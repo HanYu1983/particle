@@ -394,7 +394,7 @@ return statearr_9676;
 })();return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null,state__5717__auto__);
 });})(c__5715__auto___9704))
 );
-var face_9717 = (new Image());face_9717.src = "res/imgs/m(01-32)_gr.jpg";
+var face_9717 = (new Image());face_9717.src = "res/imgs/m_gr.jpg";
 face_9717.onload = ((function (face_9717){
 return (function (){var c__5715__auto__ = cljs.core.async.chan.call(null,(1));cljs.core.async.impl.dispatch.run.call(null,((function (c__5715__auto__,face_9717){
 return (function (){var f__5716__auto__ = (function (){var switch__5700__auto__ = ((function (c__5715__auto__,face_9717){
