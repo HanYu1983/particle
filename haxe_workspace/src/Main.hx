@@ -133,6 +133,12 @@ class Main
 		});
 	}
 	
+	static var onViewObj:Dynamic = untyped __js__('common.onView');
+	public static function notify( evt:String, value:Dynamic) {
+		//onViewObj.onNext( evt, value );
+		onViewObj.onNext("edit-particle",{ id : 'aasadf', pos : [0,0,0], vel : [0,0,0], color : [1,0,0,1], mass : 1, size : [10,10]});
+	}
+	
 	static function main() 
 	{
 		new Main();

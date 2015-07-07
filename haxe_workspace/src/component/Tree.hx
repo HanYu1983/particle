@@ -30,6 +30,8 @@ class Tree implements ITree
 		
 		addToTree( dom );
 		addParticle( name, name );
+		
+		Main.notify( 'edit-particle', { id: name, pos:[0, 0, 0], vel: [0, 0, 0], color: [1, 0, 0, 1], mass: 1, size: [10, 10] } );
 	}
 	
 	public function addParticle( ?parentName:String, name:String ):Void 

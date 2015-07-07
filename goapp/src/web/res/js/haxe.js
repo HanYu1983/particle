@@ -13,6 +13,9 @@ var Main = function() {
 	this.initContextMenu();
 };
 Main.__name__ = true;
+Main.notify = function(evt,value) {
+	Main.onViewObj.onNext("edit-particle",{ id : "aasadf", pos : [0,0,0], vel : [0,0,0], color : [1,0,0,1], mass : 1, size : [10,10]});
+};
 Main.main = function() {
 	new Main();
 };
@@ -230,6 +233,7 @@ component_Tree.prototype = {
 		parentDom.prepend(dom);
 		this.addToTree(dom);
 		this.addParticle(name,name);
+		Main.notify("edit-particle",{ id : name, pos : [0,0,0], vel : [0,0,0], color : [1,0,0,1], mass : 1, size : [10,10]});
 	}
 	,addParticle: function(parentName,name) {
 		var parentDom = this.findParent(parentName);
@@ -346,6 +350,7 @@ Array.__name__ = true;
 var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;
+Main.onViewObj = common.onView;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
