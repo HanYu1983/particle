@@ -17,7 +17,6 @@ class OnView
 	}
 	
 	public function moveParticle( id, x, y ) {
-		trace( id, x, y );
 		notify( 'edit-particle', {id:id, pos:[x, y, 0] } );
 	}
 	
@@ -26,6 +25,6 @@ class OnView
 	}
 	
 	function notify( evt:String, value:Dynamic) {
-		onViewObj.onNext( evt, value );
+		onViewObj.onNext( [evt, value] );
 	}
 }
