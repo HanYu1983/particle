@@ -211,11 +211,26 @@ select {
 	<script src='res/js/lib/rx.all.min.js'></script>
 	<script src='res/js/lib/three.min.js'></script>
 	<script src='res/js/lib/underscore-min.js'></script>
+	<script src='res/js/common.js'></script>
 	<script src="res/js/haxe.js"></script>
-	<script src='res/js/goog/base.js'></script>
-	<script src='res/js/cljs.js'></script>
+	<script src='res/cljs/goog/base.js'></script>
+	<script src='res/cljs/cljs.js'></script>
 	<script>
 	
+	common.onModel.subscribe(function(data){
+		console.log( data )
+	})
+	
+	common.onView.subscribe(function(data){
+		console.log( data )
+	})
+	
+	common.onModel.onNext(['testmodel', {}])
+	common.onView.onNext(['testview', {}])
+	
+	</script>
+	<script>
+	goog.require("app.main2");
 	</script>
 </body>
 </html>
