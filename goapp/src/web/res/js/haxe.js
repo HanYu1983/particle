@@ -11,16 +11,23 @@ var Main = function() {
 	this.createParams(new component_Params("px","c"));
 	this.createParams(new component_Params("py","c"));
 	this.initContextMenu();
+	this.addListener();
 };
 Main.__name__ = true;
 Main.notify = function(evt,value) {
-	Main.onViewObj.onNext("edit-particle",{ id : "aasadf", pos : [0,0,0], vel : [0,0,0], color : [1,0,0,1], mass : 1, size : [10,10]});
+	Main.onViewObj.onNext(evt,value);
 };
 Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	deleteParams: function(params) {
+	addListener: function() {
+		this.j("body").mousemove($bind(this,this.onMousemove));
+	}
+	,onMousemove: function(e) {
+		console.log(e);
+	}
+	,deleteParams: function(params) {
 		params.dom.remove();
 	}
 	,createParams: function(params) {

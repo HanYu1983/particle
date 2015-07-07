@@ -47,6 +47,16 @@ class Main
 		createParams( new Params( 'py', 'c' ) );
 		
 		initContextMenu();
+		addListener();
+	}
+	
+	function addListener() {
+		j('body').mousemove( onMousemove );
+	}
+	
+	function onMousemove(e) {
+		var pox = e.clientX;
+		var poy = e.clientY;
 	}
 	
 	function deleteParams( params:IParams ) {
@@ -131,12 +141,6 @@ class Main
 				cut: { name: "Cut", icon: "cut" }
 			}	
 		});
-	}
-	
-	static var onViewObj:Dynamic = untyped __js__('common.onView');
-	public static function notify( evt:String, value:Dynamic) {
-		//onViewObj.onNext( evt, value );
-		onViewObj.onNext("edit-particle",{ id : 'aasadf', pos : [0,0,0], vel : [0,0,0], color : [1,0,0,1], mass : 1, size : [10,10]});
 	}
 	
 	static function main() 
