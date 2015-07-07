@@ -1,0 +1,1 @@
+C:\Users\viyu\AppData\Roaming\npm\lessc ..\less_workspace\src\main.less > ..\goapp\src\web\res\css\main.css
