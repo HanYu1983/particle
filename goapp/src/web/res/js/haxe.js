@@ -24,6 +24,7 @@ Main.prototype = {
 	,onMousemove: function(e) {
 		var px = e.clientX;
 		var py = e.clientY;
+		OnView.inst.moveParticle("root",px,py);
 	}
 	,deleteParams: function(params) {
 		params.dom.remove();
@@ -254,6 +255,7 @@ component_Tree.prototype = {
 		this.addToTree(dom);
 		this.addParticle(name,name);
 		OnView.inst.setParticle(name,0,0,0,0,[1,0,0,1],1,[10,10]);
+		OnView.inst.moveParticle(name,100,200);
 	}
 	,addParticle: function(parentName,name) {
 		var parentDom = this.findParent(parentName);

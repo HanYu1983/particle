@@ -57,7 +57,7 @@ class Main
 	function onMousemove(e) {
 		var px = e.clientX;
 		var py = e.clientY;
-		//OnView.inst.moveParticle( 'root', px, py );
+		OnView.inst.moveParticle( 'root', px, py );
 	}
 	
 	function deleteParams( params:IParams ) {

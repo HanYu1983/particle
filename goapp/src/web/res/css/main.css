@@ -98,3 +98,14 @@ select {
 .subContainer {
   display: inline-block;
 }
+.ui_root {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#webgl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: solid 1px black;
+}
