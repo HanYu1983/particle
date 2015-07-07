@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>ParticleEditorUI</title>
+	<meta name="description" content="" />
+	<script src="res/js/lib/jquery/jquery-1.9.min.js"></script>
+	<script src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
+	<script src="res/js/lib/jquery/jquery.treeview.js"></script>
+	<script src="res/js/lib/jquery/jquery.treeview.edit.js"></script>
+	
+	<!--
+	<script src="js/lib/jquery-ui-1.11.4/external/jquery/jquery.js"></script>
+	-->
+	
+	<script src="res/js/lib/jquery-ui-1.11.4/jquery-ui.js"></script>
+	<link href="res/js/lib/jquery-ui-1.11.4/jquery-ui.css" rel="stylesheet">
+		
+	<script src="res/js/lib/jquery/jquery.contextMenu.js" type="text/javascript"></script>
+	<link href="res/js/lib/jquery/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+	
+	<script src="res/js/lib/colorpicker-master/jquery.colorpicker.js"></script>
+	<link href="res/js/lib/colorpicker-master/jquery.colorpicker.css" rel="stylesheet" type="text/css"/>
+	
+	
+</head>
+<style>
+
+body{
+	font: 62.5% "Trebuchet MS", sans-serif;
+	margin: 10px;
+}
+.demoHeaders {
+	margin-top: 2em;
+}
+#dialog-link {
+	padding: .4em 1em .4em 20px;
+	text-decoration: none;
+	position: relative;
+}
+#dialog-link span.ui-icon {
+	margin: 0 5px 0 0;
+	position: absolute;
+	left: .2em;
+	top: 50%;
+	margin-top: -8px;
+}
+#icons {
+	margin: 0;
+	padding: 0;
+}
+#icons li {
+	margin: 2px;
+	position: relative;
+	padding: 4px 0;
+	cursor: pointer;
+	float: left;
+	list-style: none;
+}
+#icons span.ui-icon {
+	float: left;
+	margin: 0 4px;
+}
+.fakewindowcontain .ui-widget-overlay {
+	position: absolute;
+}
+
+.hide{
+	display:none;
+}
+select {
+	width: 200px;
+}
+	
+
+.center{
+	text-align:center;
+}
+.w_full{
+	width:100%;
+}
+.f_left{
+	float:left;
+}
+
+.absolute{
+	position:absolute;
+}
+.relative{
+	position:relative;
+}
+.left{
+	left:0;
+}
+.right{
+	right:0;
+}
+
+.panel{
+	width:460px;
+}
+.group{
+	width:420px;
+	margin-bottom:10px;
+}
+.list, .input_params{
+	text-align:center;
+}
+
+.p_group{
+	margin-bottom:5px;
+}
+.p_group select{
+	width:80px;
+}
+.p_group input, #input_age{
+	width:40px;
+	text-align:center;
+}
+.p_group button{
+	width:50px;
+}
+.params_mask{
+	height:200px;
+	overflow:auto;
+}
+.panel h3{
+	text-align:center;
+}
+.subContainer{
+	display:inline-block;
+}
+</style>
+<script id="tmpl_params" type="jquery-x-tmpl">
+	<div class="w_full p_group">
+		<button id="btn_copy">copy</button>
+		<button id="btn_delete">delete</button>
+		<select id="input_type" class="list" value="px">
+			<option value="px" {{if type=='px'}}selected{{/if}}>position-x</option>
+			<option value="py" {{if type=='py'}}selected{{/if}}>position-y</option>
+			<option value="r" {{if type=='r'}}selected{{/if}}>rotation</option>
+			<option value="vx" {{if type=='vx'}}selected{{/if}}>velocity-x</option>
+			<option value="vy" {{if type=='vy'}}selected{{/if}}>velocity-y</option>
+			<option value="vr" {{if type=='vr'}}selected{{/if}}>velocity-r</option>
+			<option value="w" {{if type=='w'}}selected{{/if}}>width</option>
+			<option value="h" {{if type=='h'}}selected{{/if}}>height</option>
+			<option value="c" {{if type=='c'}}selected{{/if}}>color</option>
+		</select>
+		<select id="input_easingType" class="list" value="c">
+			<option value="c" {{if easingType=='c'}}selected{{/if}}>const</option>
+			<option value="l" {{if easingType=='l'}}selected{{/if}}>linear</option>
+			<option value="r" {{if easingType=='r'}}selected{{/if}}>random</option>
+			<!--
+			<option value="cus" {{if easingType=='cus'}}selected{{/if}}>custom</option>
+			-->
+		</select>
+		<div class="subContainer"></div>
+	</div>
+</script>
+<script id="tmpl_const" type="jquery-x-tmpl">
+	<input class="input_params" value="30" />
+</script>
+<script id="tmpl_linear" type="jquery-x-tmpl">
+	<input class="input_params" value="30" />
+	<input class="input_params" value="30" />
+</script>
+<script id="tmpl_detail" type="jquery-x-tmpl">
+	<button>curve</button>
+</script>
+<script id="tmpl_const_color" type="jquery-x-tmpl">
+	<input type="text" class="hide" value="fe9810">
+</script>
+<script id="tmpl_linear_color" type="jquery-x-tmpl">
+	<input type="text" class="hide" value="fe9810">
+	<input type="text" class="hide" value="fe9810">
+</script>
+<body>
+	<div class="panel">
+		<h3>樹狀圖</h3>
+		<div>
+			<li><span class="folder"></span>
+				<ul>
+					<li><span class="file">aa</span></li>
+					<li><span class="folder">BB</span></li>
+				</ul>
+			</li>
+			<li><span class="file">aaa</span></li>
+			<li><span class="file">aaa</span></li>
+			<li><span class="file">aaa</span></li>
+			<input type="text" id="colorpicker-full" class="hide" value="fe9810">
+		</div>
+		<h3>參數</h3>
+		<div>
+			<div class="group">
+				<span>age</span>
+				<input id="input_age" type="text" value="10" />
+			</div>
+			<div id="params" class="group"></div>
+		</div>
+	</div>
+	<div class="panel">
+		
+	</div>
+	<script>
+	/*x,y,rotation, vx, vy, vrot, width, height, r, g, b, mass*/
+	</script>
+	<script src="res/js/haxe.js"></script>
+</body>
+</html>
