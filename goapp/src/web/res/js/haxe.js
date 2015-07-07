@@ -1,142 +1,212 @@
 (function (console) { "use strict";
-var Main = function() {
+function $extend(from, fields) {
+	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
+	for (var name in fields) proto[name] = fields[name];
+	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
+	return proto;
+}
+Math.__name__ = true;
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var StringTools = function() { };
+StringTools.__name__ = true;
+StringTools.htmlEscape = function(s,quotes) {
+	s = s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+	if(quotes) return s.split("\"").join("&quot;").split("'").join("&#039;"); else return s;
+};
+var TestTree = function() {
 	this.j = $;
-	this.container_params = this.j("#params");
-	this.tree_particle = this.j("#tree_particle");
-	var panel = this.j(".panel");
-	panel.accordion({ heightStyle : "content"});
-	this.tree_particle.treeview({ animated : "fast"});
-	this.createParams(new component_Params("px","c"));
-	this.createParams(new component_Params("py","c"));
+	this.tree = new component_Tree(this.j("#tree_particle"));
+	this.tree.init();
+	this.tree.addEmitter(null,"root");
+	this.tree.addEmitter("root","AAA");
+	this.tree.addEmitter("root","BBB");
+	this.tree.removeParticle("BBB");
+	this.tree.removeParticle("AAA");
 };
-Main.main = function() {
-	new Main();
+TestTree.__name__ = true;
+TestTree.main = function() {
+	new TestTree();
 };
-Main.prototype = {
-	deleteParams: function(params) {
-		params.dom.remove();
-	}
-	,createParams: function(params) {
-		params.dom.appendTo(this.container_params);
-		params.event.on("onParamsActEvent",$bind(this,this.onParamsActEvent));
-	}
-	,onParamsActEvent: function(e,params) {
-		var target = params.target;
-		var _g = params.id;
-		switch(_g) {
-		case "btn_add":
-			var extra = target.extra;
-			extra.isParams = true;
-			var copy = new component_Params(target.type,target.easingType,extra);
-			this.createParams(copy);
-			break;
-		case "btn_copy":
-			this.createParams(target.copy());
-			break;
-		case "btn_delete":
-			this.deleteParams(target);
-			break;
-		}
-	}
-};
-var component_IParams = function() { };
-var component_ISubParams = function() { };
-var component_Params = function(type,easingType,extra) {
+var component_IDom = function() { };
+component_IDom.__name__ = true;
+var component_ITree = function() { };
+component_ITree.__name__ = true;
+component_ITree.__interfaces__ = [component_IDom];
+var component_Tree = function(dom) {
 	this.j = $;
-	this.type = type;
-	this.easingType = easingType;
-	this.extra = extra;
-	this.event = this.j("<div></div>");
-	this.dom = this.j("#tmpl_params").tmpl({ type : type, easingType : easingType});
-	this.subContainer = this.dom.find(".subContainer");
-	this.subParams = new component_SubParams(type,easingType);
-	this.subContainer.append(this.subParams.dom);
-	this.input_type = this.dom.find("#input_type");
-	this.input_easingType = this.dom.find("#input_easingType");
-	this.input_type.change($bind(this,this.onInputTypeChange));
-	this.input_easingType.change($bind(this,this.onInputEasingTypeChange));
-	this.dom.delegate("button","click",$bind(this,this.onDelegate));
+	this.dom = dom;
 };
-component_Params.__interfaces__ = [component_IParams];
-component_Params.prototype = {
-	copy: function() {
-		return new component_Params(this.type,this.easingType,this.extra);
+component_Tree.__name__ = true;
+component_Tree.__interfaces__ = [component_ITree];
+component_Tree.prototype = {
+	init: function() {
+		this.dom.treeview({ animated : "fast"});
 	}
-	,onInputTypeChange: function(e) {
-		var target = e.currentTarget;
-		this.type = target.value;
-		this.subParams.setType(this.type);
-		var subdom = this.subParams.dom;
-		this.subContainer.empty();
-		this.subContainer.append(subdom);
-		if(this.type == "c") this.createColorPicker(subdom);
+	,addEmitter: function(parentName,name) {
+		var parentDom = this.findParent(parentName);
+		var dom = this.j("<li id=\"" + name + "\"><span class=\"folder\">" + name + "_emitter</span><ul id=\"" + name + "_container\"></ul></li>");
+		parentDom.prepend(dom);
+		this.addToTree(dom);
+		this.addParticle(name,name);
 	}
-	,onInputEasingTypeChange: function(e) {
-		var target = e.currentTarget;
-		this.easingType = target.value;
-		this.subParams.setEasingType(this.easingType);
-		var subdom = this.subParams.dom;
-		this.subContainer.empty();
-		this.subContainer.append(subdom);
-		if(this.type == "c") this.createColorPicker(subdom);
+	,addParticle: function(parentName,name) {
+		var parentDom = this.findParent(parentName);
+		var dom = this.j("<li id=\"" + name + "\"><span class=\"file\">" + name + "_particle</span></li>");
+		parentDom.prepend(dom);
+		this.addToTree(dom);
 	}
-	,createColorPicker: function(colordom) {
-		if(this.type == "c") colordom.colorpicker({ parts : "full", alpha : true, showOn : "both", buttonColorize : true, showNoneButton : true});
+	,removeParticle: function(name) {
+		var removeDom = this.dom.find("#" + name);
+		removeDom.remove();
 	}
-	,onDelegate: function(e) {
-		this.event.trigger("onParamsActEvent",{ id : e.currentTarget.id, target : this});
-	}
-};
-var component_SubParams = function(type,easingType,extra) {
-	this.j = $;
-	this.type = type;
-	this.easingType = easingType;
-	this.extra = extra;
-	this.event = this.j("<div></div>");
-	this.setEasingType(easingType);
-};
-component_SubParams.__interfaces__ = [component_ISubParams];
-component_SubParams.prototype = {
-	setType: function(type) {
-		this.type = type;
-		this.setEasingType(this.easingType);
-	}
-	,setEasingType: function(easingType) {
-		this.easingType = easingType;
-		var tmplName;
-		switch(easingType) {
-		case "c":
-			tmplName = this.getConstName();
-			break;
-		case "l":
-			tmplName = this.getLinearName();
-			break;
-		case "r":
-			tmplName = this.getLinearName();
-			break;
-		case "cus":
-			tmplName = "tmpl_detail";
-			break;
+	,findParent: function(parentName) {
+		if(parentName == null) return this.dom; else switch(parentName) {
 		default:
-			tmplName = "";
+			return this.dom.find("#" + parentName + "_container");
 		}
-		if(this.dom != null) this.dom.remove();
-		this.dom = this.j("#" + tmplName).tmpl();
 	}
-	,copy: function() {
-		return new component_SubParams(this.easingType,this.extra);
-	}
-	,getConstName: function() {
-		if(this.type == "c") return "tmpl_const_color"; else return "tmpl_const";
-	}
-	,getLinearName: function() {
-		if(this.type == "c") return "tmpl_linear_color"; else return "tmpl_linear";
+	,addToTree: function(dom) {
+		this.dom.treeview({ add : dom});
 	}
 };
-var $_, $fid = 0;
-function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
-var q = window.jQuery;
-var js = js || {}
-js.JQuery = q;
-Main.main();
+var haxe_unit_TestCase = function() {
+};
+haxe_unit_TestCase.__name__ = true;
+haxe_unit_TestCase.prototype = {
+	setup: function() {
+	}
+	,tearDown: function() {
+	}
+	,print: function(v) {
+		haxe_unit_TestRunner.print(v);
+	}
+	,assertTrue: function(b,c) {
+		this.currentTest.done = true;
+		if(b != true) {
+			this.currentTest.success = false;
+			this.currentTest.error = "expected true but was false";
+			this.currentTest.posInfos = c;
+			throw new js__$Boot_HaxeError(this.currentTest);
+		}
+	}
+	,assertFalse: function(b,c) {
+		this.currentTest.done = true;
+		if(b == true) {
+			this.currentTest.success = false;
+			this.currentTest.error = "expected false but was true";
+			this.currentTest.posInfos = c;
+			throw new js__$Boot_HaxeError(this.currentTest);
+		}
+	}
+	,assertEquals: function(expected,actual,c) {
+		this.currentTest.done = true;
+		if(actual != expected) {
+			this.currentTest.success = false;
+			this.currentTest.error = "expected '" + Std.string(expected) + "' but was '" + Std.string(actual) + "'";
+			this.currentTest.posInfos = c;
+			throw new js__$Boot_HaxeError(this.currentTest);
+		}
+	}
+};
+var haxe_unit_TestRunner = function() { };
+haxe_unit_TestRunner.__name__ = true;
+haxe_unit_TestRunner.print = function(v) {
+	var msg = js_Boot.__string_rec(v,"");
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) {
+		msg = StringTools.htmlEscape(msg).split("\n").join("<br/>");
+		d.innerHTML += msg + "<br/>";
+	} else if(typeof process != "undefined" && process.stdout != null && process.stdout.write != null) process.stdout.write(msg); else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
+var haxe_unit_TestStatus = function() { };
+haxe_unit_TestStatus.__name__ = true;
+var js__$Boot_HaxeError = function(val) {
+	Error.call(this);
+	this.val = val;
+	this.message = String(val);
+	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
+};
+js__$Boot_HaxeError.__name__ = true;
+js__$Boot_HaxeError.__super__ = Error;
+js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
+});
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+};
+String.__name__ = true;
+Array.__name__ = true;
+TestTree.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=haxe.js.map

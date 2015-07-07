@@ -2,6 +2,7 @@ package ;
 
 import component.IParams;
 import component.Params;
+import component.Tree;
 import js.JQuery;
 import js.Lib;
 using Reflect;
@@ -12,7 +13,7 @@ using Reflect;
 
 class Main 
 {
-	var j = untyped __js__('$');
+	var j:Dynamic = untyped __js__('$');
 	var container_params:Dynamic;
 	var tree_particle:Dynamic;
 	
@@ -29,6 +30,7 @@ class Main
 			animated: "fast"
 		});
 		
+		new Tree( j( '#tree_particle' ) );
 		/*
 		var colorpickerfull:Dynamic = j( '#colorpicker-full' );
 		colorpickerfull.colorpicker({
@@ -42,6 +44,8 @@ class Main
 		
 		createParams( new Params( 'px', 'c' ) );
 		createParams( new Params( 'py', 'c' ) );
+		
+		initContextMenu();
 	}
 	
 	function deleteParams( params:IParams ) {
@@ -66,6 +70,36 @@ class Main
 			case 'btn_delete':
 				deleteParams( target );
 		}
+	}
+	
+	function initContextMenu(){
+		
+		j.contextMenu( 'destroy', 'li' );
+		j.contextMenu({
+			selector: 'li', 
+			callback: function(key, options:Dynamic) {
+				var target = options.field( "$trigger" );
+				var id = target.attr( 'id' );
+				var isEmitter = target.hasClass( 'emitter' );
+				trace( target );
+				trace( id );
+				switch( key ){
+					case 'copy':
+					case 'paste':
+					case 'delete':
+					case 'addParticle':
+					case 'addEmitter':
+					default:
+				}
+			},
+			items: {
+				addParticle: { name: "Add Particle", icon: "add" }
+			}	
+		});
+		
+		j('.context-menu-one').on('click', function(e){
+			
+		});
 	}
 	
 	static function main() 
