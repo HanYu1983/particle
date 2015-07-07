@@ -1,6 +1,7 @@
 (ns app.particle)
 
 (defn create [{
+  id :id
   {count :count duration :duration :as emit} :emit
   [x y rot :as pos] :pos 
   [vx vy vr :as vel] :vel
@@ -11,6 +12,7 @@
   color :color
   }]
   {
+    :id (or id (gensym "particle"))
     :emit
     (when emit
       (merge 
