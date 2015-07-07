@@ -25,9 +25,10 @@ class TestTree
 		tree.init();
 		tree.addEmitter( null, 'root' );
 		tree.addEmitter( 'root', 'AAA' );
-		tree.addEmitter( 'root', 'BBB' );
-		tree.removeParticle( 'BBB' );
-		tree.removeParticle( 'AAA' );
+		tree.addEmitter( 'AAA', 'BBB' );
+		tree.addEmitter( 'BBB', 'CCC' );
+		//tree.removeParticle( 'BBB' );
+		//tree.removeParticle( 'AAA' );
 	}
 	
 }

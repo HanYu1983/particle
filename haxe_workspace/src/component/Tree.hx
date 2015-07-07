@@ -25,7 +25,7 @@ class Tree implements ITree
 	{
 		var parentDom = findParent( parentName );
 		
-		var dom = j( '<li id="' + name + '"><span class="folder">' + name + '_emitter</span><ul id="' + name + '_container"></ul></li>' );
+		var dom = j( '<li id="' + name + '" e_type="emitter"><span class="folder">' + name + '_emitter</span><ul id="' + name + '_container"></ul></li>' );
 		parentDom.prepend( dom );
 		
 		addToTree( dom );
@@ -36,7 +36,7 @@ class Tree implements ITree
 	{
 		var parentDom = findParent( parentName );
 		
-		var dom = j( '<li id="' + name + '"><span class="file">' + name + '_particle</span></li>' );
+		var dom = j( '<li id="' + name + '_particle" e_type="particle"><span class="file">' + name + '_particle</span></li>' );
 		parentDom.prepend( dom );
 		
 		addToTree( dom );
@@ -46,6 +46,23 @@ class Tree implements ITree
 	{
 		var removeDom = this.dom.find( '#' + name );
 		removeDom.remove();
+	}
+	
+	public function copy( name:String ):Dynamic {
+		var copyDom:Dynamic = this.dom.find( '#' + name ).clone();
+		copyDom.attr( 'id', copyDom.attr( 'id' ) + '_copy' );
+		return copyDom;
+	}
+	
+	public function paste( ?parentName:String, pasteDom:Dynamic ):Void {
+		var parentDom = findParent( parentName );
+		parentDom.prepend( pasteDom );
+		addToTree( pasteDom );
+	}
+	
+	public function cut( name:String ):Dynamic {
+		var cutDom = this.dom.find( '#' + name );
+		return cutDom;
 	}
 	
 	function findParent( ?parentName ) {
