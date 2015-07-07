@@ -2,10 +2,10 @@
 var Main = function() {
 	this.j = $;
 	this.container_params = this.j("#params");
+	this.tree_particle = this.j("#tree_particle");
 	var panel = this.j(".panel");
 	panel.accordion({ heightStyle : "content"});
-	var slider = this.j(".slider");
-	slider.slider();
+	this.tree_particle.treeview({ animated : "fast"});
 	this.createParams(new component_Params("px","c"));
 	this.createParams(new component_Params("py","c"));
 };

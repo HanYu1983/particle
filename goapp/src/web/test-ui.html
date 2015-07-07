@@ -131,6 +131,11 @@ select {
 	display:inline-block;
 }
 </style>
+
+
+<!-- template start -->
+
+
 <script id="tmpl_params" type="jquery-x-tmpl">
 	<div class="w_full p_group">
 		<button id="btn_copy">copy</button>
@@ -174,10 +179,15 @@ select {
 	<input type="text" class="hide" value="fe9810">
 	<input type="text" class="hide" value="fe9810">
 </script>
+
+
+<!-- template end -->
+
+
 <body>
 	<div class="panel">
 		<h3>樹狀圖</h3>
-		<div>
+		<div id="tree_particle" class="filetree">
 			<li><span class="folder"></span>
 				<ul>
 					<li><span class="file">aa</span></li>
@@ -187,7 +197,6 @@ select {
 			<li><span class="file">aaa</span></li>
 			<li><span class="file">aaa</span></li>
 			<li><span class="file">aaa</span></li>
-			<input type="text" id="colorpicker-full" class="hide" value="fe9810">
 		</div>
 		<h3>參數</h3>
 		<div>

@@ -14,14 +14,21 @@ class Main
 {
 	var j = untyped __js__('$');
 	var container_params:Dynamic;
+	var tree_particle:Dynamic;
 	
 	public function new() {
 		container_params = j( '#params' );
+		tree_particle = j( '#tree_particle' );
 		
 		var panel:Dynamic = j( '.panel' );
 		panel.accordion( {
 			heightStyle: "content"
 		});
+		
+		tree_particle.treeview({
+			animated: "fast"
+		});
+		
 		/*
 		var colorpickerfull:Dynamic = j( '#colorpicker-full' );
 		colorpickerfull.colorpicker({
@@ -32,8 +39,6 @@ class Main
 			showNoneButton: true
 		});
 		*/
-		var slider:Dynamic = j( '.slider' );
-		slider.slider();
 		
 		createParams( new Params( 'px', 'c' ) );
 		createParams( new Params( 'py', 'c' ) );
