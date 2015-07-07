@@ -258,7 +258,7 @@
           ctx))))
         
   (let [face (js/Image.)]
-    (set! (.-src face) "res/imgs/m_gr.jpg")
+    (set! (.-src face) "res/images/m_gr.jpg")
     (set! (.-onload face) #(go (>! rx/onImage [:face face]))))
   
   (js/setInterval 
