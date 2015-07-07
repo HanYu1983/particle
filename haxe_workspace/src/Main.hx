@@ -21,6 +21,10 @@ class Main
 	var tree:ITree;
 	
 	public function new() {
+		Browser.window.setField( 'haxeStart', start );
+	}
+	
+	function start() {
 		container_params = j( '#params' );
 		tree_particle = j( '#tree_particle' );
 		

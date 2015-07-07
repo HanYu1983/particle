@@ -122,6 +122,7 @@
 	<script src='res/js/lib/three.min.js'></script>
 	<script src='res/js/lib/underscore-min.js'></script>
 	<script src='res/js/common.js'></script>
+	<script src="res/js/haxe.js"></script>
 	<script src='res/cljs/goog/base.js'></script>
 	<script src='res/cljs/cljs.js'></script>
 	<script>
@@ -138,9 +139,10 @@
 	common.onView.onNext(['testview', {}])
 	
 	</script>
-	<script src="res/js/haxe.js"></script>
 	<script>
 	goog.require("app.main2");
+	window.haxeStart();
 	</script>
+	
 </body>
 </html>

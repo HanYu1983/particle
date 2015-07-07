@@ -1,24 +1,27 @@
 (function (console) { "use strict";
 var Main = function() {
 	this.j = $;
-	this.container_params = this.j("#params");
-	this.tree_particle = this.j("#tree_particle");
-	var panel = this.j(".panel");
-	panel.accordion({ heightStyle : "content"});
-	this.tree = new component_Tree(this.j("#tree_particle"));
-	this.tree.init();
-	this.tree.addEmitter(null,"root");
-	this.createParams(new component_Params("px","c"));
-	this.createParams(new component_Params("py","c"));
-	this.initContextMenu();
-	this.addListener();
+	Reflect.setField(window,"haxeStart",$bind(this,this.start));
 };
 Main.__name__ = true;
 Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	addListener: function() {
+	start: function() {
+		this.container_params = this.j("#params");
+		this.tree_particle = this.j("#tree_particle");
+		var panel = this.j(".panel");
+		panel.accordion({ heightStyle : "content"});
+		this.tree = new component_Tree(this.j("#tree_particle"));
+		this.tree.init();
+		this.tree.addEmitter(null,"root");
+		this.createParams(new component_Params("px","c"));
+		this.createParams(new component_Params("py","c"));
+		this.initContextMenu();
+		this.addListener();
+	}
+	,addListener: function() {
 		this.j("body").mousemove($bind(this,this.onMousemove));
 	}
 	,onMousemove: function(e) {
@@ -129,6 +132,9 @@ Reflect.field = function(o,field) {
 	} catch( e ) {
 		return null;
 	}
+};
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
 };
 var Std = function() { };
 Std.__name__ = true;
