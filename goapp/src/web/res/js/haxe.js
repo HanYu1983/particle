@@ -255,7 +255,6 @@ component_Tree.prototype = {
 		this.addToTree(dom);
 		this.addParticle(name,name);
 		OnView.inst.setParticle(name,0,0,0,0,[1,0,0,1],1,[10,10]);
-		OnView.inst.moveParticle(name,100,200);
 	}
 	,addParticle: function(parentName,name) {
 		var parentDom = this.findParent(parentName);
