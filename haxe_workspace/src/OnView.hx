@@ -25,6 +25,6 @@ class OnView
 	}
 	
 	function notify( evt:String, value:Dynamic) {
-		onViewObj.onNext( evt, value );
+		onViewObj.onNext( [evt, value] );
 	}
 }
