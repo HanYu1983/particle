@@ -51,31 +51,31 @@
           (shader/use gl sprite-shader
             (fn [pobj] 
               (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color :as p} ps]
-              (let [proj 
-                    (doto (js/THREE.Matrix4.) 
-                          (.makeOrthographic 0 cw ch 0 1 -1))
+                (let [proj 
+                      (doto (js/THREE.Matrix4.) 
+                            (.makeOrthographic 0 cw ch 0 1 -1))
                     
-                    tras 
-                    (doto (js/THREE.Matrix4.)
-                          (.makeTranslation x y 0)
-                          (.multiply (-> (js/THREE.Matrix4.) (.makeRotationZ rot)))
-                          (.multiply (-> (js/THREE.Matrix4.) (.makeScale xs ys 1))))
+                      tras 
+                      (doto (js/THREE.Matrix4.)
+                            (.makeTranslation x y 0)
+                            (.multiply (-> (js/THREE.Matrix4.) (.makeRotationZ rot)))
+                            (.multiply (-> (js/THREE.Matrix4.) (.makeScale xs ys 1))))
                     
-                    texTx 
-                    (doto (js/THREE.Matrix3.))
+                      texTx 
+                      (doto (js/THREE.Matrix3.))
                     
-                    colorTx 
-                    (doto (js/THREE.Matrix4.) 
-                          (.makeTranslation r g b))]
-                (mesh/bind gl mesh :vertex (get-in pobj [:attrs :a_position]))
-                (mesh/bind gl mesh :texture (get-in pobj [:attrs :a_texCoord]))
-                (shader/uniform gl pobj
-                  [:u_projection "m4fv" (.-elements proj)]
-                  [:u_transform "m4fv" (.-elements tras)]
-                  [:u_tex "s2d" [tex 0]]
-                  [:u_texTransform "m3fv" (.-elements texTx)]
-                  [:u_colorTransform "m4fv" (.-elements colorTx)])
-                (mesh/draw gl mesh nil)))))))
+                      colorTx 
+                      (doto (js/THREE.Matrix4.) 
+                            (.makeTranslation r g b))]
+                  (mesh/bind gl mesh :vertex (get-in pobj [:attrs :a_position]))
+                  (mesh/bind gl mesh :texture (get-in pobj [:attrs :a_texCoord]))
+                  (shader/uniform gl pobj
+                    [:u_projection "m4fv" (.-elements proj)]
+                    [:u_transform "m4fv" (.-elements tras)]
+                    [:u_tex "s2d" [tex 0]]
+                    [:u_texTransform "m3fv" (.-elements texTx)]
+                    [:u_colorTransform "m4fv" (.-elements colorTx)])
+                  (mesh/draw gl mesh nil)))))))
               
       (.disable gl (.-BLEND gl))
       ctx)))
