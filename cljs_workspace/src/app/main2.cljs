@@ -120,9 +120,9 @@
         
     (go
       (<! (timeout 1000))
-      (>! onView (array "edit-particle" (js-obj "id" "x1")))
+      (>! onView (array "edit-particle" (js-obj "id" "x1" "pos" (array 0 0 0))))
       (<! (timeout 1000))
-      (>! onView (array "edit-particle" (js-obj "id" "x2" "vel" (array 100 0 0)))))
+      (>! onView (array "edit-particle" (js-obj "id" "x1" "pos" (array 100 0 0)))))
       
     ; main-loop
     (go-loop 
