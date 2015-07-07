@@ -14,9 +14,6 @@ var Main = function() {
 	this.addListener();
 };
 Main.__name__ = true;
-Main.notify = function(evt,value) {
-	Main.onViewObj.onNext(evt,value);
-};
 Main.main = function() {
 	new Main();
 };
@@ -25,7 +22,9 @@ Main.prototype = {
 		this.j("body").mousemove($bind(this,this.onMousemove));
 	}
 	,onMousemove: function(e) {
-		console.log(e);
+		var px = e.clientX;
+		var py = e.clientY;
+		OnView.inst.moveParticle("root",px,py);
 	}
 	,deleteParams: function(params) {
 		params.dom.remove();
@@ -61,16 +60,16 @@ Main.prototype = {
 			var id = target.attr("id");
 			var isEmitter = target.attr("e_type") == "emitter";
 			var isRoot = id == "root";
-			console.log(id);
-			console.log(isEmitter);
+			haxe_Log.trace(id,{ fileName : "Main.hx", lineNumber : 99, className : "Main", methodName : "initContextMenu"});
+			haxe_Log.trace(isEmitter,{ fileName : "Main.hx", lineNumber : 100, className : "Main", methodName : "initContextMenu"});
 			switch(key) {
 			case "cut":
 				copyDom = _g.tree.cut(id);
-				console.log(copyDom);
+				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 104, className : "Main", methodName : "initContextMenu"});
 				break;
 			case "copy":
 				copyDom = _g.tree.copy(id);
-				console.log(copyDom);
+				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 107, className : "Main", methodName : "initContextMenu"});
 				break;
 			case "paste":
 				if(copyDom == null) {
@@ -107,6 +106,22 @@ Main.prototype = {
 	}
 };
 Math.__name__ = true;
+var OnView = function() {
+	this.onViewObj = common.onView;
+};
+OnView.__name__ = true;
+OnView.prototype = {
+	moveParticle: function(id,x,y) {
+		haxe_Log.trace(id,{ fileName : "OnView.hx", lineNumber : 20, className : "OnView", methodName : "moveParticle", customParams : [x,y]});
+		this.notify("edit-particle",{ id : id, pos : [x,y,0]});
+	}
+	,setParticle: function(id,x,y,vx,vy,color,mass,size) {
+		this.notify("edit-particle",{ id : id, pos : [x,y,0], vel : [vx,vy,0], color : color, mass : mass, size : size});
+	}
+	,notify: function(evt,value) {
+		this.onViewObj.onNext(evt,value);
+	}
+};
 var Reflect = function() { };
 Reflect.__name__ = true;
 Reflect.field = function(o,field) {
@@ -240,7 +255,8 @@ component_Tree.prototype = {
 		parentDom.prepend(dom);
 		this.addToTree(dom);
 		this.addParticle(name,name);
-		Main.notify("edit-particle",{ id : name, pos : [0,0,0], vel : [0,0,0], color : [1,0,0,1], mass : 1, size : [10,10]});
+		OnView.inst.setParticle(name,0,0,0,0,[1,0,0,1],1,[10,10]);
+		OnView.inst.moveParticle(name,100,100);
 	}
 	,addParticle: function(parentName,name) {
 		var parentDom = this.findParent(parentName);
@@ -276,8 +292,32 @@ component_Tree.prototype = {
 		this.dom.treeview({ add : dom});
 	}
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -357,7 +397,7 @@ Array.__name__ = true;
 var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;
-Main.onViewObj = common.onView;
+OnView.inst = new OnView();
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
