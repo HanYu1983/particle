@@ -6,9 +6,11 @@
 	<meta name="description" content="" />
 	<script src="res/js/lib/jquery/jquery-1.9.min.js"></script>
 	<script src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
-	<script src="res/js/lib/jquery/jquery.treeview.js"></script>
-	<script src="res/js/lib/jquery/jquery.treeview.edit.js"></script>
 	
+	
+	<script src="res/js/lib/jquery-treeview-master/jquery.treeview.js"></script>
+	<script src="res/js/lib/jquery-treeview-master/jquery.treeview.edit.js"></script>
+	<link rel="stylesheet" href="res/js/lib/jquery-treeview-master/jquery.treeview.css" />
 	<!--
 	<script src="js/lib/jquery-ui-1.11.4/external/jquery/jquery.js"></script>
 	-->
@@ -21,116 +23,10 @@
 	
 	<script src="res/js/lib/colorpicker-master/jquery.colorpicker.js"></script>
 	<link href="res/js/lib/colorpicker-master/jquery.colorpicker.css" rel="stylesheet" type="text/css"/>
+	<link href="res/css/main.css" rel="stylesheet" type="text/css"/>
 	
 	
 </head>
-<style>
-
-body{
-	font: 62.5% "Trebuchet MS", sans-serif;
-	margin: 10px;
-}
-.demoHeaders {
-	margin-top: 2em;
-}
-#dialog-link {
-	padding: .4em 1em .4em 20px;
-	text-decoration: none;
-	position: relative;
-}
-#dialog-link span.ui-icon {
-	margin: 0 5px 0 0;
-	position: absolute;
-	left: .2em;
-	top: 50%;
-	margin-top: -8px;
-}
-#icons {
-	margin: 0;
-	padding: 0;
-}
-#icons li {
-	margin: 2px;
-	position: relative;
-	padding: 4px 0;
-	cursor: pointer;
-	float: left;
-	list-style: none;
-}
-#icons span.ui-icon {
-	float: left;
-	margin: 0 4px;
-}
-.fakewindowcontain .ui-widget-overlay {
-	position: absolute;
-}
-
-.hide{
-	display:none;
-}
-select {
-	width: 200px;
-}
-	
-
-.center{
-	text-align:center;
-}
-.w_full{
-	width:100%;
-}
-.f_left{
-	float:left;
-}
-
-.absolute{
-	position:absolute;
-}
-.relative{
-	position:relative;
-}
-.left{
-	left:0;
-}
-.right{
-	right:0;
-}
-
-.panel{
-	width:460px;
-}
-.group{
-	width:420px;
-	margin-bottom:10px;
-}
-.list, .input_params{
-	text-align:center;
-}
-
-.p_group{
-	margin-bottom:5px;
-}
-.p_group select{
-	width:80px;
-}
-.p_group input, #input_age{
-	width:40px;
-	text-align:center;
-}
-.p_group button{
-	width:50px;
-}
-.params_mask{
-	height:200px;
-	overflow:auto;
-}
-.panel h3{
-	text-align:center;
-}
-.subContainer{
-	display:inline-block;
-}
-</style>
 
 
 <!-- template start -->
@@ -188,7 +84,8 @@ select {
 	<div class="panel">
 		<h3>樹狀圖</h3>
 		<div id="tree_particle" class="filetree">
-			<li><span class="folder"></span>
+			<!--
+			<li><span class="folder">AAA</span>
 				<ul>
 					<li><span class="file">aa</span></li>
 					<li><span class="folder">BB</span></li>
@@ -197,6 +94,7 @@ select {
 			<li><span class="file">aaa</span></li>
 			<li><span class="file">aaa</span></li>
 			<li><span class="file">aaa</span></li>
+				-->
 		</div>
 		<h3>參數</h3>
 		<div>

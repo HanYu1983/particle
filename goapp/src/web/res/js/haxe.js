@@ -5,15 +5,28 @@ var Main = function() {
 	this.tree_particle = this.j("#tree_particle");
 	var panel = this.j(".panel");
 	panel.accordion({ heightStyle : "content"});
-	this.tree_particle.treeview({ animated : "fast"});
+	this.tree = new component_Tree(this.j("#tree_particle"));
+	this.tree.init();
+	this.tree.addEmitter(null,"root");
 	this.createParams(new component_Params("px","c"));
 	this.createParams(new component_Params("py","c"));
+	this.initContextMenu();
+	this.addListener();
 };
+Main.__name__ = true;
 Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	deleteParams: function(params) {
+	addListener: function() {
+		this.j("body").mousemove($bind(this,this.onMousemove));
+	}
+	,onMousemove: function(e) {
+		var px = e.clientX;
+		var py = e.clientY;
+		OnView.inst.moveParticle("root",px,py);
+	}
+	,deleteParams: function(params) {
 		params.dom.remove();
 	}
 	,createParams: function(params) {
@@ -38,9 +51,100 @@ Main.prototype = {
 			break;
 		}
 	}
+	,initContextMenu: function() {
+		var _g = this;
+		var copyDom = null;
+		this.j.contextMenu("destroy","li");
+		this.j.contextMenu({ selector : "li", callback : function(key,options) {
+			var target = Reflect.field(options,"$trigger");
+			var id = target.attr("id");
+			var isEmitter = target.attr("e_type") == "emitter";
+			var isRoot = id == "root";
+			haxe_Log.trace(id,{ fileName : "Main.hx", lineNumber : 99, className : "Main", methodName : "initContextMenu"});
+			haxe_Log.trace(isEmitter,{ fileName : "Main.hx", lineNumber : 100, className : "Main", methodName : "initContextMenu"});
+			switch(key) {
+			case "cut":
+				copyDom = _g.tree.cut(id);
+				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 104, className : "Main", methodName : "initContextMenu"});
+				break;
+			case "copy":
+				copyDom = _g.tree.copy(id);
+				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 107, className : "Main", methodName : "initContextMenu"});
+				break;
+			case "paste":
+				if(copyDom == null) {
+					js_Browser.alert("沒有復制粒子");
+					return;
+				}
+				_g.tree.paste(id,copyDom);
+				copyDom = null;
+				break;
+			case "delete":
+				if(isRoot) {
+					js_Browser.alert("無法刪除元發射器");
+					return;
+				}
+				_g.tree.removeParticle(id);
+				break;
+			case "addParticle":
+				if(!isEmitter) {
+					js_Browser.alert("粒子無法增加粒子");
+					return;
+				}
+				_g.tree.addParticle(id,Math.ceil(Math.random() * 10000) + "");
+				break;
+			case "addEmitter":
+				if(!isEmitter) {
+					js_Browser.alert("粒子無法增加粒子");
+					return;
+				}
+				_g.tree.addEmitter(id,Math.ceil(Math.random() * 10000) + "");
+				break;
+			default:
+			}
+		}, items : { addParticle : { name : "Add Particle", icon : "add"}, addEmitter : { name : "Add Emitter", icon : "add"}, 'delete' : { name : "Delete Particle", icon : "delete"}, copy : { name : "Copy", icon : "copy"}, paste : { name : "Paste", icon : "paste"}, cut : { name : "Cut", icon : "cut"}}});
+	}
 };
+Math.__name__ = true;
+var OnView = function() {
+	this.onViewObj = common.onView;
+};
+OnView.__name__ = true;
+OnView.prototype = {
+	moveParticle: function(id,x,y) {
+		haxe_Log.trace(id,{ fileName : "OnView.hx", lineNumber : 20, className : "OnView", methodName : "moveParticle", customParams : [x,y]});
+		this.notify("edit-particle",{ id : id, pos : [x,y,0]});
+	}
+	,setParticle: function(id,x,y,vx,vy,color,mass,size) {
+		this.notify("edit-particle",{ id : id, pos : [x,y,0], vel : [vx,vy,0], color : color, mass : mass, size : size});
+	}
+	,notify: function(evt,value) {
+		this.onViewObj.onNext(evt,value);
+	}
+};
+var Reflect = function() { };
+Reflect.__name__ = true;
+Reflect.field = function(o,field) {
+	try {
+		return o[field];
+	} catch( e ) {
+		return null;
+	}
+};
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var component_IDom = function() { };
+component_IDom.__name__ = true;
 var component_IParams = function() { };
+component_IParams.__name__ = true;
 var component_ISubParams = function() { };
+component_ISubParams.__name__ = true;
+var component_ITree = function() { };
+component_ITree.__name__ = true;
+component_ITree.__interfaces__ = [component_IDom];
 var component_Params = function(type,easingType,extra) {
 	this.j = $;
 	this.type = type;
@@ -57,6 +161,7 @@ var component_Params = function(type,easingType,extra) {
 	this.input_easingType.change($bind(this,this.onInputEasingTypeChange));
 	this.dom.delegate("button","click",$bind(this,this.onDelegate));
 };
+component_Params.__name__ = true;
 component_Params.__interfaces__ = [component_IParams];
 component_Params.prototype = {
 	copy: function() {
@@ -95,6 +200,7 @@ var component_SubParams = function(type,easingType,extra) {
 	this.event = this.j("<div></div>");
 	this.setEasingType(easingType);
 };
+component_SubParams.__name__ = true;
 component_SubParams.__interfaces__ = [component_ISubParams];
 component_SubParams.prototype = {
 	setType: function(type) {
@@ -133,10 +239,166 @@ component_SubParams.prototype = {
 		if(this.type == "c") return "tmpl_linear_color"; else return "tmpl_linear";
 	}
 };
+var component_Tree = function(dom) {
+	this.j = $;
+	this.dom = dom;
+};
+component_Tree.__name__ = true;
+component_Tree.__interfaces__ = [component_ITree];
+component_Tree.prototype = {
+	init: function() {
+		this.dom.treeview({ animated : "fast"});
+	}
+	,addEmitter: function(parentName,name) {
+		var parentDom = this.findParent(parentName);
+		var dom = this.j("<li id=\"" + name + "\" e_type=\"emitter\"><span class=\"folder\">" + name + "_emitter</span><ul id=\"" + name + "_container\"></ul></li>");
+		parentDom.prepend(dom);
+		this.addToTree(dom);
+		this.addParticle(name,name);
+		OnView.inst.setParticle(name,0,0,0,0,[1,0,0,1],1,[10,10]);
+		OnView.inst.moveParticle(name,100,100);
+	}
+	,addParticle: function(parentName,name) {
+		var parentDom = this.findParent(parentName);
+		var dom = this.j("<li id=\"" + name + "_particle\" e_type=\"particle\"><span class=\"file\">" + name + "_particle</span></li>");
+		parentDom.prepend(dom);
+		this.addToTree(dom);
+	}
+	,removeParticle: function(name) {
+		var removeDom = this.dom.find("#" + name);
+		removeDom.remove();
+	}
+	,copy: function(name) {
+		var copyDom = this.dom.find("#" + name).clone();
+		copyDom.attr("id",Std.string(copyDom.attr("id")) + "_copy");
+		return copyDom;
+	}
+	,paste: function(parentName,pasteDom) {
+		var parentDom = this.findParent(parentName);
+		parentDom.prepend(pasteDom);
+		this.addToTree(pasteDom);
+	}
+	,cut: function(name) {
+		var cutDom = this.dom.find("#" + name);
+		return cutDom;
+	}
+	,findParent: function(parentName) {
+		if(parentName == null) return this.dom; else switch(parentName) {
+		default:
+			return this.dom.find("#" + parentName + "_container");
+		}
+	}
+	,addToTree: function(dom) {
+		this.dom.treeview({ add : dom});
+	}
+};
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
+};
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
+String.__name__ = true;
+Array.__name__ = true;
 var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;
+OnView.inst = new OnView();
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=haxe.js.map
