@@ -22,6 +22,6 @@ goog.addDependency("../gl/mesh.js", ['gl.mesh'], ['cljs.core']);
 goog.addDependency("../clojure/data.js", ['clojure.data'], ['cljs.core', 'clojure.set']);
 goog.addDependency("../app/main.js", ['app.main'], ['gl.shader', 'app.particle', 'cljs.core', 'app.react', 'cljs.core.async', 'gl.texture', 'gl.mesh', 'clojure.data', 'clojure.walk', 'gl.util']);
 goog.addDependency("../test/dialogList.js", ['test.dialogList'], ['cljs.core', 'cljs.core.async', 'tool.dialog']);
-goog.addDependency("../app/main2.js", ['app.main2'], ['cljs.core']);
+goog.addDependency("../app/main2.js", ['app.main2'], ['gl.shader', 'app.particle', 'cljs.core', 'cljs.core.async', 'gl.texture', 'gl.mesh', 'gl.util']);
 goog.addDependency("../test/ann.js", ['test.ann'], ['cljs.core', 'cljs.core.async', 'ai.ann']);
 goog.addDependency("../test/ann_xor.js", ['test.ann_xor'], ['cljs.core', 'cljs.core.async', 'clojure.walk', 'ai.ann']);
