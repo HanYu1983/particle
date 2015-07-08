@@ -73,16 +73,24 @@ class ParamsPanel implements IDom
 	}
 	
 	function onParamsChangeEvent( e, params:Dynamic ) {
+		
 		var pos = params.pos;
 		var val = params.val;
-		var type = params.type;
+		var type:ParticleAttribute = params.type;
 		switch( type ) {
-			case 'px':
-			case 'py':
-			case 'vx':
-			case 'vy':
+			case ParticleAttribute.POSITION_X:
+				particle_object.pos[0] = val;
+			case ParticleAttribute.POSITION_Y:
+				particle_object.pos[1] = val;
+			case ParticleAttribute.VELOCITY_X:
+				particle_object.vel[0] = val;
+			case ParticleAttribute.VELOCITY_Y:
+				particle_object.vel[1] = val;
+			case ParticleAttribute.COLOR:
+			case _:
 		}
-		trace( pos, val );
+		trace( particle_object );
+		OnView.inst.updateParticleRoot();
 	}
 	
 	function onInputAgeChange( e ) {

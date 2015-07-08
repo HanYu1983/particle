@@ -50,16 +50,16 @@ Main.prototype = {
 			var id = target.attr("id");
 			var isEmitter = target.attr("e_type") == "emitter";
 			var isRoot = id == "root";
-			haxe_Log.trace(id,{ fileName : "Main.hx", lineNumber : 76, className : "Main", methodName : "initContextMenu"});
-			haxe_Log.trace(isEmitter,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "initContextMenu"});
+			console.log(id);
+			console.log(isEmitter);
 			switch(key) {
 			case "cut":
 				copyDom = _g.tree.cut(id);
-				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 81, className : "Main", methodName : "initContextMenu"});
+				console.log(copyDom);
 				break;
 			case "copy":
 				copyDom = _g.tree.copy(id);
-				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 84, className : "Main", methodName : "initContextMenu"});
+				console.log(copyDom);
 				break;
 			case "paste":
 				if(copyDom == null) {
@@ -307,17 +307,26 @@ component_ParamsPanel.prototype = {
 		var pos = params.pos;
 		var val = params.val;
 		var type = params.type;
-		switch(type) {
-		case "px":
+		console.log(type);
+		switch(type[1]) {
+		case 1:
+			this.particle_object.pos[0] = val;
 			break;
-		case "py":
+		case 2:
+			this.particle_object.pos[1] = val;
 			break;
-		case "vx":
+		case 3:
+			this.particle_object.vel[0] = val;
 			break;
-		case "vy":
+		case 4:
+			this.particle_object.vel[1] = val;
 			break;
+		case 5:
+			break;
+		default:
 		}
-		haxe_Log.trace(pos,{ fileName : "ParamsPanel.hx", lineNumber : 85, className : "component.ParamsPanel", methodName : "onParamsChangeEvent", customParams : [val]});
+		console.log(this.particle_object);
+		OnView.inst.updateParticleRoot();
 	}
 	,onInputAgeChange: function(e) {
 		this.particle_object.lifetime = this.input_age.val();
@@ -461,11 +470,6 @@ component_Tree.prototype = {
 		this.dom.find("li span").removeClass("particle_focus");
 	}
 };
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -478,25 +482,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
