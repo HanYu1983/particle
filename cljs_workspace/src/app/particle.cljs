@@ -17,24 +17,25 @@
     (when emit
       (merge 
         {
-          :count 1
-          :duration 1
-          :angle 0
-          :range 0
-          :force 0
+          :count 1      ; 一次射出幾層(prototype列表)
+          :duration 1   ; 間隔（秒）
+          :angle 0      ; 角度（弧度）
+          :range 0      ; 範圍（弧度）
+          :force 0      ; 發射力道
         }
         emit))
-    :formulaList (or formulaList nil)
+    :formulaList (or formulaList nil) ; 改變函式
+    :lifetime (or lifetime 10)        ; 生命
+    :pos (or pos [0 0 0])             ; 位置
+    :vel (or vel [0 0 0])             ; 速度
+    :color (or color [1 0 0 1])       ; 顏色
+    :mass (or mass 1)                 ; 質量（還沒有作用）
+    :size (or size [10 10])           ; 大小
+    
+    ; 計算用
     :timer 0
     :emit-times 0
-    :lifetime (or lifetime 10)
     :forceVel [0 0 0]
-    
-    :pos (or pos [0 0 0])
-    :vel (or vel [0 0 0])
-    :color (or color [1 0 0 1])
-    :mass (or mass 1)
-    :size (or size [10 10])
   })
   
 
