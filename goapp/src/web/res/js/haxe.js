@@ -163,12 +163,15 @@ OnView.prototype = {
 		return _findParticle(this.getObject());
 	}
 	,moveParticle: function(id,x,y) {
-		this.getObject().pos[0] = x;
-		this.getObject().pos[1] = y;
-		this.notify("edit-particle",this.getObject());
+		var p = this.findParticle(id);
+		if(p != null) {
+			p.pos[0] = x;
+			p.pos[1] = y;
+		}
+		this.updateParticleRoot();
 	}
-	,setParticle: function(id,x,y,vx,vy,color,mass,size) {
-		this.notify("edit-particle",{ id : id, pos : [x,y,0], vel : [vx,vy,0], color : color, mass : mass, size : size});
+	,updateParticleRoot: function() {
+		this.notify("edit-particle",this.getObject());
 	}
 	,notify: function(evt,value) {
 		this.onViewObj.onNext([evt,value]);

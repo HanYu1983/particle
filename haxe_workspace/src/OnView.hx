@@ -55,13 +55,16 @@ class OnView
 	}
 	
 	public function moveParticle( id, x, y ) {
-		getObject().pos[0] = x;
-		getObject().pos[1] = y;
-		notify( 'edit-particle', getObject() );
+		var p = findParticle( id );
+		if( p != null ){
+			p.pos[0] = x;
+			p.pos[1] = y;
+		}
+		updateParticleRoot();
 	}
 	
-	public function setParticle( id, x, y, vx, vy, color:Array<Int>, mass, size:Array<Float>) {
-		notify( 'edit-particle', {id:id, pos:[x,y,0], vel:[vx, vy, 0], color:color, mass:mass, size:size} );
+	function updateParticleRoot() {
+		notify( 'edit-particle', getObject() );
 	}
 	
 	function notify( evt:String, value:Dynamic) {
