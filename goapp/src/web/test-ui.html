@@ -28,6 +28,12 @@
 	
 </head>
 
+<style>
+.particle_focus{
+	color:red;
+}
+</style>
+
 
 <!-- template start -->
 
@@ -99,6 +105,9 @@
 				<li><span class="file">aaa</span></li>
 				-->
 			</div>
+		</div>
+		<div class="panel">
+			
 			<h3>參數</h3>
 			<div>
 				<div class="group">
@@ -128,11 +137,11 @@
 	<script>
 	
 	common.onModel.subscribe(function(data){
-		console.log( data )
+		//console.log( data )
 	})
 	
 	common.onView.subscribe(function(data){
-		console.log( data )
+		//console.log( data )
 	})
 	
 	common.onModel.onNext(['testmodel', {}])

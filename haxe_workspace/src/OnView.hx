@@ -32,7 +32,8 @@ class OnView
 	
 	public function setObject( ?obj ) {
 		basicObj = ( obj == null ? { 	id:'root', 
-										emit: { prototype:[ { vel:[50, 0, 0] } ] }, 
+										lifetime:10,
+										emit: { prototype:[ { id:'root_particle', lifetime:1, vel:[50, 0, 0] } ] }, 
 										pos:[0, 0, 0], vel:[0, 0, 0] } : obj );
 		notify( 'edit-particle', basicObj );
 	}
@@ -42,13 +43,19 @@ class OnView
 		return basicObj;
 	}
 	
-	public function findParticle( id ) {
+	public function findParticle( id:String ) {
 		function _findParticle( fields:Dynamic ) {
 			if ( fields.id == id ) return fields;
 			if ( fields.hasField( 'emit' ) ) {
-				Lambda.map( fields.emit.prototype, _findParticle );
+				var ary:Array<Dynamic> = fields.emit.prototype;
+				var target:Dynamic = null;
+				for ( i in 0...ary.length ) {
+					target = _findParticle( ary[i] );
+				}
+				return target;
+			}else {
+				return null;
 			}
-			return null;
 		}
 		
 		return _findParticle( getObject() );

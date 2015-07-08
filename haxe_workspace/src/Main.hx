@@ -36,6 +36,11 @@ class Main
 		tree = new Tree( j( '#tree_particle' ) );
 		tree.init();
 		tree.addEmitter( null, 'root' );
+		tree.dom.on( 'onParticleClick', function( evt, params ) {
+			var pid = params.id;
+			var pobj = OnView.inst.findParticle( pid );
+			createParamsByParticle( pobj );
+		});
 		/*
 		var colorpickerfull:Dynamic = j( '#colorpicker-full' );
 		colorpickerfull.colorpicker({
@@ -47,11 +52,23 @@ class Main
 		});
 		*/
 		
-		createParams( new Params( 'px', 'c' ) );
-		createParams( new Params( 'py', 'c' ) );
-		
 		initContextMenu();
 		addListener();
+	}
+	
+	function createParamsByParticle( obj:Dynamic ) {
+		clearParams();
+		
+		for ( k in obj.fields() ) {
+			switch( k ) {
+				case 'pos':
+					createParams( new Params( 'px', 'c' ) );
+					createParams( new Params( 'py', 'c' ) );
+				case 'vel':
+					createParams( new Params( 'vx', 'c' ) );
+					createParams( new Params( 'vy', 'c' ) );
+			}
+		}
 	}
 	
 	function addListener() {
@@ -71,6 +88,10 @@ class Main
 	function createParams( params:IParams ) {
 		params.dom.appendTo( container_params );
 		params.event.on( 'onParamsActEvent', onParamsActEvent );
+	}
+	
+	function clearParams() {
+		container_params.empty();
 	}
 	
 	function onParamsActEvent( e, params ) {

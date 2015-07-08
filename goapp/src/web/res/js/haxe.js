@@ -5,29 +5,6 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var Lambda = function() { };
-Lambda.__name__ = true;
-Lambda.map = function(it,f) {
-	var l = new List();
-	var $it0 = it.iterator();
-	while( $it0.hasNext() ) {
-		var x = $it0.next();
-		l.add(f(x));
-	}
-	return l;
-};
-var List = function() {
-	this.length = 0;
-};
-List.__name__ = true;
-List.prototype = {
-	add: function(item) {
-		var x = [item];
-		if(this.h == null) this.h = x; else this.q[1] = x;
-		this.q = x;
-		this.length++;
-	}
-};
 var Main = function() {
 	this.j = $;
 	Reflect.setField(window,"haxeStart",$bind(this,this.start));
@@ -38,6 +15,7 @@ Main.main = function() {
 };
 Main.prototype = {
 	start: function() {
+		var _g = this;
 		this.container_params = this.j("#params");
 		this.tree_particle = this.j("#tree_particle");
 		var panel = this.j(".panel");
@@ -45,10 +23,32 @@ Main.prototype = {
 		this.tree = new component_Tree(this.j("#tree_particle"));
 		this.tree.init();
 		this.tree.addEmitter(null,"root");
-		this.createParams(new component_Params("px","c"));
-		this.createParams(new component_Params("py","c"));
+		this.tree.dom.on("onParticleClick",function(evt,params) {
+			var pid = params.id;
+			var pobj = OnView.inst.findParticle(pid);
+			_g.createParamsByParticle(pobj);
+		});
 		this.initContextMenu();
 		this.addListener();
+	}
+	,createParamsByParticle: function(obj) {
+		this.clearParams();
+		var _g = 0;
+		var _g1 = Reflect.fields(obj);
+		while(_g < _g1.length) {
+			var k = _g1[_g];
+			++_g;
+			switch(k) {
+			case "pos":
+				this.createParams(new component_Params("px","c"));
+				this.createParams(new component_Params("py","c"));
+				break;
+			case "vel":
+				this.createParams(new component_Params("vx","c"));
+				this.createParams(new component_Params("vy","c"));
+				break;
+			}
+		}
 	}
 	,addListener: function() {
 		this.j("body").mousemove($bind(this,this.onMousemove));
@@ -64,6 +64,9 @@ Main.prototype = {
 	,createParams: function(params) {
 		params.dom.appendTo(this.container_params);
 		params.event.on("onParamsActEvent",$bind(this,this.onParamsActEvent));
+	}
+	,clearParams: function() {
+		this.container_params.empty();
 	}
 	,onParamsActEvent: function(e,params) {
 		var target = params.target;
@@ -144,7 +147,7 @@ var OnView = function() {
 OnView.__name__ = true;
 OnView.prototype = {
 	setObject: function(obj) {
-		if(obj == null) this.basicObj = { id : "root", emit : { prototype : [{ vel : [50,0,0]}]}, pos : [0,0,0], vel : [0,0,0]}; else this.basicObj = obj;
+		if(obj == null) this.basicObj = { id : "root", lifetime : 10, emit : { prototype : [{ id : "root_particle", lifetime : 1, vel : [50,0,0]}]}, pos : [0,0,0], vel : [0,0,0]}; else this.basicObj = obj;
 		this.notify("edit-particle",this.basicObj);
 	}
 	,getObject: function() {
@@ -156,8 +159,17 @@ OnView.prototype = {
 		var _findParticle1 = null;
 		_findParticle1 = function(fields) {
 			if(fields.id == id) return fields;
-			if(Object.prototype.hasOwnProperty.call(fields,"emit")) Lambda.map(fields.emit.prototype,_findParticle1);
-			return null;
+			if(Object.prototype.hasOwnProperty.call(fields,"emit")) {
+				var ary = fields.emit.prototype;
+				var target = null;
+				var _g1 = 0;
+				var _g = ary.length;
+				while(_g1 < _g) {
+					var i = _g1++;
+					target = _findParticle1(ary[i]);
+				}
+				return target;
+			} else return null;
 		};
 		_findParticle = _findParticle1;
 		return _findParticle(this.getObject());
@@ -189,6 +201,16 @@ Reflect.field = function(o,field) {
 };
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
+};
+Reflect.fields = function(o) {
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(f != "__id__" && f != "hx__closures__" && hasOwnProperty.call(o,f)) a.push(f);
+		}
+	}
+	return a;
 };
 var Std = function() { };
 Std.__name__ = true;
@@ -306,11 +328,11 @@ component_Tree.__name__ = true;
 component_Tree.__interfaces__ = [component_ITree];
 component_Tree.prototype = {
 	init: function() {
-		this.dom.treeview({ animated : "fast"});
 	}
 	,addEmitter: function(parentName,name) {
 		var parentDom = this.findParent(parentName);
 		var dom = this.j("<li id=\"" + name + "\" e_type=\"emitter\"><span class=\"folder\">" + name + "_emitter</span><ul id=\"" + name + "_container\"></ul></li>");
+		dom.click($bind(this,this.onParticleClick));
 		parentDom.prepend(dom);
 		this.addToTree(dom);
 		this.addParticle(name,name);
@@ -319,6 +341,7 @@ component_Tree.prototype = {
 	,addParticle: function(parentName,name) {
 		var parentDom = this.findParent(parentName);
 		var dom = this.j("<li id=\"" + name + "_particle\" e_type=\"particle\"><span class=\"file\">" + name + "_particle</span></li>");
+		dom.click($bind(this,this.onParticleClick));
 		parentDom.prepend(dom);
 		this.addToTree(dom);
 	}
@@ -347,7 +370,19 @@ component_Tree.prototype = {
 		}
 	}
 	,addToTree: function(dom) {
-		this.dom.treeview({ add : dom});
+	}
+	,onParticleClick: function(e) {
+		e.stopPropagation();
+		this.unfocusParticle();
+		var targetDom = this.j(e.currentTarget);
+		this.focusParticle(targetDom);
+		this.dom.trigger("onParticleClick",{ id : targetDom.attr("id")});
+	}
+	,focusParticle: function(jdom) {
+		jdom.find("> span").addClass("particle_focus");
+	}
+	,unfocusParticle: function() {
+		this.dom.find("li span").removeClass("particle_focus");
 	}
 };
 var js__$Boot_HaxeError = function(val) {
@@ -445,3 +480,5 @@ js.JQuery = q;
 OnView.inst = new OnView();
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=haxe.js.map

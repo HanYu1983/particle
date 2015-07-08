@@ -16,9 +16,11 @@ class Tree implements ITree
 	}
 	
 	public function init():Void {
+		/*
 		dom.treeview({
 			animated: "fast"
 		});
+		*/
 	}
 	
 	public function addEmitter( ?parentName:String, name:String ):Void 
@@ -26,6 +28,7 @@ class Tree implements ITree
 		var parentDom = findParent( parentName );
 		
 		var dom = j( '<li id="' + name + '" e_type="emitter"><span class="folder">' + name + '_emitter</span><ul id="' + name + '_container"></ul></li>' );
+		dom.click( onParticleClick );
 		parentDom.prepend( dom );
 		
 		addToTree( dom );
@@ -40,6 +43,7 @@ class Tree implements ITree
 		var parentDom = findParent( parentName );
 		
 		var dom = j( '<li id="' + name + '_particle" e_type="particle"><span class="file">' + name + '_particle</span></li>' );
+		dom.click( onParticleClick );
 		parentDom.prepend( dom );
 		
 		addToTree( dom );
@@ -78,8 +82,27 @@ class Tree implements ITree
 	}
 	
 	function addToTree( dom ) {
-		this.dom.treeview( {
-			add:dom
-		});
+		//this.dom.treeview( {
+		//	add:dom
+		//});
+	}
+	
+	function onParticleClick( e ) {
+		e.stopPropagation();
+		
+		unfocusParticle();
+		
+		var targetDom:Dynamic = j( e.currentTarget );
+		focusParticle( targetDom );
+		
+		this.dom.trigger( 'onParticleClick', { id:targetDom.attr('id')}  );
+	}
+	
+	function focusParticle( jdom ) {
+		jdom.find('> span').addClass( 'particle_focus' );
+	}
+	
+	function unfocusParticle() {
+		this.dom.find( 'li span' ).removeClass( 'particle_focus' );
 	}
 }
