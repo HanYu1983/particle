@@ -206,7 +206,7 @@ component_ISubParams.__name__ = true;
 var component_ITree = function() { };
 component_ITree.__name__ = true;
 component_ITree.__interfaces__ = [component_IDom];
-var component_Params = function(type,easingType,extra) {
+var component_Params = function(type,easingType,initValue,extra) {
 	this.j = $;
 	this.type = type;
 	this.easingType = easingType;
@@ -221,6 +221,7 @@ var component_Params = function(type,easingType,extra) {
 	this.input_type.change($bind(this,this.onInputTypeChange));
 	this.input_easingType.change($bind(this,this.onInputEasingTypeChange));
 	this.dom.delegate("button","click",$bind(this,this.onDelegate));
+	this.setValue(0,initValue);
 	this.addInputListener();
 };
 component_Params.__name__ = true;
@@ -251,6 +252,9 @@ component_Params.prototype = {
 	}
 	,createColorPicker: function(colordom) {
 		if(this.type == component_ParticleAttribute.COLOR) colordom.colorpicker({ parts : "full", alpha : true, showOn : "both", buttonColorize : true, showNoneButton : true});
+	}
+	,setValue: function(pos,val) {
+		this.dom.find(".input_params").eq(pos).val(val);
 	}
 	,addInputListener: function() {
 		this.dom.find(".input_params").change($bind(this,this.onInputParamsChange));
@@ -286,12 +290,12 @@ component_ParamsPanel.prototype = {
 			++_g;
 			switch(k) {
 			case "pos":
-				this.createParams(new component_Params(component_ParticleAttribute.POSITION_X,component_EasingType.CONST));
-				this.createParams(new component_Params(component_ParticleAttribute.POSITION_Y,component_EasingType.CONST));
+				this.createParams(new component_Params(component_ParticleAttribute.POSITION_X,component_EasingType.CONST,this.particle_object.pos[0]));
+				this.createParams(new component_Params(component_ParticleAttribute.POSITION_Y,component_EasingType.CONST,this.particle_object.pos[1]));
 				break;
 			case "vel":
-				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_X,component_EasingType.CONST));
-				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_Y,component_EasingType.CONST));
+				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_X,component_EasingType.CONST,this.particle_object.vel[0]));
+				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_Y,component_EasingType.CONST,this.particle_object.vel[1]));
 				break;
 			}
 		}
@@ -349,7 +353,7 @@ component_ParamsPanel.prototype = {
 			break;
 		default:
 		}
-		haxe_Log.trace(this.particle_object,{ fileName : "ParamsPanel.hx", lineNumber : 92, className : "component.ParamsPanel", methodName : "onParamsChangeEvent"});
+		haxe_Log.trace(this.particle_object,{ fileName : "ParamsPanel.hx", lineNumber : 93, className : "component.ParamsPanel", methodName : "onParamsChangeEvent"});
 		OnView.inst.updateParticleRoot();
 	}
 	,onInputAgeChange: function(e) {

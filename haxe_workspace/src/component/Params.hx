@@ -19,7 +19,7 @@ class Params implements IParams
 	var input_type:Dynamic;
 	var input_easingType:Dynamic;
 	
-	public function new( type, easingType:EasingType, ?extra ) 
+	public function new( type, easingType:EasingType, initValue, ?extra ) 
 	{
 		this.type = type;
 		this.easingType = easingType;
@@ -44,7 +44,7 @@ class Params implements IParams
 		input_easingType.change( onInputEasingTypeChange );
 		
 		dom.delegate( 'button', 'click', onDelegate );
-		
+		setValue( 0, initValue );
 		addInputListener();
 	}
 	
@@ -90,6 +90,10 @@ class Params implements IParams
 				showNoneButton: true
 			});
 		}
+	}
+	
+	function setValue( pos, val ):Void {
+		this.dom.find( '.input_params' ).eq( pos ).val( val );
 	}
 	
 	function addInputListener() {

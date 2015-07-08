@@ -27,14 +27,15 @@ class ParamsPanel implements IDom
 		
 		clearParams();
 		setLifetime( particle_object.lifetime );
+		
 		for ( k in obj.fields() ) {
 			switch( k ) {
 				case 'pos':
-					createParams( new Params( ParticleAttribute.POSITION_X, EasingType.CONST ) );
-					createParams( new Params( ParticleAttribute.POSITION_Y, EasingType.CONST ) );
+					createParams( new Params( ParticleAttribute.POSITION_X, EasingType.CONST, particle_object.pos[0] ) );
+					createParams( new Params( ParticleAttribute.POSITION_Y, EasingType.CONST, particle_object.pos[1] ) );
 				case 'vel':
-					createParams( new Params( ParticleAttribute.VELOCITY_X, EasingType.CONST ) );
-					createParams( new Params( ParticleAttribute.VELOCITY_Y, EasingType.CONST ) );
+					createParams( new Params( ParticleAttribute.VELOCITY_X, EasingType.CONST, particle_object.vel[0] ) );
+					createParams( new Params( ParticleAttribute.VELOCITY_Y, EasingType.CONST, particle_object.vel[1] ) );
 			}
 		}
 	}
