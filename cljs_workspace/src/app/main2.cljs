@@ -182,7 +182,12 @@
                         [:part :ps]
                         (partial 
                           replace
-                          {target newpart})))
+                          {target 
+                            (merge 
+                              newpart
+                              ; preserve attributes
+                              {:timer (:timer target)
+                               :emit-times (:emit-times target)})})))
                           
                     (-> ctx
                       (update-in
