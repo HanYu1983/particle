@@ -7,7 +7,7 @@ import component.IParams;
  */
 class SubParams implements ISubParams
 {
-	public var type:String;
+	public var type:ParticleAttribute;
 	public var easingType:String;
 	public var dom:Dynamic;
 	public var event:Dynamic;
@@ -24,7 +24,7 @@ class SubParams implements ISubParams
 		setEasingType( easingType );
 	}
 	
-	public function setType( type ) {
+	public function setType( type:ParticleAttribute ) {
 		this.type = type;
 		setEasingType( this.easingType );
 	}
@@ -43,14 +43,14 @@ class SubParams implements ISubParams
 	}
 	
 	public function copy():ISubParams {
-		return new SubParams( easingType, extra );
+		return new SubParams( this.type, easingType, extra );
 	}
 	
 	function getConstName() {
-		return type == 'c' ? 'tmpl_const_color' : 'tmpl_const';
+		return type == ParticleAttribute.COLOR ? 'tmpl_const_color' : 'tmpl_const';
 	}
 	
 	function getLinearName() {
-		return type == 'c' ? 'tmpl_linear_color' : 'tmpl_linear';
+		return type == ParticleAttribute.COLOR ? 'tmpl_linear_color' : 'tmpl_linear';
 	}
 }

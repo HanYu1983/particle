@@ -30,11 +30,11 @@ class ParamsPanel implements IDom
 		for ( k in obj.fields() ) {
 			switch( k ) {
 				case 'pos':
-					createParams( new Params( 'px', 'c' ) );
-					createParams( new Params( 'py', 'c' ) );
+					createParams( new Params( ParticleAttribute.POSITION_X, 'c' ) );
+					createParams( new Params( ParticleAttribute.POSITION_Y, 'c' ) );
 				case 'vel':
-					createParams( new Params( 'vx', 'c' ) );
-					createParams( new Params( 'vy', 'c' ) );
+					createParams( new Params( ParticleAttribute.VELOCITY_X, 'c' ) );
+					createParams( new Params( ParticleAttribute.VELOCITY_Y, 'c' ) );
 			}
 		}
 	}

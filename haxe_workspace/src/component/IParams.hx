@@ -6,7 +6,7 @@ package component;
 
 interface IParams 
 {
-	var type:String;
+	var type:ParticleAttribute;
 	var easingType:String;
 	var dom:Dynamic;
 	var event:Dynamic;

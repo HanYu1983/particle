@@ -6,12 +6,12 @@ package component;
 
 interface ISubParams 
 {
-	var type:String;
+	var type:ParticleAttribute;
 	var easingType:String;
 	var dom:Dynamic;
 	var event:Dynamic;
 	var extra:Dynamic;
 	function copy():ISubParams;
-	function setType( type:String ):Void;
+	function setType( type:ParticleAttribute ):Void;
 	function setEasingType( easingType:String ):Void;
 }

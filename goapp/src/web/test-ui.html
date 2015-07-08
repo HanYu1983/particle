@@ -43,15 +43,15 @@
 		<button id="btn_copy">copy</button>
 		<button id="btn_delete">delete</button>
 		<select id="input_type" class="list" value="px">
-			<option value="px" {{if type=='px'}}selected{{/if}}>position-x</option>
-			<option value="py" {{if type=='py'}}selected{{/if}}>position-y</option>
-			<option value="r" {{if type=='r'}}selected{{/if}}>rotation</option>
-			<option value="vx" {{if type=='vx'}}selected{{/if}}>velocity-x</option>
-			<option value="vy" {{if type=='vy'}}selected{{/if}}>velocity-y</option>
-			<option value="vr" {{if type=='vr'}}selected{{/if}}>velocity-r</option>
-			<option value="w" {{if type=='w'}}selected{{/if}}>width</option>
-			<option value="h" {{if type=='h'}}selected{{/if}}>height</option>
-			<option value="c" {{if type=='c'}}selected{{/if}}>color</option>
+			<option value="px" {{if type=='POSITION_X'}}selected{{/if}}>position-x</option>
+			<option value="py" {{if type=='POSITION_Y'}}selected{{/if}}>position-y</option>
+			<option value="r" {{if type=='ROTATION'}}selected{{/if}}>rotation</option>
+			<option value="vx" {{if type=='VELOCITY_X'}}selected{{/if}}>velocity-x</option>
+			<option value="vy" {{if type=='VELOCITY_Y'}}selected{{/if}}>velocity-y</option>
+			<option value="vr" {{if type=='VELOCITY_R'}}selected{{/if}}>velocity-r</option>
+			<option value="w" {{if type=='WIDTH'}}selected{{/if}}>width</option>
+			<option value="h" {{if type=='HEIGHT'}}selected{{/if}}>height</option>
+			<option value="c" {{if type=='COLOR'}}selected{{/if}}>color</option>
 		</select>
 		<select id="input_easingType" class="list" value="c">
 			<option value="c" {{if easingType=='c'}}selected{{/if}}>const</option>

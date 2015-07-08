@@ -7,7 +7,7 @@ import component.IParams;
  */
 class Params implements IParams
 {
-	public var type:String;
+	public var type:ParticleAttribute;
 	public var easingType:String;
 	public var dom:Dynamic;
 	public var event:Dynamic;
@@ -62,7 +62,7 @@ class Params implements IParams
 		subContainer.empty();
 		subContainer.append( subdom );
 		
-		if ( type == 'c' ) createColorPicker( subdom );
+		if ( type == ParticleAttribute.COLOR ) createColorPicker( subdom );
 		addInputListener();
 	}
 	
@@ -76,12 +76,12 @@ class Params implements IParams
 		subContainer.empty();
 		subContainer.append( subdom );
 		
-		if ( type == 'c' ) createColorPicker( subdom );
+		if ( type == ParticleAttribute.COLOR ) createColorPicker( subdom );
 		addInputListener();
 	}
 	
 	function createColorPicker( colordom ) {
-		if ( type == 'c' ) {
+		if ( type == ParticleAttribute.COLOR ) {
 			colordom.colorpicker({
 				parts:          'full',
 				alpha:          true,

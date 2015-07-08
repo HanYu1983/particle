@@ -1,4 +1,5 @@
 (function (console) { "use strict";
+var $estr = function() { return js_Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
@@ -210,7 +211,7 @@ component_Params.prototype = {
 		var subdom = this.subParams.dom;
 		this.subContainer.empty();
 		this.subContainer.append(subdom);
-		if(this.type == "c") this.createColorPicker(subdom);
+		if(this.type == component_ParticleAttribute.COLOR) this.createColorPicker(subdom);
 		this.addInputListener();
 	}
 	,onInputEasingTypeChange: function(e) {
@@ -220,11 +221,11 @@ component_Params.prototype = {
 		var subdom = this.subParams.dom;
 		this.subContainer.empty();
 		this.subContainer.append(subdom);
-		if(this.type == "c") this.createColorPicker(subdom);
+		if(this.type == component_ParticleAttribute.COLOR) this.createColorPicker(subdom);
 		this.addInputListener();
 	}
 	,createColorPicker: function(colordom) {
-		if(this.type == "c") colordom.colorpicker({ parts : "full", alpha : true, showOn : "both", buttonColorize : true, showNoneButton : true});
+		if(this.type == component_ParticleAttribute.COLOR) colordom.colorpicker({ parts : "full", alpha : true, showOn : "both", buttonColorize : true, showNoneButton : true});
 	}
 	,addInputListener: function() {
 		this.dom.find(".input_params").change($bind(this,this.onInputParamsChange));
@@ -260,12 +261,12 @@ component_ParamsPanel.prototype = {
 			++_g;
 			switch(k) {
 			case "pos":
-				this.createParams(new component_Params("px","c"));
-				this.createParams(new component_Params("py","c"));
+				this.createParams(new component_Params(component_ParticleAttribute.POSITION_X,"c"));
+				this.createParams(new component_Params(component_ParticleAttribute.POSITION_Y,"c"));
 				break;
 			case "vel":
-				this.createParams(new component_Params("vx","c"));
-				this.createParams(new component_Params("vy","c"));
+				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_X,"c"));
+				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_Y,"c"));
 				break;
 			}
 		}
@@ -323,6 +324,31 @@ component_ParamsPanel.prototype = {
 		OnView.inst.updateParticleRoot();
 	}
 };
+var component_ParticleAttribute = { __ename__ : true, __constructs__ : ["LEFT_TIME","POSITION_X","POSITION_Y","VELOCITY_X","VELOCITY_Y","COLOR","MASS","SIZE"] };
+component_ParticleAttribute.LEFT_TIME = ["LEFT_TIME",0];
+component_ParticleAttribute.LEFT_TIME.toString = $estr;
+component_ParticleAttribute.LEFT_TIME.__enum__ = component_ParticleAttribute;
+component_ParticleAttribute.POSITION_X = ["POSITION_X",1];
+component_ParticleAttribute.POSITION_X.toString = $estr;
+component_ParticleAttribute.POSITION_X.__enum__ = component_ParticleAttribute;
+component_ParticleAttribute.POSITION_Y = ["POSITION_Y",2];
+component_ParticleAttribute.POSITION_Y.toString = $estr;
+component_ParticleAttribute.POSITION_Y.__enum__ = component_ParticleAttribute;
+component_ParticleAttribute.VELOCITY_X = ["VELOCITY_X",3];
+component_ParticleAttribute.VELOCITY_X.toString = $estr;
+component_ParticleAttribute.VELOCITY_X.__enum__ = component_ParticleAttribute;
+component_ParticleAttribute.VELOCITY_Y = ["VELOCITY_Y",4];
+component_ParticleAttribute.VELOCITY_Y.toString = $estr;
+component_ParticleAttribute.VELOCITY_Y.__enum__ = component_ParticleAttribute;
+component_ParticleAttribute.COLOR = ["COLOR",5];
+component_ParticleAttribute.COLOR.toString = $estr;
+component_ParticleAttribute.COLOR.__enum__ = component_ParticleAttribute;
+component_ParticleAttribute.MASS = ["MASS",6];
+component_ParticleAttribute.MASS.toString = $estr;
+component_ParticleAttribute.MASS.__enum__ = component_ParticleAttribute;
+component_ParticleAttribute.SIZE = ["SIZE",7];
+component_ParticleAttribute.SIZE.toString = $estr;
+component_ParticleAttribute.SIZE.__enum__ = component_ParticleAttribute;
 var component_SubParams = function(type,easingType,extra) {
 	this.j = $;
 	this.type = type;
@@ -361,13 +387,13 @@ component_SubParams.prototype = {
 		this.dom = this.j("#" + tmplName).tmpl();
 	}
 	,copy: function() {
-		return new component_SubParams(this.easingType,this.extra);
+		return new component_SubParams(this.type,this.easingType,this.extra);
 	}
 	,getConstName: function() {
-		if(this.type == "c") return "tmpl_const_color"; else return "tmpl_const";
+		if(this.type == component_ParticleAttribute.COLOR) return "tmpl_const_color"; else return "tmpl_const";
 	}
 	,getLinearName: function() {
-		if(this.type == "c") return "tmpl_linear_color"; else return "tmpl_linear";
+		if(this.type == component_ParticleAttribute.COLOR) return "tmpl_linear_color"; else return "tmpl_linear";
 	}
 };
 var component_Tree = function(dom) {
