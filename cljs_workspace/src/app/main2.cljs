@@ -89,8 +89,23 @@
           (map
             (fn [[k v]]
               [(keyword k) v])
-            (js->clj jsobj)))]
-    (part/create obj)))
+            (js->clj jsobj)))
+            
+        emit
+        (if (:emit obj)
+          (update-in obj [:emit]
+            (fn [ori]
+              (->
+                (into {}
+                  (map
+                    (fn [[k v]]
+                      [(keyword k) v])
+                    ori))
+                (update-in
+                  [:prototype]
+                  (fn [ps] (mapv createParticle ps))))))
+          obj)]
+    (part/create emit)))
 
 (defn main []
   (let [onView (chan)
@@ -120,9 +135,20 @@
         
     (go
       (<! (timeout 1000))
-      (>! onView (array "edit-particle" (js-obj "id" "x1" "pos" (array 0 0 0))))
-      (<! (timeout 1000))
-      (>! onView (array "edit-particle" (js-obj "id" "x1" "pos" (array 100 0 0)))))
+      (>! onView (array "edit-particle" (js-obj "id" "x1" "pos" (array 300 300 0))))
+      (<! (timeout 1100))
+      (>! onView 
+        (array "edit-particle" 
+          (js-obj 
+            "id" "x1" 
+            "emit" 
+            (js-obj
+              "prototype"
+              (array
+                (js-obj
+                  "vel" (array 100 0 0))))
+            "pos" (array 300 300 0) 
+            "vel" (array 100 100 0)))))
       
     ; main-loop
     (go-loop 
