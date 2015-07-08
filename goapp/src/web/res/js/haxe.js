@@ -1,4 +1,33 @@
 (function (console) { "use strict";
+function $extend(from, fields) {
+	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
+	for (var name in fields) proto[name] = fields[name];
+	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
+	return proto;
+}
+var Lambda = function() { };
+Lambda.__name__ = true;
+Lambda.map = function(it,f) {
+	var l = new List();
+	var $it0 = it.iterator();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		l.add(f(x));
+	}
+	return l;
+};
+var List = function() {
+	this.length = 0;
+};
+List.__name__ = true;
+List.prototype = {
+	add: function(item) {
+		var x = [item];
+		if(this.h == null) this.h = x; else this.q[1] = x;
+		this.q = x;
+		this.length++;
+	}
+};
 var Main = function() {
 	this.j = $;
 	Reflect.setField(window,"haxeStart",$bind(this,this.start));
@@ -114,8 +143,29 @@ var OnView = function() {
 };
 OnView.__name__ = true;
 OnView.prototype = {
-	moveParticle: function(id,x,y) {
-		this.notify("edit-particle",{ id : id, pos : [x,y,0]});
+	setObject: function(obj) {
+		if(obj == null) this.basicObj = { id : "root", emit : { prototype : [{ vel : [50,0,0]}]}, pos : [0,0,0], vel : [0,0,0]}; else this.basicObj = obj;
+		this.notify("edit-particle",this.basicObj);
+	}
+	,getObject: function() {
+		if(this.basicObj == null) throw new js__$Boot_HaxeError("you should set object first!");
+		return this.basicObj;
+	}
+	,findParticle: function(id) {
+		var _findParticle;
+		var _findParticle1 = null;
+		_findParticle1 = function(fields) {
+			if(fields.id == id) return fields;
+			if(Object.prototype.hasOwnProperty.call(fields,"emit")) Lambda.map(fields.emit.prototype,_findParticle1);
+			return null;
+		};
+		_findParticle = _findParticle1;
+		return _findParticle(this.getObject());
+	}
+	,moveParticle: function(id,x,y) {
+		this.getObject().pos[0] = x;
+		this.getObject().pos[1] = y;
+		this.notify("edit-particle",this.getObject());
 	}
 	,setParticle: function(id,x,y,vx,vy,color,mass,size) {
 		this.notify("edit-particle",{ id : id, pos : [x,y,0], vel : [vx,vy,0], color : color, mass : mass, size : size});
@@ -130,6 +180,7 @@ Reflect.field = function(o,field) {
 	try {
 		return o[field];
 	} catch( e ) {
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
 };
@@ -260,7 +311,7 @@ component_Tree.prototype = {
 		parentDom.prepend(dom);
 		this.addToTree(dom);
 		this.addParticle(name,name);
-		OnView.inst.setParticle(name,0,0,0,0,[1,0,0,1],1,[10,10]);
+		OnView.inst.setObject();
 	}
 	,addParticle: function(parentName,name) {
 		var parentDom = this.findParent(parentName);
@@ -296,6 +347,16 @@ component_Tree.prototype = {
 		this.dom.treeview({ add : dom});
 	}
 };
+var js__$Boot_HaxeError = function(val) {
+	Error.call(this);
+	this.val = val;
+	this.message = String(val);
+	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
+};
+js__$Boot_HaxeError.__name__ = true;
+js__$Boot_HaxeError.__super__ = Error;
+js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
+});
 var js_Boot = function() { };
 js_Boot.__name__ = true;
 js_Boot.__string_rec = function(o,s) {
@@ -334,6 +395,7 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -380,5 +442,3 @@ js.JQuery = q;
 OnView.inst = new OnView();
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=haxe.js.map

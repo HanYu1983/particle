@@ -31,7 +31,8 @@ class Tree implements ITree
 		addToTree( dom );
 		addParticle( name, name );
 		
-		OnView.inst.setParticle( name, 0, 0, 0, 0, [1, 0, 0, 1], 1, [10, 10] ) ;
+		OnView.inst.setObject();
+		//OnView.inst.setParticle( name, 0, 0, 0, 0, [1, 0, 0, 1], 1, [10, 10] ) ;
 	}
 	
 	public function addParticle( ?parentName:String, name:String ):Void 
