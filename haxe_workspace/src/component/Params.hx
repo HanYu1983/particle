@@ -8,7 +8,7 @@ import component.IParams;
 class Params implements IParams
 {
 	public var type:ParticleAttribute;
-	public var easingType:String;
+	public var easingType:EasingType;
 	public var dom:Dynamic;
 	public var event:Dynamic;
 	public var extra:Dynamic;
@@ -19,7 +19,7 @@ class Params implements IParams
 	var input_type:Dynamic;
 	var input_easingType:Dynamic;
 	
-	public function new( type, easingType, ?extra ) 
+	public function new( type, easingType:EasingType, ?extra ) 
 	{
 		this.type = type;
 		this.easingType = easingType;
@@ -68,7 +68,7 @@ class Params implements IParams
 	
 	function onInputEasingTypeChange( e ) {
 		var target = e.currentTarget;
-		easingType = target.value;
+		easingType = Type.createEnum( EasingType, target.value );
 		
 		subParams.setEasingType( easingType );
 		

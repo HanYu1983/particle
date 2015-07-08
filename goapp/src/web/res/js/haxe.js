@@ -50,16 +50,16 @@ Main.prototype = {
 			var id = target.attr("id");
 			var isEmitter = target.attr("e_type") == "emitter";
 			var isRoot = id == "root";
-			console.log(id);
-			console.log(isEmitter);
+			haxe_Log.trace(id,{ fileName : "Main.hx", lineNumber : 76, className : "Main", methodName : "initContextMenu"});
+			haxe_Log.trace(isEmitter,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "initContextMenu"});
 			switch(key) {
 			case "cut":
 				copyDom = _g.tree.cut(id);
-				console.log(copyDom);
+				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 81, className : "Main", methodName : "initContextMenu"});
 				break;
 			case "copy":
 				copyDom = _g.tree.copy(id);
-				console.log(copyDom);
+				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 84, className : "Main", methodName : "initContextMenu"});
 				break;
 			case "paste":
 				if(copyDom == null) {
@@ -157,6 +157,9 @@ Reflect.field = function(o,field) {
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
+Reflect.callMethod = function(o,func,args) {
+	return func.apply(o,args);
+};
 Reflect.fields = function(o) {
 	var a = [];
 	if(o != null) {
@@ -167,11 +170,33 @@ Reflect.fields = function(o) {
 	}
 	return a;
 };
+Reflect.isFunction = function(f) {
+	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
+};
 var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
+var Type = function() { };
+Type.__name__ = true;
+Type.createEnum = function(e,constr,params) {
+	var f = Reflect.field(e,constr);
+	if(f == null) throw new js__$Boot_HaxeError("No such constructor " + constr);
+	if(Reflect.isFunction(f)) {
+		if(params == null) throw new js__$Boot_HaxeError("Constructor " + constr + " need parameters");
+		return Reflect.callMethod(e,f,params);
+	}
+	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
+	return f;
+};
+var component_EasingType = { __ename__ : true, __constructs__ : ["CONST","LINEAR"] };
+component_EasingType.CONST = ["CONST",0];
+component_EasingType.CONST.toString = $estr;
+component_EasingType.CONST.__enum__ = component_EasingType;
+component_EasingType.LINEAR = ["LINEAR",1];
+component_EasingType.LINEAR.toString = $estr;
+component_EasingType.LINEAR.__enum__ = component_EasingType;
 var component_IDom = function() { };
 component_IDom.__name__ = true;
 var component_IParams = function() { };
@@ -216,7 +241,7 @@ component_Params.prototype = {
 	}
 	,onInputEasingTypeChange: function(e) {
 		var target = e.currentTarget;
-		this.easingType = target.value;
+		this.easingType = Type.createEnum(component_EasingType,target.value);
 		this.subParams.setEasingType(this.easingType);
 		var subdom = this.subParams.dom;
 		this.subContainer.empty();
@@ -261,12 +286,12 @@ component_ParamsPanel.prototype = {
 			++_g;
 			switch(k) {
 			case "pos":
-				this.createParams(new component_Params(component_ParticleAttribute.POSITION_X,"c"));
-				this.createParams(new component_Params(component_ParticleAttribute.POSITION_Y,"c"));
+				this.createParams(new component_Params(component_ParticleAttribute.POSITION_X,component_EasingType.CONST));
+				this.createParams(new component_Params(component_ParticleAttribute.POSITION_Y,component_EasingType.CONST));
 				break;
 			case "vel":
-				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_X,"c"));
-				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_Y,"c"));
+				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_X,component_EasingType.CONST));
+				this.createParams(new component_Params(component_ParticleAttribute.VELOCITY_Y,component_EasingType.CONST));
 				break;
 			}
 		}
@@ -307,7 +332,6 @@ component_ParamsPanel.prototype = {
 		var pos = params.pos;
 		var val = params.val;
 		var type = params.type;
-		console.log(type);
 		switch(type[1]) {
 		case 1:
 			this.particle_object.pos[0] = val;
@@ -325,7 +349,7 @@ component_ParamsPanel.prototype = {
 			break;
 		default:
 		}
-		console.log(this.particle_object);
+		haxe_Log.trace(this.particle_object,{ fileName : "ParamsPanel.hx", lineNumber : 92, className : "component.ParamsPanel", methodName : "onParamsChangeEvent"});
 		OnView.inst.updateParticleRoot();
 	}
 	,onInputAgeChange: function(e) {
@@ -365,6 +389,7 @@ var component_SubParams = function(type,easingType,extra) {
 	this.extra = extra;
 	this.event = this.j("<div></div>");
 	this.setEasingType(easingType);
+	haxe_Log.trace("easingType",{ fileName : "SubParams.hx", lineNumber : 25, className : "component.SubParams", methodName : "new", customParams : [easingType]});
 };
 component_SubParams.__name__ = true;
 component_SubParams.__interfaces__ = [component_ISubParams];
@@ -376,22 +401,15 @@ component_SubParams.prototype = {
 	,setEasingType: function(easingType) {
 		this.easingType = easingType;
 		var tmplName;
-		switch(easingType) {
-		case "c":
+		switch(easingType[1]) {
+		case 0:
 			tmplName = this.getConstName();
 			break;
-		case "l":
+		case 1:
 			tmplName = this.getLinearName();
 			break;
-		case "r":
-			tmplName = this.getLinearName();
-			break;
-		case "cus":
-			tmplName = "tmpl_detail";
-			break;
-		default:
-			tmplName = "";
 		}
+		haxe_Log.trace(easingType,{ fileName : "SubParams.hx", lineNumber : 41, className : "component.SubParams", methodName : "setEasingType"});
 		if(this.dom != null) this.dom.remove();
 		this.dom = this.j("#" + tmplName).tmpl();
 	}
@@ -470,6 +488,11 @@ component_Tree.prototype = {
 		this.dom.find("li span").removeClass("particle_focus");
 	}
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -482,6 +505,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";

@@ -8,7 +8,7 @@ import component.IParams;
 class SubParams implements ISubParams
 {
 	public var type:ParticleAttribute;
-	public var easingType:String;
+	public var easingType:EasingType;
 	public var dom:Dynamic;
 	public var event:Dynamic;
 	public var extra:Dynamic;
@@ -22,6 +22,7 @@ class SubParams implements ISubParams
 		this.extra = extra;
 		event = j('<div></div>' );
 		setEasingType( easingType );
+		trace( 'easingType', easingType );
 	}
 	
 	public function setType( type:ParticleAttribute ) {
@@ -29,15 +30,15 @@ class SubParams implements ISubParams
 		setEasingType( this.easingType );
 	}
 	
-	public function setEasingType( easingType:String ):Void {
+	public function setEasingType( easingType:EasingType ):Void {
 		this.easingType = easingType;
 		var tmplName = switch( easingType ) {
-			case 'c':getConstName();
-			case 'l':getLinearName();
-			case 'r':getLinearName();
-			case 'cus':'tmpl_detail';
+			case EasingType.CONST:getConstName();
+			case EasingType.LINEAR:getLinearName();
+			//case 'cus':'tmpl_detail';
 			case _:'';
 		}
+		trace( easingType );
 		if ( dom != null ) dom.remove();
 		dom = j('#' + tmplName ).tmpl();
 	}
