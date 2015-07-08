@@ -3,6 +3,7 @@ package ;
 import component.IParams;
 import component.ITree;
 import component.Params;
+import component.ParamsPanel;
 import component.Tree;
 import js.Browser;
 import js.JQuery;
@@ -19,6 +20,7 @@ class Main
 	var container_params:Dynamic;
 	var tree_particle:Dynamic;
 	var tree:ITree;
+	var paramsPanel:ParamsPanel;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -33,80 +35,30 @@ class Main
 			heightStyle: "content"
 		});
 		
+		paramsPanel = new ParamsPanel( container_params );
+		
 		tree = new Tree( j( '#tree_particle' ) );
 		tree.init();
 		tree.addEmitter( null, 'root' );
-		tree.dom.on( 'onParticleClick', function( evt, params ) {
-			var pid = params.id;
-			var pobj = OnView.inst.findParticle( pid );
-			createParamsByParticle( pobj );
-		});
-		/*
-		var colorpickerfull:Dynamic = j( '#colorpicker-full' );
-		colorpickerfull.colorpicker({
-			parts:          'full',
-			alpha:          true,
-			showOn:         'both',
-			buttonColorize: true,
-			showNoneButton: true
-		});
-		*/
+		
 		
 		initContextMenu();
 		addListener();
 	}
 	
-	function createParamsByParticle( obj:Dynamic ) {
-		clearParams();
-		
-		for ( k in obj.fields() ) {
-			switch( k ) {
-				case 'pos':
-					createParams( new Params( 'px', 'c' ) );
-					createParams( new Params( 'py', 'c' ) );
-				case 'vel':
-					createParams( new Params( 'vx', 'c' ) );
-					createParams( new Params( 'vy', 'c' ) );
-			}
-		}
-	}
-	
 	function addListener() {
 		j('body').mousemove( onMousemove );
+		tree.dom.on( 'onParticleClick', function( evt, params ) {
+			var pid = params.id;
+			var pobj = OnView.inst.findParticle( pid );
+			paramsPanel.createParamsByParticle( pobj );
+		});
 	}
 	
 	function onMousemove(e) {
 		var px = e.clientX;
 		var py = e.clientY;
 		OnView.inst.moveParticle( 'root', px, py );
-	}
-	
-	function deleteParams( params:IParams ) {
-		params.dom.remove();
-	}
-	
-	function createParams( params:IParams ) {
-		params.dom.appendTo( container_params );
-		params.event.on( 'onParamsActEvent', onParamsActEvent );
-	}
-	
-	function clearParams() {
-		container_params.empty();
-	}
-	
-	function onParamsActEvent( e, params ) {
-		var target:IParams = params.target;
-		switch( params.id ) {
-			case 'btn_add':
-				var extra = target.extra;
-				extra.isParams = true;
-				var copy = new Params( target.type, target.easingType, extra );
-				createParams( copy );
-			case 'btn_copy':
-				createParams( target.copy() );
-			case 'btn_delete':
-				deleteParams( target );
-		}
 	}
 	
 	function initContextMenu() {

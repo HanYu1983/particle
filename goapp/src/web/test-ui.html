@@ -65,21 +65,21 @@
 	</div>
 </script>
 <script id="tmpl_const" type="jquery-x-tmpl">
-	<input class="input_params" value="30" />
+	<input class="input_params" value="30" input_pos="0" />
 </script>
 <script id="tmpl_linear" type="jquery-x-tmpl">
-	<input class="input_params" value="30" />
-	<input class="input_params" value="30" />
+	<input class="input_params" value="30" input_pos="0"/>
+	<input class="input_params" value="30" input_pos="1"/>
 </script>
 <script id="tmpl_detail" type="jquery-x-tmpl">
 	<button>curve</button>
 </script>
 <script id="tmpl_const_color" type="jquery-x-tmpl">
-	<input type="text" class="hide" value="fe9810">
+	<input type="text" class="hide input_params" value="fe9810" input_pos="0">
 </script>
 <script id="tmpl_linear_color" type="jquery-x-tmpl">
-	<input type="text" class="hide" value="fe9810">
-	<input type="text" class="hide" value="fe9810">
+	<input type="text" class="hide input_params" value="fe9810" input_pos="0">
+	<input type="text" class="hide input_params" value="fe9810" input_pos="1">
 </script>
 
 
@@ -107,14 +107,13 @@
 			</div>
 		</div>
 		<div class="panel">
-			
 			<h3>參數</h3>
-			<div>
+			<div id="params">
 				<div class="group">
-					<span>age</span>
+					<span>age(second)</span>
 					<input id="input_age" type="text" value="10" />
 				</div>
-				<div id="params" class="group"></div>
+				<div id="params_container" class="group"></div>
 			</div>
 		</div>
 		<div class="panel">

@@ -52,6 +52,5 @@ class SubParams implements ISubParams
 	
 	function getLinearName() {
 		return type == 'c' ? 'tmpl_linear_color' : 'tmpl_linear';
-		
 	}
 }

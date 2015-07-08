@@ -44,6 +44,8 @@ class Params implements IParams
 		input_easingType.change( onInputEasingTypeChange );
 		
 		dom.delegate( 'button', 'click', onDelegate );
+		
+		addInputListener();
 	}
 	
 	public function copy():IParams {
@@ -60,7 +62,8 @@ class Params implements IParams
 		subContainer.empty();
 		subContainer.append( subdom );
 		
-		if( type == 'c' ) createColorPicker( subdom );
+		if ( type == 'c' ) createColorPicker( subdom );
+		addInputListener();
 	}
 	
 	function onInputEasingTypeChange( e ) {
@@ -73,7 +76,8 @@ class Params implements IParams
 		subContainer.empty();
 		subContainer.append( subdom );
 		
-		if( type == 'c' ) createColorPicker( subdom );
+		if ( type == 'c' ) createColorPicker( subdom );
+		addInputListener();
 	}
 	
 	function createColorPicker( colordom ) {
@@ -88,7 +92,18 @@ class Params implements IParams
 		}
 	}
 	
+	function addInputListener() {
+		this.dom.find( '.input_params' ).change( onInputParamsChange );
+	}
+	
 	function onDelegate( e ) {
 		event.trigger( 'onParamsActEvent', {id:e.currentTarget.id, target:this } );
+	}
+	
+	function onInputParamsChange( e ) {
+		var targetDom:Dynamic = j( e.currentTarget );
+		var input_pos = targetDom.attr( 'input_pos' );
+		var val = targetDom.val();
+		event.trigger( 'onParamsChangeEvent', {pos:input_pos, type:type, val:val } );
 	}
 }

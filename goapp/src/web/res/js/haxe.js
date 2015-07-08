@@ -15,76 +15,30 @@ Main.main = function() {
 };
 Main.prototype = {
 	start: function() {
-		var _g = this;
 		this.container_params = this.j("#params");
 		this.tree_particle = this.j("#tree_particle");
 		var panel = this.j(".panel");
 		panel.accordion({ heightStyle : "content"});
+		this.paramsPanel = new component_ParamsPanel(this.container_params);
 		this.tree = new component_Tree(this.j("#tree_particle"));
 		this.tree.init();
 		this.tree.addEmitter(null,"root");
-		this.tree.dom.on("onParticleClick",function(evt,params) {
-			var pid = params.id;
-			var pobj = OnView.inst.findParticle(pid);
-			_g.createParamsByParticle(pobj);
-		});
 		this.initContextMenu();
 		this.addListener();
 	}
-	,createParamsByParticle: function(obj) {
-		this.clearParams();
-		var _g = 0;
-		var _g1 = Reflect.fields(obj);
-		while(_g < _g1.length) {
-			var k = _g1[_g];
-			++_g;
-			switch(k) {
-			case "pos":
-				this.createParams(new component_Params("px","c"));
-				this.createParams(new component_Params("py","c"));
-				break;
-			case "vel":
-				this.createParams(new component_Params("vx","c"));
-				this.createParams(new component_Params("vy","c"));
-				break;
-			}
-		}
-	}
 	,addListener: function() {
+		var _g = this;
 		this.j("body").mousemove($bind(this,this.onMousemove));
+		this.tree.dom.on("onParticleClick",function(evt,params) {
+			var pid = params.id;
+			var pobj = OnView.inst.findParticle(pid);
+			_g.paramsPanel.createParamsByParticle(pobj);
+		});
 	}
 	,onMousemove: function(e) {
 		var px = e.clientX;
 		var py = e.clientY;
 		OnView.inst.moveParticle("root",px,py);
-	}
-	,deleteParams: function(params) {
-		params.dom.remove();
-	}
-	,createParams: function(params) {
-		params.dom.appendTo(this.container_params);
-		params.event.on("onParamsActEvent",$bind(this,this.onParamsActEvent));
-	}
-	,clearParams: function() {
-		this.container_params.empty();
-	}
-	,onParamsActEvent: function(e,params) {
-		var target = params.target;
-		var _g = params.id;
-		switch(_g) {
-		case "btn_add":
-			var extra = target.extra;
-			extra.isParams = true;
-			var copy = new component_Params(target.type,target.easingType,extra);
-			this.createParams(copy);
-			break;
-		case "btn_copy":
-			this.createParams(target.copy());
-			break;
-		case "btn_delete":
-			this.deleteParams(target);
-			break;
-		}
 	}
 	,initContextMenu: function() {
 		var _g = this;
@@ -95,16 +49,16 @@ Main.prototype = {
 			var id = target.attr("id");
 			var isEmitter = target.attr("e_type") == "emitter";
 			var isRoot = id == "root";
-			console.log(id);
-			console.log(isEmitter);
+			haxe_Log.trace(id,{ fileName : "Main.hx", lineNumber : 76, className : "Main", methodName : "initContextMenu"});
+			haxe_Log.trace(isEmitter,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "initContextMenu"});
 			switch(key) {
 			case "cut":
 				copyDom = _g.tree.cut(id);
-				console.log(copyDom);
+				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 81, className : "Main", methodName : "initContextMenu"});
 				break;
 			case "copy":
 				copyDom = _g.tree.copy(id);
-				console.log(copyDom);
+				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 84, className : "Main", methodName : "initContextMenu"});
 				break;
 			case "paste":
 				if(copyDom == null) {
@@ -154,6 +108,9 @@ OnView.prototype = {
 		if(this.basicObj == null) throw new js__$Boot_HaxeError("you should set object first!");
 		return this.basicObj;
 	}
+	,updateParticleRoot: function() {
+		this.notify("edit-particle",this.getObject());
+	}
 	,findParticle: function(id) {
 		var _findParticle;
 		var _findParticle1 = null;
@@ -181,9 +138,6 @@ OnView.prototype = {
 			p.pos[1] = y;
 		}
 		this.updateParticleRoot();
-	}
-	,updateParticleRoot: function() {
-		this.notify("edit-particle",this.getObject());
 	}
 	,notify: function(evt,value) {
 		this.onViewObj.onNext([evt,value]);
@@ -241,6 +195,7 @@ var component_Params = function(type,easingType,extra) {
 	this.input_type.change($bind(this,this.onInputTypeChange));
 	this.input_easingType.change($bind(this,this.onInputEasingTypeChange));
 	this.dom.delegate("button","click",$bind(this,this.onDelegate));
+	this.addInputListener();
 };
 component_Params.__name__ = true;
 component_Params.__interfaces__ = [component_IParams];
@@ -256,6 +211,7 @@ component_Params.prototype = {
 		this.subContainer.empty();
 		this.subContainer.append(subdom);
 		if(this.type == "c") this.createColorPicker(subdom);
+		this.addInputListener();
 	}
 	,onInputEasingTypeChange: function(e) {
 		var target = e.currentTarget;
@@ -265,12 +221,106 @@ component_Params.prototype = {
 		this.subContainer.empty();
 		this.subContainer.append(subdom);
 		if(this.type == "c") this.createColorPicker(subdom);
+		this.addInputListener();
 	}
 	,createColorPicker: function(colordom) {
 		if(this.type == "c") colordom.colorpicker({ parts : "full", alpha : true, showOn : "both", buttonColorize : true, showNoneButton : true});
 	}
+	,addInputListener: function() {
+		this.dom.find(".input_params").change($bind(this,this.onInputParamsChange));
+	}
 	,onDelegate: function(e) {
 		this.event.trigger("onParamsActEvent",{ id : e.currentTarget.id, target : this});
+	}
+	,onInputParamsChange: function(e) {
+		var targetDom = this.j(e.currentTarget);
+		var input_pos = targetDom.attr("input_pos");
+		var val = targetDom.val();
+		this.event.trigger("onParamsChangeEvent",{ pos : input_pos, type : this.type, val : val});
+	}
+};
+var component_ParamsPanel = function(dom) {
+	this.j = $;
+	this.dom = dom;
+	this.params_container = this.dom.find("#params_container");
+	this.input_age = this.dom.find("#input_age");
+	this.input_age.change($bind(this,this.onInputAgeChange));
+};
+component_ParamsPanel.__name__ = true;
+component_ParamsPanel.__interfaces__ = [component_IDom];
+component_ParamsPanel.prototype = {
+	createParamsByParticle: function(obj) {
+		this.particle_object = obj;
+		this.clearParams();
+		this.setLifetime(this.particle_object.lifetime);
+		var _g = 0;
+		var _g1 = Reflect.fields(obj);
+		while(_g < _g1.length) {
+			var k = _g1[_g];
+			++_g;
+			switch(k) {
+			case "pos":
+				this.createParams(new component_Params("px","c"));
+				this.createParams(new component_Params("py","c"));
+				break;
+			case "vel":
+				this.createParams(new component_Params("vx","c"));
+				this.createParams(new component_Params("vy","c"));
+				break;
+			}
+		}
+	}
+	,setLifetime: function(val) {
+		this.input_age.val(val);
+	}
+	,deleteParams: function(params) {
+		params.dom.remove();
+	}
+	,createParams: function(params) {
+		params.dom.appendTo(this.params_container);
+		params.event.on("onParamsActEvent",$bind(this,this.onParamsActEvent));
+		params.event.on("onParamsChangeEvent",$bind(this,this.onParamsChangeEvent));
+	}
+	,clearParams: function() {
+		this.params_container.empty();
+	}
+	,onParamsActEvent: function(e,params) {
+		var target = params.target;
+		var _g = params.id;
+		switch(_g) {
+		case "btn_add":
+			var extra = target.extra;
+			extra.isParams = true;
+			var copy = new component_Params(target.type,target.easingType,extra);
+			this.createParams(copy);
+			break;
+		case "btn_copy":
+			this.createParams(target.copy());
+			break;
+		case "btn_delete":
+			this.deleteParams(target);
+			break;
+		}
+	}
+	,onParamsChangeEvent: function(e,params) {
+		var pos = params.pos;
+		var val = params.val;
+		var type = params.type;
+		switch(type) {
+		case "px":
+			break;
+		case "py":
+			break;
+		case "vx":
+			break;
+		case "vy":
+			break;
+		}
+		haxe_Log.trace(pos,{ fileName : "ParamsPanel.hx", lineNumber : 85, className : "component.ParamsPanel", methodName : "onParamsChangeEvent", customParams : [val]});
+	}
+	,onInputAgeChange: function(e) {
+		this.particle_object.lifetime = this.input_age.val();
+		OnView.inst.updateParticleRoot();
 	}
 };
 var component_SubParams = function(type,easingType,extra) {
@@ -385,6 +435,11 @@ component_Tree.prototype = {
 		this.dom.find("li span").removeClass("particle_focus");
 	}
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -397,6 +452,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";

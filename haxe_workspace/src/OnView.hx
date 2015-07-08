@@ -43,6 +43,10 @@ class OnView
 		return basicObj;
 	}
 	
+	public function updateParticleRoot() {
+		notify( 'edit-particle', getObject() );
+	}
+	
 	public function findParticle( id:String ) {
 		function _findParticle( fields:Dynamic ) {
 			if ( fields.id == id ) return fields;
@@ -68,10 +72,6 @@ class OnView
 			p.pos[1] = y;
 		}
 		updateParticleRoot();
-	}
-	
-	function updateParticleRoot() {
-		notify( 'edit-particle', getObject() );
 	}
 	
 	function notify( evt:String, value:Dynamic) {
