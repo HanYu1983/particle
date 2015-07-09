@@ -29,11 +29,14 @@
 				<a href="#" class="easyui-menubutton" data-options="menu:'#mm3'">About</a>
 			</div>
 			<div data-options="region:'west',split:true" title="Properties" style="width:20%; height:100%">
+				<a href="#" class="easyui-menubutton" data-options="menu:'#menu_particleTree',iconCls:'icon-edit'">Edit</a>
 				<div class="easyui-panel" style="padding:5px; width:100%; height:40%;">
 					<ul id="tree_particle" class="easyui-tree" data-options="dnd:true">
 						<li>
-							<span>My Documents</span>
+							<span>Root_Emitter</span>
 							<ul>
+								<li>Root_Particle</li>
+								<!--
 								<li data-options="state:'closed'">
 									<span>Photos</span>
 									<ul>
@@ -57,9 +60,7 @@
 										<li>Games</li>
 									</ul>
 								</li>
-								<li>index.html</li>
-								<li>about.html</li>
-								<li>welcome.html</li>
+								-->
 							</ul>
 						</li>
 					</ul>
@@ -76,7 +77,11 @@
 		</div>
 		
 		<!-- menu data -->
-		
+		<div id="menu_particleTree">
+			<div id="btn_addParticle" data-options="iconCls:'icon-add'" onclick="window.onHtmlClick(this)">Add Particle</div>
+			<div id="btn_addEmitter" data-options="iconCls:'icon-add'" onclick="window.onHtmlClick(this)">Add Emitter</div>
+			<div id="btn_remove" data-options="iconCls:'icon-remove'" onclick="window.onHtmlClick(this)">Delete</div>
+		</div>
 		<div id="mm1" style="width:150px;">
 			<div data-options="iconCls:'icon-undo'">Undo</div>
 			<div data-options="iconCls:'icon-redo'">Redo</div>
@@ -108,6 +113,50 @@
 			<img src="http://www.jeasyui.com/images/logo1.png" style="width:150px;height:50px">
 			<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 		</div>
+		
+		<!-- 不知道怎麼在tree_particle 上用 -->
+		<!--
+		<div id="menu_particleTree" class="easyui-menu" style="width:120px;">
+			<div onclick="javascript:alert('new')">New Particle</div>
+			<div>
+				<span>Open</span>
+				<div style="width:150px;">
+					<div><b>Word</b></div>
+					<div>Excel</div>
+					<div>PowerPoint</div>
+					<div>
+						<span>M1</span>
+						<div style="width:120px;">
+							<div>sub1</div>
+							<div>sub2</div>
+							<div>
+								<span>Sub</span>
+								<div style="width:80px;">
+									<div onclick="javascript:alert('sub21')">sub21</div>
+									<div>sub22</div>
+									<div>sub23</div>
+								</div>
+							</div>
+							<div>sub3</div>
+						</div>
+					</div>
+					<div>
+						<span>Window Demos</span>
+						<div style="width:120px;">
+							<div data-options="href:'window.html'">Window</div>
+							<div data-options="href:'dialog.html'">Dialog</div>
+							<div><a href="http://www.jeasyui.com" target="_blank">EasyUI</a></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div data-options="iconCls:'icon-save'">Save</div>
+			<div data-options="iconCls:'icon-print',disabled:true">Print</div>
+			<div class="menu-sep"></div>
+			<div>Exit</div>
+		</div>
+		-->
+		
 	</body>
 	<script src='res/js/lib/async.js'></script>
 	<script src='res/js/lib/rx.all.min.js'></script>
@@ -137,6 +186,17 @@
 	</script>
 	<!-- script test -->
 	<script>
+	
+	//不知道怎麼在tree_particle 上用
+	/*
+	$('#tree_particle').bind('contextmenu',function(e){
+                e.preventDefault();
+                $('#menu_particleTree').menu('show', {
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            });
+			*/
 	/*
 	$('#tree_particle').tree({
 		onClick: function(node){

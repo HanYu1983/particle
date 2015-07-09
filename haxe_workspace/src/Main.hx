@@ -21,6 +21,7 @@ class Main
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
+		Browser.window.setField( 'onHtmlClick', onHtmlClick );
 	}
 	
 	function start() {
@@ -33,6 +34,21 @@ class Main
 		
 		addListener();
 		onResize( null );
+	}
+	
+	function onHtmlClick( target ) {
+		trace( target.id );
+		switch( target.id ) {
+			case 'btn_addParticle':
+				tree.addParticle( tree_particle, getId() );
+			case 'btn_addEmitter':
+				tree.addEmitter( tree_particle, getId() );
+			case 'btn_remove':
+		}
+	}
+	
+	function getId() {
+		return Math.floor( Math.random() * 10000 ) + '';
 	}
 	
 	function addListener() {

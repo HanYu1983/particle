@@ -3,8 +3,8 @@ package component;
 /**
  * @author vic
  */
-enum E_easingType 
+enum EParticleType 
 {
-	CONST;
-	LINEAR;
+	PARTICLE;
+	EMITTER;
 }

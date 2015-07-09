@@ -7,6 +7,7 @@ package inter;
 class AbstractDom implements IDom
 {
 	var _dom:Dynamic;
+	var j:Dynamic = untyped __js__('$');
 	public function new( dom ) 
 	{
 		_dom = dom;
