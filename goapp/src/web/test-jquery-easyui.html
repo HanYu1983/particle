@@ -5,6 +5,7 @@
 		<link rel="stylesheet" type="text/css" href="res/js/lib/jquery-easyui-1.4.3/themes/icon.css">
 		<link rel="stylesheet" type="text/css" href="res/js/lib/jquery-easyui-1.4.3/demo/demo.css">
 		<link rel="stylesheet" type="text/css" href="res/css/normalize.css">
+			
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 			
@@ -16,6 +17,7 @@
 		height:100%;
 		left:0;
 		top:0;
+		background-color:black;
 	}
 	</style>
 	<body>
@@ -26,11 +28,7 @@
 				<a href="#" class="easyui-menubutton" data-options="menu:'#mm2',iconCls:'icon-help'">Help</a>
 				<a href="#" class="easyui-menubutton" data-options="menu:'#mm3'">About</a>
 			</div>
-			<!--
-			<div data-options="region:'south',split:false" style="height:50px;"></div>
-			<div data-options="region:'east',split:false" title="East" style="width:100px;"></div>
-				-->
-			<div data-options="region:'west',split:true" title="Properties" style="width:20%;">
+			<div data-options="region:'west',split:true" title="Properties" style="width:20%; height:100%">
 				<div class="easyui-panel" style="padding:5px; width:100%; height:40%;">
 					<ul id="tree_particle" class="easyui-tree" data-options="dnd:true">
 						<li>
@@ -71,7 +69,9 @@
 				</div>
 			</div>
 			<div data-options="region:'center',title:'Canvas'">
-				<canvas id='webgl' style="width:100%; height:100%;"></canvas>
+				<div id="canvas_container" style="width:100%; height:100%">
+					<canvas id='webgl' width="1920" height="1080"></canvas>
+				</div>
 			</div>
 		</div>
 		
@@ -109,9 +109,35 @@
 			<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 		</div>
 	</body>
-		
+	<script src='res/js/lib/async.js'></script>
+	<script src='res/js/lib/rx.all.min.js'></script>
+	<script src='res/js/lib/three.min.js'></script>
+	<script src='res/js/lib/underscore-min.js'></script>
+	<script src='res/js/common.js'></script>
+	<script src="res/js/haxe.js"></script>
+	<script src='res/cljs/goog/base.js'></script>
+	<script src='res/cljs/cljs.js'></script>
+	<script>
+	
+	common.onModel.subscribe(function(data){
+		//console.log( data )
+	})
+	
+	common.onView.subscribe(function(data){
+		//console.log( data )
+	})
+	
+	common.onModel.onNext(['testmodel', {}])
+	common.onView.onNext(['testview', {}])
+	
+	</script>
+	<script>
+	goog.require("app.main2");
+	window.haxeStart();
+	</script>
 	<!-- script test -->
 	<script>
+	/*
 	$('#tree_particle').tree({
 		onClick: function(node){
 			alert(node.text);  // alert node text property when clicked
@@ -123,5 +149,6 @@
 		
 		}
 	});
+	*/
 	</script>
 </html>
