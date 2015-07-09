@@ -1,6 +1,5 @@
 <html>
 	<head>
-		
 		<link rel="stylesheet" type="text/css" href="res/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
 		<link rel="stylesheet" type="text/css" href="res/js/lib/jquery-easyui-1.4.3/themes/icon.css">
 		<link rel="stylesheet" type="text/css" href="res/js/lib/jquery-easyui-1.4.3/demo/demo.css">
@@ -8,7 +7,9 @@
 			
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
-			
+		
+		<script type="text/javascript" src="res/js/lib/spectrum/spectrum.js"></script>
+		<link rel="stylesheet" type="text/css" href="res/js/lib/spectrum/spectrum.css">
 	</head>
 	<style>
 	body{
@@ -18,6 +19,25 @@
 		left:0;
 		top:0;
 		background-color:black;
+	}
+	.lbl_prop{
+		float:left;
+		width:35px;
+		margin-left:10px;
+		margin-right:5px;
+	}
+	.particle_title{
+		width:150px;
+		margin-left:10px;
+		line-height:25px;
+	}
+	.propGroup{
+		width:100%;
+		height:25px;
+	}
+	.prop{
+		float:left;
+		margin-bottom:10px;
 	}
 	</style>
 	<body>
@@ -31,6 +51,7 @@
 			<div data-options="region:'west',split:true" title="Properties" style="width:20%; height:100%">
 				<a href="#" class="easyui-menubutton" data-options="menu:'#menu_particleTree',iconCls:'icon-edit'">Edit</a>
 				<div class="easyui-panel" style="padding:5px; width:100%; height:20%;">
+					
 					<ul id="tree_particle" class="easyui-tree" data-options="dnd:true">
 						<li>
 							<span>Root_Emitter</span>
@@ -65,8 +86,51 @@
 						</li>
 					</ul>
 				</div>
-				<div class="easyui-panel" style="padding:5px; width:100%; height:80%;">
-					屬性區
+				<div class="easyui-panel" title="Paritlce Properties" style="padding:5px; width:100%; height:80%;">
+					
+					
+					<div class="propGroup" style="margin-bottom:10px;">
+						<div class="particle_title" style="float:left; margin-right:20px;">Name: <span style="color:yellow;">AAasdfasdfBB</span></div>
+						<a href="#" class="easyui-linkbutton" >Rename</a>
+					</div>
+					
+					<div class="propGroup">
+						<div class="prop">
+							<div class="lbl_prop">life</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						
+						<div class="prop">
+							<div class="lbl_prop">mass</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">pos-x</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">pos-y</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">pos-z</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">vel-x</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">vel-y</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">vel-z</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">size-x</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">size-y</div><input class="easyui-numberspinner" style="width:80px;"></input>
+						</div>
+						<div class="prop">
+							<div class="lbl_prop">color</div><input id="cpk_color" type="text" class="hide input_params" value="fe9810"></input>
+						</div>
+					</div>
+					
 				</div>
 			</div>
 			<div data-options="region:'center',title:'Canvas'">
@@ -167,6 +231,9 @@
 	<script src='res/cljs/goog/base.js'></script>
 	<script src='res/cljs/cljs.js'></script>
 	<script>
+	$("#cpk_color").spectrum({
+		color: "#f00"
+	});
 	
 	common.onModel.subscribe(function(data){
 		//console.log( data )
