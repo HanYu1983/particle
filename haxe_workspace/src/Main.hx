@@ -1,6 +1,8 @@
 package ;
 
+import component.EParticleType;
 import component.Tree;
+import inter.IDom;
 import inter.ITree;
 import js.Browser;
 import js.JQuery;
@@ -17,7 +19,7 @@ class Main
 	var canvas_container:Dynamic;
 	var tree_particle:Dynamic;
 	var webgl:Dynamic;
-	var tree:ITree;
+	var tree:Dynamic;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -31,24 +33,43 @@ class Main
 		tree_particle = j( '#tree_particle' );
 		
 		tree = new Tree( tree_particle );
+		tree.addParticle( tree.getDom().tree( 'getRoot' ).id, getId() );
 		
 		addListener();
 		onResize( null );
 	}
 	
 	function onHtmlClick( target ) {
-		trace( target.id );
+		
+		function checkNodeAndThen( fn ) {
+			var treeDom = cast( tree, IDom );
+			var selectNode = treeDom.getDom().tree('getSelected');
+			if ( selectNode == null ) {
+				Browser.alert( '請選擇發射器' );
+				return;
+			}else if( selectNode.type == EParticleType.PARTICLE ) {
+				Browser.alert( '只能增加粒子在發射器下' );
+				return;
+			}
+			fn( selectNode.id );
+		}
+		
 		switch( target.id ) {
 			case 'btn_addParticle':
-				tree.addParticle( tree_particle, getId() );
+				checkNodeAndThen( function( nodeId ) {
+					tree.addParticle( nodeId, getId() );
+				});
 			case 'btn_addEmitter':
-				tree.addEmitter( tree_particle, getId() );
+				checkNodeAndThen( function( nodeId ) {
+					tree.addEmitter( nodeId, getId() );
+				});
 			case 'btn_remove':
+				var treeDom = cast( tree, IDom );
+				var selectNode = treeDom.getDom().tree('getSelected');
+				trace( selectNode );
+				trace( selectNode.id );
+				tree.removeParticle( selectNode.id );
 		}
-	}
-	
-	function getId() {
-		return Math.floor( Math.random() * 10000 ) + '';
 	}
 	
 	function addListener() {
@@ -67,6 +88,9 @@ class Main
 		//OnView.inst.moveParticle( 'root', px, py );
 	}
 	
+	public static function getId() {
+		return Math.floor( Math.random() * 10000 ) + '';
+	}
 	
 	static function main() 
 	{

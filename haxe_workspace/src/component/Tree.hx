@@ -27,9 +27,8 @@ class Tree extends AbstractDom implements ITree
 		});
 	}
 	
-	public function addEmitter( parentDom:Dynamic, id:String ):Void {
-		var node:Dynamic = getDom().tree('getSelected');
-		trace( node );
+	public function addEmitter( parentNodeId:String, id:String ):Void {
+		var node:Dynamic = getDom().tree('find', parentNodeId);
 		if (node && ( node.domId == '_easyui_tree_1' || node.type == EParticleType.EMITTER )) {
 			var nodes = [{
 				id:id,
@@ -40,18 +39,12 @@ class Tree extends AbstractDom implements ITree
 				parent:node.target,
 				data:nodes
 			});
+			
+			addParticle( id, Main.getId() );
 		}
-		
-		
-		/*
-		var edom = j( '<li id="' + id + '"><span>' + id + '</span><ul id="' + id + '_container"></ul></li>' );
-		edom.appendTo( parentDom.find( '#' + id + '_container' ));
-		addParticle( edom, id + '_particle' );
-		*/
 	}
-	public function addParticle( parentDom:Dynamic, id:String ):Void {
-		var node:Dynamic = getDom().tree('getSelected');
-		trace( node );
+	public function addParticle( parentNodeId:String, id:String ):Void {
+		var node:Dynamic = getDom().tree('find', parentNodeId);
 		if (node && ( node.domId == '_easyui_tree_1' || node.type == EParticleType.EMITTER )) {
 			var nodes = [{
 				id:id,
@@ -63,16 +56,12 @@ class Tree extends AbstractDom implements ITree
 				data:nodes
 			});
 		}
-		/*
-		var pdom = j( '<li id="' + id + '">' + id + '</li>' );
-		pdom.appendTo( parentDom.find( '#' + id + '_container' ));
-		*/
 	}
 	
-	public function removeEmitter( id:String ):Void {
-		
-	}
-	public function removeParticle( id:String ):Void {
-		
+	public function removeParticle( nodeId:String ):Void {
+		var node:Dynamic = getDom().tree('find', nodeId);
+		if (node && node.domId != '_easyui_tree_1' ) {
+			getDom().tree('remove', node.target );
+		}
 	}
 }
