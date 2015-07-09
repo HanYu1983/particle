@@ -16,83 +16,15 @@ Main.main = function() {
 };
 Main.prototype = {
 	start: function() {
-		this.container_params = this.j("#params");
-		this.tree_particle = this.j("#tree_particle");
-		var panel = this.j(".panel");
-		panel.accordion({ heightStyle : "content"});
-		this.paramsPanel = new component_ParamsPanel(this.container_params);
-		this.tree = new component_Tree(this.j("#tree_particle"));
-		this.tree.init();
-		this.tree.addEmitter(null,"root");
-		this.initContextMenu();
 		this.addListener();
 	}
 	,addListener: function() {
-		var _g = this;
 		this.j("body").mousemove($bind(this,this.onMousemove));
-		this.tree.dom.on("onParticleClick",function(evt,params) {
-			var pid = params.id;
-			var pobj = OnView.inst.findParticle(pid);
-			_g.paramsPanel.createParamsByParticle(pobj);
-		});
 	}
 	,onMousemove: function(e) {
 		var px = e.clientX;
 		var py = e.clientY;
 		OnView.inst.moveParticle("root",px,py);
-	}
-	,initContextMenu: function() {
-		var _g = this;
-		var copyDom = null;
-		this.j.contextMenu("destroy","li");
-		this.j.contextMenu({ selector : "li", callback : function(key,options) {
-			var target = Reflect.field(options,"$trigger");
-			var id = target.attr("id");
-			var isEmitter = target.attr("e_type") == "emitter";
-			var isRoot = id == "root";
-			haxe_Log.trace(id,{ fileName : "Main.hx", lineNumber : 76, className : "Main", methodName : "initContextMenu"});
-			haxe_Log.trace(isEmitter,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "initContextMenu"});
-			switch(key) {
-			case "cut":
-				copyDom = _g.tree.cut(id);
-				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 81, className : "Main", methodName : "initContextMenu"});
-				break;
-			case "copy":
-				copyDom = _g.tree.copy(id);
-				haxe_Log.trace(copyDom,{ fileName : "Main.hx", lineNumber : 84, className : "Main", methodName : "initContextMenu"});
-				break;
-			case "paste":
-				if(copyDom == null) {
-					js_Browser.alert("沒有復制粒子");
-					return;
-				}
-				_g.tree.paste(id,copyDom);
-				copyDom = null;
-				break;
-			case "delete":
-				if(isRoot) {
-					js_Browser.alert("無法刪除元發射器");
-					return;
-				}
-				_g.tree.removeParticle(id);
-				break;
-			case "addParticle":
-				if(!isEmitter) {
-					js_Browser.alert("粒子無法增加粒子");
-					return;
-				}
-				_g.tree.addParticle(id,Math.ceil(Math.random() * 10000) + "");
-				break;
-			case "addEmitter":
-				if(!isEmitter) {
-					js_Browser.alert("粒子無法增加粒子");
-					return;
-				}
-				_g.tree.addEmitter(id,Math.ceil(Math.random() * 10000) + "");
-				break;
-			default:
-			}
-		}, items : { addParticle : { name : "Add Particle", icon : "add"}, addEmitter : { name : "Add Emitter", icon : "add"}, 'delete' : { name : "Delete Particle", icon : "delete"}, copy : { name : "Copy", icon : "copy"}, paste : { name : "Paste", icon : "paste"}, cut : { name : "Cut", icon : "cut"}}});
 	}
 };
 Math.__name__ = true;
@@ -595,11 +527,6 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
-};
-var js_Browser = function() { };
-js_Browser.__name__ = true;
-js_Browser.alert = function(v) {
-	window.alert(js_Boot.__string_rec(v,""));
 };
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
