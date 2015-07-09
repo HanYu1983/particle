@@ -3,7 +3,7 @@ package component;
 /**
  * @author vic
  */
-enum EasingType 
+enum E_easingType 
 {
 	CONST;
 	LINEAR;

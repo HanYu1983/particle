@@ -3,7 +3,7 @@ package component;
 /**
  * @author vic
  */
-enum ParticleAttribute 
+enum E_particleAttribute 
 {
 	LEFT_TIME;
 	POSITION_X;
