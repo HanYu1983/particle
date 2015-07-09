@@ -27,7 +27,6 @@ class Main
 	}
 	
 	function start() {
-		
 		canvas_container = j( '#canvas_container' );
 		webgl = j( '#webgl' );
 		tree_particle = j( '#tree_particle' );
@@ -75,6 +74,9 @@ class Main
 	function addListener() {
 		j('body').mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
+		tree.getEvent().on( 'onTreeNodeClick', function( e, params ) {
+			trace( e, params );
+		});
 	}
 	
 	function onResize( e ) {

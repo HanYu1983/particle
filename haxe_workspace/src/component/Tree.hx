@@ -18,7 +18,10 @@ class Tree extends AbstractDom implements ITree
 	{
 		super.init();
 		
-		getDom().tree({
+		getDom().tree( {
+			onClick:function( node ) {
+				getEvent().trigger( 'onTreeNodeClick', {id:node.id} );
+			},
 			onDrop:function( target,source,point ){
 				trace( target );
 				trace( source );

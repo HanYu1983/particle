@@ -59,8 +59,8 @@ Main.prototype = {
 			var treeDom1;
 			treeDom1 = js_Boot.__cast(this.tree , inter_IDom);
 			var selectNode1 = treeDom1.getDom().tree("getSelected");
-			console.log(selectNode1);
-			console.log(selectNode1.id);
+			haxe_Log.trace(selectNode1,{ fileName : "Main.hx", lineNumber : 68, className : "Main", methodName : "onHtmlClick"});
+			haxe_Log.trace(selectNode1.id,{ fileName : "Main.hx", lineNumber : 69, className : "Main", methodName : "onHtmlClick"});
 			this.tree.removeParticle(selectNode1.id);
 			break;
 		}
@@ -68,6 +68,9 @@ Main.prototype = {
 	,addListener: function() {
 		this.j("body").mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
+		this.tree.getEvent().on("onTreeNodeClick",function(e,params) {
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "addListener", customParams : [params]});
+		});
 	}
 	,onResize: function(e) {
 		this.webgl.attr("width",this.canvas_container.width());
@@ -105,6 +108,7 @@ inter_IDom.prototype = {
 var inter_AbstractDom = function(dom) {
 	this.j = $;
 	this._dom = dom;
+	this._event = this.j("<div></div>");
 	this.init();
 };
 inter_AbstractDom.__name__ = true;
@@ -112,12 +116,19 @@ inter_AbstractDom.__interfaces__ = [inter_IDom];
 inter_AbstractDom.prototype = {
 	init: function() {
 	}
+	,getEvent: function() {
+		return this._event;
+	}
 	,getDom: function() {
 		return this._dom;
 	}
 	,trigger: function(type,options) {
+		haxe_Log.trace("trigger",{ fileName : "AbstractDom.hx", lineNumber : 33, className : "inter.AbstractDom", methodName : "trigger", customParams : [type,options]});
+		this.getDom().trigger(type,options);
 	}
-	,on: function(evt,options) {
+	,on: function(type,fn) {
+		haxe_Log.trace("on",{ fileName : "AbstractDom.hx", lineNumber : 38, className : "inter.AbstractDom", methodName : "on", customParams : [type,fn]});
+		this.getDom().on(type,fn);
 	}
 	,__class__: inter_AbstractDom
 };
@@ -134,11 +145,14 @@ component_Tree.__interfaces__ = [inter_ITree];
 component_Tree.__super__ = inter_AbstractDom;
 component_Tree.prototype = $extend(inter_AbstractDom.prototype,{
 	init: function() {
+		var _g = this;
 		inter_AbstractDom.prototype.init.call(this);
-		this.getDom().tree({ onDrop : function(target,source,point) {
-			console.log(target);
-			console.log(source);
-			console.log(point);
+		this.getDom().tree({ onClick : function(node) {
+			_g.getEvent().trigger("onTreeNodeClick",{ id : node.id});
+		}, onDrop : function(target,source,point) {
+			haxe_Log.trace(target,{ fileName : "Tree.hx", lineNumber : 26, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(source,{ fileName : "Tree.hx", lineNumber : 27, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 28, className : "component.Tree", methodName : "init"});
 		}});
 	}
 	,addEmitter: function(parentNodeId,id) {
@@ -158,13 +172,15 @@ component_Tree.prototype = $extend(inter_AbstractDom.prototype,{
 	}
 	,removeParticle: function(nodeId) {
 		var node = this.getDom().tree("find",nodeId);
-		if(node && node.domId != "_easyui_tree_1") {
-			console.log("GGD");
-			this.getDom().tree("remove",node.target);
-		}
+		if(node && node.domId != "_easyui_tree_1") this.getDom().tree("remove",node.target);
 	}
 	,__class__: component_Tree
 });
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -178,6 +194,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
