@@ -1,10 +1,5 @@
 package ;
 
-import component.IParams;
-import component.ITree;
-import component.Params;
-import component.ParamsPanel;
-import component.Tree;
 import js.Browser;
 import js.JQuery;
 import js.Lib;
