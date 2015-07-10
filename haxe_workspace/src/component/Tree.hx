@@ -1,13 +1,14 @@
 package component;
 
 import inter.AbstractDom;
+import inter.AbstractTree;
 import inter.ITree;
 
 /**
  * ...
  * @author vic
  */
-class Tree extends AbstractDom implements ITree
+class Tree extends AbstractTree
 {
 	public function new( dom ) 
 	{
@@ -30,7 +31,7 @@ class Tree extends AbstractDom implements ITree
 		});
 	}
 	
-	public function addEmitter( parentNodeId:String, id:String ):Void {
+	override public function addEmitter( parentNodeId:String, id:String ):Void {
 		var node:Dynamic = getDom().tree('find', parentNodeId);
 		if (node && ( node.domId == '_easyui_tree_1' || node.type == EParticleType.EMITTER )) {
 			var nodes = [{
@@ -46,7 +47,7 @@ class Tree extends AbstractDom implements ITree
 			addParticle( id, Main.getId() );
 		}
 	}
-	public function addParticle( parentNodeId:String, id:String ):Void {
+	override public function addParticle( parentNodeId:String, id:String ):Void {
 		var node:Dynamic = getDom().tree('find', parentNodeId);
 		if (node && ( node.domId == '_easyui_tree_1' || node.type == EParticleType.EMITTER )) {
 			var nodes = [{
@@ -61,7 +62,7 @@ class Tree extends AbstractDom implements ITree
 		}
 	}
 	
-	public function removeParticle( nodeId:String ):Void {
+	override public function removeParticle( nodeId:String ):Void {
 		var node:Dynamic = getDom().tree('find', nodeId);
 		if (node && node.domId != '_easyui_tree_1' ) {
 			getDom().tree('remove', node.target );

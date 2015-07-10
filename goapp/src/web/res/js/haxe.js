@@ -56,9 +56,7 @@ Main.prototype = {
 			});
 			break;
 		case "btn_remove":
-			var treeDom1;
-			treeDom1 = js_Boot.__cast(this.tree , inter_IDom);
-			var selectNode1 = treeDom1.getDom().tree("getSelected");
+			var selectNode1 = this.tree.getDom().tree("getSelected");
 			haxe_Log.trace(selectNode1,{ fileName : "Main.hx", lineNumber : 68, className : "Main", methodName : "onHtmlClick"});
 			haxe_Log.trace(selectNode1.id,{ fileName : "Main.hx", lineNumber : 69, className : "Main", methodName : "onHtmlClick"});
 			this.tree.removeParticle(selectNode1.id);
@@ -137,22 +135,36 @@ inter_ITree.__name__ = true;
 inter_ITree.prototype = {
 	__class__: inter_ITree
 };
-var component_Tree = function(dom) {
+var inter_AbstractTree = function(dom) {
 	inter_AbstractDom.call(this,dom);
 };
+inter_AbstractTree.__name__ = true;
+inter_AbstractTree.__interfaces__ = [inter_ITree];
+inter_AbstractTree.__super__ = inter_AbstractDom;
+inter_AbstractTree.prototype = $extend(inter_AbstractDom.prototype,{
+	addEmitter: function(parentNodeId,id) {
+	}
+	,addParticle: function(parentNodeId,id) {
+	}
+	,removeParticle: function(nodeId) {
+	}
+	,__class__: inter_AbstractTree
+});
+var component_Tree = function(dom) {
+	inter_AbstractTree.call(this,dom);
+};
 component_Tree.__name__ = true;
-component_Tree.__interfaces__ = [inter_ITree];
-component_Tree.__super__ = inter_AbstractDom;
-component_Tree.prototype = $extend(inter_AbstractDom.prototype,{
+component_Tree.__super__ = inter_AbstractTree;
+component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 	init: function() {
 		var _g = this;
-		inter_AbstractDom.prototype.init.call(this);
+		inter_AbstractTree.prototype.init.call(this);
 		this.getDom().tree({ onClick : function(node) {
 			_g.getEvent().trigger("onTreeNodeClick",{ id : node.id});
 		}, onDrop : function(target,source,point) {
-			haxe_Log.trace(target,{ fileName : "Tree.hx", lineNumber : 26, className : "component.Tree", methodName : "init"});
-			haxe_Log.trace(source,{ fileName : "Tree.hx", lineNumber : 27, className : "component.Tree", methodName : "init"});
-			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 28, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(target,{ fileName : "Tree.hx", lineNumber : 27, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(source,{ fileName : "Tree.hx", lineNumber : 28, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 29, className : "component.Tree", methodName : "init"});
 		}});
 	}
 	,addEmitter: function(parentNodeId,id) {
@@ -372,5 +384,3 @@ js.JQuery = q;
 js_Boot.__toStr = {}.toString;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=haxe.js.map
