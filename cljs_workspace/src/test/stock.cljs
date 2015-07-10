@@ -156,7 +156,7 @@
                   (if (> (count all) 0)
                     (first all)
                     100)]
-              (cons (+ la (* la (- r 0.075))) all)))
+              (cons (+ la (* la (- r 0.07))) all)))
           '()
           (repeatedly k-line-count #(* (rand) 0.14)))
         avg10 (average curve 5)
