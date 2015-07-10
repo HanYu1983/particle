@@ -106,7 +106,6 @@ inter_IDom.prototype = {
 var inter_AbstractDom = function(dom) {
 	this.j = $;
 	this._dom = dom;
-	this._event = this.j("<div></div>");
 	this.init();
 };
 inter_AbstractDom.__name__ = true;
@@ -114,34 +113,49 @@ inter_AbstractDom.__interfaces__ = [inter_IDom];
 inter_AbstractDom.prototype = {
 	init: function() {
 	}
-	,getEvent: function() {
-		return this._event;
-	}
 	,getDom: function() {
 		return this._dom;
 	}
+	,__class__: inter_AbstractDom
+};
+var inter_IEvent = function() { };
+inter_IEvent.__name__ = true;
+inter_IEvent.prototype = {
+	__class__: inter_IEvent
+};
+var inter_AbstractEvent = function(dom) {
+	inter_AbstractDom.call(this,dom);
+	this._event = this.j("<div></div>");
+};
+inter_AbstractEvent.__name__ = true;
+inter_AbstractEvent.__interfaces__ = [inter_IEvent];
+inter_AbstractEvent.__super__ = inter_AbstractDom;
+inter_AbstractEvent.prototype = $extend(inter_AbstractDom.prototype,{
+	getEvent: function() {
+		return this._event;
+	}
 	,trigger: function(type,options) {
-		haxe_Log.trace("trigger",{ fileName : "AbstractDom.hx", lineNumber : 33, className : "inter.AbstractDom", methodName : "trigger", customParams : [type,options]});
+		haxe_Log.trace("trigger",{ fileName : "AbstractEvent.hx", lineNumber : 24, className : "inter.AbstractEvent", methodName : "trigger", customParams : [type,options]});
 		this.getDom().trigger(type,options);
 	}
 	,on: function(type,fn) {
-		haxe_Log.trace("on",{ fileName : "AbstractDom.hx", lineNumber : 38, className : "inter.AbstractDom", methodName : "on", customParams : [type,fn]});
+		haxe_Log.trace("on",{ fileName : "AbstractEvent.hx", lineNumber : 29, className : "inter.AbstractEvent", methodName : "on", customParams : [type,fn]});
 		this.getDom().on(type,fn);
 	}
-	,__class__: inter_AbstractDom
-};
+	,__class__: inter_AbstractEvent
+});
 var inter_ITree = function() { };
 inter_ITree.__name__ = true;
 inter_ITree.prototype = {
 	__class__: inter_ITree
 };
 var inter_AbstractTree = function(dom) {
-	inter_AbstractDom.call(this,dom);
+	inter_AbstractEvent.call(this,dom);
 };
 inter_AbstractTree.__name__ = true;
 inter_AbstractTree.__interfaces__ = [inter_ITree];
-inter_AbstractTree.__super__ = inter_AbstractDom;
-inter_AbstractTree.prototype = $extend(inter_AbstractDom.prototype,{
+inter_AbstractTree.__super__ = inter_AbstractEvent;
+inter_AbstractTree.prototype = $extend(inter_AbstractEvent.prototype,{
 	addEmitter: function(parentNodeId,id) {
 	}
 	,addParticle: function(parentNodeId,id) {

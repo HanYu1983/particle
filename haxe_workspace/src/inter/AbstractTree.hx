@@ -4,7 +4,7 @@ package inter;
  * ...
  * @author vic
  */
-class AbstractTree extends AbstractDom implements ITree
+class AbstractTree extends AbstractEvent implements ITree
 {
 
 	public function new( dom ) 
