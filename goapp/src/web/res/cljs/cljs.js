@@ -10,11 +10,11 @@ goog.addDependency("../cljs/core/async/impl/dispatch.js", ['cljs.core.async.impl
 goog.addDependency("../cljs/core/async/impl/channels.js", ['cljs.core.async.impl.channels'], ['cljs.core.async.impl.dispatch', 'cljs.core', 'cljs.core.async.impl.buffers', 'cljs.core.async.impl.protocols']);
 goog.addDependency("../clojure/set.js", ['clojure.set'], ['cljs.core']);
 goog.addDependency("../gl/util.js", ['gl.util'], ['cljs.core']);
-goog.addDependency("../test/stock2.js", ['test.stock2'], ['cljs.core']);
+goog.addDependency("../ai/ann.js", ['ai.ann'], ['cljs.core']);
+goog.addDependency("../test/stock2.js", ['test.stock2'], ['cljs.core', 'ai.ann']);
 goog.addDependency("../gl/shader.js", ['gl.shader'], ['cljs.core', 'gl.texture']);
 goog.addDependency("../cljs/core/async/impl/timers.js", ['cljs.core.async.impl.timers'], ['cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core', 'cljs.core.async.impl.protocols']);
 goog.addDependency("../cljs/core/async.js", ['cljs.core.async'], ['cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core', 'cljs.core.async.impl.buffers', 'cljs.core.async.impl.protocols', 'cljs.core.async.impl.ioc_helpers', 'cljs.core.async.impl.timers']);
-goog.addDependency("../ai/ann.js", ['ai.ann'], ['cljs.core']);
 goog.addDependency("../test/stock.js", ['test.stock'], ['cljs.core', 'cljs.core.async', 'ai.ann']);
 goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
 goog.addDependency("../app/particle.js", ['app.particle'], ['cljs.core']);
