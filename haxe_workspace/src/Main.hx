@@ -2,6 +2,7 @@ package ;
 
 import component.EParticleType;
 import component.Tree;
+import inter.AbstractTree;
 import inter.IDom;
 import inter.ITree;
 import js.Browser;
@@ -19,7 +20,7 @@ class Main
 	var canvas_container:Dynamic;
 	var tree_particle:Dynamic;
 	var webgl:Dynamic;
-	var tree:Dynamic;
+	var tree:AbstractTree;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -63,8 +64,7 @@ class Main
 					tree.addEmitter( nodeId, getId() );
 				});
 			case 'btn_remove':
-				var treeDom = cast( tree, IDom );
-				var selectNode = treeDom.getDom().tree('getSelected');
+				var selectNode = tree.getDom().tree('getSelected');
 				trace( selectNode );
 				trace( selectNode.id );
 				tree.removeParticle( selectNode.id );
