@@ -105,7 +105,7 @@
       (fn [[la & _ :as all] r]
         (cons (+ la (* la (- r (/ up-rate 1)))) all))
       (list start)
-      ; cnt減掉1(start已經加入在初使值)
+      ; cnt減掉1(start已經加入在初始值)
       (repeatedly (dec cnt) #(* (rand) (* 2 up-rate))))
     reverse))
 
