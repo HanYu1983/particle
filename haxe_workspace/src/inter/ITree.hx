@@ -1,12 +1,13 @@
 package inter;
+import component.Particle;
 
 /**
  * @author vic
  */
 interface ITree 
 {
-	function addEmitter( parentNode:Dynamic, id:String ):Void;
-	function addParticle( parentNode:Dynamic, id:String ):Void;
+	function addEmitter( parentNode:Dynamic, particle:IParticle ):Void;
+	function addParticle( parentNode:Dynamic, particle:IParticle ):Void;
 	function parserLoadData( loadData:Dynamic ):Void;
 	function findNode( nodeId:String ):Dynamic;
 	function getRootNode():Dynamic;

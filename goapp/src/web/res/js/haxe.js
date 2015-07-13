@@ -7,7 +7,6 @@ function $extend(from, fields) {
 	return proto;
 }
 var Main = function() {
-	this.particleManager = component_ParticleManager.inst;
 	this.onView = OnView.inst;
 	this.j = $;
 	Reflect.setField(window,"haxeStart",$bind(this,this.start));
@@ -47,12 +46,12 @@ Main.prototype = {
 		switch(_g1) {
 		case "btn_addParticle":
 			checkNodeAndThen(function(node) {
-				_g.tree.addParticle(node,Main.getId());
+				_g.tree.addParticle(node,new component_Particle({ id : Main.getId()}));
 			});
 			break;
 		case "btn_addEmitter":
 			checkNodeAndThen(function(node1) {
-				_g.tree.addEmitter(node1,Main.getId());
+				_g.tree.addEmitter(node1,new component_Particle({ id : Main.getId()}));
 			});
 			break;
 		case "btn_remove":
@@ -65,7 +64,7 @@ Main.prototype = {
 		this.j("body").mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
 		this.tree.getEvent().on("onTreeNodeClick",function(e,params) {
-			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 86, className : "Main", methodName : "addListener", customParams : [params]});
+			haxe_Log.trace(params.node.particle,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "addListener"});
 		});
 	}
 	,loadSaveData: function() {
@@ -167,26 +166,28 @@ component_EParticleType.PARTICLE.__enum__ = component_EParticleType;
 component_EParticleType.EMITTER = ["EMITTER",1];
 component_EParticleType.EMITTER.toString = $estr;
 component_EParticleType.EMITTER.__enum__ = component_EParticleType;
-var component_Particle = function(type,data) {
-	this.setType(type);
+var inter_IParticle = function() { };
+inter_IParticle.__name__ = true;
+var component_Particle = function(data) {
 	this._data = data;
 };
 component_Particle.__name__ = true;
+component_Particle.__interfaces__ = [inter_IParticle];
 component_Particle.prototype = {
-	setType: function(type) {
+	getId: function() {
+		return this.getData().id;
+	}
+	,getData: function() {
+		return this._data;
+	}
+	,getType: function() {
+		return this._type;
+	}
+	,setType: function(type) {
 		this._type = type;
 	}
-};
-var component_ParticleManager = function() {
-	this.coll_particle = new haxe_ds_StringMap();
-};
-component_ParticleManager.__name__ = true;
-component_ParticleManager.prototype = {
-	addParticle: function(data) {
-		var value = new component_Particle(data.emit == null?component_EParticleType.PARTICLE:component_EParticleType.EMITTER,data);
-		this.coll_particle.set(data.id,value);
-	}
-	,getParticle: function(id) {
+	,toString: function() {
+		return JSON.stringify(this.getData());
 	}
 };
 var inter_IDom = function() { };
@@ -238,9 +239,9 @@ inter_AbstractTree.__super__ = inter_AbstractEvent;
 inter_AbstractTree.prototype = $extend(inter_AbstractEvent.prototype,{
 	parserLoadData: function(loadData) {
 	}
-	,addEmitter: function(parentNode,id) {
+	,addEmitter: function(parentNode,particle) {
 	}
-	,addParticle: function(parentNode,id) {
+	,addParticle: function(parentNode,particle) {
 	}
 	,getRootNode: function() {
 		return null;
@@ -264,11 +265,11 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		var _g = this;
 		inter_AbstractTree.prototype.init.call(this);
 		this.getDom().tree({ onClick : function(node) {
-			_g.getEvent().trigger("onTreeNodeClick",{ id : node.id});
+			_g.getEvent().trigger("onTreeNodeClick",{ node : node});
 		}, onDrop : function(target,source,point) {
-			haxe_Log.trace(target,{ fileName : "Tree.hx", lineNumber : 27, className : "component.Tree", methodName : "init"});
-			haxe_Log.trace(source,{ fileName : "Tree.hx", lineNumber : 28, className : "component.Tree", methodName : "init"});
-			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 29, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(target,{ fileName : "Tree.hx", lineNumber : 28, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(source,{ fileName : "Tree.hx", lineNumber : 29, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 30, className : "component.Tree", methodName : "init"});
 		}});
 	}
 	,parserLoadData: function(loadData) {
@@ -279,30 +280,28 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			if(Object.prototype.hasOwnProperty.call(fields,"emit")) {
 				var ary = fields.emit.prototype;
 				var target = null;
-				if(fields.id != "root") {
-					_g.addEmitter(parentNode,fields.id);
-					parentNode = _g.findNode(fields.id);
-				} else parentNode = _g.getRootNode();
-				var _g1 = 0;
-				var _g2 = ary.length;
-				while(_g1 < _g2) {
-					var i = _g1++;
+				_g.addEmitter(parentNode,new component_Particle(fields));
+				parentNode = _g.findNode(fields.id);
+				var _g2 = 0;
+				var _g1 = ary.length;
+				while(_g2 < _g1) {
+					var i = _g2++;
 					_findParticle1(ary[i],parentNode);
 				}
-			} else _g.addParticle(parentNode,fields.id);
+			} else _g.addParticle(parentNode,new component_Particle(fields));
 		};
 		_findParticle = _findParticle1;
 		_findParticle(loadData,this.getRootNode());
 	}
-	,addEmitter: function(parentNode,id) {
+	,addEmitter: function(parentNode,particle) {
 		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
-			var nodes = [{ id : id, text : id + "_" + Std.string(component_EParticleType.EMITTER), type : component_EParticleType.EMITTER}];
+			var nodes = [{ id : particle.getId(), text : particle.getId() + "_" + Std.string(component_EParticleType.EMITTER), type : component_EParticleType.EMITTER, particle : particle}];
 			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
 		}
 	}
-	,addParticle: function(parentNode,id) {
+	,addParticle: function(parentNode,particle) {
 		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
-			var nodes = [{ id : id, text : id + "_" + Std.string(component_EParticleType.PARTICLE), type : component_EParticleType.PARTICLE}];
+			var nodes = [{ id : particle.getId(), text : particle.getId() + "_" + Std.string(component_EParticleType.PARTICLE), type : component_EParticleType.PARTICLE, particle : particle}];
 			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
 		}
 	}
@@ -319,26 +318,10 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		if(node && node.domId != "_easyui_tree_1") this.getDom().tree("remove",node.target);
 	}
 });
-var haxe_IMap = function() { };
-haxe_IMap.__name__ = true;
 var haxe_Log = function() { };
 haxe_Log.__name__ = true;
 haxe_Log.trace = function(v,infos) {
 	js_Boot.__trace(v,infos);
-};
-var haxe_ds_StringMap = function() {
-	this.h = { };
-};
-haxe_ds_StringMap.__name__ = true;
-haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
-haxe_ds_StringMap.prototype = {
-	set: function(key,value) {
-		if(__map_reserved[key] != null) this.setReserved(key,value); else this.h[key] = value;
-	}
-	,setReserved: function(key,value) {
-		if(this.rh == null) this.rh = { };
-		this.rh["$" + key] = value;
-	}
 };
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
@@ -448,12 +431,10 @@ var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 String.__name__ = true;
 Array.__name__ = true;
-var __map_reserved = {}
 var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;
 OnView.inst = new OnView();
-component_ParticleManager.inst = new component_ParticleManager();
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

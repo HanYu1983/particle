@@ -1,7 +1,7 @@
 package ;
 
 import component.EParticleType;
-import component.ParticleManager;
+import component.Particle;
 import component.Tree;
 import inter.AbstractTree;
 import inter.IDom;
@@ -23,7 +23,6 @@ class Main
 	var webgl:Dynamic;
 	var tree:AbstractTree;
 	var onView = OnView.inst;
-	var particleManager = ParticleManager.inst;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -35,16 +34,8 @@ class Main
 		webgl = j( '#webgl' );
 		tree_particle = j( '#tree_particle' );
 		
-		/*
-		onView.setObject( loadSaveData(), function( p ) {
-			p.viewId = getId();
-			particleManager.addParticle( p );
-		});
-		*/
-		
 		tree = new Tree( tree_particle );
 		tree.parserLoadData( loadSaveData() );
-		//tree.addParticle( tree.getRootNode(), getId() );
 		
 		addListener();
 		onResize( null );
@@ -67,11 +58,11 @@ class Main
 		switch( target.id ) {
 			case 'btn_addParticle':
 				checkNodeAndThen( function( node ) {
-					tree.addParticle( node, getId() );
+					tree.addParticle( node, new Particle( { id:getId()} ) );
 				});
 			case 'btn_addEmitter':
 				checkNodeAndThen( function( node ) {
-					tree.addEmitter( node, getId() );
+					tree.addEmitter( node, new Particle( { id:getId() } ));
 				});
 			case 'btn_remove':
 				var selectNode = tree.getSelectedNode();
@@ -83,7 +74,7 @@ class Main
 		j('body').mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
 		tree.getEvent().on( 'onTreeNodeClick', function( e, params ) {
-			trace( e, params );
+			trace( params.node.particle );
 		});
 	}
 	

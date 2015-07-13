@@ -2,6 +2,7 @@ package component;
 
 import inter.AbstractDom;
 import inter.AbstractTree;
+import inter.IParticle;
 import inter.ITree;
 using Reflect;
 /**
@@ -21,7 +22,7 @@ class Tree extends AbstractTree
 		
 		getDom().tree( {
 			onClick:function( node ) {
-				getEvent().trigger( 'onTreeNodeClick', {id:node.id} );
+				getEvent().trigger( 'onTreeNodeClick', {node:node} );
 			},
 			onDrop:function( target,source,point ){
 				trace( target );
@@ -37,22 +38,14 @@ class Tree extends AbstractTree
 				var ary:Array<Dynamic> = fields.emit.prototype;
 				var target:Dynamic = null;
 				
-				//如果解析到的是root的話，parentNode就直接取root
-				//否則就是用目前創建的物件當root
-				//如果解析到root，就不創建root的發射器，因為場景上已經有了
-				if ( fields.id != 'root' ) {
-					addEmitter( parentNode, fields.id );
-					parentNode = findNode( fields.id );
-				}else {
-					parentNode = getRootNode();	
-				}
+				addEmitter( parentNode, new Particle( fields ) );
+				parentNode = findNode( fields.id );
 				
-				//尋找發射器下所有的粒子
 				for ( i in 0...ary.length ) {
 					_findParticle( ary[i], parentNode );
 				}
 			}else {
-				addParticle( parentNode, fields.id );
+				addParticle( parentNode, new Particle( fields ) );
 			}
 		}
 		
@@ -60,12 +53,13 @@ class Tree extends AbstractTree
 	}
 	
 	
-	override public function addEmitter( parentNode:Dynamic, id:String ):Void {
+	override public function addEmitter( parentNode:Dynamic, particle:IParticle ):Void {
 		if (parentNode && ( parentNode.domId == '_easyui_tree_1' || parentNode.type == EParticleType.EMITTER )) {
 			var nodes = [{
-				id:id,
-				text:id + '_' + EParticleType.EMITTER,
-				type:EParticleType.EMITTER
+				id:particle.getId(),
+				text:particle.getId() + '_' + EParticleType.EMITTER,
+				type:EParticleType.EMITTER,
+				particle:particle
 			}];
 			getDom().tree('append', {
 				parent:parentNode.target,
@@ -73,12 +67,13 @@ class Tree extends AbstractTree
 			});
 		}
 	}
-	override public function addParticle( parentNode:Dynamic, id:String ):Void {
+	override public function addParticle( parentNode:Dynamic, particle:IParticle ):Void {
 		if (parentNode && ( parentNode.domId == '_easyui_tree_1' || parentNode.type == EParticleType.EMITTER )) {
 			var nodes = [{
-				id:id,
-				text:id + '_' + EParticleType.PARTICLE,
-				type:EParticleType.PARTICLE
+				id:particle.getId(),
+				text:particle.getId() + '_' + EParticleType.PARTICLE,
+				type:EParticleType.PARTICLE,
+				particle:particle
 			}];
 			getDom().tree('append', {
 				parent:parentNode.target,
