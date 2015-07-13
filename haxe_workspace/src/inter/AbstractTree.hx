@@ -16,12 +16,12 @@ class AbstractTree extends AbstractEvent implements ITree
 		
 	}
 	
-	public function addEmitter(parentNode:Dynamic, particle:IParticle):Void 
+	public function addEmitter(parentNode:Dynamic, particle:IParticle, ?addData:Bool = true):Void 
 	{
 		
 	}
 	
-	public function addParticle(parentNode:Dynamic, particle:IParticle):Void 
+	public function addParticle(parentNode:Dynamic, particle:IParticle, ?addData:Bool = true):Void 
 	{
 		
 	}

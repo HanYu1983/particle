@@ -2,7 +2,7 @@ package component;
 import haxe.Json;
 import inter.AbstractEvent;
 import inter.IParticle;
-
+using Reflect;
 /**
  * ...
  * @author vic
@@ -26,11 +26,8 @@ class Particle implements IParticle
 	}
 	
 	public function getType():EParticleType {
-		return _type;
-	}
-	
-	public function setType( type ) {
-		_type = type;
+		if ( getData().hasField( 'emit' ) ) return EParticleType.EMITTER;
+		return EParticleType.PARTICLE;
 	}
 	
 	public function toString():String {

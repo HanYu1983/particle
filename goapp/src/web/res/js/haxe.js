@@ -151,6 +151,9 @@ OnView.prototype = {
 };
 var Reflect = function() { };
 Reflect.__name__ = true;
+Reflect.hasField = function(o,field) {
+	return Object.prototype.hasOwnProperty.call(o,field);
+};
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
@@ -181,10 +184,8 @@ component_Particle.prototype = {
 		return this._data;
 	}
 	,getType: function() {
-		return this._type;
-	}
-	,setType: function(type) {
-		this._type = type;
+		if(Reflect.hasField(this.getData(),"emit")) return component_EParticleType.EMITTER;
+		return component_EParticleType.PARTICLE;
 	}
 	,toString: function() {
 		return JSON.stringify(this.getData());
@@ -239,9 +240,11 @@ inter_AbstractTree.__super__ = inter_AbstractEvent;
 inter_AbstractTree.prototype = $extend(inter_AbstractEvent.prototype,{
 	parserLoadData: function(loadData) {
 	}
-	,addEmitter: function(parentNode,particle) {
+	,addEmitter: function(parentNode,particle,addData) {
+		if(addData == null) addData = true;
 	}
-	,addParticle: function(parentNode,particle) {
+	,addParticle: function(parentNode,particle,addData) {
+		if(addData == null) addData = true;
 	}
 	,getRootNode: function() {
 		return null;
@@ -280,7 +283,7 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			if(Object.prototype.hasOwnProperty.call(fields,"emit")) {
 				var ary = fields.emit.prototype;
 				var target = null;
-				_g.addEmitter(parentNode,new component_Particle(fields));
+				_g.addEmitter(parentNode,new component_Particle(fields),false);
 				parentNode = _g.findNode(fields.id);
 				var _g2 = 0;
 				var _g1 = ary.length;
@@ -288,22 +291,18 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 					var i = _g2++;
 					_findParticle1(ary[i],parentNode);
 				}
-			} else _g.addParticle(parentNode,new component_Particle(fields));
+			} else _g.addParticle(parentNode,new component_Particle(fields),false);
 		};
 		_findParticle = _findParticle1;
 		_findParticle(loadData,this.getRootNode());
 	}
-	,addEmitter: function(parentNode,particle) {
-		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
-			var nodes = [{ id : particle.getId(), text : particle.getId() + "_" + Std.string(component_EParticleType.EMITTER), type : component_EParticleType.EMITTER, particle : particle}];
-			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
-		}
+	,addEmitter: function(parentNode,particle,addData) {
+		if(addData == null) addData = true;
+		this.addNode(parentNode,particle,addData);
 	}
-	,addParticle: function(parentNode,particle) {
-		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
-			var nodes = [{ id : particle.getId(), text : particle.getId() + "_" + Std.string(component_EParticleType.PARTICLE), type : component_EParticleType.PARTICLE, particle : particle}];
-			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
-		}
+	,addParticle: function(parentNode,particle,addData) {
+		if(addData == null) addData = true;
+		this.addNode(parentNode,particle,addData);
 	}
 	,findNode: function(nodeId) {
 		return this.getDom().tree("find",nodeId);
@@ -316,6 +315,16 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 	}
 	,removeParticle: function(node) {
 		if(node && node.domId != "_easyui_tree_1") this.getDom().tree("remove",node.target);
+	}
+	,addNode: function(parentNode,particle,addData) {
+		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
+			var nodes = [{ id : particle.getId(), text : particle.getId() + "_" + Std.string(particle.getType()), type : particle.getType(), particle : particle}];
+			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
+			if(parentNode.particle == null || !addData) return;
+			var particleObj = parentNode.particle.getData();
+			if(!Object.prototype.hasOwnProperty.call(particleObj,"emit")) particleObj.emit = { prototype : []};
+			particleObj.emit.prototype.push(particle.getData());
+		}
 	}
 });
 var haxe_Log = function() { };
