@@ -20,6 +20,7 @@ goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
 goog.addDependency("../app/particle.js", ['app.particle'], ['cljs.core']);
 goog.addDependency("../app/react.js", ['app.react'], ['cljs.core', 'cljs.core.async']);
 goog.addDependency("../test/dialog.js", ['test.dialog'], ['cljs.core', 'cljs.core.async', 'tool.dialog']);
+goog.addDependency("../test/stock3.js", ['test.stock3'], ['cljs.core']);
 goog.addDependency("../gl/mesh.js", ['gl.mesh'], ['cljs.core']);
 goog.addDependency("../clojure/data.js", ['clojure.data'], ['cljs.core', 'clojure.set']);
 goog.addDependency("../app/main.js", ['app.main'], ['gl.shader', 'app.particle', 'cljs.core', 'app.react', 'cljs.core.async', 'gl.texture', 'gl.mesh', 'clojure.data', 'clojure.walk', 'gl.util']);
