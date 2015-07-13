@@ -41,25 +41,23 @@ Main.prototype = {
 				js_Browser.alert("只能增加粒子在發射器下");
 				return;
 			}
-			fn(selectNode.id);
+			fn(selectNode);
 		};
 		var _g1 = target.id;
 		switch(_g1) {
 		case "btn_addParticle":
-			checkNodeAndThen(function(nodeId) {
-				_g.tree.addParticle(nodeId,Main.getId());
+			checkNodeAndThen(function(node) {
+				_g.tree.addParticle(node,Main.getId());
 			});
 			break;
 		case "btn_addEmitter":
-			checkNodeAndThen(function(nodeId1) {
-				_g.tree.addEmitter(nodeId1,Main.getId());
+			checkNodeAndThen(function(node1) {
+				_g.tree.addEmitter(node1,Main.getId());
 			});
 			break;
 		case "btn_remove":
 			var selectNode1 = this.tree.getDom().tree("getSelected");
-			haxe_Log.trace(selectNode1,{ fileName : "Main.hx", lineNumber : 68, className : "Main", methodName : "onHtmlClick"});
-			haxe_Log.trace(selectNode1.id,{ fileName : "Main.hx", lineNumber : 69, className : "Main", methodName : "onHtmlClick"});
-			this.tree.removeParticle(selectNode1.id);
+			this.tree.removeParticle(selectNode1);
 			break;
 		}
 	}
@@ -67,7 +65,7 @@ Main.prototype = {
 		this.j("body").mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
 		this.tree.getEvent().on("onTreeNodeClick",function(e,params) {
-			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "addListener", customParams : [params]});
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 76, className : "Main", methodName : "addListener", customParams : [params]});
 		});
 	}
 	,onResize: function(e) {
@@ -156,11 +154,11 @@ inter_AbstractTree.__name__ = true;
 inter_AbstractTree.__interfaces__ = [inter_ITree];
 inter_AbstractTree.__super__ = inter_AbstractEvent;
 inter_AbstractTree.prototype = $extend(inter_AbstractEvent.prototype,{
-	addEmitter: function(parentNodeId,id) {
+	addEmitter: function(parentNode,id) {
 	}
-	,addParticle: function(parentNodeId,id) {
+	,addParticle: function(parentNode,id) {
 	}
-	,removeParticle: function(nodeId) {
+	,removeParticle: function(node) {
 	}
 	,__class__: inter_AbstractTree
 });
@@ -181,23 +179,20 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 29, className : "component.Tree", methodName : "init"});
 		}});
 	}
-	,addEmitter: function(parentNodeId,id) {
-		var node = this.getDom().tree("find",parentNodeId);
-		if(node && (node.domId == "_easyui_tree_1" || node.type == component_EParticleType.EMITTER)) {
+	,addEmitter: function(parentNode,id) {
+		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
 			var nodes = [{ id : id, text : id + "_" + Std.string(component_EParticleType.EMITTER), type : component_EParticleType.EMITTER}];
-			this.getDom().tree("append",{ parent : node.target, data : nodes});
-			this.addParticle(id,Main.getId());
+			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
+			this.addParticle(this.getDom().tree("find",id),Main.getId());
 		}
 	}
-	,addParticle: function(parentNodeId,id) {
-		var node = this.getDom().tree("find",parentNodeId);
-		if(node && (node.domId == "_easyui_tree_1" || node.type == component_EParticleType.EMITTER)) {
+	,addParticle: function(parentNode,id) {
+		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
 			var nodes = [{ id : id, text : id + "_" + Std.string(component_EParticleType.PARTICLE), type : component_EParticleType.PARTICLE}];
-			this.getDom().tree("append",{ parent : node.target, data : nodes});
+			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
 		}
 	}
-	,removeParticle: function(nodeId) {
-		var node = this.getDom().tree("find",nodeId);
+	,removeParticle: function(node) {
 		if(node && node.domId != "_easyui_tree_1") this.getDom().tree("remove",node.target);
 	}
 	,__class__: component_Tree
@@ -398,3 +393,5 @@ js.JQuery = q;
 js_Boot.__toStr = {}.toString;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=haxe.js.map

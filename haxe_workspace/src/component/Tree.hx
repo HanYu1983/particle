@@ -31,39 +31,36 @@ class Tree extends AbstractTree
 		});
 	}
 	
-	override public function addEmitter( parentNodeId:String, id:String ):Void {
-		var node:Dynamic = getDom().tree('find', parentNodeId);
-		if (node && ( node.domId == '_easyui_tree_1' || node.type == EParticleType.EMITTER )) {
+	override public function addEmitter( parentNode:Dynamic, id:String ):Void {
+		if (parentNode && ( parentNode.domId == '_easyui_tree_1' || parentNode.type == EParticleType.EMITTER )) {
 			var nodes = [{
 				id:id,
 				text:id + '_' + EParticleType.EMITTER,
 				type:EParticleType.EMITTER
 			}];
 			getDom().tree('append', {
-				parent:node.target,
+				parent:parentNode.target,
 				data:nodes
 			});
 			
-			addParticle( id, Main.getId() );
+			addParticle( getDom().tree('find', id), Main.getId() );
 		}
 	}
-	override public function addParticle( parentNodeId:String, id:String ):Void {
-		var node:Dynamic = getDom().tree('find', parentNodeId);
-		if (node && ( node.domId == '_easyui_tree_1' || node.type == EParticleType.EMITTER )) {
+	override public function addParticle( parentNode:Dynamic, id:String ):Void {
+		if (parentNode && ( parentNode.domId == '_easyui_tree_1' || parentNode.type == EParticleType.EMITTER )) {
 			var nodes = [{
 				id:id,
 				text:id + '_' + EParticleType.PARTICLE,
 				type:EParticleType.PARTICLE
 			}];
 			getDom().tree('append', {
-				parent:node.target,
+				parent:parentNode.target,
 				data:nodes
 			});
 		}
 	}
 	
-	override public function removeParticle( nodeId:String ):Void {
-		var node:Dynamic = getDom().tree('find', nodeId);
+	override public function removeParticle( node:Dynamic ):Void {
 		if (node && node.domId != '_easyui_tree_1' ) {
 			getDom().tree('remove', node.target );
 		}

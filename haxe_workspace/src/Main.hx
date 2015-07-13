@@ -51,23 +51,21 @@ class Main
 				Browser.alert( '只能增加粒子在發射器下' );
 				return;
 			}
-			fn( selectNode.id );
+			fn( selectNode );
 		}
 		
 		switch( target.id ) {
 			case 'btn_addParticle':
-				checkNodeAndThen( function( nodeId ) {
-					tree.addParticle( nodeId, getId() );
+				checkNodeAndThen( function( node ) {
+					tree.addParticle( node, getId() );
 				});
 			case 'btn_addEmitter':
-				checkNodeAndThen( function( nodeId ) {
-					tree.addEmitter( nodeId, getId() );
+				checkNodeAndThen( function( node ) {
+					tree.addEmitter( node, getId() );
 				});
 			case 'btn_remove':
 				var selectNode = tree.getDom().tree('getSelected');
-				trace( selectNode );
-				trace( selectNode.id );
-				tree.removeParticle( selectNode.id );
+				tree.removeParticle( selectNode );
 		}
 	}
 	
