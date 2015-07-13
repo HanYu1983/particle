@@ -1,6 +1,7 @@
 package ;
 
 import component.EParticleType;
+import component.Particle;
 import component.Tree;
 import inter.AbstractTree;
 import inter.IDom;
@@ -21,6 +22,7 @@ class Main
 	var tree_particle:Dynamic;
 	var webgl:Dynamic;
 	var tree:AbstractTree;
+	var onView = OnView.inst;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -33,7 +35,7 @@ class Main
 		tree_particle = j( '#tree_particle' );
 		
 		tree = new Tree( tree_particle );
-		tree.addParticle( tree.getDom().tree( 'getRoot' ).id, getId() );
+		tree.parserLoadData( loadSaveData() );
 		
 		addListener();
 		onResize( null );
@@ -42,8 +44,7 @@ class Main
 	function onHtmlClick( target ) {
 		
 		function checkNodeAndThen( fn ) {
-			var treeDom = cast( tree, IDom );
-			var selectNode = treeDom.getDom().tree('getSelected');
+			var selectNode = tree.getSelectedNode();
 			if ( selectNode == null ) {
 				Browser.alert( '請選擇發射器' );
 				return;
@@ -51,23 +52,21 @@ class Main
 				Browser.alert( '只能增加粒子在發射器下' );
 				return;
 			}
-			fn( selectNode.id );
+			fn( selectNode );
 		}
 		
 		switch( target.id ) {
 			case 'btn_addParticle':
-				checkNodeAndThen( function( nodeId ) {
-					tree.addParticle( nodeId, getId() );
+				checkNodeAndThen( function( node ) {
+					tree.addParticle( node, new Particle( { id:getId()} ) );
 				});
 			case 'btn_addEmitter':
-				checkNodeAndThen( function( nodeId ) {
-					tree.addEmitter( nodeId, getId() );
+				checkNodeAndThen( function( node ) {
+					tree.addEmitter( node, new Particle( { id:getId() } ));
 				});
 			case 'btn_remove':
-				var selectNode = tree.getDom().tree('getSelected');
-				trace( selectNode );
-				trace( selectNode.id );
-				tree.removeParticle( selectNode.id );
+				var selectNode = tree.getSelectedNode();
+				tree.removeParticle( selectNode );
 		}
 	}
 	
@@ -75,8 +74,12 @@ class Main
 		j('body').mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
 		tree.getEvent().on( 'onTreeNodeClick', function( e, params ) {
-			trace( e, params );
+			trace( params.node.particle );
 		});
+	}
+	
+	function loadSaveData():Dynamic {
+		return untyped __js__( 'testLoadData' );
 	}
 	
 	function onResize( e ) {

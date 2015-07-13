@@ -12,17 +12,33 @@ class AbstractTree extends AbstractEvent implements ITree
 		super( dom );
 	}
 	
-	public function addEmitter(parentNodeId:String, id:String):Void 
+	public function parserLoadData( loadData:Dynamic ):Void {
+		
+	}
+	
+	public function addEmitter(parentNode:Dynamic, particle:IParticle, ?addData:Bool = true):Void 
 	{
 		
 	}
 	
-	public function addParticle(parentNodeId:String, id:String):Void 
+	public function addParticle(parentNode:Dynamic, particle:IParticle, ?addData:Bool = true):Void 
 	{
 		
 	}
 	
-	public function removeParticle(nodeId:String):Void 
+	public function getRootNode():Dynamic {
+		return null;
+	}
+	
+	public function findNode( nodeId:String ):Dynamic {
+		return null;
+	}
+	
+	public function getSelectedNode():Dynamic {
+		return null;
+	}
+	
+	public function removeParticle(node:Dynamic):Void 
 	{
 		
 	}
