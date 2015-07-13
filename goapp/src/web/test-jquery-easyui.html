@@ -254,6 +254,13 @@
 	
 	</script>
 	<script>
+	//測試用讀取資料
+	var testLoadData = { 	id:'root', 
+							lifetime:10,
+							emit: { prototype:[ { id:'root_particle', lifetime:1, vel:[50, 0, 0] }, { id:'root_particle2', emit: { prototype:[ { id:'a_particle', lifetime:1, vel:[50, 0, 0] }, { id:'a_particle2', lifetime:1, vel:[50, 0, 0] } ] }, lifetime:1, vel:[50, 0, 0] } ] }, 
+							pos:[0, 0, 0], vel:[0, 0, 0] }
+	
+	
 	goog.require("app.main2");
 	window.haxeStart();
 	</script>

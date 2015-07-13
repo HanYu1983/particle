@@ -1,6 +1,7 @@
 package ;
 
 import component.EParticleType;
+import component.ParticleManager;
 import component.Tree;
 import inter.AbstractTree;
 import inter.IDom;
@@ -21,6 +22,8 @@ class Main
 	var tree_particle:Dynamic;
 	var webgl:Dynamic;
 	var tree:AbstractTree;
+	var onView = OnView.inst;
+	var particleManager = ParticleManager.inst;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -32,8 +35,16 @@ class Main
 		webgl = j( '#webgl' );
 		tree_particle = j( '#tree_particle' );
 		
+		/*
+		onView.setObject( loadSaveData(), function( p ) {
+			p.viewId = getId();
+			particleManager.addParticle( p );
+		});
+		*/
+		
 		tree = new Tree( tree_particle );
-		tree.addParticle( tree.getRootNode(), getId() );
+		tree.parserLoadData( loadSaveData() );
+		//tree.addParticle( tree.getRootNode(), getId() );
 		
 		addListener();
 		onResize( null );
@@ -74,6 +85,10 @@ class Main
 		tree.getEvent().on( 'onTreeNodeClick', function( e, params ) {
 			trace( e, params );
 		});
+	}
+	
+	function loadSaveData():Dynamic {
+		return untyped __js__( 'testLoadData' );
 	}
 	
 	function onResize( e ) {

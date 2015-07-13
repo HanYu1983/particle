@@ -30,12 +30,14 @@ class OnView
 		
 	}
 	
-	public function setObject( ?obj ) {
+	public function setObject( ?obj, fn ) {
 		basicObj = ( obj == null ? { 	id:'root', 
 										lifetime:10,
 										emit: { prototype:[ { id:'root_particle', lifetime:1, vel:[50, 0, 0] } ] }, 
 										pos:[0, 0, 0], vel:[0, 0, 0] } : obj );
-		notify( 'edit-particle', basicObj );
+		
+		goThroughAllParticle( fn );
+		updateParticleRoot();
 	}
 	
 	public function getObject() {
@@ -45,6 +47,24 @@ class OnView
 	
 	public function updateParticleRoot() {
 		notify( 'edit-particle', getObject() );
+	}
+	
+	public function goThroughAllParticle( fn ) {
+		function _findParticle( fields:Dynamic, fn ) {
+			fn( fields );
+			if ( fields.hasField( 'emit' ) ) {
+				var ary:Array<Dynamic> = fields.emit.prototype;
+				var target:Dynamic = null;
+				for ( i in 0...ary.length ) {
+					_findParticle( ary[i], fn );
+				}
+				return target;
+			}else {
+				return null;
+			}
+		}
+		
+		return _findParticle( getObject(), fn );
 	}
 	
 	public function findParticle( id:String ) {

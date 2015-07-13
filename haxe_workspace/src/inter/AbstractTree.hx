@@ -12,6 +12,10 @@ class AbstractTree extends AbstractEvent implements ITree
 		super( dom );
 	}
 	
+	public function parserLoadData( loadData:Dynamic ):Void {
+		
+	}
+	
 	public function addEmitter(parentNode:Dynamic, id:String):Void 
 	{
 		
