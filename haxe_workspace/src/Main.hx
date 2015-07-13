@@ -33,7 +33,7 @@ class Main
 		tree_particle = j( '#tree_particle' );
 		
 		tree = new Tree( tree_particle );
-		tree.addParticle( tree.getDom().tree( 'getRoot' ).id, getId() );
+		tree.addParticle( tree.getRootNode(), getId() );
 		
 		addListener();
 		onResize( null );
@@ -42,8 +42,7 @@ class Main
 	function onHtmlClick( target ) {
 		
 		function checkNodeAndThen( fn ) {
-			var treeDom = cast( tree, IDom );
-			var selectNode = treeDom.getDom().tree('getSelected');
+			var selectNode = tree.getSelectedNode();
 			if ( selectNode == null ) {
 				Browser.alert( '請選擇發射器' );
 				return;
@@ -64,7 +63,7 @@ class Main
 					tree.addEmitter( node, getId() );
 				});
 			case 'btn_remove':
-				var selectNode = tree.getDom().tree('getSelected');
+				var selectNode = tree.getSelectedNode();
 				tree.removeParticle( selectNode );
 		}
 	}

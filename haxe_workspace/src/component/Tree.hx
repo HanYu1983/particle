@@ -43,7 +43,7 @@ class Tree extends AbstractTree
 				data:nodes
 			});
 			
-			addParticle( getDom().tree('find', id), Main.getId() );
+			addParticle( findNode( id ), Main.getId() );
 		}
 	}
 	override public function addParticle( parentNode:Dynamic, id:String ):Void {
@@ -58,6 +58,21 @@ class Tree extends AbstractTree
 				data:nodes
 			});
 		}
+	}
+	
+	override public function findNode(nodeId:String):Dynamic 
+	{
+		return getDom().tree('find', nodeId);
+	}
+	
+	override public function getRootNode():Dynamic 
+	{
+		return getDom().tree( 'getRoot' );
+	}
+	
+	override public function getSelectedNode():Dynamic 
+	{
+		return getDom().tree('getSelected');
 	}
 	
 	override public function removeParticle( node:Dynamic ):Void {

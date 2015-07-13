@@ -22,6 +22,18 @@ class AbstractTree extends AbstractEvent implements ITree
 		
 	}
 	
+	public function getRootNode():Dynamic {
+		return null;
+	}
+	
+	public function findNode( nodeId:String ):Dynamic {
+		return null;
+	}
+	
+	public function getSelectedNode():Dynamic {
+		return null;
+	}
+	
 	public function removeParticle(node:Dynamic):Void 
 	{
 		
