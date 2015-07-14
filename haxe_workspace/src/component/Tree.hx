@@ -13,6 +13,7 @@ using Reflect;
 class Tree extends AbstractTree
 {
 	public static var ADD_NODE = 'add_node';
+	public static var ON_TREE_NODE_CLICK = 'on_tree_node_click';
 	
 	public function new( dom ) 
 	{
@@ -25,7 +26,7 @@ class Tree extends AbstractTree
 		
 		getDom().tree( {
 			onClick:function( node ) {
-				getEvent().trigger( 'onTreeNodeClick', {node:node} );
+				trigger( ON_TREE_NODE_CLICK, {node:node} );
 			},
 			onDrop:function( target,source,point ){
 				trace( target );
@@ -87,18 +88,7 @@ class Tree extends AbstractTree
 				data:nodes
 			});
 			
-			trigger( ADD_NODE, { particleData:particleData } );
-			//parentNode.particle == null 的時候是因為新增root emitter，它的parent是Particle Tree，這個源頭沒有資料
-			/*
-			if ( parentNode.particle == null || !addData ) return;
-			var particleObj:Dynamic = parentNode.particle.getData();
-			if ( !particleObj.hasField( 'emit' ) ) {
-				particleObj.emit = {
-					prototype:[]
-				}
-			}
-			particleObj.emit.prototype.push( particle.getData() );
-			*/
+			trigger( ADD_NODE, { parentNode:parentNode, particleData:particleData } );
 		}
 	}
 }

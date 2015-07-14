@@ -9,21 +9,19 @@ using Reflect;
  */
 class Particle implements IParticle
 {
-	var _id:String;
 	var _parent:IParticle;
 	var _ary_children = new Array<IParticle>();
 	var _type:EParticleType;
 	var _data:Dynamic;
 
-	public function new( id, parent , data ) 
+	public function new( parent, data ) 
 	{
 		_data = data;
-		_id = id;
 		_parent = parent;
 	}
 	
 	public function getId() {
-		return _id;
+		return getData().id;
 	}
 	
 	public function getData():Dynamic {

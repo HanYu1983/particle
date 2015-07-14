@@ -17,18 +17,22 @@ class ParticleManager
 	}
 	
 	public function addParticle( particle:IParticle ) {
-		if ( existParticle( particle )) return;
+		if ( existParticle( particle.getId() )) return;
 		_coll_particle.set( particle.getId(), particle );
 	}
 	
 	public function removeParticle( particle:IParticle ) {
-		if ( !existParticle( particle )) return;
+		if ( !existParticle( particle.getId() )) return;
 		_coll_particle.remove( particle.getId() );
 	}
 	
 	public function getParticleById( id:String ):IParticle {
-		if ( !existParticle( particle )) return null;
+		if ( !existParticle( id )) return null;
 		return _coll_particle.get( id );
+	}
+	
+	public function getParticles() {
+		return _coll_particle;
 	}
 	
 	function existParticle( id:String ) {

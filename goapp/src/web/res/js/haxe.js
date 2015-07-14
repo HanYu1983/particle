@@ -7,6 +7,7 @@ function $extend(from, fields) {
 	return proto;
 }
 var Main = function() {
+	this.particleManager = component_ParticleManager.inst;
 	this.onView = component_OnView.inst;
 	this.j = $;
 	Reflect.setField(window,"haxeStart",$bind(this,this.start));
@@ -25,9 +26,9 @@ Main.prototype = {
 		this.webgl = this.j("#webgl");
 		this.tree_particle = this.j("#tree_particle");
 		this.tree = new component_Tree(this.tree_particle);
-		this.tree.parserLoadData(this.loadSaveData());
 		this.addListener();
 		this.onResize(null);
+		this.tree.parserLoadData(this.loadSaveData());
 	}
 	,onHtmlClick: function(target) {
 		var _g = this;
@@ -61,10 +62,20 @@ Main.prototype = {
 		}
 	}
 	,addListener: function() {
+		var _g = this;
 		this.j("body").mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
-		this.tree.getEvent().on("onTreeNodeClick",function(e,params) {
-			haxe_Log.trace(params.node.particle,{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "addListener"});
+		this.tree.getEvent().on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
+			var pid = params.node.id;
+			var particle = _g.particleManager.getParticleById(pid);
+			if(particle == null) return;
+			console.log(particle.getData());
+		});
+		this.tree.getEvent().on(component_Tree.ADD_NODE,function(e1,params1) {
+			var particleData = params1.particleData;
+			var parentNode = params1.parentNode;
+			var parentParticle = _g.particleManager.getParticleById(parentNode.id);
+			_g.particleManager.addParticle(new component_Particle(parentParticle,particleData));
 		});
 	}
 	,loadSaveData: function() {
@@ -166,17 +177,16 @@ component_OnView.prototype = {
 };
 var inter_IParticle = function() { };
 inter_IParticle.__name__ = true;
-var component_Particle = function(id,parent,data) {
+var component_Particle = function(parent,data) {
 	this._ary_children = [];
 	this._data = data;
-	this._id = id;
 	this._parent = parent;
 };
 component_Particle.__name__ = true;
 component_Particle.__interfaces__ = [inter_IParticle];
 component_Particle.prototype = {
 	getId: function() {
-		return this._id;
+		return this.getData().id;
 	}
 	,getData: function() {
 		return this._data;
@@ -196,6 +206,32 @@ component_Particle.prototype = {
 	}
 	,toString: function() {
 		return JSON.stringify(this.getData());
+	}
+};
+var component_ParticleManager = function() {
+	this._coll_particle = new haxe_ds_StringMap();
+};
+component_ParticleManager.__name__ = true;
+component_ParticleManager.prototype = {
+	addParticle: function(particle) {
+		if(this.existParticle(particle.getId())) return;
+		var key = particle.getId();
+		this._coll_particle.set(key,particle);
+	}
+	,removeParticle: function(particle) {
+		if(!this.existParticle(particle.getId())) return;
+		var key = particle.getId();
+		this._coll_particle.remove(key);
+	}
+	,getParticleById: function(id) {
+		if(!this.existParticle(id)) return null;
+		return this._coll_particle.get(id);
+	}
+	,getParticles: function() {
+		return this._coll_particle;
+	}
+	,existParticle: function(id) {
+		return this._coll_particle.exists(id);
 	}
 };
 var inter_IDom = function() { };
@@ -228,12 +264,10 @@ inter_AbstractEvent.prototype = $extend(inter_AbstractDom.prototype,{
 		return this._event;
 	}
 	,trigger: function(type,options) {
-		haxe_Log.trace("trigger",{ fileName : "AbstractEvent.hx", lineNumber : 24, className : "inter.AbstractEvent", methodName : "trigger", customParams : [type,options]});
-		this.getDom().trigger(type,options);
+		this.getEvent().trigger(type,options);
 	}
 	,on: function(type,fn) {
-		haxe_Log.trace("on",{ fileName : "AbstractEvent.hx", lineNumber : 29, className : "inter.AbstractEvent", methodName : "on", customParams : [type,fn]});
-		this.getDom().on(type,fn);
+		this.getEvent().on(type,fn);
 	}
 });
 var inter_ITree = function() { };
@@ -271,11 +305,11 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		var _g = this;
 		inter_AbstractTree.prototype.init.call(this);
 		this.getDom().tree({ onClick : function(node) {
-			_g.getEvent().trigger("onTreeNodeClick",{ node : node});
+			_g.trigger(component_Tree.ON_TREE_NODE_CLICK,{ node : node});
 		}, onDrop : function(target,source,point) {
-			haxe_Log.trace(target,{ fileName : "Tree.hx", lineNumber : 31, className : "component.Tree", methodName : "init"});
-			haxe_Log.trace(source,{ fileName : "Tree.hx", lineNumber : 32, className : "component.Tree", methodName : "init"});
-			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 33, className : "component.Tree", methodName : "init"});
+			console.log(target);
+			console.log(source);
+			console.log(point);
 		}});
 	}
 	,parserLoadData: function(loadData) {
@@ -318,14 +352,52 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
 			var nodes = [{ id : particleData.id, text : name, type : type}];
 			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
-			this.trigger(component_Tree.ADD_NODE,{ particleData : particleData});
+			this.trigger(component_Tree.ADD_NODE,{ parentNode : parentNode, particleData : particleData});
 		}
 	}
 });
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
+var haxe_IMap = function() { };
+haxe_IMap.__name__ = true;
+var haxe_ds_StringMap = function() {
+	this.h = { };
+};
+haxe_ds_StringMap.__name__ = true;
+haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
+haxe_ds_StringMap.prototype = {
+	set: function(key,value) {
+		if(__map_reserved[key] != null) this.setReserved(key,value); else this.h[key] = value;
+	}
+	,get: function(key) {
+		if(__map_reserved[key] != null) return this.getReserved(key);
+		return this.h[key];
+	}
+	,exists: function(key) {
+		if(__map_reserved[key] != null) return this.existsReserved(key);
+		return this.h.hasOwnProperty(key);
+	}
+	,setReserved: function(key,value) {
+		if(this.rh == null) this.rh = { };
+		this.rh["$" + key] = value;
+	}
+	,getReserved: function(key) {
+		if(this.rh == null) return null; else return this.rh["$" + key];
+	}
+	,existsReserved: function(key) {
+		if(this.rh == null) return false;
+		return this.rh.hasOwnProperty("$" + key);
+	}
+	,remove: function(key) {
+		if(__map_reserved[key] != null) {
+			key = "$" + key;
+			if(this.rh == null || !this.rh.hasOwnProperty(key)) return false;
+			delete(this.rh[key]);
+			return true;
+		} else {
+			if(!this.h.hasOwnProperty(key)) return false;
+			delete(this.h[key]);
+			return true;
+		}
+	}
 };
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
@@ -339,25 +411,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -435,11 +488,14 @@ var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 String.__name__ = true;
 Array.__name__ = true;
+var __map_reserved = {}
 var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;
 component_OnView.inst = new component_OnView();
+component_ParticleManager.inst = new component_ParticleManager();
 component_Tree.ADD_NODE = "add_node";
+component_Tree.ON_TREE_NODE_CLICK = "on_tree_node_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

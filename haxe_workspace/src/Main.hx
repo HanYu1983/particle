@@ -3,6 +3,7 @@ package ;
 import component.EParticleType;
 import component.OnView;
 import component.Particle;
+import component.ParticleManager;
 import component.Tree;
 import inter.AbstractTree;
 import inter.IDom;
@@ -24,6 +25,7 @@ class Main
 	var webgl:Dynamic;
 	var tree:AbstractTree;
 	var onView = component.OnView.inst;
+	var particleManager = ParticleManager.inst;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -36,10 +38,11 @@ class Main
 		tree_particle = j( '#tree_particle' );
 		
 		tree = new Tree( tree_particle );
-		tree.parserLoadData( loadSaveData() );
 		
 		addListener();
 		onResize( null );
+		
+		tree.parserLoadData( loadSaveData() );
 	}
 	
 	function onHtmlClick( target ) {
@@ -74,8 +77,17 @@ class Main
 	function addListener() {
 		j('body').mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
-		tree.getEvent().on( 'onTreeNodeClick', function( e, params ) {
-			trace( params.node.particle );
+		tree.getEvent().on( Tree.ON_TREE_NODE_CLICK, function( e, params ) {
+			var pid = params.node.id;
+			var particle = particleManager.getParticleById( pid );
+			if ( particle == null ) return;
+			trace( particle.getData() );
+		});
+		tree.getEvent().on( Tree.ADD_NODE, function( e, params ) {
+			var particleData = params.particleData;
+			var parentNode = params.parentNode;
+			var parentParticle = particleManager.getParticleById( parentNode.id );
+			particleManager.addParticle( new Particle( parentParticle, particleData ));
 		});
 	}
 	
