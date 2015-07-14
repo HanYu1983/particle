@@ -64,11 +64,14 @@ Main.prototype = {
 		}
 	}
 	,addListener: function() {
+		var _g = this;
 		this.webgl.mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
 		this.tree.on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
 			var particleData = params.node.particleData;
+			if(particleData == null) return;
 			console.log(particleData);
+			_g.panel.setData(particleData);
 		});
 	}
 	,loadSaveData: function() {
@@ -210,7 +213,13 @@ inter_AbstractParamsPanel.__name__ = true;
 inter_AbstractParamsPanel.__interfaces__ = [inter_IParamsPanel];
 inter_AbstractParamsPanel.__super__ = inter_AbstractEvent;
 inter_AbstractParamsPanel.prototype = $extend(inter_AbstractEvent.prototype,{
-	setLife: function(life) {
+	setData: function(data) {
+		this.particleData = data;
+	}
+	,getData: function() {
+		return this.particleData;
+	}
+	,setLife: function(life) {
 	}
 	,setMass: function(mass) {
 	}
@@ -225,6 +234,8 @@ inter_AbstractParamsPanel.prototype = $extend(inter_AbstractEvent.prototype,{
 	,setSize: function(width,height) {
 	}
 	,setColor: function(color) {
+	}
+	,setName: function(name) {
 	}
 	,getLife: function() {
 		return 0;
@@ -253,10 +264,61 @@ inter_AbstractParamsPanel.prototype = $extend(inter_AbstractEvent.prototype,{
 });
 var component_ParamsPanel = function(dom) {
 	inter_AbstractParamsPanel.call(this,dom);
+	this.txt_name = dom.find("#txt_name").find("span");
+	this.txt_life = dom.find("#txt_life");
+	this.txt_mass = dom.find("#txt_mass");
+	this.txt_rot = dom.find("#txt_rot");
+	this.txt_vel_rot = dom.find("#txt_vel_rot");
+	this.txt_size_x = dom.find("#txt_size_x");
+	this.txt_size_y = dom.find("#txt_size_y");
+	this.txt_pos_x = dom.find("#txt_pos_x");
+	this.txt_pos_y = dom.find("#txt_pos_y");
+	this.txt_vel_x = dom.find("#txt_vel_x");
+	this.txt_vel_y = dom.find("#txt_vel_y");
 };
 component_ParamsPanel.__name__ = true;
 component_ParamsPanel.__super__ = inter_AbstractParamsPanel;
 component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
+	setData: function(data) {
+		inter_AbstractParamsPanel.prototype.setData.call(this,data);
+		this.setName(data.id);
+		this.setPosition(data.pos[0],data.pos[1]);
+		this.setVelocity(data.vel[0],data.vel[1]);
+		this.setRotation(data.pos[2]);
+		this.setVelocityRotation(data.vel[2]);
+		this.setLife(data.lifetime);
+		this.setMass(data.mass);
+		this.setSize(data.size[0],data.size[1]);
+	}
+	,setVelocity: function(x,y) {
+		this.txt_vel_x.spinner("setValue",x);
+		this.txt_vel_y.spinner("setValue",y);
+	}
+	,setName: function(name) {
+		this.txt_name.html(name);
+	}
+	,setColor: function(color) {
+	}
+	,setLife: function(life) {
+		this.txt_life.spinner("setValue",life);
+	}
+	,setMass: function(mass) {
+		this.txt_mass.spinner("setValue",mass);
+	}
+	,setPosition: function(x,y) {
+		this.txt_pos_x.spinner("setValue",x);
+		this.txt_pos_y.spinner("setValue",y);
+	}
+	,setRotation: function(r) {
+		this.txt_rot.spinner("setValue",r);
+	}
+	,setSize: function(width,height) {
+		this.txt_size_x.spinner("setValue",width);
+		this.txt_size_y.spinner("setValue",height);
+	}
+	,setVelocityRotation: function(v) {
+		this.txt_vel_rot.spinner("setValue",v);
+	}
 });
 var inter_ITree = function() { };
 inter_ITree.__name__ = true;

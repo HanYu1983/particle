@@ -82,7 +82,9 @@ class Main
 		j( Browser.window ).resize( onResize );
 		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
 			var particleData = params.node.particleData;
+			if ( particleData == null ) return;
 			trace( particleData );
+			panel.setData( particleData );
 		});
 	}
 	

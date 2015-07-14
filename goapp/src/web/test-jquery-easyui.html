@@ -92,47 +92,41 @@
 				<div id="paramsPanel" class="easyui-panel" title="Paritlce Properties" style="padding:5px; width:100%; height:80%;">
 					
 					<div class="propGroup" style="margin-bottom:10px;">
-						<div class="particle_title" style="float:left; margin-right:20px;">Name: <span style="color:yellow;">AAasdfasdfBB</span></div>
+						<div id="txt_name" class="particle_title" style="float:left; margin-right:20px;">Name: <span style="color:yellow;">AAasdfasdfBB</span></div>
 						<a href="#" class="easyui-linkbutton" >Rename</a>
 					</div>
 					
 					<div class="propGroup">
 						<div class="prop">
-							<div class="lbl_prop">life</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">life</div><input id="txt_life" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						
 						<div class="prop">
-							<div class="lbl_prop">mass</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">mass</div><input id="txt_mass" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
-							<div class="lbl_prop">pos-x</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">pos-x</div><input id="txt_pos_x" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
-							<div class="lbl_prop">pos-y</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">pos-y</div><input id="txt_pos_y" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
-							<div class="lbl_prop">pos-z</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">rot</div><input id="txt_rot" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
-							<div class="lbl_prop">rot</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">vel-x</div><input id="txt_vel_x" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
-							<div class="lbl_prop">vel-x</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">vel-y</div><input id="txt_vel_y" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
-							<div class="lbl_prop">vel-y</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">vel-r</div><input id="txt_vel_rot" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
-							<div class="lbl_prop">vel-z</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">size-x</div><input id="txt_size_x" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
-							<div class="lbl_prop">vel-r</div><input class="easyui-numberspinner" style="width:80px;"></input>
-						</div>
-						<div class="prop">
-							<div class="lbl_prop">size-x</div><input class="easyui-numberspinner" style="width:80px;"></input>
-						</div>
-						<div class="prop">
-							<div class="lbl_prop">size-y</div><input class="easyui-numberspinner" style="width:80px;"></input>
+							<div class="lbl_prop">size-y</div><input id="txt_size_y" class="easyui-numberspinner" style="width:80px;"></input>
 						</div>
 						<div class="prop">
 							<div class="lbl_prop">color</div><input id="cpk_color" type="text" class="hide input_params" value="fe9810"></input>
@@ -259,8 +253,16 @@
 	//測試用讀取資料
 	var testLoadData = { 	id:'root', 
 							lifetime:10,
-							emit: { prototype:[ { id:'root_particle', lifetime:1, vel:[50, 0, 0] }, { id:'root_particle2', emit: { prototype:[ { id:'a_particle', lifetime:1, vel:[50, 0, 0] }, { id:'a_particle2', lifetime:1, vel:[50, 0, 0] } ] }, lifetime:1, vel:[50, 0, 0] } ] }, 
-							pos:[0, 0, 0], vel:[0, 0, 0] }
+							mass:3,
+							color:'#33ddff',
+							size:[10, 20],
+							pos:[0, 0, 0], vel:[0, 0, 0],
+							emit: { prototype:[ { 	id:'root_particle', 
+													lifetime:1,
+													mass:3,
+													color:'#33ddff',
+													size:[10, 20],
+													pos:[0, 0, 0], vel:[100, 0, 0] }] }}
 	
 	
 	goog.require("app.main2");

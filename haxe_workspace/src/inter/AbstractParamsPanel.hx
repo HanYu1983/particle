@@ -6,11 +6,20 @@ package inter;
  */
 class AbstractParamsPanel extends AbstractEvent implements IParamsPanel
 {
+	var particleData:Dynamic;
 
 	public function new(dom) 
 	{
 		super(dom);
 		
+	}
+	
+	public function setData( data:Dynamic ):Void {
+		particleData = data;
+	}
+	
+	public function getData():Dynamic {
+		return particleData;
 	}
 	
 	public function setLife(life:Int):Void 
@@ -50,6 +59,10 @@ class AbstractParamsPanel extends AbstractEvent implements IParamsPanel
 	
 	public function setColor(color:Int):Void 
 	{
+		
+	}
+	
+	public function setName( name:String ):Void {
 		
 	}
 	
