@@ -1,7 +1,8 @@
 package ;
 
 import component.EParticleType;
-import component.Particle;
+import component.OnView;
+import component.ParamsPanel;
 import component.Tree;
 import inter.AbstractTree;
 import inter.IDom;
@@ -21,8 +22,10 @@ class Main
 	var canvas_container:Dynamic;
 	var tree_particle:Dynamic;
 	var webgl:Dynamic;
+	var paramsPanel:Dynamic;
 	var tree:AbstractTree;
-	var onView = OnView.inst;
+	var onView = component.OnView.inst;
+	var panel:ParamsPanel;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -33,12 +36,16 @@ class Main
 		canvas_container = j( '#canvas_container' );
 		webgl = j( '#webgl' );
 		tree_particle = j( '#tree_particle' );
+		paramsPanel = j( '#paramsPanel' );
 		
 		tree = new Tree( tree_particle );
-		tree.parserLoadData( loadSaveData() );
+		panel = new ParamsPanel( paramsPanel );
 		
 		addListener();
 		onResize( null );
+		
+		tree.parserLoadData( loadSaveData() );
+		onView.setObject( loadSaveData() );
 	}
 	
 	function onHtmlClick( target ) {
@@ -58,11 +65,11 @@ class Main
 		switch( target.id ) {
 			case 'btn_addParticle':
 				checkNodeAndThen( function( node ) {
-					tree.addParticle( node, new Particle( { id:getId()} ) );
+					tree.addParticle( node, { id:getId() }, EParticleType.PARTICLE, 'test_particle' );
 				});
 			case 'btn_addEmitter':
 				checkNodeAndThen( function( node ) {
-					tree.addEmitter( node, new Particle( { id:getId() } ));
+					tree.addParticle( node, { id:getId() }, EParticleType.EMITTER, 'test_emitter' );
 				});
 			case 'btn_remove':
 				var selectNode = tree.getSelectedNode();
@@ -71,10 +78,13 @@ class Main
 	}
 	
 	function addListener() {
-		j('body').mousemove( onMousemove );
+		webgl.mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
-		tree.getEvent().on( 'onTreeNodeClick', function( e, params ) {
-			trace( params.node.particle );
+		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
+			var particleData = params.node.particleData;
+			if ( particleData == null ) return;
+			trace( particleData );
+			panel.setData( particleData );
 		});
 	}
 	
@@ -88,9 +98,11 @@ class Main
 	}
 	
 	function onMousemove(e) {
-		var px = e.clientX;
-		var py = e.clientY;
-		//OnView.inst.moveParticle( 'root', px, py );
+		var px = e.offsetX;
+		var py = e.offsetY;
+		
+		onView.moveParticle( px, py );
+		onView.setObject( tree.outputData() );
 	}
 	
 	public static function getId() {
