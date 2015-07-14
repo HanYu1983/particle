@@ -1,4 +1,5 @@
 package inter;
+import component.EParticleType;
 
 /**
  * ...
@@ -16,13 +17,7 @@ class AbstractTree extends AbstractEvent implements ITree
 		
 	}
 	
-	public function addEmitter(parentNode:Dynamic, particle:IParticle, ?addData:Bool = true):Void 
-	{
-		
-	}
-	
-	public function addParticle(parentNode:Dynamic, particle:IParticle, ?addData:Bool = true):Void 
-	{
+	public function addParticle( parentNode:Dynamic, particleData:Dynamic, type:EParticleType, name:String ):Void {
 		
 	}
 	

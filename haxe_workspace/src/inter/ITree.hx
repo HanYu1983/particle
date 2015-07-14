@@ -1,4 +1,5 @@
 package inter;
+import component.EParticleType;
 import component.Particle;
 
 /**
@@ -6,8 +7,7 @@ import component.Particle;
  */
 interface ITree 
 {
-	function addEmitter( parentNode:Dynamic, particle:IParticle, ?addData:Bool = true ):Void;
-	function addParticle( parentNode:Dynamic, particle:IParticle, ?addData:Bool = true ):Void;
+	function addParticle( parentNode:Dynamic, particleData:Dynamic, type:EParticleType, name:String ):Void;
 	function parserLoadData( loadData:Dynamic ):Void;
 	function findNode( nodeId:String ):Dynamic;
 	function getRootNode():Dynamic;

@@ -46,10 +46,12 @@ Main.prototype = {
 		switch(_g1) {
 		case "btn_addParticle":
 			checkNodeAndThen(function(node) {
+				_g.tree.addParticle(node,{ id : Main.getId()},component_EParticleType.PARTICLE,"test_particle");
 			});
 			break;
 		case "btn_addEmitter":
 			checkNodeAndThen(function(node1) {
+				_g.tree.addParticle(node1,{ id : Main.getId()},component_EParticleType.EMITTER,"test_emitter");
 			});
 			break;
 		case "btn_remove":
@@ -85,11 +87,6 @@ Reflect.hasField = function(o,field) {
 };
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
-};
-var Std = function() { };
-Std.__name__ = true;
-Std.string = function(s) {
-	return js_Boot.__string_rec(s,"");
 };
 var component_EParticleType = { __ename__ : true, __constructs__ : ["PARTICLE","EMITTER"] };
 component_EParticleType.PARTICLE = ["PARTICLE",0];
@@ -250,11 +247,7 @@ inter_AbstractTree.__super__ = inter_AbstractEvent;
 inter_AbstractTree.prototype = $extend(inter_AbstractEvent.prototype,{
 	parserLoadData: function(loadData) {
 	}
-	,addEmitter: function(parentNode,particle,addData) {
-		if(addData == null) addData = true;
-	}
-	,addParticle: function(parentNode,particle,addData) {
-		if(addData == null) addData = true;
+	,addParticle: function(parentNode,particleData,type,name) {
 	}
 	,getRootNode: function() {
 		return null;
@@ -280,9 +273,9 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		this.getDom().tree({ onClick : function(node) {
 			_g.getEvent().trigger("onTreeNodeClick",{ node : node});
 		}, onDrop : function(target,source,point) {
-			haxe_Log.trace(target,{ fileName : "Tree.hx", lineNumber : 28, className : "component.Tree", methodName : "init"});
-			haxe_Log.trace(source,{ fileName : "Tree.hx", lineNumber : 29, className : "component.Tree", methodName : "init"});
-			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 30, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(target,{ fileName : "Tree.hx", lineNumber : 31, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(source,{ fileName : "Tree.hx", lineNumber : 32, className : "component.Tree", methodName : "init"});
+			haxe_Log.trace(point,{ fileName : "Tree.hx", lineNumber : 33, className : "component.Tree", methodName : "init"});
 		}});
 	}
 	,parserLoadData: function(loadData) {
@@ -290,6 +283,7 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		var _findParticle;
 		var _findParticle1 = null;
 		_findParticle1 = function(fields,parentNode) {
+			_g.addParticle(parentNode,fields,component_EParticleType.EMITTER,fields.id);
 			if(Object.prototype.hasOwnProperty.call(fields,"emit")) {
 				var ary = fields.emit.prototype;
 				var target = null;
@@ -300,19 +294,13 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 					var i = _g2++;
 					_findParticle1(ary[i],parentNode);
 				}
-			} else {
 			}
 		};
 		_findParticle = _findParticle1;
 		_findParticle(loadData,this.getRootNode());
 	}
-	,addEmitter: function(parentNode,particle,addData) {
-		if(addData == null) addData = true;
-		this.addNode(parentNode,particle,addData);
-	}
-	,addParticle: function(parentNode,particle,addData) {
-		if(addData == null) addData = true;
-		this.addNode(parentNode,particle,addData);
+	,addParticle: function(parentNode,particleData,type,name) {
+		this.addNode(parentNode,particleData,type,name);
 	}
 	,findNode: function(nodeId) {
 		return this.getDom().tree("find",nodeId);
@@ -326,14 +314,11 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 	,removeParticle: function(node) {
 		if(node && node.domId != "_easyui_tree_1") this.getDom().tree("remove",node.target);
 	}
-	,addNode: function(parentNode,particle,addData) {
+	,addNode: function(parentNode,particleData,type,name) {
 		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
-			var nodes = [{ id : particle.getId(), text : particle.getId() + "_" + Std.string(particle.getType()), type : particle.getType(), particle : particle}];
+			var nodes = [{ id : particleData.id, text : name, type : type}];
 			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
-			if(parentNode.particle == null || !addData) return;
-			var particleObj = parentNode.particle.getData();
-			if(!Object.prototype.hasOwnProperty.call(particleObj,"emit")) particleObj.emit = { prototype : []};
-			particleObj.emit.prototype.push(particle.getData());
+			this.trigger(component_Tree.ADD_NODE,{ particleData : particleData});
 		}
 	}
 });
@@ -454,6 +439,7 @@ var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;
 component_OnView.inst = new component_OnView();
+component_Tree.ADD_NODE = "add_node";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
