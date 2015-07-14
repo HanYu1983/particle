@@ -41,9 +41,7 @@ class Tree extends AbstractTree
 				addEmitter( parentNode, new Particle( fields ), false );
 				parentNode = findNode( fields.id );
 				
-				for ( i in 0...ary.length ) {
-					_findParticle( ary[i], parentNode );
-				}
+				for ( i in 0...ary.length ) _findParticle( ary[i], parentNode );
 			}else {
 				addParticle( parentNode, new Particle( fields ), false );
 			}

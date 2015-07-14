@@ -7,7 +7,7 @@ function $extend(from, fields) {
 	return proto;
 }
 var Main = function() {
-	this.onView = OnView.inst;
+	this.onView = component_OnView.inst;
 	this.j = $;
 	Reflect.setField(window,"haxeStart",$bind(this,this.start));
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
@@ -64,7 +64,7 @@ Main.prototype = {
 		this.j("body").mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
 		this.tree.getEvent().on("onTreeNodeClick",function(e,params) {
-			haxe_Log.trace(params.node.particle,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "addListener"});
+			haxe_Log.trace(params.node.particle,{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "addListener"});
 		});
 	}
 	,loadSaveData: function() {
@@ -80,11 +80,31 @@ Main.prototype = {
 	}
 };
 Math.__name__ = true;
-var OnView = function() {
+var Reflect = function() { };
+Reflect.__name__ = true;
+Reflect.hasField = function(o,field) {
+	return Object.prototype.hasOwnProperty.call(o,field);
+};
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
+};
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var component_EParticleType = { __ename__ : true, __constructs__ : ["PARTICLE","EMITTER"] };
+component_EParticleType.PARTICLE = ["PARTICLE",0];
+component_EParticleType.PARTICLE.toString = $estr;
+component_EParticleType.PARTICLE.__enum__ = component_EParticleType;
+component_EParticleType.EMITTER = ["EMITTER",1];
+component_EParticleType.EMITTER.toString = $estr;
+component_EParticleType.EMITTER.__enum__ = component_EParticleType;
+var component_OnView = function() {
 	this.onViewObj = common.onView;
 };
-OnView.__name__ = true;
-OnView.prototype = {
+component_OnView.__name__ = true;
+component_OnView.prototype = {
 	setObject: function(obj,fn) {
 		if(obj == null) this.basicObj = { id : "root", lifetime : 10, emit : { prototype : [{ id : "root_particle", lifetime : 1, vel : [50,0,0]}]}, pos : [0,0,0], vel : [0,0,0]}; else this.basicObj = obj;
 		this.goThroughAllParticle(fn);
@@ -149,26 +169,6 @@ OnView.prototype = {
 		this.onViewObj.onNext([evt,value]);
 	}
 };
-var Reflect = function() { };
-Reflect.__name__ = true;
-Reflect.hasField = function(o,field) {
-	return Object.prototype.hasOwnProperty.call(o,field);
-};
-Reflect.setField = function(o,field,value) {
-	o[field] = value;
-};
-var Std = function() { };
-Std.__name__ = true;
-Std.string = function(s) {
-	return js_Boot.__string_rec(s,"");
-};
-var component_EParticleType = { __ename__ : true, __constructs__ : ["PARTICLE","EMITTER"] };
-component_EParticleType.PARTICLE = ["PARTICLE",0];
-component_EParticleType.PARTICLE.toString = $estr;
-component_EParticleType.PARTICLE.__enum__ = component_EParticleType;
-component_EParticleType.EMITTER = ["EMITTER",1];
-component_EParticleType.EMITTER.toString = $estr;
-component_EParticleType.EMITTER.__enum__ = component_EParticleType;
 var inter_IParticle = function() { };
 inter_IParticle.__name__ = true;
 var component_Particle = function(data) {
@@ -443,7 +443,7 @@ Array.__name__ = true;
 var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;
-OnView.inst = new OnView();
+component_OnView.inst = new component_OnView();
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

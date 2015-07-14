@@ -1,6 +1,7 @@
 package ;
 
 import component.EParticleType;
+import component.OnView;
 import component.Particle;
 import component.Tree;
 import inter.AbstractTree;
@@ -22,7 +23,7 @@ class Main
 	var tree_particle:Dynamic;
 	var webgl:Dynamic;
 	var tree:AbstractTree;
-	var onView = OnView.inst;
+	var onView = component.OnView.inst;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
