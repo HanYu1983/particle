@@ -93,6 +93,7 @@ Main.prototype = {
 			var pid = params.node.id;
 			var particle = _g.particleManager.getParticleById(pid);
 			if(particle == null) return;
+			console.log(particle.getData());
 		});
 		this.tree.on(component_Tree.ADD_NODE,function(e1,params1) {
 			var particleData = params1.particleData;

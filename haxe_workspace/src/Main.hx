@@ -82,6 +82,7 @@ class Main
 			var pid = params.node.id;
 			var particle = particleManager.getParticleById( pid );
 			if ( particle == null ) return;
+			trace( particle.getData() );
 		});
 		tree.on( Tree.ADD_NODE, function( e, params:Dynamic ) {
 			var particleData = params.particleData;
