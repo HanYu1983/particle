@@ -56,13 +56,13 @@ class Tree extends AbstractTree
 	{
 		var retobj:Dynamic = { };
 		function _loopNode( node:Dynamic, outputData:Dynamic ) {
-			var p = ParticleManager.inst.getParticleById( node.id );
-			outputData.id = p.getId();
-			outputData.lifetime = p.getData().lifetime;
-			outputData.vel = p.getData().vel;
-			outputData.pos = p.getData().pos;
-			outputData.mass = p.getData().mass;
-			outputData.color = p.getData().color;
+			var particleData = node.particleData;
+			outputData.id = particleData.id;
+			outputData.lifetime = particleData.lifetime;
+			outputData.vel = particleData.vel;
+			outputData.pos = particleData.pos;
+			outputData.mass = particleData.mass;
+			outputData.color = particleData.color;
 			
 			if ( node.children && node.children.length > 0 ) {
 				outputData.emit = {prototype:[]}
@@ -109,7 +109,8 @@ class Tree extends AbstractTree
 			var nodes = [{
 				id:particleData.id,
 				text:name,
-				type:type
+				type:type,
+				particleData:particleData
 			}];
 			getDom().tree('append', {
 				parent:parentNode.target,

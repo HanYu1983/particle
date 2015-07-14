@@ -4,7 +4,6 @@ import component.EParticleType;
 import component.OnView;
 import component.ParamsPanel;
 import component.Particle;
-import component.ParticleManager;
 import component.Tree;
 import inter.AbstractTree;
 import inter.IDom;
@@ -27,7 +26,6 @@ class Main
 	var paramsPanel:Dynamic;
 	var tree:AbstractTree;
 	var onView = component.OnView.inst;
-	var particleManager = ParticleManager.inst;
 	var panel:ParamsPanel;
 	
 	public function new() {
@@ -84,23 +82,8 @@ class Main
 		webgl.mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
 		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
-			var pid = params.node.id;
-			var particle = particleManager.getParticleById( pid );
-			if ( particle == null ) return;
-			//panel.setPosition( particle.get
-			trace( particle.getData() );
-		});
-		tree.on( Tree.ADD_NODE, function( e, params:Dynamic ) {
-			var particleData = params.particleData;
-			var parentNode = params.parentNode;
-			var parentParticle = particleManager.getParticleById( parentNode.id );
-			particleManager.addParticle( new Particle( parentParticle, particleData ));
-		});
-		tree.on( Tree.REMOVE_NODE, function( e, params:Dynamic ) {
-			var pid = params.node.id;
-			var particle = particleManager.getParticleById( pid );
-			particleManager.removeParticleAndChildren( particle );
-			trace( particleManager.getParticles() );
+			var particleData = params.node.particleData;
+			trace( particleData );
 		});
 	}
 	
