@@ -2,6 +2,7 @@ package ;
 
 import component.EParticleType;
 import component.OnView;
+import component.ParamsPanel;
 import component.Particle;
 import component.ParticleManager;
 import component.Tree;
@@ -23,9 +24,11 @@ class Main
 	var canvas_container:Dynamic;
 	var tree_particle:Dynamic;
 	var webgl:Dynamic;
+	var paramsPanel:Dynamic;
 	var tree:AbstractTree;
 	var onView = component.OnView.inst;
 	var particleManager = ParticleManager.inst;
+	var panel:ParamsPanel;
 	
 	public function new() {
 		Browser.window.setField( 'haxeStart', start );
@@ -36,8 +39,10 @@ class Main
 		canvas_container = j( '#canvas_container' );
 		webgl = j( '#webgl' );
 		tree_particle = j( '#tree_particle' );
+		paramsPanel = j( '#paramsPanel' );
 		
 		tree = new Tree( tree_particle );
+		panel = new ParamsPanel( paramsPanel );
 		
 		addListener();
 		onResize( null );
@@ -82,6 +87,7 @@ class Main
 			var pid = params.node.id;
 			var particle = particleManager.getParticleById( pid );
 			if ( particle == null ) return;
+			//panel.setPosition( particle.get
 			trace( particle.getData() );
 		});
 		tree.on( Tree.ADD_NODE, function( e, params:Dynamic ) {

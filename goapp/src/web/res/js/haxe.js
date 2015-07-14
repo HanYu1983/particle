@@ -48,7 +48,9 @@ Main.prototype = {
 		this.canvas_container = this.j("#canvas_container");
 		this.webgl = this.j("#webgl");
 		this.tree_particle = this.j("#tree_particle");
+		this.paramsPanel = this.j("#paramsPanel");
 		this.tree = new component_Tree(this.tree_particle);
+		this.panel = new component_ParamsPanel(this.paramsPanel);
 		this.addListener();
 		this.onResize(null);
 		this.tree.parserLoadData(this.loadSaveData());
@@ -224,6 +226,99 @@ component_OnView.prototype = {
 		this.onViewObj.onNext([evt,value]);
 	}
 };
+var inter_IDom = function() { };
+inter_IDom.__name__ = true;
+var inter_AbstractDom = function(dom) {
+	this.j = $;
+	this._dom = dom;
+	this.init();
+};
+inter_AbstractDom.__name__ = true;
+inter_AbstractDom.__interfaces__ = [inter_IDom];
+inter_AbstractDom.prototype = {
+	init: function() {
+	}
+	,getDom: function() {
+		return this._dom;
+	}
+};
+var inter_IEvent = function() { };
+inter_IEvent.__name__ = true;
+var inter_AbstractEvent = function(dom) {
+	inter_AbstractDom.call(this,dom);
+	this._event = this.j("<div></div>");
+};
+inter_AbstractEvent.__name__ = true;
+inter_AbstractEvent.__interfaces__ = [inter_IEvent];
+inter_AbstractEvent.__super__ = inter_AbstractDom;
+inter_AbstractEvent.prototype = $extend(inter_AbstractDom.prototype,{
+	getEvent: function() {
+		return this._event;
+	}
+	,trigger: function(type,options) {
+		this.getEvent().trigger(type,options);
+	}
+	,on: function(type,fn) {
+		this.getEvent().on(type,fn);
+	}
+});
+var inter_IParamsPanel = function() { };
+inter_IParamsPanel.__name__ = true;
+var inter_AbstractParamsPanel = function(dom) {
+	inter_AbstractEvent.call(this,dom);
+};
+inter_AbstractParamsPanel.__name__ = true;
+inter_AbstractParamsPanel.__interfaces__ = [inter_IParamsPanel];
+inter_AbstractParamsPanel.__super__ = inter_AbstractEvent;
+inter_AbstractParamsPanel.prototype = $extend(inter_AbstractEvent.prototype,{
+	setLife: function(life) {
+	}
+	,setMass: function(mass) {
+	}
+	,setPosition: function(x,y) {
+	}
+	,setVelocity: function(x,y) {
+	}
+	,setRotation: function(r) {
+	}
+	,setVelocityRotation: function(v) {
+	}
+	,setSize: function(width,height) {
+	}
+	,setColor: function(color) {
+	}
+	,getLife: function() {
+		return 0;
+	}
+	,getMass: function() {
+		return 0;
+	}
+	,getPosition: function() {
+		return null;
+	}
+	,getVelocity: function() {
+		return null;
+	}
+	,getRotation: function() {
+		return 0;
+	}
+	,getVelocityRotation: function() {
+		return 0;
+	}
+	,getSize: function() {
+		return null;
+	}
+	,getColor: function() {
+		return 0;
+	}
+});
+var component_ParamsPanel = function(dom) {
+	inter_AbstractParamsPanel.call(this,dom);
+};
+component_ParamsPanel.__name__ = true;
+component_ParamsPanel.__super__ = inter_AbstractParamsPanel;
+component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
+});
 var inter_IParticle = function() { };
 inter_IParticle.__name__ = true;
 var component_Particle = function(parent,data) {
@@ -277,7 +372,6 @@ var component_ParticleManager = function() {
 component_ParticleManager.__name__ = true;
 component_ParticleManager.prototype = {
 	addParticle: function(particle) {
-		if(this.existParticle(particle.getId())) return;
 		var key = particle.getId();
 		this._coll_particle.set(key,particle);
 	}
@@ -312,42 +406,6 @@ component_ParticleManager.prototype = {
 		return this._coll_particle.exists(id);
 	}
 };
-var inter_IDom = function() { };
-inter_IDom.__name__ = true;
-var inter_AbstractDom = function(dom) {
-	this.j = $;
-	this._dom = dom;
-	this.init();
-};
-inter_AbstractDom.__name__ = true;
-inter_AbstractDom.__interfaces__ = [inter_IDom];
-inter_AbstractDom.prototype = {
-	init: function() {
-	}
-	,getDom: function() {
-		return this._dom;
-	}
-};
-var inter_IEvent = function() { };
-inter_IEvent.__name__ = true;
-var inter_AbstractEvent = function(dom) {
-	inter_AbstractDom.call(this,dom);
-	this._event = this.j("<div></div>");
-};
-inter_AbstractEvent.__name__ = true;
-inter_AbstractEvent.__interfaces__ = [inter_IEvent];
-inter_AbstractEvent.__super__ = inter_AbstractDom;
-inter_AbstractEvent.prototype = $extend(inter_AbstractDom.prototype,{
-	getEvent: function() {
-		return this._event;
-	}
-	,trigger: function(type,options) {
-		this.getEvent().trigger(type,options);
-	}
-	,on: function(type,fn) {
-		this.getEvent().on(type,fn);
-	}
-});
 var inter_ITree = function() { };
 inter_ITree.__name__ = true;
 var inter_AbstractTree = function(dom) {

@@ -17,7 +17,6 @@ class ParticleManager
 	}
 	
 	public function addParticle( particle:IParticle ) {
-		if ( existParticle( particle.getId() )) return;
 		_coll_particle.set( particle.getId(), particle );
 	}
 	
