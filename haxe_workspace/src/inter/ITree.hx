@@ -1,6 +1,5 @@
 package inter;
 import component.EParticleType;
-import component.Particle;
 
 /**
  * @author vic

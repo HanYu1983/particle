@@ -4,7 +4,6 @@ import component.EParticleType;
 import haxe.Json;
 import inter.AbstractDom;
 import inter.AbstractTree;
-import inter.IParticle;
 import inter.ITree;
 using Reflect;
 /**

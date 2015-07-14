@@ -3,7 +3,6 @@ package ;
 import component.EParticleType;
 import component.OnView;
 import component.ParamsPanel;
-import component.Particle;
 import component.Tree;
 import inter.AbstractTree;
 import inter.IDom;

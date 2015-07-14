@@ -88,9 +88,6 @@ Main.prototype = {
 Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
-Reflect.hasField = function(o,field) {
-	return Object.prototype.hasOwnProperty.call(o,field);
-};
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
@@ -261,53 +258,6 @@ component_ParamsPanel.__name__ = true;
 component_ParamsPanel.__super__ = inter_AbstractParamsPanel;
 component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 });
-var inter_IParticle = function() { };
-inter_IParticle.__name__ = true;
-var component_Particle = function(parent,data) {
-	this._ary_children = [];
-	this._data = data;
-	this._parent = parent;
-};
-component_Particle.__name__ = true;
-component_Particle.__interfaces__ = [inter_IParticle];
-component_Particle.prototype = {
-	getId: function() {
-		return this.getData().id;
-	}
-	,getData: function() {
-		return this._data;
-	}
-	,getParent: function() {
-		return this._parent;
-	}
-	,throughAllChildren: function(fn) {
-		var _g = this;
-		var _throughAllChildren = function(particleData) {
-			if(_g.getType() == component_EParticleType.EMITTER) {
-				var ary = _g.getData().emit.prototype;
-				var _g2 = 0;
-				var _g1 = ary.length;
-				while(_g2 < _g1) {
-					var i = _g2++;
-					fn(ary[i]);
-				}
-			}
-		};
-	}
-	,getChildren: function() {
-		return this._ary_children;
-	}
-	,addChild: function(particle) {
-		this._ary_children.push(particle);
-	}
-	,getType: function() {
-		if(Reflect.hasField(this.getData(),"emit")) return component_EParticleType.EMITTER;
-		return component_EParticleType.PARTICLE;
-	}
-	,toString: function() {
-		return JSON.stringify(this.getData());
-	}
-};
 var inter_ITree = function() { };
 inter_ITree.__name__ = true;
 var inter_AbstractTree = function(dom) {
