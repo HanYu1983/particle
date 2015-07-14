@@ -52,6 +52,8 @@ Main.prototype = {
 		this.addListener();
 		this.onResize(null);
 		this.tree.parserLoadData(this.loadSaveData());
+		this.onView.setObject(this.loadSaveData());
+		console.log(this.tree.outputData());
 	}
 	,onHtmlClick: function(target) {
 		var _g = this;
@@ -86,13 +88,12 @@ Main.prototype = {
 	}
 	,addListener: function() {
 		var _g = this;
-		this.j("body").mousemove($bind(this,this.onMousemove));
+		this.webgl.mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
 		this.tree.on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
 			var pid = params.node.id;
 			var particle = _g.particleManager.getParticleById(pid);
 			if(particle == null) return;
-			console.log(particle.getData());
 		});
 		this.tree.on(component_Tree.ADD_NODE,function(e1,params1) {
 			var particleData = params1.particleData;
@@ -120,8 +121,9 @@ Main.prototype = {
 		this.webgl.attr("height",this.canvas_container.height());
 	}
 	,onMousemove: function(e) {
-		var px = e.clientX;
-		var py = e.clientY;
+		var px = e.offsetX;
+		var py = e.offsetY;
+		component_OnView.inst.moveParticle(px,py);
 	}
 };
 Math.__name__ = true;
@@ -159,9 +161,8 @@ var component_OnView = function() {
 };
 component_OnView.__name__ = true;
 component_OnView.prototype = {
-	setObject: function(obj,fn) {
+	setObject: function(obj) {
 		if(obj == null) this.basicObj = { id : "root", lifetime : 10, emit : { prototype : [{ id : "root_particle", lifetime : 1, vel : [50,0,0]}]}, pos : [0,0,0], vel : [0,0,0]}; else this.basicObj = obj;
-		this.goThroughAllParticle(fn);
 		this.updateParticleRoot();
 	}
 	,getObject: function() {
@@ -211,8 +212,8 @@ component_OnView.prototype = {
 		_findParticle = _findParticle1;
 		return _findParticle(this.getObject());
 	}
-	,moveParticle: function(id,x,y) {
-		var p = this.findParticle(id);
+	,moveParticle: function(x,y) {
+		var p = this.findParticle("root");
 		if(p != null) {
 			p.pos[0] = x;
 			p.pos[1] = y;
@@ -358,6 +359,9 @@ inter_AbstractTree.__super__ = inter_AbstractEvent;
 inter_AbstractTree.prototype = $extend(inter_AbstractEvent.prototype,{
 	parserLoadData: function(loadData) {
 	}
+	,outputData: function() {
+		return null;
+	}
 	,addParticle: function(parentNode,particleData,type,name) {
 	}
 	,getRootNode: function() {
@@ -409,6 +413,34 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		};
 		_findParticle = _findParticle1;
 		_findParticle(loadData,this.getRootNode());
+	}
+	,outputData: function() {
+		var retobj = { };
+		var _loopNode;
+		var _loopNode1 = null;
+		_loopNode1 = function(node,outputData) {
+			var p = component_ParticleManager.inst.getParticleById(node.id);
+			outputData.id = p.getId();
+			outputData.lifetime = p.getData().lifetime;
+			outputData.vel = p.getData().vel;
+			outputData.pos = p.getData().pos;
+			outputData.mass = p.getData().mass;
+			outputData.color = p.getData().color;
+			if(node.children && node.children.length > 0) {
+				outputData.emit = { prototype : []};
+				var _g1 = 0;
+				var _g = node.children.length;
+				while(_g1 < _g) {
+					var i = _g1++;
+					var obj = { };
+					outputData.emit.prototype.push(obj);
+					_loopNode1(node.children[i],obj);
+				}
+			}
+		};
+		_loopNode = _loopNode1;
+		_loopNode(this.findNode("root"),retobj);
+		return retobj;
 	}
 	,addParticle: function(parentNode,particleData,type,name) {
 		this.addNode(parentNode,particleData,type,name);

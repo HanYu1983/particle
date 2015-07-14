@@ -30,13 +30,12 @@ class OnView
 		
 	}
 	
-	public function setObject( ?obj, fn ) {
+	public function setObject( ?obj ) {
 		basicObj = ( obj == null ? { 	id:'root', 
 										lifetime:10,
 										emit: { prototype:[ { id:'root_particle', lifetime:1, vel:[50, 0, 0] } ] }, 
 										pos:[0, 0, 0], vel:[0, 0, 0] } : obj );
 		
-		goThroughAllParticle( fn );
 		updateParticleRoot();
 	}
 	
@@ -85,8 +84,8 @@ class OnView
 		return _findParticle( getObject() );
 	}
 	
-	public function moveParticle( id, x, y ) {
-		var p = findParticle( id );
+	public function moveParticle( x, y ) {
+		var p = findParticle( 'root' );
 		if( p != null ){
 			p.pos[0] = x;
 			p.pos[1] = y;

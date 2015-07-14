@@ -43,6 +43,8 @@ class Main
 		onResize( null );
 		
 		tree.parserLoadData( loadSaveData() );
+		onView.setObject( loadSaveData() );
+		trace( tree.outputData() );
 	}
 	
 	function onHtmlClick( target ) {
@@ -75,13 +77,12 @@ class Main
 	}
 	
 	function addListener() {
-		j('body').mousemove( onMousemove );
+		webgl.mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
 		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
 			var pid = params.node.id;
 			var particle = particleManager.getParticleById( pid );
 			if ( particle == null ) return;
-			trace( particle.getData() );
 		});
 		tree.on( Tree.ADD_NODE, function( e, params:Dynamic ) {
 			var particleData = params.particleData;
@@ -92,11 +93,6 @@ class Main
 		tree.on( Tree.REMOVE_NODE, function( e, params:Dynamic ) {
 			var pid = params.node.id;
 			var particle = particleManager.getParticleById( pid );
-			/*
-			particle.throughAllChildren( function( particleData ) {
-				particleManager.removeParticle( particleData.id );
-			});
-			*/
 			particleManager.removeParticleAndChildren( particle );
 			trace( particleManager.getParticles() );
 		});
@@ -112,9 +108,9 @@ class Main
 	}
 	
 	function onMousemove(e) {
-		var px = e.clientX;
-		var py = e.clientY;
-		//OnView.inst.moveParticle( 'root', px, py );
+		var px = e.offsetX;
+		var py = e.offsetY;
+		OnView.inst.moveParticle( px, py );
 	}
 	
 	public static function getId() {

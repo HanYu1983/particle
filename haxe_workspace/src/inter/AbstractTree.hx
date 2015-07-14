@@ -17,6 +17,10 @@ class AbstractTree extends AbstractEvent implements ITree
 		
 	}
 	
+	public function outputData():Dynamic {
+		return null;
+	}
+	
 	public function addParticle( parentNode:Dynamic, particleData:Dynamic, type:EParticleType, name:String ):Void {
 		
 	}

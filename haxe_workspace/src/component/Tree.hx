@@ -1,6 +1,7 @@
 package component;
 
 import component.EParticleType;
+import haxe.Json;
 import inter.AbstractDom;
 import inter.AbstractTree;
 import inter.IParticle;
@@ -49,6 +50,31 @@ class Tree extends AbstractTree
 			}
 		}
 		_findParticle( loadData, getRootNode() );
+	}
+	
+	override public function outputData():Dynamic 
+	{
+		var retobj:Dynamic = { };
+		function _loopNode( node:Dynamic, outputData:Dynamic ) {
+			var p = ParticleManager.inst.getParticleById( node.id );
+			outputData.id = p.getId();
+			outputData.lifetime = p.getData().lifetime;
+			outputData.vel = p.getData().vel;
+			outputData.pos = p.getData().pos;
+			outputData.mass = p.getData().mass;
+			outputData.color = p.getData().color;
+			
+			if ( node.children && node.children.length > 0 ) {
+				outputData.emit = {prototype:[]}
+				for ( i in 0...node.children.length ) {
+					var obj = { };
+					outputData.emit.prototype.push( obj );
+					_loopNode( node.children[i], obj );
+				}
+			}
+		}
+		_loopNode( findNode( 'root' ), retobj );
+		return retobj;
 	}
 	
 	override public function addParticle(parentNode:Dynamic, particleData:Dynamic, type:EParticleType, name:String):Void 
