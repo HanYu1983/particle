@@ -1,6 +1,6 @@
 package component;
 import inter.IParticle;
-
+using Lambda;
 /**
  * ...
  * @author vic
@@ -21,9 +21,22 @@ class ParticleManager
 		_coll_particle.set( particle.getId(), particle );
 	}
 	
-	public function removeParticle( particle:IParticle ) {
-		if ( !existParticle( particle.getId() )) return;
-		_coll_particle.remove( particle.getId() );
+	public function removeParticleById( id:String ) {
+		if ( !existParticle( id )) return;
+		_coll_particle.remove( id );
+	}
+	
+	public function removeParticleAndChildren( particle:IParticle ) {
+		function _removeParticleAndChildren( parent:IParticle ) {
+			getParticles().map( function( p ):Void {
+				if ( p.getParent() == parent ) {
+					_removeParticleAndChildren( p );
+					removeParticleById( p.getId() );
+				}
+			});
+			removeParticleById( parent.getId() );
+		}
+		_removeParticleAndChildren( particle );
 	}
 	
 	public function getParticleById( id:String ):IParticle {
@@ -31,7 +44,7 @@ class ParticleManager
 		return _coll_particle.get( id );
 	}
 	
-	public function getParticles() {
+	public function getParticles():Map<String,IParticle> {
 		return _coll_particle;
 	}
 	

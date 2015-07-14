@@ -13,6 +13,7 @@ using Reflect;
 class Tree extends AbstractTree
 {
 	public static var ADD_NODE = 'add_node';
+	public static var REMOVE_NODE = 'remove_node';
 	public static var ON_TREE_NODE_CLICK = 'on_tree_node_click';
 	
 	public function new( dom ) 
@@ -73,6 +74,7 @@ class Tree extends AbstractTree
 	override public function removeParticle( node:Dynamic ):Void {
 		if (node && node.domId != '_easyui_tree_1' ) {
 			getDom().tree('remove', node.target );
+			trigger( REMOVE_NODE, { node:node } );
 		}
 	}
 	
@@ -87,7 +89,6 @@ class Tree extends AbstractTree
 				parent:parentNode.target,
 				data:nodes
 			});
-			
 			trigger( ADD_NODE, { parentNode:parentNode, particleData:particleData } );
 		}
 	}

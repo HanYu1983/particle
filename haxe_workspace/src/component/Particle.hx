@@ -32,6 +32,15 @@ class Particle implements IParticle
 		return _parent;
 	}
 	
+	public function throughAllChildren( fn:Dynamic -> Void ):Void {
+		function _throughAllChildren( particleData ){
+			if ( getType() == EParticleType.EMITTER ) {
+				var ary:Array<Dynamic> = getData().emit.prototype;
+				for ( i in 0...ary.length ) fn( ary[i] );
+			}
+		}
+	}
+	
 	public function getChildren():Array<IParticle> {
 		return _ary_children;
 	}

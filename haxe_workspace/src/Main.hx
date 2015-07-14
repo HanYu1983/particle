@@ -77,17 +77,28 @@ class Main
 	function addListener() {
 		j('body').mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
-		tree.getEvent().on( Tree.ON_TREE_NODE_CLICK, function( e, params ) {
+		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
 			var pid = params.node.id;
 			var particle = particleManager.getParticleById( pid );
 			if ( particle == null ) return;
 			trace( particle.getData() );
 		});
-		tree.getEvent().on( Tree.ADD_NODE, function( e, params ) {
+		tree.on( Tree.ADD_NODE, function( e, params:Dynamic ) {
 			var particleData = params.particleData;
 			var parentNode = params.parentNode;
 			var parentParticle = particleManager.getParticleById( parentNode.id );
 			particleManager.addParticle( new Particle( parentParticle, particleData ));
+		});
+		tree.on( Tree.REMOVE_NODE, function( e, params:Dynamic ) {
+			var pid = params.node.id;
+			var particle = particleManager.getParticleById( pid );
+			/*
+			particle.throughAllChildren( function( particleData ) {
+				particleManager.removeParticle( particleData.id );
+			});
+			*/
+			particleManager.removeParticleAndChildren( particle );
+			trace( particleManager.getParticles() );
 		});
 	}
 	

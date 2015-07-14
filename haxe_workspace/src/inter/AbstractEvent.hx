@@ -24,7 +24,7 @@ class AbstractEvent extends AbstractDom implements IEvent
 		getEvent().trigger( type, options );
 	}
 	
-	public function on( type:String, fn:Dynamic -> Void ):Void {
+	public function on( type:String, fn:Dynamic -> Dynamic -> Void ):Void {
 		getEvent().on( type, fn );
 	}
 }

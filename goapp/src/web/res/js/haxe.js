@@ -6,6 +6,29 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var Lambda = function() { };
+Lambda.__name__ = true;
+Lambda.map = function(it,f) {
+	var l = new List();
+	var $it0 = it.iterator();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		l.add(f(x));
+	}
+	return l;
+};
+var List = function() {
+	this.length = 0;
+};
+List.__name__ = true;
+List.prototype = {
+	add: function(item) {
+		var x = [item];
+		if(this.h == null) this.h = x; else this.q[1] = x;
+		this.q = x;
+		this.length++;
+	}
+};
 var Main = function() {
 	this.particleManager = component_ParticleManager.inst;
 	this.onView = component_OnView.inst;
@@ -65,17 +88,28 @@ Main.prototype = {
 		var _g = this;
 		this.j("body").mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
-		this.tree.getEvent().on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
+		this.tree.on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
 			var pid = params.node.id;
 			var particle = _g.particleManager.getParticleById(pid);
 			if(particle == null) return;
 			console.log(particle.getData());
 		});
-		this.tree.getEvent().on(component_Tree.ADD_NODE,function(e1,params1) {
+		this.tree.on(component_Tree.ADD_NODE,function(e1,params1) {
 			var particleData = params1.particleData;
 			var parentNode = params1.parentNode;
 			var parentParticle = _g.particleManager.getParticleById(parentNode.id);
 			_g.particleManager.addParticle(new component_Particle(parentParticle,particleData));
+		});
+		this.tree.on(component_Tree.REMOVE_NODE,function(e2,params2) {
+			var pid1 = params2.node.id;
+			var particle1 = _g.particleManager.getParticleById(pid1);
+			_g.particleManager.removeParticleAndChildren(particle1);
+			console.log((function($this) {
+				var $r;
+				var this1 = _g.particleManager.getParticles();
+				$r = this1.toString();
+				return $r;
+			}(this)));
 		});
 	}
 	,loadSaveData: function() {
@@ -98,6 +132,20 @@ Reflect.hasField = function(o,field) {
 };
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
+};
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var StringBuf = function() {
+	this.b = "";
+};
+StringBuf.__name__ = true;
+StringBuf.prototype = {
+	add: function(x) {
+		this.b += Std.string(x);
+	}
 };
 var component_EParticleType = { __ename__ : true, __constructs__ : ["PARTICLE","EMITTER"] };
 component_EParticleType.PARTICLE = ["PARTICLE",0];
@@ -194,6 +242,20 @@ component_Particle.prototype = {
 	,getParent: function() {
 		return this._parent;
 	}
+	,throughAllChildren: function(fn) {
+		var _g = this;
+		var _throughAllChildren = function(particleData) {
+			if(_g.getType() == component_EParticleType.EMITTER) {
+				var ary = _g.getData().emit.prototype;
+				var _g2 = 0;
+				var _g1 = ary.length;
+				while(_g2 < _g1) {
+					var i = _g2++;
+					fn(ary[i]);
+				}
+			}
+		};
+	}
 	,getChildren: function() {
 		return this._ary_children;
 	}
@@ -218,10 +280,25 @@ component_ParticleManager.prototype = {
 		var key = particle.getId();
 		this._coll_particle.set(key,particle);
 	}
-	,removeParticle: function(particle) {
-		if(!this.existParticle(particle.getId())) return;
-		var key = particle.getId();
-		this._coll_particle.remove(key);
+	,removeParticleById: function(id) {
+		if(!this.existParticle(id)) return;
+		this._coll_particle.remove(id);
+	}
+	,removeParticleAndChildren: function(particle) {
+		var _g = this;
+		var _removeParticleAndChildren;
+		var _removeParticleAndChildren1 = null;
+		_removeParticleAndChildren1 = function(parent) {
+			Lambda.map(_g.getParticles(),function(p) {
+				if(p.getParent() == parent) {
+					_removeParticleAndChildren1(p);
+					_g.removeParticleById(p.getId());
+				}
+			});
+			_g.removeParticleById(parent.getId());
+		};
+		_removeParticleAndChildren = _removeParticleAndChildren1;
+		_removeParticleAndChildren(particle);
 	}
 	,getParticleById: function(id) {
 		if(!this.existParticle(id)) return null;
@@ -346,7 +423,10 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		return this.getDom().tree("getSelected");
 	}
 	,removeParticle: function(node) {
-		if(node && node.domId != "_easyui_tree_1") this.getDom().tree("remove",node.target);
+		if(node && node.domId != "_easyui_tree_1") {
+			this.getDom().tree("remove",node.target);
+			this.trigger(component_Tree.REMOVE_NODE,{ node : node});
+		}
 	}
 	,addNode: function(parentNode,particleData,type,name) {
 		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
@@ -358,6 +438,21 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 });
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_ds__$StringMap_StringMapIterator = function(map,keys) {
+	this.map = map;
+	this.keys = keys;
+	this.index = 0;
+	this.count = keys.length;
+};
+haxe_ds__$StringMap_StringMapIterator.__name__ = true;
+haxe_ds__$StringMap_StringMapIterator.prototype = {
+	hasNext: function() {
+		return this.index < this.count;
+	}
+	,next: function() {
+		return this.map.get(this.keys[this.index++]);
+	}
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -397,6 +492,38 @@ haxe_ds_StringMap.prototype = {
 			delete(this.h[key]);
 			return true;
 		}
+	}
+	,arrayKeys: function() {
+		var out = [];
+		for( var key in this.h ) {
+		if(this.h.hasOwnProperty(key)) out.push(key);
+		}
+		if(this.rh != null) {
+			for( var key in this.rh ) {
+			if(key.charCodeAt(0) == 36) out.push(key.substr(1));
+			}
+		}
+		return out;
+	}
+	,iterator: function() {
+		return new haxe_ds__$StringMap_StringMapIterator(this,this.arrayKeys());
+	}
+	,toString: function() {
+		var s = new StringBuf();
+		s.b += "{";
+		var keys = this.arrayKeys();
+		var _g1 = 0;
+		var _g = keys.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var k = keys[i];
+			if(k == null) s.b += "null"; else s.b += "" + k;
+			s.b += " => ";
+			s.add(Std.string(__map_reserved[k] != null?this.getReserved(k):this.h[k]));
+			if(i < keys.length) s.b += ", ";
+		}
+		s.b += "}";
+		return s.b;
 	}
 };
 var js__$Boot_HaxeError = function(val) {
@@ -495,6 +622,7 @@ js.JQuery = q;
 component_OnView.inst = new component_OnView();
 component_ParticleManager.inst = new component_ParticleManager();
 component_Tree.ADD_NODE = "add_node";
+component_Tree.REMOVE_NODE = "remove_node";
 component_Tree.ON_TREE_NODE_CLICK = "on_tree_node_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
