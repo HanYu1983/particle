@@ -38,12 +38,12 @@ class Tree extends AbstractTree
 				var ary:Array<Dynamic> = fields.emit.prototype;
 				var target:Dynamic = null;
 				
-				addEmitter( parentNode, new Particle( fields ), false );
+				//addEmitter( parentNode, new Particle( Main.getId(), fields ), false );
 				parentNode = findNode( fields.id );
 				
 				for ( i in 0...ary.length ) _findParticle( ary[i], parentNode );
 			}else {
-				addParticle( parentNode, new Particle( fields ), false );
+				//addParticle( parentNode, new Particle( Main.getId(), fields ), false );
 			}
 		}
 		

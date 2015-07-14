@@ -59,11 +59,11 @@ class Main
 		switch( target.id ) {
 			case 'btn_addParticle':
 				checkNodeAndThen( function( node ) {
-					tree.addParticle( node, new Particle( { id:getId()} ) );
+					//tree.addParticle( node, new Particle( Main.getId(), { id:getId()} ) );
 				});
 			case 'btn_addEmitter':
 				checkNodeAndThen( function( node ) {
-					tree.addEmitter( node, new Particle( { id:getId() } ));
+					//tree.addEmitter( node, new Particle( Main.getId(), { id:getId() } ));
 				});
 			case 'btn_remove':
 				var selectNode = tree.getSelectedNode();

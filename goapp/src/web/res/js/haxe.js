@@ -46,12 +46,10 @@ Main.prototype = {
 		switch(_g1) {
 		case "btn_addParticle":
 			checkNodeAndThen(function(node) {
-				_g.tree.addParticle(node,new component_Particle({ id : Main.getId()}));
 			});
 			break;
 		case "btn_addEmitter":
 			checkNodeAndThen(function(node1) {
-				_g.tree.addEmitter(node1,new component_Particle({ id : Main.getId()}));
 			});
 			break;
 		case "btn_remove":
@@ -171,17 +169,29 @@ component_OnView.prototype = {
 };
 var inter_IParticle = function() { };
 inter_IParticle.__name__ = true;
-var component_Particle = function(data) {
+var component_Particle = function(id,parent,data) {
+	this._ary_children = [];
 	this._data = data;
+	this._id = id;
+	this._parent = parent;
 };
 component_Particle.__name__ = true;
 component_Particle.__interfaces__ = [inter_IParticle];
 component_Particle.prototype = {
 	getId: function() {
-		return this.getData().id;
+		return this._id;
 	}
 	,getData: function() {
 		return this._data;
+	}
+	,getParent: function() {
+		return this._parent;
+	}
+	,getChildren: function() {
+		return this._ary_children;
+	}
+	,addChild: function(particle) {
+		this._ary_children.push(particle);
 	}
 	,getType: function() {
 		if(Reflect.hasField(this.getData(),"emit")) return component_EParticleType.EMITTER;
@@ -283,7 +293,6 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			if(Object.prototype.hasOwnProperty.call(fields,"emit")) {
 				var ary = fields.emit.prototype;
 				var target = null;
-				_g.addEmitter(parentNode,new component_Particle(fields),false);
 				parentNode = _g.findNode(fields.id);
 				var _g2 = 0;
 				var _g1 = ary.length;
@@ -291,7 +300,8 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 					var i = _g2++;
 					_findParticle1(ary[i],parentNode);
 				}
-			} else _g.addParticle(parentNode,new component_Particle(fields),false);
+			} else {
+			}
 		};
 		_findParticle = _findParticle1;
 		_findParticle(loadData,this.getRootNode());
