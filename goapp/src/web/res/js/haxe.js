@@ -53,7 +53,6 @@ Main.prototype = {
 		this.onResize(null);
 		this.tree.parserLoadData(this.loadSaveData());
 		this.onView.setObject(this.loadSaveData());
-		console.log(this.tree.outputData());
 	}
 	,onHtmlClick: function(target) {
 		var _g = this;
@@ -123,7 +122,8 @@ Main.prototype = {
 	,onMousemove: function(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		component_OnView.inst.moveParticle(px,py);
+		this.onView.moveParticle(px,py);
+		this.onView.setObject(this.tree.outputData());
 	}
 };
 Math.__name__ = true;
@@ -218,7 +218,6 @@ component_OnView.prototype = {
 			p.pos[0] = x;
 			p.pos[1] = y;
 		}
-		this.updateParticleRoot();
 	}
 	,notify: function(evt,value) {
 		this.onViewObj.onNext([evt,value]);

@@ -90,7 +90,6 @@ class OnView
 			p.pos[0] = x;
 			p.pos[1] = y;
 		}
-		updateParticleRoot();
 	}
 	
 	function notify( evt:String, value:Dynamic) {

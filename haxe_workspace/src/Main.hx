@@ -44,7 +44,6 @@ class Main
 		
 		tree.parserLoadData( loadSaveData() );
 		onView.setObject( loadSaveData() );
-		trace( tree.outputData() );
 	}
 	
 	function onHtmlClick( target ) {
@@ -110,7 +109,9 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		OnView.inst.moveParticle( px, py );
+		
+		onView.moveParticle( px, py );
+		onView.setObject( tree.outputData() );
 	}
 	
 	public static function getId() {
