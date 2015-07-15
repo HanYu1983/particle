@@ -175,18 +175,20 @@
           (map
             (fn [[_ _ _ _ _ volume]] volume)
              group))]
-    (if (zero? (count group))
-      nil
+    (when-not (zero? (count group))
       (cons [date open high low close volume] (lazy-seq (average cnt (drop cnt kline)))))))
 
 (defn check-turn [kline]
-  (if (>= (count kline) 3)
+  (when (>= (count kline) 3)
     (let [[_ _ _ _ c1 _ :as l1] (first kline)
           [date _ _ _ c2 _ :as l2] (second kline)
           [_ _ _ _ c3 _ :as l3] (nth kline 2)
           rate (/ (- c1 c2) c2)
           rate2 (/ (- c2 c3) c3)
-          isReturn (neg? (* rate rate2))]
+          isReturn 
+          (and 
+            (neg? (* rate rate2))
+            (> (.abs js/Math (- (.abs js/Math rate) (.abs js/Math rate2))) 0.01))]
       (if isReturn
         (cons date (lazy-seq (check-turn (rest kline))))
         (check-turn (rest kline))))))
@@ -208,7 +210,7 @@
           (js/alert err)
           (>! onSystem [:loaded infos]))))
 
-    (go-loop [{cnt :cnt :as ctx} {:cnt 100}]
+    (go-loop [{cnt :cnt :as ctx} {:cnt 200}]
       (let [[v ch] (alts! [onSystem onView])]
         (recur
           (condp = ch
@@ -232,6 +234,15 @@
                   }
                   v]
               (condp = cmd
+                "stock"
+                (do
+                  (go
+                    (let [[err infos] (<! (stock-info nil params "2014/1/1" 0 200))]
+                      (if err
+                        (js/alert err)
+                        (>! onSystem [:loaded infos]))))
+                  ctx)
+                
                 "avg"
                 (->
                   ctx
