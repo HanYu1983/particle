@@ -1,6 +1,6 @@
 <html>
 	<body>
-		<canvas id='canvas' width=1024 height=400></canvas>
+		<canvas id='canvas' width=2048 height=400></canvas>
 	</body>
 </html>
 <script src='res/js/lib/jquery-1.9.min.js'></script>
@@ -11,20 +11,8 @@
 <script src='res/cljs/goog/base.js'></script>
 <script src='res/cljs/cljs.js'></script>
 <script>
+var onView = new Rx.Subject
+</script>
+<script>
 goog.require("test.stock4")
-/*
-$.ajax({
-	url:"/proxy",
-	dataType:'text',
-	data:{
-		url:"https://www.google.com/finance/historical?q=TPE:2330&startdate=1/31/1986&start=30&num=30"
-	},
-	success: function(data){
-		console.log( data )
-	},
-	error: function(xhr, a, err){
-		console.log( err )
-	}
-})
-*/
 </script>
