@@ -14,6 +14,24 @@
         (fn [v]
           (* h (- 1 (/ (- v min-v) offset-v))))]
     [max-v min-v offset-v offset-x pos-y]))
+    
+(defn draw-turn [ctx w h kline turn]
+  (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)]
+    (aset ctx "fillStyle" "black")
+    (doseq
+      [
+        [idx [date & _ :as line]]
+        (map
+          (fn [& args] args)
+          (map inc (range (count kline)))
+          kline)
+      ]
+      (cond
+        (some #(= date %) turn)
+        (.fillText ctx "turn" (* idx offset-x) h)
+        
+        :else
+        (comment "not thing")))))
 
 (defn draw-line [ctx w h kline]
   (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)]
@@ -45,7 +63,7 @@
 (defn draw [canvas]
   (let [ctx (.getContext canvas "2d")
         [w h] [(.-width canvas) (.-height canvas)]]
-    (fn [{kline :kline avgs :avgs bias :bias :as appctx}]
+    (fn [{kline :kline turn :turn avgs :avgs bias :bias :as appctx}]
       (aset ctx "fillStyle" "yellow")
       (.fillRect ctx 0 0 w h)
 
@@ -56,6 +74,8 @@
       ;  (draw-avg ctx w h kline "#aaaaaa" avg))
 
       (draw-line ctx w h kline)
+      (when turn
+        (draw-turn ctx w h kline turn))
       appctx)))
 
 (defn stock-url [id startdate start num]
@@ -155,19 +175,22 @@
           (map
             (fn [[_ _ _ _ _ volume]] volume)
              group))]
-    (cons [date open high low close volume] (lazy-seq (average cnt (drop cnt kline))))))
+    (if (zero? (count group))
+      nil
+      (cons [date open high low close volume] (lazy-seq (average cnt (drop cnt kline)))))))
 
-(defn check-return [kline]
-  (let [[_ _ _ _ c1 _ :as l1] (first kline)
-        [date _ _ _ c2 _ :as l2] (second kline)
-        [_ _ _ _ c3 _ :as l3] (nth kline 2)
-        rate (/ (- c1 c2) c2)
-        rate2 (/ (- c2 c3) c3)
-        isReturn (neg? (* rate rate2))]
-        (.log js/console (pr-str l1))
-        (.log js/console (pr-str l2))
-        (.log js/console (pr-str l3))
-    (cons (if isReturn l2 nil) (lazy-seq (check-return (rest kline))))))
+(defn check-turn [kline]
+  (if (>= (count kline) 3)
+    (let [[_ _ _ _ c1 _ :as l1] (first kline)
+          [date _ _ _ c2 _ :as l2] (second kline)
+          [_ _ _ _ c3 _ :as l3] (nth kline 2)
+          rate (/ (- c1 c2) c2)
+          rate2 (/ (- c2 c3) c3)
+          isReturn (neg? (* rate rate2))]
+      (if isReturn
+        (cons date (lazy-seq (check-turn (rest kline))))
+        (check-turn (rest kline))))))
+  
 
 (defn main []
 
@@ -185,7 +208,7 @@
           (js/alert err)
           (>! onSystem [:loaded infos]))))
 
-    (go-loop [ctx {}]
+    (go-loop [{cnt :cnt :as ctx} {:cnt 100}]
       (let [[v ch] (alts! [onSystem onView])]
         (recur
           (condp = ch
@@ -196,7 +219,7 @@
                 (->
                   ctx
                   (assoc :info params)
-                  (assoc :kline params)
+                  (assoc :kline (take cnt params))
                   draw)
 
                 ctx))
@@ -216,12 +239,28 @@
                     :kline
                     (->>
                       (average params (:info ctx))
-                      (take 50)))
+                      (take cnt)))
                   draw)
-                ctx)
+                  
+                "turn"
+                (->
+                  ctx
+                  (assoc
+                    :turn
+                    (->>
+                      (check-turn (:kline ctx))
+                      (take cnt)))
+                  (draw))
+                
+                "print"
+                (do
+                  (doseq [line ((keyword params) ctx)] 
+                    (.log js/console (pr-str line)))
+                  ctx)
+                  
+                ctx))
 
-            ctx)))))
-
+            ctx))))
     (comment "end let")))
 
 

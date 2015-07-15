@@ -12,6 +12,17 @@
 <script src='res/cljs/cljs.js'></script>
 <script>
 var onView = new Rx.Subject
+
+function avg(cnt){
+	onView.onNext({"cmd":"avg", "params":cnt})
+}
+function turn(){
+	onView.onNext({"cmd":"turn", "params":null})
+}
+function print(type){
+	onView.onNext({"cmd":"print", "params":type})
+}
+
 </script>
 <script>
 goog.require("test.stock4")
