@@ -98,7 +98,7 @@ class ParamsPanel extends AbstractParamsPanel
 		slr_vel_rot.slider( 'setValue', data.vel[2] );
 		slr_pos_x.slider( 'setValue', data.pos[0] );
 		slr_pos_y.slider( 'setValue', data.pos[1]);
-		slr_rot.slider( 'setValue', data.pos[2] );
+		slr_rot.slider( 'setValue', data.pos[2] / Math.PI * 180 );
 		slr_size_x.slider( 'setValue', data.size[0] );
 		slr_size_y.slider( 'setValue', data.size[1] );
 	}
@@ -124,7 +124,7 @@ class ParamsPanel extends AbstractParamsPanel
 				case EParticleAttribute.MASS:
 					getData().setField( 'mass', value );
 				case EParticleAttribute.POSITION_R:
-					getData().field( 'pos' )[2] = value;
+					getData().field( 'pos' )[2] = value / 180 * Math.PI;
 				case EParticleAttribute.POSITION_X:
 					getData().field( 'pos' )[0] = value;
 				case EParticleAttribute.POSITION_Y:

@@ -360,7 +360,7 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 		this.slr_vel_rot.slider("setValue",data.vel[2]);
 		this.slr_pos_x.slider("setValue",data.pos[0]);
 		this.slr_pos_y.slider("setValue",data.pos[1]);
-		this.slr_rot.slider("setValue",data.pos[2]);
+		this.slr_rot.slider("setValue",data.pos[2] / Math.PI * 180);
 		this.slr_size_x.slider("setValue",data.size[0]);
 		this.slr_size_y.slider("setValue",data.size[1]);
 	}
@@ -394,7 +394,7 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 				Reflect.setField(_g.getData(),"mass",value);
 				break;
 			case 3:
-				Reflect.field(_g.getData(),"pos")[2] = value;
+				Reflect.field(_g.getData(),"pos")[2] = value / 180 * Math.PI;
 				break;
 			case 1:
 				Reflect.field(_g.getData(),"pos")[0] = value;
