@@ -76,6 +76,7 @@ class Main
 	}
 	
 	function createEmitterAttribute( obj:Dynamic ) {
+		if ( obj.emit != null ) return;
 		obj.emit = { prototype:[] };
 		obj.emit.count = 1;
 		obj.emit.duration = .5;
@@ -101,7 +102,7 @@ class Main
 			var particleData = node.particleData;
 			if ( particleData == null ) return;
 			if ( node.children != null && node.children.length > 0 ) {
-				if ( particleData.emit == null ) createEmitterAttribute( particleData );
+				createEmitterAttribute( particleData );
 				panel.setData( particleData, EParticleType.EMITTER );
 			}else {
 				panel.setData( particleData, EParticleType.PARTICLE );
@@ -116,7 +117,7 @@ class Main
 		});
 		tree.on( Tree.ON_TREE_DROP_NODE, function( e, params:Dynamic ) {
 			var targetNode = params.targetNode;
-			if ( targetNode.particleData.emit == null ) createEmitterAttribute( targetNode.particleData );
+			createEmitterAttribute( targetNode.particleData );
 		});
 		panel.on( ParamsPanel.ON_PARAMS_CHANGE, function( e, params:Dynamic ) {
 			onView.setObject( tree.outputData() );
