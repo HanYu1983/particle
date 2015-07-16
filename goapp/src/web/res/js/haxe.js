@@ -66,7 +66,7 @@ Main.prototype = {
 		obj.emit.duration = .5;
 		obj.emit.angle = 0;
 		obj.emit.range = 0;
-		obj.emit.force = 100;
+		obj.emit.force = 0;
 	}
 	,createNewParticleObj: function(id) {
 		return { id : id, lifetime : 3, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0]};

@@ -82,7 +82,7 @@ class Main
 		obj.emit.duration = .5;
 		obj.emit.angle = 0;
 		obj.emit.range = 0;
-		obj.emit.force = 100;
+		obj.emit.force = 0;
 	}
 	
 	function createNewParticleObj( id ) {
