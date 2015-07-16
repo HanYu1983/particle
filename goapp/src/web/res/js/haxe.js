@@ -59,6 +59,14 @@ Main.prototype = {
 			break;
 		}
 	}
+	,createEmitterAttribute: function(obj) {
+		obj.emit = { prototype : []};
+		obj.emit.count = 1;
+		obj.emit.duration = .1;
+		obj.emit.angle = 0;
+		obj.emit.range = 0;
+		obj.emit.force = 100;
+	}
 	,createNewParticleObj: function(id) {
 		return { id : id, lifetime : 3, mass : 3, color : "#33ddff", size : [10,20], pos : [0,0,0], vel : [0,0,0]};
 	}
@@ -69,7 +77,10 @@ Main.prototype = {
 		var resetPanel = function(node) {
 			var particleData = node.particleData;
 			if(particleData == null) return;
-			if(node.children != null && node.children.length > 0) _g.panel.setData(particleData,component_EParticleType.EMITTER); else _g.panel.setData(particleData,component_EParticleType.PARTICLE);
+			if(node.children != null && node.children.length > 0) {
+				if(particleData.emit == null) _g.createEmitterAttribute(particleData);
+				_g.panel.setData(particleData,component_EParticleType.EMITTER);
+			} else _g.panel.setData(particleData,component_EParticleType.PARTICLE);
 		};
 		this.tree.on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
 			resetPanel(params.node);
@@ -327,7 +338,7 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 			this.slr_count.slider("setValue",data.emit.count);
 			this.slr_duration.slider("setValue",data.emit.duration * 1000);
 			this.slr_angle.slider("setValue",data.emit.angle / Math.PI * 180);
-			this.slr_range.slider("setValue",data.emit.angle / Math.PI * 180);
+			this.slr_range.slider("setValue",data.emit.range / Math.PI * 180);
 			this.slr_force.slider("setValue",data.emit.force);
 			this.slr_count.parent().parent().show();
 			this.slr_duration.parent().parent().show();
@@ -360,19 +371,19 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 			var value = target.slider("getValue");
 			switch(particleAttr[1]) {
 			case 11:
-				Reflect.setField(_g.getData().emit,"count",value);
+				_g.getData().emit.count = value;
 				break;
 			case 12:
-				Reflect.setField(_g.getData().emit,"duration",value / 1000);
+				_g.getData().emit.duration = value / 1000;
 				break;
 			case 13:
-				Reflect.setField(_g.getData().emit,"angle",value / 180 * Math.PI);
+				_g.getData().emit.angle = value / 180 * Math.PI;
 				break;
 			case 14:
-				Reflect.setField(_g.getData().emit,"range",value / 180 * Math.PI);
+				_g.getData().emit.range = value / 180 * Math.PI;
 				break;
 			case 15:
-				Reflect.setField(_g.getData().emit,"force",value);
+				_g.getData().emit.force = value;
 				break;
 			case 0:
 				Reflect.setField(_g.getData(),"lifetime",value);

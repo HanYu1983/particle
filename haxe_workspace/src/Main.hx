@@ -75,6 +75,15 @@ class Main
 		}
 	}
 	
+	function createEmitterAttribute( obj:Dynamic ) {
+		obj.emit = { prototype:[] };
+		obj.emit.count = 1;
+		obj.emit.duration = .1;
+		obj.emit.angle = 0;
+		obj.emit.range = 0;
+		obj.emit.force = 100;
+	}
+	
 	function createNewParticleObj( id ) {
 		return {id:id, 
 				lifetime:3,
@@ -92,11 +101,11 @@ class Main
 			var particleData = node.particleData;
 			if ( particleData == null ) return;
 			if ( node.children != null && node.children.length > 0 ) {
+				if ( particleData.emit == null ) createEmitterAttribute( particleData );
 				panel.setData( particleData, EParticleType.EMITTER );
 			}else {
 				panel.setData( particleData, EParticleType.PARTICLE );
 			}
-			
 		}
 		
 		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
