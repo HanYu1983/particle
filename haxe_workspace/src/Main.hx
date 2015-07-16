@@ -101,11 +101,7 @@ class Main
 			var particleData = node.particleData;
 			if ( particleData == null ) return;
 			if ( node.children != null && node.children.length > 0 ) {
-				trace( particleData.emit );
-				/*
-				if ( particleData.emit == null ) {
-					createEmitterAttribute( particleData );
-				}*/
+				if ( particleData.emit == null ) createEmitterAttribute( particleData );
 				panel.setData( particleData, EParticleType.EMITTER );
 			}else {
 				panel.setData( particleData, EParticleType.PARTICLE );

@@ -74,7 +74,7 @@ class ParamsPanel extends AbstractParamsPanel
 			slr_count.slider( 'setValue', data.emit.count );
 			slr_duration.slider( 'setValue', data.emit.duration * 1000 );
 			slr_angle.slider( 'setValue', data.emit.angle / Math.PI * 180 );
-			slr_range.slider( 'setValue', data.emit.angle / Math.PI * 180 );
+			slr_range.slider( 'setValue', data.emit.range / Math.PI * 180 );
 			slr_force.slider( 'setValue', data.emit.force );
 			
 			slr_count.parent().parent().show();
@@ -109,15 +109,15 @@ class ParamsPanel extends AbstractParamsPanel
 			var value = target.slider( 'getValue' );
 			switch( particleAttr ) {
 				case EParticleAttribute.COUNT:
-					getData().emit.setField( 'count', value );
+					getData().emit.count = value;
 				case EParticleAttribute.DURATION:
-					getData().emit.setField( 'duration', value / 1000 );
+					getData().emit.duration = value / 1000;
 				case EParticleAttribute.ANGLE:
-					getData().emit.setField( 'angle', value / 180 * Math.PI );
+					getData().emit.angle = value / 180 * Math.PI;
 				case EParticleAttribute.RANGE:
-					getData().emit.setField( 'range', value / 180 * Math.PI );
+					getData().emit.range = value / 180 * Math.PI;
 				case EParticleAttribute.FORCE:
-					getData().emit.setField( 'force', value );
+					getData().emit.force = value;
 				case EParticleAttribute.LEFT_TIME:
 					getData().setField( 'lifetime', value );
 				case EParticleAttribute.MASS:
