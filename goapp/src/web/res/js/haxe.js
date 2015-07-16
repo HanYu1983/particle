@@ -91,9 +91,51 @@ Main.prototype = {
 Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
+Reflect.field = function(o,field) {
+	try {
+		return o[field];
+	} catch( e ) {
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
+		return null;
+	}
+};
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
+var component_EParticleAttribute = { __ename__ : true, __constructs__ : ["LEFT_TIME","POSITION_X","POSITION_Y","POSITION_R","VELOCITY_X","VELOCITY_Y","VELOCITY_R","COLOR","MASS","SIZE_X","SIZE_Y"] };
+component_EParticleAttribute.LEFT_TIME = ["LEFT_TIME",0];
+component_EParticleAttribute.LEFT_TIME.toString = $estr;
+component_EParticleAttribute.LEFT_TIME.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.POSITION_X = ["POSITION_X",1];
+component_EParticleAttribute.POSITION_X.toString = $estr;
+component_EParticleAttribute.POSITION_X.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.POSITION_Y = ["POSITION_Y",2];
+component_EParticleAttribute.POSITION_Y.toString = $estr;
+component_EParticleAttribute.POSITION_Y.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.POSITION_R = ["POSITION_R",3];
+component_EParticleAttribute.POSITION_R.toString = $estr;
+component_EParticleAttribute.POSITION_R.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.VELOCITY_X = ["VELOCITY_X",4];
+component_EParticleAttribute.VELOCITY_X.toString = $estr;
+component_EParticleAttribute.VELOCITY_X.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.VELOCITY_Y = ["VELOCITY_Y",5];
+component_EParticleAttribute.VELOCITY_Y.toString = $estr;
+component_EParticleAttribute.VELOCITY_Y.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.VELOCITY_R = ["VELOCITY_R",6];
+component_EParticleAttribute.VELOCITY_R.toString = $estr;
+component_EParticleAttribute.VELOCITY_R.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.COLOR = ["COLOR",7];
+component_EParticleAttribute.COLOR.toString = $estr;
+component_EParticleAttribute.COLOR.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.MASS = ["MASS",8];
+component_EParticleAttribute.MASS.toString = $estr;
+component_EParticleAttribute.MASS.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.SIZE_X = ["SIZE_X",9];
+component_EParticleAttribute.SIZE_X.toString = $estr;
+component_EParticleAttribute.SIZE_X.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.SIZE_Y = ["SIZE_Y",10];
+component_EParticleAttribute.SIZE_Y.toString = $estr;
+component_EParticleAttribute.SIZE_Y.__enum__ = component_EParticleAttribute;
 var component_EParticleType = { __ename__ : true, __constructs__ : ["PARTICLE","EMITTER"] };
 component_EParticleType.PARTICLE = ["PARTICLE",0];
 component_EParticleType.PARTICLE.toString = $estr;
@@ -265,16 +307,26 @@ inter_AbstractParamsPanel.prototype = $extend(inter_AbstractEvent.prototype,{
 var component_ParamsPanel = function(dom) {
 	inter_AbstractParamsPanel.call(this,dom);
 	this.txt_name = dom.find("#txt_name").find("span");
-	this.txt_life = dom.find("#txt_life");
-	this.txt_mass = dom.find("#txt_mass");
-	this.txt_rot = dom.find("#txt_rot");
-	this.txt_vel_rot = dom.find("#txt_vel_rot");
-	this.txt_size_x = dom.find("#txt_size_x");
-	this.txt_size_y = dom.find("#txt_size_y");
-	this.txt_pos_x = dom.find("#txt_pos_x");
-	this.txt_pos_y = dom.find("#txt_pos_y");
-	this.txt_vel_x = dom.find("#txt_vel_x");
-	this.txt_vel_y = dom.find("#txt_vel_y");
+	this.slr_life = dom.find("#slr_life");
+	this.slr_mass = dom.find("#slr_mass");
+	this.slr_rot = dom.find("#slr_rot");
+	this.slr_vel_rot = dom.find("#slr_vel_rot");
+	this.slr_size_x = dom.find("#slr_size_x");
+	this.slr_size_y = dom.find("#slr_size_y");
+	this.slr_pos_x = dom.find("#slr_pos_x");
+	this.slr_pos_y = dom.find("#slr_pos_y");
+	this.slr_vel_x = dom.find("#slr_vel_x");
+	this.slr_vel_y = dom.find("#slr_vel_y");
+	this.slr_life.slider({ onChange : this.onSlrChange(component_EParticleAttribute.LEFT_TIME)});
+	this.slr_mass.slider({ onChange : this.onSlrChange(component_EParticleAttribute.MASS)});
+	this.slr_rot.slider({ onChange : this.onSlrChange(component_EParticleAttribute.POSITION_R)});
+	this.slr_vel_rot.slider({ onChange : this.onSlrChange(component_EParticleAttribute.VELOCITY_R)});
+	this.slr_size_x.slider({ onChange : this.onSlrChange(component_EParticleAttribute.SIZE_X)});
+	this.slr_size_y.slider({ onChange : this.onSlrChange(component_EParticleAttribute.SIZE_Y)});
+	this.slr_pos_x.slider({ onChange : this.onSlrChange(component_EParticleAttribute.POSITION_X)});
+	this.slr_pos_y.slider({ onChange : this.onSlrChange(component_EParticleAttribute.POSITION_Y)});
+	this.slr_vel_x.slider({ onChange : this.onSlrChange(component_EParticleAttribute.VELOCITY_X)});
+	this.slr_vel_y.slider({ onChange : this.onSlrChange(component_EParticleAttribute.VELOCITY_Y)});
 };
 component_ParamsPanel.__name__ = true;
 component_ParamsPanel.__super__ = inter_AbstractParamsPanel;
@@ -291,8 +343,8 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 		this.setSize(data.size[0],data.size[1]);
 	}
 	,setVelocity: function(x,y) {
-		this.txt_vel_x.spinner("setValue",x);
-		this.txt_vel_y.spinner("setValue",y);
+		this.slr_vel_x.slider("setValue",x);
+		this.slr_vel_y.slider("setValue",y);
 	}
 	,setName: function(name) {
 		this.txt_name.html(name);
@@ -300,24 +352,65 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 	,setColor: function(color) {
 	}
 	,setLife: function(life) {
-		this.txt_life.spinner("setValue",life);
+		this.slr_life.slider("setValue",life);
 	}
 	,setMass: function(mass) {
-		this.txt_mass.spinner("setValue",mass);
+		this.slr_mass.slider("setValue",mass);
 	}
 	,setPosition: function(x,y) {
-		this.txt_pos_x.spinner("setValue",x);
-		this.txt_pos_y.spinner("setValue",y);
+		this.slr_pos_x.slider("setValue",x);
+		this.slr_pos_y.slider("setValue",y);
 	}
 	,setRotation: function(r) {
-		this.txt_rot.spinner("setValue",r);
+		this.slr_rot.slider("setValue",r);
 	}
 	,setSize: function(width,height) {
-		this.txt_size_x.spinner("setValue",width);
-		this.txt_size_y.spinner("setValue",height);
+		this.slr_size_x.slider("setValue",width);
+		this.slr_size_y.slider("setValue",height);
 	}
 	,setVelocityRotation: function(v) {
-		this.txt_vel_rot.spinner("setValue",v);
+		this.slr_vel_rot.slider("setValue",v);
+	}
+	,onSlrChange: function(particleAttr) {
+		var _g = this;
+		return function(newv,oldv) {
+			var target = $(this);
+			var value = target.slider("getValue");
+			console.log(_g.getData());
+			switch(particleAttr[1]) {
+			case 0:
+				Reflect.setField(_g.getData(),"lifetime",value);
+				break;
+			case 8:
+				Reflect.setField(_g.getData(),"mass",value);
+				break;
+			case 3:
+				Reflect.field(_g.getData(),"pos")[2] = value;
+				break;
+			case 1:
+				Reflect.field(_g.getData(),"pos")[0] = value;
+				break;
+			case 2:
+				Reflect.field(_g.getData(),"pos")[1] = value;
+				break;
+			case 9:
+				Reflect.field(_g.getData(),"size")[0] = value;
+				break;
+			case 10:
+				Reflect.field(_g.getData(),"size")[1] = value;
+				break;
+			case 6:
+				Reflect.field(_g.getData(),"vel")[2] = value;
+				break;
+			case 4:
+				Reflect.field(_g.getData(),"vel")[0] = value;
+				break;
+			case 5:
+				Reflect.field(_g.getData(),"vel")[1] = value;
+				break;
+			default:
+			}
+		};
 	}
 });
 var inter_ITree = function() { };

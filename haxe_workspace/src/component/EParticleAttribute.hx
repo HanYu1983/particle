@@ -14,7 +14,8 @@ enum EParticleAttribute
 	VELOCITY_R;
 	COLOR;
 	MASS;
-	SIZE;
+	SIZE_X;
+	SIZE_Y;
 }
 /*
 :formulaList (or formulaList nil) ; 改變函式
