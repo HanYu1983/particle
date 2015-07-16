@@ -66,12 +66,12 @@ class Tree extends AbstractTree
 			outputData.color = particleData.color;
 			
 			if ( node.children && node.children.length > 0 ) {
-				outputData.count = particleData.count;
-				outputData.duration = particleData.duration;
-				outputData.angle = particleData.angle;
-				outputData.range = particleData.range;
-				outputData.force = particleData.force;
 				outputData.emit = {prototype:[]}
+				outputData.emit.count = particleData.emit.count;
+				outputData.emit.duration = particleData.emit.duration;
+				outputData.emit.angle = particleData.emit.angle;
+				outputData.emit.range = particleData.emit.range;
+				outputData.emit.force = particleData.emit.force;
 				for ( i in 0...node.children.length ) {
 					var obj = { };
 					outputData.emit.prototype.push( obj );

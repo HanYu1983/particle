@@ -324,11 +324,11 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 	setData: function(data,type) {
 		inter_AbstractParamsPanel.prototype.setData.call(this,data,type);
 		if(type == component_EParticleType.EMITTER) {
-			this.slr_count.slider("setValue",data.count);
-			this.slr_duration.slider("setValue",data.duration * 1000);
-			this.slr_angle.slider("setValue",data.angle / Math.PI * 180);
-			this.slr_range.slider("setValue",data.angle / Math.PI * 180);
-			this.slr_force.slider("setValue",data.force);
+			this.slr_count.slider("setValue",data.emit.count);
+			this.slr_duration.slider("setValue",data.emit.duration * 1000);
+			this.slr_angle.slider("setValue",data.emit.angle / Math.PI * 180);
+			this.slr_range.slider("setValue",data.emit.angle / Math.PI * 180);
+			this.slr_force.slider("setValue",data.emit.force);
 			this.slr_count.parent().parent().show();
 			this.slr_duration.parent().parent().show();
 			this.slr_angle.parent().parent().show();
@@ -360,19 +360,19 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 			var value = target.slider("getValue");
 			switch(particleAttr[1]) {
 			case 11:
-				Reflect.setField(_g.getData(),"count",value);
+				Reflect.setField(_g.getData().emit,"count",value);
 				break;
 			case 12:
-				Reflect.setField(_g.getData(),"duration",value / 1000);
+				Reflect.setField(_g.getData().emit,"duration",value / 1000);
 				break;
 			case 13:
-				Reflect.setField(_g.getData(),"angle",value / 180 * Math.PI);
+				Reflect.setField(_g.getData().emit,"angle",value / 180 * Math.PI);
 				break;
 			case 14:
-				Reflect.setField(_g.getData(),"range",value / 180 * Math.PI);
+				Reflect.setField(_g.getData().emit,"range",value / 180 * Math.PI);
 				break;
 			case 15:
-				Reflect.setField(_g.getData(),"force",value);
+				Reflect.setField(_g.getData().emit,"force",value);
 				break;
 			case 0:
 				Reflect.setField(_g.getData(),"lifetime",value);
@@ -490,12 +490,12 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			outputData.mass = particleData.mass;
 			outputData.color = particleData.color;
 			if(node.children && node.children.length > 0) {
-				outputData.count = particleData.count;
-				outputData.duration = particleData.duration;
-				outputData.angle = particleData.angle;
-				outputData.range = particleData.range;
-				outputData.force = particleData.force;
 				outputData.emit = { prototype : []};
+				outputData.emit.count = particleData.emit.count;
+				outputData.emit.duration = particleData.emit.duration;
+				outputData.emit.angle = particleData.emit.angle;
+				outputData.emit.range = particleData.emit.range;
+				outputData.emit.force = particleData.emit.force;
 				var _g1 = 0;
 				var _g = node.children.length;
 				while(_g1 < _g) {
