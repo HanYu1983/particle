@@ -10,7 +10,7 @@
     [gl.mesh :as mesh]
     [gl.shader :as shader]
     [app.react :as rx]
-    [app.particle :as part]))
+    [tool.particle :as part]))
       
   
 (def cacheTex (memoize gltex/texture))
