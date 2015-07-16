@@ -78,7 +78,7 @@ class Main
 	function createEmitterAttribute( obj:Dynamic ) {
 		obj.emit = { prototype:[] };
 		obj.emit.count = 1;
-		obj.emit.duration = .1;
+		obj.emit.duration = .5;
 		obj.emit.angle = 0;
 		obj.emit.range = 0;
 		obj.emit.force = 100;
@@ -89,7 +89,7 @@ class Main
 				lifetime:3,
 				mass:3,
 				color:'#33ddff',
-				size:[10, 20],
+				size:[10, 10],
 				pos:[0, 0, 0], vel:[0, 0, 0] };
 	}
 	
@@ -113,6 +113,10 @@ class Main
 		});
 		tree.on( Tree.ADD_NODE, function( e, params:Dynamic ) {
 			resetPanel( params.parentNode );
+		});
+		tree.on( Tree.ON_TREE_DROP_NODE, function( e, params:Dynamic ) {
+			var targetNode = params.targetNode;
+			if ( targetNode.particleData.emit == null ) createEmitterAttribute( targetNode.particleData );
 		});
 		panel.on( ParamsPanel.ON_PARAMS_CHANGE, function( e, params:Dynamic ) {
 			onView.setObject( tree.outputData() );

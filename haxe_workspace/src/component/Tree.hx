@@ -15,6 +15,7 @@ class Tree extends AbstractTree
 	public static var ADD_NODE = 'add_node';
 	public static var REMOVE_NODE = 'remove_node';
 	public static var ON_TREE_NODE_CLICK = 'on_tree_node_click';
+	public static var ON_TREE_DROP_NODE = 'on_tree_drop_node';
 	
 	public function new( dom ) 
 	{
@@ -30,9 +31,12 @@ class Tree extends AbstractTree
 				trigger( ON_TREE_NODE_CLICK, {node:node} );
 			},
 			onDrop:function( target, source, point ) {
-				trace( target );
+				trace( target.id );
 				trace( source );
 				trace( point );
+				var targetNode = getDom().tree( 'getNode', target );
+				trace( targetNode );
+				trigger( ON_TREE_DROP_NODE, {targetNode:targetNode, sourceNode:source } );
 			}
 		});
 	}

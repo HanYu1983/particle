@@ -62,13 +62,13 @@ Main.prototype = {
 	,createEmitterAttribute: function(obj) {
 		obj.emit = { prototype : []};
 		obj.emit.count = 1;
-		obj.emit.duration = .1;
+		obj.emit.duration = .5;
 		obj.emit.angle = 0;
 		obj.emit.range = 0;
 		obj.emit.force = 100;
 	}
 	,createNewParticleObj: function(id) {
-		return { id : id, lifetime : 3, mass : 3, color : "#33ddff", size : [10,20], pos : [0,0,0], vel : [0,0,0]};
+		return { id : id, lifetime : 3, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0]};
 	}
 	,addListener: function() {
 		var _g = this;
@@ -88,7 +88,11 @@ Main.prototype = {
 		this.tree.on(component_Tree.ADD_NODE,function(e1,params1) {
 			resetPanel(params1.parentNode);
 		});
-		this.panel.on(component_ParamsPanel.ON_PARAMS_CHANGE,function(e2,params2) {
+		this.tree.on(component_Tree.ON_TREE_DROP_NODE,function(e2,params2) {
+			var targetNode = params2.targetNode;
+			if(targetNode.particleData.emit == null) _g.createEmitterAttribute(targetNode.particleData);
+		});
+		this.panel.on(component_ParamsPanel.ON_PARAMS_CHANGE,function(e3,params3) {
 			_g.onView.setObject(_g.tree.outputData());
 		});
 	}
@@ -463,9 +467,12 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		this.getDom().tree({ onClick : function(node) {
 			_g.trigger(component_Tree.ON_TREE_NODE_CLICK,{ node : node});
 		}, onDrop : function(target,source,point) {
-			console.log(target);
+			console.log(target.id);
 			console.log(source);
 			console.log(point);
+			var targetNode = _g.getDom().tree("getNode",target);
+			console.log(targetNode);
+			_g.trigger(component_Tree.ON_TREE_DROP_NODE,{ targetNode : targetNode, sourceNode : source});
 		}});
 	}
 	,parserLoadData: function(loadData) {
@@ -651,6 +658,7 @@ component_ParamsPanel.ON_PARAMS_CHANGE = "on_params_change";
 component_Tree.ADD_NODE = "add_node";
 component_Tree.REMOVE_NODE = "remove_node";
 component_Tree.ON_TREE_NODE_CLICK = "on_tree_node_click";
+component_Tree.ON_TREE_DROP_NODE = "on_tree_drop_node";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
