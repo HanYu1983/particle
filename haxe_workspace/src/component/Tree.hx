@@ -39,7 +39,7 @@ class Tree extends AbstractTree
 	
 	override public function parserLoadData( loadData:Dynamic ):Void {
 		function _findParticle( fields:Dynamic, parentNode:Dynamic ) {
-			addParticle( parentNode, fields, EParticleType.EMITTER, fields.id );
+			addParticle( parentNode, fields, fields.id );
 			
 			if ( fields.hasField( 'emit' ) ) {
 				var ary:Array<Dynamic> = fields.emit.prototype;
@@ -76,9 +76,9 @@ class Tree extends AbstractTree
 		return retobj;
 	}
 	
-	override public function addParticle(parentNode:Dynamic, particleData:Dynamic, type:EParticleType, name:String):Void 
+	override public function addParticle(parentNode:Dynamic, particleData:Dynamic, name:String):Void 
 	{
-		addNode( parentNode, particleData, type, name );
+		addNode( parentNode, particleData, name );
 	}
 	
 	override public function findNode(nodeId:String):Dynamic 
@@ -103,13 +103,12 @@ class Tree extends AbstractTree
 		}
 	}
 	
-	function addNode( parentNode:Dynamic, particleData:Dynamic, type:EParticleType, name:String ) {
+	function addNode( parentNode:Dynamic, particleData:Dynamic, name:String ) {
 		//if (parentNode && ( parentNode.domId == '_easyui_tree_1' )) {
 		if (parentNode ) {
 			var nodes = [{
 				id:particleData.id,
 				text:name,
-				//type:type,
 				particleData:particleData
 			}];
 			getDom().tree('append', {

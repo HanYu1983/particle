@@ -65,11 +65,7 @@ class Main
 		switch( target.id ) {
 			case 'btn_addParticle':
 				checkNodeAndThen( function( node ) {
-					tree.addParticle( node, createNewParticleObj( getId() ), EParticleType.PARTICLE, 'test_particle' );
-				});
-			case 'btn_addEmitter':
-				checkNodeAndThen( function( node ) {
-					tree.addParticle( node, createNewParticleObj( getId() ), EParticleType.EMITTER, 'test_emitter' );
+					tree.addParticle( node, createNewParticleObj( getId() ), 'test_particle' );
 				});
 			case 'btn_remove':
 				var selectNode = tree.getSelectedNode();
@@ -79,7 +75,7 @@ class Main
 	
 	function createNewParticleObj( id ) {
 		return {id:id, 
-				lifetime:10,
+				lifetime:3,
 				mass:3,
 				color:'#33ddff',
 				size:[10, 20],

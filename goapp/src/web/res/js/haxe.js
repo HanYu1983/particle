@@ -49,12 +49,7 @@ Main.prototype = {
 		switch(_g1) {
 		case "btn_addParticle":
 			checkNodeAndThen(function(node) {
-				_g.tree.addParticle(node,_g.createNewParticleObj(Main.getId()),component_EParticleType.PARTICLE,"test_particle");
-			});
-			break;
-		case "btn_addEmitter":
-			checkNodeAndThen(function(node1) {
-				_g.tree.addParticle(node1,_g.createNewParticleObj(Main.getId()),component_EParticleType.EMITTER,"test_emitter");
+				_g.tree.addParticle(node,_g.createNewParticleObj(Main.getId()),"test_particle");
 			});
 			break;
 		case "btn_remove":
@@ -64,7 +59,7 @@ Main.prototype = {
 		}
 	}
 	,createNewParticleObj: function(id) {
-		return { id : id, lifetime : 10, mass : 3, color : "#33ddff", size : [10,20], pos : [0,0,0], vel : [0,0,0]};
+		return { id : id, lifetime : 3, mass : 3, color : "#33ddff", size : [10,20], pos : [0,0,0], vel : [0,0,0]};
 	}
 	,addListener: function() {
 		var _g = this;
@@ -429,7 +424,7 @@ inter_AbstractTree.prototype = $extend(inter_AbstractEvent.prototype,{
 	,outputData: function() {
 		return null;
 	}
-	,addParticle: function(parentNode,particleData,type,name) {
+	,addParticle: function(parentNode,particleData,name) {
 	}
 	,getRootNode: function() {
 		return null;
@@ -465,7 +460,7 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		var _findParticle;
 		var _findParticle1 = null;
 		_findParticle1 = function(fields,parentNode) {
-			_g.addParticle(parentNode,fields,component_EParticleType.EMITTER,fields.id);
+			_g.addParticle(parentNode,fields,fields.id);
 			if(Object.prototype.hasOwnProperty.call(fields,"emit")) {
 				var ary = fields.emit.prototype;
 				var target = null;
@@ -509,8 +504,8 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		_loopNode(this.findNode("root"),retobj);
 		return retobj;
 	}
-	,addParticle: function(parentNode,particleData,type,name) {
-		this.addNode(parentNode,particleData,type,name);
+	,addParticle: function(parentNode,particleData,name) {
+		this.addNode(parentNode,particleData,name);
 	}
 	,findNode: function(nodeId) {
 		return this.getDom().tree("find",nodeId);
@@ -527,7 +522,7 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			this.trigger(component_Tree.REMOVE_NODE,{ node : node});
 		}
 	}
-	,addNode: function(parentNode,particleData,type,name) {
+	,addNode: function(parentNode,particleData,name) {
 		if(parentNode) {
 			var nodes = [{ id : particleData.id, text : name, particleData : particleData}];
 			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});

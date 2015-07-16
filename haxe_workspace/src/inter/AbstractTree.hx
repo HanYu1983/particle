@@ -21,7 +21,7 @@ class AbstractTree extends AbstractEvent implements ITree
 		return null;
 	}
 	
-	public function addParticle( parentNode:Dynamic, particleData:Dynamic, type:EParticleType, name:String ):Void {
+	public function addParticle( parentNode:Dynamic, particleData:Dynamic, name:String ):Void {
 		
 	}
 	
