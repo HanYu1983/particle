@@ -12,6 +12,11 @@ class ParamsPanel extends AbstractParamsPanel
 	public static var ON_PARAMS_CHANGE = 'on_params_change';
 	
 	var txt_name:Dynamic;
+	var slr_count:Dynamic;
+	var slr_duration:Dynamic;
+	var slr_angle:Dynamic;
+	var slr_range:Dynamic;
+	var slr_force:Dynamic;
 	var slr_life:Dynamic;
 	var slr_mass:Dynamic;
 	var slr_rot:Dynamic;
@@ -28,6 +33,11 @@ class ParamsPanel extends AbstractParamsPanel
 		super( dom );
 		
 		txt_name = dom.find( '#txt_name' ).find( 'span' );
+		slr_count = dom.find( '#slr_count' );
+		slr_duration = dom.find( '#slr_duration' );
+		slr_angle = dom.find( '#slr_angle' );
+		slr_range = dom.find( '#slr_range' );
+		slr_force = dom.find( '#slr_force' );
 		slr_life = dom.find( '#slr_life' );
 		slr_mass = dom.find( '#slr_mass' );
 		slr_rot = dom.find( '#slr_rot' );
@@ -39,6 +49,11 @@ class ParamsPanel extends AbstractParamsPanel
 		slr_vel_x = dom.find( '#slr_vel_x' );
 		slr_vel_y = dom.find( '#slr_vel_y' );
 		
+		slr_count.slider( { onChange:onSlrChange( EParticleAttribute.COUNT ) });
+		slr_duration.slider( { onChange:onSlrChange( EParticleAttribute.DURATION ) });
+		slr_angle.slider( { onChange:onSlrChange( EParticleAttribute.ANGLE ) });
+		slr_range.slider( { onChange:onSlrChange( EParticleAttribute.RANGE ) });
+		slr_force.slider( { onChange:onSlrChange( EParticleAttribute.FORCE ) });
 		slr_life.slider( { onChange:onSlrChange( EParticleAttribute.LEFT_TIME ) });
 		slr_mass.slider( { onChange:onSlrChange( EParticleAttribute.MASS ) });
 		slr_rot.slider( { onChange:onSlrChange( EParticleAttribute.POSITION_R ) });
@@ -51,67 +66,41 @@ class ParamsPanel extends AbstractParamsPanel
 		slr_vel_y.slider( { onChange:onSlrChange( EParticleAttribute.VELOCITY_Y ) });
 	}
 	
-	override public function setData(data:Dynamic):Void 
+	override public function setData(data:Dynamic, type:EParticleType):Void 
 	{
-		super.setData( data );
+		super.setData( data, type );
 		
-		setName( data.id );
-		setPosition( data.pos[0], data.pos[1] );
-		setVelocity( data.vel[0], data.vel[1] );
-		setRotation( data.pos[2] );
-		setVelocityRotation( data.vel[2] );
-		setLife( data.lifetime );
-		setMass( data.mass );
-		setSize( data.size[0], data.size[1] );
-	}
-	
-	override public function setVelocity(x:Float, y:Float):Void 
-	{
-		slr_vel_x.slider( 'setValue', x );
-		slr_vel_y.slider( 'setValue', y );
-	}
-	
-	override public function setName(name:String):Void 
-	{
-		txt_name.html( name );
-	}
-	
-	override public function setColor(color:Int):Void 
-	{
+		if ( type == EParticleType.EMITTER ) {
+			slr_count.slider( 'setValue', data.count );
+			slr_duration.slider( 'setValue', data.duration * 1000 );
+			slr_angle.slider( 'setValue', data.angle / Math.PI * 180 );
+			slr_range.slider( 'setValue', data.angle / Math.PI * 180 );
+			slr_force.slider( 'setValue', data.force );
+			
+			slr_count.parent().parent().show();
+			slr_duration.parent().parent().show();
+			slr_angle.parent().parent().show();
+			slr_range.parent().parent().show();
+			slr_force.parent().parent().show();
+		}else {
+			slr_count.parent().parent().hide();
+			slr_duration.parent().parent().hide();
+			slr_angle.parent().parent().hide();
+			slr_range.parent().parent().hide();
+			slr_force.parent().parent().hide();
+		}
 		
-	}
-	
-	override public function setLife(life:Int):Void 
-	{
-		slr_life.slider( 'setValue', life );
-	}
-	
-	override public function setMass(mass:Int):Void 
-	{
-		slr_mass.slider( 'setValue', mass );
-		
-	}
-	
-	override public function setPosition(x:Float, y:Float):Void 
-	{
-		slr_pos_x.slider( 'setValue', x );
-		slr_pos_y.slider( 'setValue', y );
-	}
-	
-	override public function setRotation(r:Float):Void 
-	{
-		slr_rot.slider( 'setValue', r );
-	}
-	
-	override public function setSize(width:Float, height:Float):Void 
-	{
-		slr_size_x.slider( 'setValue', width );
-		slr_size_y.slider( 'setValue', height );
-	}
-	
-	override public function setVelocityRotation(v:Float):Void 
-	{
-		slr_vel_rot.slider( 'setValue', v );
+		txt_name.html( data.id );
+		slr_life.slider( 'setValue', data.lifetime );
+		slr_mass.slider( 'setValue', data.mass );
+		slr_vel_x.slider( 'setValue', data.vel[0] );
+		slr_vel_y.slider( 'setValue', data.vel[1] );
+		slr_vel_rot.slider( 'setValue', data.vel[2] );
+		slr_pos_x.slider( 'setValue', data.pos[0] );
+		slr_pos_y.slider( 'setValue', data.pos[1]);
+		slr_rot.slider( 'setValue', data.pos[2] );
+		slr_size_x.slider( 'setValue', data.size[0] );
+		slr_size_y.slider( 'setValue', data.size[1] );
 	}
 	
 	function onSlrChange( particleAttr:EParticleAttribute ) {
@@ -119,6 +108,16 @@ class ParamsPanel extends AbstractParamsPanel
 			var target = untyped __js__( '$(this)' );
 			var value = target.slider( 'getValue' );
 			switch( particleAttr ) {
+				case EParticleAttribute.COUNT:
+					getData().setField( 'count', value );
+				case EParticleAttribute.DURATION:
+					getData().setField( 'duration', value / 1000 );
+				case EParticleAttribute.ANGLE:
+					getData().setField( 'angle', value / 180 * Math.PI );
+				case EParticleAttribute.RANGE:
+					getData().setField( 'range', value / 180 * Math.PI );
+				case EParticleAttribute.FORCE:
+					getData().setField( 'force', value );
 				case EParticleAttribute.LEFT_TIME:
 					getData().setField( 'lifetime', value );
 				case EParticleAttribute.MASS:

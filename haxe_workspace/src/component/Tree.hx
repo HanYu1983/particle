@@ -29,7 +29,7 @@ class Tree extends AbstractTree
 			onClick:function( node ) {
 				trigger( ON_TREE_NODE_CLICK, {node:node} );
 			},
-			onDrop:function( target,source,point ){
+			onDrop:function( target, source, point ) {
 				trace( target );
 				trace( source );
 				trace( point );
@@ -66,6 +66,11 @@ class Tree extends AbstractTree
 			outputData.color = particleData.color;
 			
 			if ( node.children && node.children.length > 0 ) {
+				outputData.count = particleData.count;
+				outputData.duration = particleData.duration;
+				outputData.angle = particleData.angle;
+				outputData.range = particleData.range;
+				outputData.force = particleData.force;
 				outputData.emit = {prototype:[]}
 				for ( i in 0...node.children.length ) {
 					var obj = { };

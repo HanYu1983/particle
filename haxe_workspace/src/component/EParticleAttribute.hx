@@ -16,6 +16,11 @@ enum EParticleAttribute
 	MASS;
 	SIZE_X;
 	SIZE_Y;
+	COUNT;
+	DURATION;
+	ANGLE;
+	RANGE;
+	FORCE;
 }
 /*
 :formulaList (or formulaList nil) ; 改變函式

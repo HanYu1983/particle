@@ -31,6 +31,7 @@ Main.prototype = {
 		this.onResize(null);
 		this.tree.parserLoadData(this.loadSaveData());
 		this.onView.setObject(this.loadSaveData());
+		console.log(this.tree.outputData());
 	}
 	,onHtmlClick: function(target) {
 		var _g = this;
@@ -65,12 +66,18 @@ Main.prototype = {
 		var _g = this;
 		this.webgl.mousemove($bind(this,this.onMousemove));
 		this.j(window).resize($bind(this,this.onResize));
-		this.tree.on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
-			var particleData = params.node.particleData;
+		var resetPanel = function(node) {
+			var particleData = node.particleData;
 			if(particleData == null) return;
-			_g.panel.setData(particleData);
+			if(node.children != null && node.children.length > 0) _g.panel.setData(particleData,component_EParticleType.EMITTER); else _g.panel.setData(particleData,component_EParticleType.PARTICLE);
+		};
+		this.tree.on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
+			resetPanel(params.node);
 		});
-		this.panel.on(component_ParamsPanel.ON_PARAMS_CHANGE,function(e1,params1) {
+		this.tree.on(component_Tree.ADD_NODE,function(e1,params1) {
+			resetPanel(params1.parentNode);
+		});
+		this.panel.on(component_ParamsPanel.ON_PARAMS_CHANGE,function(e2,params2) {
 			_g.onView.setObject(_g.tree.outputData());
 		});
 	}
@@ -102,7 +109,7 @@ Reflect.field = function(o,field) {
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
-var component_EParticleAttribute = { __ename__ : true, __constructs__ : ["LEFT_TIME","POSITION_X","POSITION_Y","POSITION_R","VELOCITY_X","VELOCITY_Y","VELOCITY_R","COLOR","MASS","SIZE_X","SIZE_Y"] };
+var component_EParticleAttribute = { __ename__ : true, __constructs__ : ["LEFT_TIME","POSITION_X","POSITION_Y","POSITION_R","VELOCITY_X","VELOCITY_Y","VELOCITY_R","COLOR","MASS","SIZE_X","SIZE_Y","COUNT","DURATION","ANGLE","RANGE","FORCE"] };
 component_EParticleAttribute.LEFT_TIME = ["LEFT_TIME",0];
 component_EParticleAttribute.LEFT_TIME.toString = $estr;
 component_EParticleAttribute.LEFT_TIME.__enum__ = component_EParticleAttribute;
@@ -136,6 +143,21 @@ component_EParticleAttribute.SIZE_X.__enum__ = component_EParticleAttribute;
 component_EParticleAttribute.SIZE_Y = ["SIZE_Y",10];
 component_EParticleAttribute.SIZE_Y.toString = $estr;
 component_EParticleAttribute.SIZE_Y.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.COUNT = ["COUNT",11];
+component_EParticleAttribute.COUNT.toString = $estr;
+component_EParticleAttribute.COUNT.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.DURATION = ["DURATION",12];
+component_EParticleAttribute.DURATION.toString = $estr;
+component_EParticleAttribute.DURATION.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.ANGLE = ["ANGLE",13];
+component_EParticleAttribute.ANGLE.toString = $estr;
+component_EParticleAttribute.ANGLE.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.RANGE = ["RANGE",14];
+component_EParticleAttribute.RANGE.toString = $estr;
+component_EParticleAttribute.RANGE.__enum__ = component_EParticleAttribute;
+component_EParticleAttribute.FORCE = ["FORCE",15];
+component_EParticleAttribute.FORCE.toString = $estr;
+component_EParticleAttribute.FORCE.__enum__ = component_EParticleAttribute;
 var component_EParticleType = { __ename__ : true, __constructs__ : ["PARTICLE","EMITTER"] };
 component_EParticleType.PARTICLE = ["PARTICLE",0];
 component_EParticleType.PARTICLE.toString = $estr;
@@ -255,58 +277,21 @@ inter_AbstractParamsPanel.__name__ = true;
 inter_AbstractParamsPanel.__interfaces__ = [inter_IParamsPanel];
 inter_AbstractParamsPanel.__super__ = inter_AbstractEvent;
 inter_AbstractParamsPanel.prototype = $extend(inter_AbstractEvent.prototype,{
-	setData: function(data) {
+	setData: function(data,type) {
 		this.particleData = data;
 	}
 	,getData: function() {
 		return this.particleData;
 	}
-	,setLife: function(life) {
-	}
-	,setMass: function(mass) {
-	}
-	,setPosition: function(x,y) {
-	}
-	,setVelocity: function(x,y) {
-	}
-	,setRotation: function(r) {
-	}
-	,setVelocityRotation: function(v) {
-	}
-	,setSize: function(width,height) {
-	}
-	,setColor: function(color) {
-	}
-	,setName: function(name) {
-	}
-	,getLife: function() {
-		return 0;
-	}
-	,getMass: function() {
-		return 0;
-	}
-	,getPosition: function() {
-		return null;
-	}
-	,getVelocity: function() {
-		return null;
-	}
-	,getRotation: function() {
-		return 0;
-	}
-	,getVelocityRotation: function() {
-		return 0;
-	}
-	,getSize: function() {
-		return null;
-	}
-	,getColor: function() {
-		return 0;
-	}
 });
 var component_ParamsPanel = function(dom) {
 	inter_AbstractParamsPanel.call(this,dom);
 	this.txt_name = dom.find("#txt_name").find("span");
+	this.slr_count = dom.find("#slr_count");
+	this.slr_duration = dom.find("#slr_duration");
+	this.slr_angle = dom.find("#slr_angle");
+	this.slr_range = dom.find("#slr_range");
+	this.slr_force = dom.find("#slr_force");
 	this.slr_life = dom.find("#slr_life");
 	this.slr_mass = dom.find("#slr_mass");
 	this.slr_rot = dom.find("#slr_rot");
@@ -317,6 +302,11 @@ var component_ParamsPanel = function(dom) {
 	this.slr_pos_y = dom.find("#slr_pos_y");
 	this.slr_vel_x = dom.find("#slr_vel_x");
 	this.slr_vel_y = dom.find("#slr_vel_y");
+	this.slr_count.slider({ onChange : this.onSlrChange(component_EParticleAttribute.COUNT)});
+	this.slr_duration.slider({ onChange : this.onSlrChange(component_EParticleAttribute.DURATION)});
+	this.slr_angle.slider({ onChange : this.onSlrChange(component_EParticleAttribute.ANGLE)});
+	this.slr_range.slider({ onChange : this.onSlrChange(component_EParticleAttribute.RANGE)});
+	this.slr_force.slider({ onChange : this.onSlrChange(component_EParticleAttribute.FORCE)});
 	this.slr_life.slider({ onChange : this.onSlrChange(component_EParticleAttribute.LEFT_TIME)});
 	this.slr_mass.slider({ onChange : this.onSlrChange(component_EParticleAttribute.MASS)});
 	this.slr_rot.slider({ onChange : this.onSlrChange(component_EParticleAttribute.POSITION_R)});
@@ -331,45 +321,37 @@ var component_ParamsPanel = function(dom) {
 component_ParamsPanel.__name__ = true;
 component_ParamsPanel.__super__ = inter_AbstractParamsPanel;
 component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
-	setData: function(data) {
-		inter_AbstractParamsPanel.prototype.setData.call(this,data);
-		this.setName(data.id);
-		this.setPosition(data.pos[0],data.pos[1]);
-		this.setVelocity(data.vel[0],data.vel[1]);
-		this.setRotation(data.pos[2]);
-		this.setVelocityRotation(data.vel[2]);
-		this.setLife(data.lifetime);
-		this.setMass(data.mass);
-		this.setSize(data.size[0],data.size[1]);
-	}
-	,setVelocity: function(x,y) {
-		this.slr_vel_x.slider("setValue",x);
-		this.slr_vel_y.slider("setValue",y);
-	}
-	,setName: function(name) {
-		this.txt_name.html(name);
-	}
-	,setColor: function(color) {
-	}
-	,setLife: function(life) {
-		this.slr_life.slider("setValue",life);
-	}
-	,setMass: function(mass) {
-		this.slr_mass.slider("setValue",mass);
-	}
-	,setPosition: function(x,y) {
-		this.slr_pos_x.slider("setValue",x);
-		this.slr_pos_y.slider("setValue",y);
-	}
-	,setRotation: function(r) {
-		this.slr_rot.slider("setValue",r);
-	}
-	,setSize: function(width,height) {
-		this.slr_size_x.slider("setValue",width);
-		this.slr_size_y.slider("setValue",height);
-	}
-	,setVelocityRotation: function(v) {
-		this.slr_vel_rot.slider("setValue",v);
+	setData: function(data,type) {
+		inter_AbstractParamsPanel.prototype.setData.call(this,data,type);
+		if(type == component_EParticleType.EMITTER) {
+			this.slr_count.slider("setValue",data.count);
+			this.slr_duration.slider("setValue",data.duration * 1000);
+			this.slr_angle.slider("setValue",data.angle / Math.PI * 180);
+			this.slr_range.slider("setValue",data.angle / Math.PI * 180);
+			this.slr_force.slider("setValue",data.force);
+			this.slr_count.parent().parent().show();
+			this.slr_duration.parent().parent().show();
+			this.slr_angle.parent().parent().show();
+			this.slr_range.parent().parent().show();
+			this.slr_force.parent().parent().show();
+		} else {
+			this.slr_count.parent().parent().hide();
+			this.slr_duration.parent().parent().hide();
+			this.slr_angle.parent().parent().hide();
+			this.slr_range.parent().parent().hide();
+			this.slr_force.parent().parent().hide();
+		}
+		this.txt_name.html(data.id);
+		this.slr_life.slider("setValue",data.lifetime);
+		this.slr_mass.slider("setValue",data.mass);
+		this.slr_vel_x.slider("setValue",data.vel[0]);
+		this.slr_vel_y.slider("setValue",data.vel[1]);
+		this.slr_vel_rot.slider("setValue",data.vel[2]);
+		this.slr_pos_x.slider("setValue",data.pos[0]);
+		this.slr_pos_y.slider("setValue",data.pos[1]);
+		this.slr_rot.slider("setValue",data.pos[2]);
+		this.slr_size_x.slider("setValue",data.size[0]);
+		this.slr_size_y.slider("setValue",data.size[1]);
 	}
 	,onSlrChange: function(particleAttr) {
 		var _g = this;
@@ -377,6 +359,21 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 			var target = $(this);
 			var value = target.slider("getValue");
 			switch(particleAttr[1]) {
+			case 11:
+				Reflect.setField(_g.getData(),"count",value);
+				break;
+			case 12:
+				Reflect.setField(_g.getData(),"duration",value / 1000);
+				break;
+			case 13:
+				Reflect.setField(_g.getData(),"angle",value / 180 * Math.PI);
+				break;
+			case 14:
+				Reflect.setField(_g.getData(),"range",value / 180 * Math.PI);
+				break;
+			case 15:
+				Reflect.setField(_g.getData(),"force",value);
+				break;
 			case 0:
 				Reflect.setField(_g.getData(),"lifetime",value);
 				break;
@@ -493,6 +490,11 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			outputData.mass = particleData.mass;
 			outputData.color = particleData.color;
 			if(node.children && node.children.length > 0) {
+				outputData.count = particleData.count;
+				outputData.duration = particleData.duration;
+				outputData.angle = particleData.angle;
+				outputData.range = particleData.range;
+				outputData.force = particleData.force;
 				outputData.emit = { prototype : []};
 				var _g1 = 0;
 				var _g = node.children.length;

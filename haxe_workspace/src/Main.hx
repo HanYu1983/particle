@@ -46,6 +46,8 @@ class Main
 		
 		tree.parserLoadData( loadSaveData() );
 		onView.setObject( loadSaveData() );
+		
+		trace( tree.outputData() );
 	}
 	
 	function onHtmlClick( target ) {
@@ -85,12 +87,24 @@ class Main
 	function addListener() {
 		webgl.mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
-		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
-			var particleData = params.node.particleData;
-			if ( particleData == null ) return;
-			panel.setData( particleData );
-		});
 		
+		function resetPanel( node:Dynamic ) {
+			var particleData = node.particleData;
+			if ( particleData == null ) return;
+			if ( node.children != null && node.children.length > 0 ) {
+				panel.setData( particleData, EParticleType.EMITTER );
+			}else {
+				panel.setData( particleData, EParticleType.PARTICLE );
+			}
+			
+		}
+		
+		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
+			resetPanel( params.node );
+		});
+		tree.on( Tree.ADD_NODE, function( e, params:Dynamic ) {
+			resetPanel( params.parentNode );
+		});
 		panel.on( ParamsPanel.ON_PARAMS_CHANGE, function( e, params:Dynamic ) {
 			onView.setObject( tree.outputData() );
 		});

@@ -101,69 +101,99 @@
 				<div id="paramsPanel" class="easyui-panel" title="Paritlce Properties" style="padding:5px; width:100%; height:80%;">
 					
 					<div class="propGroup" style="margin-bottom:10px;">
-						<div id="txt_name" class="particle_title" style="float:left; margin-right:20px;">Name: <span style="color:yellow;">AAasdfasdfBB</span></div>
-						<a href="#" class="easyui-linkbutton" >Rename</a>
+						<div id="txt_name" class="particle_title" style="float:left; margin-right:20px;">名稱: <span style="color:yellow;">AAasdfasdfBB</span></div>
+						<a href="#" class="easyui-linkbutton" >重新命名</a>
 					</div>
 					
 					<div class="propGroup">
 						<div class="prop">
-							<div class="sliderTitle">LIFE:</div>
+							<div class="sliderTitle">生命:</div>
 							<div class="sliderContainer">
 								<input id="slr_life" class="easyui-slider" style="width:100%;" data-options="showTip:true,max:10,value:3"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">MASS:</div>
+							<div class="sliderTitle">質量:</div>
 							<div class="sliderContainer">
 								<input id="slr_mass" class="easyui-slider" style="width:100%;" data-options="showTip:true,max:1000,value:1"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">POS-X:</div>
+							<div class="sliderTitle">位置x:</div>
 							<div class="sliderContainer">
 								<input id="slr_pos_x" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:-1000,max:1000,value:0"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">POS-Y:</div>
+							<div class="sliderTitle">位置y:</div>
 							<div class="sliderContainer">
 								<input id="slr_pos_y" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:-1000,max:1000,value:0"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">ROT:</div>
+							<div class="sliderTitle">角度:</div>
 							<div class="sliderContainer">
 								<input id="slr_rot" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:-360,max:360,value:0"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">VEL-X:</div>
+							<div class="sliderTitle">速度x:</div>
 							<div class="sliderContainer">
 								<input id="slr_vel_x" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:-1000,max:1000,value:0"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">VEL-Y:</div>
+							<div class="sliderTitle">速度y:</div>
 							<div class="sliderContainer">
 								<input id="slr_vel_y" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:-1000,max:1000,value:0"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">VEL-R:</div>
+							<div class="sliderTitle">轉速:</div>
 							<div class="sliderContainer">
 								<input id="slr_vel_rot" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:-1000,max:1000,value:0"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">SIZE-X:</div>
+							<div class="sliderTitle">寬度:</div>
 							<div class="sliderContainer">
 								<input id="slr_size_x" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:-100,max:100,value:10"></input>
 							</div>
 						</div>
 						<div class="prop">
-							<div class="sliderTitle">SIZE-Y:</div>
+							<div class="sliderTitle">高度:</div>
 							<div class="sliderContainer">
 								<input id="slr_size_y" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:-100,max:100,value:10"></input>
+							</div>
+						</div>
+						<div class="prop">
+							<div class="sliderTitle">數目:</div>
+							<div class="sliderContainer">
+								<input id="slr_count" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:0,max:100,value:1"></input>
+							</div>
+						</div>
+						<div class="prop">
+							<div class="sliderTitle">週期:</div>
+							<div class="sliderContainer">
+								<input id="slr_duration" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:0,max:10000,value:1000"></input>
+							</div>
+						</div>
+						<div class="prop">
+							<div class="sliderTitle">射角:</div>
+							<div class="sliderContainer">
+								<input id="slr_angle" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:0,max:360,value:0"></input>
+							</div>
+						</div>
+						<div class="prop">
+							<div class="sliderTitle">範圍:</div>
+							<div class="sliderContainer">
+								<input id="slr_range" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:0,max:360,value:0"></input>
+							</div>
+						</div>
+						<div class="prop">
+							<div class="sliderTitle">力道:</div>
+							<div class="sliderContainer">
+								<input id="slr_force" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:0,max:1000,value:1"></input>
 							</div>
 						</div>
 						<!--
@@ -299,13 +329,17 @@
 							color:'#33ddff',
 							size:[10, 20],
 							pos:[0, 0, 0], vel:[0, 0, 0],
+							count:2,
+							duration:.01,
+							angle:0,
+							range:0,
+							force:1,
 							emit: { prototype:[ { 	id:'root_particle', 
 													lifetime:1,
 													mass:3,
 													color:'#33ddff',
 													size:[10, 20],
 													pos:[0, 0, 0], vel:[100, 0, 0] }] }}
-	
 	
 	goog.require("app.main2");
 	window.haxeStart();
