@@ -32,7 +32,7 @@
               (int (* g 255)) ","
               (int (* b 255)) ","
               a ")"))
-          (.fillRect 0 0 (- (/ xs 2)) (- (/ ys 2)))
+          (.fillRect (- (/ xs 2)) (- (/ ys 2)) xs ys)
           (.restore)))
       ctx)))
     
