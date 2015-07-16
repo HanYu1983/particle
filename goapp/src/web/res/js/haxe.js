@@ -68,8 +68,10 @@ Main.prototype = {
 		this.tree.on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
 			var particleData = params.node.particleData;
 			if(particleData == null) return;
-			console.log(particleData);
 			_g.panel.setData(particleData);
+		});
+		this.panel.on(component_ParamsPanel.ON_PARAMS_CHANGE,function(e1,params1) {
+			_g.onView.setObject(_g.tree.outputData());
 		});
 	}
 	,loadSaveData: function() {
@@ -82,7 +84,7 @@ Main.prototype = {
 	,onMousemove: function(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		this.onView.moveParticle(px,py);
+		this.onView.moveRoot(px,py);
 		this.onView.setObject(this.tree.outputData());
 	}
 };
@@ -197,7 +199,7 @@ component_OnView.prototype = {
 		_findParticle = _findParticle1;
 		return _findParticle(this.getObject());
 	}
-	,moveParticle: function(x,y) {
+	,moveRoot: function(x,y) {
 		var p = this.findParticle("root");
 		if(p != null) {
 			p.pos[0] = x;
@@ -407,6 +409,7 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 				break;
 			default:
 			}
+			_g.trigger(component_ParamsPanel.ON_PARAMS_CHANGE,{ });
 		};
 	}
 });
@@ -475,6 +478,7 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		};
 		_findParticle = _findParticle1;
 		_findParticle(loadData,this.getRootNode());
+		this.focusNode(this.findNode("root"));
 	}
 	,outputData: function() {
 		var retobj = { };
@@ -521,6 +525,10 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			this.getDom().tree("remove",node.target);
 			this.trigger(component_Tree.REMOVE_NODE,{ node : node});
 		}
+	}
+	,focusNode: function(node) {
+		this.getDom().tree("select",node.target);
+		this.trigger(component_Tree.ON_TREE_NODE_CLICK,{ node : node});
 	}
 	,addNode: function(parentNode,particleData,name) {
 		if(parentNode) {
@@ -623,6 +631,7 @@ var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;
 component_OnView.inst = new component_OnView();
+component_ParamsPanel.ON_PARAMS_CHANGE = "on_params_change";
 component_Tree.ADD_NODE = "add_node";
 component_Tree.REMOVE_NODE = "remove_node";
 component_Tree.ON_TREE_NODE_CLICK = "on_tree_node_click";

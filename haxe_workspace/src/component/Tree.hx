@@ -49,6 +49,8 @@ class Tree extends AbstractTree
 			}
 		}
 		_findParticle( loadData, getRootNode() );
+		
+		focusNode( findNode( 'root' ) );
 	}
 	
 	override public function outputData():Dynamic 
@@ -101,6 +103,11 @@ class Tree extends AbstractTree
 			getDom().tree('remove', node.target );
 			trigger( REMOVE_NODE, { node:node } );
 		}
+	}
+	
+	function focusNode( node ) {
+		getDom().tree( 'select', node.target);
+		trigger( ON_TREE_NODE_CLICK, {node:node} );
 	}
 	
 	function addNode( parentNode:Dynamic, particleData:Dynamic, name:String ) {

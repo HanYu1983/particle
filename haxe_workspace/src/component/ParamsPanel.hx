@@ -9,6 +9,8 @@ using Reflect;
  */
 class ParamsPanel extends AbstractParamsPanel
 {
+	public static var ON_PARAMS_CHANGE = 'on_params_change';
+	
 	var txt_name:Dynamic;
 	var slr_life:Dynamic;
 	var slr_mass:Dynamic;
@@ -20,7 +22,6 @@ class ParamsPanel extends AbstractParamsPanel
 	var slr_pos_y:Dynamic;
 	var slr_vel_x:Dynamic;
 	var slr_vel_y:Dynamic;
-	
 
 	public function new( dom ) 
 	{
@@ -140,7 +141,7 @@ class ParamsPanel extends AbstractParamsPanel
 					getData().field( 'vel' )[1] = value;
 				case _:
 			}
-			
+			trigger( ON_PARAMS_CHANGE, {} );
 		}
 	}
 }

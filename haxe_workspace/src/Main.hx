@@ -88,8 +88,11 @@ class Main
 		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
 			var particleData = params.node.particleData;
 			if ( particleData == null ) return;
-			trace( particleData );
 			panel.setData( particleData );
+		});
+		
+		panel.on( ParamsPanel.ON_PARAMS_CHANGE, function( e, params:Dynamic ) {
+			onView.setObject( tree.outputData() );
 		});
 	}
 	
@@ -105,8 +108,7 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		
-		onView.moveParticle( px, py );
+		onView.moveRoot( px, py );
 		onView.setObject( tree.outputData() );
 	}
 	

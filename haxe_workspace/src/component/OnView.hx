@@ -84,7 +84,7 @@ class OnView
 		return _findParticle( getObject() );
 	}
 	
-	public function moveParticle( x, y ) {
+	public function moveRoot( x, y ) {
 		var p = findParticle( 'root' );
 		if( p != null ){
 			p.pos[0] = x;
