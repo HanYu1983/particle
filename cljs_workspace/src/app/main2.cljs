@@ -21,15 +21,19 @@
         (aset "fillStyle" "red")
         (.fillText (str "count:" (count ps)) 50 50))
       
-      (doseq [{[x y r] :pos [xs ys] :size [r g b a] :color :as p} ps]
+      (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color :as p} ps]
         (doto canvas-ctx
+          (.save)
+          (.translate x y)
+          (.rotate rot)
           (aset "fillStyle" 
             (str "rgba(" 
               (int (* r 255)) ","
               (int (* g 255)) ","
               (int (* b 255)) ","
               a ")"))
-          (.fillRect x y xs ys)))
+          (.fillRect 0 0 (- (/ xs 2)) (- (/ ys 2)))
+          (.restore)))
       ctx)))
     
 (defn draw3D [canvas]
@@ -143,15 +147,17 @@
             "id" "x1"
             "emit" 
             (js-obj
-              "duration" 0.1
+              "duration" 1
               "angle" 0
               "force" 100
               "range" 6.28
               "prototype"
               (array
                 (js-obj
+                  "position" (array 0 0 0)
                   "size" (array 10 20)
-                  "vel" (array 100 0 0))))
+                  "vel" (array 100 0 3.14))))
+            "size" (array 30 10)
             "pos" (array 300 300 0) 
             "vel" (array 100 100 0)))))
       
