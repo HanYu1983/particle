@@ -354,11 +354,11 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 			this.slr_force.parent().parent().hide();
 		}
 		this.txt_name.html(data.id);
-		this.slr_life.slider("setValue",data.lifetime);
+		this.slr_life.slider("setValue",data.lifetime * 1000);
 		this.slr_mass.slider("setValue",data.mass);
 		this.slr_vel_x.slider("setValue",data.vel[0]);
 		this.slr_vel_y.slider("setValue",data.vel[1]);
-		this.slr_vel_rot.slider("setValue",data.vel[2]);
+		this.slr_vel_rot.slider("setValue",data.vel[2] / Math.PI * 180);
 		this.slr_pos_x.slider("setValue",data.pos[0]);
 		this.slr_pos_y.slider("setValue",data.pos[1]);
 		this.slr_rot.slider("setValue",data.pos[2] / Math.PI * 180);
@@ -389,7 +389,7 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 				_g.getData().emit.force = value;
 				break;
 			case 0:
-				Reflect.setField(_g.getData(),"lifetime",value);
+				Reflect.setField(_g.getData(),"lifetime",value / 1000);
 				break;
 			case 8:
 				Reflect.setField(_g.getData(),"mass",value);
@@ -410,7 +410,7 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 				Reflect.field(_g.getData(),"size")[1] = value;
 				break;
 			case 6:
-				Reflect.field(_g.getData(),"vel")[2] = value;
+				Reflect.field(_g.getData(),"vel")[2] = value / 180 * Math.PI;
 				break;
 			case 4:
 				Reflect.field(_g.getData(),"vel")[0] = value;

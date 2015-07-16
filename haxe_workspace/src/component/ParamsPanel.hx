@@ -92,11 +92,11 @@ class ParamsPanel extends AbstractParamsPanel
 		}
 		
 		txt_name.html( data.id );
-		slr_life.slider( 'setValue', data.lifetime );
+		slr_life.slider( 'setValue', data.lifetime * 1000 );
 		slr_mass.slider( 'setValue', data.mass );
 		slr_vel_x.slider( 'setValue', data.vel[0] );
 		slr_vel_y.slider( 'setValue', data.vel[1] );
-		slr_vel_rot.slider( 'setValue', data.vel[2] );
+		slr_vel_rot.slider( 'setValue', data.vel[2] / Math.PI * 180 );
 		slr_pos_x.slider( 'setValue', data.pos[0] );
 		slr_pos_y.slider( 'setValue', data.pos[1]);
 		slr_rot.slider( 'setValue', data.pos[2] / Math.PI * 180 );
@@ -121,7 +121,7 @@ class ParamsPanel extends AbstractParamsPanel
 				case EParticleAttribute.FORCE:
 					getData().emit.force = value;
 				case EParticleAttribute.LEFT_TIME:
-					getData().setField( 'lifetime', value );
+					getData().setField( 'lifetime', value / 1000 );
 				case EParticleAttribute.MASS:
 					getData().setField( 'mass', value );
 				case EParticleAttribute.POSITION_R:
@@ -135,7 +135,7 @@ class ParamsPanel extends AbstractParamsPanel
 				case EParticleAttribute.SIZE_Y:
 					getData().field( 'size' )[1] = value;
 				case EParticleAttribute.VELOCITY_R:
-					getData().field( 'vel' )[2] = value;
+					getData().field( 'vel' )[2] = value / 180 * Math.PI;
 				case EParticleAttribute.VELOCITY_X:
 					getData().field( 'vel' )[0] = value;
 				case EParticleAttribute.VELOCITY_Y:
