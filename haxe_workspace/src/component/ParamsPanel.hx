@@ -70,6 +70,7 @@ class ParamsPanel extends AbstractParamsPanel
 	{
 		super.setData( data, type );
 		
+		trace( type );
 		if ( type == EParticleType.EMITTER ) {
 			slr_count.slider( 'setValue', data.emit.count );
 			slr_duration.slider( 'setValue', data.emit.duration * 1000 );

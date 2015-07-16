@@ -334,6 +334,7 @@ component_ParamsPanel.__super__ = inter_AbstractParamsPanel;
 component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 	setData: function(data,type) {
 		inter_AbstractParamsPanel.prototype.setData.call(this,data,type);
+		console.log(type);
 		if(type == component_EParticleType.EMITTER) {
 			this.slr_count.slider("setValue",data.emit.count);
 			this.slr_duration.slider("setValue",data.emit.duration * 1000);
