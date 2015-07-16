@@ -103,7 +103,7 @@
 
 (defn main []
   (go-loop [ctx {:timer 0
-                 :ps (list (part/create 
+                 :ps (list (part/particle 
                       {
                         :lifetime -1
                         :pos [250 250 0] 
@@ -260,6 +260,7 @@
   (let [face (js/Image.)]
     (set! (.-src face) "res/images/m_gr.jpg")
     (set! (.-onload face) #(go (>! rx/onImage [:face face]))))
+  
   
   (js/setInterval 
     (apply
