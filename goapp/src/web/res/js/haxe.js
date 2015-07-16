@@ -528,8 +528,8 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 		}
 	}
 	,addNode: function(parentNode,particleData,type,name) {
-		if(parentNode && (parentNode.domId == "_easyui_tree_1" || parentNode.type == component_EParticleType.EMITTER)) {
-			var nodes = [{ id : particleData.id, text : name, type : type, particleData : particleData}];
+		if(parentNode) {
+			var nodes = [{ id : particleData.id, text : name, particleData : particleData}];
 			this.getDom().tree("append",{ parent : parentNode.target, data : nodes});
 			this.trigger(component_Tree.ADD_NODE,{ parentNode : parentNode, particleData : particleData});
 		}

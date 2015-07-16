@@ -104,11 +104,12 @@ class Tree extends AbstractTree
 	}
 	
 	function addNode( parentNode:Dynamic, particleData:Dynamic, type:EParticleType, name:String ) {
-		if (parentNode && ( parentNode.domId == '_easyui_tree_1' || parentNode.type == EParticleType.EMITTER )) {
+		//if (parentNode && ( parentNode.domId == '_easyui_tree_1' )) {
+		if (parentNode ) {
 			var nodes = [{
 				id:particleData.id,
 				text:name,
-				type:type,
+				//type:type,
 				particleData:particleData
 			}];
 			getDom().tree('append', {
