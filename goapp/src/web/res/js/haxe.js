@@ -59,6 +59,14 @@ Main.prototype = {
 			break;
 		}
 	}
+	,createEmitterAttribute: function(obj) {
+		obj.emit = { prototype : []};
+		obj.emit.count = 1;
+		obj.emit.duration = .1;
+		obj.emit.angle = 0;
+		obj.emit.range = 0;
+		obj.emit.force = 100;
+	}
 	,createNewParticleObj: function(id) {
 		return { id : id, lifetime : 3, mass : 3, color : "#33ddff", size : [10,20], pos : [0,0,0], vel : [0,0,0]};
 	}
@@ -69,7 +77,10 @@ Main.prototype = {
 		var resetPanel = function(node) {
 			var particleData = node.particleData;
 			if(particleData == null) return;
-			if(node.children != null && node.children.length > 0) _g.panel.setData(particleData,component_EParticleType.EMITTER); else _g.panel.setData(particleData,component_EParticleType.PARTICLE);
+			if(node.children != null && node.children.length > 0) {
+				console.log(particleData.emit);
+				_g.panel.setData(particleData,component_EParticleType.EMITTER);
+			} else _g.panel.setData(particleData,component_EParticleType.PARTICLE);
 		};
 		this.tree.on(component_Tree.ON_TREE_NODE_CLICK,function(e,params) {
 			resetPanel(params.node);

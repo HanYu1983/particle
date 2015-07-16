@@ -310,11 +310,11 @@
 	});
 	
 	common.onModel.subscribe(function(data){
-		console.log( data )
+		//console.log( data )
 	})
 	
 	common.onView.subscribe(function(data){
-		console.log( data )
+		//console.log( data )
 	})
 	
 	common.onModel.onNext(['testmodel', {}])
@@ -327,7 +327,7 @@
 							lifetime:3,
 							mass:3,
 							color:'#33ddff',
-							size:[20, 20],
+							size:[10, 10],
 							pos:[0, 0, 0], vel:[0, 0, 0],
 							emit: { count:1,
 									duration:.1,
@@ -338,8 +338,8 @@
 													lifetime:1,
 													mass:3,
 													color:'#33ddff',
-													size:[10, 20],
-													pos:[0, 0, 0], vel:[100, 0, 0] }] }}
+													size:[10, 10],
+													pos:[0, 0, 0], vel:[0, 0, 0] }] }}
 	
 	goog.require("app.main2");
 	window.haxeStart();
