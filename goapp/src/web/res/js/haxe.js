@@ -49,12 +49,12 @@ Main.prototype = {
 		switch(_g1) {
 		case "btn_addParticle":
 			checkNodeAndThen(function(node) {
-				_g.tree.addParticle(node,{ id : Main.getId()},component_EParticleType.PARTICLE,"test_particle");
+				_g.tree.addParticle(node,_g.createNewParticleObj(Main.getId()),component_EParticleType.PARTICLE,"test_particle");
 			});
 			break;
 		case "btn_addEmitter":
 			checkNodeAndThen(function(node1) {
-				_g.tree.addParticle(node1,{ id : Main.getId()},component_EParticleType.EMITTER,"test_emitter");
+				_g.tree.addParticle(node1,_g.createNewParticleObj(Main.getId()),component_EParticleType.EMITTER,"test_emitter");
 			});
 			break;
 		case "btn_remove":
@@ -62,6 +62,9 @@ Main.prototype = {
 			this.tree.removeParticle(selectNode1);
 			break;
 		}
+	}
+	,createNewParticleObj: function(id) {
+		return { id : id, lifetime : 10, mass : 3, color : "#33ddff", size : [10,20], pos : [0,0,0], vel : [0,0,0]};
 	}
 	,addListener: function() {
 		var _g = this;
@@ -376,7 +379,6 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 		return function(newv,oldv) {
 			var target = $(this);
 			var value = target.slider("getValue");
-			console.log(_g.getData());
 			switch(particleAttr[1]) {
 			case 0:
 				Reflect.setField(_g.getData(),"lifetime",value);

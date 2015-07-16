@@ -65,16 +65,25 @@ class Main
 		switch( target.id ) {
 			case 'btn_addParticle':
 				checkNodeAndThen( function( node ) {
-					tree.addParticle( node, { id:getId() }, EParticleType.PARTICLE, 'test_particle' );
+					tree.addParticle( node, createNewParticleObj( getId() ), EParticleType.PARTICLE, 'test_particle' );
 				});
 			case 'btn_addEmitter':
 				checkNodeAndThen( function( node ) {
-					tree.addParticle( node, { id:getId() }, EParticleType.EMITTER, 'test_emitter' );
+					tree.addParticle( node, createNewParticleObj( getId() ), EParticleType.EMITTER, 'test_emitter' );
 				});
 			case 'btn_remove':
 				var selectNode = tree.getSelectedNode();
 				tree.removeParticle( selectNode );
 		}
+	}
+	
+	function createNewParticleObj( id ) {
+		return {id:id, 
+				lifetime:10,
+				mass:3,
+				color:'#33ddff',
+				size:[10, 20],
+				pos:[0, 0, 0], vel:[0, 0, 0] };
 	}
 	
 	function addListener() {
