@@ -140,12 +140,17 @@
       (>! onView 
         (array "edit-particle" 
           (js-obj 
-            "id" "x1" 
+            "id" "x1"
             "emit" 
             (js-obj
+              "duration" 0.1
+              "angle" 0
+              "force" 100
+              "range" 6.28
               "prototype"
               (array
                 (js-obj
+                  "size" (array 10 20)
                   "vel" (array 100 0 0))))
             "pos" (array 300 300 0) 
             "vel" (array 100 100 0)))))
