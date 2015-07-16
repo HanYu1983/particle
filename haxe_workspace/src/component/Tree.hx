@@ -64,6 +64,7 @@ class Tree extends AbstractTree
 			outputData.pos = particleData.pos;
 			outputData.mass = particleData.mass;
 			outputData.color = particleData.color;
+			outputData.size = particleData.size;
 			
 			if ( node.children && node.children.length > 0 ) {
 				outputData.emit = {prototype:[]}

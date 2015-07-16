@@ -370,6 +370,8 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 			var target = $(this);
 			var value = target.slider("getValue");
 			switch(particleAttr[1]) {
+			case 7:
+				break;
 			case 11:
 				_g.getData().emit.count = value;
 				break;
@@ -415,7 +417,6 @@ component_ParamsPanel.prototype = $extend(inter_AbstractParamsPanel.prototype,{
 			case 5:
 				Reflect.field(_g.getData(),"vel")[1] = value;
 				break;
-			default:
 			}
 			_g.trigger(component_ParamsPanel.ON_PARAMS_CHANGE,{ });
 		};
@@ -500,6 +501,7 @@ component_Tree.prototype = $extend(inter_AbstractTree.prototype,{
 			outputData.pos = particleData.pos;
 			outputData.mass = particleData.mass;
 			outputData.color = particleData.color;
+			outputData.size = particleData.size;
 			if(node.children && node.children.length > 0) {
 				outputData.emit = { prototype : []};
 				outputData.emit.count = particleData.emit.count;

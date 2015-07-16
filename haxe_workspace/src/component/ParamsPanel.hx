@@ -108,6 +108,7 @@ class ParamsPanel extends AbstractParamsPanel
 			var target = untyped __js__( '$(this)' );
 			var value = target.slider( 'getValue' );
 			switch( particleAttr ) {
+				case EParticleAttribute.COLOR:
 				case EParticleAttribute.COUNT:
 					getData().emit.count = value;
 				case EParticleAttribute.DURATION:
@@ -138,7 +139,6 @@ class ParamsPanel extends AbstractParamsPanel
 					getData().field( 'vel' )[0] = value;
 				case EParticleAttribute.VELOCITY_Y:
 					getData().field( 'vel' )[1] = value;
-				case _:
 			}
 			trigger( ON_PARAMS_CHANGE, {} );
 		}
