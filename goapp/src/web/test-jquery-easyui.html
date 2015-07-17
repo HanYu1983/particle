@@ -43,7 +43,6 @@
 		right:30px;
 	}
 	.prop{
-		float:left;
 		width:100%;
 		margin-top:15px;
 		margin-left:10px;
@@ -55,6 +54,14 @@
 	}
 	.prop .sliderTitle{
 		float:left;
+	}
+	.propGroup .btnAddContainer{
+		text-align:center;
+	}
+	.combobContainer{
+		width:100px;
+		float:left;
+		margin-right:10px;
 	}
 	</style>
 	<body>
@@ -180,6 +187,30 @@
 								</div>
 							</div>
 							-->
+						</div>
+					</div>
+					<div data-options="region:'south',split:true" title="動態屬性" style="height:20%">
+						<div class="propGroup">
+							<div class="btnAddContainer">
+								<a href="#" class="easyui-linkbutton" >新增屬性</a>
+							</div>
+						</div>
+						<div class="propGroup">
+							<div class="prop">
+								<div class="combobContainer">
+									<select class="easyui-combobox" name="state" style="width:100%;">
+										<option value="pos">位置</option>
+									</select>
+								</div>
+								<div class="combobContainer">
+									<select class="easyui-combobox" name="state" style="width:100%;">
+										<option value="pos">圓形</option>
+									</select>
+								</div>
+								<div>
+									
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
