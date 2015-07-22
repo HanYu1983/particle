@@ -32,6 +32,9 @@ Main.prototype = {
 		this.tree.parserLoadData(this.loadSaveData());
 		this.onView.setObject(this.loadSaveData());
 		console.log(this.tree.outputData());
+		var tmpl_dynamic_properties = this.j("#tmpl_dynamic_properties");
+		var dynamicContainer = this.j("#dynamicContainer");
+		dynamicContainer.append(tmpl_dynamic_properties.tmpl());
 	}
 	,onHtmlClick: function(target) {
 		var _g = this;
