@@ -192,10 +192,75 @@
       (if isReturn
         (cons date (lazy-seq (check-turn (rest kline))))
         (check-turn (rest kline))))))
-  
+
+
+(defn check-length
+  "以最近30天的振盪平均值來計算
+  振盪超過平均值1倍以上的可以視為長紅
+  振盪低於平均值0.8倍以下的可以視為小幅盤整"
+  [kline]
+  (when (>= (count kline) 30)
+    (let [group (take 30 kline)
+          avg-length 
+          (->
+            (apply + (map (fn [[_ _ high low _ _]] (- high low)) group))
+            (/ (count group)))
+          [_ open high low close _ :as curr] (first group)
+          length-rate (/ (- high low) avg-length)
+          solid-rate (/ (- close open) avg-length)]
+      (cons [curr solid-rate length-rate] (lazy-seq (check-length (rest kline)))))))
+
+(defn sma 
+  "Simple Moving Average 簡單移動平均線"
+  [n kline]
+  (when (>= (count kline) n)
+    (let [group (take n kline)
+          avg
+          (->
+            (apply + (map (fn [[_ _ _ _ close _]] close) group))
+            (/ (count group)))
+          curr (first kline)]
+      (cons [curr avg] (lazy-seq (sma n (rest kline)))))))
+      
+(defn ema2
+  "網路版本的 Exponentional Moving Average 指數移動平均線
+  這個計算不知道正確還是錯誤"
+  [n kline]
+  (when (>= (count kline) n)
+    (let [group (take n kline)
+          alpha (/ 2 (inc n))
+          value
+          (->>
+            (map
+              *
+              (iterate (partial * (- 1 alpha)) 1)
+              (map (fn [[_ _ _ _ close _]] close) group))
+            (apply +)
+            (* alpha))
+          curr (first kline)]
+      (cons [curr value] (lazy-seq (ema2 n (rest kline)))))))
+
+(defn ema
+  "點線賺錢術的 Exponentional Moving Average 指數移動平均線。使用了加權型式，w為1可用於計算MACD
+  這個計算上較為正確，和yahoo股市算的很接近"
+  [n w kline]
+  (let [[_ _ _ _ close _ :as curr] (first kline)]
+    (->>
+      (iterate 
+        (fn [[[_ prev-ema] kline idx]]
+          (let [[_ _ _ _ close _ :as curr] (first kline)]
+            [
+              [
+                curr
+                (+ (* close (/ (+ w 1) (+ w idx))) (* prev-ema (/ (dec idx) (+ w idx))))
+              ]
+              (rest kline) 
+              (inc idx)
+            ])) 
+        [[curr close] (rest kline) (inc 1)])
+      (map first))))
 
 (defn main []
-
   (let [draw (draw (.getElementById js/document "canvas"))
         onSystem (chan)
         onView (chan)]
@@ -234,6 +299,21 @@
                   }
                   v]
               (condp = cmd
+                "length"
+                (do
+                  (.log js/console (pr-str (take 10 (check-length (:kline ctx)))))
+                  ctx)
+                  
+                "sma"
+                (do
+                  (.log js/console (pr-str (take 10 (sma params (:kline ctx)))))
+                  ctx)
+                  
+                "ema"
+                (do
+                  (.log js/console (pr-str (take 10 (ema params 0 (:kline ctx)))))
+                  ctx)
+                
                 "stock"
                 (do
                   (go
