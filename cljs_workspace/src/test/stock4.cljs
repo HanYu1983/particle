@@ -16,6 +16,44 @@
     [max-v min-v offset-v offset-x pos-y]))
     
     
+(defn draw-sd [ctx w h kline sd]
+  (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)
+        sd-values
+        (replace
+          (into {} sd)
+          kline)]
+          
+    (aset ctx "lineWidth" 1)
+    (doseq
+      [
+        [idx [avg sd-v] [_ _ _ _ close _]]
+        (map
+          (fn [& args] args)
+          (range (count sd-values))
+          sd-values
+          kline)
+      ]
+      (aset ctx "strokeStyle" 
+        (cond
+          (< (.abs js/Math avg) 0.5)
+          "black"
+          
+          (> avg 0)
+          "red"
+          
+          :else
+          "green"))
+      (.beginPath ctx)
+      (.moveTo ctx (* idx offset-x) (pos-y (+ close sd-v sd-v)))
+      (.lineTo ctx (* (inc idx) offset-x) (pos-y (+ close sd-v sd-v)))
+      (.stroke ctx)
+      
+      (.moveTo ctx (* idx offset-x) (pos-y (- close sd-v sd-v)))
+      (.lineTo ctx (* (inc idx) offset-x) (pos-y (- close sd-v sd-v)))
+      (.stroke ctx)
+      (comment "end doseq"))
+    (comment "end let")))
+    
 (defn draw-sar [ctx w h kline sar]
   (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)
         sar-values
@@ -109,14 +147,14 @@
           (map inc (range (count kline)))
           kline)
       ]
-      (aset ctx "strokeStyle" "black")
+      (aset ctx "strokeStyle" (if (> close open) "red" "green"))
       (aset ctx "lineWidth" 2)
       (.beginPath ctx)
       (.moveTo ctx (* idx offset-x) (pos-y low))
       (.lineTo ctx (* idx offset-x) (pos-y high))
       (.stroke ctx)
 
-      (aset ctx "strokeStyle" (if (> close open) "red" "black"))
+      (aset ctx "strokeStyle" (if (> close open) "red" "green"))
       (aset ctx "lineWidth" offset-x)
       (.beginPath ctx)
       (.moveTo ctx (* idx offset-x) (pos-y open))
@@ -131,6 +169,7 @@
         [w h] [(.-width canvas) (.-height canvas)]]
     (fn [{kline :kline
           turn :turn
+          sd :sd
           kd :kd
           sar :sar
           avgs :avgs 
@@ -152,6 +191,8 @@
         (draw-kd ctx w h kline kd))
       (when sar
         (draw-sar ctx w h kline sar))
+      (when sd
+        (draw-sd ctx w h kline sd))
       appctx)))
 
 (defn stock-url [id startdate start num]
@@ -317,7 +358,8 @@
       (cons [curr value] (lazy-seq (ema2 n (rest kline)))))))
 
 (defn ema
-  "點線賺錢術的 Exponentional Moving Average 指數移動平均線。使用了加權型式，w為1可用於計算MACD
+  "點線賺錢術的 Exponentional Moving Average 指數移動平均線
+  使用了加權型式，w為1可用於計算MACD
   這個計算上較為正確，和yahoo股市算的很接近"
   [n w kline]
   (let [[_ _ _ _ close _ :as curr] (first kline)]
@@ -382,7 +424,8 @@
       (cons avg (lazy-seq (k n (rest rsv-seq)))))))
 
 (defn sar 
-  "沒有計算反向作空，所以只看支撐線"
+  "拋物線指標
+  沒有計算反向作空，所以只看支撐線"
   [reverse-kline]
   (when (> (count reverse-kline) 3)
     (let [first-line (first (drop 2 reverse-kline))
@@ -442,6 +485,68 @@
           [[first-line max-v] (drop 2 reverse-kline) (drop 3 reverse-kline) :buy 0.2])
         (map first)))))
 
+
+
+(defn sd
+  "Standard Deviation 標準差
+  n設為30很像不錯"
+  [n kline]
+  (when (> (count kline) n)
+    (let [curr (first kline)
+    
+          sma-seq 
+          (->>
+            (sma 1 kline)
+            (map second)
+            (take n))
+    
+          offsets
+          (map
+            (fn [prev curr]
+              (- curr prev))
+            (rest sma-seq)
+            sma-seq)
+          
+          offsets-avg
+          (->
+            (apply + offsets)
+            (/ n))
+          
+          v
+          (->>
+            (apply
+              +
+              (map
+                #(.pow js/Math (- % offsets-avg) 2)
+                offsets))
+            (* (/ 1 (dec n)))
+            (.sqrt js/Math))]
+      (cons [curr [offsets-avg v]] (lazy-seq (sd n (rest kline)))))))
+  
+    
+(defn z-score [n kline]
+  (let [[_ [avg sd-v]] (first (sd n kline))
+  
+        currs
+        (map
+          (fn [[_ _ _ _ close _]] close)
+          kline)
+          
+        offsets
+        (map
+          (fn [prev curr]
+            (- curr prev))
+          (rest currs)
+          currs)
+        vs
+        (map
+          #(/ % sd-v)
+          offsets)]
+    (map
+      (fn [& args] args)
+      kline
+      vs)))
+
 (defn main []
   (let [draw (draw (.getElementById js/document "canvas"))
         onSystem (chan)
@@ -485,6 +590,16 @@
                 (do
                   (.log js/console (pr-str (take 10 (check-length (:kline ctx)))))
                   ctx)
+                  
+                "sd"
+                (let [v (sd params (:kline ctx))
+                      z (z-score params (:kline ctx))]
+                  (.log js/console (pr-str (take 10 v)))
+                  ;(.log js/console (pr-str (take 10 z)))
+                  (->
+                    ctx
+                    (assoc :sd (take (count (:kline ctx)) v))
+                    draw))
                   
                 "sma"
                 (do
