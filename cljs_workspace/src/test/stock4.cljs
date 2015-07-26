@@ -15,6 +15,34 @@
           (* h (- 1 (/ (- v min-v) offset-v))))]
     [max-v min-v offset-v offset-x pos-y]))
     
+    
+(defn draw-sar [ctx w h kline sar]
+  (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)
+        sar-values
+        (replace
+          (into {} sar)
+          kline)]
+    (aset ctx "lineWidth" 1)
+    (aset ctx "strokeStyle" "red")
+    
+    (doseq
+      [
+        [idx prev curr]
+        (map
+          (fn [& args] args)
+          (map inc (range (count sar-values)))
+          sar-values
+          (rest sar-values))
+      ]
+      (when (and (number? prev) (number? curr))
+        (.beginPath ctx)
+        (.moveTo ctx (* idx offset-x) (pos-y prev))
+        (.lineTo ctx (* (inc idx) offset-x) (pos-y curr))
+        (.stroke ctx)))
+      
+    (comment "end let")))
+    
+    
 (defn draw-kd [ctx w h kline [rsv k d :as kd]]
   (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)]
     
@@ -104,6 +132,7 @@
     (fn [{kline :kline
           turn :turn
           kd :kd
+          sar :sar
           avgs :avgs 
           bias :bias 
           :as appctx}]
@@ -121,6 +150,8 @@
         (draw-turn ctx w h kline turn))
       (when kd
         (draw-kd ctx w h kline kd))
+      (when sar
+        (draw-sar ctx w h kline sar))
       appctx)))
 
 (defn stock-url [id startdate start num]
@@ -350,6 +381,66 @@
             (/ (count group)))]
       (cons avg (lazy-seq (k n (rest rsv-seq)))))))
 
+(defn sar 
+  "沒有計算反向作空，所以只看支撐線"
+  [reverse-kline]
+  (when (> (count reverse-kline) 3)
+    (let [first-line (first (drop 2 reverse-kline))
+          max-v
+          (apply
+            min
+            (map
+              (fn [[_ _ _ low _ _]]
+                low)
+              (take 3 reverse-kline)))]
+      (->>
+        (iterate
+          (fn [[[_ value] prev curr act af]]
+            (let [[_ _ ph pl _ _ :as prev-line] (first prev)
+                  [_ _ ch cl _ _ :as curr-line] (first curr)
+                    
+                  next-value 
+                  (+ value (* af (- pl value)))
+                  
+                  should-turn
+                  (condp = act
+                    :buy
+                    (> next-value cl)
+                    
+                    :sell
+                    (< next-value ch)
+                    
+                    :else
+                    false)
+                    
+                  next-af
+                  (condp = act
+                    :buy
+                    (if should-turn
+                      0.02
+                      (if (> ch ph)
+                        (max (+ 0.04 af) 0.2)
+                        (max (+ 0.02 af) 0.2)))
+                      
+                    :sell
+                    (if should-turn
+                      0.02
+                      (if (< cl pl)
+                        (max (+ 0.04 af) 0.2)
+                        (max (+ 0.02 af) 0.2)))
+                      
+                    :else
+                    af)
+                    
+                  next-act
+                  (if should-turn
+                    (condp = act
+                      :buy :sell
+                      :sell :buy)
+                    act)]
+              [[curr-line next-value] (rest prev) (rest curr) next-act next-af]))
+          [[first-line max-v] (drop 2 reverse-kline) (drop 3 reverse-kline) :buy 0.2])
+        (map first)))))
 
 (defn main []
   (let [draw (draw (.getElementById js/document "canvas"))
@@ -413,6 +504,14 @@
                   (->
                     ctx
                     (assoc :kd [nil kv d])
+                    draw))
+                    
+                "sar"
+                (let [kline (:kline ctx)
+                      sar-seq (sar (reverse kline))]
+                  (->
+                    ctx
+                    (assoc :sar (take (count kline) sar-seq))
                     draw))
                 
                 "stock"

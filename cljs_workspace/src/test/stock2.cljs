@@ -23,7 +23,7 @@
             (map
               (fn [[act line]]
                 [line act])
-            steps))
+              steps))
           info)]
     (aset ctx "fillStyle" "black")
     (.fillText ctx (str "money:" money) 20 20)
