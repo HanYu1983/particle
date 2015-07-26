@@ -12,6 +12,9 @@
 <script src='res/cljs/cljs.js'></script>
 <script>
 var onView = new Rx.Subject
+function rsv(cnt){
+	onView.onNext({"cmd":"rsv", "params":cnt})
+}
 function ema(cnt){
 	onView.onNext({"cmd":"ema", "params":cnt})
 }

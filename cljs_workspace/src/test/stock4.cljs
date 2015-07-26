@@ -15,6 +15,44 @@
           (* h (- 1 (/ (- v min-v) offset-v))))]
     [max-v min-v offset-v offset-x pos-y]))
     
+(defn draw-kd [ctx w h kline [rsv k d :as kd]]
+  (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)]
+    
+    (aset ctx "lineWidth" 1)
+    
+    (aset ctx "strokeStyle" "blue")
+    (doseq
+      [
+        [idx prev curr]
+        (map
+          (fn [& args] args)
+          (map inc (range (count k)))
+          k
+          (rest k))
+      ]
+      (.beginPath ctx)
+      (.moveTo ctx (* idx offset-x) (* (- 1 (/ prev 100)) h))
+      (.lineTo ctx (* (inc idx) offset-x) (* (- 1 (/ curr 100)) h))
+      (.stroke ctx))
+      
+    (aset ctx "strokeStyle" "yellow")
+    (doseq
+      [
+        [idx prev curr]
+        (map
+          (fn [& args] args)
+          (map inc (range (count d)))
+          d
+          (rest d))
+      ]
+      (.beginPath ctx)
+      (.moveTo ctx (* idx offset-x) (* (- 1 (/ prev 100)) h))
+      (.lineTo ctx (* (inc idx) offset-x) (* (- 1 (/ curr 100)) h))
+      (.stroke ctx))
+      
+    (comment "end let")))
+    
+    
 (defn draw-turn [ctx w h kline turn]
   (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)]
     (aset ctx "fillStyle" "black")
@@ -63,8 +101,13 @@
 (defn draw [canvas]
   (let [ctx (.getContext canvas "2d")
         [w h] [(.-width canvas) (.-height canvas)]]
-    (fn [{kline :kline turn :turn avgs :avgs bias :bias :as appctx}]
-      (aset ctx "fillStyle" "yellow")
+    (fn [{kline :kline
+          turn :turn
+          kd :kd
+          avgs :avgs 
+          bias :bias 
+          :as appctx}]
+      (aset ctx "fillStyle" "gray")
       (.fillRect ctx 0 0 w h)
 
       ;(doseq [[bia-cnt bia] bias]
@@ -76,6 +119,8 @@
       (draw-line ctx w h kline)
       (when turn
         (draw-turn ctx w h kline turn))
+      (when kd
+        (draw-kd ctx w h kline kd))
       appctx)))
 
 (defn stock-url [id startdate start num]
@@ -260,6 +305,52 @@
         [[curr close] (rest kline) (inc 1)])
       (map first))))
 
+(defn rsv
+  "未成熟隨機值
+  用來計算KD線" 
+  [kline]
+  (when (> (count kline) 9)
+    (let [group (take 9 kline)
+          [_ _ _ _ ct _ :as curr] (first group)
+          L9 
+          (apply
+            min
+            (map
+              (fn [[_ _ _ low _ _]]
+                low)
+              group))
+          H9
+          (apply
+            max
+            (map
+              (fn [[_ _ high _ _ _]]
+                high)
+              group))
+          v 
+          (->
+            (* 
+              (- ct L9) 
+              (/ 1 (- H9 L9))
+              100)
+            int)]
+      (cons [curr v] (lazy-seq (rsv (rest kline)))))))
+
+(defn k 
+  "n為3是最好的數值"
+  [n rsv-seq]
+  (when (> (count rsv-seq) n)
+    (let [group (take n rsv-seq)
+          avg
+          (->
+            (apply 
+              + 
+              (map
+                (fn [[line v]] v)
+                group))
+            (/ (count group)))]
+      (cons avg (lazy-seq (k n (rest rsv-seq)))))))
+
+
 (defn main []
   (let [draw (draw (.getElementById js/document "canvas"))
         onSystem (chan)
@@ -313,6 +404,16 @@
                 (do
                   (.log js/console (pr-str (take 10 (ema params 0 (:kline ctx)))))
                   ctx)
+                  
+                "rsv"
+                (let [cnt (count (:kline ctx))
+                      rsv-seq (rsv (:kline ctx))
+                      kv (take cnt (k params rsv-seq))
+                      d (take cnt (k (* 3 params) rsv-seq))]
+                  (->
+                    ctx
+                    (assoc :kd [nil kv d])
+                    draw))
                 
                 "stock"
                 (do
