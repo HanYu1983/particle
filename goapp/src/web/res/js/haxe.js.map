@@ -2,7 +2,7 @@
 "version":3,
 "file":"haxe.js",
 "sourceRoot":"file:///",
-"sources":["C:/Users/viyu/Documents/vic/github/particle/haxe_workspace/src/testMacro/TestMacro.hx","C:/Users/viyu/Documents/vic/github/particle/haxe_workspace/src/testMacro/TypeBuildingMacro.hx"],
+"sources":["C:/Users/viyu/Documents/vic/github/particle/haxe_workspace/src/testMacro/TestMacro.hx"],
 "names":[],
-"mappings":";sBAcO,XACP;;2BALO,hBACN;;;8BCFM,nBAAe;;;;;"
+"mappings":";UAoCU,CAAe;;;KACf,MAAqB;EAElB;EACX,UAAO;EACP,UAAS;EACT,UAAS,TAAe;;SAKhB,EACP;YAAM;;;;2BAvCF,hBAAgB;CA2CT;CAtCb,WAAO;CACP;CACA;;;;;"
 }
