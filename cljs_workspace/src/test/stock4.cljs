@@ -72,12 +72,16 @@
           :else
           "green"))
       (.beginPath ctx)
-      (.moveTo ctx (* idx offset-x) (pos-y (+ close sd-v sd-v)))
-      (.lineTo ctx (* (inc idx) offset-x) (pos-y (+ close sd-v sd-v)))
+      (.moveTo ctx (* idx offset-x) (pos-y (+ (+ avg close))))
+      (.lineTo ctx (* (inc idx) offset-x) (pos-y (+ (+ avg close))))
       (.stroke ctx)
       
-      (.moveTo ctx (* idx offset-x) (pos-y (- close sd-v sd-v)))
-      (.lineTo ctx (* (inc idx) offset-x) (pos-y (- close sd-v sd-v)))
+      (.moveTo ctx (* idx offset-x) (pos-y (+ (+ avg close) sd-v sd-v)))
+      (.lineTo ctx (* (inc idx) offset-x) (pos-y (+ (+ avg close) sd-v sd-v)))
+      (.stroke ctx)
+      
+      (.moveTo ctx (* idx offset-x) (pos-y (- (+ avg close) sd-v sd-v)))
+      (.lineTo ctx (* (inc idx) offset-x) (pos-y (- (+ avg close) sd-v sd-v)))
       (.stroke ctx)
       (comment "end doseq"))
     (comment "end let")))
@@ -598,13 +602,23 @@
       kline
       vs)))
 
-(defn yu [learning n reverse-kline]
-  (let [up-seq
+
+(defn yu
+  "余氏指標
+  w用0.001看多空動能
+  w用0.5看振盪方向"
+  [w n reverse-kline]
+  (let [normal
+        (->
+          (.pow js/Math 1.07 n)
+          (- 1))
+    
+        up-seq
         (map
-          (fn [[_ pc] [_ cc]]
-            (/ (- cc pc) pc))
-          (sma n reverse-kline)
-          (rest (sma n reverse-kline)))
+          (fn [[_ _ _ _ pc _] [_ _ _ _ cc _]]
+            (/ (- cc pc) pc normal))
+          reverse-kline
+          (rest reverse-kline))
                
         vs
         (->>
@@ -613,38 +627,30 @@
               (let [max-v (+ prev ran);(+ prev (if (pos? up-offset) ran (/ ran 2)))
                     min-v (- prev ran);(- prev (if (neg? up-offset) ran (/ ran 2)))
                     ]
-                    (.log js/console max-v up-offset min-v ran)
                 (if (> max-v up-offset min-v)
                   [up-offset (* ran 0.95)]
                   [
                     (if (> up-offset max-v)
                       max-v
                       min-v)
-                    (+ ran
-                      0.0001)
-                    ;(+ ran 
-                    ;  (* 
-                    ;    (-
-                    ;      (.abs js/Math (- up-offset prev)))
-                    ;      ran)
-                    ;    learning)
+                    (+ ran 
+                      (* 
+                        (-
+                          (.abs js/Math up-offset)
+                          ran)
+                        w))
                   ])))
             [
               (first up-seq)
-              0.0000
+              normal
             ]
             (rest up-seq))
           (map 
             (fn [[dir ran]]
-              (->
-                ran
-                ;dir
-                (* 100)
-                ;(+ 0.5)
-                ))))]
+              (-> ran))))]
     (map
       (fn [& args] (apply vector args))
-      (drop n reverse-kline)
+      (rest reverse-kline)
       vs)))
 
 (defn main []
@@ -692,7 +698,7 @@
                   ctx)
                   
                 "yu"
-                (let [yu-seq (yu 0.001 params (reverse (:kline ctx)))]
+                (let [yu-seq (yu 0.5 params (reverse (:kline ctx)))]
                   (->
                     ctx
                     (assoc :yu (take (count (:kline ctx)) yu-seq))
@@ -701,7 +707,7 @@
                 "sd"
                 (let [v (sd params (:kline ctx))
                       z (z-score params (:kline ctx))]
-                  (.log js/console (pr-str (take 10 v)))
+                  ;(.log js/console (pr-str (take 10 v)))
                   ;(.log js/console (pr-str (take 10 z)))
                   (->
                     ctx
