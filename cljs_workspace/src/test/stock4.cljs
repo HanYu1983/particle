@@ -16,6 +16,34 @@
     [max-v min-v offset-v offset-x pos-y]))
     
     
+    
+(defn draw-yu [ctx w h kline yu]
+  (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)
+        yu-values
+        (replace
+          (into {} yu)
+          kline)]
+          
+    (aset ctx "lineWidth" 1)
+    (aset ctx "strokeStyle" "blue")
+    
+    (doseq
+      [
+        [idx prev curr]
+        (map
+          (fn [& args] args)
+          (map inc (range (count yu-values)))
+          yu-values
+          (rest yu-values))
+      ]
+      (when (and (number? prev) (number? curr))
+        (.beginPath ctx)
+        (.moveTo ctx (* idx offset-x) (* (- 1 prev) h))
+        (.lineTo ctx (* (inc idx) offset-x) (* (- 1 curr) h))
+        (.stroke ctx)))
+      
+    (comment "end let")))
+    
 (defn draw-sd [ctx w h kline sd]
   (let [[max-v min-v offset-v offset-x pos-y] (graphic-base w h kline)
         sd-values
@@ -35,8 +63,8 @@
       ]
       (aset ctx "strokeStyle" 
         (cond
-          (< (.abs js/Math avg) 0.5)
-          "black"
+          ;(< (.abs js/Math avg) 0.05)
+          ;"yellow"
           
           (> avg 0)
           "red"
@@ -169,6 +197,7 @@
         [w h] [(.-width canvas) (.-height canvas)]]
     (fn [{kline :kline
           turn :turn
+          yu :yu
           sd :sd
           kd :kd
           sar :sar
@@ -193,6 +222,8 @@
         (draw-sar ctx w h kline sar))
       (when sd
         (draw-sd ctx w h kline sd))
+      (when yu
+        (draw-yu ctx w h kline yu))
       appctx)))
 
 (defn stock-url [id startdate start num]
@@ -429,7 +460,7 @@
   [reverse-kline]
   (when (> (count reverse-kline) 3)
     (let [first-line (first (drop 2 reverse-kline))
-          max-v
+          low
           (apply
             min
             (map
@@ -438,23 +469,38 @@
               (take 3 reverse-kline)))]
       (->>
         (iterate
-          (fn [[[_ value] prev curr act af]]
+          (fn [[[_ value] ori prev curr act af]]
             (let [[_ _ ph pl _ _ :as prev-line] (first prev)
                   [_ _ ch cl _ _ :as curr-line] (first curr)
-                    
-                  next-value 
-                  (+ value (* af (- pl value)))
                   
                   should-turn
                   (condp = act
                     :buy
-                    (> next-value cl)
+                    (> value pl)
                     
                     :sell
-                    (< next-value ch)
+                    (< value ph))
                     
-                    :else
-                    false)
+                  next-value 
+                  (if should-turn
+                    (condp = act
+                      :buy
+                      (apply
+                        max
+                        (map
+                          (fn [[_ _ high _ _ _]]
+                            high)
+                          (take 3 ori)))
+                          
+                      :sell
+                      (apply
+                        min
+                        (map
+                          (fn [[_ _ _ low _ _]]
+                            low)
+                          (take 3 ori))))
+                    (+ value (* af (- pl value))))
+                  
                     
                   next-af
                   (condp = act
@@ -481,8 +527,8 @@
                       :buy :sell
                       :sell :buy)
                     act)]
-              [[curr-line next-value] (rest prev) (rest curr) next-act next-af]))
-          [[first-line max-v] (drop 2 reverse-kline) (drop 3 reverse-kline) :buy 0.2])
+              [[curr-line next-value] (rest ori) (rest prev) (rest curr) next-act next-af]))
+          [[first-line low] reverse-kline (drop 2 reverse-kline) (drop 3 reverse-kline) :buy 0.2])
         (map first)))))
 
 
@@ -494,12 +540,14 @@
   (when (> (count kline) n)
     (let [curr (first kline)
     
+          ; 取得n天的收盤價
           sma-seq 
           (->>
             (sma 1 kline)
             (map second)
             (take n))
     
+          ; 每天和隔天的價差
           offsets
           (map
             (fn [prev curr]
@@ -507,11 +555,13 @@
             (rest sma-seq)
             sma-seq)
           
+          ; 價差的平均數
           offsets-avg
           (->
             (apply + offsets)
             (/ n))
           
+          ; 價差的標準差
           v
           (->>
             (apply
@@ -521,6 +571,7 @@
                 offsets))
             (* (/ 1 (dec n)))
             (.sqrt js/Math))]
+      ; 計算出[價差平均數 價差標準差]
       (cons [curr [offsets-avg v]] (lazy-seq (sd n (rest kline)))))))
   
     
@@ -547,6 +598,55 @@
       kline
       vs)))
 
+(defn yu [learning n reverse-kline]
+  (let [up-seq
+        (map
+          (fn [[_ pc] [_ cc]]
+            (/ (- cc pc) pc))
+          (sma n reverse-kline)
+          (rest (sma n reverse-kline)))
+               
+        vs
+        (->>
+          (reductions
+            (fn [[prev ran] up-offset]
+              (let [max-v (+ prev ran);(+ prev (if (pos? up-offset) ran (/ ran 2)))
+                    min-v (- prev ran);(- prev (if (neg? up-offset) ran (/ ran 2)))
+                    ]
+                    (.log js/console max-v up-offset min-v ran)
+                (if (> max-v up-offset min-v)
+                  [up-offset (* ran 0.95)]
+                  [
+                    (if (> up-offset max-v)
+                      max-v
+                      min-v)
+                    (+ ran
+                      0.0001)
+                    ;(+ ran 
+                    ;  (* 
+                    ;    (-
+                    ;      (.abs js/Math (- up-offset prev)))
+                    ;      ran)
+                    ;    learning)
+                  ])))
+            [
+              (first up-seq)
+              0.0000
+            ]
+            (rest up-seq))
+          (map 
+            (fn [[dir ran]]
+              (->
+                ran
+                ;dir
+                (* 100)
+                ;(+ 0.5)
+                ))))]
+    (map
+      (fn [& args] (apply vector args))
+      (drop n reverse-kline)
+      vs)))
+
 (defn main []
   (let [draw (draw (.getElementById js/document "canvas"))
         onSystem (chan)
@@ -557,7 +657,7 @@
         (go (>! onView (js->clj data)))))
 
     (go
-      (let [[err infos] (<! (stock-info nil 2330 "2014/1/1" 0 200))]
+      (let [[err infos] (<! (stock-info nil 2450 "2014/1/1" 0 200))]
         (if err
           (js/alert err)
           (>! onSystem [:loaded infos]))))
@@ -590,6 +690,13 @@
                 (do
                   (.log js/console (pr-str (take 10 (check-length (:kline ctx)))))
                   ctx)
+                  
+                "yu"
+                (let [yu-seq (yu 0.001 params (reverse (:kline ctx)))]
+                  (->
+                    ctx
+                    (assoc :yu (take (count (:kline ctx)) yu-seq))
+                    draw))
                   
                 "sd"
                 (let [v (sd params (:kline ctx))
