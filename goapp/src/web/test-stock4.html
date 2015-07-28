@@ -12,6 +12,9 @@
 <script src='res/cljs/cljs.js'></script>
 <script>
 var onView = new Rx.Subject
+function yu(cnt){
+	onView.onNext({"cmd":"yu", "params":cnt})
+}
 function sd(cnt){
 	onView.onNext({"cmd":"sd", "params":cnt})
 }
