@@ -1,4 +1,4 @@
-package;
+package test.testCase;
 
 import component.Particle;
 import component.ParticleManager;

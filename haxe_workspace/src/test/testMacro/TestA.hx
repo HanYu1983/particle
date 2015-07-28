@@ -1,4 +1,4 @@
-package testMacro;
+package test.testMacro;
 
 /**
  * ...
