@@ -12,6 +12,15 @@
 <script src='res/cljs/cljs.js'></script>
 <script>
 var onView = new Rx.Subject
+function ypre(cnt){
+	onView.onNext({"cmd":"yu-pre", "params":cnt})
+}
+function yobv(cnt){
+	onView.onNext({"cmd":"yu-obv", "params":cnt})
+}
+function obv(cnt){
+	onView.onNext({"cmd":"obv", "params":cnt})
+}
 function yu(cnt){
 	onView.onNext({"cmd":"yu", "params":cnt})
 }

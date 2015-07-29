@@ -624,9 +624,8 @@
         (->>
           (reductions
             (fn [[prev ran] up-offset]
-              (let [max-v (+ prev ran);(+ prev (if (pos? up-offset) ran (/ ran 2)))
-                    min-v (- prev ran);(- prev (if (neg? up-offset) ran (/ ran 2)))
-                    ]
+              (let [max-v (+ prev (if (pos? up-offset) ran (/ ran 2)))
+                    min-v (- prev (if (neg? up-offset) ran (/ ran 2)))]
                 (if (> max-v up-offset min-v)
                   [up-offset (* ran 0.95)]
                   [
@@ -635,9 +634,9 @@
                       min-v)
                     (+ ran 
                       (* 
-                        (-
-                          (.abs js/Math up-offset)
-                          ran)
+                        (max
+                          (- up-offset max-v)
+                          (- min-v up-offset))
                         w))
                   ])))
             [
@@ -652,6 +651,122 @@
       (fn [& args] (apply vector args))
       (rest reverse-kline)
       vs)))
+
+
+(defn VolumeAccumulation 
+  "Volume Accumulation 成交量多空比率淨額法
+  用來計算OBV能量潮公式"
+  [kline]
+  (map
+    (fn [[date open high low close volume]]
+      (if (= high low)
+        0 ; 跳空先算沒有量
+        (*
+          (-
+            (- close low)
+            (- high close))
+          (/ 1 (- high low))
+          volume)))
+    kline))
+    
+(defn obv 
+  "OBV能量潮公式"
+  [kline]
+  (rest
+    (reductions
+      +
+      0
+      (VolumeAccumulation kline))))
+      
+      
+(defn yu-pre [kline]
+  (let [n 30
+        group (take n kline)
+        
+        all-volume
+        (reduce
+          + 0
+          (map
+            (fn [[_ _ _ _ _ volume]] volume)
+            group))
+            
+        all-price
+        (reduce
+          + 0
+          (map
+            (fn [[_ _ high _ _ _]] high)
+            group))
+        
+        v-per-p (/ all-price all-volume)
+        
+        obv-seq (obv group)
+        
+        predict
+        (map
+          (fn [[_ open _ _ _ _] obv]
+            (+ open (* obv v-per-p)))
+          kline
+          obv-seq)]
+          (.log js/console all-volume all-price)
+          (.log js/console v-per-p)
+          
+    predict))
+      
+(defn yu-obv [n kline]
+  (let [group (take n kline)
+        va (VolumeAccumulation group)
+        max-va (apply max va)
+        min-va (apply min va)
+        region (- max-va min-va)]
+    (map
+      #(/ % region)
+      va)))
+
+(defn yu-volume [n reverse-kline]
+  (let [group (take n reverse-kline)
+        
+        price-seq
+        (map
+          (fn [[_ _ _ _ close _]]
+            close)
+          group)
+          
+        price-up-rate
+        (map
+          (fn [p c]
+            (/ (- c p) p))
+          price-seq
+          (rest price-seq))
+          
+        volume-seq
+        (map
+          (fn [[_ _ _ _ _ volume]]
+            volume)
+          group)
+        
+        volume-up-rate
+        (map
+          (fn [p c]
+            (/ (- c p) p))
+          volume-seq
+          (rest volume-seq))
+          
+        v
+        (->>
+          (map
+            (fn [p v]
+              (/ p v))
+            price-up-rate
+            volume-up-rate)
+          (apply +)
+          (/ n))
+          
+        curr (second group)]
+        
+        ;(.log js/console (pr-str (take 10 price-up-rate)))
+        ;(.log js/console (pr-str (take 10 volume-up-rate)))
+    (cons v (lazy-seq (yu-volume n (rest reverse-kline))))))
+
 
 (defn main []
   (let [draw (draw (.getElementById js/document "canvas"))
@@ -697,6 +812,24 @@
                   (.log js/console (pr-str (take 10 (check-length (:kline ctx)))))
                   ctx)
                   
+                "obv"
+                (let [kline (:kline ctx)
+                      obv-seq (obv kline)]
+                  (.log js/console (pr-str (take (count kline) obv-seq)))
+                  ctx)
+                  
+                "yu-obv"
+                (let [kline (:kline ctx)
+                      obv-seq (yu-obv params kline)]
+                  (.log js/console (pr-str (take 10 obv-seq)))
+                  ctx)
+                  
+                "yu-pre"
+                (let [kline (:kline ctx)
+                      obv-seq (yu-pre kline)]
+                  (.log js/console (pr-str (take (count (:kline ctx)) obv-seq)))
+                  ctx)
+                    
                 "yu"
                 (let [yu-seq (yu 0.5 params (reverse (:kline ctx)))]
                   (->
