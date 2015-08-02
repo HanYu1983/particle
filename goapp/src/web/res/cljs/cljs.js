@@ -18,6 +18,7 @@ goog.addDependency("../test/webgl_tex.js", ['test.webgl_tex'], ['gl.shader', 'cl
 goog.addDependency("../clojure/set.js", ['clojure.set'], ['cljs.core']);
 goog.addDependency("../ai/ann.js", ['ai.ann'], ['cljs.core']);
 goog.addDependency("../test/stock2.js", ['test.stock2'], ['cljs.core', 'ai.ann']);
+goog.addDependency("../test/stock5.js", ['test.stock5'], ['cljs.core', 'cljs.core.async', 'clojure.string']);
 goog.addDependency("../test/stock.js", ['test.stock'], ['cljs.core', 'cljs.core.async', 'ai.ann']);
 goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
 goog.addDependency("../test/stock4.js", ['test.stock4'], ['cljs.core', 'cljs.core.async', 'clojure.string']);
