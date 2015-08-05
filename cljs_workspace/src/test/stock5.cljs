@@ -5,8 +5,6 @@
     [cljs.core.async :refer [>! <! close! chan]]
     [clojure.string :as str]))
 
-
-
 (defn stock-url [id startdate start num]
   (str
     "https://www.google.com/finance/historical?q=TPE:" id
