@@ -14,12 +14,12 @@
           [w h] [(.-width canvas) (.-height canvas)]
           ctx (.getContext canvas "2d")
           
-          cs (stf/avg-seq 10 (stl/close infos))
+          cs (stf/avg-seq 12 (stl/close infos))
           avg (stf/average cs)
           sd (stf/StandardDeviation avg cs)
           z (stf/z-score avg sd cs)
           
-          vs (stf/avg-seq 10 (stl/volume infos))
+          vs (stf/avg-seq 12 (stl/volume infos))
           v-avg (stf/average vs)
           v-sd (stf/StandardDeviation v-avg vs)
           v-z (stf/z-score v-avg v-sd vs)]
@@ -27,7 +27,9 @@
         {
           :drawers [
             {:type :kline :kline infos}
-            {:type :clock :cz z :vz v-z}
+            ;{:type :clock :cz z :vz v-z}
+            {:type :line :line cs :color "blue"}
+            {:type :line :line (stf/avg-seq 60 (stl/close infos)) :color "yellow"}
           ]
         }
         w h

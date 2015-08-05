@@ -8,7 +8,7 @@
     (/ (count vs))))
 
 (defn avg-seq [n vs]
-  (when (> (count vs) n)
+  (when (>= (count vs) n)
     (cons 
       (->
         (apply + (take n vs))

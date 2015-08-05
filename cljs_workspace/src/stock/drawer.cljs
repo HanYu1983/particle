@@ -21,15 +21,39 @@
     
 (defn draw [{drawers :drawers :as info} w h ctx]
   (let [base (graphic-base w h drawers)]
-    (aset ctx "fillStyle" "gray")
+    (aset ctx "fillStyle" "lightgray")
     (.fillRect ctx 0 0 w h)
     (doseq [drawer drawers]
-      (draw-it drawer base ctx))))
+      (.save ctx)
+      (draw-it drawer base ctx)
+      (.restore ctx))))
       
-(defmethod max-v :default [{kline :kline}] 0)
-(defmethod min-v :default [{kline :kline}] 0)
-(defmethod length :default [{kline :kline}] 0)
-(defmethod draw-it :default [{kline :kline} base ctx])
+(defmethod max-v :default [info] 0)
+(defmethod min-v :default [info] 0)
+(defmethod length :default [info] 0)
+(defmethod draw-it :default [info base ctx])
+
+(defmethod max-v :line [{line :line}] (apply max line))
+(defmethod min-v :line [{line :line}] (apply min line))
+(defmethod length :line [{line :line}] (count line))
+(defmethod draw-it :line [{line :line color :color} base ctx]
+  (let [[w h max-v min-v offset-v offset-x pos-y] base]
+    (aset ctx "strokeStyle" color)
+    (doseq
+      [
+        [idx prev curr]
+        (map
+          (fn [& args] args)
+          (map inc (range (count line)))
+          line
+          (rest line))
+      ]
+      
+      (aset ctx "lineWidth" 1)
+      (.beginPath ctx)
+      (.moveTo ctx (* idx offset-x) (pos-y prev))
+      (.lineTo ctx (* (inc idx) offset-x) (pos-y curr))
+      (.stroke ctx))))
       
 ; k line
       
@@ -69,6 +93,9 @@
 
       (comment "end doseq"))))
       
+      
+(defmethod max-v :clock [{cz :cz}] (apply max cz))
+(defmethod min-v :clock [{cz :cz}] (apply min cz))
 (defmethod draw-it :clock [{cz :cz vz :vz} base ctx]
   (let [[w h max-v min-v offset-v offset-x pos-y] base
         proj-x 
