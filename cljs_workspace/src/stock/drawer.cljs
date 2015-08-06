@@ -32,7 +32,7 @@
 (defmethod min-v :default [info] 0)
 (defmethod length :default [info] 0)
 (defmethod draw-it :default [info base ctx])
-
+      
 (defmethod max-v :line [{line :line}] (apply max line))
 (defmethod min-v :line [{line :line}] (apply min line))
 (defmethod length :line [{line :line}] (count line))
@@ -66,15 +66,18 @@
 (defmethod length :kline [{kline :kline}]
   (count kline))
 
-(defmethod draw-it :kline [{kline :kline} base ctx]
+(defmethod draw-it :kline [{kline :kline info :info} base ctx]
   (let [[w h max-v min-v offset-v offset-x pos-y] base]
+    (aset ctx "fillStyle" "black")
+    
     (doseq
       [
-        [idx [date open high low close volume]]
+        [idx [date open high low close volume] info]
         (map
           (fn [& args] args)
           (map inc (range (count kline)))
-          kline)
+          kline
+          (or info kline))
       ]
       (aset ctx "strokeStyle" (if (> close open) "red" "green"))
       (aset ctx "lineWidth" 2)
@@ -91,6 +94,7 @@
       (.lineTo ctx (* idx offset-x) (pos-y close))
       (.stroke ctx)
 
+      (.fillText ctx info (* idx offset-x) h)
       (comment "end doseq"))))
       
       
@@ -108,19 +112,20 @@
           (-> v
             (* (/ h 4) -1)
             (+ (/ h 2))))]
-            
+    (aset ctx "fillStyle" "red")
     (aset ctx "strokeStyle" "red")
     (doseq
       [
-        [pc cc pv cv]
+        [idx pc cc pv cv]
         (map
           (fn [& args] args)
+          (range (count cz))
           cz
           (rest cz)
           vz
           (rest vz))
       ]
-    
+      (.fillText ctx (str idx) (proj-x pv) (proj-y pc))
       (.beginPath ctx)
       (.moveTo ctx (proj-x pv) (proj-y pc))
       (.lineTo ctx (proj-x cv) (proj-y cc))

@@ -7,6 +7,9 @@
     (apply + vs)
     (/ (count vs))))
 
+(defn offset-seq [vs]
+  (map #(- %2 %1) vs (rest vs)))
+
 (defn sma-seq [n vs]
   (when (>= (count vs) n)
     (cons 
@@ -62,6 +65,38 @@
           offsets)]
     vs))
 
+(defn clock [n kline]
+  (let [cs (sma-seq n (stl/close kline))
+        avg (average cs)
+        sd (StandardDeviation avg cs)
+        z (z-score avg sd cs)
+          
+        vs (sma-seq n (stl/volume kline))
+        v-avg (average vs)
+        v-sd (StandardDeviation v-avg vs)
+        v-z (z-score v-avg v-sd vs)]
+    {
+      :sma cs
+      :avg avg
+      :sd sd
+      :z z
+      :v-sma vs
+      :v-avg v-avg
+      :v-sd v-sd
+      :v-z v-z
+    }))
+    
+(defn xy-direction [n x y]
+  (let [v 
+        (->
+          (.atan2 js/Math y x)
+          (+ (/ -3.14 n))
+          (* (/ 1 (/ 6.28 n)))
+          int)]
+    v))
+  
+(defn clock-direction [x-seq y-seq]
+  (map (partial xy-direction 8) (offset-seq x-seq) (offset-seq y-seq)))
 
 (defn BBI 
   "Bull and Bear Index 多空指標"
