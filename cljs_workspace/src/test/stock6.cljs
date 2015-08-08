@@ -9,7 +9,7 @@
 
 (defn main []
   (am/go
-    (let [[err infos] (<! (stl/stock-info nil 2330 "2015/1/1" 0 200))
+    (let [[err infos] (<! (stl/stock-info nil 2454 "2015/1/1" 0 200))
           canvas2 (.getElementById js/document "clock")
           canvas (.getElementById js/document "kline")
           ctx (.getContext canvas "2d")
@@ -33,7 +33,7 @@
         {
           :drawers [
             {:type :kline :kline infos :info (reverse dirs)}
-            {:type :line :line cs :color "blue"}
+            {:type :line :line (reverse cs) :color "blue"}
             ;{:type :line :line (stf/avg-seq 60 (stl/close infos)) :color "yellow"}
             ;{:type :line :line bbi :color "blue"}
           ]

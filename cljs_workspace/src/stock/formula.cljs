@@ -109,15 +109,3 @@
       (fn [& args]
         (-> (apply + args) (/ 4)))
       n1 n2 n3 n4)))
-      
-(defn EBBI 
-  "這個指標很像實做的不太正確"
-  [n kline]
-  (let [n1 (ema-seq n 1 (stl/close kline))
-        n2 (ema-seq (* n 2) 1 (stl/close kline))
-        n3 (ema-seq (* n 4) 1 (stl/close kline))
-        n4 (ema-seq (* n 8) 1 (stl/close kline))]
-    (map
-      (fn [& args]
-        (-> (apply + args) (/ 4)))
-      n1 n2 n3 n4)))
