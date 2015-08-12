@@ -18,7 +18,7 @@
         (/ n))
       (lazy-seq (sma-seq n (rest vs))))))
       
-(defn ema-seq
+(comment (defn ema-seq
   "點線賺錢術的 Exponentional Moving Average 指數移動平均線
   使用了加權型式，w為1可用於計算MACD
   這個計算上較為正確，和yahoo股市算的很接近"
@@ -35,11 +35,18 @@
             ])) 
         [v (rest vs) (inc 1)])
       (map first)
-      (take (count vs)))))
+      (take (count vs))))))
+      
+(defn ema-seq [n vs]
+  (reductions
+    (fn [ema v]
+      (+ (/ (- v ema) n) ema))
+    (first vs)
+    (rest vs)))
+      
       
 (defn StandardDeviation
-  "Standard Deviation 標準差
-  n設為30很像不錯"
+  "Standard Deviation 標準差"
   [avg vs]
   (let [v
         (->>
@@ -109,3 +116,137 @@
       (fn [& args]
         (-> (apply + args) (/ 4)))
       n1 n2 n3 n4)))
+      
+(defn sar-seq 
+  "拋物線指標"
+  [reverse-kline]
+  (when (>= (count reverse-kline) 3)
+    (let [low
+          (apply
+            min
+            (map
+              (fn [[_ _ _ low _ _]]
+                low)
+              (take 3 reverse-kline)))]
+      (->>
+        (iterate
+          (fn [[value ori prev curr act af]]
+            (let [[_ _ ph pl _ _ :as prev-line] (first prev)
+                  [_ _ ch cl _ _ :as curr-line] (first curr)
+                  
+                  should-turn
+                  (condp = act
+                    :buy
+                    (> value pl)
+                    
+                    :sell
+                    (< value ph))
+                    
+                  next-value 
+                  (if should-turn
+                    (condp = act
+                      :buy
+                      (apply
+                        max
+                        (map
+                          (fn [[_ _ high _ _ _]]
+                            high)
+                          (take 3 ori)))
+                          
+                      :sell
+                      (apply
+                        min
+                        (map
+                          (fn [[_ _ _ low _ _]]
+                            low)
+                          (take 3 ori))))
+                    (+ value (* af (- pl value))))
+                  
+                    
+                  next-af
+                  (condp = act
+                    :buy
+                    (if should-turn
+                      0.02
+                      (if (> ch ph)
+                        (max (+ 0.04 af) 0.2)
+                        (max (+ 0.02 af) 0.2)))
+                      
+                    :sell
+                    (if should-turn
+                      0.02
+                      (if (< cl pl)
+                        (max (+ 0.04 af) 0.2)
+                        (max (+ 0.02 af) 0.2)))
+                      
+                    :else
+                    af)
+                    
+                  next-act
+                  (if should-turn
+                    (condp = act
+                      :buy :sell
+                      :sell :buy)
+                    act)]
+              [next-value (rest ori) (rest prev) (rest curr) next-act next-af]))
+          [low reverse-kline (drop 2 reverse-kline) (drop 3 reverse-kline) :buy 0.2])
+        (map first)
+        (take (count reverse-kline))
+        (drop-last 2)))))
+        
+        
+(defn AccDist 
+  "累積/派發線"
+  [kline]
+  (reductions
+    +
+    0
+    (map
+      (fn [[_ open high low close volume]]
+        (if (= high low)
+          0
+          (* (- (- close low) (- high close)) (/ volume (- high low)))))
+      kline)))
+      
+(defn Chaikin
+  "蔡金指標"
+  [n m kline]
+  (map
+    #(- %1 %2)
+    (ema-seq n (AccDist kline))
+    (ema-seq m (AccDist kline))))
+    
+    
+(defn EOM 
+  "Ease Of Movement (EOM) 簡易波動指標"
+  [n kline]
+  (let [mid-move 
+        (map
+          #(- %1 %2)
+          (stl/mid kline)
+          (rest (stl/mid kline)))
+          
+        BoxRatio
+        (map
+          (fn [[_ _ high low _ volume]]
+            (/ volume (- high low)))
+          kline)
+          
+        eom
+        (map
+          #(/ %1 %2)
+          mid-move
+          (rest BoxRatio))]
+    (sma-seq n eom)))
+    
+  
+(defn yu-gv 
+  "地量"
+  [n kline]
+  (when (>= (count kline) n)
+    (let [group (take n kline)
+          vs (stl/volume group)
+          avg (average vs)
+          sd (StandardDeviation avg vs)
+          z (z-score avg sd vs)]
+      (cons (first z) (lazy-seq (yu-gv n (rest kline)))))))

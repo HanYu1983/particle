@@ -96,3 +96,8 @@
   (map
     (fn [[_ _ _ _ _ volume]] volume)
     kline))
+    
+(defn mid [kline]
+  (map
+    (fn [[_ _ high low _ _]] (/ (- high low) 2))
+    kline))
