@@ -47,9 +47,6 @@ class Main
 		tree.parserLoadData( loadSaveData() );
 		onView.setObject( loadSaveData() );
 		
-		trace( tree.outputData() );
-		
-		
 		var tmpl_dynamic_properties = j( '#tmpl_dynamic_properties' );
 		var dynamicContainer = j( '#dynamicContainer' );
 		dynamicContainer.append( tmpl_dynamic_properties.tmpl() );
