@@ -1,6 +1,6 @@
-(ns app.particle)
+(ns tool.particle)
 
-(defn create [{
+(defn particle [{
   id :id
   {count :count duration :duration :as emit} :emit
   [x y rot :as pos] :pos 
@@ -37,7 +37,30 @@
     :emit-times 0
     :forceVel [0 0 0]
   })
-  
+
+(defn jsobj->particle [jsobj]
+  (let [obj 
+        (into {}
+          (map
+            (fn [[k v]]
+              [(keyword k) v])
+            (js->clj jsobj)))
+            
+        emit
+        (if (:emit obj)
+          (update-in obj [:emit]
+            (fn [ori]
+              (->
+                (into {}
+                  (map
+                    (fn [[k v]]
+                      [(keyword k) v])
+                    ori))
+                (update-in
+                  [:prototype]
+                  (fn [ps] (mapv jsobj->particle ps))))))
+          obj)]
+    (particle emit)))
 
 (defn updatePos [{pos :pos vel :vel fvel :forceVel :as particle} t]
   (let [newpos (map + pos (map #(* t %) vel) (map #(* t %) fvel))]
@@ -102,7 +125,7 @@
                                 (fn [ctx proto]
                                   (update-in ctx [:ps] conj 
                                     (-> 
-                                      (create 
+                                      (particle 
                                         (merge proto 
                                           {:pos pos}))
                                       (forceIt [

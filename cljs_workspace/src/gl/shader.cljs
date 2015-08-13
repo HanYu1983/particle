@@ -106,7 +106,10 @@
 
       "void main(){"
       " vec4 pos = u_projection* u_transform* a_position;"
-      " gl_Position = vec4(pos.x, -pos.y, pos.z, pos.w);" ;將座標系上下反轉
+      " gl_Position = vec4(pos.x, -pos.y, pos.z, pos.w);" 
+      ; 1. 因為我會將物件都畫在xy平面的第一象現內（y朝上）
+      ; 2. 從html的image創建的材質貼圖剛好為上下相反的
+      ; 所以直接將座標系上下反轉（y朝下）就可以模擬2D座標系
       " v_texCoord = ( u_texTransform* vec3( a_texCoord.st, 1 )).xy;"
       "}")
     (str
@@ -127,3 +130,43 @@
       " color = u_colorTransform* color;"
       " gl_FragColor = color;"
       "}")))
+      
+      
+(defn waveProgramObject [gl]
+  (programObject
+    gl
+    [:position :inputTextureCoordinate]
+    [:inputImageTexture :normalizedPhase :mouse]
+    (str
+      "attribute vec4 position;"
+      "attribute vec4 inputTextureCoordinate;"
+      "varying vec2 textureCoordinate;"
+       "void main(){"
+          "gl_Position = position;"
+           "textureCoordinate = inputTextureCoordinate.xy;"
+       "}")
+       
+    (str
+      "#ifdef GL_ES\n"
+      "precision highp float;\n"
+      "#endif\n"
+      
+      "varying highp vec2 textureCoordinate;"
+      "uniform sampler2D inputImageTexture;"
+ 
+      "uniform float normalizedPhase;"
+      
+      "uniform vec2 mouse;"
+ 
+      "float m_pi = 3.14159265358979323846;"
+ 
+      "void main() {"
+        "vec4 color;"
+        "float x = textureCoordinate.x - mouse.x;"
+        "float y = textureCoordinate.y - mouse.y;"
+        "float dist = sqrt(x*x + y*y);"
+        "float delt = 0.004 / dist * sin(dist * dist * m_pi / 0.06 + normalizedPhase * 2.0 * m_pi);"
+        "gl_FragColor = texture2D(inputImageTexture, textureCoordinate + vec2(x / dist * delt, y / dist * delt));"
+      "}")))
+      
+      

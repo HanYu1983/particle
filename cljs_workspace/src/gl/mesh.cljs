@@ -62,8 +62,49 @@
           realType
           0
           size)))))
-  
-(defn plain [gl]
+          
+(defn plain-2d 
+  "模倣2D畫面的繪圖方式，錨點在左上角"
+  [gl]
+  (create gl
+    {
+      :vertex 
+      (js/Float32Array.
+        (array 
+          0 0 0 1
+          0 1 0 1
+          1 0 0 1
+          1 1 0 1
+          ))
+        
+      :texture
+      (js/Float32Array. 
+        (array
+          0 0
+          0 1
+          1 0
+          1 1
+        ))
+      
+      :index
+      (js/Uint16Array. (array 0 1 2 3))
+      
+      :color
+      (js/Float32Array.
+        (array
+          1 1 1 1
+          1 0 0 1
+          0 1 0 1
+          0 0 1 1
+        ))
+        
+      :size 4
+      :drawType (.-TRIANGLE_STRIP gl)
+    }))
+    
+(defn plain
+  "錨點在中心點"
+  [gl]
   (create gl
     {
       :vertex 

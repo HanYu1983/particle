@@ -48,6 +48,11 @@ class Main
 		onView.setObject( loadSaveData() );
 		
 		trace( tree.outputData() );
+		
+		
+		var tmpl_dynamic_properties = j( '#tmpl_dynamic_properties' );
+		var dynamicContainer = j( '#dynamicContainer' );
+		dynamicContainer.append( tmpl_dynamic_properties.tmpl() );
 	}
 	
 	function onHtmlClick( target ) {
@@ -147,6 +152,8 @@ class Main
 	static function main() 
 	{
 		new Main();
+		
+		
 	}
 	
 }

@@ -7,7 +7,7 @@
     [gl.texture :as gltex]
     [gl.mesh :as mesh]
     [gl.shader :as shader]
-    [app.particle :as part]))
+    [tool.particle :as part]))
     
 (def cacheTex (memoize gltex/texture))
     
@@ -87,29 +87,7 @@
 (def draw2D (draw2D (js/$ "#webgl")))
 ;(def draw3D (draw3D (js/$ "#webgl")))
     
-(defn createParticle [jsobj]
-  (let [obj 
-        (into {}
-          (map
-            (fn [[k v]]
-              [(keyword k) v])
-            (js->clj jsobj)))
-            
-        emit
-        (if (:emit obj)
-          (update-in obj [:emit]
-            (fn [ori]
-              (->
-                (into {}
-                  (map
-                    (fn [[k v]]
-                      [(keyword k) v])
-                    ori))
-                (update-in
-                  [:prototype]
-                  (fn [ps] (mapv createParticle ps))))))
-          obj)]
-    (part/create emit)))
+
 
 (defn main []
   (let [onView (chan)
@@ -186,7 +164,7 @@
                 "edit-particle"
                 (let [partInfo params
                       target (first (filter #(= (:id %) (.-id partInfo)) (get-in ctx [:part :ps])))
-                      newpart (createParticle partInfo)]
+                      newpart (part/jsobj->particle partInfo)]
                   (if (some? target)
                     (-> ctx
                       (update-in
