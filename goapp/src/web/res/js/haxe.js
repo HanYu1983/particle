@@ -1229,5 +1229,3 @@ haxe_ds_ObjectMap.count = 0;
 js_Boot.__toStr = {}.toString;
 test_testAsh_TestAsh.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=haxe.js.map
