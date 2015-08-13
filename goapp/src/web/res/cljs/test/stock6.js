@@ -10,48 +10,49 @@ goog.require('stock.tool');
 goog.require('stock.tool');
 test.stock6.main = (function main(){var c__6202__auto__ = cljs.core.async.chan.call(null,(1));cljs.core.async.impl.dispatch.run.call(null,((function (c__6202__auto__){
 return (function (){var f__6203__auto__ = (function (){var switch__6187__auto__ = ((function (c__6202__auto__){
-return (function (state_53840){var state_val_53841 = (state_53840[(1)]);if((state_val_53841 === (5)))
-{var inst_53717 = (state_53840[(7)]);var inst_53712 = (state_53840[(8)]);var inst_53723 = (state_53840[(9)]);var inst_53713 = (state_53840[(10)]);var inst_53714 = (state_53840[(11)]);var inst_53715 = (state_53840[(12)]);var inst_53722 = (state_53840[(13)]);var inst_53731 = (state_53840[(2)]);var inst_53732 = cljs.core.get.call(null,inst_53731,new cljs.core.Keyword(null,"sma","sma",960324195));var inst_53733 = cljs.core.get.call(null,inst_53731,new cljs.core.Keyword(null,"z","z",-789527183));var inst_53734 = cljs.core.get.call(null,inst_53731,new cljs.core.Keyword(null,"v-z","v-z",-1235194156));var inst_53735 = stock.formula.clock_direction.call(null,inst_53734,inst_53733);var inst_53736 = stock.formula.BBI.call(null,(6),inst_53712);var inst_53737 = cljs.core.reverse.call(null,inst_53712);var inst_53738 = stock.formula.sar_seq.call(null,inst_53737);var inst_53739 = cljs.core.reverse.call(null,inst_53738);var inst_53740 = cljs.core.reverse.call(null,inst_53712);var inst_53741 = stock.formula.Chaikin.call(null,(3),(9),inst_53740);var inst_53742 = cljs.core.reverse.call(null,inst_53741);var inst_53743 = cljs.core.reverse.call(null,inst_53712);var inst_53744 = stock.formula.EOM.call(null,(14),inst_53743);var inst_53745 = cljs.core.reverse.call(null,inst_53744);var inst_53746 = stock.formula.yu_gv.call(null,(20),inst_53712);var inst_53747 = [new cljs.core.Keyword(null,"drawers","drawers",-1652645568)];var inst_53748 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_53749 = stock.tool.volume.call(null,inst_53712);var inst_53750 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53749,"blue"];var inst_53751 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53748,inst_53750);var inst_53752 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_53753 = stock.tool.volume.call(null,inst_53712);var inst_53754 = stock.formula.sma_seq.call(null,(6),inst_53753);var inst_53755 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53754,"yellow"];var inst_53756 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53752,inst_53755);var inst_53757 = [inst_53751,inst_53756];var inst_53758 = (new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_53757,null));var inst_53759 = [inst_53758];var inst_53760 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53747,inst_53759);var inst_53761 = inst_53713.width;var inst_53762 = inst_53713.height;var inst_53763 = inst_53713.getContext("2d");var inst_53764 = stock.drawer.draw.call(null,inst_53760,inst_53761,inst_53762,inst_53763);var inst_53765 = [new cljs.core.Keyword(null,"drawers","drawers",-1652645568)];var inst_53766 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_53767 = cljs.core.repeat.call(null,(19),(0));var inst_53768 = cljs.core.reverse.call(null,inst_53746);var inst_53769 = cljs.core.into.call(null,inst_53767,inst_53768);var inst_53770 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53769,"red"];var inst_53771 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53766,inst_53770);var inst_53772 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235)];var inst_53773 = cljs.core.count.call(null,inst_53746);var inst_53774 = cljs.core.repeat.call(null,inst_53773,(0));var inst_53775 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53774];var inst_53776 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53772,inst_53775);var inst_53777 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235)];var inst_53778 = cljs.core.count.call(null,inst_53746);var inst_53779 = cljs.core.repeat.call(null,inst_53778,(2));var inst_53780 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53779];var inst_53781 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53777,inst_53780);var inst_53782 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235)];var inst_53783 = cljs.core.count.call(null,inst_53746);var inst_53784 = cljs.core.repeat.call(null,inst_53783,(-2));var inst_53785 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53784];var inst_53786 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53782,inst_53785);var inst_53787 = [inst_53771,inst_53776,inst_53781,inst_53786];var inst_53788 = (new cljs.core.PersistentVector(null,4,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_53787,null));var inst_53789 = [inst_53788];var inst_53790 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53765,inst_53789);var inst_53791 = inst_53714.width;var inst_53792 = inst_53714.height;var inst_53793 = inst_53714.getContext("2d");var inst_53794 = stock.drawer.draw.call(null,inst_53790,inst_53791,inst_53792,inst_53793);var inst_53795 = [new cljs.core.Keyword(null,"drawers","drawers",-1652645568)];var inst_53796 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"cz","cz",1670864932),new cljs.core.Keyword(null,"vz","vz",-575323393)];var inst_53797 = [new cljs.core.Keyword(null,"clock","clock",-894301127),inst_53733,inst_53734];var inst_53798 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53796,inst_53797);var inst_53799 = [inst_53798];var inst_53800 = (new cljs.core.PersistentVector(null,1,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_53799,null));var inst_53801 = [inst_53800];var inst_53802 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53795,inst_53801);var inst_53803 = inst_53715.width;var inst_53804 = inst_53715.height;var inst_53805 = inst_53715.getContext("2d");var inst_53806 = stock.drawer.draw.call(null,inst_53802,inst_53803,inst_53804,inst_53805);var inst_53807 = [new cljs.core.Keyword(null,"drawers","drawers",-1652645568)];var inst_53808 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"kline","kline",-1160432594)];var inst_53809 = [new cljs.core.Keyword(null,"kline","kline",-1160432594),inst_53712];var inst_53810 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53808,inst_53809);var inst_53811 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_53812 = stock.tool.close.call(null,inst_53712);var inst_53813 = stock.formula.sma_seq.call(null,(5),inst_53812);var inst_53814 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53813,"blue"];var inst_53815 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53811,inst_53814);var inst_53816 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_53817 = stock.tool.close.call(null,inst_53712);var inst_53818 = stock.formula.sma_seq.call(null,(10),inst_53817);var inst_53819 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53818,"yellow"];var inst_53820 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53816,inst_53819);var inst_53821 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_53822 = stock.tool.close.call(null,inst_53712);var inst_53823 = stock.formula.sma_seq.call(null,(20),inst_53822);var inst_53824 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53823,"purple"];var inst_53825 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53821,inst_53824);var inst_53826 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_53827 = stock.tool.close.call(null,inst_53712);var inst_53828 = stock.formula.sma_seq.call(null,(65),inst_53827);var inst_53829 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53828,"black"];var inst_53830 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53826,inst_53829);var inst_53831 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_53832 = [new cljs.core.Keyword(null,"line","line",212345235),inst_53739,"red"];var inst_53833 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53831,inst_53832);var inst_53834 = [inst_53810,inst_53815,inst_53820,inst_53825,inst_53830,inst_53833];var inst_53835 = (new cljs.core.PersistentVector(null,6,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_53834,null));var inst_53836 = [inst_53835];var inst_53837 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_53807,inst_53836);var inst_53838 = stock.drawer.draw.call(null,inst_53837,inst_53722,inst_53723,inst_53717);var state_53840__$1 = (function (){var statearr_53842 = state_53840;(statearr_53842[(14)] = inst_53745);
-(statearr_53842[(15)] = inst_53742);
-(statearr_53842[(16)] = inst_53735);
-(statearr_53842[(17)] = inst_53794);
-(statearr_53842[(18)] = inst_53806);
-(statearr_53842[(19)] = inst_53764);
-(statearr_53842[(20)] = inst_53732);
-(statearr_53842[(21)] = inst_53736);
-return statearr_53842;
-})();return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_53840__$1,inst_53838);
+return (function (state_64986){var state_val_64987 = (state_64986[(1)]);if((state_val_64987 === (5)))
+{var inst_64883 = (state_64986[(7)]);var inst_64881 = (state_64986[(8)]);var inst_64880 = (state_64986[(9)]);var inst_64891 = (state_64986[(10)]);var inst_64890 = (state_64986[(11)]);var inst_64885 = (state_64986[(12)]);var inst_64882 = (state_64986[(13)]);var inst_64899 = (state_64986[(2)]);var inst_64900 = cljs.core.get.call(null,inst_64899,new cljs.core.Keyword(null,"sma","sma",960324195));var inst_64901 = cljs.core.get.call(null,inst_64899,new cljs.core.Keyword(null,"z","z",-789527183));var inst_64902 = cljs.core.get.call(null,inst_64899,new cljs.core.Keyword(null,"v-z","v-z",-1235194156));var inst_64903 = stock.formula.clock_direction.call(null,inst_64902,inst_64901);var inst_64904 = stock.formula.BBI.call(null,(6),inst_64880);var inst_64905 = cljs.core.reverse.call(null,inst_64880);var inst_64906 = stock.formula.sar_seq.call(null,inst_64905);var inst_64907 = cljs.core.reverse.call(null,inst_64906);var inst_64908 = cljs.core.reverse.call(null,inst_64880);var inst_64909 = stock.formula.Chaikin.call(null,(3),(9),inst_64908);var inst_64910 = cljs.core.reverse.call(null,inst_64909);var inst_64911 = cljs.core.reverse.call(null,inst_64880);var inst_64912 = stock.formula.EOM.call(null,(14),inst_64911);var inst_64913 = cljs.core.reverse.call(null,inst_64912);var inst_64914 = stock.formula.yu_gv.call(null,(20),inst_64880);var inst_64915 = [new cljs.core.Keyword(null,"drawers","drawers",-1652645568)];var inst_64916 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_64917 = stock.tool.volume.call(null,inst_64880);var inst_64918 = [new cljs.core.Keyword(null,"line","line",212345235),inst_64917,"blue"];var inst_64919 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64916,inst_64918);var inst_64920 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_64921 = stock.tool.volume.call(null,inst_64880);var inst_64922 = stock.formula.sma_seq.call(null,(6),inst_64921);var inst_64923 = [new cljs.core.Keyword(null,"line","line",212345235),inst_64922,"yellow"];var inst_64924 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64920,inst_64923);var inst_64925 = [inst_64919,inst_64924];var inst_64926 = (new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_64925,null));var inst_64927 = [inst_64926];var inst_64928 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64915,inst_64927);var inst_64929 = inst_64881.width;var inst_64930 = inst_64881.height;var inst_64931 = inst_64881.getContext("2d");var inst_64932 = stock.drawer.draw.call(null,inst_64928,inst_64929,inst_64930,inst_64931);var inst_64933 = [new cljs.core.Keyword(null,"drawers","drawers",-1652645568)];var inst_64934 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235)];var inst_64935 = [new cljs.core.Keyword(null,"line","line",212345235),inst_64910];var inst_64936 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64934,inst_64935);var inst_64937 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235)];var inst_64938 = cljs.core.count.call(null,inst_64910);var inst_64939 = cljs.core.repeat.call(null,inst_64938,(0));var inst_64940 = [new cljs.core.Keyword(null,"line","line",212345235),inst_64939];var inst_64941 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64937,inst_64940);var inst_64942 = [inst_64936,inst_64941];var inst_64943 = (new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_64942,null));var inst_64944 = [inst_64943];var inst_64945 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64933,inst_64944);var inst_64946 = inst_64882.width;var inst_64947 = inst_64882.height;var inst_64948 = inst_64882.getContext("2d");var inst_64949 = stock.drawer.draw.call(null,inst_64945,inst_64946,inst_64947,inst_64948);var inst_64950 = [new cljs.core.Keyword(null,"drawers","drawers",-1652645568)];var inst_64951 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"cz","cz",1670864932),new cljs.core.Keyword(null,"vz","vz",-575323393)];var inst_64952 = [new cljs.core.Keyword(null,"clock","clock",-894301127),inst_64901,inst_64902];var inst_64953 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64951,inst_64952);var inst_64954 = [inst_64953];var inst_64955 = (new cljs.core.PersistentVector(null,1,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_64954,null));var inst_64956 = [inst_64955];var inst_64957 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64950,inst_64956);var inst_64958 = inst_64883.width;var inst_64959 = inst_64883.height;var inst_64960 = inst_64883.getContext("2d");var inst_64961 = stock.drawer.draw.call(null,inst_64957,inst_64958,inst_64959,inst_64960);var inst_64962 = [new cljs.core.Keyword(null,"drawers","drawers",-1652645568)];var inst_64963 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"kline","kline",-1160432594)];var inst_64964 = [new cljs.core.Keyword(null,"kline","kline",-1160432594),inst_64880];var inst_64965 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64963,inst_64964);var inst_64966 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_64967 = stock.tool.close.call(null,inst_64880);var inst_64968 = cljs.core.reverse.call(null,inst_64967);var inst_64969 = stock.formula.ema_seq.call(null,(12),inst_64968);var inst_64970 = cljs.core.reverse.call(null,inst_64969);var inst_64971 = [new cljs.core.Keyword(null,"line","line",212345235),inst_64970,"blue"];var inst_64972 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64966,inst_64971);var inst_64973 = [new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"line","line",212345235),new cljs.core.Keyword(null,"color","color",1011675173)];var inst_64974 = stock.tool.close.call(null,inst_64880);var inst_64975 = cljs.core.reverse.call(null,inst_64974);var inst_64976 = stock.formula.ema_seq.call(null,(26),inst_64975);var inst_64977 = cljs.core.reverse.call(null,inst_64976);var inst_64978 = [new cljs.core.Keyword(null,"line","line",212345235),inst_64977,"yellow"];var inst_64979 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64973,inst_64978);var inst_64980 = [inst_64965,inst_64972,inst_64979];var inst_64981 = (new cljs.core.PersistentVector(null,3,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_64980,null));var inst_64982 = [inst_64981];var inst_64983 = cljs.core.PersistentHashMap.fromArrays.call(null,inst_64962,inst_64982);var inst_64984 = stock.drawer.draw.call(null,inst_64983,inst_64890,inst_64891,inst_64885);var state_64986__$1 = (function (){var statearr_64988 = state_64986;(statearr_64988[(14)] = inst_64913);
+(statearr_64988[(15)] = inst_64932);
+(statearr_64988[(16)] = inst_64961);
+(statearr_64988[(17)] = inst_64907);
+(statearr_64988[(18)] = inst_64914);
+(statearr_64988[(19)] = inst_64900);
+(statearr_64988[(20)] = inst_64903);
+(statearr_64988[(21)] = inst_64949);
+(statearr_64988[(22)] = inst_64904);
+return statearr_64988;
+})();return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_64986__$1,inst_64984);
 } else
-{if((state_val_53841 === (4)))
-{var inst_53725 = (state_53840[(22)]);var state_53840__$1 = state_53840;var statearr_53843_53855 = state_53840__$1;(statearr_53843_53855[(2)] = inst_53725);
-(statearr_53843_53855[(1)] = (5));
+{if((state_val_64987 === (4)))
+{var inst_64893 = (state_64986[(23)]);var state_64986__$1 = state_64986;var statearr_64989_65001 = state_64986__$1;(statearr_64989_65001[(2)] = inst_64893);
+(statearr_64989_65001[(1)] = (5));
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else
-{if((state_val_53841 === (3)))
-{var inst_53725 = (state_53840[(22)]);var inst_53728 = cljs.core.apply.call(null,cljs.core.hash_map,inst_53725);var state_53840__$1 = state_53840;var statearr_53844_53856 = state_53840__$1;(statearr_53844_53856[(2)] = inst_53728);
-(statearr_53844_53856[(1)] = (5));
+{if((state_val_64987 === (3)))
+{var inst_64893 = (state_64986[(23)]);var inst_64896 = cljs.core.apply.call(null,cljs.core.hash_map,inst_64893);var state_64986__$1 = state_64986;var statearr_64990_65002 = state_64986__$1;(statearr_64990_65002[(2)] = inst_64896);
+(statearr_64990_65002[(1)] = (5));
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else
-{if((state_val_53841 === (2)))
-{var inst_53712 = (state_53840[(8)]);var inst_53725 = (state_53840[(22)]);var inst_53710 = (state_53840[(2)]);var inst_53711 = cljs.core.nth.call(null,inst_53710,(0),null);var inst_53712__$1 = cljs.core.nth.call(null,inst_53710,(1),null);var inst_53713 = document.getElementById("index2");var inst_53714 = document.getElementById("index");var inst_53715 = document.getElementById("clock");var inst_53716 = document.getElementById("kline");var inst_53717 = inst_53716.getContext("2d");var inst_53718 = inst_53716.width;var inst_53719 = inst_53716.height;var inst_53720 = [inst_53718,inst_53719];var inst_53721 = (new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_53720,null));var inst_53722 = cljs.core.nth.call(null,inst_53721,(0),null);var inst_53723 = cljs.core.nth.call(null,inst_53721,(1),null);var inst_53724 = cljs.core.reverse.call(null,inst_53712__$1);var inst_53725__$1 = stock.formula.clock.call(null,(12),inst_53724);var inst_53726 = cljs.core.seq_QMARK_.call(null,inst_53725__$1);var state_53840__$1 = (function (){var statearr_53845 = state_53840;(statearr_53845[(7)] = inst_53717);
-(statearr_53845[(8)] = inst_53712__$1);
-(statearr_53845[(9)] = inst_53723);
-(statearr_53845[(10)] = inst_53713);
-(statearr_53845[(23)] = inst_53711);
-(statearr_53845[(11)] = inst_53714);
-(statearr_53845[(12)] = inst_53715);
-(statearr_53845[(22)] = inst_53725__$1);
-(statearr_53845[(13)] = inst_53722);
-return statearr_53845;
-})();if(inst_53726)
-{var statearr_53846_53857 = state_53840__$1;(statearr_53846_53857[(1)] = (3));
+{if((state_val_64987 === (2)))
+{var inst_64880 = (state_64986[(9)]);var inst_64893 = (state_64986[(23)]);var inst_64878 = (state_64986[(2)]);var inst_64879 = cljs.core.nth.call(null,inst_64878,(0),null);var inst_64880__$1 = cljs.core.nth.call(null,inst_64878,(1),null);var inst_64881 = document.getElementById("index2");var inst_64882 = document.getElementById("index");var inst_64883 = document.getElementById("clock");var inst_64884 = document.getElementById("kline");var inst_64885 = inst_64884.getContext("2d");var inst_64886 = inst_64884.width;var inst_64887 = inst_64884.height;var inst_64888 = [inst_64886,inst_64887];var inst_64889 = (new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,inst_64888,null));var inst_64890 = cljs.core.nth.call(null,inst_64889,(0),null);var inst_64891 = cljs.core.nth.call(null,inst_64889,(1),null);var inst_64892 = cljs.core.reverse.call(null,inst_64880__$1);var inst_64893__$1 = stock.formula.clock.call(null,(12),inst_64892);var inst_64894 = cljs.core.seq_QMARK_.call(null,inst_64893__$1);var state_64986__$1 = (function (){var statearr_64991 = state_64986;(statearr_64991[(7)] = inst_64883);
+(statearr_64991[(8)] = inst_64881);
+(statearr_64991[(9)] = inst_64880__$1);
+(statearr_64991[(10)] = inst_64891);
+(statearr_64991[(24)] = inst_64879);
+(statearr_64991[(11)] = inst_64890);
+(statearr_64991[(23)] = inst_64893__$1);
+(statearr_64991[(12)] = inst_64885);
+(statearr_64991[(13)] = inst_64882);
+return statearr_64991;
+})();if(inst_64894)
+{var statearr_64992_65003 = state_64986__$1;(statearr_64992_65003[(1)] = (3));
 } else
-{var statearr_53847_53858 = state_53840__$1;(statearr_53847_53858[(1)] = (4));
+{var statearr_64993_65004 = state_64986__$1;(statearr_64993_65004[(1)] = (4));
 }
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else
-{if((state_val_53841 === (1)))
-{var inst_53708 = stock.tool.stock_info.call(null,null,(3583),"2015/1/1",(0),(200));var state_53840__$1 = state_53840;return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null,state_53840__$1,(2),inst_53708);
+{if((state_val_64987 === (1)))
+{var inst_64876 = stock.tool.stock_info.call(null,null,(2412),"2015/1/1",(0),(200));var state_64986__$1 = state_64986;return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null,state_64986__$1,(2),inst_64876);
 } else
 {return null;
 }
@@ -63,13 +64,13 @@ return new cljs.core.Keyword(null,"recur","recur",-437573268);
 ;return ((function (switch__6187__auto__,c__6202__auto__){
 return (function() {
 var state_machine__6188__auto__ = null;
-var state_machine__6188__auto____0 = (function (){var statearr_53851 = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null];(statearr_53851[(0)] = state_machine__6188__auto__);
-(statearr_53851[(1)] = (1));
-return statearr_53851;
+var state_machine__6188__auto____0 = (function (){var statearr_64997 = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null];(statearr_64997[(0)] = state_machine__6188__auto__);
+(statearr_64997[(1)] = (1));
+return statearr_64997;
 });
-var state_machine__6188__auto____1 = (function (state_53840){while(true){
+var state_machine__6188__auto____1 = (function (state_64986){while(true){
 var ret_value__6189__auto__ = (function (){try{while(true){
-var result__6190__auto__ = switch__6187__auto__.call(null,state_53840);if(cljs.core.keyword_identical_QMARK_.call(null,result__6190__auto__,new cljs.core.Keyword(null,"recur","recur",-437573268)))
+var result__6190__auto__ = switch__6187__auto__.call(null,state_64986);if(cljs.core.keyword_identical_QMARK_.call(null,result__6190__auto__,new cljs.core.Keyword(null,"recur","recur",-437573268)))
 {{
 continue;
 }
@@ -78,21 +79,21 @@ continue;
 }
 break;
 }
-}catch (e53852){if((e53852 instanceof Object))
-{var ex__6191__auto__ = e53852;var statearr_53853_53859 = state_53840;(statearr_53853_53859[(5)] = ex__6191__auto__);
-cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_53840);
+}catch (e64998){if((e64998 instanceof Object))
+{var ex__6191__auto__ = e64998;var statearr_64999_65005 = state_64986;(statearr_64999_65005[(5)] = ex__6191__auto__);
+cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_64986);
 return new cljs.core.Keyword(null,"recur","recur",-437573268);
 } else
 {if(new cljs.core.Keyword(null,"else","else",-1508377146))
-{throw e53852;
+{throw e64998;
 } else
 {return null;
 }
 }
 }})();if(cljs.core.keyword_identical_QMARK_.call(null,ret_value__6189__auto__,new cljs.core.Keyword(null,"recur","recur",-437573268)))
 {{
-var G__53860 = state_53840;
-state_53840 = G__53860;
+var G__65006 = state_64986;
+state_64986 = G__65006;
 continue;
 }
 } else
@@ -101,12 +102,12 @@ continue;
 break;
 }
 });
-state_machine__6188__auto__ = function(state_53840){
+state_machine__6188__auto__ = function(state_64986){
 switch(arguments.length){
 case 0:
 return state_machine__6188__auto____0.call(this);
 case 1:
-return state_machine__6188__auto____1.call(this,state_53840);
+return state_machine__6188__auto____1.call(this,state_64986);
 }
 throw(new Error('Invalid arity: ' + arguments.length));
 };
@@ -115,8 +116,8 @@ state_machine__6188__auto__.cljs$core$IFn$_invoke$arity$1 = state_machine__6188_
 return state_machine__6188__auto__;
 })()
 ;})(switch__6187__auto__,c__6202__auto__))
-})();var state__6204__auto__ = (function (){var statearr_53854 = f__6203__auto__.call(null);(statearr_53854[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__6202__auto__);
-return statearr_53854;
+})();var state__6204__auto__ = (function (){var statearr_65000 = f__6203__auto__.call(null);(statearr_65000[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__6202__auto__);
+return statearr_65000;
 })();return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null,state__6204__auto__);
 });})(c__6202__auto__))
 );
