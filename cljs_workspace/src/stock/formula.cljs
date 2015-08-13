@@ -38,11 +38,13 @@
       (take (count vs))))))
       
 (defn ema-seq [n vs]
-  (reductions
-    (fn [ema v]
-      (+ (/ (- v ema) n) ema))
-    (first vs)
-    (rest vs)))
+  (let [fv (first (sma-seq n vs))
+        alpha (/ 2 (inc n))]
+    (reductions
+      (fn [ema v]
+        (+ (* (- v ema) alpha) ema))
+      fv
+      (rest vs))))
       
       
 (defn StandardDeviation
