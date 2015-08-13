@@ -7,6 +7,7 @@
 			
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.edatagrid.js"></script>
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
 		
 		<script type="text/javascript" src="res/js/lib/spectrum/spectrum.js"></script>
@@ -140,17 +141,22 @@
 								<div id="txt_name" class="particle_title" style="float:left; margin-right:20px;">名稱: <span style="color:yellow;">粒子名稱</span></div>
 								<div class="btnRenameContaqiner"><a href="#" class="easyui-linkbutton" >重新命名</a></div>
 							</div>
-							<div title="生命毫秒" style="padding:10px;">
-								<div class="sliderContainer">
-									<input id="slr_life" class="easyui-slider" style="width:100%;" data-options="showTip:true,max:10000,value:3000"></input>
-								</div>
-								<table id="pg" class="easyui-datagrid" style="width:90%;height:100px;" nownumber="true" fitColumns="true" singleSelect="true">
+							<div title="生命毫秒">
+								<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="true" fitColumns="true" singleSelect="true">
 									<thead>
 										<tr>
-											<th field="firstname" width="50%" data-options="sortable:true">age</th>
-											<th field="lastname" width="50%">value</th>
+											<th field="firstname" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
+											<th field="lastname" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
 										</tr>
 									</thead>
+									<tbody>
+										<tr>
+											<td>0</td><td>10</td>
+										</tr>
+										<tr>
+											<td>10</td><td>100</td>
+										</tr>
+									</tbody>
 								</table>
 							</div>
 							<div title="C#" style="padding:10px;">
@@ -343,7 +349,11 @@
 			<img src="http://www.jeasyui.com/images/logo1.png" style="width:150px;height:50px">
 			<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 		</div>
-		
+		 <div id="toolbar">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#pg').edatagrid('addRow')">New</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#pg').edatagrid('destroyRow')">Destroy</a>
+		</div>
+			
 		<!-- 不知道怎麼在tree_particle 上用 -->
 		<!--
 		<div id="menu_particleTree" class="easyui-menu" style="width:120px;">
@@ -414,6 +424,40 @@
 	
 	</script>
 	<script>
+	$("#pg").edatagrid();
+	
+	var editIndex;
+	$('#pg').datagrid({
+		onEndEdit:function(index, row, changes ){
+			//console.log( 'end', index, row, changes );
+		},
+		onAfterEdit:function(index, row, changes ){
+			//console.log( 'after', index, row, changes );
+		},
+		onClickRow:function( index, row ){
+			//row.lastname += 100;
+			//console.log( index, row );
+			//$('#pg').datagrid('refreshRow', index );
+			editIndex = index;
+			
+		}
+	});
+	
+	$(document).keyup( function( e ){
+		console.log( e.which );
+		switch( e.which ) {
+			//enter
+			case 13:
+				console.log( 'editIndex', editIndex );
+				$('#pg').datagrid('endEdit', editIndex );
+				break;
+			//d
+			case 68:
+			//f
+			case 70:
+		}
+	});
+	
 	//測試用讀取資料
 	var testLoadData = { 	id:'root', 
 							lifetime:3,
