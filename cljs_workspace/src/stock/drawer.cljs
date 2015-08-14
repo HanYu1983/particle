@@ -105,12 +105,12 @@
         proj-x 
         (fn [v]
           (-> v
-            (* (/ w 4))
+            (* (/ w 8))
             (+ (/ w 2))))
         proj-y
         (fn [v]
           (-> v
-            (* (/ h 4) -1)
+            (* (/ h 8) -1)
             (+ (/ h 2))))]
     (aset ctx "fillStyle" "red")
     (aset ctx "strokeStyle" "red")

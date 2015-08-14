@@ -52,7 +52,7 @@
               {:type :line :line (stl/volume kline)}
               
               "clock"
-              (let [{cs :sma z :z v-z :v-z} (stf/clock 10 (reverse kline))]
+              (let [{cs :sma z :z v-z :v-z} (stf/clock 10 kline)]
                 {:type :clock :cz z :vz v-z})
               
               {:type :kline :kline kline})
