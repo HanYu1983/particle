@@ -52,7 +52,13 @@
           :drawers
           (cons
             (condp = type
-              "volume" {:type :line :line (stl/volume kline)}
+              "volume" 
+              {:type :line :line (stl/volume kline)}
+              
+              "clock"
+              (let [{cs :sma z :z v-z :v-z} (stf/clock 10 (reverse kline))]
+                {:type :clock :cz z :vz v-z})
+              
               {:type :kline :kline kline})
             (map
               (fn [data]
