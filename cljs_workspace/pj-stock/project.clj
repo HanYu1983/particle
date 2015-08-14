@@ -7,11 +7,11 @@
     :builds [{
         :id "cljstestproject.js"
         ; The path to the top-level ClojureScript source directory:
-        :source-paths ["src"]
+        :source-paths ["../src"]
         ; The standard ClojureScript compiler options:
         ; (See the ClojureScript compiler documentation for details.)
         :compiler {
-          :output-to "../goapp/src/web/res/cljs/cljs.js"  ; default: target/cljsbuild-main.js
-          :output-dir "../goapp/src/web/res/cljs"
+          :output-to "../../goapp/src/stock/js/cljs/cljs.js"  ; default: target/cljsbuild-main.js
+          :output-dir "../../goapp/src/stock/js/cljs"
           :optimizations :none
           :pretty-print true}}]})
