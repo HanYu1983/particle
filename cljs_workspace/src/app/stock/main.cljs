@@ -21,12 +21,13 @@
     
     (am/go-loop []
       (let [data (a/<! onModel)]
-        (js/common.onModel data))
+        (.onNext js/common.onModel data))
       (recur))
     
     (am/go-loop 
       [
         ctx {
+          :onView onView
           :onModel onModel
           :onSys onSys
           :store {}

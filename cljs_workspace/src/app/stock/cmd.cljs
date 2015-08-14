@@ -5,7 +5,7 @@
     [stock.tool :as stl]
     [cljs.core.async :as a]))
 
-(defn loadStock [ch id date]
+(defn loadStock [ch id date request]
   (am/go
     (let [[err infos] (a/<! (stl/stock-info nil id date 0 200))]
-      (a/>! ch ["loadStock" [err infos id date]]))))
+      (a/>! ch ["loadStock" [err infos id date request]]))))

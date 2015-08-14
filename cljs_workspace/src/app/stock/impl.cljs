@@ -1,5 +1,8 @@
 (ns app.stock.impl
+  (:require-macros
+    [cljs.core.async.macros :as am])
   (:require
+    [cljs.core.async :as a]
     [stock.formula :as stf]
     [stock.tool :as stl]
     [stock.drawer :as std]
@@ -12,7 +15,10 @@
   ctx)
     
 (defmethod abstract/onSystem "loadStock" [type data ctx]
-  (let [[err kline id date] data]
+  (let [[err kline id date request] data]
+    (am/go
+      (a/>! (:onModel ctx) (array type (js-obj "id" id "request" request))))
+      
     (if err
       (do
         (js/alert err)
@@ -66,7 +72,7 @@
     (.log js/console kline))
   ctx)
   
-(defmethod abstract/onViewCommand "stock-id" [_ data ctx]
+(defmethod abstract/onViewCommand "stockId" [_ data ctx]
   (let [onSys (:onSys ctx)
         stock-id (aget data "id")
         date (aget data "date")
@@ -74,5 +80,5 @@
     (if stock-info
       ctx
       (do
-        (cmd/loadStock onSys stock-id date)
+        (cmd/loadStock onSys stock-id date data)
         ctx))))
