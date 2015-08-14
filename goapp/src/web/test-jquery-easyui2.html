@@ -7,6 +7,7 @@
 			
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.edatagrid.js"></script>
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
 		
 		<script type="text/javascript" src="res/js/lib/spectrum/spectrum.js"></script>
@@ -48,10 +49,10 @@
 		margin-top:15px;
 		margin-left:10px;
 	}
-	.prop .sliderContainer{
+	.sliderContainer{
 		position:relative; 
-		left:65px;
-		width:70%; 
+		width:90%; 
+		margin-top:10px;
 	}
 	.prop .sliderTitle{
 		float:left;
@@ -133,12 +134,42 @@
 							</li>
 						</ul>
 					</div>
-					<div id="paramsPanel" data-options="region:'center',title:'粒子屬性'">
-					
-						<div class="propGroup" style="margin-bottom:10px;">
-							<div id="txt_name" class="particle_title" style="float:left; margin-right:20px;">名稱: <span style="color:yellow;">粒子名稱</span></div>
-							<div class="btnRenameContaqiner"><a href="#" class="easyui-linkbutton" >重新命名</a></div>
+					<div id="paramsPanel" data-options="region:'center',title:'粒子屬性'" style="width:100%;">
+						
+						<div class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
+							<div title="資訊" style="overflow:auto;padding:10px;">
+								<div id="txt_name" class="particle_title" style="float:left; margin-right:20px;">名稱: <span style="color:yellow;">粒子名稱</span></div>
+								<div class="btnRenameContaqiner"><a href="#" class="easyui-linkbutton" >重新命名</a></div>
+							</div>
+							<div title="生命毫秒">
+								<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="true" fitColumns="true" singleSelect="true">
+									<thead>
+										<tr>
+											<th field="firstname" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
+											<th field="lastname" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>0</td><td>10</td>
+										</tr>
+										<tr>
+											<td>10</td><td>100</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div title="C#" style="padding:10px;">
+								<p>C# is a multi-paradigm programming language encompassing strong typing, imperative, declarative, functional, generic, object-oriented (class-based), and component-oriented programming disciplines.</p>
+							</div>
+							<div title="Ruby" style="padding:10px;">
+								<p>A dynamic, reflective, general-purpose object-oriented programming language.</p>
+							</div>
+							<div title="Fortran" style="padding:10px;">
+								<p>Fortran (previously FORTRAN) is a general-purpose, imperative programming language that is especially suited to numeric computation and scientific computing.</p>
+							</div>
 						</div>
+						
 						<div class="propGroup">
 							<div class="prop">
 								<div class="sliderTitle">生命毫秒</div>
@@ -241,9 +272,15 @@
 						</div>
 					</div>
 					<div data-options="region:'south',split:true" title="動態屬性" style="width:100%; height:40%">
-						<div class="easyui-accordion" data-options="multiple:true" style="width:500px;height1:300px;">
+						<div class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:300px;">
 							<div title="Language" data-options="iconCls:'icon-ok'" style="overflow:auto;padding:10px;">
-								<p>A programming language is a formal language designed to communicate instructions to a machine, particularly a computer. Programming languages can be used to create programs that control the behavior of a machine and/or to express algorithms precisely.</p>
+								<table id="pg" class="easyui-propertygrid" style="width:90%;height:400px;" data-options="
+											method:'get',
+											showGroup:true,
+											scrollbarSize:0
+										">
+								</table>
+						
 							</div>
 							<div title="Java" style="padding:10px;">
 								<p>Java (Indonesian: Jawa) is an island of Indonesia. With a population of 135 million (excluding the 3.6 million on the island of Madura which is administered as part of the provinces of Java), Java is the world's most populous island, and one of the most densely populated places in the world.</p>
@@ -312,7 +349,11 @@
 			<img src="http://www.jeasyui.com/images/logo1.png" style="width:150px;height:50px">
 			<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 		</div>
-		
+		 <div id="toolbar">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#pg').edatagrid('addRow')">New</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#pg').edatagrid('destroyRow')">Destroy</a>
+		</div>
+			
 		<!-- 不知道怎麼在tree_particle 上用 -->
 		<!--
 		<div id="menu_particleTree" class="easyui-menu" style="width:120px;">
@@ -383,6 +424,40 @@
 	
 	</script>
 	<script>
+	$("#pg").edatagrid();
+	
+	var editIndex;
+	$('#pg').datagrid({
+		onEndEdit:function(index, row, changes ){
+			//console.log( 'end', index, row, changes );
+		},
+		onAfterEdit:function(index, row, changes ){
+			//console.log( 'after', index, row, changes );
+		},
+		onClickRow:function( index, row ){
+			//row.lastname += 100;
+			//console.log( index, row );
+			//$('#pg').datagrid('refreshRow', index );
+			editIndex = index;
+			
+		}
+	});
+	
+	$(document).keyup( function( e ){
+		console.log( e.which );
+		switch( e.which ) {
+			//enter
+			case 13:
+				console.log( 'editIndex', editIndex );
+				$('#pg').datagrid('endEdit', editIndex );
+				break;
+			//d
+			case 68:
+			//f
+			case 70:
+		}
+	});
+	
 	//測試用讀取資料
 	var testLoadData = { 	id:'root', 
 							lifetime:3,
