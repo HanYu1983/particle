@@ -25,7 +25,7 @@ body{
 <script id="tmpl_panel" type="jquery-x-tmpl">
 	<div class="easyui-layout" style="width:100%;height:190px; left:0; top:0;">
 		<div data-options="region:'north'" style="height:40px; padding:5px;">
-			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="removdPanel(this);">刪除</a>
+			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
 		</div>
 		<div data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
 			<div style="position:relative; width:100%; margin-bottom:5px;">
@@ -49,8 +49,8 @@ body{
 <body>
 	<div id="mc_rootPanel" class="easyui-layout" style="width:100%;height:100%; left:0; top:0;">
         <div data-options="region:'north',split:false,title:'余氏k線圖'" style="height:70px; padding:5px;">
-			<select class="easyui-textbox" style="width:70px;"></select>
-			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="addPanel()">新增K線</a>
+			<select id="slt_stockId" class="easyui-textbox" style="width:70px;"></select>
+			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="onHtmlTrigger('addPanel')">新增K線</a>
 		</div>
         <div id="mc_mainContainer" data-options="region:'center',title:'內容'">
 			<div id="mc_accordionContainer" class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
@@ -123,6 +123,7 @@ body{
     </div>
 	-->
 	<script>
+	/*
 	var tmpl_panel = $("#tmpl_panel");
 	var mc_mainContainer = $("#mc_mainContainer");
 	var mc_rootPanel = $("#mc_rootPanel" );
@@ -142,6 +143,7 @@ body{
 			}
 		});
 	}
+	*/
 	/*(
 	klineContainer.scroll( function( e ){
 		console.log( e );
@@ -158,20 +160,14 @@ body{
 		}
 	})
 */
-	
+	/*
 	function onChkExchangeChange( target ){
 		console.log( target );
 	}
+	*/
 	
-	function addPanel(){
 	/*
-		var dom = tmpl_panel.tmpl();
-		mc_mainContainer.append(dom);
-		dom.layout();
-		dom.find( '.easyui-switchbutton' ).switchbutton();
-		dom.find( '.easyui-linkbutton' ).linkbutton();
-		*/
-		
+	function addPanel(){
 		var dom = tmpl_panel.tmpl();
 		mc_accordionContainer.accordion('add', {
 			title: 'k線',
@@ -180,7 +176,7 @@ body{
 		});
 	}
 	
-	function removdPanel( target ){
+	function removePanel( target ){
 		//$( target ).parent().parent().parent().remove();
 		
 		mc_accordionContainer.accordion( 'remove', 'k線' );
@@ -190,6 +186,7 @@ body{
 		var dom = tmpl_exchange.tmpl();
 		
 	}
+	*/
 	</script>
 	<script src='js/lib/async.js'></script>
 	<script src='js/lib/rx.all.min.js'></script>
@@ -214,6 +211,7 @@ body{
 	var cbs = {}
 	
 	function draw( canvas, id, type, params ){
+		console.log( canvas );
 		params.canvas = canvas
 		params.id = id
 		params.type = type
@@ -237,6 +235,7 @@ body{
 	</script>
 	
 	<script id="test">
+	
 	common.onModel.subscribe(function(param){
 		var type = param[0]
 		var data = param[1]
@@ -250,7 +249,7 @@ body{
 	common.onView.subscribe(function(data){
 		console.log( data )
 	})
-	
+	/*
 	setTimeout(function(){
 		
 		stockId( 2330, false, function(){
@@ -278,9 +277,9 @@ body{
 		
 	}, 1000)
 	
-	
+	*/
 	</script>
 	
-	<script src="js/proj.js"></script>
+	<script src="js/haxe.js"></script>
 </body>
 </html>
