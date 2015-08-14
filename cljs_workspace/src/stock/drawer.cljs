@@ -94,7 +94,7 @@
       (.lineTo ctx (* idx offset-x) (pos-y close))
       (.stroke ctx)
 
-      (.fillText ctx info (* idx offset-x) h)
+      ;(.fillText ctx info (* idx offset-x) h)
       (comment "end doseq"))))
       
       

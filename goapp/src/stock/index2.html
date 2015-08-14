@@ -98,7 +98,7 @@ body{
 					</div>
 				</div>
 				<div class="canvasContainer" data-options="region:'center',title:'測試用k線'">
-					<canvas id="canvas_kline" style="position:relative; left:0; top:0; width:2000px; height:100%;"></canvas>
+					<canvas id="canvas_kline" width=2000px height=100% style="position:relative; left:0; top:0;"></canvas>
 				</div>
 			</div>
         </div>
@@ -203,20 +203,47 @@ body{
 	</script>
 	
 	<script id="view-command">
-	//kline, volume, clock
-	//{}
-	function drawKline( canvas, id, type, params ){
+	// kline, volume, clock
+	// {}
+	// draw($("#canvas_kline")[0], 2330, null, {sub:[{t: "ma", d: {n: 5, color: "blue"}}, {t: "ma", d: {n: 10, color: "yellow"}} ]})
+	
+	// draw($("#canvas_kline")[0], 2330, "volume", {sub:[{t: "ma", d: {n: 5, color: "blue"}}, {t: "ma", d: {n: 10, color: "yellow"}} ]})
+	
+	var cbid = 0
+	var cbs = {}
+	
+	function draw( canvas, id, type, params ){
 		params.canvas = canvas
 		params.id = id
 		params.type = type
 		common.onView.onNext(["draw", params])
 	}
+	
+	function stockId( id, reset, cb ){
+		var params = {
+			id: id,
+			date: "2015/1/1",
+			reset: reset
+		}
+		params.cbid = cbid++
+		cbs[ params.cbid+"" ] = cb
+		common.onView.onNext(["stockId", params])
+	}
+	
+	function print(){
+		common.onView.onNext(["print"])
+	}
 	</script>
 	
 	<script id="test">
-	
-	common.onModel.subscribe(function(data){
-		console.log( data )
+	common.onModel.subscribe(function(param){
+		var type = param[0]
+		var data = param[1]
+		var request = data.request
+		if( cbs[request.cbid] ){
+			cbs[request.cbid]( data )
+			delete cbs[request.cbid]
+		}
 	})
 	
 	common.onView.subscribe(function(data){
@@ -224,8 +251,28 @@ body{
 	})
 	
 	setTimeout(function(){
-		common.onModel.onNext(['testmodel', {}])
-		common.onView.onNext(['testview', {}])
+		
+		stockId( 2330, false, function(){
+			
+			draw($("#canvas_exchange")[0], 2330, "volume", 
+				{
+					sub:[
+						{t: "ma", d: {n: 5, color: "blue"}}
+					]
+				}
+			)
+			
+			draw($("#canvas_kline")[0], 2330, null, 
+				{
+					sub:[
+						{t: "ma", d: {n: 5, color: "blue"}}, 
+						{t: "ma", d: {n: 10, color: "yellow"}} 
+					]
+				}
+			)
+			
+		})
+		
 	}, 1000)
 	
 	

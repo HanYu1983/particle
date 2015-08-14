@@ -4,14 +4,15 @@
   (:require
     [cljs.core.async :as a]
     [app.stock.abstract :as abstract]
-    [app.stock.viewcmd]
+    [app.stock.impl]
     [stock.tool :as stl]
     [stock.formula :as stf]
     [stock.drawer :as std]))
 
 (defn main []
   (let [onView (a/chan)
-        onModel (a/chan)]
+        onModel (a/chan)
+        onSys (a/chan)]
         
     (.subscribe js/common.onView
       (fn [data]
@@ -20,18 +21,25 @@
     
     (am/go-loop []
       (let [data (a/<! onModel)]
-        (js/common.onModel data))
+        (.onNext js/common.onModel data))
       (recur))
-      
+    
     (am/go-loop 
       [
         ctx {
+          :onView onView
           :onModel onModel
+          :onSys onSys
+          :store {}
         }
       ]
-      (let [[v ch] (a/alts! [onView])]
+      (let [[v ch] (a/alts! [onView onSys])]
         (recur
           (condp = ch
+            onSys
+            (let [[type data] v]
+              (abstract/onSystem type data ctx))
+            
             onView
             (let [type (aget v 0)
                   data (aget v 1)]
