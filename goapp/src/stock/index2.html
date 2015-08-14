@@ -97,7 +97,7 @@ body{
 					</div>
 				</div>
 				<div data-options="region:'center',title:'測試用k線'">
-					<canvas id="canvas_kline" style="position:relative; left:0; top:0; width:2000px; height:100%;"></canvas>
+					<canvas id="canvas_kline" width=2000px height=100% style="position:relative; left:0; top:0;"></canvas>
 				</div>
 			</div>
         </div>
@@ -187,15 +187,22 @@ body{
 	<script id="view-command">
 	//kline, volume, clock
 	//{}
-	function drawKline( canvas, id, type, params ){
+	// draw( $("#canvas_kline")[0], 2330, null, {} )
+	function draw( canvas, id, type, params ){
 		params.canvas = canvas
 		params.id = id
 		params.type = type
 		common.onView.onNext(["draw", params])
 	}
 	
-	function stockId( id ){
-		common.onView.onNext(["stock-id", id])
+	// stockId( 2330 )
+	function stockId( id, reset ){
+		var params = {
+			id: id,
+			date: "2015/1/1",
+			reset: reset
+		}
+		common.onView.onNext(["stock-id", params])
 	}
 	
 	function print(){
@@ -219,7 +226,6 @@ body{
 		
 		//stockId(2330)
 		//drawKline( $("#canvas_kline")[0], 2330, "kline", {})
-		
 	}, 1000)
 	
 	

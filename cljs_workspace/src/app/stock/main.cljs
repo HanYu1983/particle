@@ -4,7 +4,7 @@
   (:require
     [cljs.core.async :as a]
     [app.stock.abstract :as abstract]
-    [app.stock.viewcmd]
+    [app.stock.impl]
     [stock.tool :as stl]
     [stock.formula :as stf]
     [stock.drawer :as std]))

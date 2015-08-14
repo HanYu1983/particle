@@ -9,7 +9,7 @@ cljs.core._add_method.call(null,app.stock.abstract$.onSystem,new cljs.core.Keywo
 console.log(cljs.core.pr_str.call(null,data));
 return ctx;
 }));
-cljs.core._add_method.call(null,app.stock.abstract$.onSystem,"loadStock",(function (type,data,ctx){var vec__19767 = data;var err = cljs.core.nth.call(null,vec__19767,(0),null);var kline = cljs.core.nth.call(null,vec__19767,(1),null);var id = cljs.core.nth.call(null,vec__19767,(2),null);var date = cljs.core.nth.call(null,vec__19767,(3),null);if(cljs.core.truth_(err))
+cljs.core._add_method.call(null,app.stock.abstract$.onSystem,"loadStock",(function (type,data,ctx){var vec__19768 = data;var err = cljs.core.nth.call(null,vec__19768,(0),null);var kline = cljs.core.nth.call(null,vec__19768,(1),null);var id = cljs.core.nth.call(null,vec__19768,(2),null);var date = cljs.core.nth.call(null,vec__19768,(3),null);if(cljs.core.truth_(err))
 {alert(err);
 return ctx;
 } else
