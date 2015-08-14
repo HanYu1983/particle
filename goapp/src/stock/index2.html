@@ -170,6 +170,33 @@ body{
 		
 	}
 	</script>
+	<script src='js/lib/async.js'></script>
+	<script src='js/lib/rx.all.min.js'></script>
+	<script src='js/lib/three.min.js'></script>
+	<script src='js/lib/underscore-min.js'></script>
+	<script src='js/common.js'></script>
+	<script src='js/cljs/goog/base.js'></script>
+	<script src='js/cljs/cljs.js'></script>
+	
+	<script>
+	common.onModel.subscribe(function(data){
+		console.log( data )
+	})
+	
+	common.onView.subscribe(function(data){
+		console.log( data )
+	})
+	
+	setTimeout(function(){
+		common.onModel.onNext(['testmodel', {}])
+		common.onView.onNext(['testview', {}])
+	}, 1000)
+	
+	</script>
+	
+	<script>
+	goog.require("app.stock.main")
+	</script>
 	<script src="js/proj.js"></script>
 </body>
 </html>

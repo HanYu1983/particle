@@ -25,6 +25,9 @@ goog.addDependency("../stock/formula.js", ['stock.formula'], ['cljs.core', 'stoc
 goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
 goog.addDependency("../stock/drawer.js", ['stock.drawer'], ['cljs.core', 'stock.tool']);
 goog.addDependency("../test/stock6.js", ['test.stock6'], ['stock.formula', 'cljs.core', 'cljs.core.async', 'stock.tool', 'stock.drawer']);
+goog.addDependency("../app/stock/abstract.js", ['app.stock.abstract$'], ['cljs.core']);
+goog.addDependency("../app/stock/viewcmd.js", ['app.stock.viewcmd'], ['app.stock.abstract$', 'cljs.core']);
+goog.addDependency("../app/stock/main.js", ['app.stock.main'], ['app.stock.abstract$', 'stock.formula', 'cljs.core', 'cljs.core.async', 'stock.tool', 'stock.drawer', 'app.stock.viewcmd']);
 goog.addDependency("../test/stock4.js", ['test.stock4'], ['cljs.core', 'cljs.core.async', 'clojure.string']);
 goog.addDependency("../app/react.js", ['app.react'], ['cljs.core', 'cljs.core.async']);
 goog.addDependency("../test/dialog.js", ['test.dialog'], ['cljs.core', 'cljs.core.async', 'tool.dialog']);
