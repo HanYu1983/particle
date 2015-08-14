@@ -30,19 +30,12 @@
 		margin-right:5px;
 	}
 	.particle_title{
-		width:150px;
-		margin-left:10px;
 		line-height:25px;
 	}
 	.propGroup{
 		position:relative;
 		width:100%;
-		margin-top:5px;
-		height:25px;
-	}
-	.btnRenameContaqiner{
-		position:absolute;
-		right:30px;
+		padding:5px;
 	}
 	.prop{
 		width:100%;
@@ -115,6 +108,24 @@
 			</div>
 		</div>
 	</script>
+	<script id="tmpl_properties" type="jquery-x-tmpl">
+		<div style="display:inline-block; width:49%;">
+			<div style="display:inline-block; width:70px;"><input id=${id} class="easyui-numberspinner" style="width:100%;" /></div>
+			<div style="display:inline-block;">${name}</div>
+		</div>
+	</script>
+	<script id="tmpl_overlife" type="jquery-x-tmpl">
+		<div title=${name} style="overflow:auto;">
+			<table id=${id} class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="false" fitColumns="true" singleSelect="true">
+				<thead>
+					<tr>
+						<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
+						<th field="value" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</script>
 	<body>
 		<div class="easyui-layout" style="width:100%;height:100%; padding:0;">
 			<div data-options="region:'north'" style="height:30px">
@@ -138,15 +149,45 @@
 						
 						<div class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
 							<div title="資訊" style="overflow:auto;padding:10px;">
-								<div id="txt_name" class="particle_title" style="float:left; margin-right:20px;">名稱: <span style="color:yellow;">粒子名稱</span></div>
-								<div class="btnRenameContaqiner"><a href="#" class="easyui-linkbutton" >重新命名</a></div>
+								<div class="propGroup">
+									<div id="txt_name" class="particle_title" style="position:relative;">名稱: <span style="color:yellow;">粒子名稱</span></div>
+									<div style="position:absolute; right:30px; top:5px;"><a href="#" class="easyui-linkbutton" >重新命名</a></div>
+								</div>
 							</div>
-							<div title="生命毫秒">
+							<div id="mc_propertiesContainer" title="初始值"></div>
+							<div title="運動中">
+								<div id="mc_overlifeContainer" class="easyui-accordion" data-options="multiple:true, selected:1" style="width:100%;height1:100%;">
+									<!--
+									<div title="質量" style="overflow:auto;">
+										<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="false" fitColumns="true" singleSelect="true">
+											<thead>
+												<tr>
+													<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
+													<th field="value" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
+												</tr>
+											</thead>
+										</table>
+									</div>
+									<div title="位置x" style="overflow:auto;">
+										<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="false" fitColumns="true" singleSelect="true">
+											<thead>
+												<tr>
+													<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
+													<th field="value" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
+												</tr>
+											</thead>
+										</table>
+									</div>
+													-->
+								</div>
+								
+								
+								<!--
 								<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="true" fitColumns="true" singleSelect="true">
 									<thead>
 										<tr>
-											<th field="firstname" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
-											<th field="lastname" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
+											<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
+											<th field="value" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -158,6 +199,7 @@
 										</tr>
 									</tbody>
 								</table>
+										-->
 							</div>
 							<div title="C#" style="padding:10px;">
 								<p>C# is a multi-paradigm programming language encompassing strong typing, imperative, declarative, functional, generic, object-oriented (class-based), and component-oriented programming disciplines.</p>
@@ -424,21 +466,59 @@
 	
 	</script>
 	<script>
+		
+	var mc_propertiesContainer = $("#mc_propertiesContainer" );
+	var mc_overlifeContainer = $("#mc_overlifeContainer" );
+	var tmpl_properties = $("#tmpl_properties" );
+	var tmpl_overlife = $("#tmpl_overlife" );
+	var ary_props = [ 	{id:'mass', name:'質量'}, 
+						{id:'pos_x', name:'位置x'}, 
+						{id:'pos_y', name:'位置y'}, 
+						{id:'pos_r', name:'角度'}, 
+						{id:'vel_x', name:'速度x'}, 
+						{id:'vel_y', name:'速度y'}, 
+						{id:'vel_r', name:'旋轉速度'}, 
+						{id:'size_x', name:'粒子寬度'}, 
+						{id:'size_y', name:'粒子高度'}, 
+						{id:'count', name:'發射數目'}, 
+						{id:'duration', name:'週期毫秒'}, 
+						{id:'angle', name:'發射角度'}, 
+						{id:'range', name:'發射範圍'}, 
+						{id:'force', name:'發射力道'}];
+	for( var i = 0; i < ary_props.length; ++i ){
+		var dom = tmpl_properties.tmpl( ary_props[i] );
+		mc_propertiesContainer.append( dom );
+		
+		dom.find( '.easyui-numberspinner' ).spinner();
+		
+		var odom = tmpl_overlife.tmpl( ary_props[i] );
+		mc_overlifeContainer.append( odom );
+	}
+	
+	//mc_overlifeContainer.accordion();
+	
+	
 	$("#pg").edatagrid();
 	
 	var editIndex;
+	var editRow;
 	$('#pg').datagrid({
 		onEndEdit:function(index, row, changes ){
 			//console.log( 'end', index, row, changes );
 		},
 		onAfterEdit:function(index, row, changes ){
 			//console.log( 'after', index, row, changes );
+			editIndex = undefined;
+			editRow = undefined;
+		},
+		onBeginEdit:function( index, row ){
+			editIndex = index;
+			editRow = row;
 		},
 		onClickRow:function( index, row ){
 			//row.lastname += 100;
 			//console.log( index, row );
 			//$('#pg').datagrid('refreshRow', index );
-			editIndex = index;
 			
 		}
 	});
@@ -448,8 +528,22 @@
 		switch( e.which ) {
 			//enter
 			case 13:
+				if( editIndex == undefined ) return;
 				console.log( 'editIndex', editIndex );
 				$('#pg').datagrid('endEdit', editIndex );
+				break;
+			//up
+			case 38:
+				if( editIndex == undefined ) return;
+				var age = Math.floor( editRow.age );
+				editRow.age = ++age;
+				$('#pg').datagrid('refreshRow', editIndex );
+				console.log( editRow );
+				break;
+			//down
+			case 40:
+				if( editIndex == undefined ) return;
+				console.log( editRow );
 				break;
 			//d
 			case 68:
