@@ -62,15 +62,9 @@ body{
 						<div data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
 							<div style="position:relative; width:100%; margin-bottom:5px;">
 								<div style="position:relative; display:inline-block; width:70px; ">
-									<input class="easyui-switchbutton" checked>
+									<input id="swb_avg" class="easyui-switchbutton" checked>
 								</div>
-								<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
-							</div>
-							<div style="position:relative; width:100%; margin-bottom:5px;">
-								<div style="position:relative; display:inline-block; width:70px; ">
-									<input class="easyui-switchbutton">
-								</div>
-								<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
+								<div style="position:relative; display:inline-block; width:70px; ">6日均</div>
 							</div>
 						</div>
 						<div data-options="region:'center'">
@@ -79,7 +73,7 @@ body{
 					</div>
 				</div>
 				<div title="k線" style="overflow:auto;">
-					<div class="easyui-layout" style="width:100%;height:460px; left:0; top:0;">
+					<div id="mc_kline" class="easyui-layout" style="width:100%;height:460px; left:0; top:0;">
 						<div data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
 							<div style="position:relative; width:100%; margin-bottom:5px;">
 								<div style="position:relative; display:inline-block; width:70px; ">
@@ -94,7 +88,7 @@ body{
 								<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
 							</div>
 						</div>
-						<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center',title:'測試用k線'">
+						<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center'">
 							<canvas id="canvas_kline" width=2000 height=400 style="position:relative; left:0; top:0;"></canvas>
 						</div>
 					</div>
@@ -122,72 +116,6 @@ body{
         The window content.
     </div>
 	-->
-	<script>
-	/*
-	var tmpl_panel = $("#tmpl_panel");
-	var mc_mainContainer = $("#mc_mainContainer");
-	var mc_rootPanel = $("#mc_rootPanel" );
-	var tmpl_window = $("#tmpl_window" );
-	var tmpl_panel2 = $("#tmpl_panel2" );
-	var mc_exchange = $("#mc_exchange" );
-	var mc_accordionContainer = $("#mc_accordionContainer" );
-	var canvas_kline = $("#canvas_kline" );
-	var canvas_exchange = $("#canvas_exchange" );
-	
-	var ary_canvasContainer = [canvas_kline.parent(), canvas_exchange.parent()];
-	for ( var i = 0; i < ary_canvasContainer.length; ++i  ){
-		ary_canvasContainer[i].scroll( function( e ){
-			var target = $( e.currentTarget );
-			for ( var j = 0; j < ary_canvasContainer.length; ++j  ){
-				ary_canvasContainer[j].scrollLeft( target.scrollLeft() );
-			}
-		});
-	}
-	*/
-	/*(
-	klineContainer.scroll( function( e ){
-		console.log( e );
-		console.log( klineContainer.scrollLeft() );
-		exchangeContainer.scrollLeft( klineContainer.scrollLeft() );
-	});*/
-	/*
-	var chk_exchange = $("#chk_exchange" );
-	
-	chk_exchange.switchbutton({
-		checked: true,
-		onChange: function(checked){
-			checked ? mc_exchange.show() : mc_exchange.hide();
-		}
-	})
-*/
-	/*
-	function onChkExchangeChange( target ){
-		console.log( target );
-	}
-	*/
-	
-	/*
-	function addPanel(){
-		var dom = tmpl_panel.tmpl();
-		mc_accordionContainer.accordion('add', {
-			title: 'k線',
-			content: dom,
-			selected: true
-		});
-	}
-	
-	function removePanel( target ){
-		//$( target ).parent().parent().parent().remove();
-		
-		mc_accordionContainer.accordion( 'remove', 'k線' );
-	}
-	
-	function addExchange(){
-		var dom = tmpl_exchange.tmpl();
-		
-	}
-	*/
-	</script>
 	<script src='js/lib/async.js'></script>
 	<script src='js/lib/rx.all.min.js'></script>
 	<script src='js/lib/three.min.js'></script>

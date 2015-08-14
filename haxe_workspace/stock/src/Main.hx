@@ -23,23 +23,25 @@ class Main
 		tmpl_panel = j("#tmpl_panel");
 		
 		slt_stockId = j( '#slt_stockId' );
-		//canvas_clock = j( '#canvas_clock' );
 		mc_accordionContainer = j("#mc_accordionContainer" );
 		
 		ary_panel_obj.push( {
 			canvas:j( '#canvas_kline' ),
 			needMove:true,
-			type:EType.kline
+			type:EType.kline,
+			root:j('#mc_kline' )
 		});
 		ary_panel_obj.push( {
 			canvas:j( '#canvas_exchange' ),
 			needMove:true,
-			type:EType.volume
+			type:EType.volume,
+			root:j('#mc_exchange' )
 		});
 		ary_panel_obj.push( {
 			canvas:j( '#canvas_clock' ),
 			needMove:false,
-			type:EType.clock
+			type:EType.clock,
+			root:null
 		});
 		
 		slt_stockId.textbox( {
@@ -77,6 +79,36 @@ class Main
 						container = _stockMap.canvas.parent();
 						container.scrollLeft( currentScrollX );
 					});
+				});
+			}
+			
+			var root = stockMap.root;
+			if ( root != null ) {
+				root.find( '.easyui-switchbutton' ).switchbutton( {
+					onChange:function( checked ) {
+						if( checked ){
+							var target = j( untyped __js__ ( 'this' ));
+							var type = switch( target ) {
+								case 'swb_avg':
+									'';
+								case _:
+									'';
+							}
+							
+							
+						}else {
+							
+						}
+						
+						root.find( '.easyui-switchbutton' ).each( function(id, dom) {
+							var jdom = j( dom );
+							var checkDom = jdom.parent().find( '.switchbutton-inner' );
+							trace( checkDom.css( 'margin-left' ));
+							//trace( j( dom ).switchbutton );
+							//var jdom = j( dom );
+							//trace( j(dom).switchbutton( 'value'));
+						});
+					}
 				});
 			}
 		});
@@ -127,6 +159,10 @@ class Main
 			}
 			return false;
 		});
+	}
+	
+	function onSwtChange( params ) {
+		trace( params );
 	}
 	
 	static var id = 1;

@@ -77,9 +77,9 @@ var Main = function() {
 	this.tmpl_panel = this.j("#tmpl_panel");
 	this.slt_stockId = this.j("#slt_stockId");
 	this.mc_accordionContainer = this.j("#mc_accordionContainer");
-	this.ary_panel_obj.push({ canvas : this.j("#canvas_kline"), needMove : true, type : EType.kline});
-	this.ary_panel_obj.push({ canvas : this.j("#canvas_exchange"), needMove : true, type : EType.volume});
-	this.ary_panel_obj.push({ canvas : this.j("#canvas_clock"), needMove : false, type : EType.clock});
+	this.ary_panel_obj.push({ canvas : this.j("#canvas_kline"), needMove : true, type : EType.kline, root : this.j("#mc_kline")});
+	this.ary_panel_obj.push({ canvas : this.j("#canvas_exchange"), needMove : true, type : EType.volume, root : this.j("#mc_exchange")});
+	this.ary_panel_obj.push({ canvas : this.j("#canvas_clock"), needMove : false, type : EType.clock, root : null});
 	this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
 		var stockId = newValue;
 		Main.getStock(stockId,true,function(ret) {
@@ -125,6 +125,26 @@ Main.prototype = {
 					});
 				});
 			}
+			var root = stockMap.root;
+			if(root != null) root.find(".easyui-switchbutton").switchbutton({ onChange : function(checked) {
+				if(checked) {
+					var target1 = _g.j(this);
+					var type;
+					switch(target1) {
+					case "swb_avg":
+						type = "";
+						break;
+					default:
+						type = "";
+					}
+				} else {
+				}
+				root.find(".easyui-switchbutton").each(function(id,dom) {
+					var jdom = _g.j(dom);
+					var checkDom = jdom.parent().find(".switchbutton-inner");
+					console.log(checkDom.css("margin-left"));
+				});
+			}});
 		});
 	}
 	,onHtmlTrigger: function(name,params) {
@@ -158,6 +178,9 @@ Main.prototype = {
 			}
 			return false;
 		});
+	}
+	,onSwtChange: function(params) {
+		console.log(params);
 	}
 };
 Math.__name__ = true;
