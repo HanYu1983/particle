@@ -41,11 +41,7 @@
         type (aget data "type")
         canvas (aget data "canvas")
         sub (js->clj (aget data "sub"))
-        {kline "data" :as stock} (get-in ctx [:store "stocks" stockId])
-        vs
-        (condp = type
-          "volume" (stl/volume kline)
-          (stl/close kline))]
+        {kline "data" :as stock} (get-in ctx [:store "stocks" stockId])]
     (when kline
       (std/draw
         {
@@ -63,7 +59,11 @@
             (map
               (fn [data]
                 (let [subt (get data "t")
-                      subd (get data "d")]
+                      subd (get data "d")
+                      vs
+                      (condp = type
+                        "volume" (stl/volume kline)
+                        (stl/close kline))]
                   (condp = subt
                     "ma"
                     (let [n (get subd "n")
@@ -75,7 +75,7 @@
         }
         (.-width canvas) (.-height canvas)
         (.getContext canvas "2d")))
-    (.log js/console kline))
+    (comment "ent let"))
   ctx)
   
 (defmethod abstract/onViewCommand "stockId" [_ data ctx]
