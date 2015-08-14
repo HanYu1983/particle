@@ -12,102 +12,99 @@ class ParamsPanel extends AbstractParamsPanel
 	public static var ON_PARAMS_CHANGE = 'on_params_change';
 	
 	var txt_name:Dynamic;
-	var slr_count:Dynamic;
-	var slr_duration:Dynamic;
-	var slr_angle:Dynamic;
-	var slr_range:Dynamic;
-	var slr_force:Dynamic;
-	var slr_life:Dynamic;
-	var slr_mass:Dynamic;
-	var slr_rot:Dynamic;
-	var slr_vel_rot:Dynamic;
-	var slr_size_x:Dynamic;
-	var slr_size_y:Dynamic;
-	var slr_pos_x:Dynamic;
-	var slr_pos_y:Dynamic;
-	var slr_vel_x:Dynamic;
-	var slr_vel_y:Dynamic;
-
+	var input_count:Dynamic;
+	var input_duration:Dynamic;
+	var input_angle:Dynamic;
+	var input_range:Dynamic;
+	var input_force:Dynamic;
+	var input_life:Dynamic;
+	var input_mass:Dynamic;
+	var input_rot:Dynamic;
+	var input_vel_rot:Dynamic;
+	var input_size_x:Dynamic;
+	var input_size_y:Dynamic;
+	var input_pos_x:Dynamic;
+	var input_pos_y:Dynamic;
+	var input_vel_x:Dynamic;
+	var input_vel_y:Dynamic;
+	
 	public function new( dom ) 
 	{
 		super( dom );
 		
 		txt_name = dom.find( '#txt_name' ).find( 'span' );
-		slr_count = dom.find( '#slr_count' );
-		slr_duration = dom.find( '#slr_duration' );
-		slr_angle = dom.find( '#slr_angle' );
-		slr_range = dom.find( '#slr_range' );
-		slr_force = dom.find( '#slr_force' );
-		slr_life = dom.find( '#slr_life' );
-		slr_mass = dom.find( '#slr_mass' );
-		slr_rot = dom.find( '#slr_rot' );
-		slr_vel_rot = dom.find( '#slr_vel_rot' );
-		slr_size_x = dom.find( '#slr_size_x' );
-		slr_size_y = dom.find( '#slr_size_y' );
-		slr_pos_x = dom.find( '#slr_pos_x' );
-		slr_pos_y = dom.find( '#slr_pos_y' );
-		slr_vel_x = dom.find( '#slr_vel_x' );
-		slr_vel_y = dom.find( '#slr_vel_y' );
 		
-		slr_count.slider( { onChange:onSlrChange( EParticleAttribute.COUNT ) });
-		slr_duration.slider( { onChange:onSlrChange( EParticleAttribute.DURATION ) });
-		slr_angle.slider( { onChange:onSlrChange( EParticleAttribute.ANGLE ) });
-		slr_range.slider( { onChange:onSlrChange( EParticleAttribute.RANGE ) });
-		slr_force.slider( { onChange:onSlrChange( EParticleAttribute.FORCE ) });
-		slr_life.slider( { onChange:onSlrChange( EParticleAttribute.LEFT_TIME ) });
-		slr_mass.slider( { onChange:onSlrChange( EParticleAttribute.MASS ) });
-		slr_rot.slider( { onChange:onSlrChange( EParticleAttribute.POSITION_R ) });
-		slr_vel_rot.slider( { onChange:onSlrChange( EParticleAttribute.VELOCITY_R ) });
-		slr_size_x.slider( { onChange:onSlrChange( EParticleAttribute.SIZE_X ) });
-		slr_size_y.slider( { onChange:onSlrChange( EParticleAttribute.SIZE_Y ) });
-		slr_pos_x.slider( { onChange:onSlrChange( EParticleAttribute.POSITION_X ) });
-		slr_pos_y.slider( { onChange:onSlrChange( EParticleAttribute.POSITION_Y ) });
-		slr_vel_x.slider( { onChange:onSlrChange( EParticleAttribute.VELOCITY_X ) });
-		slr_vel_y.slider( { onChange:onSlrChange( EParticleAttribute.VELOCITY_Y ) });
+		input_count = dom.find( '#mc_singlePropContainer_count' ).find( '.easyui-numberspinner' );
+		input_duration = dom.find( '#mc_singlePropContainer_duration' ).find( '.easyui-numberspinner' );
+		input_angle = dom.find( '#mc_singlePropContainer_angle' ).find( '.easyui-numberspinner' );
+		input_range = dom.find( '#mc_singlePropContainer_range' ).find( '.easyui-numberspinner' );
+		input_force = dom.find( '#mc_singlePropContainer_force' ).find( '.easyui-numberspinner' );
+		input_life = dom.find( '#mc_singlePropContainer_life' ).find( '.easyui-numberspinner' );
+		input_mass = dom.find( '#mc_singlePropContainer_mass' ).find( '.easyui-numberspinner' );
+		input_rot = dom.find( '#mc_singlePropContainer_pos_r' ).find( '.easyui-numberspinner' );
+		input_vel_rot = dom.find( '#mc_singlePropContainer_vel_r' ).find( '.easyui-numberspinner' );
+		input_size_x = dom.find( '#mc_singlePropContainer_size_x' ).find( '.easyui-numberspinner' );
+		input_size_y = dom.find( '#mc_singlePropContainer_size_y' ).find( '.easyui-numberspinner' );
+		input_vel_x = dom.find( '#mc_singlePropContainer_vel_x' ).find( '.easyui-numberspinner' );
+		input_vel_y = dom.find( '#mc_singlePropContainer_vel_y' ).find( '.easyui-numberspinner' );
+		
+		input_count.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.COUNT ), onSpinDown:onInputSpinChange( EParticleAttribute.COUNT ) } );
+		input_duration.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.DURATION ), onSpinDown:onInputSpinChange( EParticleAttribute.DURATION ) } );
+		input_angle.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.ANGLE ), onSpinDown:onInputSpinChange( EParticleAttribute.ANGLE ) } );
+		input_range.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.RANGE ), onSpinDown:onInputSpinChange( EParticleAttribute.RANGE ) } );
+		input_force.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.FORCE ), onSpinDown:onInputSpinChange( EParticleAttribute.FORCE ) } );
+		input_life.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.LEFT_TIME ), onSpinDown:onInputSpinChange( EParticleAttribute.LEFT_TIME ) } );
+		input_mass.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.MASS ), onSpinDown:onInputSpinChange( EParticleAttribute.MASS ) } );
+		input_rot.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.POSITION_R ), onSpinDown:onInputSpinChange( EParticleAttribute.POSITION_R ) } );
+		input_vel_rot.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.VELOCITY_R ), onSpinDown:onInputSpinChange( EParticleAttribute.VELOCITY_R ) } );
+		input_size_x.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.SIZE_X ), onSpinDown:onInputSpinChange( EParticleAttribute.SIZE_X ) } );
+		input_size_y.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.SIZE_Y ), onSpinDown:onInputSpinChange( EParticleAttribute.SIZE_Y ) } );
+		input_vel_x.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.VELOCITY_X ), onSpinDown:onInputSpinChange( EParticleAttribute.VELOCITY_X ) } );
+		input_vel_y.numberspinner( { onSpinUp:onInputSpinChange( EParticleAttribute.VELOCITY_Y ), onSpinDown:onInputSpinChange( EParticleAttribute.VELOCITY_Y ) } );
+		
 	}
 	
 	override public function setData(data:Dynamic, type:EParticleType):Void 
 	{
 		super.setData( data, type );
 		
-		trace( type );
+		trace("GG");
 		if ( type == EParticleType.EMITTER ) {
-			slr_count.slider( 'setValue', data.emit.count );
-			slr_duration.slider( 'setValue', data.emit.duration * 1000 );
-			slr_angle.slider( 'setValue', data.emit.angle / Math.PI * 180 );
-			slr_range.slider( 'setValue', data.emit.range / Math.PI * 180 );
-			slr_force.slider( 'setValue', data.emit.force );
+			input_count.numberspinner( 'setValue', data.emit.count );
+			input_duration.numberspinner( 'setValue', data.emit.duration * 1000 );
+			input_angle.numberspinner( 'setValue', data.emit.angle / Math.PI * 180 );
+			input_range.numberspinner( 'setValue', data.emit.range / Math.PI * 180 );
+			input_force.numberspinner( 'setValue', data.emit.force );
 			
-			slr_count.parent().parent().show();
-			slr_duration.parent().parent().show();
-			slr_angle.parent().parent().show();
-			slr_range.parent().parent().show();
-			slr_force.parent().parent().show();
+			input_count.parent().parent().show();
+			input_duration.parent().parent().show();
+			input_angle.parent().parent().show();
+			input_range.parent().parent().show();
+			input_force.parent().parent().show();
 		}else {
-			slr_count.parent().parent().hide();
-			slr_duration.parent().parent().hide();
-			slr_angle.parent().parent().hide();
-			slr_range.parent().parent().hide();
-			slr_force.parent().parent().hide();
+			input_count.parent().parent().hide();
+			input_duration.parent().parent().hide();
+			input_angle.parent().parent().hide();
+			input_range.parent().parent().hide();
+			input_force.parent().parent().hide();
 		}
 		
 		txt_name.html( data.id );
-		slr_life.slider( 'setValue', data.lifetime * 1000 );
-		slr_mass.slider( 'setValue', data.mass );
-		slr_vel_x.slider( 'setValue', data.vel[0] );
-		slr_vel_y.slider( 'setValue', data.vel[1] );
-		slr_vel_rot.slider( 'setValue', data.vel[2] / Math.PI * 180 );
-		slr_pos_x.slider( 'setValue', data.pos[0] );
-		slr_pos_y.slider( 'setValue', data.pos[1]);
-		slr_rot.slider( 'setValue', data.pos[2] / Math.PI * 180 );
-		slr_size_x.slider( 'setValue', data.size[0] );
-		slr_size_y.slider( 'setValue', data.size[1] );
+		input_life.numberspinner( 'setValue', data.lifetime * 1000 );
+		input_mass.numberspinner( 'setValue', data.mass );
+		input_vel_x.numberspinner( 'setValue', data.vel[0] );
+		input_vel_y.numberspinner( 'setValue', data.vel[1] );
+		input_vel_rot.numberspinner( 'setValue', data.vel[2] / Math.PI * 180 );
+		input_rot.numberspinner( 'setValue', data.pos[2] / Math.PI * 180 );
+		input_size_x.numberspinner( 'setValue', data.size[0] );
+		input_size_y.numberspinner( 'setValue', data.size[1] );
+		
 	}
 	
-	function onSlrChange( particleAttr:EParticleAttribute ) {
-		return function( newv, oldv ) {
+	function onInputSpinChange( particleAttr:EParticleAttribute ) {
+		return function() {
 			var target = untyped __js__( '$(this)' );
-			var value = target.slider( 'getValue' );
+			var value = target.numberspinner( 'getValue' );
 			switch( particleAttr ) {
 				case EParticleAttribute.COLOR:
 				case EParticleAttribute.COUNT:

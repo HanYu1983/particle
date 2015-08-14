@@ -41,15 +41,16 @@ class Main
 		tree = new Tree( tree_particle );
 		panel = new ParamsPanel( paramsPanel );
 		
-		addListener();
+		
 		onResize( null );
 		
 		tree.parserLoadData( loadSaveData() );
 		onView.setObject( loadSaveData() );
 		
-		var tmpl_dynamic_properties = j( '#tmpl_dynamic_properties' );
-		var dynamicContainer = j( '#dynamicContainer' );
-		dynamicContainer.append( tmpl_dynamic_properties.tmpl() );
+		resetPanel( tree.getSelectedNode() );
+		
+		addListener();
+		
 	}
 	
 	function onHtmlClick( target ) {
@@ -96,20 +97,21 @@ class Main
 				pos:[0, 0, 0], vel:[0, 0, 0] };
 	}
 	
+	function resetPanel( node:Dynamic ) {
+		var particleData = node.particleData;
+		trace( 'particleData', particleData) ;
+		if ( particleData == null ) return;
+		if ( node.children != null && node.children.length > 0 ) {
+			createEmitterAttribute( particleData );
+			panel.setData( particleData, EParticleType.EMITTER );
+		}else {
+			panel.setData( particleData, EParticleType.PARTICLE );
+		}
+	}
+	
 	function addListener() {
 		webgl.mousemove( onMousemove );
 		j( Browser.window ).resize( onResize );
-		
-		function resetPanel( node:Dynamic ) {
-			var particleData = node.particleData;
-			if ( particleData == null ) return;
-			if ( node.children != null && node.children.length > 0 ) {
-				createEmitterAttribute( particleData );
-				panel.setData( particleData, EParticleType.EMITTER );
-			}else {
-				panel.setData( particleData, EParticleType.PARTICLE );
-			}
-		}
 		
 		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
 			resetPanel( params.node );

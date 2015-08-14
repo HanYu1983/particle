@@ -64,6 +64,7 @@
 		display:none;
 	}
 	</style>
+	<!--
 	<script id="tmpl_dynamic_properties" type="jquery-x-tmpl">
 		<div class="prop">
 			<div class="f_left">
@@ -108,15 +109,18 @@
 			</div>
 		</div>
 	</script>
+		-->
 	<script id="tmpl_properties" type="jquery-x-tmpl">
-		<div style="display:inline-block; width:49%;">
-			<div style="display:inline-block; width:70px;"><input id=${id} class="easyui-numberspinner" style="width:100%;" /></div>
+		<div id=${id} style="display:inline-block; width:49%; margin-bottom:5px;">
+			<div style="display:inline-block; width:70px;"><input class="easyui-numberspinner" style="width:100%;" /></div>
 			<div style="display:inline-block;">${name}</div>
 		</div>
 	</script>
 	<script id="tmpl_overlife" type="jquery-x-tmpl">
 		<div title=${name} style="overflow:auto;">
-			<table id=${id} class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="false" fitColumns="true" singleSelect="true">
+			<table id=${id} class="easyui-datagrid" style="width:100%;height:150px;" nownumber="false" fitColumns="true" singleSelect="true">
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#pg').edatagrid('addRow')">New</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#pg').edatagrid('destroyRow')">Destroy</a>
 				<thead>
 					<tr>
 						<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
@@ -146,72 +150,12 @@
 						</ul>
 					</div>
 					<div id="paramsPanel" data-options="region:'center',title:'粒子屬性'" style="width:100%;">
-						
-						<div class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
-							<div title="資訊" style="overflow:auto;padding:10px;">
-								<div class="propGroup">
-									<div id="txt_name" class="particle_title" style="position:relative;">名稱: <span style="color:yellow;">粒子名稱</span></div>
-									<div style="position:absolute; right:30px; top:5px;"><a href="#" class="easyui-linkbutton" >重新命名</a></div>
-								</div>
-							</div>
-							<div id="mc_propertiesContainer" title="初始值"></div>
-							<div title="運動中">
-								<div id="mc_overlifeContainer" class="easyui-accordion" data-options="multiple:true, selected:1" style="width:100%;height1:100%;">
-									<!--
-									<div title="質量" style="overflow:auto;">
-										<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="false" fitColumns="true" singleSelect="true">
-											<thead>
-												<tr>
-													<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
-													<th field="value" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
-												</tr>
-											</thead>
-										</table>
-									</div>
-									<div title="位置x" style="overflow:auto;">
-										<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="false" fitColumns="true" singleSelect="true">
-											<thead>
-												<tr>
-													<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
-													<th field="value" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
-												</tr>
-											</thead>
-										</table>
-									</div>
-													-->
-								</div>
-								
-								
-								<!--
-								<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="true" fitColumns="true" singleSelect="true">
-									<thead>
-										<tr>
-											<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
-											<th field="value" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>0</td><td>10</td>
-										</tr>
-										<tr>
-											<td>10</td><td>100</td>
-										</tr>
-									</tbody>
-								</table>
-										-->
-							</div>
-							<div title="C#" style="padding:10px;">
-								<p>C# is a multi-paradigm programming language encompassing strong typing, imperative, declarative, functional, generic, object-oriented (class-based), and component-oriented programming disciplines.</p>
-							</div>
-							<div title="Ruby" style="padding:10px;">
-								<p>A dynamic, reflective, general-purpose object-oriented programming language.</p>
-							</div>
-							<div title="Fortran" style="padding:10px;">
-								<p>Fortran (previously FORTRAN) is a general-purpose, imperative programming language that is especially suited to numeric computation and scientific computing.</p>
-							</div>
+						<div class="propGroup">
+							<div id="txt_name" class="particle_title" style="position:relative;">名稱: <span style="color:yellow;">粒子名稱</span></div>
+							<div style="position:absolute; right:30px; top:5px;"><a href="#" class="easyui-linkbutton" >重新命名</a></div>
 						</div>
-						
+						<div id="mc_propertiesContainer" class="propGroup"></div>
+						<!--
 						<div class="propGroup">
 							<div class="prop">
 								<div class="sliderTitle">生命毫秒</div>
@@ -303,50 +247,32 @@
 									<input id="slr_force" class="easyui-slider" style="width:100%;" data-options="showTip:true,min:0,max:1000,value:0"></input>
 								</div>
 							</div>
-							<!--
 							<div class="prop">
 								<div class="sliderTitle">COLOR:</div>
 								<div class="sliderContainer">
 									<input id="cpk_color" type="text" class="hide input_params" value="fe9810"></input>
 								</div>
 							</div>
-							-->
 						</div>
+						-->
 					</div>
-					<div data-options="region:'south',split:true" title="動態屬性" style="width:100%; height:40%">
-						<div class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:300px;">
-							<div title="Language" data-options="iconCls:'icon-ok'" style="overflow:auto;padding:10px;">
-								<table id="pg" class="easyui-propertygrid" style="width:90%;height:400px;" data-options="
-											method:'get',
-											showGroup:true,
-											scrollbarSize:0
-										">
+					<div data-options="region:'south',split:true" title="動態屬性" style="width:100%; height:45%">
+						<div id="mc_overlifeContainer" class="easyui-accordion" data-options="multiple:true, selected:0" style="width:100%;height1:100%;">
+							<!--
+							<div title="質量" style="overflow:auto;">
+								<table id="pg" class="easyui-datagrid" style="width:100%;height:150px;" toolbar="#toolbar" nownumber="false" fitColumns="true" singleSelect="true">
+									<thead>
+										<tr>
+											<th field="age" width="50%" editor="{type:'validatebox',options:{required:true}}" data-options="sortable:true">年齡(%)</th>
+											<th field="value" width="50%" editor="{type:'validatebox',options:{required:true}}">數值</th>
+										</tr>
+									</thead>
 								</table>
-						
 							</div>
-							<div title="Java" style="padding:10px;">
-								<p>Java (Indonesian: Jawa) is an island of Indonesia. With a population of 135 million (excluding the 3.6 million on the island of Madura which is administered as part of the provinces of Java), Java is the world's most populous island, and one of the most densely populated places in the world.</p>
-							</div>
-							<div title="C#" style="padding:10px;">
-								<p>C# is a multi-paradigm programming language encompassing strong typing, imperative, declarative, functional, generic, object-oriented (class-based), and component-oriented programming disciplines.</p>
-							</div>
-							<div title="Ruby" style="padding:10px;">
-								<p>A dynamic, reflective, general-purpose object-oriented programming language.</p>
-							</div>
-							<div title="Fortran" style="padding:10px;">
-								<p>Fortran (previously FORTRAN) is a general-purpose, imperative programming language that is especially suited to numeric computation and scientific computing.</p>
-							</div>
+							-->		
 						</div>
-			<!--
-						<div class="propGroup">
-							<div class="btnAddContainer">
-								<a href="#" class="easyui-linkbutton" >新增屬性</a>
-							</div>
-						</div>
-						<div id="dynamicContainer" class="propGroup"></div>
 					</div>
 				</div>
-					-->
 			</div>
 			<div data-options="region:'center',title:'畫布'">
 				<div id="canvas_container" style="width:100%; height:100%">
@@ -391,11 +317,12 @@
 			<img src="http://www.jeasyui.com/images/logo1.png" style="width:150px;height:50px">
 			<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 		</div>
-		 <div id="toolbar">
+		<!--
+		<div id="toolbar">
 			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#pg').edatagrid('addRow')">New</a>
 			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#pg').edatagrid('destroyRow')">Destroy</a>
 		</div>
-			
+		-->
 		<!-- 不知道怎麼在tree_particle 上用 -->
 		<!--
 		<div id="menu_particleTree" class="easyui-menu" style="width:120px;">
@@ -471,9 +398,8 @@
 	var mc_overlifeContainer = $("#mc_overlifeContainer" );
 	var tmpl_properties = $("#tmpl_properties" );
 	var tmpl_overlife = $("#tmpl_overlife" );
+	var tmpl_toolbar = $("#tmpl_toolbar" );
 	var ary_props = [ 	{id:'mass', name:'質量'}, 
-						{id:'pos_x', name:'位置x'}, 
-						{id:'pos_y', name:'位置y'}, 
 						{id:'pos_r', name:'角度'}, 
 						{id:'vel_x', name:'速度x'}, 
 						{id:'vel_y', name:'速度y'}, 
@@ -486,13 +412,26 @@
 						{id:'range', name:'發射範圍'}, 
 						{id:'force', name:'發射力道'}];
 	for( var i = 0; i < ary_props.length; ++i ){
-		var dom = tmpl_properties.tmpl( ary_props[i] );
+		var props = ary_props[i];
+		var dom = tmpl_properties.tmpl( {
+			id:'mc_singlePropContainer_' + props.id,
+			name:props.name
+		} );
 		mc_propertiesContainer.append( dom );
 		
-		dom.find( '.easyui-numberspinner' ).spinner();
+		//dom.find( '.easyui-numberspinner' ).numberspinner();
 		
-		var odom = tmpl_overlife.tmpl( ary_props[i] );
+	//	var tdom = tmpl_toolbar.tmpl( props );
+	//	$('body').append( tdom );
+		
+	//	props.toolbar = '#' + props.id;
+		
+	//	console.log( props.toolbar );
+		
+		var odom = tmpl_overlife.tmpl( props );
 		mc_overlifeContainer.append( odom );
+		
+		
 	}
 	
 	//mc_overlifeContainer.accordion();
