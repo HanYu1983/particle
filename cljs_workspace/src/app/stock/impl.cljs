@@ -1,5 +1,6 @@
 (ns app.stock.impl
   (:require
+    [stock.formula :as stf]
     [stock.tool :as stl]
     [stock.drawer :as std]
     [app.stock.cmd :as cmd]
@@ -33,15 +34,32 @@
   (let [stockId (aget data "id")
         type (aget data "type")
         canvas (aget data "canvas")
-        {kline "data" :as stock} (get-in ctx [:store "stocks" stockId])]
+        sub (js->clj (aget data "sub"))
+        {kline "data" :as stock} (get-in ctx [:store "stocks" stockId])
+        vs
+        (condp = type
+          "volume" (stl/volume kline)
+          (stl/close kline))]
     (when kline
       (std/draw
         {
-          :drawers [
+          :drawers
+          (cons
             (condp = type
               "volume" {:type :line :line (stl/volume kline)}
               {:type :kline :kline kline})
-          ]
+            (map
+              (fn [data]
+                (let [subt (get data "t")
+                      subd (get data "d")]
+                  (condp = subt
+                    "ma"
+                    (let [n (get subd "n")
+                          color (get subd "color")]
+                      {:type :line :line (stf/sma-seq n vs) :color color})
+                    
+                    {:type :line :line (stf/sma-seq 5 vs) :color "purple"})))
+              sub))
         }
         (.-width canvas) (.-height canvas)
         (.getContext canvas "2d")))

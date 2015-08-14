@@ -185,9 +185,12 @@ body{
 	</script>
 	
 	<script id="view-command">
-	//kline, volume, clock
-	//{}
-	// draw( $("#canvas_kline")[0], 2330, null, {} )
+	// kline, volume, clock
+	// {}
+	// draw($("#canvas_kline")[0], 2330, null, {sub:[{t: "ma", d: {n: 5, color: "blue"}}, {t: "ma", d: {n: 10, color: "yellow"}} ]})
+	
+	// draw($("#canvas_kline")[0], 2330, "volume", {sub:[{t: "ma", d: {n: 5, color: "blue"}}, {t: "ma", d: {n: 10, color: "yellow"}} ]})
+	
 	function draw( canvas, id, type, params ){
 		params.canvas = canvas
 		params.id = id
