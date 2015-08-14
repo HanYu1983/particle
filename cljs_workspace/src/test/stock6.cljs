@@ -9,7 +9,7 @@
 
 (defn main []
   (am/go
-    (let [[err infos] (<! (stl/stock-info nil 2412 "2015/1/1" 0 200))
+    (let [[err infos] (<! (stl/stock-info nil 5305 "2015/1/1" 0 200))
           canvas4 (.getElementById js/document "index2")
           canvas3 (.getElementById js/document "index")
           canvas2 (.getElementById js/document "clock")
@@ -67,8 +67,8 @@
           :drawers [
             {:type :kline :kline infos}
             ;{:type :line :line (reverse cs) :color "blue"}
-            {:type :line :line (reverse (stf/ema-seq 12 (reverse (stl/close infos)))) :color "blue"}
-            {:type :line :line (reverse (stf/ema-seq 26 (reverse (stl/close infos)))) :color "yellow"}
+            {:type :line :line (reverse (stf/ema-seq 5 (reverse (stl/close infos)))) :color "blue"}
+            {:type :line :line (reverse (stf/ema-seq 10 (reverse (stl/close infos)))) :color "yellow"}
             ;{:type :line :line (stf/sma-seq 5 (stl/close infos)) :color "purple"}
             ;{:type :line :line (stf/sma-seq 10 (stl/close infos)) :color "black"}
             ;{:type :line :line sar :color "red"}
