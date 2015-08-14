@@ -193,6 +193,14 @@ body{
 		params.type = type
 		common.onView.onNext(["draw", params])
 	}
+	
+	function stockId( id ){
+		common.onView.onNext(["stock-id", id])
+	}
+	
+	function print(){
+		common.onView.onNext(["print"])
+	}
 	</script>
 	
 	<script id="test">
@@ -206,8 +214,12 @@ body{
 	})
 	
 	setTimeout(function(){
-		common.onModel.onNext(['testmodel', {}])
-		common.onView.onNext(['testview', {}])
+		//common.onModel.onNext(['testmodel', {}])
+		//common.onView.onNext(['testview', {}])
+		
+		//stockId(2330)
+		//drawKline( $("#canvas_kline")[0], 2330, "kline", {})
+		
 	}, 1000)
 	
 	
