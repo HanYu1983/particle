@@ -4,10 +4,7 @@
   (:require
     [cljs.core.async :as a]
     [app.stock.abstract :as abstract]
-    [app.stock.impl]
-    [stock.tool :as stl]
-    [stock.formula :as stf]
-    [stock.drawer :as std]))
+    [app.stock.impl]))
 
 (defn main []
   (let [onView (a/chan)
@@ -45,7 +42,6 @@
                   data (aget v 1)]
               (abstract/onViewCommand type data ctx))
             
-            :else
             ctx))))
           
     (comment "end let"))
