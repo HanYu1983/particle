@@ -111,10 +111,16 @@
 	</script>
 		-->
 	<script id="tmpl_properties" type="jquery-x-tmpl">
+		<div style="position:relative; width:100%; text-align:center;">${name}</div>
+		<div style="position:relative; width:90%; height:40px; margin-top:20px; margin-bottom:-10px; margin-left:10px; " >
+			<input id="slr_mass" class="easyui-slider" style="width:100%;" data-options="showTip:true,max:1000,value:1"></input>
+		</div>
+		<!--
 		<div id=${id} style="display:inline-block; width:49%; margin-bottom:5px;">
 			<div style="display:inline-block; width:70px;"><input class="easyui-numberspinner" style="width:100%;" /></div>
 			<div style="display:inline-block;">${name}</div>
 		</div>
+		-->
 	</script>
 	<script id="tmpl_overlife" type="jquery-x-tmpl">
 		<div title=${name} style="overflow:auto;">
@@ -414,7 +420,7 @@
 	for( var i = 0; i < ary_props.length; ++i ){
 		var props = ary_props[i];
 		var dom = tmpl_properties.tmpl( {
-			id:'mc_singlePropContainer_' + props.id,
+			id:'slr_' + props.id,
 			name:props.name
 		} );
 		mc_propertiesContainer.append( dom );
@@ -493,7 +499,7 @@
 	
 	//測試用讀取資料
 	var testLoadData = { 	id:'root', 
-							lifetime:3,
+							lifetime:5,
 							mass:3,
 							color:'#33ddff',
 							size:[10, 10],
