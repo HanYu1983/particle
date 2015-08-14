@@ -179,6 +179,20 @@ body{
 	<script src='js/cljs/cljs.js'></script>
 	
 	<script>
+	goog.require("app.stock.main")
+	</script>
+	
+	<script id="view-command">
+	function drawKline( canvas, id, type, params ){
+		params.canvas = canvas
+		params.id = id
+		params.type = type
+		common.onView.onNext(["draw", params])
+	}
+	</script>
+	
+	<script id="test">
+	
 	common.onModel.subscribe(function(data){
 		console.log( data )
 	})
@@ -192,11 +206,9 @@ body{
 		common.onView.onNext(['testview', {}])
 	}, 1000)
 	
+	
 	</script>
 	
-	<script>
-	goog.require("app.stock.main")
-	</script>
 	<script src="js/proj.js"></script>
 </body>
 </html>
