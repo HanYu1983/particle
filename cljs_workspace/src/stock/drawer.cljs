@@ -100,7 +100,7 @@
       
 (defmethod max-v :clock [{cz :cz}] (apply max cz))
 (defmethod min-v :clock [{cz :cz}] (apply min cz))
-(defmethod draw-it :clock [{cz :cz vz :vz} base ctx]
+(defmethod draw-it :clock [{cz :cz vz :vz color :color} base ctx]
   (let [[w h max-v min-v offset-v offset-x pos-y] base
         proj-x 
         (fn [v]
@@ -112,8 +112,8 @@
           (-> v
             (* (/ h 8) -1)
             (+ (/ h 2))))]
-    (aset ctx "fillStyle" "red")
-    (aset ctx "strokeStyle" "red")
+    (aset ctx "fillStyle" color)
+    (aset ctx "strokeStyle" color)
     (doseq
       [
         [idx pc cc pv cv]
