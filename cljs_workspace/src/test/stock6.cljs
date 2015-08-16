@@ -9,15 +9,14 @@
 
 (defn main []
   (am/go
-    (let [[err infos] (<! (stl/stock-info nil 2450 "2015/1/1" 0 200))
+    (let [[err infos] (<! (stl/stock-info nil 1464 "2015/1/1" 0 200))
           canvas4 (.getElementById js/document "index2")
           canvas3 (.getElementById js/document "index")
           canvas2 (.getElementById js/document "clock")
           canvas (.getElementById js/document "kline")
           ctx (.getContext canvas "2d")
           [w h] [(.-width canvas) (.-height canvas)]
-          {cs :sma z :z v-z :v-z} (stf/clock 5 infos)
-          {cs2 :sma z2 :z v-z2 :v-z} (stf/clock 10 infos)
+          {cs :sma z :z v-z :v-z} (stf/clock 40 infos)
           dist
           (->>
             (map + z v-z)
@@ -35,9 +34,11 @@
           sar (reverse (stf/sar-seq (reverse infos)))
           acc (reverse (stf/Chaikin 3 9 (reverse infos)))
           eom (reverse (stf/EOM 14 (reverse infos)))
-          gv (stf/yu-gv 20 infos)]
+          gv (stf/yu-gv 20 infos)
           
-          (.log js/console (pr-str dist))
+          yu-c (stf/yu-clock 40 infos)]
+          
+          ;(.log js/console (pr-str yu-c))
           
       (std/draw
         {
@@ -60,13 +61,13 @@
             ;{:type :line :line (repeat (count gv) 0)}
             ;{:type :line :line (repeat (count gv) 2)}
             ;{:type :line :line (repeat (count gv) -2)}
-            {:type :line :line dist :color "blue"}
-            {:type :line :line (stf/sma-seq 5 dist) :color "yellow"}
+            {:type :line :line yu-c :color "blue"}
+            ;{:type :line :line (stf/sma-seq 5 dist) :color "yellow"}
             ;{:type :line :line (into (repeat 4 0) (reverse z)) :color "black"}
             
-            {:type :line :line (repeat (count dist) 0)}
-            {:type :line :line (repeat (count dist) 1.5)}
-            {:type :line :line (repeat (count dist) -1.5)}
+            {:type :line :line (repeat (count yu-c) 0)}
+            {:type :line :line (repeat (count yu-c) 0.1)}
+            {:type :line :line (repeat (count yu-c) -0.1)}
           ]
         }
         (.-width canvas3) (.-height canvas3)
@@ -76,7 +77,6 @@
         {
           :drawers [
             {:type :clock :cz z :vz v-z :color "blue"}
-            {:type :clock :cz z2 :vz v-z2 :color "yellow"}
           ]
         }
         (.-width canvas2) (.-height canvas2)

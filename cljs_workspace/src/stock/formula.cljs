@@ -73,6 +73,35 @@
           #(/ % sd)
           offsets)]
     vs))
+    
+(defn yu-clock [n kline]
+  (let [ps (sma-seq n (stl/close kline))
+        ps-avg (average ps)
+        ps-sd (StandardDeviation ps-avg ps)
+        ps-z (z-score ps-avg ps-sd ps)
+        
+        vs (sma-seq n (stl/volume kline))
+        vs-avg (average vs)
+        vs-sd (StandardDeviation vs-avg vs)
+        vs-z (z-score vs-avg vs-sd vs)
+        
+        ps (map vector vs-z ps-z)
+        
+        normal [0.707 -0.707]
+        
+        projs
+        (map
+          (fn [prev curr]
+            (let [dir (mapv - prev curr)]
+              (apply + (map * dir normal))))
+          ps
+          (rest ps))]
+          
+          ;(.log js/console (pr-str projs))
+          
+    (into 
+      (repeat n 0)
+      (reverse projs))))
 
 (defn clock [n kline]
   (let [cs (sma-seq n (stl/close kline))
