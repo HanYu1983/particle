@@ -105,5 +105,5 @@
   (if (seq? kline)
     (map mid kline)
     (let [[_ _ high low _ _] kline]
-      (/ (- high low) 2))))
+      (/ (+ high low) 2))))
       
