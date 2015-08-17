@@ -1,5 +1,18 @@
 (function (console) { "use strict";
 var $estr = function() { return js_Boot.__string_rec(this,''); };
+function $extend(from, fields) {
+	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
+	for (var name in fields) proto[name] = fields[name];
+	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
+	return proto;
+}
+var EProp = { __ename__ : true, __constructs__ : ["avg","kd"] };
+EProp.avg = ["avg",0];
+EProp.avg.toString = $estr;
+EProp.avg.__enum__ = EProp;
+EProp.kd = ["kd",1];
+EProp.kd.toString = $estr;
+EProp.kd.__enum__ = EProp;
 var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline"] };
 EType.volume = ["volume",0];
 EType.volume.toString = $estr;
@@ -69,24 +82,15 @@ List.prototype = {
 	}
 };
 var Main = function() {
+	this.panelModel = new model_PanelModel();
 	this.currentScrollX = null;
 	this.currentStockId = null;
-	this.ary_panel_obj = [];
 	this.j = $;
-	var _g = this;
 	this.tmpl_panel = this.j("#tmpl_panel");
 	this.slt_stockId = this.j("#slt_stockId");
 	this.mc_accordionContainer = this.j("#mc_accordionContainer");
-	this.ary_panel_obj.push({ canvas : this.j("#canvas_kline"), needMove : true, type : EType.kline, root : this.j("#mc_kline")});
-	this.ary_panel_obj.push({ canvas : this.j("#canvas_exchange"), needMove : true, type : EType.volume, root : this.j("#mc_exchange")});
-	this.ary_panel_obj.push({ canvas : this.j("#canvas_clock"), needMove : false, type : EType.clock, root : null});
-	this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
-		var stockId = newValue;
-		Main.getStock(stockId,true,function(ret) {
-			_g.currentStockId = stockId;
-			_g.drawAllCanvas(stockId);
-		});
-	}});
+	this.panelModel.set_config({ panel : [{ id : "kline", canvas : this.j("#canvas_kline"), needMove : true, type : EType.kline, root : this.j("#mc_kline"), props : [{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]},{ id : "exchange", canvas : this.j("#canvas_exchange"), needMove : true, type : EType.volume, root : this.j("#mc_exchange"), props : [{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]},{ id : "clock", canvas : this.j("#canvas_clock"), needMove : false, type : EType.clock, root : null, props : null}]});
+	this.createAllProp();
 	this.resetAllCanvasListener();
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
@@ -105,47 +109,8 @@ Main.drawStock = function(canvas,id,type,params) {
 };
 Main.prototype = {
 	drawAllCanvas: function(stockId) {
-		Lambda.map(this.ary_panel_obj,function(stockMap) {
-			Main.drawStock(stockMap.canvas,stockId,stockMap.type,{ });
-		});
 	}
 	,resetAllCanvasListener: function() {
-		var _g = this;
-		Lambda.map(this.ary_panel_obj,function(stockMap) {
-			if(stockMap.needMove) {
-				var container = stockMap.canvas.parent();
-				if(_g.currentScrollX != null) container.scrollLeft(_g.currentScrollX);
-				container.off("scroll");
-				container.scroll(function(e) {
-					var target = _g.j(e.currentTarget);
-					_g.currentScrollX = target.scrollLeft();
-					Lambda.map(_g.ary_panel_obj,function(_stockMap) {
-						container = _stockMap.canvas.parent();
-						container.scrollLeft(_g.currentScrollX);
-					});
-				});
-			}
-			var root = stockMap.root;
-			if(root != null) root.find(".easyui-switchbutton").switchbutton({ onChange : function(checked) {
-				if(checked) {
-					var target1 = _g.j(this);
-					var type;
-					switch(target1) {
-					case "swb_avg":
-						type = "";
-						break;
-					default:
-						type = "";
-					}
-				} else {
-				}
-				root.find(".easyui-switchbutton").each(function(id,dom) {
-					var jdom = _g.j(dom);
-					var checkDom = jdom.parent().find(".switchbutton-inner");
-					console.log(checkDom.css("margin-left"));
-				});
-			}});
-		});
 	}
 	,onHtmlTrigger: function(name,params) {
 		switch(name) {
@@ -161,22 +126,37 @@ Main.prototype = {
 		var id = Main.getId();
 		var dom = this.tmpl_panel.tmpl({ id : id});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
-		this.ary_panel_obj.push({ id : id, canvas : dom.find("#canvas_kline"), needMove : true, type : EType.kline});
 		if(this.currentStockId != null) Main.drawStock(dom.find("#canvas_kline"),this.currentStockId,EType.kline,{ });
 		this.resetAllCanvasListener();
 	}
 	,removePanel: function(params) {
-		var _g = this;
 		var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
 		var id = panelDom.attr("id");
 		var deleteName = "k線: " + id.substr("k_".length,id.length);
 		this.mc_accordionContainer.accordion("remove",deleteName);
-		Lambda.foreach(this.ary_panel_obj,function(stockMap) {
-			if(stockMap.id == id) {
-				HxOverrides.remove(_g.ary_panel_obj,stockMap);
-				return true;
+	}
+	,createAllProp: function() {
+	}
+	,createProp: function(container,props) {
+		var _g1 = this;
+		Lambda.map(props,function(prop) {
+			prop.sid = "swb_" + Std.string(prop.type);
+			prop.vid = "input_" + Std.string(prop.type);
+			var dom;
+			var _g = prop.type;
+			switch(Type.enumIndex(_g)) {
+			case 0:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case 1:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			default:
+				dom = null;
 			}
-			return false;
+			container.append(dom);
+			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show});
+			dom.find(".easyui-textbox").textbox({ value : prop.value});
 		});
 	}
 	,onSwtChange: function(params) {
@@ -193,6 +173,11 @@ var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
+};
+var Type = function() { };
+Type.__name__ = true;
+Type.enumIndex = function(e) {
+	return e[1];
 };
 var js_Boot = function() { };
 js_Boot.__name__ = true;
@@ -263,6 +248,54 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
+var model_Model = function() {
+	this._ary_handler = [];
+};
+model_Model.__name__ = true;
+model_Model.prototype = {
+	addHandler: function(handler) {
+		this._ary_handler.push(handler);
+	}
+	,notify: function(type,params) {
+		Lambda.map(this._ary_handler,function(fn) {
+			fn(type,params);
+		});
+	}
+	,set_config: function(config) {
+		this.config = config;
+		this.init();
+		return this.config;
+	}
+	,init: function() {
+	}
+	,execute: function(type,params) {
+	}
+};
+var model_PanelModel = function() {
+	this.ary_panel_obj = [];
+	model_Model.call(this);
+};
+model_PanelModel.__name__ = true;
+model_PanelModel.__super__ = model_Model;
+model_PanelModel.prototype = $extend(model_Model.prototype,{
+	addPanel: function(id,root,canvas,type,needMove,props) {
+		this.ary_panel_obj.push({ id : id, canvas : canvas, needMove : needMove, type : type, root : root, props : props});
+	}
+	,removePanel: function(id) {
+		var _g = this;
+		Lambda.foreach(this.ary_panel_obj,function(stockMap) {
+			if(stockMap.id == id) {
+				HxOverrides.remove(_g.ary_panel_obj,stockMap);
+				return true;
+			}
+			return false;
+		});
+	}
+	,init: function() {
+		model_Model.prototype.init.call(this);
+		console.log(this.config);
+	}
+});
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
