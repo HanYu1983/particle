@@ -24,6 +24,11 @@ class Model
 		});
 	}
 	
+	public function execute( type:String, ?params:Dynamic ):Dynamic {
+		//for children
+		return null;
+	}
+	
 	function set_config( config ) {
 		this.config = config;
 		init();
@@ -31,10 +36,6 @@ class Model
 	}
 	
 	function init() {
-		//for children
-	}
-	
-	function execute( type, params ) {
 		//for children
 	}
 }

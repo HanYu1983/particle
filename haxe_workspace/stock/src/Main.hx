@@ -4,6 +4,7 @@ import js.Browser;
 import js.Lib;
 import model.Model;
 import model.PanelModel;
+import view.PanelView;
 
 /**
  * ...
@@ -12,27 +13,31 @@ import model.PanelModel;
 class Main 
 {
 	var j:Dynamic = untyped __js__( '$' );
-	var tmpl_panel:Dynamic;
+	
 	
 	var slt_stockId:Dynamic;
-	var mc_accordionContainer:Dynamic;
+	
 	var currentStockId = null;
 	var currentScrollX = null;
 	
 	var panelModel:Model = new PanelModel();
+	var panelView:Model = new PanelView();
 	
 	function new() {
 		
-		tmpl_panel = j("#tmpl_panel");
+		
 		
 		slt_stockId = j( '#slt_stockId' );
-		mc_accordionContainer = j("#mc_accordionContainer" );
+		
+		panelView.config = {
+			mc_accordionContainer:j("#mc_accordionContainer" ),
+			tmpl_panel:j("#tmpl_panel")
+		}
 		
 		panelModel.addHandler( function( type, params ) {
 			switch( type ) {
 				case PanelModel.ON_ADD_PANEL:
-					trace( params );
-					addPanel( params );
+					panelView.execute( PanelModel.ON_ADD_PANEL, params );
 				case _:
 			}
 		});
@@ -71,6 +76,14 @@ class Main
 						{t: "ma", d: {n: 5, color: "blue"}}, 
 						{t: "ma", d: {n: 10, color: "yellow"}} 
 					]
+				},
+				{
+					id:4,
+					type:'kline',
+					sub:[
+						{t: "ma", d: {n: 5, color: "blue"}}, 
+						{t: "ma", d: {n: 10, color: "yellow"}} 
+					]
 				}
 			]
 		};
@@ -104,19 +117,20 @@ class Main
 			props:null
 		});
 		*/
-		/*
+		
 		slt_stockId.textbox( {
 			onChange:function(newValue, oldValue) {
 				var stockId = newValue;
 				getStock( stockId, true, function( ret:Dynamic ) {
 					currentStockId = stockId;
-					drawAllCanvas( stockId );
+					panelView.execute( 'drawAllCanvas', { 'ary_panel':panelModel.execute( 'getAry' ), 'stockId':stockId } );
+					//drawAllCanvas( stockId );
 				});
 			}
 		});
-		*/
-		createAllProp();
-		resetAllCanvasListener();
+		
+		//createAllProp();
+		//resetAllCanvasListener();
 		
 		Reflect.setField( Browser.window, 'onHtmlTrigger', onHtmlTrigger );
 	}
@@ -178,6 +192,7 @@ class Main
 	}
 	
 	function addPanel( params ) {
+		/*
 		var id = getId();
 		var dom = tmpl_panel.tmpl({id:id});
 		mc_accordionContainer.accordion('add', {
@@ -186,6 +201,7 @@ class Main
 			content: dom,
 			selected: true
 		});
+		*/
 		/*
 		ary_panel_obj.push( {
 			id:id,
@@ -197,18 +213,19 @@ class Main
 					{ type:EProp.kd, value:2, show:true } ]
 		});
 		*/
-		if( currentStockId != null )
-			drawStock( dom.find( '#canvas_kline' ), currentStockId, EType.kline, { } );
+		//if( currentStockId != null )
+		//	drawStock( dom.find( '#canvas_kline' ), currentStockId, EType.kline, { } );
 			
 		//createProp( dom.find( '#mc_propContainer' ), ary_panel_obj[ ary_panel_obj.length - 1].props );
-		resetAllCanvasListener();
+		//resetAllCanvasListener();
 	}
 	
 	function removePanel( params ) {
 		var panelDom = j( params.currentTarget ).parent().parent().parent().parent();
 		var id = panelDom.attr( 'id' );
 		var deleteName = 'k線: ' + id.substr( 'k_'.length, id.length );
-		mc_accordionContainer.accordion( 'remove', deleteName );
+		//mc_accordionContainer.accordion( 'remove', deleteName );
+		
 		/*
 		Lambda.foreach( ary_panel_obj, function ( stockMap ) {
 			if ( stockMap.id == id ) {
@@ -271,7 +288,7 @@ class Main
 		untyped __js__('stockId')( id, reset, cb );
 	}
 	
-	static function drawStock( canvas:Dynamic, id:Int, type:EType, params:Dynamic ) {
+	public static function drawStock( canvas:Dynamic, id:Int, type:EType, params:Dynamic ) {
 		untyped __js__('draw')( canvas[0], id, Std.string( type ), params );
 	}
 }

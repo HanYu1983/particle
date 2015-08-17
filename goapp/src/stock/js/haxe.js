@@ -82,26 +82,30 @@ List.prototype = {
 	}
 };
 var Main = function() {
+	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
 	this.currentScrollX = null;
 	this.currentStockId = null;
 	this.j = $;
 	var _g = this;
-	this.tmpl_panel = this.j("#tmpl_panel");
 	this.slt_stockId = this.j("#slt_stockId");
-	this.mc_accordionContainer = this.j("#mc_accordionContainer");
+	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel")});
 	this.panelModel.addHandler(function(type,params) {
 		switch(type) {
 		case "on_add_panel":
-			console.log(params);
-			_g.addPanel(params);
+			_g.panelView.execute(model_PanelModel.ON_ADD_PANEL,params);
 			break;
 		default:
 		}
 	});
-	this.panelModel.set_config({ panel : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]});
-	this.createAllProp();
-	this.resetAllCanvasListener();
+	this.panelModel.set_config({ panel : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]});
+	this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
+		var stockId = newValue;
+		Main.getStock(stockId,true,function(ret) {
+			_g.currentStockId = stockId;
+			_g.panelView.execute("drawAllCanvas",{ 'ary_panel' : _g.panelModel.execute("getAry"), 'stockId' : stockId});
+		});
+	}});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -133,17 +137,11 @@ Main.prototype = {
 		}
 	}
 	,addPanel: function(params) {
-		var id = Main.getId();
-		var dom = this.tmpl_panel.tmpl({ id : id});
-		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
-		if(this.currentStockId != null) Main.drawStock(dom.find("#canvas_kline"),this.currentStockId,EType.kline,{ });
-		this.resetAllCanvasListener();
 	}
 	,removePanel: function(params) {
 		var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
 		var id = panelDom.attr("id");
 		var deleteName = "k線: " + id.substr("k_".length,id.length);
-		this.mc_accordionContainer.accordion("remove",deleteName);
 	}
 	,createAllProp: function() {
 	}
@@ -271,14 +269,15 @@ model_Model.prototype = {
 			fn(type,params);
 		});
 	}
+	,execute: function(type,params) {
+		return null;
+	}
 	,set_config: function(config) {
 		this.config = config;
 		this.init();
 		return this.config;
 	}
 	,init: function() {
-	}
-	,execute: function(type,params) {
 	}
 };
 var model_PanelModel = function() {
@@ -288,14 +287,10 @@ var model_PanelModel = function() {
 model_PanelModel.__name__ = true;
 model_PanelModel.__super__ = model_Model;
 model_PanelModel.prototype = $extend(model_Model.prototype,{
-	addPanel: function(id,root,canvas,type,needMove,props) {
-		var obj = { id : id, canvas : canvas, needMove : needMove, type : type, root : root, props : props};
+	addPanel: function(id,type,needMove,props) {
+		var obj = { id : id, needMove : needMove, type : type, props : props, root : null};
 		this.ary_panel_obj.push(obj);
-		var i = id;
-		if(i < 3) console.log(id); else {
-			console.log(id);
-			this.notify(model_PanelModel.ON_ADD_PANEL,obj);
-		}
+		this.notify(model_PanelModel.ON_ADD_PANEL,obj);
 	}
 	,removePanel: function(id) {
 		var _g = this;
@@ -307,6 +302,14 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			return false;
 		});
 	}
+	,execute: function(type,params) {
+		switch(type) {
+		case "getAry":
+			return this.ary_panel_obj;
+		default:
+			return null;
+		}
+	}
 	,init: function() {
 		var _g1 = this;
 		model_Model.prototype.init.call(this);
@@ -315,17 +318,47 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			var _g = obj.id;
 			switch(_g) {
 			case 0:
-				_g1.addPanel(obj.id,null,j("#canvas_clock"),EType.clock,false,null);
+				_g1.addPanel(obj.id,EType.clock,false,null);
 				break;
 			case 1:
-				_g1.addPanel(obj.id,j("#mc_exchange"),j("#canvas_exchange"),EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+				_g1.addPanel(obj.id,EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 				break;
 			case 2:
-				_g1.addPanel(obj.id,j("#mc_kline"),j("#canvas_kline"),EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+				_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 				break;
 			default:
+				_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 			}
 		});
+	}
+});
+var view_PanelView = function() {
+	model_Model.call(this);
+};
+view_PanelView.__name__ = true;
+view_PanelView.__super__ = model_Model;
+view_PanelView.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.mc_accordionContainer = this.config.mc_accordionContainer;
+		this.mc_accordionContainer.accordion();
+		this.tmpl_panel = this.config.tmpl_panel;
+	}
+	,execute: function(type,params) {
+		switch(type) {
+		case "on_add_panel":
+			var id = params.id;
+			var dom = this.tmpl_panel.tmpl({ id : id});
+			this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
+			params.root = dom;
+			break;
+		case "drawAllCanvas":
+			Lambda.map(params.ary_panel,function(stockMap) {
+				Main.drawStock(stockMap.root.find("#canvas_kline"),params.stockId,stockMap.type,{ });
+			});
+			break;
+		}
+		return null;
 	}
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }

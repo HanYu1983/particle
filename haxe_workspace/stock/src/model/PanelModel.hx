@@ -16,24 +16,23 @@ class PanelModel extends Model
 		
 	}
 	
-	public function addPanel( id:Dynamic, root:Dynamic, canvas:Dynamic, type:EType, needMove:Bool, props ) {
+	public function addPanel( id:Dynamic, type:EType, needMove:Bool, props ) {
 		var obj = {
 			id:id,
-			canvas:canvas,
 			needMove:needMove,
 			type:type,
-			root:root,
-			props:props
+			props:props,
+			root:null //add by panelView
 		};
 		ary_panel_obj.push( obj );
 		
+		notify( ON_ADD_PANEL, obj );
+		/*
 		switch( id ) {
 			case i if ( i < 3 ):
-				trace( id );
 			case _:
-				trace( id );
 				notify( ON_ADD_PANEL, obj );
-		}
+		}*/
 	}
 	
 	public function removePanel( id:Dynamic ) {
@@ -46,6 +45,16 @@ class PanelModel extends Model
 		});
 	}
 	
+	override public function execute(type:String, ?params:Dynamic):Dynamic 
+	{
+		switch( type ) {
+			case 'getAry':
+				return ary_panel_obj;
+			case _:
+				return null;
+		}
+	}
+	
 	override function init() 
 	{
 		super.init();
@@ -54,13 +63,13 @@ class PanelModel extends Model
 		Lambda.map( config.panel, function( obj ) {
 			switch( obj.id ) {
 				case 0:
-					addPanel( obj.id, null, j( '#canvas_clock' ), EType.clock, false, null );
+					addPanel( obj.id, EType.clock, false, null );
 				case 1:
-					addPanel( obj.id, j('#mc_exchange' ), j( '#canvas_exchange' ), EType.volume, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
+					addPanel( obj.id, EType.volume, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
 				case 2:
-					addPanel( obj.id, j('#mc_kline' ), j( '#canvas_kline' ), EType.kline, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
+					addPanel( obj.id, EType.kline, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
 				case _:
-					//addPanel( obj.id, j('#mc_kline' ), j( '#canvas_kline' ), EType.kline, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
+					addPanel( obj.id, EType.kline, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
 			}
 		});
 		
