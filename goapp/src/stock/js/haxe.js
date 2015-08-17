@@ -86,10 +86,20 @@ var Main = function() {
 	this.currentScrollX = null;
 	this.currentStockId = null;
 	this.j = $;
+	var _g = this;
 	this.tmpl_panel = this.j("#tmpl_panel");
 	this.slt_stockId = this.j("#slt_stockId");
 	this.mc_accordionContainer = this.j("#mc_accordionContainer");
-	this.panelModel.set_config({ panel : [{ id : "kline", canvas : this.j("#canvas_kline"), needMove : true, type : EType.kline, root : this.j("#mc_kline"), props : [{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]},{ id : "exchange", canvas : this.j("#canvas_exchange"), needMove : true, type : EType.volume, root : this.j("#mc_exchange"), props : [{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]},{ id : "clock", canvas : this.j("#canvas_clock"), needMove : false, type : EType.clock, root : null, props : null}]});
+	this.panelModel.addHandler(function(type,params) {
+		switch(type) {
+		case "on_add_panel":
+			console.log(params);
+			_g.addPanel(params);
+			break;
+		default:
+		}
+	});
+	this.panelModel.set_config({ panel : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]});
 	this.createAllProp();
 	this.resetAllCanvasListener();
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
@@ -279,7 +289,13 @@ model_PanelModel.__name__ = true;
 model_PanelModel.__super__ = model_Model;
 model_PanelModel.prototype = $extend(model_Model.prototype,{
 	addPanel: function(id,root,canvas,type,needMove,props) {
-		this.ary_panel_obj.push({ id : id, canvas : canvas, needMove : needMove, type : type, root : root, props : props});
+		var obj = { id : id, canvas : canvas, needMove : needMove, type : type, root : root, props : props};
+		this.ary_panel_obj.push(obj);
+		var i = id;
+		if(i < 3) console.log(id); else {
+			console.log(id);
+			this.notify(model_PanelModel.ON_ADD_PANEL,obj);
+		}
 	}
 	,removePanel: function(id) {
 		var _g = this;
@@ -292,8 +308,24 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		});
 	}
 	,init: function() {
+		var _g1 = this;
 		model_Model.prototype.init.call(this);
-		console.log(this.config);
+		var j = $;
+		Lambda.map(this.config.panel,function(obj) {
+			var _g = obj.id;
+			switch(_g) {
+			case 0:
+				_g1.addPanel(obj.id,null,j("#canvas_clock"),EType.clock,false,null);
+				break;
+			case 1:
+				_g1.addPanel(obj.id,j("#mc_exchange"),j("#canvas_exchange"),EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+				break;
+			case 2:
+				_g1.addPanel(obj.id,j("#mc_kline"),j("#canvas_kline"),EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+				break;
+			default:
+			}
+		});
 	}
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
@@ -305,6 +337,7 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 String.__name__ = true;
 Array.__name__ = true;
 Main.id = 1;
+model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

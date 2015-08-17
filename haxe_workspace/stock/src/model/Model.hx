@@ -14,7 +14,7 @@ class Model
 		
 	}
 	
-	public function addHandler( handler ) {
+	public function addHandler( handler:String -> Dynamic -> Void ) {
 		_ary_handler.push( handler );
 	}
 	

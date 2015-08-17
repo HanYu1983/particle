@@ -28,34 +28,49 @@ class Main
 		slt_stockId = j( '#slt_stockId' );
 		mc_accordionContainer = j("#mc_accordionContainer" );
 		
+		panelModel.addHandler( function( type, params ) {
+			switch( type ) {
+				case PanelModel.ON_ADD_PANEL:
+					trace( params );
+					addPanel( params );
+				case _:
+			}
+		});
+		
 		//從model端來的資料(暫定)
 		panelModel.config = {
 			panel:[
 				{
-					id:'kline',
-					canvas:j( '#canvas_kline' ),
-					needMove:true,
-					type:EType.kline,
-					root:j('#mc_kline' ),
-					props:[ { type:EProp.avg, value:1, show:false }, 
-							{ type:EProp.kd, value:2, show:true } ]
+					id:0,
+					type:'clock',
+					sub:[
+						{t: "ma", d: {n: 5, color: "blue"}}, 
+						{t: "ma", d: {n: 10, color: "yellow"}} 
+					]
 				},
 				{
-					id:'exchange',
-					canvas:j( '#canvas_exchange' ),
-					needMove:true,
-					type:EType.volume,
-					root:j('#mc_exchange' ),
-					props:[ { type:EProp.avg, value:1, show:false }, 
-							{ type:EProp.kd, value:2, show:true } ]
+					id:1,
+					type:'volume',
+					sub:[
+						{t: "ma", d: {n: 5, color: "blue"}}, 
+						{t: "ma", d: {n: 10, color: "yellow"}} 
+					]
 				},
 				{
-					id:'clock',
-					canvas:j( '#canvas_clock' ),
-					needMove:false,
-					type:EType.clock,
-					root:null,
-					props:null
+					id:2,
+					type:'kline',
+					sub:[
+						{t: "ma", d: {n: 5, color: "blue"}}, 
+						{t: "ma", d: {n: 10, color: "yellow"}} 
+					]
+				},
+				{
+					id:3,
+					type:'kline',
+					sub:[
+						{t: "ma", d: {n: 5, color: "blue"}}, 
+						{t: "ma", d: {n: 10, color: "yellow"}} 
+					]
 				}
 			]
 		};
