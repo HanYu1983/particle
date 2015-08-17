@@ -33,7 +33,7 @@ class PanelView extends Model
 		switch( type ) {
 			case PanelModel.ON_ADD_PANEL:
 				var id = params.id;
-				var dom = tmpl_panel.tmpl( { id:id } );
+				var dom = tmpl_panel.tmpl( {id:id, type:params.type} );
 				mc_accordionContainer.accordion('add', {
 					id:'k_' + id,
 					title: 'k線: ' + id,

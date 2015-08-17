@@ -348,7 +348,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		switch(type) {
 		case "on_add_panel":
 			var id = params.id;
-			var dom = this.tmpl_panel.tmpl({ id : id});
+			var dom = this.tmpl_panel.tmpl({ id : id, type : params.type});
 			this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
 			params.root = dom;
 			break;
