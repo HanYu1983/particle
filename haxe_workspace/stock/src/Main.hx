@@ -3,8 +3,9 @@ package;
 import haxe.Json;
 import js.Browser;
 import js.Lib;
-import model.Model;
+import model.IPanel;
 import model.PanelModel;
+import view.IPanelView;
 import view.PanelView;
 
 /**
@@ -15,11 +16,8 @@ class Main
 {
 	var j:Dynamic = untyped __js__( '$' );
 	
-	//var currentStockId = null;
-	//var currentScrollX = null;
-	
-	var panelModel:Model = new PanelModel();
-	var panelView:Model = new PanelView();
+	var panelModel:IPanel = new PanelModel();
+	var panelView:IPanelView = new PanelView();
 	
 	function new() {
 		
@@ -39,22 +37,21 @@ class Main
 		panelModel.addHandler( function( type, params ) {
 			switch( type ) {
 				case PanelModel.ON_INIT:
-					getStockAndDraw( params.stockId );
+					panelView.setShowId( params.stockId );
 				case PanelModel.ON_ADD_PANEL:
-					panelView.execute( PanelModel.ON_ADD_PANEL, params );
+					panelView.addPanel( params.stockId, params.panelObj );
 				case PanelModel.ON_REMOVE_PANEL:
-					panelView.execute( PanelModel.ON_REMOVE_PANEL, params );
+					panelView.removePanel( params.id );
 				case _:
 			}
 		});
 		
-		//從model端來的資料(暫定)
-		panelModel.config = {
+		var config = {
 			facebookId:'12233',
 			stocks:[
 				{
 					id:'2330',
-					kline:[
+					lines:[
 						{
 							id:0,
 							type:'clock',
@@ -100,14 +97,15 @@ class Main
 			]
 		};
 		
-		trace( Json.stringify( panelModel.execute( 'getAry' )) );
+		//從model端來的資料(暫定)
+		panelModel.config = config;
 		
 		Reflect.setField( Browser.window, 'onHtmlTrigger', onHtmlTrigger );
 	}
 	
 	function getStockAndDraw( stockId ) {
 		getStock( stockId, true, function( ret:Dynamic ) {
-			panelView.execute( 'drawAllCanvas', { 'ary_panel':panelModel.execute( 'getAry' ), 'stockId':stockId } );
+			panelView.drawAllCanvas( stockId, panelModel.getAryPanel() );
 		});
 	}
 	
@@ -153,24 +151,14 @@ class Main
 	function onHtmlTrigger( name, params ) {
 		switch( name ) {
 			case 'addPanel':
-				panelModel.execute( 'addPanel', { 	'id':getId(),
-													'type':EType.kline,
-													'needMove':true,
-													'props':[ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] } );
+				panelModel.addPanel( getId(), EType.kline, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
 			case 'removePanel':
 				var panelDom = j( params.currentTarget ).parent().parent().parent().parent();
 				var id = panelDom.attr( 'id' );
-				panelModel.execute( 'removePanel', { 'id':id } );
+				trace( id );
+				panelModel.removePanel( id );
 		}
 	}
-	/*
-	function removePanel( params ) {
-		var panelDom = j( params.currentTarget ).parent().parent().parent().parent();
-		var id = panelDom.attr( 'id' );
-		var deleteName = 'k線: ' + id.substr( 'k_'.length, id.length );
-	}
-	*/
-	
 	static var id = 1;
 	
 	static function getId() {
@@ -182,11 +170,11 @@ class Main
 		new Main();
 	}
 	
-	public static function getStock( id:Int, reset:Bool, cb:Dynamic -> Void ) {
+	public static function getStock( id:String, reset:Bool, cb:Dynamic -> Void ) {
 		untyped __js__('stockId')( id, reset, cb );
 	}
 	
-	public static function drawStock( canvas:Dynamic, id:Int, type:EType, params:Dynamic ) {
+	public static function drawStock( canvas:Dynamic, id:String, type:EType, params:Dynamic ) {
 		untyped __js__('draw')( canvas[0], id, Std.string( type ), params );
 	}
 }

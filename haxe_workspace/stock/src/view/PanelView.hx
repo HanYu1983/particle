@@ -7,7 +7,7 @@ import model.PanelModel;
  * ...
  * @author vic
  */
-class PanelView extends Model
+class PanelView extends Model implements IPanelView
 {
 	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
 	
@@ -41,26 +41,16 @@ class PanelView extends Model
 		});
 	}
 	
-	override public function execute(type:String, ?params:Dynamic):Dynamic 
-	{
-		switch( type ) {
-			case PanelModel.ON_ADD_PANEL:
-				addPanel( params );
-			case PanelModel.ON_REMOVE_PANEL:
-				removePanel( params.id );
-			case 'drawAllCanvas':
-				Lambda.map( params.ary_panel, function( stockMap ) {
-					Main.drawStock( stockMap.root.find( '#canvas_kline' ), params.stockId, stockMap.type, { } );
-				});
-				slt_stockId.textbox( 'setValue', params.stockId);
-		}
-		return null;
+	public function setShowId( stockId:String ):Void {
+		slt_stockId.textbox( 'setValue', stockId );
 	}
 	
-	function addPanel( params ) {
+	public function addPanel( stockId:String, params:Dynamic ):Void {
 		var id = params.id;
+		var type = params.type;
+		var props = params.props;
 		
-		var dom = tmpl_panel.tmpl( {id:id, type:params.type } );
+		var dom = tmpl_panel.tmpl( {id:id, type:type } );
 		mc_accordionContainer.accordion('add', {
 			id:'k_' + id,
 			title: 'k線: ' + id,
@@ -69,19 +59,28 @@ class PanelView extends Model
 		});
 		params.root = dom;
 		
-		if( params.type != 'clock' )
+		if( type != EType.clock )
 			dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
 		
-		if( params.props != null )
-			createProp( dom.find( '#mc_propContainer' ), params.props );
+		if( props != null )
+			createProp( dom.find( '#mc_propContainer' ), props );
+			
+		Main.drawStock( dom.find( '#canvas_kline' ), stockId, type, { } );
 	}
 	
-	function removePanel( id ) {
+	public function removePanel( id:String ):Void {
 		var deleteName = 'k線: ' + id.substr( 'k_'.length, id.length );
 		mc_accordionContainer.accordion( 'remove', deleteName );
 	}
 	
+	public function drawAllCanvas( stockId:String, ary_panel:Array<Dynamic> ):Void {
+		Lambda.map( ary_panel, function( stockMap ) {
+			Main.drawStock( stockMap.root.find( '#canvas_kline' ), stockId, stockMap.type, { } );
+		});
+	}
+
 	function createProp( container, props ) {
+		
 		Lambda.map( props, function( prop:Dynamic ) {
 			prop.sid = 'swb_' + prop.type;
 			prop.vid = 'input_' + prop.type;
@@ -108,6 +107,7 @@ class PanelView extends Model
 			});
 			
 		});
+		
 	}
 	
 }
