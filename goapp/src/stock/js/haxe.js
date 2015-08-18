@@ -25,6 +25,15 @@ EType.kline.toString = $estr;
 EType.kline.__enum__ = EType;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.substr = function(s,pos,len) {
+	if(pos != null && pos != 0 && len != null && len < 0) return "";
+	if(len == null) len = s.length;
+	if(pos < 0) {
+		pos = s.length + pos;
+		if(pos < 0) pos = 0;
+	} else if(len < 0) len = s.length + len - pos;
+	return s.substr(pos,len);
+};
 HxOverrides.indexOf = function(a,obj,i) {
 	var len = a.length;
 	if(i < 0) {
@@ -69,6 +78,14 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
+Lambda.find = function(it,f) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var v = $it0.next();
+		if(f(v)) return v;
+	}
+	return null;
+};
 var List = function() {
 	this.length = 0;
 };
@@ -84,28 +101,32 @@ List.prototype = {
 var Main = function() {
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
-	this.currentScrollX = null;
-	this.currentStockId = null;
 	this.j = $;
 	var _g = this;
-	this.slt_stockId = this.j("#slt_stockId");
-	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel")});
-	this.panelModel.addHandler(function(type,params) {
+	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId")});
+	this.panelView.addHandler(function(type,params) {
 		switch(type) {
+		case "on_stockid_change":
+			_g.getStockAndDraw(params.stockId);
+			break;
+		}
+	});
+	this.panelModel.addHandler(function(type1,params1) {
+		switch(type1) {
+		case "on_init":
+			_g.panelView.setShowId(params1.stockId);
+			break;
 		case "on_add_panel":
-			_g.panelView.execute(model_PanelModel.ON_ADD_PANEL,params);
+			_g.panelView.addPanel(params1.stockId,params1.panelObj);
+			break;
+		case "on_remove_panel":
+			_g.panelView.removePanel(params1.id);
 			break;
 		default:
 		}
 	});
-	this.panelModel.set_config({ panel : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]});
-	this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
-		var stockId = newValue;
-		Main.getStock(stockId,true,function(ret) {
-			_g.currentStockId = stockId;
-			_g.panelView.execute("drawAllCanvas",{ 'ary_panel' : _g.panelModel.execute("getAry"), 'stockId' : stockId});
-		});
-	}});
+	var config = { facebookId : "12233", stocks : [{ id : "2330", lines : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]}]};
+	this.panelModel.set_config(config);
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -122,53 +143,26 @@ Main.drawStock = function(canvas,id,type,params) {
 	draw(canvas[0],id,Std.string(type),params);
 };
 Main.prototype = {
-	drawAllCanvas: function(stockId) {
+	getStockAndDraw: function(stockId) {
+		var _g = this;
+		Main.getStock(stockId,true,function(ret) {
+			_g.panelView.drawAllCanvas(stockId,_g.panelModel.getAryPanel());
+		});
 	}
 	,resetAllCanvasListener: function() {
 	}
 	,onHtmlTrigger: function(name,params) {
 		switch(name) {
 		case "addPanel":
-			this.addPanel(params);
+			this.panelModel.addPanel(Main.getId(),EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 			break;
 		case "removePanel":
-			this.removePanel(params);
+			var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
+			var id = panelDom.attr("id");
+			console.log(id);
+			this.panelModel.removePanel(id);
 			break;
 		}
-	}
-	,addPanel: function(params) {
-	}
-	,removePanel: function(params) {
-		var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
-		var id = panelDom.attr("id");
-		var deleteName = "k線: " + id.substr("k_".length,id.length);
-	}
-	,createAllProp: function() {
-	}
-	,createProp: function(container,props) {
-		var _g1 = this;
-		Lambda.map(props,function(prop) {
-			prop.sid = "swb_" + Std.string(prop.type);
-			prop.vid = "input_" + Std.string(prop.type);
-			var dom;
-			var _g = prop.type;
-			switch(Type.enumIndex(_g)) {
-			case 0:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
-				break;
-			case 1:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
-				break;
-			default:
-				dom = null;
-			}
-			container.append(dom);
-			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show});
-			dom.find(".easyui-textbox").textbox({ value : prop.value});
-		});
-	}
-	,onSwtChange: function(params) {
-		console.log(params);
 	}
 };
 Math.__name__ = true;
@@ -256,6 +250,11 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
+var model_IModel = function() { };
+model_IModel.__name__ = true;
+var model_IPanel = function() { };
+model_IPanel.__name__ = true;
+model_IPanel.__interfaces__ = [model_IModel];
 var model_Model = function() {
 	this._ary_handler = [];
 };
@@ -269,9 +268,6 @@ model_Model.prototype = {
 			fn(type,params);
 		});
 	}
-	,execute: function(type,params) {
-		return null;
-	}
 	,set_config: function(config) {
 		this.config = config;
 		this.init();
@@ -281,16 +277,27 @@ model_Model.prototype = {
 	}
 };
 var model_PanelModel = function() {
+	this.currentStockId = null;
 	this.ary_panel_obj = [];
 	model_Model.call(this);
 };
 model_PanelModel.__name__ = true;
+model_PanelModel.__interfaces__ = [model_IPanel];
 model_PanelModel.__super__ = model_Model;
 model_PanelModel.prototype = $extend(model_Model.prototype,{
-	addPanel: function(id,type,needMove,props) {
-		var obj = { id : id, needMove : needMove, type : type, props : props, root : null};
+	getAryPanel: function() {
+		return this.ary_panel_obj;
+	}
+	,changeStockId: function(stockId) {
+		var _g = this;
+		Main.getStock(stockId,true,function(params) {
+			_g.notify(model_PanelModel.ON_CHANGE_STOCK_SUCCESS);
+		});
+	}
+	,addPanel: function(id,type,needMove,props) {
+		var obj = { 'id' : id, 'needMove' : needMove, 'type' : type, 'props' : props, 'root' : null};
 		this.ary_panel_obj.push(obj);
-		this.notify(model_PanelModel.ON_ADD_PANEL,obj);
+		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
 	,removePanel: function(id) {
 		var _g = this;
@@ -301,64 +308,117 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			}
 			return false;
 		});
-	}
-	,execute: function(type,params) {
-		switch(type) {
-		case "getAry":
-			return this.ary_panel_obj;
-		default:
-			return null;
-		}
+		this.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : id});
 	}
 	,init: function() {
-		var _g1 = this;
+		var _g = this;
 		model_Model.prototype.init.call(this);
 		var j = $;
-		Lambda.map(this.config.panel,function(obj) {
-			var _g = obj.id;
-			switch(_g) {
-			case 0:
-				_g1.addPanel(obj.id,EType.clock,false,null);
-				break;
-			case 1:
-				_g1.addPanel(obj.id,EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
-				break;
-			case 2:
-				_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
-				break;
-			default:
-				_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
-			}
+		Main.getStock(this.config.stocks[0].id,true,function(params) {
+			_g.currentStockId = _g.config.stocks[0].id;
+			Lambda.map(_g.config.stocks[0].lines,function(obj) {
+				var _g1 = obj.id;
+				switch(_g1) {
+				case 0:
+					_g.addPanel(obj.id,EType.clock,false,null);
+					break;
+				case 1:
+					_g.addPanel(obj.id,EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+					break;
+				case 2:
+					_g.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+					break;
+				default:
+					_g.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+				}
+			});
+			_g.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g.currentStockId});
 		});
 	}
+	,getSaveData: function() {
+		var _g = this;
+		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
+		var stockobj = Lambda.find(output.stocks,function(obj) {
+			if(obj.id == _g.currentStockId) return true;
+			return false;
+		});
+		stockobj.lines = [];
+		Lambda.map(this.ary_panel_obj,function(stockMap) {
+			stockobj.lines.push({ id : stockMap.id, type : Std.string(stockMap.type)});
+		});
+		return output;
+	}
 });
+var view_IPanelView = function() { };
+view_IPanelView.__name__ = true;
+view_IPanelView.__interfaces__ = [model_IModel];
 var view_PanelView = function() {
+	this.j = $;
 	model_Model.call(this);
 };
 view_PanelView.__name__ = true;
+view_PanelView.__interfaces__ = [view_IPanelView];
 view_PanelView.__super__ = model_Model;
 view_PanelView.prototype = $extend(model_Model.prototype,{
 	init: function() {
+		var _g = this;
 		model_Model.prototype.init.call(this);
 		this.mc_accordionContainer = this.config.mc_accordionContainer;
 		this.mc_accordionContainer.accordion();
 		this.tmpl_panel = this.config.tmpl_panel;
+		this.slt_stockId = this.config.slt_stockId;
+		this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
+			var stockId = newValue;
+			_g.notify(view_PanelView.ON_STOCKID_CHANGE,{ 'stockId' : stockId});
+		}});
 	}
-	,execute: function(type,params) {
-		switch(type) {
-		case "on_add_panel":
-			var id = params.id;
-			var dom = this.tmpl_panel.tmpl({ id : id, type : params.type});
-			this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
-			params.root = dom;
-			break;
-		case "drawAllCanvas":
-			Lambda.map(params.ary_panel,function(stockMap) {
-				Main.drawStock(stockMap.root.find("#canvas_kline"),params.stockId,stockMap.type,{ });
-			});
-			break;
-		}
-		return null;
+	,setShowId: function(stockId) {
+		this.slt_stockId.textbox("setValue",stockId);
+	}
+	,addPanel: function(stockId,params) {
+		var id = params.id;
+		var type = params.type;
+		var props = params.props;
+		var dom = this.tmpl_panel.tmpl({ id : id, type : type});
+		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
+		params.root = dom;
+		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
+		if(props != null) this.createProp(dom.find("#mc_propContainer"),props);
+		Main.drawStock(dom.find("#canvas_kline"),stockId,type,{ });
+	}
+	,removePanel: function(id) {
+		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
+		this.mc_accordionContainer.accordion("remove",deleteName);
+	}
+	,drawAllCanvas: function(stockId,ary_panel) {
+		Lambda.map(ary_panel,function(stockMap) {
+			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,{ });
+		});
+	}
+	,createProp: function(container,props) {
+		var _g1 = this;
+		Lambda.map(props,function(prop) {
+			prop.sid = "swb_" + Std.string(prop.type);
+			prop.vid = "input_" + Std.string(prop.type);
+			var dom;
+			var _g = prop.type;
+			switch(Type.enumIndex(_g)) {
+			case 0:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case 1:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			default:
+				dom = null;
+			}
+			container.append(dom);
+			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
+				var target = _g1.j(this);
+				console.log(target.attr("id"));
+			}});
+			dom.find(".easyui-textbox").textbox({ value : prop.value});
+		});
 	}
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
@@ -370,7 +430,11 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 String.__name__ = true;
 Array.__name__ = true;
 Main.id = 1;
+model_PanelModel.ON_INIT = "on_init";
+model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
+model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
+view_PanelView.ON_STOCKID_CHANGE = "on_stockid_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
