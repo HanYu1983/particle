@@ -4,6 +4,7 @@
 	<meta charset="utf-8"/>
 	<title>proj</title>
 	<meta name="description" content="" />
+	<meta name="viewport" content="width=device-width , user-scalable=no">
 	
 	<link rel="stylesheet" type="text/css" href="js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
 	<link rel="stylesheet" type="text/css" href="js/lib/jquery-easyui-1.4.3/themes/icon.css">
@@ -23,27 +24,50 @@ body{
 }
 </style>
 <script id="tmpl_panel" type="jquery-x-tmpl">
-	<div class="easyui-layout" style="width:100%;height:190px; left:0; top:0;">
+	{{if type == 'clock'}}
+	<div class="easyui-layout" style="width:100%;height:420px; left:0; top:0;">
+	{{/if}}
+	{{if type == 'volume'}}
+	<div class="easyui-layout" style="width:100%;height:150px; left:0; top:0;">
+	{{/if}}
+	{{if type == 'kline'}}
+	<div class="easyui-layout" style="width:100%;height:450px; left:0; top:0;">
+	{{/if}}
+		<!--
 		<div data-options="region:'north'" style="height:40px; padding:5px;">
 			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
 		</div>
-		<div data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
-			<div style="position:relative; width:100%; margin-bottom:5px;">
-				<div style="position:relative; display:inline-block; width:70px; ">
-					<input class="easyui-switchbutton" checked>
-				</div>
-				<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
-			</div>
-			<div style="position:relative; width:100%; margin-bottom:5px;">
-				<div style="position:relative; display:inline-block; width:70px; ">
-					<input class="easyui-switchbutton">
-				</div>
-				<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
-			</div>
+		-->
+		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:200px; padding:10px;">
+			<!-- for script created -->
 		</div>
 		<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center',title:'k線'">
-			<canvas id="canvas_kline" width=2000 height=100 style="position:relative; left:0; top:0;"></canvas>
+			{{if type == 'clock'}}
+			<canvas id="canvas_kline" width=400 height=400 style="position:relative; left:50%; margin-left:-200px; top:0;"></canvas>
+			{{/if}}
+			{{if type == 'volume'}}
+			<canvas id="canvas_kline" width=2000 height=100 style="position:relative;"></canvas>
+			{{/if}}
+			{{if type == 'kline'}}
+			<canvas id="canvas_kline" width=2000 height=400 style="position:relative; left:0; top:0;"></canvas>
+			{{/if}}
 		</div>
+	</div>
+</script>
+<script id="tmpl_avg" type="jquery-x-tmpl">
+	<div style="position:relative; width:100%; margin-bottom:5px;">
+		<div style="position:relative; display:inline-block; width:70px; ">
+			<input id=${sid} class="easyui-switchbutton" checked>
+		</div>
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select id=${vid} class="easyui-textbox" style="width:100%;"></select>
+		</div>
+		{{if type == 'avg' }}
+		<div style="position:relative; display:inline-block; width:70px; ">日均</div>
+		{{/if}}
+		{{if type == 'kd' }}
+		<div style="position:relative; display:inline-block; width:70px; ">KD</div>
+		{{/if}}
 	</div>
 </script>
 <body>
@@ -54,50 +78,10 @@ body{
 		</div>
         <div id="mc_mainContainer" data-options="region:'center',title:'內容'">
 			<div id="mc_accordionContainer" class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
-				<div title="逆時鐘曲線" style="width:100%;height:420px; left:0; top:0;">
-					<canvas id="canvas_clock" width=400 height=400 style="position:relative; left:50%; margin-left:-200px; top:0;"></canvas>
-				</div>
-				<div title="成交量" style="overflow:auto;">
-					<div id="mc_exchange" class="easyui-layout" style="width:100%;height:130px; left:0; top:0;" >
-						<div data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
-							<div style="position:relative; width:100%; margin-bottom:5px;">
-								<div style="position:relative; display:inline-block; width:70px; ">
-									<input id="swb_avg" class="easyui-switchbutton" checked>
-								</div>
-								<div style="position:relative; display:inline-block; width:70px; ">6日均</div>
-							</div>
-						</div>
-						<div data-options="region:'center'">
-							<canvas id="canvas_exchange" width=2000 height=100 style="position:relative;"></canvas>
-						</div>
-					</div>
-				</div>
-				<div title="k線" style="overflow:auto;">
-					<div id="mc_kline" class="easyui-layout" style="width:100%;height:460px; left:0; top:0;">
-						<div data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
-							<div style="position:relative; width:100%; margin-bottom:5px;">
-								<div style="position:relative; display:inline-block; width:70px; ">
-									<input class="easyui-switchbutton" checked>
-								</div>
-								<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
-							</div>
-							<div style="position:relative; width:100%; margin-bottom:5px;">
-								<div style="position:relative; display:inline-block; width:70px; ">
-									<input class="easyui-switchbutton">
-								</div>
-								<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
-							</div>
-						</div>
-						<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center'">
-							<canvas id="canvas_kline" width=2000 height=400 style="position:relative; left:0; top:0;"></canvas>
-						</div>
-					</div>
-				</div>
+				<!-- for script created -->
 			</div>
-			
-            
         </div>
-						
+		
 		<div id="mm1" style="width:100px;">
 			<div data-options="iconCls:'icon-add'" onclick="addPanel();">新增</div>
 		</div>
