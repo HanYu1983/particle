@@ -150,7 +150,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "volume", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "kline", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "clock", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "volume", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "kline", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -172,6 +172,7 @@ Main.prototype = {
 	getStockAndDraw: function(stockId) {
 		var _g = this;
 		Main.getStock(stockId,true,function(ret) {
+			haxe_Log.trace("d",{ fileName : "Main.hx", lineNumber : 165, className : "Main", methodName : "getStockAndDraw", customParams : [ret]});
 			_g.panelView.drawAllCanvas(stockId,null,_g.panelModel.getAryPanel());
 		});
 	}
@@ -230,6 +231,11 @@ Type.createEnum = function(e,constr,params) {
 Type.enumIndex = function(e) {
 	return e[1];
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -242,6 +248,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -362,7 +387,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentOffset;
 	}
 	,addPanel: function(id,type,props) {
-		console.log(props);
+		haxe_Log.trace(props,{ fileName : "PanelModel.hx", lineNumber : 46, className : "model.PanelModel", methodName : "addPanel"});
 		var obj = { id : id, type : type, props : props, root : null};
 		this.ary_panel_obj.push(obj);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
@@ -379,7 +404,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : id});
 	}
 	,init: function() {
-		var _g1 = this;
+		var _g = this;
 		model_Model.prototype.init.call(this);
 		var j = $;
 		var stock = this.config.stocks[0];
@@ -395,24 +420,17 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			});
 			return Lambda.array(sub);
 		};
+		Lambda.foreach(stock.lines,function(obj1) {
+			obj1.type = Type.createEnum(EType,obj1.type);
+			obj1.sub = parserSub(obj1.sub);
+			return true;
+		});
 		Main.getStock(this.currentStockId,true,function(params) {
-			Lambda.map(stock.lines,function(obj1) {
-				var _g = obj1.type;
-				switch(_g) {
-				case "clock":
-					_g1.addPanel(obj1.id,EType.clock,parserSub(obj1.sub));
-					break;
-				case "volume":
-					_g1.addPanel(obj1.id,EType.volume,parserSub(obj1.sub));
-					break;
-				case "kline":
-					_g1.addPanel(obj1.id,EType.kline,parserSub(obj1.sub));
-					break;
-				default:
-					_g1.addPanel(obj1.id,EType.kline,parserSub(obj1.sub));
-				}
+			Lambda.foreach(stock.lines,function(obj2) {
+				_g.addPanel(obj2.id,obj2.type,obj2.sub);
+				return true;
 			});
-			_g1.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g1.currentStockId});
+			_g.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g.currentStockId});
 		});
 	}
 	,getSaveData: function() {
@@ -531,7 +549,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			container.append(dom);
 			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
 				var target = _g1.j(this);
-				console.log(target.attr("id"));
+				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 131, className : "view.PanelView", methodName : "createProp"});
 			}});
 			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
 			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});

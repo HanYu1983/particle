@@ -89,20 +89,18 @@ class PanelModel extends Model implements IPanel
 			});
 			return Lambda.array( sub );
 		}
+		
+		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
+			obj.type = Type.createEnum( EType, obj.type );
+			obj.sub = parserSub( obj.sub );
+			return true;
+		});
 			
 		Main.getStock( currentStockId, true, function( params:Dynamic ) {
 			
-			Lambda.map( stock.lines, function( obj:Dynamic ) {
-				switch( obj.type ) {
-					case 'clock':
-						addPanel( obj.id, EType.clock, parserSub( obj.sub ) );
-					case 'volume':
-						addPanel( obj.id, EType.volume, parserSub( obj.sub ) );
-					case 'kline':
-						addPanel( obj.id, EType.kline, parserSub( obj.sub ) );
-					case _:
-						addPanel( obj.id, EType.kline, parserSub( obj.sub ) );
-				}
+			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
+				addPanel( obj.id, obj.type, obj.sub );
+				return true;
 			});
 			
 			notify( ON_INIT, { 'stockId':currentStockId } );
@@ -110,6 +108,7 @@ class PanelModel extends Model implements IPanel
 	}
 	
 	public function getSaveData():Dynamic {
+		
 		var output = {
 			facebookId:config.facebookId,
 			stocks:config.stocks
@@ -127,6 +126,7 @@ class PanelModel extends Model implements IPanel
 				type:Std.string( stockMap.type ),
 			});
 		});
+		
 		return output;
 	}
 }

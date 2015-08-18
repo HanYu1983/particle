@@ -64,6 +64,39 @@ class Main
 					lines:[
 						{
 							id:4,
+							type:'clock',
+							sub:[
+								{
+									s:true,
+									t: 'ma', //ma | ema | kd | macd | yu
+									d: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									s:false,
+									t: 'kd', //ma | ema | kd | macd | yu
+									d: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									s:true,
+									t: 'yu', //ma | ema | kd | macd | yu
+									d: {
+										n: 2,
+										m: 4,
+										color: ''
+									}
+								}
+							]
+						},
+						{
+							id:4,
 							type:'volume',
 							sub:[
 								{
@@ -129,6 +162,7 @@ class Main
 	
 	function getStockAndDraw( stockId ) {
 		getStock( stockId, true, function( ret:Dynamic ) {
+			trace('d', ret );
 			panelView.drawAllCanvas( stockId, panelModel.getAryPanel() );
 		});
 	}

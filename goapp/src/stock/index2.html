@@ -70,12 +70,8 @@ body{
 		<div style="position:relative; display:inline-block; width:40px; ">
 			<select id=${mid} class="easyui-textbox" style="width:100%;"></select>
 		</div>
-		{{if type == 'ma' }}
-		<div style="position:relative; display:inline-block; width:70px; ">日均</div>
-		{{/if}}
-		{{if type == 'kd' }}
-		<div style="position:relative; display:inline-block; width:70px; ">KD</div>
-		{{/if}}
+		
+		<div style="position:relative; display:inline-block; width:70px; ">${type}</div>
 	</div>
 </script>
 <body>
@@ -129,25 +125,6 @@ body{
 	<script>
 	goog.require("app.stock.main")
 	</script>
-	<script id="test">
-	var cbid = 0
-	var cbs = {}
-	
-	common.onModel.subscribe(function(param){
-		var type = param[0]
-		var data = param[1]
-		var request = data.request
-		if( cbs[request.cbid] ){
-			cbs[request.cbid]( data )
-			delete cbs[request.cbid]
-		}
-	})
-	
-	common.onView.subscribe(function(data){
-		console.log( data )
-	})
-	</script>
-	
 	<script src="js/haxe.js"></script>
 </body>
 </html>
