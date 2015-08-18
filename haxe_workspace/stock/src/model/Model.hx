@@ -18,15 +18,10 @@ class Model
 		_ary_handler.push( handler );
 	}
 	
-	public function notify( type, params ) {
+	public function notify( type, ?params:Dynamic ) {
 		Lambda.map( _ary_handler, function( fn ) {
 			fn( type, params );
 		});
-	}
-	
-	public function execute( type:String, ?params:Dynamic ):Dynamic {
-		//for children
-		return null;
 	}
 	
 	function set_config( config ) {

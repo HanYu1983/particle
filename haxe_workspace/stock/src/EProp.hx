@@ -6,6 +6,9 @@ package;
 
 enum EProp 
 {
-	avg;
+	ma;
+	ema;
 	kd;
+	macd;
+	yu;
 }

@@ -6,13 +6,22 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EProp = { __ename__ : true, __constructs__ : ["avg","kd"] };
-EProp.avg = ["avg",0];
-EProp.avg.toString = $estr;
-EProp.avg.__enum__ = EProp;
-EProp.kd = ["kd",1];
+var EProp = { __ename__ : true, __constructs__ : ["ma","ema","kd","macd","yu"] };
+EProp.ma = ["ma",0];
+EProp.ma.toString = $estr;
+EProp.ma.__enum__ = EProp;
+EProp.ema = ["ema",1];
+EProp.ema.toString = $estr;
+EProp.ema.__enum__ = EProp;
+EProp.kd = ["kd",2];
 EProp.kd.toString = $estr;
 EProp.kd.__enum__ = EProp;
+EProp.macd = ["macd",3];
+EProp.macd.toString = $estr;
+EProp.macd.__enum__ = EProp;
+EProp.yu = ["yu",4];
+EProp.yu.toString = $estr;
+EProp.yu.__enum__ = EProp;
 var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline"] };
 EType.volume = ["volume",0];
 EType.volume.toString = $estr;
@@ -25,6 +34,15 @@ EType.kline.toString = $estr;
 EType.kline.__enum__ = EType;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.substr = function(s,pos,len) {
+	if(pos != null && pos != 0 && len != null && len < 0) return "";
+	if(len == null) len = s.length;
+	if(pos < 0) {
+		pos = s.length + pos;
+		if(pos < 0) pos = 0;
+	} else if(len < 0) len = s.length + len - pos;
+	return s.substr(pos,len);
+};
 HxOverrides.indexOf = function(a,obj,i) {
 	var len = a.length;
 	if(i < 0) {
@@ -52,6 +70,15 @@ HxOverrides.iter = function(a) {
 };
 var Lambda = function() { };
 Lambda.__name__ = true;
+Lambda.array = function(it) {
+	var a = [];
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var i = $it0.next();
+		a.push(i);
+	}
+	return a;
+};
 Lambda.map = function(it,f) {
 	var l = new List();
 	var $it0 = $iterator(it)();
@@ -69,6 +96,14 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
+Lambda.find = function(it,f) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var v = $it0.next();
+		if(f(v)) return v;
+	}
+	return null;
+};
 var List = function() {
 	this.length = 0;
 };
@@ -84,28 +119,38 @@ List.prototype = {
 var Main = function() {
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
-	this.currentScrollX = null;
-	this.currentStockId = null;
 	this.j = $;
 	var _g = this;
-	this.slt_stockId = this.j("#slt_stockId");
-	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel")});
-	this.panelModel.addHandler(function(type,params) {
+	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId"), btn_controller : this.j("#btn_controller")});
+	this.panelView.addHandler(function(type,params) {
 		switch(type) {
+		case "on_stockid_change":
+			_g.getStockAndDraw(params.stockId);
+			break;
+		case "on_offset_change":
+			var _g1 = _g.panelModel;
+			_g1.set_currentOffset(_g1.currentOffset + params.value);
+			break;
+		}
+	});
+	this.panelModel.addHandler(function(type1,params1) {
+		switch(type1) {
+		case "on_offset_change":
+			_g.panelView.drawAllCanvas(params1.stockId,params1.offset,_g.panelModel.getAryPanel());
+			break;
+		case "on_init":
+			_g.panelView.setShowId(params1.stockId);
+			break;
 		case "on_add_panel":
-			_g.panelView.execute(model_PanelModel.ON_ADD_PANEL,params);
+			_g.panelView.addPanel(params1.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelObj);
+			break;
+		case "on_remove_panel":
+			_g.panelView.removePanel(params1.id);
 			break;
 		default:
 		}
 	});
-	this.panelModel.set_config({ panel : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]});
-	this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
-		var stockId = newValue;
-		Main.getStock(stockId,true,function(ret) {
-			_g.currentStockId = stockId;
-			_g.panelView.execute("drawAllCanvas",{ 'ary_panel' : _g.panelModel.execute("getAry"), 'stockId' : stockId});
-		});
-	}});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "volume", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "kline", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -116,66 +161,54 @@ Main.main = function() {
 	new Main();
 };
 Main.getStock = function(id,reset,cb) {
-	stockId(id,reset,cb);
+	api.stockId(id,reset,cb);
 };
-Main.drawStock = function(canvas,id,type,params) {
-	draw(canvas[0],id,Std.string(type),params);
+Main.drawStock = function(canvas,id,type,offset,count,sub) {
+	if(count == null) count = 100;
+	if(offset == null) offset = 0;
+	api.draw(canvas[0],id,Std.string(type),offset,count,sub);
 };
 Main.prototype = {
-	drawAllCanvas: function(stockId) {
+	getStockAndDraw: function(stockId) {
+		var _g = this;
+		Main.getStock(stockId,true,function(ret) {
+			_g.panelView.drawAllCanvas(stockId,null,_g.panelModel.getAryPanel());
+		});
 	}
 	,resetAllCanvasListener: function() {
 	}
 	,onHtmlTrigger: function(name,params) {
 		switch(name) {
 		case "addPanel":
-			this.addPanel(params);
+			this.panelModel.addPanel(Main.getId(),EType.kline,[{ type : EProp.ma, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 			break;
 		case "removePanel":
-			this.removePanel(params);
+			var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
+			var id = panelDom.attr("id");
+			this.panelModel.removePanel(id);
 			break;
 		}
-	}
-	,addPanel: function(params) {
-	}
-	,removePanel: function(params) {
-		var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
-		var id = panelDom.attr("id");
-		var deleteName = "k線: " + id.substr("k_".length,id.length);
-	}
-	,createAllProp: function() {
-	}
-	,createProp: function(container,props) {
-		var _g1 = this;
-		Lambda.map(props,function(prop) {
-			prop.sid = "swb_" + Std.string(prop.type);
-			prop.vid = "input_" + Std.string(prop.type);
-			var dom;
-			var _g = prop.type;
-			switch(Type.enumIndex(_g)) {
-			case 0:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
-				break;
-			case 1:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
-				break;
-			default:
-				dom = null;
-			}
-			container.append(dom);
-			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show});
-			dom.find(".easyui-textbox").textbox({ value : prop.value});
-		});
-	}
-	,onSwtChange: function(params) {
-		console.log(params);
 	}
 };
 Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
+Reflect.field = function(o,field) {
+	try {
+		return o[field];
+	} catch( e ) {
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
+		return null;
+	}
+};
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
+};
+Reflect.callMethod = function(o,func,args) {
+	return func.apply(o,args);
+};
+Reflect.isFunction = function(f) {
+	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
 };
 var Std = function() { };
 Std.__name__ = true;
@@ -184,9 +217,29 @@ Std.string = function(s) {
 };
 var Type = function() { };
 Type.__name__ = true;
+Type.createEnum = function(e,constr,params) {
+	var f = Reflect.field(e,constr);
+	if(f == null) throw new js__$Boot_HaxeError("No such constructor " + constr);
+	if(Reflect.isFunction(f)) {
+		if(params == null) throw new js__$Boot_HaxeError("Constructor " + constr + " need parameters");
+		return Reflect.callMethod(e,f,params);
+	}
+	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
+	return f;
+};
 Type.enumIndex = function(e) {
 	return e[1];
 };
+var js__$Boot_HaxeError = function(val) {
+	Error.call(this);
+	this.val = val;
+	this.message = String(val);
+	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
+};
+js__$Boot_HaxeError.__name__ = true;
+js__$Boot_HaxeError.__super__ = Error;
+js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
+});
 var js_Boot = function() { };
 js_Boot.__name__ = true;
 js_Boot.__string_rec = function(o,s) {
@@ -225,6 +278,7 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -256,6 +310,11 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
+var model_IModel = function() { };
+model_IModel.__name__ = true;
+var model_IPanel = function() { };
+model_IPanel.__name__ = true;
+model_IPanel.__interfaces__ = [model_IModel];
 var model_Model = function() {
 	this._ary_handler = [];
 };
@@ -269,9 +328,6 @@ model_Model.prototype = {
 			fn(type,params);
 		});
 	}
-	,execute: function(type,params) {
-		return null;
-	}
 	,set_config: function(config) {
 		this.config = config;
 		this.init();
@@ -282,15 +338,34 @@ model_Model.prototype = {
 };
 var model_PanelModel = function() {
 	this.ary_panel_obj = [];
+	this.currentCount = 100;
+	this.currentOffset = 0;
 	model_Model.call(this);
 };
 model_PanelModel.__name__ = true;
+model_PanelModel.__interfaces__ = [model_IPanel];
 model_PanelModel.__super__ = model_Model;
 model_PanelModel.prototype = $extend(model_Model.prototype,{
-	addPanel: function(id,type,needMove,props) {
-		var obj = { id : id, needMove : needMove, type : type, props : props, root : null};
+	getAryPanel: function() {
+		return this.ary_panel_obj;
+	}
+	,changeStockId: function(stockId) {
+		var _g = this;
+		Main.getStock(stockId,true,function(params) {
+			_g.notify(model_PanelModel.ON_CHANGE_STOCK_SUCCESS);
+		});
+	}
+	,set_currentOffset: function(offset) {
+		this.currentOffset = offset;
+		if(this.currentOffset < 0) this.currentOffset = 0;
+		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
+		return this.currentOffset;
+	}
+	,addPanel: function(id,type,props) {
+		console.log(props);
+		var obj = { id : id, type : type, props : props, root : null};
 		this.ary_panel_obj.push(obj);
-		this.notify(model_PanelModel.ON_ADD_PANEL,obj);
+		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
 	,removePanel: function(id) {
 		var _g = this;
@@ -301,64 +376,167 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			}
 			return false;
 		});
-	}
-	,execute: function(type,params) {
-		switch(type) {
-		case "getAry":
-			return this.ary_panel_obj;
-		default:
-			return null;
-		}
+		this.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : id});
 	}
 	,init: function() {
 		var _g1 = this;
 		model_Model.prototype.init.call(this);
 		var j = $;
-		Lambda.map(this.config.panel,function(obj) {
-			var _g = obj.id;
-			switch(_g) {
-			case 0:
-				_g1.addPanel(obj.id,EType.clock,false,null);
-				break;
-			case 1:
-				_g1.addPanel(obj.id,EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
-				break;
-			case 2:
-				_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
-				break;
-			default:
-				_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
-			}
+		var stock = this.config.stocks[0];
+		this.currentStockId = stock.id;
+		this.set_currentOffset(stock.offset);
+		this.currentCount = stock.count;
+		var parserSub = function(sub) {
+			Lambda.foreach(sub,function(obj) {
+				obj.type = Type.createEnum(EProp,obj.t);
+				obj.show = obj.s;
+				obj.value = { n : obj.d.n, m : obj.d.m};
+				return true;
+			});
+			return Lambda.array(sub);
+		};
+		Main.getStock(this.currentStockId,true,function(params) {
+			Lambda.map(stock.lines,function(obj1) {
+				var _g = obj1.type;
+				switch(_g) {
+				case "clock":
+					_g1.addPanel(obj1.id,EType.clock,parserSub(obj1.sub));
+					break;
+				case "volume":
+					_g1.addPanel(obj1.id,EType.volume,parserSub(obj1.sub));
+					break;
+				case "kline":
+					_g1.addPanel(obj1.id,EType.kline,parserSub(obj1.sub));
+					break;
+				default:
+					_g1.addPanel(obj1.id,EType.kline,parserSub(obj1.sub));
+				}
+			});
+			_g1.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g1.currentStockId});
 		});
 	}
+	,getSaveData: function() {
+		var _g = this;
+		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
+		var stockobj = Lambda.find(output.stocks,function(obj) {
+			if(obj.id == _g.currentStockId) return true;
+			return false;
+		});
+		stockobj.lines = [];
+		Lambda.map(this.ary_panel_obj,function(stockMap) {
+			stockobj.lines.push({ id : stockMap.id, type : Std.string(stockMap.type)});
+		});
+		return output;
+	}
 });
+var view_IPanelView = function() { };
+view_IPanelView.__name__ = true;
+view_IPanelView.__interfaces__ = [model_IModel];
 var view_PanelView = function() {
+	this.j = $;
 	model_Model.call(this);
 };
 view_PanelView.__name__ = true;
+view_PanelView.__interfaces__ = [view_IPanelView];
 view_PanelView.__super__ = model_Model;
 view_PanelView.prototype = $extend(model_Model.prototype,{
 	init: function() {
+		var _g = this;
 		model_Model.prototype.init.call(this);
 		this.mc_accordionContainer = this.config.mc_accordionContainer;
 		this.mc_accordionContainer.accordion();
 		this.tmpl_panel = this.config.tmpl_panel;
+		this.slt_stockId = this.config.slt_stockId;
+		this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
+			var stockId = newValue;
+			_g.notify(view_PanelView.ON_STOCKID_CHANGE,{ 'stockId' : stockId});
+		}});
+		this.btn_controller = this.config.btn_controller;
+		this.btn_controller.delegate(".btn_controller","click",function(e) {
+			var target = e.currentTarget;
+			var id = _g.j(target).attr("id");
+			switch(id) {
+			case "btn_first":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -10000});
+				break;
+			case "btn_prev10":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -10});
+				break;
+			case "btn_prev":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -1});
+				break;
+			case "btn_next":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 1});
+				break;
+			case "btn_next10":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 10});
+				break;
+			case "btn_last":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 10000});
+				break;
+			}
+		});
 	}
-	,execute: function(type,params) {
-		switch(type) {
-		case "on_add_panel":
-			var id = params.id;
-			var dom = this.tmpl_panel.tmpl({ id : id, type : params.type});
-			this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
-			params.root = dom;
-			break;
-		case "drawAllCanvas":
-			Lambda.map(params.ary_panel,function(stockMap) {
-				Main.drawStock(stockMap.root.find("#canvas_kline"),params.stockId,stockMap.type,{ });
-			});
-			break;
-		}
-		return null;
+	,setShowId: function(stockId) {
+		this.slt_stockId.textbox("setValue",stockId);
+	}
+	,addPanel: function(stockId,offset,count,params) {
+		var id = params.id;
+		var type = params.type;
+		var props = params.props;
+		var dom = this.tmpl_panel.tmpl({ id : id, type : type});
+		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
+		params.root = dom;
+		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
+		if(props != null) this.createProp(dom.find("#mc_propContainer"),props);
+		Main.drawStock(dom.find("#canvas_kline"),stockId,type,offset,count,{ });
+	}
+	,removePanel: function(id) {
+		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
+		this.mc_accordionContainer.accordion("remove",deleteName);
+	}
+	,drawAllCanvas: function(stockId,offset,ary_panel) {
+		if(offset == null) offset = 0;
+		Lambda.map(ary_panel,function(stockMap) {
+			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,offset,null,{ });
+		});
+	}
+	,createProp: function(container,props) {
+		var _g1 = this;
+		Lambda.foreach(props,function(prop) {
+			prop.sid = "swb_" + Std.string(prop.type);
+			prop.nid = "input_n_" + Std.string(prop.type);
+			prop.mid = "input_m_" + Std.string(prop.type);
+			var dom;
+			var _g = prop.type;
+			switch(Type.enumIndex(_g)) {
+			case 0:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case 2:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case 4:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case 3:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case 1:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			default:
+				throw new js__$Boot_HaxeError("do not enter here!");
+			}
+			container.append(dom);
+			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
+				var target = _g1.j(this);
+				console.log(target.attr("id"));
+			}});
+			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
+			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});
+			return true;
+		});
 	}
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
@@ -370,7 +548,13 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 String.__name__ = true;
 Array.__name__ = true;
 Main.id = 1;
+model_PanelModel.ON_INIT = "on_init";
+model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
+model_PanelModel.ON_OFFSET_CHANGE = "on_offset_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
+model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
+view_PanelView.ON_STOCKID_CHANGE = "on_stockid_change";
+view_PanelView.ON_OFFSET_CHANGE = "on_offset_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

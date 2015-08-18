@@ -22,23 +22,28 @@ body{
 	height:100%;
 	padding:0;
 }
+
+.btn_controller{
+	width:15px; 
+	height:15px; 
+	display:inline-block; 
+	cursor:pointer;
+}
 </style>
 <script id="tmpl_panel" type="jquery-x-tmpl">
 	{{if type == 'clock'}}
-	<div class="easyui-layout" style="width:100%;height:420px; left:0; top:0;">
+	<div class="easyui-layout" style="width:100%;height:480px; left:0; top:0;">
 	{{/if}}
 	{{if type == 'volume'}}
-	<div class="easyui-layout" style="width:100%;height:150px; left:0; top:0;">
+	<div class="easyui-layout" style="width:100%;height:180px; left:0; top:0;">
 	{{/if}}
 	{{if type == 'kline'}}
-	<div class="easyui-layout" style="width:100%;height:450px; left:0; top:0;">
+	<div class="easyui-layout" style="width:100%;height:480px; left:0; top:0;">
 	{{/if}}
-		<!--
 		<div data-options="region:'north'" style="height:40px; padding:5px;">
 			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
 		</div>
-		-->
-		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:200px; padding:10px;">
+		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
 			<!-- for script created -->
 		</div>
 		<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center',title:'k線'">
@@ -46,10 +51,10 @@ body{
 			<canvas id="canvas_kline" width=400 height=400 style="position:relative; left:50%; margin-left:-200px; top:0;"></canvas>
 			{{/if}}
 			{{if type == 'volume'}}
-			<canvas id="canvas_kline" width=2000 height=100 style="position:relative;"></canvas>
+			<canvas id="canvas_kline" width=800 height=100 style="position:relative; left:0; top:0;"></canvas>
 			{{/if}}
 			{{if type == 'kline'}}
-			<canvas id="canvas_kline" width=2000 height=400 style="position:relative; left:0; top:0;"></canvas>
+			<canvas id="canvas_kline" width=800 height=400 style="position:relative; left:0; top:0;"></canvas>
 			{{/if}}
 		</div>
 	</div>
@@ -60,9 +65,12 @@ body{
 			<input id=${sid} class="easyui-switchbutton" checked>
 		</div>
 		<div style="position:relative; display:inline-block; width:40px; ">
-			<select id=${vid} class="easyui-textbox" style="width:100%;"></select>
+			<select id=${nid} class="easyui-textbox" style="width:100%;"></select>
 		</div>
-		{{if type == 'avg' }}
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select id=${mid} class="easyui-textbox" style="width:100%;"></select>
+		</div>
+		{{if type == 'ma' }}
 		<div style="position:relative; display:inline-block; width:70px; ">日均</div>
 		{{/if}}
 		{{if type == 'kd' }}
@@ -73,8 +81,18 @@ body{
 <body>
 	<div id="mc_rootPanel" class="easyui-layout" style="width:100%;height:100%; left:0; top:0;">
         <div data-options="region:'north',split:false,title:'余氏k線圖'" style="height:70px; padding:5px;">
-			<select id="slt_stockId" class="easyui-textbox" style="width:70px;"></select>
-			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="onHtmlTrigger('addPanel')">新增K線</a>
+			<div style="position:relative; left:0; top:0; display:inline-block;">
+				<select id="slt_stockId" class="easyui-textbox" style="width:70px;"></select>
+				<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="onHtmlTrigger('addPanel')">新增K線</a>
+			</div>
+			<div id="btn_controller" style="position:relative; left:0; top:0; display:inline-block; vertical-align:middle; ">
+				<div id="btn_first" class="btn_controller pagination-first"></div>
+				<div id="btn_prev10" class="btn_controller pagination-prev"></div>
+				<div id="btn_prev" class="btn_controller pagination-prev"></div>
+				<div id="btn_next" class="btn_controller pagination-next"></div>
+				<div id="btn_next10" class="btn_controller pagination-next"></div>
+				<div id="btn_last" class="btn_controller pagination-last"></div>
+			</div>
 		</div>
         <div id="mc_mainContainer" data-options="region:'center',title:'內容'">
 			<div id="mc_accordionContainer" class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
@@ -107,46 +125,13 @@ body{
 	<script src='js/common.js'></script>
 	<script src='js/cljs/goog/base.js'></script>
 	<script src='js/cljs/cljs.js'></script>
-	
+	<script src='js/api.js'></script>
 	<script>
 	goog.require("app.stock.main")
 	</script>
-	
-	<script id="view-command">
-	// kline, volume, clock
-	// {}
-	// draw($("#canvas_kline")[0], 2330, null, {sub:[{t: "ma", d: {n: 5, color: "blue"}}, {t: "ma", d: {n: 10, color: "yellow"}} ]})
-	
-	// draw($("#canvas_kline")[0], 2330, "volume", {sub:[{t: "ma", d: {n: 5, color: "blue"}}, {t: "ma", d: {n: 10, color: "yellow"}} ]})
-	
+	<script id="test">
 	var cbid = 0
 	var cbs = {}
-	
-	function draw( canvas, id, type, params ){
-		console.log( canvas );
-		params.canvas = canvas
-		params.id = id
-		params.type = type
-		common.onView.onNext(["draw", params])
-	}
-	
-	function stockId( id, reset, cb ){
-		var params = {
-			id: id,
-			date: "2015/1/1",
-			reset: reset
-		}
-		params.cbid = cbid++
-		cbs[ params.cbid+"" ] = cb
-		common.onView.onNext(["stockId", params])
-	}
-	
-	function print(){
-		common.onView.onNext(["print"])
-	}
-	</script>
-	
-	<script id="test">
 	
 	common.onModel.subscribe(function(param){
 		var type = param[0]
@@ -161,35 +146,6 @@ body{
 	common.onView.subscribe(function(data){
 		console.log( data )
 	})
-	/*
-	setTimeout(function(){
-		
-		stockId( 2330, false, function(){
-			
-			draw($("#canvas_exchange")[0], 2330, "volume", 
-				{
-					sub:[
-						{t: "ma", d: {n: 5, color: "blue"}}
-					]
-				}
-			)
-			
-			draw($("#canvas_clock")[0], 2330, "clock", {})
-			
-			draw($("#canvas_kline")[0], 2330, null, 
-				{
-					sub:[
-						{t: "ma", d: {n: 5, color: "blue"}}, 
-						{t: "ma", d: {n: 10, color: "yellow"}} 
-					]
-				}
-			)
-			
-		})
-		
-	}, 1000)
-	
-	*/
 	</script>
 	
 	<script src="js/haxe.js"></script>
