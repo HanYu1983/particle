@@ -110,21 +110,21 @@ var Main = function() {
 			_g.getStockAndDraw(params.stockId);
 			break;
 		case "on_offset_change":
-			_g.panelModel.changeOffset(params.value);
+			var _g1 = _g.panelModel;
+			_g1.set_currentOffset(_g1.currentOffset + params.value);
 			break;
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
 		switch(type1) {
 		case "on_offset_change":
-			console.log(params1);
 			_g.panelView.drawAllCanvas(params1.stockId,params1.offset,_g.panelModel.getAryPanel());
 			break;
 		case "on_init":
 			_g.panelView.setShowId(params1.stockId);
 			break;
 		case "on_add_panel":
-			_g.panelView.addPanel(params1.stockId,params1.panelObj);
+			_g.panelView.addPanel(params1.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelObj);
 			break;
 		case "on_remove_panel":
 			_g.panelView.removePanel(params1.id);
@@ -132,7 +132,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", lines : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -284,9 +284,9 @@ model_Model.prototype = {
 	}
 };
 var model_PanelModel = function() {
-	this.currentOffset = 0;
-	this.currentStockId = null;
 	this.ary_panel_obj = [];
+	this.currentCount = 100;
+	this.currentOffset = 0;
 	model_Model.call(this);
 };
 model_PanelModel.__name__ = true;
@@ -302,10 +302,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			_g.notify(model_PanelModel.ON_CHANGE_STOCK_SUCCESS);
 		});
 	}
-	,changeOffset: function(offset) {
-		this.currentOffset += offset;
+	,set_currentOffset: function(offset) {
+		this.currentOffset = offset;
 		if(this.currentOffset < 0) this.currentOffset = 0;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
+		return this.currentOffset;
 	}
 	,addPanel: function(id,type,needMove,props) {
 		var obj = { 'id' : id, 'needMove' : needMove, 'type' : type, 'props' : props, 'root' : null};
@@ -324,38 +325,43 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : id});
 	}
 	,init: function() {
-		var _g = this;
+		var _g1 = this;
 		model_Model.prototype.init.call(this);
 		var j = $;
+		var stock = this.config.stocks[0];
+		this.currentStockId = stock.id;
+		this.set_currentOffset(stock.offset);
+		this.currentCount = stock.count;
 		Main.getStock(this.config.stocks[0].id,true,function(params) {
-			_g.currentStockId = _g.config.stocks[0].id;
-			Lambda.map(_g.config.stocks[0].lines,function(obj) {
-				var _g1 = obj.id;
-				switch(_g1) {
+			Lambda.map(stock.lines,function(obj) {
+				var _g = obj.id;
+				switch(_g) {
 				case 0:
-					_g.addPanel(obj.id,EType.clock,false,null);
+					_g1.addPanel(obj.id,EType.clock,false,null);
 					break;
 				case 1:
-					_g.addPanel(obj.id,EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+					_g1.addPanel(obj.id,EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 					break;
 				case 2:
-					_g.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+					_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 					break;
 				default:
-					_g.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+					_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 				}
 			});
-			_g.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g.currentStockId});
+			_g1.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g1.currentStockId});
 		});
 	}
 	,getSaveData: function() {
 		var _g = this;
 		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
+		console.log(output);
 		var stockobj = Lambda.find(output.stocks,function(obj) {
 			if(obj.id == _g.currentStockId) return true;
 			return false;
 		});
 		stockobj.lines = [];
+		console.log(output);
 		Lambda.map(this.ary_panel_obj,function(stockMap) {
 			stockobj.lines.push({ id : stockMap.id, type : Std.string(stockMap.type)});
 		});
@@ -413,7 +419,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	,setShowId: function(stockId) {
 		this.slt_stockId.textbox("setValue",stockId);
 	}
-	,addPanel: function(stockId,params) {
+	,addPanel: function(stockId,offset,count,params) {
 		var id = params.id;
 		var type = params.type;
 		var props = params.props;
@@ -422,7 +428,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		params.root = dom;
 		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
 		if(props != null) this.createProp(dom.find("#mc_propContainer"),props);
-		Main.drawStock(dom.find("#canvas_kline"),stockId,type,null,null,{ });
+		Main.drawStock(dom.find("#canvas_kline"),stockId,type,offset,count,{ });
 	}
 	,removePanel: function(id) {
 		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);

@@ -33,7 +33,7 @@ class Main
 				case PanelView.ON_STOCKID_CHANGE:
 					getStockAndDraw( params.stockId );
 				case PanelView.ON_OFFSET_CHANGE:
-					panelModel.changeOffset( params.value );
+					panelModel.currentOffset += params.value;
 					
 			}
 		});
@@ -41,12 +41,11 @@ class Main
 		panelModel.addHandler( function( type, params ) {
 			switch( type ) {
 				case PanelModel.ON_OFFSET_CHANGE:
-					trace( params );
 					panelView.drawAllCanvas( params.stockId, params.offset, panelModel.getAryPanel() );
 				case PanelModel.ON_INIT:
 					panelView.setShowId( params.stockId );
 				case PanelModel.ON_ADD_PANEL:
-					panelView.addPanel( params.stockId, params.panelObj );
+					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
 				case PanelModel.ON_REMOVE_PANEL:
 					panelView.removePanel( params.id );
 				case _:
@@ -59,6 +58,8 @@ class Main
 			stocks:[
 				{
 					id:'2330',
+					count:200,
+					offset:13,
 					lines:[
 						{
 							id:0,

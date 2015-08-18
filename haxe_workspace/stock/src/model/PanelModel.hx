@@ -12,9 +12,12 @@ class PanelModel extends Model implements IPanel
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	
+	public var currentStockId(default, default):String;
+	public var currentOffset(default, set):Int = 0;
+	public var currentCount(default, default):Int = 100;
+	
 	var ary_panel_obj = new Array<Dynamic>();
-	var currentStockId = null;
-	var currentOffset = 0;
+	
 
 	public function new() 
 	{
@@ -32,10 +35,11 @@ class PanelModel extends Model implements IPanel
 		});
 	}
 	
-	public function changeOffset( offset:Int ):Void {
-		currentOffset += offset;
+	function set_currentOffset( offset:Int ) {
+		currentOffset = offset;
 		if ( currentOffset < 0 ) currentOffset = 0;
 		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
+		return currentOffset;
 	}
 	
 	public function addPanel( id:Dynamic, type:EType, needMove:Bool, props:Array<Dynamic> ):Void{
@@ -68,11 +72,14 @@ class PanelModel extends Model implements IPanel
 		
 		var j = untyped __js__('$');
 		
+		var stock = config.stocks[0];
+		currentStockId = stock.id;
+		currentOffset = stock.offset;
+		currentCount = stock.count;
+			
 		Main.getStock( config.stocks[0].id, true, function( params:Dynamic ) {
 			
-			currentStockId = config.stocks[0].id;
-			
-			Lambda.map( config.stocks[0].lines, function( obj ) {
+			Lambda.map( stock.lines, function( obj ) {
 				switch( obj.id ) {
 					case 0:
 						addPanel( obj.id, EType.clock, false, null );
@@ -95,11 +102,15 @@ class PanelModel extends Model implements IPanel
 			stocks:config.stocks
 		}
 		
+		trace( output );
+		
 		var stockobj:Dynamic = Lambda.find( output.stocks, function( obj ) {
 			if ( obj.id == currentStockId ) return true;
 			return false;
 		});
 		stockobj.lines = [];
+		
+		trace( output );
 		
 		Lambda.map( ary_panel_obj, function( stockMap ) {
 			stockobj.lines.push( {

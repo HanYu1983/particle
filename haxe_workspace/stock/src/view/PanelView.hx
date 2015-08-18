@@ -67,7 +67,7 @@ class PanelView extends Model implements IPanelView
 		slt_stockId.textbox( 'setValue', stockId );
 	}
 	
-	public function addPanel( stockId:String, params:Dynamic ):Void {
+	public function addPanel( stockId:String, offset:Int, count:Int, params:Dynamic ):Void{
 		var id = params.id;
 		var type = params.type;
 		var props = params.props;
@@ -87,7 +87,7 @@ class PanelView extends Model implements IPanelView
 		if( props != null )
 			createProp( dom.find( '#mc_propContainer' ), props );
 			
-		Main.drawStock( dom.find( '#canvas_kline' ), stockId, type, { } );
+		Main.drawStock( dom.find( '#canvas_kline' ), stockId, type, offset, count, { } );
 	}
 	
 	public function removePanel( id:String ):Void {

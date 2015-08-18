@@ -24,16 +24,53 @@ class TestModel extends TestCase
 			stocks:[
 				{
 					id:'2330',
+					count:200,
+					offset:13,
 					lines:[
 						{
 							id:0,
-							type:'clock'
+							type:'clock',
+							sub:[
+								{t: "ma", d: {n: 5, color: "blue"}}, 
+								{t: "ma", d: {n: 10, color: "yellow"}} 
+							]
+						},
+						{
+							id:1,
+							type:'volume',
+							sub:[
+								{t: "ma", d: {n: 5, color: "blue"}}, 
+								{t: "ma", d: {n: 10, color: "yellow"}} 
+							]
+						},
+						{
+							id:2,
+							type:'kline',
+							sub:[
+								{t: "ma", d: {n: 5, color: "blue"}}, 
+								{t: "ma", d: {n: 10, color: "yellow"}} 
+							]
+						},
+						{
+							id:3,
+							type:'kline',
+							sub:[
+								{t: "ma", d: {n: 5, color: "blue"}}, 
+								{t: "ma", d: {n: 10, color: "yellow"}} 
+							]
+						},
+						{
+							id:4,
+							type:'kline',
+							sub:[
+								{t: "ma", d: {n: 5, color: "blue"}}, 
+								{t: "ma", d: {n: 10, color: "yellow"}} 
+							]
 						}
 					]
 				}
 			]
 		};
-		
 		
 		var output = panelModel.getSaveData();
 		
