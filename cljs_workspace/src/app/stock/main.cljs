@@ -28,6 +28,7 @@
           :onModel onModel
           :onSys onSys
           :store {}
+          :temp {}
         }
       ]
       (let [[v ch] (a/alts! [onView onSys])]

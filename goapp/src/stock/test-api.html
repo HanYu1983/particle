@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<title>test-api</title>
+	</head>
+	<body>
+		<form name="info">
+			<input name="stockId" value=2330></input>
+			<input type="number" name="offset" value=0></input>
+			<input type="number" name="cnt" value=100></input>
+		</form>
+		<button onclick="api.stockId(document.info.stockId.value)">load</button>
+		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'kline', document.info.offset.value, document.info.cnt.value, {} )">draw</button>
+		
+		<br>
+		<canvas name="kline" id="kline" width=1000 height=300></canvas>
+		
+		
+		<script type="text/javascript" src="js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script src='js/lib/async.js'></script>
+		<script src='js/lib/rx.all.min.js'></script>
+		<script src='js/lib/three.min.js'></script>
+		<script src='js/lib/underscore-min.js'></script>
+		<script src='js/common.js'></script>
+		<script src='js/cljs/goog/base.js'></script>
+		<script src='js/cljs/cljs.js'></script>
+		<script src='js/api.js'></script>
+		<script>
+		goog.require("app.stock.main")
+		</script>
+		
+		
+	</body>
+</html>
