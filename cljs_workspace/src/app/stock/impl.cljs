@@ -184,6 +184,14 @@
         (cmd/loadStock onSys stock-id date data)
         ctx))))
         
+(defmethod abstract/onViewCommand "stockInfo" [_ data ctx]
+  (let [onSys (:onSys ctx)
+        stock-id (aget data "id")
+        stock-info (get-in ctx [:temp "stocks" stock-id])]
+    (am/go
+      (a/>! onSys ["view" [nil (clj->js stock-info) data]])))
+  ctx)
+        
 (defmethod abstract/onViewCommand "load" [type data {onSys :onSys :as ctx}]
   (let [fbid (aget data "fbid")]
     (cmd/loadUser onSys fbid data))
@@ -192,6 +200,5 @@
 (defmethod abstract/onViewCommand "save" [type data {onSys :onSys :as ctx}]
   (let [fbid (aget data "fbid")
         user (aget data "user")]
-    (cmd/saveUser onSys fbid user data)
-    )
+    (cmd/saveUser onSys fbid user data))
   ctx)

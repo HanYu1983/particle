@@ -62,6 +62,30 @@ var api = {};
 		cbs[ params.cbid+"" ] = cb
 		common.onView.onNext(["stockId", params])
 	}
+	
+	/**
+	取得股票資料
+	cb: 
+	function( info ){
+		info : {
+			err: err msg
+			data: [
+				state,
+				[[date open high low close volume]],
+				stockId,
+				date
+			]
+		}
+	}
+	*/
+	function stockInfo( id, cb ){
+		var params = {
+			id: id
+		}
+		params.cbid = cbid++
+		cbs[ params.cbid+"" ] = cb
+		common.onView.onNext(["stockInfo", params])
+	}
 
 	/**
 	印出資料在console。開發者用
@@ -98,6 +122,7 @@ var api = {};
 	
 	pkg.draw = draw
 	pkg.stockId = stockId
+	pkg.stockInfo = stockInfo
 	pkg.print = print
 	pkg.load = load
 	pkg.save = save
