@@ -27,7 +27,7 @@ var api = {};
 	count: k線的數量
 	sub: 
 		[{
-			t: ma | ema | kd | macd | yu
+			t: ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 			d: {
 				n: int,
 				m: int,
@@ -36,13 +36,15 @@ var api = {};
 		}]
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
-		sub = sub || {}
-		sub.canvas = canvas
-		sub.id = id
-		sub.type = type
-		sub.offset = offset
-		sub.count = count
-		common.onView.onNext(["draw", sub])
+		var params = {
+			canvas : canvas,
+			id: id,
+			type: type,
+			offset: offset,
+			count: count,
+			sub: sub
+		}
+		common.onView.onNext(["draw", params])
 	}
 	
 	/**
@@ -59,6 +61,30 @@ var api = {};
 		params.cbid = cbid++
 		cbs[ params.cbid+"" ] = cb
 		common.onView.onNext(["stockId", params])
+	}
+	
+	/**
+	取得股票資料
+	cb: 
+	function( info ){
+		info : {
+			err: err msg
+			data: [
+				state,
+				[[date open high low close volume]],
+				stockId,
+				date
+			]
+		}
+	}
+	*/
+	function stockInfo( id, cb ){
+		var params = {
+			id: id
+		}
+		params.cbid = cbid++
+		cbs[ params.cbid+"" ] = cb
+		common.onView.onNext(["stockInfo", params])
 	}
 
 	/**
@@ -96,6 +122,7 @@ var api = {};
 	
 	pkg.draw = draw
 	pkg.stockId = stockId
+	pkg.stockInfo = stockInfo
 	pkg.print = print
 	pkg.load = load
 	pkg.save = save

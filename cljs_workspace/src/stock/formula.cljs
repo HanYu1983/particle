@@ -10,7 +10,9 @@
 (defn offset-seq [vs]
   (map #(- %2 %1) vs (rest vs)))
 
-(defn sma-seq [n vs]
+(defn sma-seq 
+  "移動平均線"
+  [n vs]
   (when (>= (count vs) n)
     (cons 
       (->
@@ -18,26 +20,9 @@
         (/ n))
       (lazy-seq (sma-seq n (rest vs))))))
       
-(comment (defn ema-seq
-  "點線賺錢術的 Exponentional Moving Average 指數移動平均線
-  使用了加權型式，w為1可用於計算MACD
-  這個計算上較為正確，和yahoo股市算的很接近"
-  [n w vs]
-  (let [v (first (sma-seq n vs))]
-    (->>
-      (iterate
-        (fn [[prev-ema vs idx]]
-          (let [v (first vs)]
-            [
-              (+ (* v (/ (+ w 1) (+ w idx))) (* prev-ema (/ (dec idx) (+ w idx))))
-              (rest vs) 
-              (inc idx)
-            ])) 
-        [v (rest vs) (inc 1)])
-      (map first)
-      (take (count vs))))))
-      
-(defn ema-seq [n vs]
+(defn ema-seq 
+  "指數移動平均線"
+  [n vs]
   (let [fv (first (sma-seq n vs))
         alpha (/ 2 (inc n))]
     (reductions
@@ -46,7 +31,9 @@
       fv
       (drop n vs))))
       
-(defn macd-dif [n m kline]
+(defn macd-dif 
+  "指數差離指標"
+  [n m kline]
   (->>
     (map
       -
@@ -82,7 +69,9 @@
           offsets)]
     vs))
     
-(defn yu-clock [n kline]
+(defn yu-clock
+  "余氏背離線"
+  [n kline]
   (let [ps (sma-seq n (stl/mid kline))
         ps-avg (average ps)
         ps-sd (StandardDeviation ps-avg ps)
@@ -298,3 +287,34 @@
           sd (StandardDeviation avg vs)
           z (z-score avg sd vs)]
       (cons (first z) (lazy-seq (yu-gv n (rest kline)))))))
+      
+
+(defn rsv-seq
+  "未成熟隨機值
+  用來計算KD線" 
+  [n kline]
+  (when (> (count kline) n)
+    (let [group (take n kline)
+          [_ _ _ _ ct _] (first group)
+          L 
+          (apply
+            min
+            (map
+              (fn [[_ _ _ low _ _]]
+                low)
+              group))
+          H
+          (apply
+            max
+            (map
+              (fn [[_ _ high _ _ _]]
+                high)
+              group))
+          v 
+          (->
+            (* 
+              (- ct L) 
+              (/ 1 (- H L))
+              100)
+            int)]
+      (cons v (lazy-seq (rsv-seq n (rest kline)))))))
