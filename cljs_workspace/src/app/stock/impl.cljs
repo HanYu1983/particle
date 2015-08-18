@@ -21,7 +21,6 @@
     ctx))
     
 (defmethod abstract/onSystem "loadStock" [type data ctx]
-  (.log js/console "onSystem view")
   (let [[err kline id date request] data]
     (am/go
       (a/>! (:onModel ctx) (array type (js-obj "id" id "request" request))))
