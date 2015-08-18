@@ -46,7 +46,8 @@ class Main
 			}
 		});
 		
-		var config = {
+		//從model端來的資料(暫定)
+		panelModel.config = {
 			facebookId:'12233',
 			stocks:[
 				{
@@ -96,9 +97,6 @@ class Main
 				}
 			]
 		};
-		
-		//從model端來的資料(暫定)
-		panelModel.config = config;
 		
 		Reflect.setField( Browser.window, 'onHtmlTrigger', onHtmlTrigger );
 	}
@@ -155,10 +153,10 @@ class Main
 			case 'removePanel':
 				var panelDom = j( params.currentTarget ).parent().parent().parent().parent();
 				var id = panelDom.attr( 'id' );
-				trace( id );
 				panelModel.removePanel( id );
 		}
 	}
+	
 	static var id = 1;
 	
 	static function getId() {
@@ -171,11 +169,11 @@ class Main
 	}
 	
 	public static function getStock( id:String, reset:Bool, cb:Dynamic -> Void ) {
-		untyped __js__('stockId')( id, reset, cb );
+		untyped __js__('api.stockId')( id, reset, cb );
 	}
 	
-	public static function drawStock( canvas:Dynamic, id:String, type:EType, params:Dynamic ) {
-		untyped __js__('draw')( canvas[0], id, Std.string( type ), params );
+	public static function drawStock( canvas:Dynamic, id:String, type:EType, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
+		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 }
 

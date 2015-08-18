@@ -122,46 +122,13 @@ body{
 	<script src='js/common.js'></script>
 	<script src='js/cljs/goog/base.js'></script>
 	<script src='js/cljs/cljs.js'></script>
-	
+	<script src='js/api.js'></script>
 	<script>
 	goog.require("app.stock.main")
 	</script>
-	
-	<script id="view-command">
-	// kline, volume, clock
-	// {}
-	// draw($("#canvas_kline")[0], 2330, null, {sub:[{t: "ma", d: {n: 5, color: "blue"}}, {t: "ma", d: {n: 10, color: "yellow"}} ]})
-	
-	// draw($("#canvas_kline")[0], 2330, "volume", {sub:[{t: "ma", d: {n: 5, color: "blue"}}, {t: "ma", d: {n: 10, color: "yellow"}} ]})
-	
+	<script id="test">
 	var cbid = 0
 	var cbs = {}
-	
-	function draw( canvas, id, type, params ){
-		console.log( canvas );
-		params.canvas = canvas
-		params.id = id
-		params.type = type
-		common.onView.onNext(["draw", params])
-	}
-	
-	function stockId( id, reset, cb ){
-		var params = {
-			id: id,
-			date: "2015/1/1",
-			reset: reset
-		}
-		params.cbid = cbid++
-		cbs[ params.cbid+"" ] = cb
-		common.onView.onNext(["stockId", params])
-	}
-	
-	function print(){
-		common.onView.onNext(["print"])
-	}
-	</script>
-	
-	<script id="test">
 	
 	common.onModel.subscribe(function(param){
 		var type = param[0]
@@ -176,35 +143,6 @@ body{
 	common.onView.subscribe(function(data){
 		console.log( data )
 	})
-	/*
-	setTimeout(function(){
-		
-		stockId( 2330, false, function(){
-			
-			draw($("#canvas_exchange")[0], 2330, "volume", 
-				{
-					sub:[
-						{t: "ma", d: {n: 5, color: "blue"}}
-					]
-				}
-			)
-			
-			draw($("#canvas_clock")[0], 2330, "clock", {})
-			
-			draw($("#canvas_kline")[0], 2330, null, 
-				{
-					sub:[
-						{t: "ma", d: {n: 5, color: "blue"}}, 
-						{t: "ma", d: {n: 10, color: "yellow"}} 
-					]
-				}
-			)
-			
-		})
-		
-	}, 1000)
-	
-	*/
 	</script>
 	
 	<script src="js/haxe.js"></script>

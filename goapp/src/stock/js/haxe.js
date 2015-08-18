@@ -125,8 +125,7 @@ var Main = function() {
 		default:
 		}
 	});
-	var config = { facebookId : "12233", stocks : [{ id : "2330", lines : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]}]};
-	this.panelModel.set_config(config);
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", lines : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -137,10 +136,12 @@ Main.main = function() {
 	new Main();
 };
 Main.getStock = function(id,reset,cb) {
-	stockId(id,reset,cb);
+	api.stockId(id,reset,cb);
 };
-Main.drawStock = function(canvas,id,type,params) {
-	draw(canvas[0],id,Std.string(type),params);
+Main.drawStock = function(canvas,id,type,offset,count,sub) {
+	if(count == null) count = 100;
+	if(offset == null) offset = 0;
+	api.draw(canvas[0],id,Std.string(type),offset,count,sub);
 };
 Main.prototype = {
 	getStockAndDraw: function(stockId) {
@@ -159,7 +160,6 @@ Main.prototype = {
 		case "removePanel":
 			var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
 			var id = panelDom.attr("id");
-			console.log(id);
 			this.panelModel.removePanel(id);
 			break;
 		}
@@ -384,7 +384,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		params.root = dom;
 		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
 		if(props != null) this.createProp(dom.find("#mc_propContainer"),props);
-		Main.drawStock(dom.find("#canvas_kline"),stockId,type,{ });
+		Main.drawStock(dom.find("#canvas_kline"),stockId,type,null,null,{ });
 	}
 	,removePanel: function(id) {
 		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
@@ -392,7 +392,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	}
 	,drawAllCanvas: function(stockId,ary_panel) {
 		Lambda.map(ary_panel,function(stockMap) {
-			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,{ });
+			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,null,null,{ });
 		});
 	}
 	,createProp: function(container,props) {
