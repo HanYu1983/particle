@@ -24,18 +24,25 @@ class Main
 		panelView.config = {
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
-			slt_stockId:j( '#slt_stockId' )
+			slt_stockId:j( '#slt_stockId' ),
+			btn_controller:j( '#btn_controller' )
 		}
 		
 		panelView.addHandler( function( type, params ) {
 			switch( type ) {
 				case PanelView.ON_STOCKID_CHANGE:
 					getStockAndDraw( params.stockId );
+				case PanelView.ON_OFFSET_CHANGE:
+					panelModel.changeOffset( params.value );
+					
 			}
 		});
 		
 		panelModel.addHandler( function( type, params ) {
 			switch( type ) {
+				case PanelModel.ON_OFFSET_CHANGE:
+					trace( params );
+					panelView.drawAllCanvas( params.stockId, params.offset, panelModel.getAryPanel() );
 				case PanelModel.ON_INIT:
 					panelView.setShowId( params.stockId );
 				case PanelModel.ON_ADD_PANEL:

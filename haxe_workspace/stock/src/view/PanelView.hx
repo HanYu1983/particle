@@ -10,12 +10,14 @@ import model.PanelModel;
 class PanelView extends Model implements IPanelView
 {
 	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
+	public static var ON_OFFSET_CHANGE = 'on_offset_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	
+	var tmpl_panel:Dynamic;
 	var slt_stockId:Dynamic;
 	var mc_accordionContainer:Dynamic;
-	var tmpl_panel:Dynamic;
+	var btn_controller:Dynamic;
 	
 	public function new() 
 	{
@@ -37,6 +39,26 @@ class PanelView extends Model implements IPanelView
 			onChange:function(newValue, oldValue) {
 				var stockId = newValue;
 				notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
+			}
+		});
+		
+		btn_controller = config.btn_controller;
+		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
+			var target = e.currentTarget;
+			var id = j( target ).attr( 'id' );
+			switch( id ) {
+				case 'btn_first':
+					notify( ON_OFFSET_CHANGE, { value:-10000 } );
+				case 'btn_prev10':
+					notify( ON_OFFSET_CHANGE, { value:-10 } );
+				case 'btn_prev':
+					notify( ON_OFFSET_CHANGE, { value:-1 } );
+				case 'btn_next':
+					notify( ON_OFFSET_CHANGE, { value:1 } );
+				case 'btn_next10':
+					notify( ON_OFFSET_CHANGE, { value:10 } );
+				case 'btn_last':
+					notify( ON_OFFSET_CHANGE, { value:10000 } );
 			}
 		});
 	}
@@ -73,9 +95,9 @@ class PanelView extends Model implements IPanelView
 		mc_accordionContainer.accordion( 'remove', deleteName );
 	}
 	
-	public function drawAllCanvas( stockId:String, ary_panel:Array<Dynamic> ):Void {
+	public function drawAllCanvas( stockId:String, offset:Int = 0, ary_panel:Array<Dynamic> ):Void {
 		Lambda.map( ary_panel, function( stockMap ) {
-			Main.drawStock( stockMap.root.find( '#canvas_kline' ), stockId, stockMap.type, { } );
+			Main.drawStock( stockMap.root.find( '#canvas_kline' ), stockId, stockMap.type, offset, { } );
 		});
 	}
 

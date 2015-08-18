@@ -103,16 +103,23 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	this.j = $;
 	var _g = this;
-	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId")});
+	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId"), btn_controller : this.j("#btn_controller")});
 	this.panelView.addHandler(function(type,params) {
 		switch(type) {
 		case "on_stockid_change":
 			_g.getStockAndDraw(params.stockId);
 			break;
+		case "on_offset_change":
+			_g.panelModel.changeOffset(params.value);
+			break;
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
 		switch(type1) {
+		case "on_offset_change":
+			console.log(params1);
+			_g.panelView.drawAllCanvas(params1.stockId,params1.offset,_g.panelModel.getAryPanel());
+			break;
 		case "on_init":
 			_g.panelView.setShowId(params1.stockId);
 			break;
@@ -147,7 +154,7 @@ Main.prototype = {
 	getStockAndDraw: function(stockId) {
 		var _g = this;
 		Main.getStock(stockId,true,function(ret) {
-			_g.panelView.drawAllCanvas(stockId,_g.panelModel.getAryPanel());
+			_g.panelView.drawAllCanvas(stockId,null,_g.panelModel.getAryPanel());
 		});
 	}
 	,resetAllCanvasListener: function() {
@@ -277,6 +284,7 @@ model_Model.prototype = {
 	}
 };
 var model_PanelModel = function() {
+	this.currentOffset = 0;
 	this.currentStockId = null;
 	this.ary_panel_obj = [];
 	model_Model.call(this);
@@ -293,6 +301,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		Main.getStock(stockId,true,function(params) {
 			_g.notify(model_PanelModel.ON_CHANGE_STOCK_SUCCESS);
 		});
+	}
+	,changeOffset: function(offset) {
+		this.currentOffset += offset;
+		if(this.currentOffset < 0) this.currentOffset = 0;
+		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 	}
 	,addPanel: function(id,type,needMove,props) {
 		var obj = { 'id' : id, 'needMove' : needMove, 'type' : type, 'props' : props, 'root' : null};
@@ -371,6 +384,31 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			var stockId = newValue;
 			_g.notify(view_PanelView.ON_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
+		this.btn_controller = this.config.btn_controller;
+		this.btn_controller.delegate(".btn_controller","click",function(e) {
+			var target = e.currentTarget;
+			var id = _g.j(target).attr("id");
+			switch(id) {
+			case "btn_first":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -10000});
+				break;
+			case "btn_prev10":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -10});
+				break;
+			case "btn_prev":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -1});
+				break;
+			case "btn_next":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 1});
+				break;
+			case "btn_next10":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 10});
+				break;
+			case "btn_last":
+				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 10000});
+				break;
+			}
+		});
 	}
 	,setShowId: function(stockId) {
 		this.slt_stockId.textbox("setValue",stockId);
@@ -390,9 +428,10 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
 		this.mc_accordionContainer.accordion("remove",deleteName);
 	}
-	,drawAllCanvas: function(stockId,ary_panel) {
+	,drawAllCanvas: function(stockId,offset,ary_panel) {
+		if(offset == null) offset = 0;
 		Lambda.map(ary_panel,function(stockMap) {
-			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,null,null,{ });
+			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,offset,null,{ });
 		});
 	}
 	,createProp: function(container,props) {
@@ -432,9 +471,11 @@ Array.__name__ = true;
 Main.id = 1;
 model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
+model_PanelModel.ON_OFFSET_CHANGE = "on_offset_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 view_PanelView.ON_STOCKID_CHANGE = "on_stockid_change";
+view_PanelView.ON_OFFSET_CHANGE = "on_offset_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

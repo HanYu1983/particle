@@ -8,11 +8,13 @@ class PanelModel extends Model implements IPanel
 {
 	public static var ON_INIT = 'on_init';
 	public static var ON_CHANGE_STOCK_SUCCESS = 'on_change_stock_success';
+	public static var ON_OFFSET_CHANGE = 'on_offset_change';
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	
 	var ary_panel_obj = new Array<Dynamic>();
 	var currentStockId = null;
+	var currentOffset = 0;
 
 	public function new() 
 	{
@@ -28,6 +30,12 @@ class PanelModel extends Model implements IPanel
 		Main.getStock( stockId, true, function( params:Dynamic ) {
 			notify( ON_CHANGE_STOCK_SUCCESS );
 		});
+	}
+	
+	public function changeOffset( offset:Int ):Void {
+		currentOffset += offset;
+		if ( currentOffset < 0 ) currentOffset = 0;
+		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
 	}
 	
 	public function addPanel( id:Dynamic, type:EType, needMove:Bool, props:Array<Dynamic> ):Void{
