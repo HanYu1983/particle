@@ -10,10 +10,8 @@ interface IPanel extends IModel
 	var currentOffset(default, set):Int;
 	var currentCount(default, default):Int;
 	
-	//function changeStockId( stockId:String ):Void;
-	///function changeOffset( offset:Int ):Void;
 	function getAryPanel():Array<Dynamic>;
-	function addPanel( id:Dynamic, type:EType, needMove:Bool, props:Array<Dynamic> ):Void;
+	function addPanel( id:Dynamic, type:EType, props:Array<Dynamic> ):Void;
 	function removePanel( id:Dynamic ):Void;
 	function getSaveData():Dynamic;
 }

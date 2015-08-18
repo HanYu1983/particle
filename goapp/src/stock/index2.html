@@ -43,7 +43,7 @@ body{
 		<div data-options="region:'north'" style="height:40px; padding:5px;">
 			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
 		</div>
-		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:250px; padding:10px;">
+		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
 			<!-- for script created -->
 		</div>
 		<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center',title:'k線'">
@@ -65,9 +65,12 @@ body{
 			<input id=${sid} class="easyui-switchbutton" checked>
 		</div>
 		<div style="position:relative; display:inline-block; width:40px; ">
-			<select id=${vid} class="easyui-textbox" style="width:100%;"></select>
+			<select id=${nid} class="easyui-textbox" style="width:100%;"></select>
 		</div>
-		{{if type == 'avg' }}
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select id=${mid} class="easyui-textbox" style="width:100%;"></select>
+		</div>
+		{{if type == 'ma' }}
 		<div style="position:relative; display:inline-block; width:70px; ">日均</div>
 		{{/if}}
 		{{if type == 'kd' }}

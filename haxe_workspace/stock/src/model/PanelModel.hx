@@ -42,13 +42,13 @@ class PanelModel extends Model implements IPanel
 		return currentOffset;
 	}
 	
-	public function addPanel( id:Dynamic, type:EType, needMove:Bool, props:Array<Dynamic> ):Void{
+	public function addPanel( id:Dynamic, type:EType, props:Array<Dynamic> ):Void {
+	trace( 	props );
 		var obj = {
-			'id':id,
-			'needMove':needMove,
-			'type':type,
-			'props':props,
-			'root':null //add by panelView
+			id:id,
+			type:type,
+			props:props,
+			root:null //add by panelView
 		};
 		ary_panel_obj.push( obj );
 		
@@ -76,19 +76,32 @@ class PanelModel extends Model implements IPanel
 		currentStockId = stock.id;
 		currentOffset = stock.offset;
 		currentCount = stock.count;
+		
+		function parserSub( sub ):Array<Dynamic> {
+			Lambda.foreach( sub, function( obj:Dynamic ) {
+				obj.type = Type.createEnum( EProp, obj.t );
+				obj.show = obj.s;
+				obj.value = {
+					n:obj.d.n,
+					m:obj.d.m
+				}
+				return true;
+			});
+			return Lambda.array( sub );
+		}
 			
-		Main.getStock( config.stocks[0].id, true, function( params:Dynamic ) {
+		Main.getStock( currentStockId, true, function( params:Dynamic ) {
 			
-			Lambda.map( stock.lines, function( obj ) {
-				switch( obj.id ) {
-					case 0:
-						addPanel( obj.id, EType.clock, false, null );
-					case 1:
-						addPanel( obj.id, EType.volume, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
-					case 2:
-						addPanel( obj.id, EType.kline, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
+			Lambda.map( stock.lines, function( obj:Dynamic ) {
+				switch( obj.type ) {
+					case 'clock':
+						addPanel( obj.id, EType.clock, parserSub( obj.sub ) );
+					case 'volume':
+						addPanel( obj.id, EType.volume, parserSub( obj.sub ) );
+					case 'kline':
+						addPanel( obj.id, EType.kline, parserSub( obj.sub ) );
 					case _:
-						addPanel( obj.id, EType.kline, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
+						addPanel( obj.id, EType.kline, parserSub( obj.sub ) );
 				}
 			});
 			
@@ -102,15 +115,11 @@ class PanelModel extends Model implements IPanel
 			stocks:config.stocks
 		}
 		
-		trace( output );
-		
 		var stockobj:Dynamic = Lambda.find( output.stocks, function( obj ) {
 			if ( obj.id == currentStockId ) return true;
 			return false;
 		});
 		stockobj.lines = [];
-		
-		trace( output );
 		
 		Lambda.map( ary_panel_obj, function( stockMap ) {
 			stockobj.lines.push( {
@@ -118,7 +127,6 @@ class PanelModel extends Model implements IPanel
 				type:Std.string( stockMap.type ),
 			});
 		});
-		
 		return output;
 	}
 }

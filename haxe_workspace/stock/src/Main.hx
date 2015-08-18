@@ -53,6 +53,7 @@ class Main
 		});
 		
 		//從model端來的資料(暫定)
+		
 		panelModel.config = {
 			facebookId:'12233',
 			stocks:[
@@ -62,43 +63,60 @@ class Main
 					offset:13,
 					lines:[
 						{
-							id:0,
-							type:'clock',
-							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
-							]
-						},
-						{
-							id:1,
+							id:4,
 							type:'volume',
 							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
-							]
-						},
-						{
-							id:2,
-							type:'kline',
-							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
-							]
-						},
-						{
-							id:3,
-							type:'kline',
-							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
+								{
+									s:true,
+									t: 'ma', //ma | ema | kd | macd | yu
+									d: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									s:false,
+									t: 'kd', //ma | ema | kd | macd | yu
+									d: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									s:true,
+									t: 'yu', //ma | ema | kd | macd | yu
+									d: {
+										n: 2,
+										m: 4,
+										color: ''
+									}
+								}
 							]
 						},
 						{
 							id:4,
 							type:'kline',
 							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
+								{
+									s:true,
+									t: 'ma', //ma | ema | kd | macd | yu
+									d: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									s:true,
+									t: 'yu', //ma | ema | kd | macd | yu
+									d: {
+										n: 2,
+										m: 4,
+										color: ''
+									}
+								}
 							]
 						}
 					]
@@ -157,7 +175,7 @@ class Main
 	function onHtmlTrigger( name, params ) {
 		switch( name ) {
 			case 'addPanel':
-				panelModel.addPanel( getId(), EType.kline, true, [ { type:EProp.avg, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
+				panelModel.addPanel( getId(), EType.kline, [ { type:EProp.ma, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
 			case 'removePanel':
 				var panelDom = j( params.currentTarget ).parent().parent().parent().parent();
 				var id = panelDom.attr( 'id' );

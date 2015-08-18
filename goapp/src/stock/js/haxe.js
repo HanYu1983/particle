@@ -6,13 +6,22 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EProp = { __ename__ : true, __constructs__ : ["avg","kd"] };
-EProp.avg = ["avg",0];
-EProp.avg.toString = $estr;
-EProp.avg.__enum__ = EProp;
-EProp.kd = ["kd",1];
+var EProp = { __ename__ : true, __constructs__ : ["ma","ema","kd","macd","yu"] };
+EProp.ma = ["ma",0];
+EProp.ma.toString = $estr;
+EProp.ma.__enum__ = EProp;
+EProp.ema = ["ema",1];
+EProp.ema.toString = $estr;
+EProp.ema.__enum__ = EProp;
+EProp.kd = ["kd",2];
 EProp.kd.toString = $estr;
 EProp.kd.__enum__ = EProp;
+EProp.macd = ["macd",3];
+EProp.macd.toString = $estr;
+EProp.macd.__enum__ = EProp;
+EProp.yu = ["yu",4];
+EProp.yu.toString = $estr;
+EProp.yu.__enum__ = EProp;
 var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline"] };
 EType.volume = ["volume",0];
 EType.volume.toString = $estr;
@@ -61,6 +70,15 @@ HxOverrides.iter = function(a) {
 };
 var Lambda = function() { };
 Lambda.__name__ = true;
+Lambda.array = function(it) {
+	var a = [];
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var i = $it0.next();
+		a.push(i);
+	}
+	return a;
+};
 Lambda.map = function(it,f) {
 	var l = new List();
 	var $it0 = $iterator(it)();
@@ -132,7 +150,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 0, type : "clock", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 1, type : "volume", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 2, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 3, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]},{ id : 4, type : "kline", sub : [{ t : "ma", d : { n : 5, color : "blue"}},{ t : "ma", d : { n : 10, color : "yellow"}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "volume", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "kline", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -162,7 +180,7 @@ Main.prototype = {
 	,onHtmlTrigger: function(name,params) {
 		switch(name) {
 		case "addPanel":
-			this.panelModel.addPanel(Main.getId(),EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+			this.panelModel.addPanel(Main.getId(),EType.kline,[{ type : EProp.ma, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 			break;
 		case "removePanel":
 			var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
@@ -175,8 +193,22 @@ Main.prototype = {
 Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
+Reflect.field = function(o,field) {
+	try {
+		return o[field];
+	} catch( e ) {
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
+		return null;
+	}
+};
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
+};
+Reflect.callMethod = function(o,func,args) {
+	return func.apply(o,args);
+};
+Reflect.isFunction = function(f) {
+	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
 };
 var Std = function() { };
 Std.__name__ = true;
@@ -185,9 +217,29 @@ Std.string = function(s) {
 };
 var Type = function() { };
 Type.__name__ = true;
+Type.createEnum = function(e,constr,params) {
+	var f = Reflect.field(e,constr);
+	if(f == null) throw new js__$Boot_HaxeError("No such constructor " + constr);
+	if(Reflect.isFunction(f)) {
+		if(params == null) throw new js__$Boot_HaxeError("Constructor " + constr + " need parameters");
+		return Reflect.callMethod(e,f,params);
+	}
+	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
+	return f;
+};
 Type.enumIndex = function(e) {
 	return e[1];
 };
+var js__$Boot_HaxeError = function(val) {
+	Error.call(this);
+	this.val = val;
+	this.message = String(val);
+	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
+};
+js__$Boot_HaxeError.__name__ = true;
+js__$Boot_HaxeError.__super__ = Error;
+js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
+});
 var js_Boot = function() { };
 js_Boot.__name__ = true;
 js_Boot.__string_rec = function(o,s) {
@@ -226,6 +278,7 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -308,8 +361,9 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
-	,addPanel: function(id,type,needMove,props) {
-		var obj = { 'id' : id, 'needMove' : needMove, 'type' : type, 'props' : props, 'root' : null};
+	,addPanel: function(id,type,props) {
+		console.log(props);
+		var obj = { id : id, type : type, props : props, root : null};
 		this.ary_panel_obj.push(obj);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
@@ -332,21 +386,30 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.currentStockId = stock.id;
 		this.set_currentOffset(stock.offset);
 		this.currentCount = stock.count;
-		Main.getStock(this.config.stocks[0].id,true,function(params) {
-			Lambda.map(stock.lines,function(obj) {
-				var _g = obj.id;
+		var parserSub = function(sub) {
+			Lambda.foreach(sub,function(obj) {
+				obj.type = Type.createEnum(EProp,obj.t);
+				obj.show = obj.s;
+				obj.value = { n : obj.d.n, m : obj.d.m};
+				return true;
+			});
+			return Lambda.array(sub);
+		};
+		Main.getStock(this.currentStockId,true,function(params) {
+			Lambda.map(stock.lines,function(obj1) {
+				var _g = obj1.type;
 				switch(_g) {
-				case 0:
-					_g1.addPanel(obj.id,EType.clock,false,null);
+				case "clock":
+					_g1.addPanel(obj1.id,EType.clock,parserSub(obj1.sub));
 					break;
-				case 1:
-					_g1.addPanel(obj.id,EType.volume,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+				case "volume":
+					_g1.addPanel(obj1.id,EType.volume,parserSub(obj1.sub));
 					break;
-				case 2:
-					_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+				case "kline":
+					_g1.addPanel(obj1.id,EType.kline,parserSub(obj1.sub));
 					break;
 				default:
-					_g1.addPanel(obj.id,EType.kline,true,[{ type : EProp.avg, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
+					_g1.addPanel(obj1.id,EType.kline,parserSub(obj1.sub));
 				}
 			});
 			_g1.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g1.currentStockId});
@@ -355,13 +418,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,getSaveData: function() {
 		var _g = this;
 		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
-		console.log(output);
 		var stockobj = Lambda.find(output.stocks,function(obj) {
 			if(obj.id == _g.currentStockId) return true;
 			return false;
 		});
 		stockobj.lines = [];
-		console.log(output);
 		Lambda.map(this.ary_panel_obj,function(stockMap) {
 			stockobj.lines.push({ id : stockMap.id, type : Std.string(stockMap.type)});
 		});
@@ -442,27 +503,39 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	}
 	,createProp: function(container,props) {
 		var _g1 = this;
-		Lambda.map(props,function(prop) {
+		Lambda.foreach(props,function(prop) {
 			prop.sid = "swb_" + Std.string(prop.type);
-			prop.vid = "input_" + Std.string(prop.type);
+			prop.nid = "input_n_" + Std.string(prop.type);
+			prop.mid = "input_m_" + Std.string(prop.type);
 			var dom;
 			var _g = prop.type;
 			switch(Type.enumIndex(_g)) {
 			case 0:
 				dom = _g1.j("#tmpl_avg").tmpl(prop);
 				break;
+			case 2:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case 4:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case 3:
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
 			case 1:
 				dom = _g1.j("#tmpl_avg").tmpl(prop);
 				break;
 			default:
-				dom = null;
+				throw new js__$Boot_HaxeError("do not enter here!");
 			}
 			container.append(dom);
 			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
 				var target = _g1.j(this);
 				console.log(target.attr("id"));
 			}});
-			dom.find(".easyui-textbox").textbox({ value : prop.value});
+			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
+			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});
+			return true;
 		});
 	}
 });

@@ -102,18 +102,25 @@ class PanelView extends Model implements IPanelView
 	}
 
 	function createProp( container, props ) {
-		
-		Lambda.map( props, function( prop:Dynamic ) {
+		Lambda.foreach( props, function( prop:Dynamic ) {
+			
 			prop.sid = 'swb_' + prop.type;
-			prop.vid = 'input_' + prop.type;
+			prop.nid = 'input_n_' + prop.type;
+			prop.mid = 'input_m_' + prop.type;
 			
 			var dom:Dynamic = switch( prop.type ) {
-				case EProp.avg:
+				case EProp.ma:
 					j( '#tmpl_avg' ).tmpl( prop );
 				case EProp.kd:
 					j( '#tmpl_avg' ).tmpl( prop );
+				case EProp.yu:
+					j( '#tmpl_avg' ).tmpl( prop );
+				case EProp.macd:
+					j( '#tmpl_avg' ).tmpl( prop );
+				case EProp.ema:
+					j( '#tmpl_avg' ).tmpl( prop );
 				case _:
-					null;
+					throw 'do not enter here!';
 			}
 			container.append( dom );
 			
@@ -124,10 +131,13 @@ class PanelView extends Model implements IPanelView
 					trace( target.attr( 'id' ));
 				}
 			});
-			dom.find( '.easyui-textbox' ).textbox( {
-				value:prop.value
+			dom.find( '.easyui-textbox' ).eq(0).textbox( {
+				value:prop.value.n
 			});
-			
+			dom.find( '.easyui-textbox' ).eq(1).textbox( {
+				value:prop.value.m
+			});
+			return true;
 		});
 		
 	}
