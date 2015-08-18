@@ -44,8 +44,16 @@
       (fn [ema v]
         (+ (* (- v ema) alpha) ema))
       fv
-      (rest vs))))
+      (drop n vs))))
       
+(defn macd-dif [n m kline]
+  (->>
+    (map
+      -
+      (reverse (ema-seq n (reverse (stl/close kline))))
+      (reverse (ema-seq m (reverse (stl/close kline)))))
+    (reverse)
+    (into (repeat (dec m) 0))))
       
 (defn StandardDeviation
   "Standard Deviation 標準差"
@@ -73,9 +81,47 @@
           #(/ % sd)
           offsets)]
     vs))
+    
+(defn yu-clock [n kline]
+  (let [ps (sma-seq n (stl/mid kline))
+        ps-avg (average ps)
+        ps-sd (StandardDeviation ps-avg ps)
+        ps-z (z-score ps-avg ps-sd ps)
+        
+        vs (sma-seq n (stl/volume kline))
+        vs-avg (average vs)
+        vs-sd (StandardDeviation vs-avg vs)
+        vs-z (z-score vs-avg vs-sd vs)
+        
+        ps (map vector vs-z ps-z)
+        
+        axis [0.707 -0.707]
+        
+        dot
+        (fn [l1 l2]
+          (apply + (map * l1 l2)))
+        
+        length
+        (fn [line]
+          (.sqrt js/Math (dot line line)))
+
+        normalize
+        (fn [line]
+          (map #(/ % (length line)) line))  
+        
+        projs
+        (map
+          (fn [prev curr]
+            (let [dir (mapv - prev curr)]
+              (dot (normalize dir) axis)))
+          ps
+          (rest ps))]
+    (into 
+      (repeat n 0)
+      (reverse projs))))
 
 (defn clock [n kline]
-  (let [cs (sma-seq n (stl/close kline))
+  (let [cs (sma-seq n (stl/mid kline))
         avg (average cs)
         sd (StandardDeviation avg cs)
         z (z-score avg sd cs)

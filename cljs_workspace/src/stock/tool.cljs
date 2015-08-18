@@ -78,26 +78,32 @@
             
 
 (defn high [kline]
-  (map
-    (fn [[_ _ high _ _ _]] high)
-    kline))
+  (if (seq? kline)
+    (map high kline)
+    (let [[_ _ high _ _ _] kline]
+      high)))
 
-(defn low [kline]
-  (map
-    (fn [[_ _ _ low _ _]] low)
-    kline))
-    
 (defn close [kline]
-  (map
-    (fn [[_ _ _ _ close _]] close)
-    kline))
+  (if (seq? kline)
+    (map close kline)
+    (let [[_ _ _ _ close _] kline]
+      close)))
+      
+(defn low [kline]
+  (if (seq? kline)
+    (map low kline)
+    (let [[_ _ _ low _ _] kline]
+      low)))
     
 (defn volume [kline]
-  (map
-    (fn [[_ _ _ _ _ volume]] volume)
-    kline))
+  (if (seq? kline)
+    (map volume kline)
+    (let [[_ _ _ _ _ volume] kline]
+      volume)))
     
 (defn mid [kline]
-  (map
-    (fn [[_ _ high low _ _]] (/ (- high low) 2))
-    kline))
+  (if (seq? kline)
+    (map mid kline)
+    (let [[_ _ high low _ _] kline]
+      (/ (+ high low) 2))))
+      
