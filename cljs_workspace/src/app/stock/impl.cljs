@@ -23,12 +23,9 @@
 (defmethod abstract/onSystem "loadStock" [type data ctx]
   (let [[err kline id date request] data]
     (am/go
-      (a/>! (:onModel ctx) (array type (js-obj "id" id "request" request))))
-      
+      (a/>! (:onModel ctx) (array type (js-obj "err" err "data" id "request" request))))
     (if err
-      (do
-        (js/alert err)
-        ctx)
+      ctx
       (assoc-in ctx [:temp "stocks" id] data))))
 
 ; view command

@@ -10,7 +10,7 @@ var api = {};
 		var data = param[1]
 		var request = data.request
 		if( cbs[request.cbid] ){
-			cbs[request.cbid]( data )
+			cbs[request.cbid]( data.err, data.data )
 			delete cbs[request.cbid]
 		}
 	})
@@ -66,16 +66,13 @@ var api = {};
 	/**
 	取得股票資料
 	cb: 
-	function( info ){
-		info : {
-			err: err msg
-			data: [
-				state,
-				[[date open high low close volume]],
-				stockId,
-				date
-			]
-		}
+	function( err, data ){
+		data: [
+			state,
+			[[date open high low close volume]],
+			stockId,
+			date
+		]
 	}
 	*/
 	function stockInfo( id, cb ){
