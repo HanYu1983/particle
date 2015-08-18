@@ -344,10 +344,8 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		});
 		stockobj.lines = [];
 		Lambda.map(this.ary_panel_obj,function(stockMap) {
-			console.log(stockMap);
 			stockobj.lines.push({ id : stockMap.id, type : Std.string(stockMap.type)});
 		});
-		console.log(output);
 		return output;
 	}
 });
@@ -389,7 +387,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		Main.drawStock(dom.find("#canvas_kline"),stockId,type,{ });
 	}
 	,removePanel: function(id) {
-		console.log(id);
 		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
 		this.mc_accordionContainer.accordion("remove",deleteName);
 	}

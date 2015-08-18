@@ -41,12 +41,6 @@ class PanelModel extends Model implements IPanel
 		ary_panel_obj.push( obj );
 		
 		notify( ON_ADD_PANEL, {stockId:currentStockId, panelObj:obj } );
-		/*
-		switch( id ) {
-			case i if ( i < 3 ):
-			case _:
-				notify( ON_ADD_PANEL, obj );
-		}*/
 	}
 	
 	public function removePanel( id:Dynamic ) {
@@ -93,7 +87,6 @@ class PanelModel extends Model implements IPanel
 			stocks:config.stocks
 		}
 		
-		
 		var stockobj:Dynamic = Lambda.find( output.stocks, function( obj ) {
 			if ( obj.id == currentStockId ) return true;
 			return false;
@@ -101,67 +94,12 @@ class PanelModel extends Model implements IPanel
 		stockobj.lines = [];
 		
 		Lambda.map( ary_panel_obj, function( stockMap ) {
-			trace( stockMap );
 			stockobj.lines.push( {
 				id:stockMap.id,
 				type:Std.string( stockMap.type ),
 			});
 		});
 		
-		trace( output );
-		/*
-		panelModel.config = {
-			facebookId:'12233',
-			stocks:[
-				{
-					id:'2330',
-					kline:[
-						{
-							id:0,
-							type:'clock',
-							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
-							]
-						},
-						{
-							id:1,
-							type:'volume',
-							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
-							]
-						},
-						{
-							id:2,
-							type:'kline',
-							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
-							]
-						},
-						{
-							id:3,
-							type:'kline',
-							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
-							]
-						},
-						{
-							id:4,
-							type:'kline',
-							sub:[
-								{t: "ma", d: {n: 5, color: "blue"}}, 
-								{t: "ma", d: {n: 10, color: "yellow"}} 
-							]
-						}
-					]
-				}
-			]
-		};
-		
-		*/
 		return output;
 	}
 }
