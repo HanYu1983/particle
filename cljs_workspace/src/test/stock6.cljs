@@ -9,7 +9,7 @@
 
 (defn main []
   (am/go
-    (let [[err infos] (<! (stl/stock-info nil 2450 "2015/1/1" 0 200))
+    (let [[err infos] (<! (stl/stock-info nil 2330 "2015/1/1" 0 200))
           canvas4 (.getElementById js/document "index2")
           canvas3 (.getElementById js/document "index")
           canvas2 (.getElementById js/document "clock")
@@ -23,6 +23,8 @@
             (map #(.abs js/Math %))
             (reverse)
             (into (repeat 5 0)))
+            
+            
             
           ;(map
           ;  #(apply + (map - %1 %2))
@@ -38,7 +40,7 @@
           
           yu-c (stf/yu-clock 20 infos)
           
-          dif (stf/macd-dif 12 26 infos)]
+          dif (stf/macd-dif 5 10 infos)]
           
           ;(.log js/console (pr-str yu-c))
           
@@ -66,7 +68,7 @@
             ;{:type :line :line (repeat (count gv) 2)}
             ;{:type :line :line (repeat (count gv) -2)}
             {:type :line :line yu-c :color "blue"}
-            {:type :line :line (stf/sma-seq 5 yu-c) :color "yellow"}
+            {:type :line :line (stf/sma-seq 10 yu-c) :color "yellow"}
             ;{:type :line :line (stf/sma-seq 5 dist) :color "yellow"}
             ;{:type :line :line (into (repeat 4 0) (reverse z)) :color "black"}
             
@@ -92,8 +94,8 @@
           :drawers [
             {:type :kline :kline infos}
             ;{:type :line :line (reverse cs) :color "blue"}
-            {:type :line :line (reverse (stf/ema-seq 12 (reverse (stl/close infos)))) :color "blue"}
-            {:type :line :line (reverse (stf/ema-seq 26 (reverse (stl/close infos)))) :color "yellow"}
+            {:type :line :line (reverse (stf/ema-seq 5 (reverse (stl/close infos)))) :color "blue"}
+            {:type :line :line (reverse (stf/ema-seq 10 (reverse (stl/close infos)))) :color "yellow"}
             ;{:type :line :line (stf/sma-seq 5 (stl/close infos)) :color "purple"}
             ;{:type :line :line (stf/sma-seq 10 (stl/close infos)) :color "black"}
             ;{:type :line :line sar :color "red"}
