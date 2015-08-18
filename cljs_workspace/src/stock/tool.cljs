@@ -83,6 +83,13 @@
     (let [[_ _ high _ _ _] kline]
       high)))
 
+
+(defn open [kline]
+  (if (seq? kline)
+    (map open kline)
+    (let [[_ _ _ _ open _] kline]
+      open)))
+      
 (defn close [kline]
   (if (seq? kline)
     (map close kline)
@@ -104,6 +111,6 @@
 (defn mid [kline]
   (if (seq? kline)
     (map mid kline)
-    (let [[_ _ high low _ _] kline]
-      (/ (+ high low) 2))))
+    (let [[_ _ high low close _] kline]
+      (/ (+ high low close) 3))))
       

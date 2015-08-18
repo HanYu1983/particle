@@ -9,8 +9,9 @@
 			<input type="number" name="cnt" value=100></input>
 		</form>
 		<button onclick="api.stockId(document.info.stockId.value)">load</button>
-		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'kline', document.info.offset.value, document.info.cnt.value, {} )">draw</button>
-		
+		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'kline', document.info.offset.value, document.info.cnt.value, [{t:'ma', d:{n: 5, color:'blue'}}] )">kline</button>
+		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'volume', document.info.offset.value, document.info.cnt.value, {} )">volume</button>
+		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'kline', document.info.offset.value, document.info.cnt.value, [{t:'yu-sd', d:{n: 40, m: 10,  color:'blue'}}] )">test</button>
 		<br>
 		<canvas name="kline" id="kline" width=1000 height=300></canvas>
 		

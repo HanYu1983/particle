@@ -42,24 +42,98 @@
   (.log js/console (pr-str ctx))
   ctx)
   
-  
 (defn jsobj->drawer-info [kline sub]
-  (map
-    (fn [data]
-      (let [subt (get data "t")
-            subd (get data "d")
-            vs
-            (condp = type
-              "volume" (stl/volume kline)
-              (stl/close kline))]
-        (condp = subt
-          "ma"
-          (let [n (get subd "n")
-                color (get subd "color")]
-            {:type :line :line (stf/sma-seq n vs) :color color})
+  (->
+    (map
+      (fn [data]
+        (let [subt (get data "t")
+              subd (get data "d")
+              vs
+              (condp = type
+                "volume" (stl/volume kline)
+                (stl/close kline))]
+          (condp = subt
+            "ma"
+            (let [n (get subd "n")
+                  color (get subd "color")]
+              {:type :line :line (stf/sma-seq n vs) :color color})
+            
+            "ema"
+            (let [n (get subd "n")
+                  color (get subd "color")]
+              {:type :line :line (reverse (stf/ema-seq n (reverse vs))) :color color})
           
-          {:type :line :line (stf/sma-seq 5 vs) :color "purple"})))
-    sub))
+            "yu-clock"
+            (let [n (get subd "n")]
+              {:type :line :line (stf/yu-clock n kline) :color "blue"})
+              
+            "yu-sd"
+            (let [n (get subd "n")
+                
+                  group (take n kline)
+                  
+                  vs
+                  (stl/open group)
+    
+                  ; 每天和隔天的價差
+                  offsets
+                  (stf/offset-seq (reverse vs))
+          
+                  ; 價差的平均數
+                  offsets-avg
+                  (stf/average offsets)
+          
+                  ; 價差的標準差
+                  sd
+                  (stf/StandardDeviation offsets-avg offsets)
+                  
+                  sd2
+                  (* sd 2)]
+                [
+                  {:type :line :line (map (partial + offsets-avg) vs) :color "blue" :offset -1}
+                  {:type :line :line (map (partial + (+ sd2) offsets-avg) vs) :color "blue" :offset -1}
+                  {:type :line :line (map (partial + (- sd2) offsets-avg) vs) :color "blue" :offset -1}
+                ])
+            
+            "macd"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  dif (stf/macd-dif n m kline)]
+              [
+                {:type :line :line dif :color "blue"}
+                {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
+              ])
+              
+            "kd"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  rsv 
+                  (->>
+                    (stf/rsv-seq n kline)
+                    (reverse)
+                    (into
+                      (repeat (dec n) 0)))]
+              [
+                {:type :line :line rsv :color "blue"}
+                {:type :line :line (stf/sma-seq m rsv) :color "yellow"}
+              ])
+          
+            "Chaikin"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  vs 
+                  (into
+                    (repeat (dec m) 0)  ; into一個seq也代表reverse
+                    (stf/Chaikin n m (reverse kline)))]
+              [
+                {:type :line :line (repeat (count vs) 0) :color "black"}
+                {:type :line :line vs :color "blue"}
+                {:type :line :line (stf/sma-seq 5 vs) :color "yellow"}
+              ])
+              
+            {:type nil})))
+      sub)
+    (flatten)))
   
 (defmethod abstract/onViewCommand "draw" [_ data ctx]
   (let [stockId (aget data "id")
@@ -87,7 +161,10 @@
               (let [{cs :sma z :z v-z :v-z} (stf/clock 10 kline)]
                 {:type :clock :cz z :vz v-z})
               
-              {:type :kline :kline kline})
+              "kline"
+              {:type :kline :kline kline}
+              
+              {:type nil})
             (jsobj->drawer-info kline sub))
         }
         (.-width canvas) (.-height canvas)

@@ -22,7 +22,6 @@ goog.addDependency("../stock/drawer.js", ['stock.drawer'], ['cljs.core', 'stock.
 goog.addDependency("../app/stock/cmd.js", ['app.stock.cmd'], ['cljs.core', 'cljs.core.async', 'stock.tool']);
 goog.addDependency("../app/stock/impl.js", ['app.stock.impl'], ['app.stock.abstract$', 'stock.formula', 'cljs.core', 'cljs.core.async', 'stock.tool', 'stock.drawer', 'app.stock.cmd']);
 goog.addDependency("../clojure/set.js", ['clojure.set'], ['cljs.core']);
-goog.addDependency("../app/stock/stock_info.js", ['app.stock.stock_info'], ['cljs.core', 'stock.tool']);
 goog.addDependency("../ai/ann.js", ['ai.ann'], ['cljs.core']);
 goog.addDependency("../test/stock2.js", ['test.stock2'], ['cljs.core', 'ai.ann']);
 goog.addDependency("../test/stock5.js", ['test.stock5'], ['cljs.core', 'cljs.core.async', 'clojure.string']);

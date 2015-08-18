@@ -27,7 +27,7 @@ var api = {};
 	count: k線的數量
 	sub: 
 		[{
-			t: ma | ema | kd | macd | yu
+			t: ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 			d: {
 				n: int,
 				m: int,
@@ -36,13 +36,15 @@ var api = {};
 		}]
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
-		sub = sub || {}
-		sub.canvas = canvas
-		sub.id = id
-		sub.type = type
-		sub.offset = offset
-		sub.count = count
-		common.onView.onNext(["draw", sub])
+		var params = {
+			canvas : canvas,
+			id: id,
+			type: type,
+			offset: offset,
+			count: count,
+			sub: sub
+		}
+		common.onView.onNext(["draw", params])
 	}
 	
 	/**
