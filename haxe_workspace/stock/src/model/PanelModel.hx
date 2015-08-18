@@ -19,7 +19,7 @@ class PanelModel extends Model
 		
 	}
 	
-	public function addPanel( id:Dynamic, type:EType, needMove:Bool, props ) {
+	function addPanel( id:Dynamic, type:EType, needMove:Bool, props ) {
 		var obj = {
 			'id':id,
 			'needMove':needMove,
@@ -96,22 +96,22 @@ class PanelModel extends Model
 			stocks:config.stocks
 		}
 		
+		
 		var stockobj:Dynamic = Lambda.find( output.stocks, function( obj ) {
 			if ( obj.id == currentStockId ) return true;
 			return false;
 		});
 		stockobj.lines = [];
-		trace( stockobj );
-		
 		
 		Lambda.map( ary_panel_obj, function( stockMap ) {
 			trace( stockMap );
-			output.stocks.push( {
-				
+			stockobj.lines.push( {
+				id:stockMap.id,
+				type:Std.string( stockMap.type ),
 			});
 		});
 		
-		
+		trace( output );
 		/*
 		panelModel.config = {
 			facebookId:'12233',
@@ -165,6 +165,6 @@ class PanelModel extends Model
 		};
 		
 		*/
-		return null;
+		return output;
 	}
 }

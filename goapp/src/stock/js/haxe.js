@@ -793,19 +793,18 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,getSaveData: function() {
 		var _g = this;
-		var output_facebookId = this.config.facebookId;
-		var output_stocks = this.config.stocks;
-		var stockobj = Lambda.find(output_stocks,function(obj) {
+		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
+		var stockobj = Lambda.find(output.stocks,function(obj) {
 			if(obj.id == _g.currentStockId) return true;
 			return false;
 		});
 		stockobj.lines = [];
-		haxe_Log.trace(stockobj,{ fileName : "PanelModel.hx", lineNumber : 104, className : "model.PanelModel", methodName : "getSaveData"});
 		Lambda.map(this.ary_panel_obj,function(stockMap) {
-			haxe_Log.trace(stockMap,{ fileName : "PanelModel.hx", lineNumber : 108, className : "model.PanelModel", methodName : "getSaveData"});
-			output_stocks.push({ });
+			haxe_Log.trace(stockMap,{ fileName : "PanelModel.hx", lineNumber : 107, className : "model.PanelModel", methodName : "getSaveData"});
+			stockobj.lines.push({ id : stockMap.id, type : Std.string(stockMap.type)});
 		});
-		return null;
+		haxe_Log.trace(output,{ fileName : "PanelModel.hx", lineNumber : 114, className : "model.PanelModel", methodName : "getSaveData"});
+		return output;
 	}
 	,__class__: model_PanelModel
 });
@@ -826,8 +825,7 @@ test_TestModel.prototype = $extend(haxe_unit_TestCase.prototype,{
 		var panelModel = new model_PanelModel();
 		panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", lines : [{ id : 0, type : "clock"}]}]});
 		var output = panelModel.execute("getSaveData");
-		haxe_Log.trace(JSON.stringify(panelModel.config),{ fileName : "TestModel.hx", lineNumber : 38, className : "test.TestModel", methodName : "testConfig"});
-		haxe_Log.trace(JSON.stringify(output),{ fileName : "TestModel.hx", lineNumber : 39, className : "test.TestModel", methodName : "testConfig"});
+		this.assertEquals(JSON.stringify(panelModel.config).length,JSON.stringify(output).length,{ fileName : "TestModel.hx", lineNumber : 39, className : "test.TestModel", methodName : "testConfig"});
 	}
 	,__class__: test_TestModel
 });

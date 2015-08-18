@@ -34,8 +34,10 @@ class TestModel extends TestCase
 			]
 		};
 		
+		panelModel.execute( 'addPanel' 
+		
 		var output = panelModel.execute( 'getSaveData' );
-		trace( Json.stringify( panelModel.config ));
-		trace( Json.stringify( output ));
+		
+		assertEquals( Json.stringify( panelModel.config ).length, Json.stringify( output ).length );
 	}
 }
