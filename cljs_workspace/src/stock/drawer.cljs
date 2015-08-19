@@ -21,7 +21,7 @@
     
 (defn draw [{drawers :drawers :as info} w h ctx]
   (let [base (graphic-base w h drawers)]
-    (aset ctx "fillStyle" "lightgray")
+    (aset ctx "fillStyle" "black")
     (.fillRect ctx 0 0 w h)
     (doseq [drawer drawers]
       (.save ctx)
