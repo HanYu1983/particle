@@ -79,12 +79,7 @@ class PanelModel extends Model implements IPanel
 		
 		function parserSub( sub ):Array<Dynamic> {
 			Lambda.foreach( sub, function( obj:Dynamic ) {
-				obj.type = Type.createEnum( EProp, obj.t );
-				obj.show = obj.s;
-				obj.value = {
-					n:obj.d.n,
-					m:obj.d.m
-				}
+				obj.type = Type.createEnum( EProp, obj.type );
 				return true;
 			});
 			return Lambda.array( sub );

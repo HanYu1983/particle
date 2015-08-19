@@ -71,8 +71,10 @@ class PanelView extends Model implements IPanelView
 		var id = params.id;
 		var type = params.type;
 		var props = params.props;
-		
-		var dom = tmpl_panel.tmpl( {id:id, type:type } );
+		var deletable = params.deletable;
+		trace( params );
+		trace( deletable );
+		var dom = tmpl_panel.tmpl( {id:id, type:type, deletable:deletable } );
 		mc_accordionContainer.accordion('add', {
 			id:'k_' + id,
 			title: 'k線: ' + id,

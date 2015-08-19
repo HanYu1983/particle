@@ -65,88 +65,14 @@ class Main
 						{
 							id:4,
 							type:'clock',
+							deletable:false,
 							sub:[
 								{
-									s:true,
-									t: 'ma', //ma | ema | kd | macd | yu
-									d: {
+									show:true,
+									type: 'ma', //ma | ema | kd | macd | yu
+									value: {
 										n: 3,
 										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:false,
-									t: 'kd', //ma | ema | kd | macd | yu
-									d: {
-										n: 3,
-										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:true,
-									t: 'yu', //ma | ema | kd | macd | yu
-									d: {
-										n: 2,
-										m: 4,
-										color: ''
-									}
-								}
-							]
-						},
-						{
-							id:4,
-							type:'volume',
-							sub:[
-								{
-									s:true,
-									t: 'ma', //ma | ema | kd | macd | yu
-									d: {
-										n: 3,
-										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:false,
-									t: 'kd', //ma | ema | kd | macd | yu
-									d: {
-										n: 3,
-										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:true,
-									t: 'yu', //ma | ema | kd | macd | yu
-									d: {
-										n: 2,
-										m: 4,
-										color: ''
-									}
-								}
-							]
-						},
-						{
-							id:4,
-							type:'kline',
-							sub:[
-								{
-									s:true,
-									t: 'ma', //ma | ema | kd | macd | yu
-									d: {
-										n: 3,
-										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:true,
-									t: 'yu', //ma | ema | kd | macd | yu
-									d: {
-										n: 2,
-										m: 4,
 										color: ''
 									}
 								}

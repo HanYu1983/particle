@@ -150,7 +150,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "clock", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "volume", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "kline", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "clock", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -172,7 +172,7 @@ Main.prototype = {
 	getStockAndDraw: function(stockId) {
 		var _g = this;
 		Main.getStock(stockId,true,function(ret) {
-			haxe_Log.trace("d",{ fileName : "Main.hx", lineNumber : 165, className : "Main", methodName : "getStockAndDraw", customParams : [ret]});
+			haxe_Log.trace("d",{ fileName : "Main.hx", lineNumber : 91, className : "Main", methodName : "getStockAndDraw", customParams : [ret]});
 			_g.panelView.drawAllCanvas(stockId,null,_g.panelModel.getAryPanel());
 		});
 	}
@@ -413,9 +413,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.currentCount = stock.count;
 		var parserSub = function(sub) {
 			Lambda.foreach(sub,function(obj) {
-				obj.type = Type.createEnum(EProp,obj.t);
-				obj.show = obj.s;
-				obj.value = { n : obj.d.n, m : obj.d.m};
+				obj.type = Type.createEnum(EProp,obj.type);
 				return true;
 			});
 			return Lambda.array(sub);
@@ -502,7 +500,10 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var id = params.id;
 		var type = params.type;
 		var props = params.props;
-		var dom = this.tmpl_panel.tmpl({ id : id, type : type});
+		var deletable = params.deletable;
+		haxe_Log.trace(params,{ fileName : "PanelView.hx", lineNumber : 75, className : "view.PanelView", methodName : "addPanel"});
+		haxe_Log.trace(deletable,{ fileName : "PanelView.hx", lineNumber : 76, className : "view.PanelView", methodName : "addPanel"});
+		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
 		params.root = dom;
 		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
@@ -549,7 +550,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			container.append(dom);
 			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
 				var target = _g1.j(this);
-				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 131, className : "view.PanelView", methodName : "createProp"});
+				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 133, className : "view.PanelView", methodName : "createProp"});
 			}});
 			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
 			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});
