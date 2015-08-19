@@ -11,6 +11,7 @@ class PanelView extends Model implements IPanelView
 {
 	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
 	public static var ON_OFFSET_CHANGE = 'on_offset_change';
+	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -82,20 +83,25 @@ class PanelView extends Model implements IPanelView
 			content: dom,
 			selected: true
 		});
-		stockData.root = dom;
+		panelData.root = dom;
 		
 		if( type != EType.clock )
 			dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
 		
 		if( props != null )
-			createProp( dom.find( '#mc_propContainer' ), props );
+			createProp( dom.find( '#mc_propContainer' ), props, panelData );
 			
-		Main.drawStock( dom.find( '#canvas_kline' ), stockId, type, offset, count, propsToDraw( props ) );
+		drawCanvas( stockId, offset, count, panelData );
 	}
 	
 	public function removePanel( id:String ):Void {
 		var deleteName = 'k線: ' + id.substr( 'k_'.length, id.length );
 		mc_accordionContainer.accordion( 'remove', deleteName );
+	}
+	
+	public function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+		trace( panelData );
+		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
 	}
 	
 	public function drawAllCanvas( stockId:String, offset:Int = 0, ary_panel:Array<Dynamic> ):Void {
@@ -121,7 +127,7 @@ class PanelView extends Model implements IPanelView
 		}, [] );
 	}
 
-	function createProp( container, props ) {
+	function createProp( container, props:Dynamic, panelData:Dynamic ) {
 		Lambda.foreach( props, function( prop:Dynamic ) {
 			
 			prop.sid = 'swb_' + prop.type;
@@ -150,9 +156,10 @@ class PanelView extends Model implements IPanelView
 			
 			dom.find( '.easyui-switchbutton' ).switchbutton( {
 				checked:prop.show,
-				onChange:function() {
+				onChange:function( checked ) {
 					var target = j( untyped __js__ ( 'this' ));
-					trace( target.attr( 'id' ));
+					var type = target.attr( 'ktype' );
+					notify( ON_SHOWLINE_CHANGE, { id:panelData.id, type:type, show:checked } );
 				}
 			});
 			dom.find( '.easyui-textbox' ).eq(0).textbox( {

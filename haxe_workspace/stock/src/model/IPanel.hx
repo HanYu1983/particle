@@ -13,5 +13,6 @@ interface IPanel extends IModel
 	function getAryPanel():Array<Dynamic>;
 	function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void;
 	function removePanel( id:Dynamic ):Void;
+	function changeShow( id:Dynamic, type:String, show:Bool ):Void;
 	function getSaveData():Dynamic;
 }

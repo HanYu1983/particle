@@ -79,6 +79,14 @@ Lambda.fold = function(it,f,first) {
 	}
 	return first;
 };
+Lambda.find = function(it,f) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var v = $it0.next();
+		if(f(v)) return v;
+	}
+	return null;
+};
 var List = function() {
 	this.length = 0;
 };
@@ -106,6 +114,9 @@ var Main = function() {
 			var _g1 = _g.panelModel;
 			_g1.set_currentOffset(_g1.currentOffset + params.value);
 			break;
+		case "on_showline_change":
+			_g.panelModel.changeShow(params.id,params.type,params.show);
+			break;
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
@@ -121,6 +132,9 @@ var Main = function() {
 			break;
 		case "on_remove_panel":
 			_g.panelView.removePanel(params1.id);
+			break;
+		case "on_showline_change":
+			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelData);
 			break;
 		default:
 		}
@@ -147,7 +161,6 @@ Main.prototype = {
 	getStockAndDraw: function(stockId) {
 		var _g = this;
 		Main.getStock(stockId,true,function(ret) {
-			haxe_Log.trace("d",{ fileName : "Main.hx", lineNumber : 100, className : "Main", methodName : "getStockAndDraw", customParams : [ret]});
 			_g.panelView.drawAllCanvas(stockId,null,_g.panelModel.getAryPanel());
 		});
 	}
@@ -202,11 +215,6 @@ Type.createEnum = function(e,constr,params) {
 	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
 	return f;
 };
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -219,25 +227,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -351,11 +340,12 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			_g.notify(model_PanelModel.ON_CHANGE_STOCK_SUCCESS);
 		});
 	}
-	,set_currentOffset: function(offset) {
-		this.currentOffset = offset;
-		if(this.currentOffset < 0) this.currentOffset = 0;
-		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
-		return this.currentOffset;
+	,changeShow: function(id,type,show) {
+		var panelData = this.getPanelById(id);
+		Reflect.setField(Lambda.find(panelData.data.sub,function(subObj) {
+			return subObj.type == type;
+		}),"show",show);
+		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,addPanel: function(id,data,extra) {
 		var obj = { id : id, data : data, root : null};
@@ -372,6 +362,10 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			return false;
 		});
 		this.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : id});
+	}
+	,getSaveData: function() {
+		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
+		return output;
 	}
 	,init: function() {
 		var _g = this;
@@ -393,9 +387,16 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			_g.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g.currentStockId});
 		});
 	}
-	,getSaveData: function() {
-		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
-		return output;
+	,getPanelById: function(id) {
+		return Lambda.find(this.ary_panel_obj,function(panelObj) {
+			return panelObj.id == id;
+		});
+	}
+	,set_currentOffset: function(offset) {
+		this.currentOffset = offset;
+		if(this.currentOffset < 0) this.currentOffset = 0;
+		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
+		return this.currentOffset;
 	}
 });
 var view_IPanelView = function() { };
@@ -456,14 +457,18 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var deletable = stockData.deletable;
 		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
-		stockData.root = dom;
+		panelData.root = dom;
 		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
-		if(props != null) this.createProp(dom.find("#mc_propContainer"),props);
-		Main.drawStock(dom.find("#canvas_kline"),stockId,type,offset,count,this.propsToDraw(props));
+		if(props != null) this.createProp(dom.find("#mc_propContainer"),props,panelData);
+		this.drawCanvas(stockId,offset,count,panelData);
 	}
 	,removePanel: function(id) {
 		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
 		this.mc_accordionContainer.accordion("remove",deleteName);
+	}
+	,drawCanvas: function(stockId,offset,count,panelData) {
+		console.log(panelData);
+		Main.drawStock(panelData.root.find("#canvas_kline"),stockId,panelData.data.type,offset,count,this.propsToDraw(panelData.data.sub));
 	}
 	,drawAllCanvas: function(stockId,offset,ary_panel) {
 		if(offset == null) offset = 0;
@@ -477,7 +482,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			return current;
 		},[]);
 	}
-	,createProp: function(container,props) {
+	,createProp: function(container,props,panelData) {
 		var _g1 = this;
 		Lambda.foreach(props,function(prop) {
 			prop.sid = "swb_" + Std.string(prop.type);
@@ -511,9 +516,10 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 				throw new js__$Boot_HaxeError("do not enter here!");
 			}
 			container.append(dom);
-			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
+			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {
 				var target = _g1.j(this);
-				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 155, className : "view.PanelView", methodName : "createProp"});
+				var type = target.attr("ktype");
+				_g1.notify(view_PanelView.ON_SHOWLINE_CHANGE,{ id : panelData.id, type : type, show : checked});
 			}});
 			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
 			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});
@@ -533,10 +539,12 @@ Main.id = 1;
 model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
 model_PanelModel.ON_OFFSET_CHANGE = "on_offset_change";
+model_PanelModel.ON_SHOWLINE_CHANGE = "on_showline_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 view_PanelView.ON_STOCKID_CHANGE = "on_stockid_change";
 view_PanelView.ON_OFFSET_CHANGE = "on_offset_change";
+view_PanelView.ON_SHOWLINE_CHANGE = "on_showline_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

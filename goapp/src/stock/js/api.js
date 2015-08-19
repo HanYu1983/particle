@@ -55,7 +55,7 @@ var api = {};
 	function stockId( id, reset, cb ){
 		var params = {
 			id: id,
-			date: "2015/1/1",
+			date: "2014/1/1",
 			reset: reset
 		}
 		params.cbid = cbid++
