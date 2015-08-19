@@ -45,7 +45,7 @@ body{
 			<div style="position:relative; width:100%;">
 				{{if deletable}}
 				<div style="position:relative; display:inline-block; width:70px; ">
-					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
+					<a href="#" id="btn_removePanel" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
 				</div>
 				{{/if}}
 				<div style="position:relative; display:inline-block; width:70px; ">
@@ -96,7 +96,7 @@ body{
         <div data-options="region:'north',split:false,title:'余氏k線圖'" style="height:70px; padding:5px;">
 			<div style="position:relative; left:0; top:0; display:inline-block;">
 				<select id="slt_stockId" class="easyui-textbox" style="width:70px;"></select>
-				<a href="#" id="btn_addPanel" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="onHtmlTrigger('addPanel')">新增K線</a>
+				<a href="#" id="btn_addPanel" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增K線</a>
 			</div>
 			<div id="btn_controller" style="position:relative; left:0; top:0; display:inline-block; vertical-align:middle; ">
 				<div id="btn_first" class="btn_controller pagination-first"></div>
@@ -112,7 +112,7 @@ body{
 				<!-- for script created -->
 			</div>
         </div>
-		
+		<!--
 		<div id="mm1" style="width:100px;">
 			<div data-options="iconCls:'icon-add'" onclick="addPanel();">新增</div>
 		</div>
@@ -125,6 +125,7 @@ body{
 			<img src="http://www.jeasyui.com/images/logo1.png" style="width:150px;height:50px">
 			<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 		</div>
+		-->
     </div>
 	<!--
 	<div id="w" class="easyui-window" title="Basic Window" data-options="iconCls:'icon-save'" style="width:500px;height:200px;padding:10px;">

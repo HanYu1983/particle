@@ -6,7 +6,7 @@ package model;
 
 interface IPanel extends IModel
 {
-	var currentStockId(default, default):String;
+	var currentStockId(default, set):String;
 	var currentOffset(default, set):Int;
 	var currentCount(default, default):Int;
 	

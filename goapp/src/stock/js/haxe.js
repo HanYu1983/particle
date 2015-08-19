@@ -21,15 +21,6 @@ EType.none.toString = $estr;
 EType.none.__enum__ = EType;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
-HxOverrides.substr = function(s,pos,len) {
-	if(pos != null && pos != 0 && len != null && len < 0) return "";
-	if(len == null) len = s.length;
-	if(pos < 0) {
-		pos = s.length + pos;
-		if(pos < 0) pos = 0;
-	} else if(len < 0) len = s.length + len - pos;
-	return s.substr(pos,len);
-};
 HxOverrides.indexOf = function(a,obj,i) {
 	var len = a.length;
 	if(i < 0) {
@@ -111,7 +102,7 @@ var Main = function() {
 	this.panelView.addHandler(function(type,params) {
 		switch(type) {
 		case "on_stockid_change":
-			_g.getStockAndDraw(params.stockId);
+			_g.panelModel.set_currentStockId(params.stockId);
 			break;
 		case "on_offset_change":
 			var _g1 = _g.panelModel;
@@ -130,12 +121,20 @@ var Main = function() {
 			var penalObj = _g.createNewPanelObj();
 			_g.panelModel.addPanel(penalObj.id,penalObj);
 			break;
+		case "on_btn_removePanel_click":
+			_g.panelModel.removePanel(params.id);
+			break;
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
 		switch(type1) {
+		case "on_stockid_change":
+			Main.getStock(params1.stockId,true,function(ret) {
+				_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
+			});
+			break;
 		case "on_offset_change":
-			_g.panelView.drawAllCanvas(params1.stockId,params1.offset,_g.panelModel.getAryPanel());
+			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_init":
 			_g.panelView.setShowId(params1.stockId);
@@ -149,7 +148,6 @@ var Main = function() {
 		case "on_showline_change":
 			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelData);
 			break;
-		default:
 		}
 	});
 	this.panelModel.set_config(defaultStock);
@@ -171,13 +169,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,Std.string(type),offset,count,sub);
 };
 Main.prototype = {
-	getStockAndDraw: function(stockId) {
-		var _g = this;
-		Main.getStock(stockId,true,function(ret) {
-			_g.panelView.drawAllCanvas(stockId,null,_g.panelModel.getAryPanel());
-		});
-	}
-	,createNewPanelObj: function() {
+	createNewPanelObj: function() {
 		return { id : Main.getId(), type : EType.none, deletable : true, sub : [{ show : false, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-sd", value : { n : 20, m : 0, o : 0, p : 0, color : ""}},{ show : true, type : "kd", value : { n : 9, m : 1, o : 3, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}}]};
 	}
 	,resetAllCanvasListener: function() {
@@ -400,7 +392,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		model_Model.prototype.init.call(this);
 		var j = $;
 		var stock = this.config.stocks[0];
-		this.currentStockId = stock.id;
+		this.set_currentStockId(stock.id);
 		this.set_currentOffset(stock.offset);
 		this.currentCount = stock.count;
 		Lambda.foreach(stock.lines,function(obj) {
@@ -431,6 +423,10 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
+	,set_currentStockId: function(stockId) {
+		this.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stockId : stockId});
+		return this.currentStockId = stockId;
+	}
 });
 var view_IPanelView = function() { };
 view_IPanelView.__name__ = true;
@@ -454,9 +450,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
 		this.slt_stockId = this.config.slt_stockId;
-		this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
-			var stockId = newValue;
-		}});
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e1) {
 			var target = e1.currentTarget;
@@ -484,7 +477,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		});
 	}
 	,setShowId: function(stockId) {
-		this.slt_stockId.textbox("setValue",stockId);
+		var _g = this;
+		this.slt_stockId.textbox({ value : stockId, onChange : function(newValue,oldValue) {
+			var stockId1 = newValue;
+			_g.notify(view_PanelView.ON_STOCKID_CHANGE,{ 'stockId' : stockId1});
+		}});
 	}
 	,addPanel: function(stockId,offset,count,panelData) {
 		var _g = this;
@@ -499,20 +496,24 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		if(type == EType.kline || type == EType.none) dom.find("#slt_showKline").switchbutton({ checked : type == EType.kline, onChange : function(checked) {
 			_g.notify(view_PanelView.ON_SHOWLINE_K_CHANGE,{ id : panelData.id, show : checked});
 		}});
+		dom.find("#btn_removePanel").click(function() {
+			_g.notify(view_PanelView.ON_BTN_REMOVEPANEL_CLICK,{ id : panelData.id});
+		});
 		if(props != null) this.createProp(dom.find("#mc_propContainer"),props,panelData);
 		this.drawCanvas(stockId,offset,count,panelData);
 	}
 	,removePanel: function(id) {
-		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
+		var deleteName = "k線: " + id;
 		this.mc_accordionContainer.accordion("remove",deleteName);
 	}
 	,drawCanvas: function(stockId,offset,count,panelData) {
 		Main.drawStock(panelData.root.find("#canvas_kline"),stockId,panelData.data.type,offset,count,this.propsToDraw(panelData.data.sub));
 	}
-	,drawAllCanvas: function(stockId,offset,ary_panel) {
+	,drawAllCanvas: function(stockId,offset,count,ary_panel) {
 		if(offset == null) offset = 0;
-		Lambda.map(ary_panel,function(stockMap) {
-			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,offset,null,{ });
+		var _g = this;
+		Lambda.map(ary_panel,function(panelData) {
+			_g.drawCanvas(stockId,offset,count,panelData);
 		});
 	}
 	,propsToDraw: function(props) {
@@ -563,6 +564,7 @@ String.__name__ = true;
 Array.__name__ = true;
 Main.id = 4;
 model_PanelModel.ON_INIT = "on_init";
+model_PanelModel.ON_STOCKID_CHANGE = "on_stockid_change";
 model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
 model_PanelModel.ON_OFFSET_CHANGE = "on_offset_change";
 model_PanelModel.ON_SHOWLINE_CHANGE = "on_showline_change";
@@ -574,6 +576,7 @@ view_PanelView.ON_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
 view_PanelView.ON_SHOWLINE_CHANGE = "on_showline_change";
 view_PanelView.ON_SHOWLINE_K_CHANGE = "on_showline_k_change";
 view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
+view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

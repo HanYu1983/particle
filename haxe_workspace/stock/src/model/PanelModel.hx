@@ -7,13 +7,14 @@ package model;
 class PanelModel extends Model implements IPanel
 {
 	public static var ON_INIT = 'on_init';
+	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
 	public static var ON_CHANGE_STOCK_SUCCESS = 'on_change_stock_success';
 	public static var ON_OFFSET_CHANGE = 'on_offset_change';
 	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	
-	public var currentStockId(default, default):String;
+	public var currentStockId(default, set):String;
 	public var currentOffset(default, set):Int = 0;
 	public var currentCount(default, default):Int = 100;
 	
@@ -157,4 +158,8 @@ class PanelModel extends Model implements IPanel
 		return currentOffset;
 	}
 	
+	function set_currentStockId( stockId:String ) {
+		notify( ON_STOCKID_CHANGE, { stockId:stockId } );
+		return currentStockId = stockId;
+	}
 }

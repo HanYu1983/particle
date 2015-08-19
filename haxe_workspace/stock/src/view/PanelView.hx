@@ -15,6 +15,7 @@ class PanelView extends Model implements IPanelView
 	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_SHOWLINE_K_CHANGE = 'on_showline_k_change';
 	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
+	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -45,12 +46,6 @@ class PanelView extends Model implements IPanelView
 		});
 		
 		slt_stockId = config.slt_stockId;
-		slt_stockId.textbox( {
-			onChange:function(newValue, oldValue) {
-				var stockId = newValue;
-			//	notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
-			}
-		});
 		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
@@ -74,7 +69,13 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function setShowId( stockId:String ):Void {
-		slt_stockId.textbox( 'setValue', stockId );
+		slt_stockId.textbox( {
+			value:stockId,
+			onChange:function(newValue, oldValue) {
+				var stockId = newValue;
+				notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
+			}
+		});
 	}
 	
 	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
@@ -106,6 +107,10 @@ class PanelView extends Model implements IPanelView
 			});
 		}
 		
+		dom.find( '#btn_removePanel' ).click( function() {
+			notify( ON_BTN_REMOVEPANEL_CLICK, { id:panelData.id } );
+		});
+		
 		if( props != null )
 			createProp( dom.find( '#mc_propContainer' ), props, panelData );
 			
@@ -113,7 +118,7 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function removePanel( id:String ):Void {
-		var deleteName = 'k線: ' + id.substr( 'k_'.length, id.length );
+		var deleteName = 'k線: ' + id;
 		mc_accordionContainer.accordion( 'remove', deleteName );
 	}
 	
@@ -121,9 +126,9 @@ class PanelView extends Model implements IPanelView
 		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
 	}
 	
-	public function drawAllCanvas( stockId:String, offset:Int = 0, ary_panel:Array<Dynamic> ):Void {
-		Lambda.map( ary_panel, function( stockMap ) {
-			Main.drawStock( stockMap.root.find( '#canvas_kline' ), stockId, stockMap.type, offset, { } );
+	public function drawAllCanvas( stockId:String, offset:Int = 0, count:Int, ary_panel:Array<Dynamic> ):Void {
+		Lambda.map( ary_panel, function( panelData ) {
+			drawCanvas( stockId, offset, count, panelData );
 		});
 	}
 	

@@ -32,7 +32,7 @@ class Main
 		panelView.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
 				case PanelView.ON_STOCKID_CHANGE:
-					getStockAndDraw( params.stockId );
+					panelModel.currentStockId = params.stockId;
 				case PanelView.ON_OFFSET_CHANGE:
 					panelModel.currentOffset += params.value;
 				case PanelView.ON_SHOWLINE_CHANGE:
@@ -44,13 +44,19 @@ class Main
 				case PanelView.ON_BTN_ADDPANEL_CLICK:
 					var penalObj = createNewPanelObj();
 					panelModel.addPanel( penalObj.id, penalObj );
+				case PanelView.ON_BTN_REMOVEPANEL_CLICK:
+					panelModel.removePanel( params.id );
 			}
 		});
 		
 		panelModel.addHandler( function( type, params ) {
 			switch( type ) {
+				case PanelModel.ON_STOCKID_CHANGE:
+					getStock( params.stockId, true, function( ret:Dynamic ) {
+						panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+					});
 				case PanelModel.ON_OFFSET_CHANGE:
-					panelView.drawAllCanvas( params.stockId, params.offset, panelModel.getAryPanel() );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_INIT:
 					panelView.setShowId( params.stockId );
 				case PanelModel.ON_ADD_PANEL:
@@ -59,7 +65,6 @@ class Main
 					panelView.removePanel( params.id );
 				case PanelModel.ON_SHOWLINE_CHANGE:
 					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
-				case _:
 			}
 		});
 		
@@ -67,12 +72,6 @@ class Main
 		panelModel.config = untyped __js__('defaultStock' );
 		
 		Reflect.setField( Browser.window, 'onHtmlTrigger', onHtmlTrigger );
-	}
-	
-	function getStockAndDraw( stockId ) {
-		getStock( stockId, true, function( ret:Dynamic ) {
-			panelView.drawAllCanvas( stockId, panelModel.getAryPanel() );
-		});
 	}
 	
 	function createNewPanelObj() {
