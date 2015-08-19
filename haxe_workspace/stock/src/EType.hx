@@ -9,4 +9,5 @@ enum EType
 	volume;
 	clock;
 	kline;
+	none;
 }

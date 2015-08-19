@@ -11,6 +11,11 @@ class PanelView extends Model implements IPanelView
 {
 	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
 	public static var ON_OFFSET_CHANGE = 'on_offset_change';
+	public static var ON_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
+	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
+	public static var ON_SHOWLINE_K_CHANGE = 'on_showline_k_change';
+	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
+	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -18,6 +23,8 @@ class PanelView extends Model implements IPanelView
 	var slt_stockId:Dynamic;
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
+	var btn_addPanel:Dynamic;
+	var currentScrollX:Int = null;
 	
 	public function new() 
 	{
@@ -34,13 +41,12 @@ class PanelView extends Model implements IPanelView
 		
 		tmpl_panel = config.tmpl_panel;
 		
-		slt_stockId = config.slt_stockId;
-		slt_stockId.textbox( {
-			onChange:function(newValue, oldValue) {
-				var stockId = newValue;
-				notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
-			}
+		btn_addPanel = config.btn_addPanel;
+		btn_addPanel.click( function( e ) {
+			notify( ON_BTN_ADDPANEL_CLICK );
 		});
+		
+		slt_stockId = config.slt_stockId;
 		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
@@ -64,82 +70,155 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function setShowId( stockId:String ):Void {
-		slt_stockId.textbox( 'setValue', stockId );
+		slt_stockId.textbox( {
+			value:stockId,
+			onChange:function(newValue, oldValue) {
+				var stockId = newValue;
+				notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
+			}
+		});
 	}
 	
-	public function addPanel( stockId:String, offset:Int, count:Int, params:Dynamic ):Void{
-		var id = params.id;
-		var type = params.type;
-		var props = params.props;
+	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
 		
-		var dom = tmpl_panel.tmpl( {id:id, type:type } );
+		var stockData = panelData.data;
+		var id = stockData.id;
+		var type = stockData.type;
+		var props = stockData.sub;
+		var deletable = stockData.deletable;
+		
+		var dom:Dynamic = tmpl_panel.tmpl( {id:id, type:type, deletable:deletable } );
 		mc_accordionContainer.accordion('add', {
 			id:'k_' + id,
 			title: 'k線: ' + id,
 			content: dom,
 			selected: true
 		});
-		params.root = dom;
+		panelData.root = dom;
 		
-		if( type != EType.clock )
-			dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
+		//if( type != EType.clock )
+		//	dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
+			
+		if ( type == EType.kline || type == EType.none ){
+			dom.find( '#slt_showKline' ).switchbutton( {
+				checked:type == EType.kline,
+				onChange:function( checked ) {
+					notify( ON_SHOWLINE_K_CHANGE, { id:panelData.id, show:checked } );
+				}
+			});
+		}
+		
+		dom.find( '#btn_removePanel' ).click( function() {
+			notify( ON_BTN_REMOVEPANEL_CLICK, { id:panelData.id } );
+		});
 		
 		if( props != null )
-			createProp( dom.find( '#mc_propContainer' ), props );
+			createProp( dom.find( '#mc_propContainer' ), props, panelData );
 			
-		Main.drawStock( dom.find( '#canvas_kline' ), stockId, type, offset, count, { } );
+		drawCanvas( stockId, offset, count, panelData );
 	}
 	
 	public function removePanel( id:String ):Void {
-		var deleteName = 'k線: ' + id.substr( 'k_'.length, id.length );
+		var deleteName = 'k線: ' + id;
 		mc_accordionContainer.accordion( 'remove', deleteName );
 	}
 	
-	public function drawAllCanvas( stockId:String, offset:Int = 0, ary_panel:Array<Dynamic> ):Void {
-		Lambda.map( ary_panel, function( stockMap ) {
-			Main.drawStock( stockMap.root.find( '#canvas_kline' ), stockId, stockMap.type, offset, { } );
+	public function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
+	}
+	
+	public function drawAllCanvas( stockId:String, offset:Int = 0, count:Int, ary_panel:Array<Dynamic> ):Void {
+		Lambda.map( ary_panel, function( panelData ) {
+			drawCanvas( stockId, offset, count, panelData );
 		});
 	}
+	
+	function propsToDraw( props ) {
+		return Lambda.fold( props, function( obj, current ) {
+			if ( obj.show ) {
+				current.push( 
+				{
+					't': Std.string( obj.type ),
+					'd': {
+						n:obj.value.n,
+						m:obj.value.m,
+						o:obj.value.o,
+						p:obj.value.p
+					},
+					'color':'red'
+				});
+			}
+			return current;
+		}, [] );
+	}
 
-	function createProp( container, props ) {
+	function createProp( container, props:Dynamic, panelData:Dynamic ) {
+		function onInputChange( dom:Dynamic ) {
+			return function ( newv, oldv ){
+				var target = j( untyped __js__ ( 'this' ));
+				var type = dom.find( '.easyui-switchbutton' ).attr( 'ktype' );
+				var value = [];
+				dom.find( '.easyui-textbox' ).each( function( id, subdom ) {
+					value.push( j( subdom ).textbox('getValue' ) );
+				});
+				notify( ON_SHOWLINE_VALUE_CHANGE, { id:panelData.id, type:type, value:value } );
+			}
+		}
+		
 		Lambda.foreach( props, function( prop:Dynamic ) {
 			
 			prop.sid = 'swb_' + prop.type;
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
 			
-			var dom:Dynamic = switch( prop.type ) {
-				case EProp.ma:
-					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.kd:
-					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.yu:
-					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.macd:
-					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.ema:
-					j( '#tmpl_avg' ).tmpl( prop );
-				case _:
-					throw 'do not enter here!';
-			}
+			var dom = j( '#tmpl_avg' ).tmpl( prop );
 			container.append( dom );
 			
 			dom.find( '.easyui-switchbutton' ).switchbutton( {
 				checked:prop.show,
-				onChange:function() {
+				onChange:function( checked ) {
 					var target = j( untyped __js__ ( 'this' ));
-					trace( target.attr( 'id' ));
+					var type = target.attr( 'ktype' );
+					notify( ON_SHOWLINE_CHANGE, { id:panelData.id, type:type, show:checked } );
 				}
 			});
 			dom.find( '.easyui-textbox' ).eq(0).textbox( {
-				value:prop.value.n
+				value:prop.value.n,
+				onChange:onInputChange( dom )
 			});
 			dom.find( '.easyui-textbox' ).eq(1).textbox( {
-				value:prop.value.m
+				value:prop.value.m,
+				onChange:onInputChange( dom )
+			});
+			dom.find( '.easyui-textbox' ).eq(2).textbox( {
+				value:prop.value.o,
+				onChange:onInputChange( dom )
+			});
+			dom.find( '.easyui-textbox' ).eq(3).textbox( {
+				value:prop.value.p,
+				onChange:onInputChange( dom )
 			});
 			return true;
 		});
 		
 	}
 	
+	public function resetAllCanvasListener( ary_panel_obj:Array<Dynamic> ) {
+		Lambda.map( ary_panel_obj, function( stockMap ) {
+			if ( stockMap.needMove ) {
+				var container = stockMap.root.find( '#canvas_kline' ).parent();
+				if( currentScrollX != null )
+					container.scrollLeft( currentScrollX );
+				container.off( 'scroll' );
+				container.scroll( function( e ) {
+					var target = j( e.currentTarget );
+					currentScrollX = target.scrollLeft();
+					Lambda.map( ary_panel_obj, function( _stockMap ) {
+						container = _stockMap.root.find( '#canvas_kline' ).parent();
+						container.scrollLeft( currentScrollX );
+					});
+				});
+			}
+		});
+	}
 }

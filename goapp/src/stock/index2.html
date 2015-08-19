@@ -32,18 +32,30 @@ body{
 </style>
 <script id="tmpl_panel" type="jquery-x-tmpl">
 	{{if type == 'clock'}}
-	<div class="easyui-layout" style="width:100%;height:480px; left:0; top:0;">
+	<div class="easyui-layout" style="width:100%;height:435px; left:0; top:0;">
 	{{/if}}
 	{{if type == 'volume'}}
-	<div class="easyui-layout" style="width:100%;height:180px; left:0; top:0;">
+	<div class="easyui-layout" style="width:100%;height:150px; left:0; top:0;">
 	{{/if}}
-	{{if type == 'kline'}}
-	<div class="easyui-layout" style="width:100%;height:480px; left:0; top:0;">
+	{{if type == 'kline' || type == 'none'}}
+	<div class="easyui-layout" style="width:100%;height:380px; left:0; top:0;">
 	{{/if}}
+		{{if type == 'kline' || type == 'none'}}
 		<div data-options="region:'north'" style="height:40px; padding:5px;">
-			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
+			<div style="position:relative; width:100%;">
+				{{if deletable}}
+				<div style="position:relative; display:inline-block; width:70px; ">
+					<a href="#" id="btn_removePanel" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
+				</div>
+				{{/if}}
+				<div style="position:relative; display:inline-block; width:70px; ">
+					<input id="slt_showKline" class="easyui-switchbutton" checked>
+				</div>
+				<div style="position:relative; display:inline-block; width:70px; ">顯示k線</div>
+			</div>
 		</div>
-		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
+		{{/if}}
+		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:360px; padding:5px;">
 			<!-- for script created -->
 		</div>
 		<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center',title:'k線'">
@@ -51,10 +63,10 @@ body{
 			<canvas id="canvas_kline" width=400 height=400 style="position:relative; left:50%; margin-left:-200px; top:0;"></canvas>
 			{{/if}}
 			{{if type == 'volume'}}
-			<canvas id="canvas_kline" width=800 height=100 style="position:relative; left:0; top:0;"></canvas>
+			<canvas id="canvas_kline" width=2000 height=100 style="position:relative; left:0; top:0;"></canvas>
 			{{/if}}
-			{{if type == 'kline'}}
-			<canvas id="canvas_kline" width=800 height=400 style="position:relative; left:0; top:0;"></canvas>
+			{{if type == 'kline' || type == 'none'}}
+			<canvas id="canvas_kline" width=2000 height=300 style="position:relative; left:0; top:0;"></canvas>
 			{{/if}}
 		</div>
 	</div>
@@ -62,7 +74,7 @@ body{
 <script id="tmpl_avg" type="jquery-x-tmpl">
 	<div style="position:relative; width:100%; margin-bottom:5px;">
 		<div style="position:relative; display:inline-block; width:70px; ">
-			<input id=${sid} class="easyui-switchbutton" checked>
+			<input id=${sid} ktype=${type} class="easyui-switchbutton" checked>
 		</div>
 		<div style="position:relative; display:inline-block; width:40px; ">
 			<select id=${nid} class="easyui-textbox" style="width:100%;"></select>
@@ -70,7 +82,12 @@ body{
 		<div style="position:relative; display:inline-block; width:40px; ">
 			<select id=${mid} class="easyui-textbox" style="width:100%;"></select>
 		</div>
-		
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select class="easyui-textbox" style="width:100%;"></select>
+		</div>
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select class="easyui-textbox" style="width:100%;"></select>
+		</div>
 		<div style="position:relative; display:inline-block; width:70px; ">${type}</div>
 	</div>
 </script>
@@ -79,7 +96,7 @@ body{
         <div data-options="region:'north',split:false,title:'余氏k線圖'" style="height:70px; padding:5px;">
 			<div style="position:relative; left:0; top:0; display:inline-block;">
 				<select id="slt_stockId" class="easyui-textbox" style="width:70px;"></select>
-				<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="onHtmlTrigger('addPanel')">新增K線</a>
+				<a href="#" id="btn_addPanel" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增K線</a>
 			</div>
 			<div id="btn_controller" style="position:relative; left:0; top:0; display:inline-block; vertical-align:middle; ">
 				<div id="btn_first" class="btn_controller pagination-first"></div>
@@ -95,7 +112,7 @@ body{
 				<!-- for script created -->
 			</div>
         </div>
-		
+		<!--
 		<div id="mm1" style="width:100px;">
 			<div data-options="iconCls:'icon-add'" onclick="addPanel();">新增</div>
 		</div>
@@ -108,6 +125,7 @@ body{
 			<img src="http://www.jeasyui.com/images/logo1.png" style="width:150px;height:50px">
 			<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 		</div>
+		-->
     </div>
 	<!--
 	<div id="w" class="easyui-window" title="Basic Window" data-options="iconCls:'icon-save'" style="width:500px;height:200px;padding:10px;">
@@ -125,6 +143,7 @@ body{
 	<script>
 	goog.require("app.stock.main")
 	</script>
+	<script src="js/defaultStock.js"></script>
 	<script src="js/haxe.js"></script>
 </body>
 </html>
