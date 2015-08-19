@@ -6,6 +6,7 @@ var defaultStock = {
 			count:200,
 			offset:13,
 			lines:[
+			/*
 				{
 					id:1,
 					type:'clock',
@@ -30,6 +31,7 @@ var defaultStock = {
 							}
 						}]
 				},
+				*/
 				{
 					id:3,
 					type:'kline',
