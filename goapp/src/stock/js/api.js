@@ -45,7 +45,7 @@ var api = {};
 	yu-macd(5, 12)
 	bbi(12)
 	eom(14, 3)
-	yu-car(1, 0.005, 0.7)
+	yu-car(1, 0.025, 0.7)
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
 		var params = {

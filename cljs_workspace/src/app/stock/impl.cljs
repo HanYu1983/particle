@@ -60,26 +60,24 @@
                 {:type :line :line (stf/sma-seq n vs) :color "blue"}
                 {:type :line :line (stf/sma-seq m vs) :color "yellow"}
                 {:type :line :line (stf/sma-seq o vs) :color "purple"}
-                {:type :line :line (stf/sma-seq p vs) :color "black"}
+                {:type :line :line (stf/sma-seq p vs) :color "lightgray"}
               ])
             
             "ema"
             (let [n (get subd "n")
                   m (get subd "m")
                   o (get subd "o")
-                  p (get subd "p")
-                  color (get subd "color")]
+                  p (get subd "p")]
               [
                 {:type :line :line (reverse (stf/ema-seq n (reverse vs))) :color "blue"}
                 {:type :line :line (reverse (stf/ema-seq m (reverse vs))) :color "yellow"}
                 {:type :line :line (reverse (stf/ema-seq o (reverse vs))) :color "purple"}
-                {:type :line :line (reverse (stf/ema-seq p (reverse vs))) :color "black"}
+                {:type :line :line (reverse (stf/ema-seq p (reverse vs))) :color "lightgray"}
               ])
           
             "bbi"
-            (let [n (get subd "n")
-                  color (get subd "color")]
-              {:type :line :line (stf/BBI n vs) :color color})
+            (let [n (get subd "n")]
+              {:type :line :line (stf/BBI n vs) :color "lightgray"})
               
             "yu-car"
             (let [n (get subd "n")
@@ -91,7 +89,7 @@
                 {:type :line :line (map (partial + avg) (reverse (drop 20 dirs))) :color "blue"}
                 {:type :line :line (map + (stl/mid kline) (reverse ranges)) :color "yellow" :offset -1}
                 {:type :line :line (map - (stl/mid kline) (reverse ranges)) :color "yellow" :offset -1}
-                {:type :line :line (repeat (count kline) avg) :color "gray"}
+                {:type :line :line (repeat (count kline) avg) :color "lightgray"}
               ])
               
             "yu-macd"
@@ -103,7 +101,7 @@
               [
                 {:type :line :line dif :color "blue"}
                 {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
-                {:type :line :line (repeat (count kline) 0) :color "black"}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
               ])
             
             "yu-clock"
@@ -111,7 +109,7 @@
                   m (get subd "m")]
               [
                 {:type :line :line (stf/sma-seq m (stf/yu-clock n kline)) :color "blue"}
-                {:type :line :line (repeat (count kline) 0) :color "black"}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
               ])
               
             "yu-sd"
@@ -149,7 +147,7 @@
               [
                 {:type :line :line dif :color "blue"}
                 {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
-                {:type :line :line (repeat (count kline) 0) :color "black"}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
               ])
               
             "kd"
@@ -160,7 +158,7 @@
               [
                 {:type :line :line (stf/sma-seq m rsv) :color "blue"}
                 {:type :line :line (stf/sma-seq o rsv) :color "yellow"}
-                {:type :line :line (repeat (count kline) 0) :color "black"}
+                {:type :line :line (repeat (count kline) 50) :color "lightgray"}
               ])
           
             "Chaikin"
@@ -172,7 +170,7 @@
               [
                 {:type :line :line vs :color "blue"}
                 {:type :line :line (stf/sma-seq o vs) :color "yellow"}
-                {:type :line :line (repeat (count kline) 0) :color "black"}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
               ])
             
             "eom"
@@ -182,7 +180,7 @@
               [
                 {:type :line :line vs :color "blue"}
                 {:type :line :line (stf/sma-seq m vs) :color "yellow"}
-                {:type :line :line (repeat (count kline) 0) :color "black"}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
               ])
             {:type nil})))
       sub)
