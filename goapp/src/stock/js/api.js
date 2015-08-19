@@ -44,7 +44,7 @@ var api = {};
 	Chaikin(3, 10, 9)
 	yu-macd(5, 12)
 	bbi(12)
-	eom(14)
+	eom(14, 3)
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
 		var params = {
