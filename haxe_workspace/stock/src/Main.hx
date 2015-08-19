@@ -127,7 +127,18 @@ class Main
 					}
 				},
 				{
-					show:true,
+					show:false,
+					type: 'yu-car', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 1,
+						m: .005,
+						o: .7, 
+						p: 0,
+						color: ''
+					}
+				},
+				{
+					show:false,
 					type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 					value: {
 						n: 9,
@@ -138,11 +149,33 @@ class Main
 					}
 				},
 				{
-					show:false,
+					show:true,
 					type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 					value: {
 						n: 12,
 						m: 26,
+						o: 0, 
+						p: 0,
+						color: ''
+					}
+				},
+				{
+					show:false,
+					type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 3,
+						m: 10,
+						o: 9, 
+						p: 0,
+						color: ''
+					}
+				},
+				{
+					show:false,
+					type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 14,
+						m: 3,
 						o: 0, 
 						p: 0,
 						color: ''
@@ -158,18 +191,6 @@ class Main
 						p: 0,
 						color: ''
 					}
-				}
-				,
-				{
-					show:false,
-					type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 3,
-						m: 10,
-						o: 9, 
-						p: 0,
-						color: ''
-					}
 				},
 				{
 					show:false,
@@ -177,18 +198,6 @@ class Main
 					value: {
 						n: 5,
 						m: 12,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				}
-				,
-				{
-					show:false,
-					type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 14,
-						m: 3,
 						o: 0, 
 						p: 0,
 						color: ''
