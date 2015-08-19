@@ -10,12 +10,14 @@ var defaultStock = {
 					id:1,
 					type:'clock',
 					deletable:false,
+					needMove:false,
 					sub:[]
 				},
 				{
 					id:2,
 					type:'volume',
 					deletable:false,
+					needMove:true,
 					sub:[{
 							show:true,
 							type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
@@ -32,6 +34,7 @@ var defaultStock = {
 					id:3,
 					type:'kline',
 					deletable:false,
+					needMove:true,
 					sub:[
 						{
 							show:true,

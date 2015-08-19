@@ -61,6 +61,7 @@ class Main
 					panelView.setShowId( params.stockId );
 				case PanelModel.ON_ADD_PANEL:
 					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
+					//panelView.
 				case PanelModel.ON_REMOVE_PANEL:
 					panelView.removePanel( params.id );
 				case PanelModel.ON_SHOWLINE_CHANGE:
@@ -79,6 +80,7 @@ class Main
 			id:getId(),
 			type:EType.none,
 			deletable:true,
+			needMove:true,
 			sub:[
 				{
 					show:false,
@@ -194,45 +196,6 @@ class Main
 				}
 			]
 		}
-	}
-	
-	function resetAllCanvasListener() {
-		/*
-		Lambda.map( ary_panel_obj, function( stockMap ) {
-			if( stockMap.needMove ){
-				var container = stockMap.canvas.parent();
-				if( currentScrollX != null )
-					container.scrollLeft( currentScrollX );
-				container.off( 'scroll' );
-				container.scroll( function( e ) {
-					var target = j( e.currentTarget );
-					currentScrollX = target.scrollLeft();
-					Lambda.map( ary_panel_obj, function( _stockMap ) {
-						container = _stockMap.canvas.parent();
-						container.scrollLeft( currentScrollX );
-					});
-				});
-			}
-			
-			var root = stockMap.root;
-			if ( root != null ) {
-				root.find( '.easyui-switchbutton' ).switchbutton( {
-					onChange:function( checked ) {
-						var target = j( untyped __js__ ( 'this' ));
-						trace( target.attr( 'id' ));
-						var propContainer = target.parent().parent();
-						var value = propContainer.find( '.easyui-textbox' ).textbox( 'getValue' );
-						if ( checked ) {
-							
-						}
-						trace( stockMap.id );
-						trace( target );
-						trace( value );
-					}
-				});
-			}
-		});
-		*/
 	}
 	
 	function onHtmlTrigger( name, params ) {
