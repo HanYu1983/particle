@@ -34,6 +34,17 @@ var api = {};
 				color: red | ...
 			}
 		}]
+	最適參數
+	ma(5, 10, 20, 40)
+	ema(5, 10, 20, 40)
+	kd(9, 1, 3) or kd(100, 3, 9)
+	macd(12, 26)
+	yu-clock(20, 20)
+	yu-sd(20)
+	Chaikin(3, 10, 9)
+	yu-macd(5, 12)
+	bbi(12)
+	eom(14)
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
 		var params = {
