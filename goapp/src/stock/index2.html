@@ -40,9 +40,11 @@ body{
 	{{if type == 'kline'}}
 	<div class="easyui-layout" style="width:100%;height:480px; left:0; top:0;">
 	{{/if}}
+		{{if deletable }}
 		<div data-options="region:'north'" style="height:40px; padding:5px;">
 			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
 		</div>
+		{{/if}}
 		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
 			<!-- for script created -->
 		</div>

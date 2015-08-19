@@ -8,7 +8,7 @@ import model.IModel;
 interface IPanelView extends IModel
 {
 	function setShowId( stockId:String ):Void;
-	function addPanel( stockId:String, offset:Int, count:Int, params:Dynamic ):Void;
+	function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void;
 	function removePanel( id:String ):Void;
 	function drawAllCanvas( stockId:String, offset:Int = 0, ary_panel:Array<Dynamic> ):Void;
 }

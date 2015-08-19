@@ -42,12 +42,10 @@ class PanelModel extends Model implements IPanel
 		return currentOffset;
 	}
 	
-	public function addPanel( id:Dynamic, type:EType, props:Array<Dynamic> ):Void {
-	trace( 	props );
+	public function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void{
 		var obj = {
 			id:id,
-			type:type,
-			props:props,
+			data:data,
 			root:null //add by panelView
 		};
 		ary_panel_obj.push( obj );
@@ -94,7 +92,7 @@ class PanelModel extends Model implements IPanel
 		Main.getStock( currentStockId, true, function( params:Dynamic ) {
 			
 			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
-				addPanel( obj.id, obj.type, obj.sub );
+				addPanel( obj.id, obj );
 				return true;
 			});
 			
@@ -108,7 +106,7 @@ class PanelModel extends Model implements IPanel
 			facebookId:config.facebookId,
 			stocks:config.stocks
 		}
-		
+		/*
 		var stockobj:Dynamic = Lambda.find( output.stocks, function( obj ) {
 			if ( obj.id == currentStockId ) return true;
 			return false;
@@ -121,7 +119,7 @@ class PanelModel extends Model implements IPanel
 				type:Std.string( stockMap.type ),
 			});
 		});
-		
+		*/
 		return output;
 	}
 }

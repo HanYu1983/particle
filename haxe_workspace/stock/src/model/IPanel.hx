@@ -11,7 +11,7 @@ interface IPanel extends IModel
 	var currentCount(default, default):Int;
 	
 	function getAryPanel():Array<Dynamic>;
-	function addPanel( id:Dynamic, type:EType, props:Array<Dynamic> ):Void;
+	function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void;
 	function removePanel( id:Dynamic ):Void;
 	function getSaveData():Dynamic;
 }

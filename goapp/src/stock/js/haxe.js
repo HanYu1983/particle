@@ -96,14 +96,6 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
-Lambda.find = function(it,f) {
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var v = $it0.next();
-		if(f(v)) return v;
-	}
-	return null;
-};
 var List = function() {
 	this.length = 0;
 };
@@ -386,9 +378,8 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
-	,addPanel: function(id,type,props) {
-		haxe_Log.trace(props,{ fileName : "PanelModel.hx", lineNumber : 46, className : "model.PanelModel", methodName : "addPanel"});
-		var obj = { id : id, type : type, props : props, root : null};
+	,addPanel: function(id,data,extra) {
+		var obj = { id : id, data : data, root : null};
 		this.ary_panel_obj.push(obj);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
@@ -425,23 +416,14 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		});
 		Main.getStock(this.currentStockId,true,function(params) {
 			Lambda.foreach(stock.lines,function(obj2) {
-				_g.addPanel(obj2.id,obj2.type,obj2.sub);
+				_g.addPanel(obj2.id,obj2);
 				return true;
 			});
 			_g.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g.currentStockId});
 		});
 	}
 	,getSaveData: function() {
-		var _g = this;
 		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
-		var stockobj = Lambda.find(output.stocks,function(obj) {
-			if(obj.id == _g.currentStockId) return true;
-			return false;
-		});
-		stockobj.lines = [];
-		Lambda.map(this.ary_panel_obj,function(stockMap) {
-			stockobj.lines.push({ id : stockMap.id, type : Std.string(stockMap.type)});
-		});
 		return output;
 	}
 });
@@ -465,7 +447,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.slt_stockId = this.config.slt_stockId;
 		this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
 			var stockId = newValue;
-			_g.notify(view_PanelView.ON_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e) {
@@ -496,16 +477,15 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	,setShowId: function(stockId) {
 		this.slt_stockId.textbox("setValue",stockId);
 	}
-	,addPanel: function(stockId,offset,count,params) {
-		var id = params.id;
-		var type = params.type;
-		var props = params.props;
-		var deletable = params.deletable;
-		haxe_Log.trace(params,{ fileName : "PanelView.hx", lineNumber : 75, className : "view.PanelView", methodName : "addPanel"});
-		haxe_Log.trace(deletable,{ fileName : "PanelView.hx", lineNumber : 76, className : "view.PanelView", methodName : "addPanel"});
+	,addPanel: function(stockId,offset,count,panelData) {
+		var stockData = panelData.data;
+		var id = stockData.id;
+		var type = stockData.type;
+		var props = stockData.sub;
+		var deletable = stockData.deletable;
 		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
-		params.root = dom;
+		stockData.root = dom;
 		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
 		if(props != null) this.createProp(dom.find("#mc_propContainer"),props);
 		Main.drawStock(dom.find("#canvas_kline"),stockId,type,offset,count,{ });
@@ -550,7 +530,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			container.append(dom);
 			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
 				var target = _g1.j(this);
-				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 133, className : "view.PanelView", methodName : "createProp"});
+				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 134, className : "view.PanelView", methodName : "createProp"});
 			}});
 			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
 			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});

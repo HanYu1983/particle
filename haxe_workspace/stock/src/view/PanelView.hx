@@ -38,7 +38,7 @@ class PanelView extends Model implements IPanelView
 		slt_stockId.textbox( {
 			onChange:function(newValue, oldValue) {
 				var stockId = newValue;
-				notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
+			//	notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
 			}
 		});
 		
@@ -67,13 +67,14 @@ class PanelView extends Model implements IPanelView
 		slt_stockId.textbox( 'setValue', stockId );
 	}
 	
-	public function addPanel( stockId:String, offset:Int, count:Int, params:Dynamic ):Void{
-		var id = params.id;
-		var type = params.type;
-		var props = params.props;
-		var deletable = params.deletable;
-		trace( params );
-		trace( deletable );
+	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+		
+		var stockData = panelData.data;
+		var id = stockData.id;
+		var type = stockData.type;
+		var props = stockData.sub;
+		var deletable = stockData.deletable;
+		
 		var dom = tmpl_panel.tmpl( {id:id, type:type, deletable:deletable } );
 		mc_accordionContainer.accordion('add', {
 			id:'k_' + id,
@@ -81,7 +82,7 @@ class PanelView extends Model implements IPanelView
 			content: dom,
 			selected: true
 		});
-		params.root = dom;
+		stockData.root = dom;
 		
 		if( type != EType.clock )
 			dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
