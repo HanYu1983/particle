@@ -27,7 +27,7 @@ var api = {};
 	count: k線的數量
 	sub: 
 		[{
-			t: ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+			t: ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
 			d: {
 				n: int,
 				m: int,

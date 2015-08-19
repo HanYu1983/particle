@@ -6,12 +6,12 @@
 		<form name="info">
 			<input name="stockId" value=2330></input>
 			<input type="number" name="offset" value=0></input>
-			<input type="number" name="cnt" value=100></input>
+			<input type="number" name="cnt" value=200></input>
 		</form>
 		<button onclick="api.stockId(document.info.stockId.value, false, function(){ console.log(arguments) })">load</button>
-		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'kline', document.info.offset.value, document.info.cnt.value, [{t:'ma', d:{n: 5, color:'blue'}}] )">kline</button>
+		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'kline', document.info.offset.value, document.info.cnt.value, [{t:'ema', d:{n: 5, m: 10, o: 20, p: 50, color:'blue'}}] )">kline</button>
 		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'volume', document.info.offset.value, document.info.cnt.value, {} )">volume</button>
-		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'kline', document.info.offset.value, document.info.cnt.value, [{t:'yu-sd', d:{n: 40, m: 10,  color:'blue'}}] )">test</button>
+		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, null, document.info.offset.value, document.info.cnt.value, [{t:'eom', d:{n: 12, m: 26, o: 3, color:'blue'}}] )">test</button>
 		<br>
 		<canvas name="kline" id="kline" width=1000 height=300></canvas>
 		

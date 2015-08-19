@@ -34,13 +34,19 @@
 (defn macd-dif 
   "指數差離指標"
   [n m kline]
-  (->>
-    (map
-      -
-      (reverse (ema-seq n (reverse (stl/close kline))))
-      (reverse (ema-seq m (reverse (stl/close kline)))))
-    (reverse)
-    (into (repeat (dec m) 0))))
+  (map
+    -
+    (reverse (ema-seq n (reverse (stl/close kline))))
+    (reverse (ema-seq m (reverse (stl/close kline))))))
+    
+  ;(->>
+  ;  (map
+  ;    -
+  ;    (reverse (ema-seq n (reverse (stl/close kline))))
+  ;    (reverse (ema-seq m (reverse (stl/close kline)))))
+  ;  (reverse)
+  ;  (into (repeat (dec m) 0))))
+    
       
 (defn StandardDeviation
   "Standard Deviation 標準差"
@@ -105,9 +111,7 @@
               (dot (normalize dir) axis)))
           ps
           (rest ps))]
-    (into 
-      (repeat n 0)
-      (reverse projs))))
+    projs))
 
 (defn clock [n kline]
   (let [cs (sma-seq n (stl/mid kline))
@@ -143,12 +147,13 @@
   (map (partial xy-direction 8) (offset-seq x-seq) (offset-seq y-seq)))
 
 (defn BBI 
-  "Bull and Bear Index 多空指標"
-  [n kline]
-  (let [n1 (sma-seq n (stl/close kline))
-        n2 (sma-seq (* n 2) (stl/close kline))
-        n3 (sma-seq (* n 4) (stl/close kline))
-        n4 (sma-seq (* n 8) (stl/close kline))]
+  "Bull and Bear Index 多空指標
+  利用ema(5)和BBI(12)的差離值(macd)的圖形，和rsv(100)後的sma(3)和sma(9)的曲線圖形幾乎無二致!!"
+  [n vs]
+  (let [n1 (sma-seq n vs)
+        n2 (sma-seq (* n 2) vs)
+        n3 (sma-seq (* n 4) vs)
+        n4 (sma-seq (* n 8) vs)]
     (map
       (fn [& args]
         (-> (apply + args) (/ 4)))
@@ -293,7 +298,7 @@
   "未成熟隨機值
   用來計算KD線" 
   [n kline]
-  (when (> (count kline) n)
+  (when (>= (count kline) n)
     (let [group (take n kline)
           [_ _ _ _ ct _] (first group)
           L 

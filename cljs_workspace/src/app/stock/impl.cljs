@@ -52,17 +52,54 @@
           (condp = subt
             "ma"
             (let [n (get subd "n")
+                  m (get subd "m")
+                  o (get subd "o")
+                  p (get subd "p")
                   color (get subd "color")]
-              {:type :line :line (stf/sma-seq n vs) :color color})
+              [
+                {:type :line :line (stf/sma-seq n vs) :color "blue"}
+                {:type :line :line (stf/sma-seq m vs) :color "yellow"}
+                {:type :line :line (stf/sma-seq o vs) :color "purple"}
+                {:type :line :line (stf/sma-seq p vs) :color "black"}
+              ])
             
             "ema"
             (let [n (get subd "n")
+                  m (get subd "m")
+                  o (get subd "o")
+                  p (get subd "p")
                   color (get subd "color")]
-              {:type :line :line (reverse (stf/ema-seq n (reverse vs))) :color color})
+              [
+                {:type :line :line (reverse (stf/ema-seq n (reverse vs))) :color "blue"}
+                {:type :line :line (reverse (stf/ema-seq m (reverse vs))) :color "yellow"}
+                {:type :line :line (reverse (stf/ema-seq o (reverse vs))) :color "purple"}
+                {:type :line :line (reverse (stf/ema-seq p (reverse vs))) :color "black"}
+              ])
           
+            "bbi"
+            (let [n (get subd "n")
+                  color (get subd "color")]
+              {:type :line :line (stf/BBI n vs) :color color})
+              
+            "yu-macd"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  ema (reverse (stf/ema-seq n (reverse vs)))
+                  bbi (stf/BBI m vs)
+                  dif (map - ema bbi)]
+              [
+                {:type :line :line dif :color "blue"}
+                {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
+                {:type :line :line (repeat (count kline) 0) :color "black"}
+              ])
+            
             "yu-clock"
-            (let [n (get subd "n")]
-              {:type :line :line (stf/yu-clock n kline) :color "blue"})
+            (let [n (get subd "n")
+                  m (get subd "m")]
+              [
+                {:type :line :line (stf/sma-seq m (stf/yu-clock n kline)) :color "blue"}
+                {:type :line :line (repeat (count kline) 0) :color "black"}
+              ])
               
             "yu-sd"
             (let [n (get subd "n")
@@ -99,35 +136,41 @@
               [
                 {:type :line :line dif :color "blue"}
                 {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
+                {:type :line :line (repeat (count kline) 0) :color "black"}
               ])
               
             "kd"
             (let [n (get subd "n")
                   m (get subd "m")
-                  rsv 
-                  (->>
-                    (stf/rsv-seq n kline)
-                    (reverse)
-                    (into
-                      (repeat (dec n) 0)))]
+                  o (get subd "o")
+                  rsv (stf/rsv-seq n kline)]
               [
-                {:type :line :line rsv :color "blue"}
-                {:type :line :line (stf/sma-seq m rsv) :color "yellow"}
+                {:type :line :line (stf/sma-seq m rsv) :color "blue"}
+                {:type :line :line (stf/sma-seq o rsv) :color "yellow"}
+                {:type :line :line (repeat (count kline) 0) :color "black"}
               ])
           
             "Chaikin"
             (let [n (get subd "n")
                   m (get subd "m")
+                  o (get subd "o")
                   vs 
-                  (into
-                    (repeat (dec m) 0)  ; into一個seq也代表reverse
-                    (stf/Chaikin n m (reverse kline)))]
+                  (reverse (stf/Chaikin n m (reverse kline)))]
               [
-                {:type :line :line (repeat (count vs) 0) :color "black"}
                 {:type :line :line vs :color "blue"}
-                {:type :line :line (stf/sma-seq 5 vs) :color "yellow"}
+                {:type :line :line (stf/sma-seq o vs) :color "yellow"}
+                {:type :line :line (repeat (count kline) 0) :color "black"}
               ])
-              
+            
+            "eom"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  vs (stf/EOM n kline)]
+              [
+                {:type :line :line vs :color "blue"}
+                {:type :line :line (stf/sma-seq m vs) :color "yellow"}
+                {:type :line :line (repeat (count kline) 0) :color "black"}
+              ])
             {:type nil})))
       sub)
     (flatten)))
