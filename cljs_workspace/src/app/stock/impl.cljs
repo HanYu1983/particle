@@ -81,6 +81,19 @@
                   color (get subd "color")]
               {:type :line :line (stf/BBI n vs) :color color})
               
+            "yu-car"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  o (get subd "o")
+                  [dirs ranges] (reverse (stf/yu-car n m o (reverse kline)))
+                  avg (stf/average (stl/mid kline))]
+              [
+                {:type :line :line (map (partial + avg) (reverse (drop 20 dirs))) :color "blue"}
+                {:type :line :line (map + (stl/mid kline) (reverse ranges)) :color "yellow" :offset -1}
+                {:type :line :line (map - (stl/mid kline) (reverse ranges)) :color "yellow" :offset -1}
+                {:type :line :line (repeat (count kline) avg) :color "gray"}
+              ])
+              
             "yu-macd"
             (let [n (get subd "n")
                   m (get subd "m")
