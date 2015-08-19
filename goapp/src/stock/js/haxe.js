@@ -6,22 +6,6 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EProp = { __ename__ : true, __constructs__ : ["ma","ema","kd","macd","yu"] };
-EProp.ma = ["ma",0];
-EProp.ma.toString = $estr;
-EProp.ma.__enum__ = EProp;
-EProp.ema = ["ema",1];
-EProp.ema.toString = $estr;
-EProp.ema.__enum__ = EProp;
-EProp.kd = ["kd",2];
-EProp.kd.toString = $estr;
-EProp.kd.__enum__ = EProp;
-EProp.macd = ["macd",3];
-EProp.macd.toString = $estr;
-EProp.macd.__enum__ = EProp;
-EProp.yu = ["yu",4];
-EProp.yu.toString = $estr;
-EProp.yu.__enum__ = EProp;
 var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline"] };
 EType.volume = ["volume",0];
 EType.volume.toString = $estr;
@@ -70,15 +54,6 @@ HxOverrides.iter = function(a) {
 };
 var Lambda = function() { };
 Lambda.__name__ = true;
-Lambda.array = function(it) {
-	var a = [];
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var i = $it0.next();
-		a.push(i);
-	}
-	return a;
-};
 Lambda.map = function(it,f) {
 	var l = new List();
 	var $it0 = $iterator(it)();
@@ -95,6 +70,14 @@ Lambda.foreach = function(it,f) {
 		if(!f(x)) return false;
 	}
 	return true;
+};
+Lambda.fold = function(it,f,first) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		first = f(x,first);
+	}
+	return first;
 };
 Lambda.find = function(it,f) {
 	var $it0 = $iterator(it)();
@@ -131,6 +114,12 @@ var Main = function() {
 			var _g1 = _g.panelModel;
 			_g1.set_currentOffset(_g1.currentOffset + params.value);
 			break;
+		case "on_showline_change":
+			_g.panelModel.changeShow(params.id,params.type,params.show);
+			break;
+		case "on_showline_value_change":
+			_g.panelModel.changeShowValue(params.id,params.type,params.value);
+			break;
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
@@ -147,10 +136,13 @@ var Main = function() {
 		case "on_remove_panel":
 			_g.panelView.removePanel(params1.id);
 			break;
+		case "on_showline_change":
+			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelData);
+			break;
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "clock", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "volume", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : false, t : "kd", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]},{ id : 4, type : "kline", sub : [{ s : true, t : "ma", d : { n : 3, m : 9, color : ""}},{ s : true, t : "yu", d : { n : 2, m : 4, color : ""}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}},{ show : true, type : "ema", value : { n : 20, m : 100, color : ""}},{ show : true, type : "kd", value : { n : 3, m : 9, color : ""}},{ show : true, type : "macd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "yu-clock", value : { n : 3, m : 9, color : ""}},{ show : true, type : "yu-sd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "Chaikin", value : { n : 20, m : 100, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -172,7 +164,6 @@ Main.prototype = {
 	getStockAndDraw: function(stockId) {
 		var _g = this;
 		Main.getStock(stockId,true,function(ret) {
-			haxe_Log.trace("d",{ fileName : "Main.hx", lineNumber : 165, className : "Main", methodName : "getStockAndDraw", customParams : [ret]});
 			_g.panelView.drawAllCanvas(stockId,null,_g.panelModel.getAryPanel());
 		});
 	}
@@ -181,7 +172,6 @@ Main.prototype = {
 	,onHtmlTrigger: function(name,params) {
 		switch(name) {
 		case "addPanel":
-			this.panelModel.addPanel(Main.getId(),EType.kline,[{ type : EProp.ma, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 			break;
 		case "removePanel":
 			var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
@@ -228,14 +218,6 @@ Type.createEnum = function(e,constr,params) {
 	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
 	return f;
 };
-Type.enumIndex = function(e) {
-	return e[1];
-};
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -248,25 +230,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -380,15 +343,20 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			_g.notify(model_PanelModel.ON_CHANGE_STOCK_SUCCESS);
 		});
 	}
-	,set_currentOffset: function(offset) {
-		this.currentOffset = offset;
-		if(this.currentOffset < 0) this.currentOffset = 0;
-		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
-		return this.currentOffset;
+	,changeShow: function(id,type,show) {
+		var panelData = this.getPanelById(id);
+		Reflect.setField(this.getPanelSubByType(panelData,type),"show",show);
+		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
-	,addPanel: function(id,type,props) {
-		haxe_Log.trace(props,{ fileName : "PanelModel.hx", lineNumber : 46, className : "model.PanelModel", methodName : "addPanel"});
-		var obj = { id : id, type : type, props : props, root : null};
+	,changeShowValue: function(id,type,value) {
+		var panelData = this.getPanelById(id);
+		var subObj = this.getPanelSubByType(panelData,type);
+		subObj.value.n = value[0];
+		subObj.value.m = value[1];
+		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
+	}
+	,addPanel: function(id,data,extra) {
+		var obj = { id : id, data : data, root : null};
 		this.ary_panel_obj.push(obj);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
@@ -403,6 +371,10 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		});
 		this.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : id});
 	}
+	,getSaveData: function() {
+		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
+		return output;
+	}
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
@@ -411,40 +383,33 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.currentStockId = stock.id;
 		this.set_currentOffset(stock.offset);
 		this.currentCount = stock.count;
-		var parserSub = function(sub) {
-			Lambda.foreach(sub,function(obj) {
-				obj.type = Type.createEnum(EProp,obj.t);
-				obj.show = obj.s;
-				obj.value = { n : obj.d.n, m : obj.d.m};
-				return true;
-			});
-			return Lambda.array(sub);
-		};
-		Lambda.foreach(stock.lines,function(obj1) {
-			obj1.type = Type.createEnum(EType,obj1.type);
-			obj1.sub = parserSub(obj1.sub);
+		Lambda.foreach(stock.lines,function(obj) {
+			obj.type = Type.createEnum(EType,obj.type);
 			return true;
 		});
 		Main.getStock(this.currentStockId,true,function(params) {
-			Lambda.foreach(stock.lines,function(obj2) {
-				_g.addPanel(obj2.id,obj2.type,obj2.sub);
+			Lambda.foreach(stock.lines,function(obj1) {
+				_g.addPanel(obj1.id,obj1);
 				return true;
 			});
 			_g.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g.currentStockId});
 		});
 	}
-	,getSaveData: function() {
-		var _g = this;
-		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
-		var stockobj = Lambda.find(output.stocks,function(obj) {
-			if(obj.id == _g.currentStockId) return true;
-			return false;
+	,getPanelById: function(id) {
+		return Lambda.find(this.ary_panel_obj,function(panelObj) {
+			return panelObj.id == id;
 		});
-		stockobj.lines = [];
-		Lambda.map(this.ary_panel_obj,function(stockMap) {
-			stockobj.lines.push({ id : stockMap.id, type : Std.string(stockMap.type)});
+	}
+	,getPanelSubByType: function(panelData,type) {
+		return Lambda.find(panelData.data.sub,function(subObj) {
+			return subObj.type == type;
 		});
-		return output;
+	}
+	,set_currentOffset: function(offset) {
+		this.currentOffset = offset;
+		if(this.currentOffset < 0) this.currentOffset = 0;
+		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
+		return this.currentOffset;
 	}
 });
 var view_IPanelView = function() { };
@@ -467,7 +432,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.slt_stockId = this.config.slt_stockId;
 		this.slt_stockId.textbox({ onChange : function(newValue,oldValue) {
 			var stockId = newValue;
-			_g.notify(view_PanelView.ON_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e) {
@@ -498,20 +462,25 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	,setShowId: function(stockId) {
 		this.slt_stockId.textbox("setValue",stockId);
 	}
-	,addPanel: function(stockId,offset,count,params) {
-		var id = params.id;
-		var type = params.type;
-		var props = params.props;
-		var dom = this.tmpl_panel.tmpl({ id : id, type : type});
+	,addPanel: function(stockId,offset,count,panelData) {
+		var stockData = panelData.data;
+		var id = stockData.id;
+		var type = stockData.type;
+		var props = stockData.sub;
+		var deletable = stockData.deletable;
+		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
-		params.root = dom;
+		panelData.root = dom;
 		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
-		if(props != null) this.createProp(dom.find("#mc_propContainer"),props);
-		Main.drawStock(dom.find("#canvas_kline"),stockId,type,offset,count,{ });
+		if(props != null) this.createProp(dom.find("#mc_propContainer"),props,panelData);
+		this.drawCanvas(stockId,offset,count,panelData);
 	}
 	,removePanel: function(id) {
 		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
 		this.mc_accordionContainer.accordion("remove",deleteName);
+	}
+	,drawCanvas: function(stockId,offset,count,panelData) {
+		Main.drawStock(panelData.root.find("#canvas_kline"),stockId,panelData.data.type,offset,count,this.propsToDraw(panelData.data.sub));
 	}
 	,drawAllCanvas: function(stockId,offset,ary_panel) {
 		if(offset == null) offset = 0;
@@ -519,40 +488,65 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,offset,null,{ });
 		});
 	}
-	,createProp: function(container,props) {
-		var _g1 = this;
+	,propsToDraw: function(props) {
+		return Lambda.fold(props,function(obj,current) {
+			if(obj.show) current.push({ 't' : Std.string(obj.type), 'd' : { n : obj.value.n, m : obj.value.m}, 'color' : "red"});
+			return current;
+		},[]);
+	}
+	,createProp: function(container,props,panelData) {
+		var _g = this;
+		var onInputChange = function(dom) {
+			return function(newv,oldv) {
+				var target = _g.j(this);
+				var targetId = target.attr("id");
+				var type = dom.find(".easyui-switchbutton").attr("ktype");
+				var value = [];
+				dom.find(".easyui-textbox").each(function(id,subdom) {
+					value.push(_g.j(subdom).textbox("getValue"));
+				});
+				_g.notify(view_PanelView.ON_SHOWLINE_VALUE_CHANGE,{ id : panelData.id, type : type, value : value});
+			};
+		};
 		Lambda.foreach(props,function(prop) {
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
-			var dom;
-			var _g = prop.type;
-			switch(Type.enumIndex(_g)) {
-			case 0:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+			var dom1;
+			var _g1 = prop.type;
+			switch(_g1) {
+			case "ma":
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
-			case 2:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+			case "ema":
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
-			case 4:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+			case "kd":
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
-			case 3:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+			case "macd":
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
-			case 1:
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+			case "yu-clock":
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
+				break;
+			case "yu-sd":
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
+				break;
+			case "Chaikin":
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
 			default:
 				throw new js__$Boot_HaxeError("do not enter here!");
 			}
-			container.append(dom);
-			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
-				var target = _g1.j(this);
-				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 131, className : "view.PanelView", methodName : "createProp"});
+			container.append(dom1);
+			dom1.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {
+				var target1 = _g.j(this);
+				var type1 = target1.attr("ktype");
+				_g.notify(view_PanelView.ON_SHOWLINE_CHANGE,{ id : panelData.id, type : type1, show : checked});
 			}});
-			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
-			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});
+			dom1.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n, onChange : onInputChange(dom1)});
+			dom1.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m, onChange : onInputChange(dom1)});
 			return true;
 		});
 	}
@@ -569,10 +563,13 @@ Main.id = 1;
 model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
 model_PanelModel.ON_OFFSET_CHANGE = "on_offset_change";
+model_PanelModel.ON_SHOWLINE_CHANGE = "on_showline_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 view_PanelView.ON_STOCKID_CHANGE = "on_stockid_change";
 view_PanelView.ON_OFFSET_CHANGE = "on_offset_change";
+view_PanelView.ON_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
+view_PanelView.ON_SHOWLINE_CHANGE = "on_showline_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

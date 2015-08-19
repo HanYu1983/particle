@@ -11,6 +11,8 @@ class PanelView extends Model implements IPanelView
 {
 	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
 	public static var ON_OFFSET_CHANGE = 'on_offset_change';
+	public static var ON_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
+	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -38,7 +40,7 @@ class PanelView extends Model implements IPanelView
 		slt_stockId.textbox( {
 			onChange:function(newValue, oldValue) {
 				var stockId = newValue;
-				notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
+			//	notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
 			}
 		});
 		
@@ -67,27 +69,30 @@ class PanelView extends Model implements IPanelView
 		slt_stockId.textbox( 'setValue', stockId );
 	}
 	
-	public function addPanel( stockId:String, offset:Int, count:Int, params:Dynamic ):Void{
-		var id = params.id;
-		var type = params.type;
-		var props = params.props;
+	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
 		
-		var dom = tmpl_panel.tmpl( {id:id, type:type } );
+		var stockData = panelData.data;
+		var id = stockData.id;
+		var type = stockData.type;
+		var props = stockData.sub;
+		var deletable = stockData.deletable;
+		
+		var dom = tmpl_panel.tmpl( {id:id, type:type, deletable:deletable } );
 		mc_accordionContainer.accordion('add', {
 			id:'k_' + id,
 			title: 'k線: ' + id,
 			content: dom,
 			selected: true
 		});
-		params.root = dom;
+		panelData.root = dom;
 		
 		if( type != EType.clock )
 			dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
 		
 		if( props != null )
-			createProp( dom.find( '#mc_propContainer' ), props );
+			createProp( dom.find( '#mc_propContainer' ), props, panelData );
 			
-		Main.drawStock( dom.find( '#canvas_kline' ), stockId, type, offset, count, { } );
+		drawCanvas( stockId, offset, count, panelData );
 	}
 	
 	public function removePanel( id:String ):Void {
@@ -95,13 +100,48 @@ class PanelView extends Model implements IPanelView
 		mc_accordionContainer.accordion( 'remove', deleteName );
 	}
 	
+	public function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
+	}
+	
 	public function drawAllCanvas( stockId:String, offset:Int = 0, ary_panel:Array<Dynamic> ):Void {
 		Lambda.map( ary_panel, function( stockMap ) {
 			Main.drawStock( stockMap.root.find( '#canvas_kline' ), stockId, stockMap.type, offset, { } );
 		});
 	}
+	
+	function propsToDraw( props ) {
+		return Lambda.fold( props, function( obj, current ) {
+			if ( obj.show ) {
+				current.push( 
+				{
+					't': Std.string( obj.type ),
+					'd': {
+						n:obj.value.n,
+						m:obj.value.m
+					},
+					'color':'red'
+				});
+			}
+			return current;
+		}, [] );
+	}
 
-	function createProp( container, props ) {
+	function createProp( container, props:Dynamic, panelData:Dynamic ) {
+		
+		function onInputChange( dom:Dynamic ) {
+			return function ( newv, oldv ){
+				var target = j( untyped __js__ ( 'this' ));
+				var targetId = target.attr( 'id' );
+				var type = dom.find( '.easyui-switchbutton' ).attr( 'ktype' );
+				var value = [];
+				dom.find( '.easyui-textbox' ).each( function( id, subdom ) {
+					value.push( j( subdom ).textbox('getValue' ) );
+				});
+				notify( ON_SHOWLINE_VALUE_CHANGE, { id:panelData.id, type:type, value:value } );
+			}
+		}
+		
 		Lambda.foreach( props, function( prop:Dynamic ) {
 			
 			prop.sid = 'swb_' + prop.type;
@@ -109,15 +149,19 @@ class PanelView extends Model implements IPanelView
 			prop.mid = 'input_m_' + prop.type;
 			
 			var dom:Dynamic = switch( prop.type ) {
-				case EProp.ma:
+				case 'ma':
 					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.kd:
+				case 'ema':
 					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.yu:
+				case 'kd':
 					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.macd:
+				case 'macd':
 					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.ema:
+				case 'yu-clock':
+					j( '#tmpl_avg' ).tmpl( prop );
+				case 'yu-sd':
+					j( '#tmpl_avg' ).tmpl( prop );
+				case 'Chaikin':
 					j( '#tmpl_avg' ).tmpl( prop );
 				case _:
 					throw 'do not enter here!';
@@ -126,16 +170,19 @@ class PanelView extends Model implements IPanelView
 			
 			dom.find( '.easyui-switchbutton' ).switchbutton( {
 				checked:prop.show,
-				onChange:function() {
+				onChange:function( checked ) {
 					var target = j( untyped __js__ ( 'this' ));
-					trace( target.attr( 'id' ));
+					var type = target.attr( 'ktype' );
+					notify( ON_SHOWLINE_CHANGE, { id:panelData.id, type:type, show:checked } );
 				}
 			});
 			dom.find( '.easyui-textbox' ).eq(0).textbox( {
-				value:prop.value.n
+				value:prop.value.n,
+				onChange:onInputChange( dom )
 			});
 			dom.find( '.easyui-textbox' ).eq(1).textbox( {
-				value:prop.value.m
+				value:prop.value.m,
+				onChange:onInputChange( dom )
 			});
 			return true;
 		});

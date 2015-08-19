@@ -9,6 +9,7 @@ class PanelModel extends Model implements IPanel
 	public static var ON_INIT = 'on_init';
 	public static var ON_CHANGE_STOCK_SUCCESS = 'on_change_stock_success';
 	public static var ON_OFFSET_CHANGE = 'on_offset_change';
+	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	
@@ -17,7 +18,6 @@ class PanelModel extends Model implements IPanel
 	public var currentCount(default, default):Int = 100;
 	
 	var ary_panel_obj = new Array<Dynamic>();
-	
 
 	public function new() 
 	{
@@ -35,19 +35,24 @@ class PanelModel extends Model implements IPanel
 		});
 	}
 	
-	function set_currentOffset( offset:Int ) {
-		currentOffset = offset;
-		if ( currentOffset < 0 ) currentOffset = 0;
-		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
-		return currentOffset;
+	public function changeShow( id:Dynamic, type:String, show:Bool ):Void {
+		var panelData:Dynamic = getPanelById( id );
+		Reflect.setField( getPanelSubByType( panelData, type ) , 'show', show );
+		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
 	}
 	
-	public function addPanel( id:Dynamic, type:EType, props:Array<Dynamic> ):Void {
-	trace( 	props );
+	public function changeShowValue( id:Dynamic, type:String, value:Array<Int> ):Void {
+		var panelData:Dynamic = getPanelById( id );
+		var subObj:Dynamic = getPanelSubByType( panelData, type );
+		subObj.value.n = value[0];
+		subObj.value.m = value[1];
+		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
+	}
+	
+	public function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void{
 		var obj = {
 			id:id,
-			type:type,
-			props:props,
+			data:data,
 			root:null //add by panelView
 		};
 		ary_panel_obj.push( obj );
@@ -66,54 +71,13 @@ class PanelModel extends Model implements IPanel
 		notify( ON_REMOVE_PANEL, { id:id } );
 	}
 	
-	override function init() 
-	{
-		super.init();
-		
-		var j = untyped __js__('$');
-		
-		var stock = config.stocks[0];
-		currentStockId = stock.id;
-		currentOffset = stock.offset;
-		currentCount = stock.count;
-		
-		function parserSub( sub ):Array<Dynamic> {
-			Lambda.foreach( sub, function( obj:Dynamic ) {
-				obj.type = Type.createEnum( EProp, obj.t );
-				obj.show = obj.s;
-				obj.value = {
-					n:obj.d.n,
-					m:obj.d.m
-				}
-				return true;
-			});
-			return Lambda.array( sub );
-		}
-		
-		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
-			obj.type = Type.createEnum( EType, obj.type );
-			obj.sub = parserSub( obj.sub );
-			return true;
-		});
-			
-		Main.getStock( currentStockId, true, function( params:Dynamic ) {
-			
-			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
-				addPanel( obj.id, obj.type, obj.sub );
-				return true;
-			});
-			
-			notify( ON_INIT, { 'stockId':currentStockId } );
-		});
-	}
-	
 	public function getSaveData():Dynamic {
 		
 		var output = {
 			facebookId:config.facebookId,
 			stocks:config.stocks
 		}
-		
+		/*
 		var stockobj:Dynamic = Lambda.find( output.stocks, function( obj ) {
 			if ( obj.id == currentStockId ) return true;
 			return false;
@@ -126,7 +90,63 @@ class PanelModel extends Model implements IPanel
 				type:Std.string( stockMap.type ),
 			});
 		});
-		
+		*/
 		return output;
 	}
+	
+	override function init() 
+	{
+		super.init();
+		
+		var j = untyped __js__('$');
+		
+		var stock = config.stocks[0];
+		currentStockId = stock.id;
+		currentOffset = stock.offset;
+		currentCount = stock.count;
+		/*
+		function parserSub( sub ):Array<Dynamic> {
+			Lambda.foreach( sub, function( obj:Dynamic ) {
+				obj.type = Type.createEnum( EProp, obj.type );
+				return true;
+			});
+			return Lambda.array( sub );
+		}
+		*/
+		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
+			obj.type = Type.createEnum( EType, obj.type );
+			//obj.sub = parserSub( obj.sub );
+			return true;
+		});
+			
+		Main.getStock( currentStockId, true, function( params:Dynamic ) {
+			
+			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
+				addPanel( obj.id, obj );
+				return true;
+			});
+			
+			notify( ON_INIT, { 'stockId':currentStockId } );
+		});
+	}
+	
+	function getPanelById( id ) {
+		return Lambda.find( ary_panel_obj, function( panelObj ) {
+			return panelObj.id == id;
+		});
+	}
+	
+	function getPanelSubByType( panelData:Dynamic, type:String ) {
+		return Lambda.find( panelData.data.sub, function( subObj ) {
+			return subObj.type == type;
+		});
+	}
+	
+	function set_currentOffset( offset:Int ) {
+		currentOffset = offset;
+		if ( currentOffset < 0 ) currentOffset = 0;
+		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
+		return currentOffset;
+	}
+	
 }

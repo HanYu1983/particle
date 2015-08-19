@@ -28,13 +28,16 @@ class Main
 			btn_controller:j( '#btn_controller' )
 		}
 		
-		panelView.addHandler( function( type, params ) {
+		panelView.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
 				case PanelView.ON_STOCKID_CHANGE:
 					getStockAndDraw( params.stockId );
 				case PanelView.ON_OFFSET_CHANGE:
 					panelModel.currentOffset += params.value;
-					
+				case PanelView.ON_SHOWLINE_CHANGE:
+					panelModel.changeShow( params.id, params.type, params.show );
+				case PanelView.ON_SHOWLINE_VALUE_CHANGE:
+					panelModel.changeShowValue( params.id, params.type, params.value );
 			}
 		});
 		
@@ -48,6 +51,8 @@ class Main
 					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
 				case PanelModel.ON_REMOVE_PANEL:
 					panelView.removePanel( params.id );
+				case PanelModel.ON_SHOWLINE_CHANGE:
+					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
 				case _:
 			}
 		});
@@ -64,89 +69,70 @@ class Main
 					lines:[
 						{
 							id:4,
-							type:'clock',
-							sub:[
-								{
-									s:true,
-									t: 'ma', //ma | ema | kd | macd | yu
-									d: {
-										n: 3,
-										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:false,
-									t: 'kd', //ma | ema | kd | macd | yu
-									d: {
-										n: 3,
-										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:true,
-									t: 'yu', //ma | ema | kd | macd | yu
-									d: {
-										n: 2,
-										m: 4,
-										color: ''
-									}
-								}
-							]
-						},
-						{
-							id:4,
-							type:'volume',
-							sub:[
-								{
-									s:true,
-									t: 'ma', //ma | ema | kd | macd | yu
-									d: {
-										n: 3,
-										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:false,
-									t: 'kd', //ma | ema | kd | macd | yu
-									d: {
-										n: 3,
-										m: 9,
-										color: ''
-									}
-								},
-								{
-									s:true,
-									t: 'yu', //ma | ema | kd | macd | yu
-									d: {
-										n: 2,
-										m: 4,
-										color: ''
-									}
-								}
-							]
-						},
-						{
-							id:4,
 							type:'kline',
+							deletable:false,
 							sub:[
 								{
-									s:true,
-									t: 'ma', //ma | ema | kd | macd | yu
-									d: {
+									show:true,
+									type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
 										n: 3,
 										m: 9,
 										color: ''
 									}
 								},
 								{
-									s:true,
-									t: 'yu', //ma | ema | kd | macd | yu
-									d: {
-										n: 2,
-										m: 4,
+									show:true,
+									type: 'ema', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'yu-sd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
+										color: ''
+									}
+								}
+								,
+								{
+									show:true,
+									type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
 										color: ''
 									}
 								}
@@ -162,7 +148,6 @@ class Main
 	
 	function getStockAndDraw( stockId ) {
 		getStock( stockId, true, function( ret:Dynamic ) {
-			trace('d', ret );
 			panelView.drawAllCanvas( stockId, panelModel.getAryPanel() );
 		});
 	}
@@ -209,7 +194,7 @@ class Main
 	function onHtmlTrigger( name, params ) {
 		switch( name ) {
 			case 'addPanel':
-				panelModel.addPanel( getId(), EType.kline, [ { type:EProp.ma, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
+				//panelModel.addPanel( getId(), EType.kline, [ { type:'ma', value:1, show:false }, { type:'', value:2, show:true } ] );
 			case 'removePanel':
 				var panelDom = j( params.currentTarget ).parent().parent().parent().parent();
 				var id = panelDom.attr( 'id' );

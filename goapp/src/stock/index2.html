@@ -40,8 +40,16 @@ body{
 	{{if type == 'kline'}}
 	<div class="easyui-layout" style="width:100%;height:480px; left:0; top:0;">
 	{{/if}}
+		
 		<div data-options="region:'north'" style="height:40px; padding:5px;">
+			{{if deletable }}
 			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
+			{{/if}}
+			<select id="slt_klineType" class="easyui-combobox" name="state" style="width:60px;">
+				<option value="empty">---</option>
+				<option value="kline">k線</option>
+				<option value="volume">量</option>
+			</select>
 		</div>
 		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
 			<!-- for script created -->
@@ -62,7 +70,7 @@ body{
 <script id="tmpl_avg" type="jquery-x-tmpl">
 	<div style="position:relative; width:100%; margin-bottom:5px;">
 		<div style="position:relative; display:inline-block; width:70px; ">
-			<input id=${sid} class="easyui-switchbutton" checked>
+			<input id=${sid} ktype=${type} class="easyui-switchbutton" checked>
 		</div>
 		<div style="position:relative; display:inline-block; width:40px; ">
 			<select id=${nid} class="easyui-textbox" style="width:100%;"></select>
