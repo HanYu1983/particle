@@ -82,6 +82,17 @@ var defaultStock = {
 						},
 						{
 							show:false,
+							type: 'yu-car', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+							value: {
+								n: 1,
+								m: .005,
+								o: .7, 
+								p: 0,
+								color: ''
+							}
+						},
+						{
+							show:false,
 							type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 							value: {
 								n: 9,
@@ -104,18 +115,6 @@ var defaultStock = {
 						},
 						{
 							show:false,
-							type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 20,
-								m: 20,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						}
-						,
-						{
-							show:false,
 							type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 							value: {
 								n: 3,
@@ -127,22 +126,32 @@ var defaultStock = {
 						},
 						{
 							show:false,
-							type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
-							value: {
-								n: 5,
-								m: 12,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						}
-						,
-						{
-							show:false,
 							type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 							value: {
 								n: 14,
 								m: 3,
+								o: 0, 
+								p: 0,
+								color: ''
+							}
+						},
+						{
+							show:false,
+							type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+							value: {
+								n: 20,
+								m: 20,
+								o: 0, 
+								p: 0,
+								color: ''
+							}
+						},
+						{
+							show:false,
+							type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
+							value: {
+								n: 5,
+								m: 12,
 								o: 0, 
 								p: 0,
 								color: ''
