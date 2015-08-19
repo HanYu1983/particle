@@ -485,8 +485,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
 		panelData.root = dom;
-		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
-		if(type == EType.kline) dom.find("#slt_showKline").switchbutton({ checked : true, onChange : function(checked) {
+		if(type == EType.kline || type == EType.none) dom.find("#slt_showKline").switchbutton({ checked : type == EType.kline, onChange : function(checked) {
 			_g.notify(view_PanelView.ON_SHOWLINE_K_CHANGE,{ id : panelData.id, show : checked});
 		}});
 		if(props != null) this.createProp(dom.find("#mc_propContainer"),props,panelData);
@@ -497,7 +496,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.mc_accordionContainer.accordion("remove",deleteName);
 	}
 	,drawCanvas: function(stockId,offset,count,panelData) {
-		console.log(panelData.data.type);
 		Main.drawStock(panelData.root.find("#canvas_kline"),stockId,panelData.data.type,offset,count,this.propsToDraw(panelData.data.sub));
 	}
 	,drawAllCanvas: function(stockId,offset,ary_panel) {

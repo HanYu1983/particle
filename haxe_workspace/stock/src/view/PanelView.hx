@@ -87,12 +87,12 @@ class PanelView extends Model implements IPanelView
 		});
 		panelData.root = dom;
 		
-		if( type != EType.clock )
-			dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
+		//if( type != EType.clock )
+		//	dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
 			
-		if ( type == EType.kline ){
+		if ( type == EType.kline || type == EType.none ){
 			dom.find( '#slt_showKline' ).switchbutton( {
-				checked:true,
+				checked:type == EType.kline,
 				onChange:function( checked ) {
 					notify( ON_SHOWLINE_K_CHANGE, { id:panelData.id, show:checked } );
 				}
@@ -111,7 +111,6 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
-		trace( panelData.data.type );
 		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
 	}
 	

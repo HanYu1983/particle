@@ -32,28 +32,27 @@ body{
 </style>
 <script id="tmpl_panel" type="jquery-x-tmpl">
 	{{if type == 'clock'}}
-	<div class="easyui-layout" style="width:100%;height:480px; left:0; top:0;">
+	<div class="easyui-layout" style="width:100%;height:435px; left:0; top:0;">
 	{{/if}}
 	{{if type == 'volume'}}
-	<div class="easyui-layout" style="width:100%;height:180px; left:0; top:0;">
+	<div class="easyui-layout" style="width:100%;height:150px; left:0; top:0;">
 	{{/if}}
-	{{if type == 'kline'}}
+	{{if type == 'kline' || type == 'none'}}
 	<div class="easyui-layout" style="width:100%;height:480px; left:0; top:0;">
 	{{/if}}
-		
+		{{if type == 'kline' || type == 'none'}}
 		<div data-options="region:'north'" style="height:40px; padding:5px;">
-			{{if deletable }}
+			<!--
 			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="onHtmlTrigger('removePanel',event);">刪除</a>
-			{{/if}}
-			{{if type == 'kline'}}
+			-->
 			<div style="position:relative; width:100%;">
 				<div style="position:relative; display:inline-block; width:70px; ">
 					<input id="slt_showKline" class="easyui-switchbutton" checked>
 				</div>
 				<div style="position:relative; display:inline-block; width:70px; ">顯示k線</div>
 			</div>
-			{{/if}}
 		</div>
+		{{/if}}
 		<div id="mc_propContainer" data-options="region:'west',split:true" title="顯示" style="width:350px; padding:5px;">
 			<!-- for script created -->
 		</div>
@@ -62,10 +61,10 @@ body{
 			<canvas id="canvas_kline" width=400 height=400 style="position:relative; left:50%; margin-left:-200px; top:0;"></canvas>
 			{{/if}}
 			{{if type == 'volume'}}
-			<canvas id="canvas_kline" width=800 height=100 style="position:relative; left:0; top:0;"></canvas>
+			<canvas id="canvas_kline" width=2000 height=100 style="position:relative; left:0; top:0;"></canvas>
 			{{/if}}
-			{{if type == 'kline'}}
-			<canvas id="canvas_kline" width=800 height=400 style="position:relative; left:0; top:0;"></canvas>
+			{{if type == 'kline' || type == 'none'}}
+			<canvas id="canvas_kline" width=2000 height=400 style="position:relative; left:0; top:0;"></canvas>
 			{{/if}}
 		</div>
 	</div>
