@@ -25,7 +25,8 @@ class Main
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
 			slt_stockId:j( '#slt_stockId' ),
-			btn_controller:j( '#btn_controller' )
+			btn_controller:j( '#btn_controller' ),
+			btn_addPanel:j( '#btn_addPanel' )
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
@@ -40,6 +41,9 @@ class Main
 					panelModel.changeShowValue( params.id, params.type, params.value );
 				case PanelView.ON_SHOWLINE_K_CHANGE:
 					panelModel.changeShowK( params.id, params.show );
+				case PanelView.ON_BTN_ADDPANEL_CLICK:
+					var penalObj = createNewPanelObj();
+					panelModel.addPanel( penalObj.id, penalObj );
 			}
 		});
 		
@@ -69,6 +73,128 @@ class Main
 		getStock( stockId, true, function( ret:Dynamic ) {
 			panelView.drawAllCanvas( stockId, panelModel.getAryPanel() );
 		});
+	}
+	
+	function createNewPanelObj() {
+		return {
+			id:getId(),
+			type:EType.none,
+			deletable:true,
+			sub:[
+				{
+					show:false,
+					type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 5,
+						m: 10,
+						o: 20, 
+						p: 40,
+						color: ''
+					}
+				},
+				{
+					show:false,
+					type: 'ema', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 5,
+						m: 10,
+						o: 20, 
+						p: 40,
+						color: ''
+					}
+				},
+				{
+					show:false,
+					type: 'bbi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 12,
+						m: 0,
+						o: 0, 
+						p: 0,
+						color: ''
+					}
+				},
+				{
+					show:false,
+					type: 'yu-sd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 20,
+						m: 0,
+						o: 0, 
+						p: 0,
+						color: ''
+					}
+				},
+				{
+					show:true,
+					type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 9,
+						m: 1,
+						o:3, 
+						p:0,
+						color: ''
+					}
+				},
+				{
+					show:false,
+					type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 12,
+						m: 26,
+						o: 0, 
+						p: 0,
+						color: ''
+					}
+				},
+				{
+					show:false,
+					type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 20,
+						m: 20,
+						o: 0, 
+						p: 0,
+						color: ''
+					}
+				}
+				,
+				{
+					show:false,
+					type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 3,
+						m: 10,
+						o: 9, 
+						p: 0,
+						color: ''
+					}
+				},
+				{
+					show:false,
+					type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
+					value: {
+						n: 5,
+						m: 12,
+						o: 0, 
+						p: 0,
+						color: ''
+					}
+				}
+				,
+				{
+					show:false,
+					type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+					value: {
+						n: 14,
+						m: 3,
+						o: 0, 
+						p: 0,
+						color: ''
+					}
+				}
+			]
+		}
 	}
 	
 	function resetAllCanvasListener() {
@@ -121,7 +247,7 @@ class Main
 		}
 	}
 	
-	static var id = 1;
+	static var id = 4;
 	
 	static function getId() {
 		return id++;

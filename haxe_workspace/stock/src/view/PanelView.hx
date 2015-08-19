@@ -14,6 +14,7 @@ class PanelView extends Model implements IPanelView
 	public static var ON_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
 	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_SHOWLINE_K_CHANGE = 'on_showline_k_change';
+	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -21,6 +22,7 @@ class PanelView extends Model implements IPanelView
 	var slt_stockId:Dynamic;
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
+	var btn_addPanel:Dynamic;
 	
 	public function new() 
 	{
@@ -36,6 +38,11 @@ class PanelView extends Model implements IPanelView
 		mc_accordionContainer.accordion();
 		
 		tmpl_panel = config.tmpl_panel;
+		
+		btn_addPanel = config.btn_addPanel;
+		btn_addPanel.click( function( e ) {
+			notify( ON_BTN_ADDPANEL_CLICK );
+		});
 		
 		slt_stockId = config.slt_stockId;
 		slt_stockId.textbox( {
