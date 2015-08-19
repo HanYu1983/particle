@@ -13,6 +13,7 @@ class PanelView extends Model implements IPanelView
 	public static var ON_OFFSET_CHANGE = 'on_offset_change';
 	public static var ON_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
 	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
+	public static var ON_SHOWLINE_K_CHANGE = 'on_showline_k_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -77,7 +78,7 @@ class PanelView extends Model implements IPanelView
 		var props = stockData.sub;
 		var deletable = stockData.deletable;
 		
-		var dom = tmpl_panel.tmpl( {id:id, type:type, deletable:deletable } );
+		var dom:Dynamic = tmpl_panel.tmpl( {id:id, type:type, deletable:deletable } );
 		mc_accordionContainer.accordion('add', {
 			id:'k_' + id,
 			title: 'k線: ' + id,
@@ -88,6 +89,15 @@ class PanelView extends Model implements IPanelView
 		
 		if( type != EType.clock )
 			dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
+			
+		if ( type == EType.kline ){
+			dom.find( '#slt_showKline' ).switchbutton( {
+				checked:true,
+				onChange:function( checked ) {
+					notify( ON_SHOWLINE_K_CHANGE, { id:panelData.id, show:checked } );
+				}
+			});
+		}
 		
 		if( props != null )
 			createProp( dom.find( '#mc_propContainer' ), props, panelData );
@@ -101,6 +111,7 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+		trace( panelData.data.type );
 		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
 	}
 	
@@ -130,7 +141,6 @@ class PanelView extends Model implements IPanelView
 	}
 
 	function createProp( container, props:Dynamic, panelData:Dynamic ) {
-		
 		function onInputChange( dom:Dynamic ) {
 			return function ( newv, oldv ){
 				var target = j( untyped __js__ ( 'this' ));

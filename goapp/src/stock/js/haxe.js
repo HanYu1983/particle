@@ -6,7 +6,7 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline"] };
+var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline","none"] };
 EType.volume = ["volume",0];
 EType.volume.toString = $estr;
 EType.volume.__enum__ = EType;
@@ -16,6 +16,9 @@ EType.clock.__enum__ = EType;
 EType.kline = ["kline",2];
 EType.kline.toString = $estr;
 EType.kline.__enum__ = EType;
+EType.none = ["none",3];
+EType.none.toString = $estr;
+EType.none.__enum__ = EType;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.substr = function(s,pos,len) {
@@ -120,6 +123,9 @@ var Main = function() {
 		case "on_showline_value_change":
 			_g.panelModel.changeShowValue(params.id,params.type,params.value);
 			break;
+		case "on_showline_k_change":
+			_g.panelModel.changeShowK(params.id,params.show);
+			break;
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
@@ -142,7 +148,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "clock", deletable : false, sub : []},{ id : 4, type : "volume", deletable : false, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}}]},{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-sd", value : { n : 20, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 1, o : 3, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}}]}]}]});
+	this.panelModel.set_config(defaultStock);
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -348,6 +354,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		Reflect.setField(this.getPanelSubByType(panelData,type),"show",show);
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
+	,changeShowK: function(id,show) {
+		var panelData = this.getPanelById(id);
+		if(show) panelData.data.type = EType.kline; else panelData.data.type = EType.none;
+		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
+	}
 	,changeShowValue: function(id,type,value) {
 		var panelData = this.getPanelById(id);
 		var subObj = this.getPanelSubByType(panelData,type);
@@ -465,6 +476,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.slt_stockId.textbox("setValue",stockId);
 	}
 	,addPanel: function(stockId,offset,count,panelData) {
+		var _g = this;
 		var stockData = panelData.data;
 		var id = stockData.id;
 		var type = stockData.type;
@@ -474,6 +486,9 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
 		panelData.root = dom;
 		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
+		if(type == EType.kline) dom.find("#slt_showKline").switchbutton({ checked : true, onChange : function(checked) {
+			_g.notify(view_PanelView.ON_SHOWLINE_K_CHANGE,{ id : panelData.id, show : checked});
+		}});
 		if(props != null) this.createProp(dom.find("#mc_propContainer"),props,panelData);
 		this.drawCanvas(stockId,offset,count,panelData);
 	}
@@ -482,6 +497,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.mc_accordionContainer.accordion("remove",deleteName);
 	}
 	,drawCanvas: function(stockId,offset,count,panelData) {
+		console.log(panelData.data.type);
 		Main.drawStock(panelData.root.find("#canvas_kline"),stockId,panelData.data.type,offset,count,this.propsToDraw(panelData.data.sub));
 	}
 	,drawAllCanvas: function(stockId,offset,ary_panel) {
@@ -547,6 +563,7 @@ view_PanelView.ON_STOCKID_CHANGE = "on_stockid_change";
 view_PanelView.ON_OFFSET_CHANGE = "on_offset_change";
 view_PanelView.ON_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
 view_PanelView.ON_SHOWLINE_CHANGE = "on_showline_change";
+view_PanelView.ON_SHOWLINE_K_CHANGE = "on_showline_k_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

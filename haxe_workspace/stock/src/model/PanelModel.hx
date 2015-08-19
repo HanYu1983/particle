@@ -41,6 +41,12 @@ class PanelModel extends Model implements IPanel
 		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
 	}
 	
+	public function changeShowK( id:Dynamic, show:Bool ):Void {
+		var panelData:Dynamic = getPanelById( id );
+		panelData.data.type = show ? EType.kline : EType.none;
+		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
+	}
+	
 	public function changeShowValue( id:Dynamic, type:String, value:Array<Int> ):Void {
 		var panelData:Dynamic = getPanelById( id );
 		var subObj:Dynamic = getPanelSubByType( panelData, type );
