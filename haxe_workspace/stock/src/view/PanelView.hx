@@ -118,7 +118,9 @@ class PanelView extends Model implements IPanelView
 					't': Std.string( obj.type ),
 					'd': {
 						n:obj.value.n,
-						m:obj.value.m
+						m:obj.value.m,
+						o:5,
+						p:5
 					},
 					'color':'red'
 				});
@@ -147,7 +149,8 @@ class PanelView extends Model implements IPanelView
 			prop.sid = 'swb_' + prop.type;
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
-			
+			var dom = j( '#tmpl_avg' ).tmpl( prop );
+			/*
 			var dom:Dynamic = switch( prop.type ) {
 				case 'ma':
 					j( '#tmpl_avg' ).tmpl( prop );
@@ -166,6 +169,7 @@ class PanelView extends Model implements IPanelView
 				case _:
 					throw 'do not enter here!';
 			}
+			*/
 			container.append( dom );
 			
 			dom.find( '.easyui-switchbutton' ).switchbutton( {

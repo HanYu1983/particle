@@ -142,7 +142,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}},{ show : true, type : "ema", value : { n : 20, m : 100, color : ""}},{ show : true, type : "kd", value : { n : 3, m : 9, color : ""}},{ show : true, type : "macd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "yu-clock", value : { n : 3, m : 9, color : ""}},{ show : true, type : "yu-sd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "Chaikin", value : { n : 20, m : 100, color : ""}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}},{ show : true, type : "ema", value : { n : 20, m : 100, color : ""}},{ show : true, type : "kd", value : { n : 3, m : 9, color : ""}},{ show : true, type : "macd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "yu-clock", value : { n : 3, m : 9, color : ""}},{ show : true, type : "yu-sd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "Chaikin", value : { n : 20, m : 100, color : ""}},{ show : true, type : "yu-macd", value : { n : 3, m : 9, color : ""}},{ show : true, type : "bbi", value : { n : 20, m : 100, color : ""}},{ show : true, type : "eom", value : { n : 20, m : 100, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -490,7 +490,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	}
 	,propsToDraw: function(props) {
 		return Lambda.fold(props,function(obj,current) {
-			if(obj.show) current.push({ 't' : Std.string(obj.type), 'd' : { n : obj.value.n, m : obj.value.m}, 'color' : "red"});
+			if(obj.show) current.push({ 't' : Std.string(obj.type), 'd' : { n : obj.value.n, m : obj.value.m, o : 5, p : 5}, 'color' : "red"});
 			return current;
 		},[]);
 	}
@@ -512,33 +512,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
-			var dom1;
-			var _g1 = prop.type;
-			switch(_g1) {
-			case "ma":
-				dom1 = _g.j("#tmpl_avg").tmpl(prop);
-				break;
-			case "ema":
-				dom1 = _g.j("#tmpl_avg").tmpl(prop);
-				break;
-			case "kd":
-				dom1 = _g.j("#tmpl_avg").tmpl(prop);
-				break;
-			case "macd":
-				dom1 = _g.j("#tmpl_avg").tmpl(prop);
-				break;
-			case "yu-clock":
-				dom1 = _g.j("#tmpl_avg").tmpl(prop);
-				break;
-			case "yu-sd":
-				dom1 = _g.j("#tmpl_avg").tmpl(prop);
-				break;
-			case "Chaikin":
-				dom1 = _g.j("#tmpl_avg").tmpl(prop);
-				break;
-			default:
-				throw new js__$Boot_HaxeError("do not enter here!");
-			}
+			var dom1 = _g.j("#tmpl_avg").tmpl(prop);
 			container.append(dom1);
 			dom1.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {
 				var target1 = _g.j(this);

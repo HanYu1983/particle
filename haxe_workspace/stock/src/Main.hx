@@ -135,6 +135,34 @@ class Main
 										m: 100,
 										color: ''
 									}
+								},
+								{
+									show:true,
+									type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
+									value: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'bbi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
+										color: ''
+									}
+								}
+								,
+								{
+									show:true,
+									type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
+										color: ''
+									}
 								}
 							]
 						}
