@@ -142,7 +142,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}},{ show : true, type : "ema", value : { n : 20, m : 100, color : ""}},{ show : true, type : "kd", value : { n : 3, m : 9, color : ""}},{ show : true, type : "macd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "yu-clock", value : { n : 3, m : 9, color : ""}},{ show : true, type : "yu-sd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "Chaikin", value : { n : 20, m : 100, color : ""}},{ show : true, type : "yu-macd", value : { n : 3, m : 9, color : ""}},{ show : true, type : "bbi", value : { n : 20, m : 100, color : ""}},{ show : true, type : "eom", value : { n : 20, m : 100, color : ""}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "ema", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "kd", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "macd", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "yu-clock", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "yu-sd", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "yu-macd", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "bbi", value : { n : 3, m : 9, o : 5, p : 7, color : ""}},{ show : false, type : "eom", value : { n : 3, m : 9, o : 5, p : 7, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -353,6 +353,8 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var subObj = this.getPanelSubByType(panelData,type);
 		subObj.value.n = value[0];
 		subObj.value.m = value[1];
+		subObj.value.o = value[2];
+		subObj.value.p = value[3];
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,addPanel: function(id,data,extra) {
@@ -490,7 +492,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	}
 	,propsToDraw: function(props) {
 		return Lambda.fold(props,function(obj,current) {
-			if(obj.show) current.push({ 't' : Std.string(obj.type), 'd' : { n : obj.value.n, m : obj.value.m, o : 5, p : 5}, 'color' : "red"});
+			if(obj.show) current.push({ 't' : Std.string(obj.type), 'd' : { n : obj.value.n, m : obj.value.m, o : obj.value.o, p : obj.value.p}, 'color' : "red"});
 			return current;
 		},[]);
 	}
@@ -499,7 +501,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var onInputChange = function(dom) {
 			return function(newv,oldv) {
 				var target = _g.j(this);
-				var targetId = target.attr("id");
 				var type = dom.find(".easyui-switchbutton").attr("ktype");
 				var value = [];
 				dom.find(".easyui-textbox").each(function(id,subdom) {
@@ -521,6 +522,8 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			}});
 			dom1.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n, onChange : onInputChange(dom1)});
 			dom1.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m, onChange : onInputChange(dom1)});
+			dom1.find(".easyui-textbox").eq(2).textbox({ value : prop.value.o, onChange : onInputChange(dom1)});
+			dom1.find(".easyui-textbox").eq(3).textbox({ value : prop.value.p, onChange : onInputChange(dom1)});
 			return true;
 		});
 	}

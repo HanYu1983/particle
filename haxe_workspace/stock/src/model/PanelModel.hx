@@ -46,6 +46,8 @@ class PanelModel extends Model implements IPanel
 		var subObj:Dynamic = getPanelSubByType( panelData, type );
 		subObj.value.n = value[0];
 		subObj.value.m = value[1];
+		subObj.value.o = value[2];
+		subObj.value.p = value[3];
 		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
 	}
 	

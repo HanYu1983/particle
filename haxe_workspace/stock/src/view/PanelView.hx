@@ -119,8 +119,8 @@ class PanelView extends Model implements IPanelView
 					'd': {
 						n:obj.value.n,
 						m:obj.value.m,
-						o:5,
-						p:5
+						o:obj.value.o,
+						p:obj.value.p
 					},
 					'color':'red'
 				});
@@ -134,7 +134,6 @@ class PanelView extends Model implements IPanelView
 		function onInputChange( dom:Dynamic ) {
 			return function ( newv, oldv ){
 				var target = j( untyped __js__ ( 'this' ));
-				var targetId = target.attr( 'id' );
 				var type = dom.find( '.easyui-switchbutton' ).attr( 'ktype' );
 				var value = [];
 				dom.find( '.easyui-textbox' ).each( function( id, subdom ) {
@@ -149,27 +148,8 @@ class PanelView extends Model implements IPanelView
 			prop.sid = 'swb_' + prop.type;
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
+			
 			var dom = j( '#tmpl_avg' ).tmpl( prop );
-			/*
-			var dom:Dynamic = switch( prop.type ) {
-				case 'ma':
-					j( '#tmpl_avg' ).tmpl( prop );
-				case 'ema':
-					j( '#tmpl_avg' ).tmpl( prop );
-				case 'kd':
-					j( '#tmpl_avg' ).tmpl( prop );
-				case 'macd':
-					j( '#tmpl_avg' ).tmpl( prop );
-				case 'yu-clock':
-					j( '#tmpl_avg' ).tmpl( prop );
-				case 'yu-sd':
-					j( '#tmpl_avg' ).tmpl( prop );
-				case 'Chaikin':
-					j( '#tmpl_avg' ).tmpl( prop );
-				case _:
-					throw 'do not enter here!';
-			}
-			*/
 			container.append( dom );
 			
 			dom.find( '.easyui-switchbutton' ).switchbutton( {
@@ -186,6 +166,14 @@ class PanelView extends Model implements IPanelView
 			});
 			dom.find( '.easyui-textbox' ).eq(1).textbox( {
 				value:prop.value.m,
+				onChange:onInputChange( dom )
+			});
+			dom.find( '.easyui-textbox' ).eq(2).textbox( {
+				value:prop.value.o,
+				onChange:onInputChange( dom )
+			});
+			dom.find( '.easyui-textbox' ).eq(3).textbox( {
+				value:prop.value.p,
 				onChange:onInputChange( dom )
 			});
 			return true;

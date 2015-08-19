@@ -76,91 +76,111 @@ class Main
 									show:true,
 									type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
-										n: 3,
+										n: 5,
 										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								},
 								{
-									show:true,
+									show:false,
 									type: 'ema', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
-										n: 20,
-										m: 100,
+										n: 3,
+										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								},
 								{
-									show:true,
+									show:false,
 									type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
 										n: 3,
 										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								},
 								{
-									show:true,
+									show:false,
 									type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
-										n: 20,
-										m: 100,
+										n: 3,
+										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								},
 								{
-									show:true,
+									show:false,
 									type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
 										n: 3,
 										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								},
 								{
-									show:true,
+									show:false,
 									type: 'yu-sd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
-										n: 20,
-										m: 100,
+										n: 3,
+										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								}
 								,
 								{
-									show:true,
+									show:false,
 									type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
-										n: 20,
-										m: 100,
+										n: 3,
+										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								},
 								{
-									show:true,
+									show:false,
 									type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
 									value: {
 										n: 3,
 										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								},
 								{
-									show:true,
+									show:false,
 									type: 'bbi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
-										n: 20,
-										m: 100,
+										n: 3,
+										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								}
 								,
 								{
-									show:true,
+									show:false,
 									type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
-										n: 20,
-										m: 100,
+										n: 3,
+										m: 9,
+										o:5, 
+										p:7,
 										color: ''
 									}
 								}
