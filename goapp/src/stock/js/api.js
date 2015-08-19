@@ -27,7 +27,7 @@ var api = {};
 	count: k線的數量
 	sub: 
 		[{
-			t: ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
+			t: ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom | yu-car
 			d: {
 				n: int,
 				m: int,
@@ -45,6 +45,7 @@ var api = {};
 	yu-macd(5, 12)
 	bbi(12)
 	eom(14, 3)
+	yu-car(1, 0.005, 0.7)
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
 		var params = {

@@ -323,3 +323,47 @@
               100)
             int)]
       (cons v (lazy-seq (rsv-seq n (rest kline)))))))
+      
+      
+(defn yu-car
+  "余氏方向盤指標
+  w用0.001看多空動能
+  w用20看振盪方向"
+  [n w d reverse-kline]
+  (let [normal
+        (->
+          (.pow js/Math 1.07 n)
+          (- 1))
+    
+        up-seq
+        (map 
+          (partial * (/ 1 normal))
+          (offset-seq (stl/mid reverse-kline)))
+
+        vs
+        (->>
+          (reductions
+            (fn [[prev ran] up-offset]
+              (let [max-v (+ prev (if (pos? up-offset) ran (/ ran 2)))
+                    min-v (- prev (if (neg? up-offset) ran (/ ran 2)))]
+                (if (> max-v up-offset min-v)
+                  [up-offset (* ran d)]
+                  [
+                    (if (> up-offset max-v)
+                      max-v
+                      min-v)
+                    (+ ran 
+                      (* 
+                        (max
+                          (- up-offset max-v)
+                          (- min-v up-offset))
+                        w))
+                  ])
+                ))
+            [
+              (first up-seq)
+              normal
+            ]
+            (rest up-seq)))]
+    ; vector的first和list的first為倒反
+    [(map second vs) (map first vs)]))
