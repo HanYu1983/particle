@@ -90,7 +90,7 @@ class PanelView extends Model implements IPanelView
 		if( props != null )
 			createProp( dom.find( '#mc_propContainer' ), props );
 			
-		Main.drawStock( dom.find( '#canvas_kline' ), stockId, type, offset, count, { } );
+		Main.drawStock( dom.find( '#canvas_kline' ), stockId, type, offset, count, propsToDraw( props ) );
 	}
 	
 	public function removePanel( id:String ):Void {
@@ -103,6 +103,23 @@ class PanelView extends Model implements IPanelView
 			Main.drawStock( stockMap.root.find( '#canvas_kline' ), stockId, stockMap.type, offset, { } );
 		});
 	}
+	
+	function propsToDraw( props ) {
+		return Lambda.fold( props, function( obj, current ) {
+			if ( obj.show ) {
+				current.push( 
+				{
+					't': Std.string( obj.type ),
+					'd': {
+						n:obj.value.n,
+						m:obj.value.m
+					},
+					'color':'red'
+				});
+			}
+			return current;
+		}, [] );
+	}
 
 	function createProp( container, props ) {
 		Lambda.foreach( props, function( prop:Dynamic ) {
@@ -112,15 +129,19 @@ class PanelView extends Model implements IPanelView
 			prop.mid = 'input_m_' + prop.type;
 			
 			var dom:Dynamic = switch( prop.type ) {
-				case EProp.ma:
+				case 'ma':
 					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.kd:
+				case 'ema':
 					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.yu:
+				case 'kd':
 					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.macd:
+				case 'macd':
 					j( '#tmpl_avg' ).tmpl( prop );
-				case EProp.ema:
+				case 'yu-clock':
+					j( '#tmpl_avg' ).tmpl( prop );
+				case 'yu-sd':
+					j( '#tmpl_avg' ).tmpl( prop );
+				case 'Chaikin':
 					j( '#tmpl_avg' ).tmpl( prop );
 				case _:
 					throw 'do not enter here!';

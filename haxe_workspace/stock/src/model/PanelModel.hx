@@ -74,7 +74,7 @@ class PanelModel extends Model implements IPanel
 		currentStockId = stock.id;
 		currentOffset = stock.offset;
 		currentCount = stock.count;
-		
+		/*
 		function parserSub( sub ):Array<Dynamic> {
 			Lambda.foreach( sub, function( obj:Dynamic ) {
 				obj.type = Type.createEnum( EProp, obj.type );
@@ -82,10 +82,10 @@ class PanelModel extends Model implements IPanel
 			});
 			return Lambda.array( sub );
 		}
-		
+		*/
 		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
 			obj.type = Type.createEnum( EType, obj.type );
-			obj.sub = parserSub( obj.sub );
+			//obj.sub = parserSub( obj.sub );
 			return true;
 		});
 			

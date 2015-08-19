@@ -64,7 +64,7 @@ class Main
 					lines:[
 						{
 							id:4,
-							type:'clock',
+							type:'kline',
 							deletable:false,
 							sub:[
 								{
@@ -73,6 +73,15 @@ class Main
 									value: {
 										n: 3,
 										m: 9,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'yu-sd', //ma | ema | kd | macd | yu
+									value: {
+										n: 20,
+										m: 100,
 										color: ''
 									}
 								}
@@ -135,7 +144,7 @@ class Main
 	function onHtmlTrigger( name, params ) {
 		switch( name ) {
 			case 'addPanel':
-				panelModel.addPanel( getId(), EType.kline, [ { type:EProp.ma, value:1, show:false }, { type:EProp.kd, value:2, show:true } ] );
+				//panelModel.addPanel( getId(), EType.kline, [ { type:'ma', value:1, show:false }, { type:'', value:2, show:true } ] );
 			case 'removePanel':
 				var panelDom = j( params.currentTarget ).parent().parent().parent().parent();
 				var id = panelDom.attr( 'id' );

@@ -6,22 +6,6 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EProp = { __ename__ : true, __constructs__ : ["ma","ema","kd","macd","yu"] };
-EProp.ma = ["ma",0];
-EProp.ma.toString = $estr;
-EProp.ma.__enum__ = EProp;
-EProp.ema = ["ema",1];
-EProp.ema.toString = $estr;
-EProp.ema.__enum__ = EProp;
-EProp.kd = ["kd",2];
-EProp.kd.toString = $estr;
-EProp.kd.__enum__ = EProp;
-EProp.macd = ["macd",3];
-EProp.macd.toString = $estr;
-EProp.macd.__enum__ = EProp;
-EProp.yu = ["yu",4];
-EProp.yu.toString = $estr;
-EProp.yu.__enum__ = EProp;
 var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline"] };
 EType.volume = ["volume",0];
 EType.volume.toString = $estr;
@@ -70,15 +54,6 @@ HxOverrides.iter = function(a) {
 };
 var Lambda = function() { };
 Lambda.__name__ = true;
-Lambda.array = function(it) {
-	var a = [];
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var i = $it0.next();
-		a.push(i);
-	}
-	return a;
-};
 Lambda.map = function(it,f) {
 	var l = new List();
 	var $it0 = $iterator(it)();
@@ -95,6 +70,14 @@ Lambda.foreach = function(it,f) {
 		if(!f(x)) return false;
 	}
 	return true;
+};
+Lambda.fold = function(it,f,first) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		first = f(x,first);
+	}
+	return first;
 };
 var List = function() {
 	this.length = 0;
@@ -142,7 +125,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "clock", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}},{ show : true, type : "yu-sd", value : { n : 20, m : 100, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -164,7 +147,7 @@ Main.prototype = {
 	getStockAndDraw: function(stockId) {
 		var _g = this;
 		Main.getStock(stockId,true,function(ret) {
-			haxe_Log.trace("d",{ fileName : "Main.hx", lineNumber : 91, className : "Main", methodName : "getStockAndDraw", customParams : [ret]});
+			haxe_Log.trace("d",{ fileName : "Main.hx", lineNumber : 100, className : "Main", methodName : "getStockAndDraw", customParams : [ret]});
 			_g.panelView.drawAllCanvas(stockId,null,_g.panelModel.getAryPanel());
 		});
 	}
@@ -173,7 +156,6 @@ Main.prototype = {
 	,onHtmlTrigger: function(name,params) {
 		switch(name) {
 		case "addPanel":
-			this.panelModel.addPanel(Main.getId(),EType.kline,[{ type : EProp.ma, value : 1, show : false},{ type : EProp.kd, value : 2, show : true}]);
 			break;
 		case "removePanel":
 			var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
@@ -219,9 +201,6 @@ Type.createEnum = function(e,constr,params) {
 	}
 	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
 	return f;
-};
-Type.enumIndex = function(e) {
-	return e[1];
 };
 var haxe_Log = function() { };
 haxe_Log.__name__ = true;
@@ -402,21 +381,13 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.currentStockId = stock.id;
 		this.set_currentOffset(stock.offset);
 		this.currentCount = stock.count;
-		var parserSub = function(sub) {
-			Lambda.foreach(sub,function(obj) {
-				obj.type = Type.createEnum(EProp,obj.type);
-				return true;
-			});
-			return Lambda.array(sub);
-		};
-		Lambda.foreach(stock.lines,function(obj1) {
-			obj1.type = Type.createEnum(EType,obj1.type);
-			obj1.sub = parserSub(obj1.sub);
+		Lambda.foreach(stock.lines,function(obj) {
+			obj.type = Type.createEnum(EType,obj.type);
 			return true;
 		});
 		Main.getStock(this.currentStockId,true,function(params) {
-			Lambda.foreach(stock.lines,function(obj2) {
-				_g.addPanel(obj2.id,obj2);
+			Lambda.foreach(stock.lines,function(obj1) {
+				_g.addPanel(obj1.id,obj1);
 				return true;
 			});
 			_g.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g.currentStockId});
@@ -488,7 +459,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		stockData.root = dom;
 		if(type != EType.clock) dom.find("canvas").attr("width",dom.find("canvas").parent().width());
 		if(props != null) this.createProp(dom.find("#mc_propContainer"),props);
-		Main.drawStock(dom.find("#canvas_kline"),stockId,type,offset,count,{ });
+		Main.drawStock(dom.find("#canvas_kline"),stockId,type,offset,count,this.propsToDraw(props));
 	}
 	,removePanel: function(id) {
 		var deleteName = "k線: " + HxOverrides.substr(id,"k_".length,id.length);
@@ -500,6 +471,12 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			Main.drawStock(stockMap.root.find("#canvas_kline"),stockId,stockMap.type,offset,null,{ });
 		});
 	}
+	,propsToDraw: function(props) {
+		return Lambda.fold(props,function(obj,current) {
+			if(obj.show) current.push({ 't' : Std.string(obj.type), 'd' : { n : obj.value.n, m : obj.value.m}, 'color' : "red"});
+			return current;
+		},[]);
+	}
 	,createProp: function(container,props) {
 		var _g1 = this;
 		Lambda.foreach(props,function(prop) {
@@ -508,20 +485,26 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			prop.mid = "input_m_" + Std.string(prop.type);
 			var dom;
 			var _g = prop.type;
-			switch(Type.enumIndex(_g)) {
-			case 0:
+			switch(_g) {
+			case "ma":
 				dom = _g1.j("#tmpl_avg").tmpl(prop);
 				break;
-			case 2:
+			case "ema":
 				dom = _g1.j("#tmpl_avg").tmpl(prop);
 				break;
-			case 4:
+			case "kd":
 				dom = _g1.j("#tmpl_avg").tmpl(prop);
 				break;
-			case 3:
+			case "macd":
 				dom = _g1.j("#tmpl_avg").tmpl(prop);
 				break;
-			case 1:
+			case "yu-clock":
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case "yu-sd":
+				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				break;
+			case "Chaikin":
 				dom = _g1.j("#tmpl_avg").tmpl(prop);
 				break;
 			default:
@@ -530,7 +513,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			container.append(dom);
 			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function() {
 				var target = _g1.j(this);
-				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 134, className : "view.PanelView", methodName : "createProp"});
+				haxe_Log.trace(target.attr("id"),{ fileName : "PanelView.hx", lineNumber : 155, className : "view.PanelView", methodName : "createProp"});
 			}});
 			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
 			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});
