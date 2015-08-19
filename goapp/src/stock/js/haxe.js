@@ -141,6 +141,7 @@ var Main = function() {
 			break;
 		case "on_add_panel":
 			_g.panelView.addPanel(params1.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelObj);
+			_g.panelView.resetAllCanvasListener(_g.panelModel.getAryPanel());
 			break;
 		case "on_remove_panel":
 			_g.panelView.removePanel(params1.id);
@@ -170,7 +171,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 };
 Main.prototype = {
 	createNewPanelObj: function() {
-		return { id : Main.getId(), type : EType.none, deletable : true, needMove : true, sub : [{ show : false, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-sd", value : { n : 20, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 1, o : 3, p : 0, color : ""}},{ show : true, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]};
+		return { id : Main.getId(), type : EType.none, deletable : true, sub : [{ show : false, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-sd", value : { n : 20, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 1, o : 3, p : 0, color : ""}},{ show : true, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]};
 	}
 	,onHtmlTrigger: function(name,params) {
 		switch(name) {
@@ -366,7 +367,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,addPanel: function(id,data,extra) {
-		var obj = { id : id, data : data, root : null};
+		var obj = { id : id, data : data, needMove : data.type != EType.clock, root : null};
 		this.ary_panel_obj.push(obj);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
@@ -556,14 +557,14 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var _g = this;
 		Lambda.map(ary_panel_obj,function(stockMap) {
 			if(stockMap.needMove) {
-				var container = stockMap.canvas.parent();
+				var container = stockMap.root.find("#canvas_kline").parent();
 				if(_g.currentScrollX != null) container.scrollLeft(_g.currentScrollX);
 				container.off("scroll");
 				container.scroll(function(e) {
 					var target = _g.j(e.currentTarget);
 					_g.currentScrollX = target.scrollLeft();
 					Lambda.map(ary_panel_obj,function(_stockMap) {
-						container = _stockMap.canvas.parent();
+						container = _stockMap.root.find("#canvas_kline").parent();
 						container.scrollLeft(_g.currentScrollX);
 					});
 				});

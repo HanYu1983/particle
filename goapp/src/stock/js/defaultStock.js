@@ -36,7 +36,6 @@ var defaultStock = {
 					id:3,
 					type:'kline',
 					deletable:false,
-					needMove:true,
 					sub:[
 						{
 							show:true,

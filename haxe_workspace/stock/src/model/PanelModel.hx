@@ -62,6 +62,7 @@ class PanelModel extends Model implements IPanel
 		var obj = {
 			id:id,
 			data:data,
+			needMove: data.type != EType.clock,
 			root:null //add by panelView
 		};
 		ary_panel_obj.push( obj );

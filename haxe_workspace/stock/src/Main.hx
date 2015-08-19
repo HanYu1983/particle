@@ -61,7 +61,7 @@ class Main
 					panelView.setShowId( params.stockId );
 				case PanelModel.ON_ADD_PANEL:
 					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
-					//panelView.
+					panelView.resetAllCanvasListener( panelModel.getAryPanel() );
 				case PanelModel.ON_REMOVE_PANEL:
 					panelView.removePanel( params.id );
 				case PanelModel.ON_SHOWLINE_CHANGE:
@@ -80,7 +80,6 @@ class Main
 			id:getId(),
 			type:EType.none,
 			deletable:true,
-			needMove:true,
 			sub:[
 				{
 					show:false,

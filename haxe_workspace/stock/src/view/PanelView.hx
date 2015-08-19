@@ -203,10 +203,10 @@ class PanelView extends Model implements IPanelView
 		
 	}
 	
-	function resetAllCanvasListener( ary_panel_obj ) {
+	public function resetAllCanvasListener( ary_panel_obj:Array<Dynamic> ) {
 		Lambda.map( ary_panel_obj, function( stockMap ) {
-			if( stockMap.needMove ){
-				var container = stockMap.canvas.parent();
+			if ( stockMap.needMove ) {
+				var container = stockMap.root.find( '#canvas_kline' ).parent();
 				if( currentScrollX != null )
 					container.scrollLeft( currentScrollX );
 				container.off( 'scroll' );
@@ -214,30 +214,11 @@ class PanelView extends Model implements IPanelView
 					var target = j( e.currentTarget );
 					currentScrollX = target.scrollLeft();
 					Lambda.map( ary_panel_obj, function( _stockMap ) {
-						container = _stockMap.canvas.parent();
+						container = _stockMap.root.find( '#canvas_kline' ).parent();
 						container.scrollLeft( currentScrollX );
 					});
 				});
 			}
-			/*
-			var root = stockMap.root;
-			if ( root != null ) {
-				root.find( '.easyui-switchbutton' ).switchbutton( {
-					onChange:function( checked ) {
-						var target = j( untyped __js__ ( 'this' ));
-						trace( target.attr( 'id' ));
-						var propContainer = target.parent().parent();
-						var value = propContainer.find( '.easyui-textbox' ).textbox( 'getValue' );
-						if ( checked ) {
-							
-						}
-						trace( stockMap.id );
-						trace( target );
-						trace( value );
-					}
-				});
-			}
-			*/
 		});
 	}
 }
