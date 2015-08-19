@@ -28,7 +28,7 @@ class Main
 			btn_controller:j( '#btn_controller' )
 		}
 		
-		panelView.addHandler( function( type, params ) {
+		panelView.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
 				case PanelView.ON_STOCKID_CHANGE:
 					getStockAndDraw( params.stockId );
@@ -36,6 +36,8 @@ class Main
 					panelModel.currentOffset += params.value;
 				case PanelView.ON_SHOWLINE_CHANGE:
 					panelModel.changeShow( params.id, params.type, params.show );
+				case PanelView.ON_SHOWLINE_VALUE_CHANGE:
+					panelModel.changeShowValue( params.id, params.type, params.value );
 			}
 		});
 		
@@ -72,7 +74,7 @@ class Main
 							sub:[
 								{
 									show:true,
-									type: 'ma', //ma | ema | kd | macd | yu
+									type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
 										n: 3,
 										m: 9,
@@ -81,7 +83,53 @@ class Main
 								},
 								{
 									show:true,
-									type: 'yu-sd', //ma | ema | kd | macd | yu
+									type: 'ema', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 3,
+										m: 9,
+										color: ''
+									}
+								},
+								{
+									show:true,
+									type: 'yu-sd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+									value: {
+										n: 20,
+										m: 100,
+										color: ''
+									}
+								}
+								,
+								{
+									show:true,
+									type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 									value: {
 										n: 20,
 										m: 100,

@@ -37,9 +37,15 @@ class PanelModel extends Model implements IPanel
 	
 	public function changeShow( id:Dynamic, type:String, show:Bool ):Void {
 		var panelData:Dynamic = getPanelById( id );
-		Reflect.setField( Lambda.find( panelData.data.sub, function( subObj ) {
-			return subObj.type == type;
-		}), 'show', show );
+		Reflect.setField( getPanelSubByType( panelData, type ) , 'show', show );
+		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
+	}
+	
+	public function changeShowValue( id:Dynamic, type:String, value:Array<Int> ):Void {
+		var panelData:Dynamic = getPanelById( id );
+		var subObj:Dynamic = getPanelSubByType( panelData, type );
+		subObj.value.n = value[0];
+		subObj.value.m = value[1];
 		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
 	}
 	
@@ -127,6 +133,12 @@ class PanelModel extends Model implements IPanel
 	function getPanelById( id ) {
 		return Lambda.find( ary_panel_obj, function( panelObj ) {
 			return panelObj.id == id;
+		});
+	}
+	
+	function getPanelSubByType( panelData:Dynamic, type:String ) {
+		return Lambda.find( panelData.data.sub, function( subObj ) {
+			return subObj.type == type;
 		});
 	}
 	

@@ -11,6 +11,7 @@ class PanelView extends Model implements IPanelView
 {
 	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
 	public static var ON_OFFSET_CHANGE = 'on_offset_change';
+	public static var ON_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
 	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	
 	var j:Dynamic = untyped __js__('$');
@@ -100,7 +101,6 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
-		trace( panelData );
 		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
 	}
 	
@@ -128,6 +128,20 @@ class PanelView extends Model implements IPanelView
 	}
 
 	function createProp( container, props:Dynamic, panelData:Dynamic ) {
+		
+		function onInputChange( dom:Dynamic ) {
+			return function ( newv, oldv ){
+				var target = j( untyped __js__ ( 'this' ));
+				var targetId = target.attr( 'id' );
+				var type = dom.find( '.easyui-switchbutton' ).attr( 'ktype' );
+				var value = [];
+				dom.find( '.easyui-textbox' ).each( function( id, subdom ) {
+					value.push( j( subdom ).textbox('getValue' ) );
+				});
+				notify( ON_SHOWLINE_VALUE_CHANGE, { id:panelData.id, type:type, value:value } );
+			}
+		}
+		
 		Lambda.foreach( props, function( prop:Dynamic ) {
 			
 			prop.sid = 'swb_' + prop.type;
@@ -163,10 +177,12 @@ class PanelView extends Model implements IPanelView
 				}
 			});
 			dom.find( '.easyui-textbox' ).eq(0).textbox( {
-				value:prop.value.n
+				value:prop.value.n,
+				onChange:onInputChange( dom )
 			});
 			dom.find( '.easyui-textbox' ).eq(1).textbox( {
-				value:prop.value.m
+				value:prop.value.m,
+				onChange:onInputChange( dom )
 			});
 			return true;
 		});

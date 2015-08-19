@@ -117,6 +117,9 @@ var Main = function() {
 		case "on_showline_change":
 			_g.panelModel.changeShow(params.id,params.type,params.show);
 			break;
+		case "on_showline_value_change":
+			_g.panelModel.changeShowValue(params.id,params.type,params.value);
+			break;
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
@@ -139,7 +142,7 @@ var Main = function() {
 		default:
 		}
 	});
-	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}},{ show : true, type : "yu-sd", value : { n : 20, m : 100, color : ""}}]}]}]});
+	this.panelModel.set_config({ facebookId : "12233", stocks : [{ id : "2330", count : 200, offset : 13, lines : [{ id : 4, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 3, m : 9, color : ""}},{ show : true, type : "ema", value : { n : 20, m : 100, color : ""}},{ show : true, type : "kd", value : { n : 3, m : 9, color : ""}},{ show : true, type : "macd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "yu-clock", value : { n : 3, m : 9, color : ""}},{ show : true, type : "yu-sd", value : { n : 20, m : 100, color : ""}},{ show : true, type : "Chaikin", value : { n : 20, m : 100, color : ""}}]}]}]});
 	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
@@ -342,9 +345,14 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,changeShow: function(id,type,show) {
 		var panelData = this.getPanelById(id);
-		Reflect.setField(Lambda.find(panelData.data.sub,function(subObj) {
-			return subObj.type == type;
-		}),"show",show);
+		Reflect.setField(this.getPanelSubByType(panelData,type),"show",show);
+		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
+	}
+	,changeShowValue: function(id,type,value) {
+		var panelData = this.getPanelById(id);
+		var subObj = this.getPanelSubByType(panelData,type);
+		subObj.value.n = value[0];
+		subObj.value.m = value[1];
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,addPanel: function(id,data,extra) {
@@ -390,6 +398,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,getPanelById: function(id) {
 		return Lambda.find(this.ary_panel_obj,function(panelObj) {
 			return panelObj.id == id;
+		});
+	}
+	,getPanelSubByType: function(panelData,type) {
+		return Lambda.find(panelData.data.sub,function(subObj) {
+			return subObj.type == type;
 		});
 	}
 	,set_currentOffset: function(offset) {
@@ -467,7 +480,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.mc_accordionContainer.accordion("remove",deleteName);
 	}
 	,drawCanvas: function(stockId,offset,count,panelData) {
-		console.log(panelData);
 		Main.drawStock(panelData.root.find("#canvas_kline"),stockId,panelData.data.type,offset,count,this.propsToDraw(panelData.data.sub));
 	}
 	,drawAllCanvas: function(stockId,offset,ary_panel) {
@@ -483,46 +495,58 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		},[]);
 	}
 	,createProp: function(container,props,panelData) {
-		var _g1 = this;
+		var _g = this;
+		var onInputChange = function(dom) {
+			return function(newv,oldv) {
+				var target = _g.j(this);
+				var targetId = target.attr("id");
+				var type = dom.find(".easyui-switchbutton").attr("ktype");
+				var value = [];
+				dom.find(".easyui-textbox").each(function(id,subdom) {
+					value.push(_g.j(subdom).textbox("getValue"));
+				});
+				_g.notify(view_PanelView.ON_SHOWLINE_VALUE_CHANGE,{ id : panelData.id, type : type, value : value});
+			};
+		};
 		Lambda.foreach(props,function(prop) {
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
-			var dom;
-			var _g = prop.type;
-			switch(_g) {
+			var dom1;
+			var _g1 = prop.type;
+			switch(_g1) {
 			case "ma":
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
 			case "ema":
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
 			case "kd":
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
 			case "macd":
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
 			case "yu-clock":
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
 			case "yu-sd":
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
 			case "Chaikin":
-				dom = _g1.j("#tmpl_avg").tmpl(prop);
+				dom1 = _g.j("#tmpl_avg").tmpl(prop);
 				break;
 			default:
 				throw new js__$Boot_HaxeError("do not enter here!");
 			}
-			container.append(dom);
-			dom.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {
-				var target = _g1.j(this);
-				var type = target.attr("ktype");
-				_g1.notify(view_PanelView.ON_SHOWLINE_CHANGE,{ id : panelData.id, type : type, show : checked});
+			container.append(dom1);
+			dom1.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {
+				var target1 = _g.j(this);
+				var type1 = target1.attr("ktype");
+				_g.notify(view_PanelView.ON_SHOWLINE_CHANGE,{ id : panelData.id, type : type1, show : checked});
 			}});
-			dom.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n});
-			dom.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m});
+			dom1.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n, onChange : onInputChange(dom1)});
+			dom1.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m, onChange : onInputChange(dom1)});
 			return true;
 		});
 	}
@@ -544,6 +568,7 @@ model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 view_PanelView.ON_STOCKID_CHANGE = "on_stockid_change";
 view_PanelView.ON_OFFSET_CHANGE = "on_offset_change";
+view_PanelView.ON_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
 view_PanelView.ON_SHOWLINE_CHANGE = "on_showline_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
