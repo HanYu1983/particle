@@ -267,7 +267,7 @@ class PanelView extends Model implements IPanelView
 	public function resetAllCanvasListener( ary_panel_obj:Array<Dynamic> ) {
 		Lambda.map( ary_panel_obj, function( stockMap ) {
 			if ( stockMap.needMove ) {
-				var container = stockMap.root.find( '#canvas_kline' ).parent();
+				var container = stockMap.root.find( '#canvas_kline' ).parent().parent();
 				if ( currentScrollX != null )
 					container.scrollLeft( currentScrollX );
 				container.off( 'scroll' );
@@ -275,7 +275,7 @@ class PanelView extends Model implements IPanelView
 					var target = j( e.currentTarget );
 					currentScrollX = target.scrollLeft();
 					Lambda.map( ary_panel_obj, function( _stockMap ) {
-						container = _stockMap.root.find( '#canvas_kline' ).parent();
+						container = _stockMap.root.find( '#canvas_kline' ).parent().parent();
 						container.scrollLeft( currentScrollX );
 					});
 				});
@@ -287,8 +287,8 @@ class PanelView extends Model implements IPanelView
 		currentScrollX = scrollX;
 		Lambda.map( ary_panel_obj, function( stockMap ) {
 			if ( stockMap.needMove ) {
-				var container = stockMap.root.find( '#canvas_kline' ).parent();
-				container = stockMap.root.find( '#canvas_kline' ).parent();
+				var container = stockMap.root.find( '#canvas_kline' ).parent().parent();
+				container = stockMap.root.find( '#canvas_kline' ).parent().parent();
 				container.scrollLeft( currentScrollX );
 			}
 		});

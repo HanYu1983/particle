@@ -681,14 +681,14 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var _g = this;
 		Lambda.map(ary_panel_obj,function(stockMap) {
 			if(stockMap.needMove) {
-				var container = stockMap.root.find("#canvas_kline").parent();
+				var container = stockMap.root.find("#canvas_kline").parent().parent();
 				if(_g.currentScrollX != null) container.scrollLeft(_g.currentScrollX);
 				container.off("scroll");
 				container.scroll(function(e) {
 					var target = _g.j(e.currentTarget);
 					_g.currentScrollX = target.scrollLeft();
 					Lambda.map(ary_panel_obj,function(_stockMap) {
-						container = _stockMap.root.find("#canvas_kline").parent();
+						container = _stockMap.root.find("#canvas_kline").parent().parent();
 						container.scrollLeft(_g.currentScrollX);
 					});
 				});
@@ -700,8 +700,8 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.currentScrollX = scrollX;
 		Lambda.map(ary_panel_obj,function(stockMap) {
 			if(stockMap.needMove) {
-				var container = stockMap.root.find("#canvas_kline").parent();
-				container = stockMap.root.find("#canvas_kline").parent();
+				var container = stockMap.root.find("#canvas_kline").parent().parent();
+				container = stockMap.root.find("#canvas_kline").parent().parent();
 				container.scrollLeft(_g.currentScrollX);
 			}
 		});
