@@ -102,14 +102,17 @@
                 {:type :line :line dif :color "blue"}
                 {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line dif :color "lightgray" :hideY true}
               ])
             
             "yu-clock"
             (let [n (get subd "n")
-                  m (get subd "m")]
+                  m (get subd "m")
+                  vs (stf/sma-seq m (stf/yu-clock n kline))]
               [
-                {:type :line :line (stf/sma-seq m (stf/yu-clock n kline)) :color "blue"}
+                {:type :line :line vs :color "blue"}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line vs :color "lightgray" :hideY true}
               ])
               
             "yu-sd"
@@ -148,6 +151,7 @@
                 {:type :line :line dif :color "blue"}
                 {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line dif :color "lightgray" :hideY true}
               ])
               
             "kd"
@@ -159,6 +163,7 @@
                 {:type :line :line (stf/sma-seq m rsv) :color "blue"}
                 {:type :line :line (stf/sma-seq o rsv) :color "yellow"}
                 {:type :line :line (repeat (count kline) 50) :color "lightgray"}
+                {:type :grid :line rsv :color "lightgray"}
               ])
           
             "Chaikin"
@@ -171,6 +176,7 @@
                 {:type :line :line vs :color "blue"}
                 {:type :line :line (stf/sma-seq o vs) :color "yellow"}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line vs :color "lightgray"}
               ])
             
             "eom"
@@ -181,6 +187,7 @@
                 {:type :line :line vs :color "blue"}
                 {:type :line :line (stf/sma-seq m vs) :color "yellow"}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line vs :color "lightgray" :hideY true}
               ])
             {:type nil})))
       sub)
@@ -203,19 +210,22 @@
       (std/draw
         {
           :drawers
-          (cons
-            (condp = type
-              "volume" 
-              {:type :line :line (stl/volume kline)}
+          (concat
+            (flatten
+              (condp = type
+                "volume" 
+                {:type :line :line (stl/volume kline)}
               
-              "clock"
-              (let [{cs :sma z :z v-z :v-z} (stf/clock 10 kline)]
-                {:type :clock :cz z :vz v-z})
+                "clock"
+                (let [{cs :sma z :z v-z :v-z} (stf/clock 10 kline)]
+                  {:type :clock :cz z :vz v-z})
               
-              "kline"
-              {:type :kline :kline kline}
-              
-              {:type nil})
+                "kline"
+                [
+                  {:type :grid :kline kline :color "gray"}
+                  {:type :kline :kline kline}
+                ]
+                {:type nil}))
             (jsobj->drawer-info kline sub))
         }
         (.-width canvas) (.-height canvas)

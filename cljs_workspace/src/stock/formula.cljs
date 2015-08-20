@@ -295,8 +295,7 @@
       
 
 (defn rsv-seq
-  "未成熟隨機值
-  用來計算KD線" 
+  "未成熟隨機值" 
   [n kline]
   (when (>= (count kline) n)
     (let [group (take n kline)
@@ -326,9 +325,7 @@
       
       
 (defn yu-car
-  "余氏方向盤指標
-  w用0.001看多空動能
-  w用20看振盪方向"
+  "余氏方向盤指標"
   [n w d reverse-kline]
   (let [normal
         (->

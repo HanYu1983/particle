@@ -77,12 +77,17 @@
             [nil (concat all infos)]))))))
             
 
+(defn date [kline]
+  (if (seq? kline)
+    (map date kline)
+    (let [[date _ _ _ _ _] kline]
+      date)))
+      
 (defn high [kline]
   (if (seq? kline)
     (map high kline)
     (let [[_ _ high _ _ _] kline]
       high)))
-
 
 (defn open [kline]
   (if (seq? kline)

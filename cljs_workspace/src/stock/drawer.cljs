@@ -32,6 +32,51 @@
 (defmethod min-v :default [info] 0)
 (defmethod length :default [info] 0)
 (defmethod draw-it :default [info base ctx])
+
+(defmethod max-v :grid [{line :line kline :kline}]
+  (apply max (or line (stl/high kline))))
+
+(defmethod min-v :grid [{line :line kline :kline}]
+  (apply min (or line (stl/low kline))))
+  
+(defmethod length :grid [{line :line kline :kline}]
+  (count (or line kline)))
+  
+(defmethod draw-it :grid [{line :line kline :kline color :color hideY :hideY} base ctx]
+  (let [[w h max-v min-v offset-v offset-x pos-y] base
+        cnt 6
+        cntx 25
+        offset (-> (- max-v min-v) (/ cnt))]
+    (aset ctx "strokeStyle" color)
+    (aset ctx "fillStyle" color)
+    (aset ctx "lineWidth" 1)
+    (.beginPath ctx)
+    
+    (when-not hideY
+      (doseq [i (range cnt)]
+        (let [v (+ min-v (* i offset))]
+          (.fillText ctx (str (int v)) (* w (/ 1 3)) (pos-y v))
+          (.fillText ctx (str (int v)) (* w (/ 2 3)) (pos-y v))
+          (.moveTo ctx 0 (pos-y v))
+          (.lineTo ctx w (pos-y v)))))
+    
+    (when kline
+      (doseq [i (range (count kline))]
+        (when (zero? (mod i cntx))
+          (let [posx (+ (/ offset-x 2) (* i offset-x))]
+            (.fillText ctx (stl/date (nth kline i)) posx  h)
+            (.moveTo ctx posx 0)
+            (.lineTo ctx posx h)))))
+            
+    (when line
+      (doseq [i (range (count line))]
+        (when (zero? (mod i cntx))
+          (let [posx (+ (/ offset-x 2) (* i offset-x))]
+            (.moveTo ctx posx 0)
+            (.lineTo ctx posx h)))))
+          
+    (.stroke ctx)))
+    
       
 (defmethod max-v :line [{line :line}] (apply max line))
 (defmethod min-v :line [{line :line}] (apply min line))
@@ -40,6 +85,8 @@
   (let [[w h max-v min-v offset-v offset-x pos-y] base
         offset (or offset 0)]
     (aset ctx "strokeStyle" color)
+    (aset ctx "lineWidth" 1)
+    (.beginPath ctx)
     (doseq
       [
         [idx prev curr]
@@ -49,12 +96,9 @@
           line
           (rest line))
       ]
-      
-      (aset ctx "lineWidth" 1)
-      (.beginPath ctx)
       (.moveTo ctx (* (+ idx offset) offset-x) (pos-y prev))
-      (.lineTo ctx (* (inc (+ idx offset)) offset-x) (pos-y curr))
-      (.stroke ctx))))
+      (.lineTo ctx (* (inc (+ idx offset)) offset-x) (pos-y curr)))
+    (.stroke ctx)))
       
 ; k line
       
@@ -95,7 +139,6 @@
       (.lineTo ctx (* idx offset-x) (pos-y close))
       (.stroke ctx)
 
-      ;(.fillText ctx info (* idx offset-x) h)
       (comment "end doseq"))))
       
       
