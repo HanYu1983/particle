@@ -145,10 +145,10 @@ var Main = function() {
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
 			_g.panelView.scrollTo(_g.panelModel.getAryPanel(),0);
+			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_count_change":
-			break;
-		case "on_init":
+			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_add_panel":
 			_g.panelView.addPanel(params1.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelObj);
@@ -382,10 +382,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,addPanel: function(id,data,extra) {
 		var obj = { id : id, data : data, needMove : data.type != EType.clock, root : null};
 		this.ary_panel_obj.push(obj);
-		if(extra.addToModel) {
-			this.getStockById(this.currentStockId).lines.push(data);
-			console.log(this.getStockById(this.currentStockId));
-		}
+		if(extra.addToModel) this.getStockById(this.currentStockId).lines.push(data);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
 	,removePanel: function(id) {

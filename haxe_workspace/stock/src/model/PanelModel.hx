@@ -65,8 +65,6 @@ class PanelModel extends Model implements IPanel
 		
 		if ( extra.addToModel ) {
 			getStockById( currentStockId ).lines.push( data );
-			
-			trace( getStockById( currentStockId ) );
 		}
 		
 		notify( ON_ADD_PANEL, {stockId:currentStockId, panelObj:obj } );

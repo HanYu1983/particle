@@ -20,13 +20,6 @@ class Main
 	var panelView:IPanelView = new PanelView();
 	
 	function new() {
-		/*
-		getStockInfo( '2330' ).done( function( err, data ) {
-			trace( err, data );
-		});
-		*/
-		
-		
 		panelView.config = {
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
@@ -65,15 +58,12 @@ class Main
 			switch( type ) {
 				case PanelModel.ON_STOCKID_CHANGE:
 					panelView.initPanel( panelModel.config, params.stock );
-					//panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_OFFSET_CHANGE:
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.scrollTo( panelModel.getAryPanel(), 0 );
-				//	panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_COUNT_CHANGE:
-					//panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
-				case PanelModel.ON_INIT:
-					//panelView.initPanel( panelModel.config );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_ADD_PANEL:
 					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
 					panelView.resetAllCanvasListener( panelModel.getAryPanel() );
