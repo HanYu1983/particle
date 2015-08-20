@@ -149,11 +149,23 @@
 (defn BBI 
   "Bull and Bear Index 多空指標
   利用ema(5)和BBI(12)的差離值(macd)的圖形，和rsv(100)後的sma(3)和sma(9)的曲線圖形幾乎無二致!!"
-  [n vs]
+  [n m o p vs]
   (let [n1 (sma-seq n vs)
-        n2 (sma-seq (* n 2) vs)
-        n3 (sma-seq (* n 4) vs)
-        n4 (sma-seq (* n 8) vs)]
+        n2 (sma-seq m vs)
+        n3 (sma-seq o vs)
+        n4 (sma-seq p vs)]
+    (map
+      (fn [& args]
+        (-> (apply + args) (/ 4)))
+      n1 n2 n3 n4)))
+      
+(defn EBBI 
+  "指數多空指標"
+  [n m o p vs]
+  (let [n1 (ema-seq n vs)
+        n2 (ema-seq m vs)
+        n3 (ema-seq o vs)
+        n4 (ema-seq p vs)]
     (map
       (fn [& args]
         (-> (apply + args) (/ 4)))

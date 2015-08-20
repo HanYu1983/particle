@@ -80,8 +80,14 @@
               ])
           
             "bbi"
-            (let [n (get subd "n")]
-              {:type :line :line (stf/BBI n vs) :color c1})
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  o (get subd "o")
+                  p (get subd "p")]
+              [
+                {:type :line :line (stf/BBI n (* n m) (* n m m) (* n m m m) vs) :color c1}
+                {:type :line :line (stf/EBBI o (* o p) (* o p p) (* o p p p) vs) :color c2}
+              ])
               
             "yu-car"
             (let [n (get subd "n")
@@ -98,7 +104,7 @@
             (let [n (get subd "n")
                   m (get subd "m")
                   ema (reverse (stf/ema-seq n (reverse vs)))
-                  bbi (stf/BBI m vs)
+                  bbi (stf/BBI m (* m 2) (* m 4) (* m 8) vs)
                   dif (map - ema bbi)]
               [
                 {:type :line :line dif :color c1}

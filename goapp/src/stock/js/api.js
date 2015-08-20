@@ -43,7 +43,7 @@ var api = {};
 	yu-sd(20)
 	Chaikin(3, 10, 9)
 	yu-macd(5, 12)
-	bbi(12)
+	bbi(3, 2, 6, 2)
 	eom(14, 3)
 	yu-car(1, 0.025, 0.7)
 	*/
