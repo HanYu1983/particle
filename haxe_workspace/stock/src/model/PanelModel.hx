@@ -148,7 +148,7 @@ class PanelModel extends Model implements IPanel
 	function set_currentOffset( offset:Int ) {
 		currentOffset = offset;
 		if ( currentOffset < 0 ) currentOffset = 0;
-		else if ( currentOffset > maxCount ) currentOffset = maxCount - 1;
+		else if ( currentOffset > maxCount - 100 ) currentOffset = maxCount - 100;
 		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
 		return currentOffset;
 	}

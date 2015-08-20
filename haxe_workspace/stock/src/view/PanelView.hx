@@ -129,9 +129,13 @@ class PanelView extends Model implements IPanelView
 		});
 		panelData.root = dom;
 		
-		//if( type != EType.clock )
-		//	dom.find( 'canvas' ).attr( 'width', dom.find( 'canvas' ).parent().width() );
-			
+		/*
+		if ( type != EType.clock ) {
+			var cw = untyped __js__('leo.utils.getScreenWidth' )();
+			dom.find( 'canvas' ).attr( 'width', cw - 50 )
+		}
+		*/
+		
 		if ( type == EType.kline || type == EType.none ){
 			dom.find( '#slt_showKline' ).switchbutton( {
 				checked:type == EType.kline,
@@ -240,7 +244,7 @@ class PanelView extends Model implements IPanelView
 		Lambda.map( ary_panel_obj, function( stockMap ) {
 			if ( stockMap.needMove ) {
 				var container = stockMap.root.find( '#canvas_kline' ).parent();
-				if( currentScrollX != null )
+				if ( currentScrollX != null )
 					container.scrollLeft( currentScrollX );
 				container.off( 'scroll' );
 				container.scroll( function( e ) {
@@ -251,6 +255,17 @@ class PanelView extends Model implements IPanelView
 						container.scrollLeft( currentScrollX );
 					});
 				});
+			}
+		});
+	}
+	
+	public function scrollTo( ary_panel_obj:Array<Dynamic>, scrollX:Int ):Void {
+		currentScrollX = scrollX;
+		Lambda.map( ary_panel_obj, function( stockMap ) {
+			if ( stockMap.needMove ) {
+				var container = stockMap.root.find( '#canvas_kline' ).parent();
+				container = stockMap.root.find( '#canvas_kline' ).parent();
+				container.scrollLeft( currentScrollX );
 			}
 		});
 	}

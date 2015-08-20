@@ -143,6 +143,7 @@ var Main = function() {
 			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
+			_g.panelView.scrollTo(_g.panelModel.getAryPanel(),0);
 			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_count_change":
@@ -436,7 +437,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,set_currentOffset: function(offset) {
 		this.currentOffset = offset;
-		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount) this.currentOffset = this.maxCount - 1;
+		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 100) this.currentOffset = this.maxCount - 100;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
@@ -615,6 +616,17 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 						container.scrollLeft(_g.currentScrollX);
 					});
 				});
+			}
+		});
+	}
+	,scrollTo: function(ary_panel_obj,scrollX) {
+		var _g = this;
+		this.currentScrollX = scrollX;
+		Lambda.map(ary_panel_obj,function(stockMap) {
+			if(stockMap.needMove) {
+				var container = stockMap.root.find("#canvas_kline").parent();
+				container = stockMap.root.find("#canvas_kline").parent();
+				container.scrollLeft(_g.currentScrollX);
 			}
 		});
 	}

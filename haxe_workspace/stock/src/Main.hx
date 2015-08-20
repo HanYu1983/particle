@@ -71,6 +71,7 @@ class Main
 					*/
 				case PanelModel.ON_OFFSET_CHANGE:
 					panelView.changeOffset( panelModel.currentOffset );
+					panelView.scrollTo( panelModel.getAryPanel(), 0 );
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_COUNT_CHANGE:
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
