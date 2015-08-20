@@ -31,12 +31,6 @@ class PanelModel extends Model implements IPanel
 		return ary_panel_obj;
 	}
 	
-	public function changeStockId( stockId:String ):Void {
-		Main.getStock( stockId, true, function( params:Dynamic ) {
-			notify( ON_CHANGE_STOCK_SUCCESS );
-		});
-	}
-	
 	public function changeShow( id:Dynamic, type:String, show:Bool ):Void {
 		var panelData:Dynamic = getPanelById( id );
 		Reflect.setField( getPanelSubByType( panelData, type ) , 'show', show );
@@ -115,22 +109,13 @@ class PanelModel extends Model implements IPanel
 		currentStockId = stock.id;
 		currentOffset = stock.offset;
 		currentCount = stock.count;
-		/*
-		function parserSub( sub ):Array<Dynamic> {
-			Lambda.foreach( sub, function( obj:Dynamic ) {
-				obj.type = Type.createEnum( EProp, obj.type );
-				return true;
-			});
-			return Lambda.array( sub );
-		}
-		*/
+		
 		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
 			obj.type = Type.createEnum( EType, obj.type );
-			//obj.sub = parserSub( obj.sub );
 			return true;
 		});
 			
-		Main.getStock( currentStockId, true, function( params:Dynamic ) {
+		Main.getStock( currentStockId, true ).done( function( params:Dynamic ) {
 			
 			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
 				addPanel( obj.id, obj );

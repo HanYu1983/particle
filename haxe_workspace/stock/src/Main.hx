@@ -21,6 +21,10 @@ class Main
 	
 	function new() {
 		
+		getStockInfo( '2330' ).done( function( err, data ) {
+			trace( err, data );
+		});
+		
 		panelView.config = {
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
@@ -58,9 +62,14 @@ class Main
 		panelModel.addHandler( function( type, params ) {
 			switch( type ) {
 				case PanelModel.ON_STOCKID_CHANGE:
+					getStock( params.stockId, true ).done( function( ret:Dynamic ) {
+						panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+					});
+					/*
 					getStock( params.stockId, true, function( ret:Dynamic ) {
 						panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 					});
+					*/
 				case PanelModel.ON_OFFSET_CHANGE:
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
@@ -95,8 +104,20 @@ class Main
 		new Main();
 	}
 	
-	public static function getStock( id:String, reset:Bool, cb:Dynamic -> Void ) {
-		untyped __js__('api.stockId')( id, reset, cb );
+	public static function getStock( id:String, reset:Bool ) {
+		var d:Dynamic = untyped __js__('$').Deferred();
+		untyped __js__('api.stockId')( id, reset, function() {
+			d.resolve();
+		});
+		return d.promise();
+	}
+	
+	public static function getStockInfo( id:String ):Dynamic {
+		var d:Dynamic = untyped __js__('$').Deferred();
+		untyped __js__('api.stockInfo')( id, function( err, data ) {
+			d.resolve( err, data );
+		});
+		return d.promise();
 	}
 	
 	public static function drawStock( canvas:Dynamic, id:String, type:EType, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
