@@ -76,8 +76,7 @@ class PanelView extends Model implements IPanelView
 		});
 	}
 	
-	public function initPanel( model:Dynamic ):Void {
-		var stock = model.stocks[0];
+	public function initPanel( model:Dynamic, stock:Dynamic ):Void {
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;

@@ -33,7 +33,7 @@ var defaultStock = {
 				},
 				*/
 				{
-					id:3,
+					id:1,
 					type:'kline',
 					deletable:false,
 					sub:[

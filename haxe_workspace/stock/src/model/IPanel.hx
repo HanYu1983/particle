@@ -12,6 +12,7 @@ interface IPanel extends IModel
 	var maxCount(default, set ):Int;
 	
 	function getAryPanel():Array<Dynamic>;
+	function setStockData( stock:Dynamic ):Void;
 	function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void;
 	function removePanel( id:Dynamic ):Void;
 	function changeShow( id:Dynamic, type:String, show:Bool ):Void;

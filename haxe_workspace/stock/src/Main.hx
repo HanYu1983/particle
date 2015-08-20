@@ -51,7 +51,7 @@ class Main
 					panelModel.changeShowK( params.id, params.show );
 				case PanelView.ON_BTN_ADDPANEL_CLICK:
 					var penalObj = createNewPanelObj();
-					panelModel.addPanel( penalObj.id, penalObj );
+					panelModel.addPanel( penalObj.id, penalObj, {addToModel:true} );
 				case PanelView.ON_BTN_REMOVEPANEL_CLICK:
 					panelModel.removePanel( params.id );
 				case PanelView.ON_TXT_OFFSET_CHANGE:
@@ -64,19 +64,16 @@ class Main
 		panelModel.addHandler( function( type, params ) {
 			switch( type ) {
 				case PanelModel.ON_STOCKID_CHANGE:
-					/*
-					getStock( params.stockId, true ).done( function( id:String ) {
-						panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
-					});
-					*/
+					panelView.initPanel( panelModel.config, params.stock );
+					//panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_OFFSET_CHANGE:
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.scrollTo( panelModel.getAryPanel(), 0 );
-					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+				//	panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_COUNT_CHANGE:
-					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+					//panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_INIT:
-					panelView.initPanel( panelModel.config );
+					//panelView.initPanel( panelModel.config );
 				case PanelModel.ON_ADD_PANEL:
 					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
 					panelView.resetAllCanvasListener( panelModel.getAryPanel() );

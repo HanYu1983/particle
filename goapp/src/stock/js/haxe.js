@@ -124,7 +124,7 @@ var Main = function() {
 			break;
 		case "on_btn_addPanel_click":
 			var penalObj = _g.createNewPanelObj();
-			_g.panelModel.addPanel(penalObj.id,penalObj);
+			_g.panelModel.addPanel(penalObj.id,penalObj,{ addToModel : true});
 			break;
 		case "on_btn_removePanel_click":
 			_g.panelModel.removePanel(params.id);
@@ -140,17 +140,15 @@ var Main = function() {
 	this.panelModel.addHandler(function(type1,params1) {
 		switch(type1) {
 		case "on_stockid_change":
+			_g.panelView.initPanel(_g.panelModel.config,params1.stock);
 			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
 			_g.panelView.scrollTo(_g.panelModel.getAryPanel(),0);
-			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_count_change":
-			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_init":
-			_g.panelView.initPanel(_g.panelModel.config);
 			break;
 		case "on_add_panel":
 			_g.panelView.addPanel(params1.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelObj);
@@ -384,6 +382,10 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,addPanel: function(id,data,extra) {
 		var obj = { id : id, data : data, needMove : data.type != EType.clock, root : null};
 		this.ary_panel_obj.push(obj);
+		if(extra.addToModel) {
+			this.getStockById(this.currentStockId).lines.push(data);
+			console.log(this.getStockById(this.currentStockId));
+		}
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
 	,removePanel: function(id) {
@@ -391,9 +393,9 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		Lambda.foreach(this.ary_panel_obj,function(stockMap) {
 			if(stockMap.id == id) {
 				HxOverrides.remove(_g.ary_panel_obj,stockMap);
-				return true;
+				return false;
 			}
-			return false;
+			return true;
 		});
 		this.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : id});
 	}
@@ -402,27 +404,38 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return output;
 	}
 	,init: function() {
-		var _g = this;
 		model_Model.prototype.init.call(this);
 		var j = $;
 		var stock = this.config.stocks[0];
 		this.set_currentStockId(stock.id);
+	}
+	,resetPanelData: function() {
+		var _g = this;
+		Lambda.foreach(this.ary_panel_obj,function(panelObj) {
+			_g.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : panelObj.id});
+			return true;
+		});
+		this.ary_panel_obj = [];
+	}
+	,setStockData: function(stock) {
+		var _g = this;
 		this.set_currentOffset(stock.offset);
 		this.set_currentCount(stock.count);
 		Lambda.foreach(stock.lines,function(obj) {
 			obj.type = Type.createEnum(EType,obj.type);
 			return true;
 		});
+		this.resetPanelData();
 		Main.getStock(this.currentStockId,true).pipe(Main.getStockInfo).done(function(err,data) {
 			var state = data[0];
 			var dataInfo = data[1];
 			var date = data[3];
 			_g.set_maxCount(dataInfo.length);
 			Lambda.foreach(stock.lines,function(obj1) {
-				_g.addPanel(obj1.id,obj1);
+				_g.addPanel(obj1.id,obj1,{ addToModel : false});
 				return true;
 			});
-			_g.notify(model_PanelModel.ON_INIT,{ 'stockId' : _g.currentStockId});
+			_g.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stock : stock});
 		});
 	}
 	,getPanelById: function(id) {
@@ -433,6 +446,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,getPanelSubByType: function(panelData,type) {
 		return Lambda.find(panelData.data.sub,function(subObj) {
 			return subObj.type == type;
+		});
+	}
+	,getStockById: function(stockId) {
+		return Lambda.find(this.config.stocks,function(obj) {
+			return obj.id == stockId;
 		});
 	}
 	,set_currentOffset: function(offset) {
@@ -448,11 +466,38 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentCount;
 	}
 	,set_currentStockId: function(stockId) {
-		this.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stockId : stockId});
-		return this.currentStockId = stockId;
+		this.currentStockId = stockId;
+		this.setStockData((function($this) {
+			var $r;
+			var _g = $this.getStockById(stockId);
+			$r = (function($this) {
+				var $r;
+				var o = _g;
+				$r = _g == null?(function($this) {
+					var $r;
+					var obj = $this.createNewStock(stockId);
+					$this.config.stocks.push(obj);
+					$r = obj;
+					return $r;
+				}($this)):(function($this) {
+					var $r;
+					switch(_g) {
+					default:
+						$r = o;
+					}
+					return $r;
+				}($this));
+				return $r;
+			}($this));
+			return $r;
+		}(this)));
+		return this.currentStockId;
 	}
 	,set_maxCount: function(mcount) {
 		return this.maxCount = mcount;
+	}
+	,createNewStock: function(id) {
+		return { id : id, count : 200, offset : 0, lines : [{ id : 1, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-sd", value : { n : 20, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 1, o : 3, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]}]};
 	}
 });
 var view_IPanelView = function() { };
@@ -506,9 +551,8 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			}
 		});
 	}
-	,initPanel: function(model) {
+	,initPanel: function(model,stock) {
 		var _g = this;
-		var stock = model.stocks[0];
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
