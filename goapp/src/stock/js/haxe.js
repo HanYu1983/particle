@@ -103,9 +103,6 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	this.j = $;
 	var _g = this;
-	Main.getStockInfo("2330").done(function(err,data) {
-		haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 25, className : "Main", methodName : "new", customParams : [data]});
-	});
 	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId"), btn_controller : this.j("#btn_controller"), btn_addPanel : this.j("#btn_addPanel"), txt_count : this.j("#txt_count"), txt_offset : this.j("#txt_offset")});
 	this.panelView.addHandler(function(type,params) {
 		switch(type) {
@@ -143,9 +140,6 @@ var Main = function() {
 	this.panelModel.addHandler(function(type1,params1) {
 		switch(type1) {
 		case "on_stockid_change":
-			Main.getStock(params1.stockId,true).done(function(ret) {
-				_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
-			});
 			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
@@ -181,16 +175,16 @@ Main.main = function() {
 Main.getStock = function(id,reset) {
 	var d = $.Deferred();
 	api.stockId(id,reset,function() {
-		d.resolve();
+		d.resolve(id);
 	});
-	return d.promise();
+	return d;
 };
 Main.getStockInfo = function(id) {
 	var d = $.Deferred();
 	api.stockInfo(id,function(err,data) {
 		d.resolve(err,data);
 	});
-	return d.promise();
+	return d;
 };
 Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	if(count == null) count = 100;
@@ -248,11 +242,6 @@ Type.createEnum = function(e,constr,params) {
 	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
 	return f;
 };
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -265,25 +254,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -442,7 +412,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			obj.type = Type.createEnum(EType,obj.type);
 			return true;
 		});
-		Main.getStock(this.currentStockId,true).done(function(params) {
+		Main.getStock(this.currentStockId,true).pipe(Main.getStockInfo).done(function(err,data) {
+			var state = data[0];
+			var dataInfo = data[1];
+			var date = data[3];
+			_g.set_maxCount(dataInfo.length);
 			Lambda.foreach(stock.lines,function(obj1) {
 				_g.addPanel(obj1.id,obj1);
 				return true;
@@ -462,7 +436,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,set_currentOffset: function(offset) {
 		this.currentOffset = offset;
-		if(this.currentOffset < 0) this.currentOffset = 0;
+		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount) this.currentOffset = this.maxCount - 1;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
@@ -475,6 +449,9 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,set_currentStockId: function(stockId) {
 		this.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stockId : stockId});
 		return this.currentStockId = stockId;
+	}
+	,set_maxCount: function(mcount) {
+		return this.maxCount = mcount;
 	}
 });
 var view_IPanelView = function() { };

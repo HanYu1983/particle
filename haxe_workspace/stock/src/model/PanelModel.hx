@@ -18,6 +18,7 @@ class PanelModel extends Model implements IPanel
 	public var currentStockId(default, set):String;
 	public var currentOffset(default, set):Int = 0;
 	public var currentCount(default, set):Int = 100;
+	public var maxCount(default, set ):Int;
 	
 	var ary_panel_obj = new Array<Dynamic>();
 
@@ -115,7 +116,13 @@ class PanelModel extends Model implements IPanel
 			return true;
 		});
 			
-		Main.getStock( currentStockId, true ).done( function( params:Dynamic ) {
+		Main.getStock( currentStockId, true ).pipe( Main.getStockInfo ).done( function( err, data ) {
+			
+			var state = data[0];
+			var dataInfo = data[1];//[[date open high low close volume]],
+			var date = data[3];
+			
+			maxCount = dataInfo.length;
 			
 			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
 				addPanel( obj.id, obj );
@@ -141,6 +148,7 @@ class PanelModel extends Model implements IPanel
 	function set_currentOffset( offset:Int ) {
 		currentOffset = offset;
 		if ( currentOffset < 0 ) currentOffset = 0;
+		else if ( currentOffset > maxCount ) currentOffset = maxCount - 1;
 		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
 		return currentOffset;
 	}
@@ -155,5 +163,9 @@ class PanelModel extends Model implements IPanel
 	function set_currentStockId( stockId:String ) {
 		notify( ON_STOCKID_CHANGE, { stockId:stockId } );
 		return currentStockId = stockId;
+	}
+	
+	function set_maxCount( mcount ) {
+		return maxCount = mcount;
 	}
 }
