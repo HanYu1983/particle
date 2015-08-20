@@ -48,7 +48,11 @@
               vs
               (condp = type
                 "volume" (stl/volume kline)
-                (stl/close kline))]
+                (stl/close kline))
+              c4 "#FF00FF"
+              c3 "#0000FF"
+              c2 "#00FFFF"
+              c1 "#FFFF00"]
           (condp = subt
             "ma"
             (let [n (get subd "n")
@@ -57,10 +61,10 @@
                   p (get subd "p")
                   color (get subd "color")]
               [
-                {:type :line :line (stf/sma-seq n vs) :color "blue"}
-                {:type :line :line (stf/sma-seq m vs) :color "yellow"}
-                {:type :line :line (stf/sma-seq o vs) :color "purple"}
-                {:type :line :line (stf/sma-seq p vs) :color "lightgray"}
+                {:type :line :line (stf/sma-seq n vs) :color c1}
+                {:type :line :line (stf/sma-seq m vs) :color c2}
+                {:type :line :line (stf/sma-seq o vs) :color c3}
+                {:type :line :line (stf/sma-seq p vs) :color c4}
               ])
             
             "ema"
@@ -69,15 +73,15 @@
                   o (get subd "o")
                   p (get subd "p")]
               [
-                {:type :line :line (reverse (stf/ema-seq n (reverse vs))) :color "blue"}
-                {:type :line :line (reverse (stf/ema-seq m (reverse vs))) :color "yellow"}
-                {:type :line :line (reverse (stf/ema-seq o (reverse vs))) :color "purple"}
-                {:type :line :line (reverse (stf/ema-seq p (reverse vs))) :color "lightgray"}
+                {:type :line :line (reverse (stf/ema-seq n (reverse vs))) :color c1}
+                {:type :line :line (reverse (stf/ema-seq m (reverse vs))) :color c2}
+                {:type :line :line (reverse (stf/ema-seq o (reverse vs))) :color c3}
+                {:type :line :line (reverse (stf/ema-seq p (reverse vs))) :color c4}
               ])
           
             "bbi"
             (let [n (get subd "n")]
-              {:type :line :line (stf/BBI n vs) :color "lightgray"})
+              {:type :line :line (stf/BBI n vs) :color c1})
               
             "yu-car"
             (let [n (get subd "n")
@@ -86,10 +90,8 @@
                   [dirs ranges] (reverse (stf/yu-car n m o (reverse kline)))
                   avg (stf/average (stl/mid kline))]
               [
-                {:type :line :line (map (partial + avg) (reverse (drop 20 dirs))) :color "blue"}
-                {:type :line :line (map + (stl/mid kline) (reverse ranges)) :color "yellow" :offset -1}
-                {:type :line :line (map - (stl/mid kline) (reverse ranges)) :color "yellow" :offset -1}
-                {:type :line :line (repeat (count kline) avg) :color "lightgray"}
+                {:type :line :line (map + (stl/mid kline) (reverse ranges)) :color c1 :offset -1}
+                {:type :line :line (map - (stl/mid kline) (reverse ranges)) :color c1 :offset -1}
               ])
               
             "yu-macd"
@@ -99,10 +101,10 @@
                   bbi (stf/BBI m vs)
                   dif (map - ema bbi)]
               [
-                {:type :line :line dif :color "blue"}
-                {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
+                {:type :line :line dif :color c1}
+                {:type :line :line (stf/sma-seq 9 dif) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line dif :color "lightgray" :hideY true}
+                {:type :grid :line dif :color "gray" :hideY true}
               ])
             
             "yu-clock"
@@ -110,9 +112,9 @@
                   m (get subd "m")
                   vs (stf/sma-seq m (stf/yu-clock n kline))]
               [
-                {:type :line :line vs :color "blue"}
+                {:type :line :line vs :color c1}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line vs :color "lightgray" :hideY true}
+                {:type :grid :line vs :color "gray" :hideY true}
               ])
               
             "yu-sd"
@@ -138,9 +140,9 @@
                   sd2
                   (* sd 2)]
                 [
-                  {:type :line :line (map (partial + offsets-avg) vs) :color "blue" :offset -1}
-                  {:type :line :line (map (partial + (+ sd2) offsets-avg) vs) :color "blue" :offset -1}
-                  {:type :line :line (map (partial + (- sd2) offsets-avg) vs) :color "blue" :offset -1}
+                  {:type :line :line (map (partial + offsets-avg) vs) :color c2 :offset -1}
+                  {:type :line :line (map (partial + (+ sd2) offsets-avg) vs) :color c2 :offset -1}
+                  {:type :line :line (map (partial + (- sd2) offsets-avg) vs) :color c2 :offset -1}
                 ])
             
             "macd"
@@ -148,10 +150,10 @@
                   m (get subd "m")
                   dif (stf/macd-dif n m kline)]
               [
-                {:type :line :line dif :color "blue"}
-                {:type :line :line (stf/sma-seq 9 dif) :color "yellow"}
+                {:type :line :line dif :color c1}
+                {:type :line :line (stf/sma-seq 9 dif) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line dif :color "lightgray" :hideY true}
+                {:type :grid :line dif :color "gray" :hideY true}
               ])
               
             "kd"
@@ -160,10 +162,10 @@
                   o (get subd "o")
                   rsv (stf/rsv-seq n kline)]
               [
-                {:type :line :line (stf/sma-seq m rsv) :color "blue"}
-                {:type :line :line (stf/sma-seq o rsv) :color "yellow"}
+                {:type :line :line (stf/sma-seq m rsv) :color c1}
+                {:type :line :line (stf/sma-seq o rsv) :color c2}
                 {:type :line :line (repeat (count kline) 50) :color "lightgray"}
-                {:type :grid :line rsv :color "lightgray"}
+                {:type :grid :line rsv :color "gray"}
               ])
           
             "Chaikin"
@@ -173,10 +175,10 @@
                   vs 
                   (reverse (stf/Chaikin n m (reverse kline)))]
               [
-                {:type :line :line vs :color "blue"}
-                {:type :line :line (stf/sma-seq o vs) :color "yellow"}
+                {:type :line :line vs :color c1}
+                {:type :line :line (stf/sma-seq o vs) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line vs :color "lightgray"}
+                {:type :grid :line vs :color "gray"}
               ])
             
             "eom"
@@ -184,10 +186,10 @@
                   m (get subd "m")
                   vs (stf/EOM n kline)]
               [
-                {:type :line :line vs :color "blue"}
-                {:type :line :line (stf/sma-seq m vs) :color "yellow"}
+                {:type :line :line vs :color c1}
+                {:type :line :line (stf/sma-seq m vs) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line vs :color "lightgray" :hideY true}
+                {:type :grid :line vs :color "gray" :hideY true}
               ])
             {:type nil})))
       sub)
