@@ -192,7 +192,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 };
 Main.prototype = {
 	createNewPanelObj: function() {
-		return { id : Main.getId(), type : EType.none, deletable : true, sub : [{ show : false, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-sd", value : { n : 20, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 1, o : 3, p : 0, color : ""}},{ show : true, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]};
+		return { id : Main.getId(), type : EType.none, deletable : true, sub : [{ show : false, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 3, o : 9, p : 0, color : ""}},{ show : true, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]};
 	}
 };
 Math.__name__ = true;
@@ -494,7 +494,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.maxCount = mcount;
 	}
 	,createNewStock: function(id) {
-		return { id : id, count : 200, offset : 0, lines : [{ id : 1, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-sd", value : { n : 20, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 1, o : 3, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]}]};
+		return { id : id, count : 200, offset : 0, lines : [{ id : 1, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 3, o : 9, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]}]};
 	}
 });
 var view_IPanelView = function() { };
@@ -628,6 +628,41 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
+			var _g1 = prop.type;
+			switch(_g1) {
+			case "ma":
+				prop.domName = "均線 ma";
+				break;
+			case "macd":
+				prop.domName = "指數差離 macd";
+				break;
+			case "ema":
+				prop.domName = "指數均線 ema";
+				break;
+			case "bbi":
+				prop.domName = "多空指標 bbi";
+				break;
+			case "kd":
+				prop.domName = "隨機指標 kd";
+				break;
+			case "Chaikin":
+				prop.domName = "蔡金 Chaikin";
+				break;
+			case "eom":
+				prop.domName = "簡易波動 eom";
+				break;
+			case "yu-car":
+				prop.domName = "方向盤";
+				break;
+			case "yu-clock":
+				prop.domName = "背離線";
+				break;
+			case "yu-macd":
+				prop.domName = "余氏線";
+				break;
+			default:
+				prop.domName = prop.type;
+			}
 			var dom1 = _g.j("#tmpl_avg").tmpl(prop);
 			container.append(dom1);
 			dom1.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {

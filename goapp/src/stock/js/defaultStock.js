@@ -72,17 +72,6 @@ var defaultStock = {
 						},
 						{
 							show:false,
-							type: 'yu-sd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 20,
-								m: 0,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
 							type: 'yu-car', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 							value: {
 								n: 1,
@@ -97,9 +86,9 @@ var defaultStock = {
 							type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 							value: {
 								n: 9,
-								m: 1,
-								o:3, 
-								p:0,
+								m: 3,
+								o: 9, 
+								p: 0,
 								color: ''
 							}
 						},

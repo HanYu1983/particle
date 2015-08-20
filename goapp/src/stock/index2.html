@@ -41,7 +41,7 @@ body{
 	{{if type == 'kline' || type == 'none'}}
 	<div class="easyui-layout" style="width:100%;height:330px; left:0; top:0;">
 	{{/if}}
-		<div id="mc_propContainer" data-options="region:'west',split:true" title="參數列" style="width:360px; padding:5px;">
+		<div id="mc_propContainer" data-options="region:'west',split:true" title="參數列" style="width:390px; padding:5px;">
 			<!-- for script created -->
 		</div>
 		<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center'">
@@ -69,9 +69,6 @@ body{
 </script>
 <script id="tmpl_avg" type="jquery-x-tmpl">
 	<div style="position:relative; width:100%; margin-bottom:5px;">
-		<div style="position:relative; display:inline-block; width:70px; ">
-			<input id=${sid} ktype=${type} class="easyui-switchbutton" checked>
-		</div>
 		<div style="position:relative; display:inline-block; width:40px; ">
 			<select id=${nid} class="easyui-textbox" style="width:100%;"></select>
 		</div>
@@ -84,7 +81,10 @@ body{
 		<div style="position:relative; display:inline-block; width:40px; ">
 			<select class="easyui-textbox" style="width:100%;"></select>
 		</div>
-		<div style="position:relative; display:inline-block; width:70px; ">${type}</div>
+		<div style="position:relative; display:inline-block; width:70px; ">
+			<input id=${sid} ktype=${type} class="easyui-switchbutton" checked>
+		</div>
+		<div style="position:relative; display:inline-block;">${domName}</div>
 	</div>
 </script>
 <body>
