@@ -10,13 +10,14 @@ class PanelModel extends Model implements IPanel
 	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
 	public static var ON_CHANGE_STOCK_SUCCESS = 'on_change_stock_success';
 	public static var ON_OFFSET_CHANGE = 'on_offset_change';
+	public static var ON_COUNT_CHANGE = 'on_count_change';
 	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	
 	public var currentStockId(default, set):String;
 	public var currentOffset(default, set):Int = 0;
-	public var currentCount(default, default):Int = 100;
+	public var currentCount(default, set):Int = 100;
 	
 	var ary_panel_obj = new Array<Dynamic>();
 
@@ -28,12 +29,6 @@ class PanelModel extends Model implements IPanel
 	
 	public function getAryPanel():Array<Dynamic> {
 		return ary_panel_obj;
-	}
-	
-	public function changeStockId( stockId:String ):Void {
-		Main.getStock( stockId, true, function( params:Dynamic ) {
-			notify( ON_CHANGE_STOCK_SUCCESS );
-		});
 	}
 	
 	public function changeShow( id:Dynamic, type:String, show:Bool ):Void {
@@ -114,22 +109,13 @@ class PanelModel extends Model implements IPanel
 		currentStockId = stock.id;
 		currentOffset = stock.offset;
 		currentCount = stock.count;
-		/*
-		function parserSub( sub ):Array<Dynamic> {
-			Lambda.foreach( sub, function( obj:Dynamic ) {
-				obj.type = Type.createEnum( EProp, obj.type );
-				return true;
-			});
-			return Lambda.array( sub );
-		}
-		*/
+		
 		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
 			obj.type = Type.createEnum( EType, obj.type );
-			//obj.sub = parserSub( obj.sub );
 			return true;
 		});
 			
-		Main.getStock( currentStockId, true, function( params:Dynamic ) {
+		Main.getStock( currentStockId, true ).done( function( params:Dynamic ) {
 			
 			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
 				addPanel( obj.id, obj );
@@ -157,6 +143,13 @@ class PanelModel extends Model implements IPanel
 		if ( currentOffset < 0 ) currentOffset = 0;
 		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
 		return currentOffset;
+	}
+	
+	function set_currentCount( count:Int ) {
+		currentCount = count;
+		if ( currentCount < 50 ) currentCount = 50;
+		notify( ON_COUNT_CHANGE, { stockId:currentStockId, count:currentCount } );
+		return currentCount;
 	}
 	
 	function set_currentStockId( stockId:String ) {

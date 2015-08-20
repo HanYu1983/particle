@@ -4,7 +4,7 @@ var defaultStock = {
 		{
 			id:'2330',
 			count:200,
-			offset:13,
+			offset:0,
 			lines:[
 			/*
 				{

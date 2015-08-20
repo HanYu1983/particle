@@ -21,44 +21,62 @@ class Main
 	
 	function new() {
 		
+		getStockInfo( '2330' ).done( function( err, data ) {
+			trace( err, data );
+		});
+		
 		panelView.config = {
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
 			slt_stockId:j( '#slt_stockId' ),
 			btn_controller:j( '#btn_controller' ),
-			btn_addPanel:j( '#btn_addPanel' )
+			btn_addPanel:j( '#btn_addPanel' ),
+			txt_count:j( '#txt_count' ),
+			txt_offset:j( '#txt_offset' )
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
-				case PanelView.ON_STOCKID_CHANGE:
+				case PanelView.ON_SLT_STOCKID_CHANGE:
 					panelModel.currentStockId = params.stockId;
-				case PanelView.ON_OFFSET_CHANGE:
+				case PanelView.ON_BTN_CONTROLLER_CLICK:
 					panelModel.currentOffset += params.value;
-				case PanelView.ON_SHOWLINE_CHANGE:
+				case PanelView.ON_SWB_SHOWLINE_CHANGE:
 					panelModel.changeShow( params.id, params.type, params.show );
-				case PanelView.ON_SHOWLINE_VALUE_CHANGE:
+				case PanelView.ON_TXT_SHOWLINE_VALUE_CHANGE:
 					panelModel.changeShowValue( params.id, params.type, params.value );
-				case PanelView.ON_SHOWLINE_K_CHANGE:
+				case PanelView.ON_SWB_SHOWKLINE_CHANGE:
 					panelModel.changeShowK( params.id, params.show );
 				case PanelView.ON_BTN_ADDPANEL_CLICK:
 					var penalObj = createNewPanelObj();
 					panelModel.addPanel( penalObj.id, penalObj );
 				case PanelView.ON_BTN_REMOVEPANEL_CLICK:
 					panelModel.removePanel( params.id );
+				case PanelView.ON_TXT_OFFSET_CHANGE:
+					panelModel.currentOffset = params.offset;
+				case PanelView.ON_TXT_COUNT_CHANGE:
+					panelModel.currentCount = params.count;
 			}
 		});
 		
 		panelModel.addHandler( function( type, params ) {
 			switch( type ) {
 				case PanelModel.ON_STOCKID_CHANGE:
+					getStock( params.stockId, true ).done( function( ret:Dynamic ) {
+						panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+					});
+					/*
 					getStock( params.stockId, true, function( ret:Dynamic ) {
 						panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 					});
+					*/
 				case PanelModel.ON_OFFSET_CHANGE:
+					panelView.changeOffset( panelModel.currentOffset );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+				case PanelModel.ON_COUNT_CHANGE:
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_INIT:
-					panelView.setShowId( params.stockId );
+					panelView.initPanel( panelModel.config );
 				case PanelModel.ON_ADD_PANEL:
 					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
 					panelView.resetAllCanvasListener( panelModel.getAryPanel() );
@@ -71,8 +89,39 @@ class Main
 		
 		//沒有記錄的話，用預設資料
 		panelModel.config = untyped __js__('defaultStock' );
-		
-		Reflect.setField( Browser.window, 'onHtmlTrigger', onHtmlTrigger );
+	}
+	
+	
+	
+	static var id = 4;
+	
+	static function getId() {
+		return id++;
+	}
+	
+	static function main() 
+	{
+		new Main();
+	}
+	
+	public static function getStock( id:String, reset:Bool ) {
+		var d:Dynamic = untyped __js__('$').Deferred();
+		untyped __js__('api.stockId')( id, reset, function() {
+			d.resolve();
+		});
+		return d.promise();
+	}
+	
+	public static function getStockInfo( id:String ):Dynamic {
+		var d:Dynamic = untyped __js__('$').Deferred();
+		untyped __js__('api.stockInfo')( id, function( err, data ) {
+			d.resolve( err, data );
+		});
+		return d.promise();
+	}
+	
+	public static function drawStock( canvas:Dynamic, id:String, type:EType, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
+		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 	
 	function createNewPanelObj() {
@@ -204,36 +253,6 @@ class Main
 				}
 			]
 		}
-	}
-	
-	function onHtmlTrigger( name, params ) {
-		switch( name ) {
-			case 'addPanel':
-				//panelModel.addPanel( getId(), EType.kline, [ { type:'ma', value:1, show:false }, { type:'', value:2, show:true } ] );
-			case 'removePanel':
-				var panelDom = j( params.currentTarget ).parent().parent().parent().parent();
-				var id = panelDom.attr( 'id' );
-				panelModel.removePanel( id );
-		}
-	}
-	
-	static var id = 4;
-	
-	static function getId() {
-		return id++;
-	}
-	
-	static function main() 
-	{
-		new Main();
-	}
-	
-	public static function getStock( id:String, reset:Bool, cb:Dynamic -> Void ) {
-		untyped __js__('api.stockId')( id, reset, cb );
-	}
-	
-	public static function drawStock( canvas:Dynamic, id:String, type:EType, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
-		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 }
 

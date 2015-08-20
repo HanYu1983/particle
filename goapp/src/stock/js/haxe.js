@@ -21,6 +21,11 @@ EType.none.toString = $estr;
 EType.none.__enum__ = EType;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) return undefined;
+	return x;
+};
 HxOverrides.indexOf = function(a,obj,i) {
 	var len = a.length;
 	if(i < 0) {
@@ -98,7 +103,10 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	this.j = $;
 	var _g = this;
-	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId"), btn_controller : this.j("#btn_controller"), btn_addPanel : this.j("#btn_addPanel")});
+	Main.getStockInfo("2330").done(function(err,data) {
+		haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 25, className : "Main", methodName : "new", customParams : [data]});
+	});
+	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId"), btn_controller : this.j("#btn_controller"), btn_addPanel : this.j("#btn_addPanel"), txt_count : this.j("#txt_count"), txt_offset : this.j("#txt_offset")});
 	this.panelView.addHandler(function(type,params) {
 		switch(type) {
 		case "on_stockid_change":
@@ -124,20 +132,30 @@ var Main = function() {
 		case "on_btn_removePanel_click":
 			_g.panelModel.removePanel(params.id);
 			break;
+		case "on_txt_offset_change":
+			_g.panelModel.set_currentOffset(params.offset);
+			break;
+		case "on_txt_count_change":
+			_g.panelModel.set_currentCount(params.count);
+			break;
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
 		switch(type1) {
 		case "on_stockid_change":
-			Main.getStock(params1.stockId,true,function(ret) {
+			Main.getStock(params1.stockId,true).done(function(ret) {
 				_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			});
 			break;
 		case "on_offset_change":
+			_g.panelView.changeOffset(_g.panelModel.currentOffset);
+			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
+			break;
+		case "on_count_change":
 			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_init":
-			_g.panelView.setShowId(params1.stockId);
+			_g.panelView.initPanel(_g.panelModel.config);
 			break;
 		case "on_add_panel":
 			_g.panelView.addPanel(params1.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelObj);
@@ -152,7 +170,6 @@ var Main = function() {
 		}
 	});
 	this.panelModel.set_config(defaultStock);
-	Reflect.setField(window,"onHtmlTrigger",$bind(this,this.onHtmlTrigger));
 };
 Main.__name__ = true;
 Main.getId = function() {
@@ -161,8 +178,19 @@ Main.getId = function() {
 Main.main = function() {
 	new Main();
 };
-Main.getStock = function(id,reset,cb) {
-	api.stockId(id,reset,cb);
+Main.getStock = function(id,reset) {
+	var d = $.Deferred();
+	api.stockId(id,reset,function() {
+		d.resolve();
+	});
+	return d.promise();
+};
+Main.getStockInfo = function(id) {
+	var d = $.Deferred();
+	api.stockInfo(id,function(err,data) {
+		d.resolve(err,data);
+	});
+	return d.promise();
 };
 Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	if(count == null) count = 100;
@@ -172,17 +200,6 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 Main.prototype = {
 	createNewPanelObj: function() {
 		return { id : Main.getId(), type : EType.none, deletable : true, sub : [{ show : false, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-sd", value : { n : 20, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 1, o : 3, p : 0, color : ""}},{ show : true, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]};
-	}
-	,onHtmlTrigger: function(name,params) {
-		switch(name) {
-		case "addPanel":
-			break;
-		case "removePanel":
-			var panelDom = this.j(params.currentTarget).parent().parent().parent().parent();
-			var id = panelDom.attr("id");
-			this.panelModel.removePanel(id);
-			break;
-		}
 	}
 };
 Math.__name__ = true;
@@ -210,6 +227,15 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
+	if(isNaN(v)) return null;
+	return v;
+};
+Std.parseFloat = function(x) {
+	return parseFloat(x);
+};
 var Type = function() { };
 Type.__name__ = true;
 Type.createEnum = function(e,constr,params) {
@@ -221,6 +247,11 @@ Type.createEnum = function(e,constr,params) {
 	}
 	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
 	return f;
+};
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
 };
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
@@ -234,6 +265,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -341,12 +391,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	getAryPanel: function() {
 		return this.ary_panel_obj;
 	}
-	,changeStockId: function(stockId) {
-		var _g = this;
-		Main.getStock(stockId,true,function(params) {
-			_g.notify(model_PanelModel.ON_CHANGE_STOCK_SUCCESS);
-		});
-	}
 	,changeShow: function(id,type,show) {
 		var panelData = this.getPanelById(id);
 		Reflect.setField(this.getPanelSubByType(panelData,type),"show",show);
@@ -393,12 +437,12 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var stock = this.config.stocks[0];
 		this.set_currentStockId(stock.id);
 		this.set_currentOffset(stock.offset);
-		this.currentCount = stock.count;
+		this.set_currentCount(stock.count);
 		Lambda.foreach(stock.lines,function(obj) {
 			obj.type = Type.createEnum(EType,obj.type);
 			return true;
 		});
-		Main.getStock(this.currentStockId,true,function(params) {
+		Main.getStock(this.currentStockId,true).done(function(params) {
 			Lambda.foreach(stock.lines,function(obj1) {
 				_g.addPanel(obj1.id,obj1);
 				return true;
@@ -421,6 +465,12 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		if(this.currentOffset < 0) this.currentOffset = 0;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
+	}
+	,set_currentCount: function(count) {
+		this.currentCount = count;
+		if(this.currentCount < 50) this.currentCount = 50;
+		this.notify(model_PanelModel.ON_COUNT_CHANGE,{ stockId : this.currentStockId, count : this.currentCount});
+		return this.currentCount;
 	}
 	,set_currentStockId: function(stockId) {
 		this.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stockId : stockId});
@@ -450,37 +500,57 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
 		this.slt_stockId = this.config.slt_stockId;
+		this.txt_count = this.config.txt_count;
+		this.txt_offset = this.config.txt_offset;
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e1) {
 			var target = e1.currentTarget;
 			var id = _g.j(target).attr("id");
 			switch(id) {
 			case "btn_first":
-				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -10000});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000});
 				break;
 			case "btn_prev10":
-				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -10});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10});
 				break;
 			case "btn_prev":
-				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : -1});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
 				break;
 			case "btn_next":
-				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 1});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
 				break;
 			case "btn_next10":
-				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 10});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10});
 				break;
 			case "btn_last":
-				_g.notify(view_PanelView.ON_OFFSET_CHANGE,{ value : 10000});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
 				break;
 			}
 		});
 	}
-	,setShowId: function(stockId) {
+	,initPanel: function(model) {
 		var _g = this;
+		var stock = model.stocks[0];
+		var stockId = stock.id;
+		var offset = stock.offset;
+		var count = stock.count;
 		this.slt_stockId.textbox({ value : stockId, onChange : function(newValue,oldValue) {
 			var stockId1 = newValue;
-			_g.notify(view_PanelView.ON_STOCKID_CHANGE,{ 'stockId' : stockId1});
+			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId1});
+		}});
+		this.changeOffset(offset);
+		this.changeCount(count);
+	}
+	,changeOffset: function(offset) {
+		var _g = this;
+		this.txt_offset.textbox({ value : offset, onChange : function(newValue,oldValue) {
+			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
+		}});
+	}
+	,changeCount: function(count) {
+		var _g = this;
+		this.txt_count.textbox({ value : count, onChange : function(newValue,oldValue) {
+			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue)});
 		}});
 	}
 	,addPanel: function(stockId,offset,count,panelData) {
@@ -494,7 +564,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
 		panelData.root = dom;
 		if(type == EType.kline || type == EType.none) dom.find("#slt_showKline").switchbutton({ checked : type == EType.kline, onChange : function(checked) {
-			_g.notify(view_PanelView.ON_SHOWLINE_K_CHANGE,{ id : panelData.id, show : checked});
+			_g.notify(view_PanelView.ON_SWB_SHOWKLINE_CHANGE,{ id : panelData.id, show : checked});
 		}});
 		dom.find("#btn_removePanel").click(function() {
 			_g.notify(view_PanelView.ON_BTN_REMOVEPANEL_CLICK,{ id : panelData.id});
@@ -530,9 +600,9 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 				var type = dom.find(".easyui-switchbutton").attr("ktype");
 				var value = [];
 				dom.find(".easyui-textbox").each(function(id,subdom) {
-					value.push(_g.j(subdom).textbox("getValue"));
+					value.push(Std.parseFloat(_g.j(subdom).textbox("getValue")));
 				});
-				_g.notify(view_PanelView.ON_SHOWLINE_VALUE_CHANGE,{ id : panelData.id, type : type, value : value});
+				_g.notify(view_PanelView.ON_TXT_SHOWLINE_VALUE_CHANGE,{ id : panelData.id, type : type, value : value});
 			};
 		};
 		Lambda.foreach(props,function(prop) {
@@ -544,7 +614,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			dom1.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {
 				var target1 = _g.j(this);
 				var type1 = target1.attr("ktype");
-				_g.notify(view_PanelView.ON_SHOWLINE_CHANGE,{ id : panelData.id, type : type1, show : checked});
+				_g.notify(view_PanelView.ON_SWB_SHOWLINE_CHANGE,{ id : panelData.id, type : type1, show : checked});
 			}});
 			dom1.find(".easyui-textbox").eq(0).textbox({ value : prop.value.n, onChange : onInputChange(dom1)});
 			dom1.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m, onChange : onInputChange(dom1)});
@@ -585,16 +655,19 @@ model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_STOCKID_CHANGE = "on_stockid_change";
 model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
 model_PanelModel.ON_OFFSET_CHANGE = "on_offset_change";
+model_PanelModel.ON_COUNT_CHANGE = "on_count_change";
 model_PanelModel.ON_SHOWLINE_CHANGE = "on_showline_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
-view_PanelView.ON_STOCKID_CHANGE = "on_stockid_change";
-view_PanelView.ON_OFFSET_CHANGE = "on_offset_change";
-view_PanelView.ON_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
-view_PanelView.ON_SHOWLINE_CHANGE = "on_showline_change";
-view_PanelView.ON_SHOWLINE_K_CHANGE = "on_showline_k_change";
+view_PanelView.ON_SLT_STOCKID_CHANGE = "on_stockid_change";
+view_PanelView.ON_BTN_CONTROLLER_CLICK = "on_offset_change";
+view_PanelView.ON_TXT_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
+view_PanelView.ON_SWB_SHOWLINE_CHANGE = "on_showline_change";
+view_PanelView.ON_SWB_SHOWKLINE_CHANGE = "on_showline_k_change";
 view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
 view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
+view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
+view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
