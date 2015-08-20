@@ -8,7 +8,7 @@ interface IPanel extends IModel
 {
 	var currentStockId(default, set):String;
 	var currentOffset(default, set):Int;
-	var currentCount(default, default):Int;
+	var currentCount(default, set):Int;
 	
 	function getAryPanel():Array<Dynamic>;
 	function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void;

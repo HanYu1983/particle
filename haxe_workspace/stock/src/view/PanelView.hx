@@ -9,13 +9,15 @@ import model.PanelModel;
  */
 class PanelView extends Model implements IPanelView
 {
-	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
-	public static var ON_OFFSET_CHANGE = 'on_offset_change';
-	public static var ON_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
-	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
-	public static var ON_SHOWLINE_K_CHANGE = 'on_showline_k_change';
+	public static var ON_SLT_STOCKID_CHANGE = 'on_stockid_change';
+	public static var ON_BTN_CONTROLLER_CLICK = 'on_offset_change';
+	public static var ON_TXT_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
+	public static var ON_SWB_SHOWLINE_CHANGE = 'on_showline_change';
+	public static var ON_SWB_SHOWKLINE_CHANGE = 'on_showline_k_change';
 	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
+	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
+	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -24,6 +26,8 @@ class PanelView extends Model implements IPanelView
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
+	var txt_count:Dynamic;
+	var txt_offset:Dynamic;
 	var currentScrollX:Int = null;
 	
 	public function new() 
@@ -48,33 +52,62 @@ class PanelView extends Model implements IPanelView
 		
 		slt_stockId = config.slt_stockId;
 		
+		txt_count = config.txt_count;
+		txt_offset = config.txt_offset;
+		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
 			var target = e.currentTarget;
 			var id = j( target ).attr( 'id' );
 			switch( id ) {
 				case 'btn_first':
-					notify( ON_OFFSET_CHANGE, { value:-10000 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:-10000 } );
 				case 'btn_prev10':
-					notify( ON_OFFSET_CHANGE, { value:-10 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:-10 } );
 				case 'btn_prev':
-					notify( ON_OFFSET_CHANGE, { value:-1 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:-1 } );
 				case 'btn_next':
-					notify( ON_OFFSET_CHANGE, { value:1 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:1 } );
 				case 'btn_next10':
-					notify( ON_OFFSET_CHANGE, { value:10 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:10 } );
 				case 'btn_last':
-					notify( ON_OFFSET_CHANGE, { value:10000 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
 			}
 		});
 	}
 	
-	public function setShowId( stockId:String ):Void {
+	public function initPanel( model:Dynamic ):Void {
+		var stock = model.stocks[0];
+		var stockId = stock.id;
+		var offset = stock.offset;
+		var count = stock.count;
+		
 		slt_stockId.textbox( {
 			value:stockId,
 			onChange:function(newValue, oldValue) {
 				var stockId = newValue;
-				notify( ON_STOCKID_CHANGE, { 'stockId':stockId } );
+				notify( ON_SLT_STOCKID_CHANGE, { 'stockId':stockId } );
+			}
+		});
+		
+		changeOffset( offset );
+		changeCount( count );
+	}
+	
+	public function changeOffset( offset:Int ):Void {
+		txt_offset.textbox( {
+			value:offset,
+			onChange:function(newValue, oldValue) {
+				notify( ON_TXT_OFFSET_CHANGE, { offset:Std.parseInt( newValue ) } );
+			}
+		});
+	}
+	
+	public function changeCount( count:Int ):Void {
+		txt_count.textbox( {
+			value:count,
+			onChange:function(newValue, oldValue) {
+				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
 			}
 		});
 	}
@@ -103,7 +136,7 @@ class PanelView extends Model implements IPanelView
 			dom.find( '#slt_showKline' ).switchbutton( {
 				checked:type == EType.kline,
 				onChange:function( checked ) {
-					notify( ON_SHOWLINE_K_CHANGE, { id:panelData.id, show:checked } );
+					notify( ON_SWB_SHOWKLINE_CHANGE, { id:panelData.id, show:checked } );
 				}
 			});
 		}
@@ -159,9 +192,9 @@ class PanelView extends Model implements IPanelView
 				var type = dom.find( '.easyui-switchbutton' ).attr( 'ktype' );
 				var value = [];
 				dom.find( '.easyui-textbox' ).each( function( id, subdom ) {
-					value.push( j( subdom ).textbox('getValue' ) );
+					value.push( Std.parseFloat( j( subdom ).textbox('getValue' )) );
 				});
-				notify( ON_SHOWLINE_VALUE_CHANGE, { id:panelData.id, type:type, value:value } );
+				notify( ON_TXT_SHOWLINE_VALUE_CHANGE, { id:panelData.id, type:type, value:value } );
 			}
 		}
 		
@@ -179,7 +212,7 @@ class PanelView extends Model implements IPanelView
 				onChange:function( checked ) {
 					var target = j( untyped __js__ ( 'this' ));
 					var type = target.attr( 'ktype' );
-					notify( ON_SHOWLINE_CHANGE, { id:panelData.id, type:type, show:checked } );
+					notify( ON_SWB_SHOWLINE_CHANGE, { id:panelData.id, type:type, show:checked } );
 				}
 			});
 			dom.find( '.easyui-textbox' ).eq(0).textbox( {
