@@ -214,7 +214,16 @@
                 {:type :line :line (stf/sma-seq m line) :color c2}
                 {:type :line :line (repeat (count kline) 1) :color "lightgray"}
               ])
-              
+            
+            "rsi"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  line (reverse (stf/rsi-seq n (stl/close (reverse kline))))]
+              [
+                {:type :line :line line :color c1}
+                {:type :line :line (stf/sma-seq m line) :color c2}
+                {:type :line :line (repeat (count kline) 0.5) :color "lightgray"}
+              ])
             {:type nil})))
       sub)
     (flatten)))

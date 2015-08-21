@@ -11,7 +11,7 @@
 		<button onclick="api.stockId(document.info.stockId.value, false, function(){ console.log(arguments) })">load</button>
 		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'kline', document.info.offset.value, document.info.cnt.value, [{t:'ema', d:{n: 5, m: 5, o: 20, p: 50, color:'blue'}}] )">kline</button>
 		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, 'volume', document.info.offset.value, document.info.cnt.value, {} )">volume</button>
-		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, null, document.info.offset.value, document.info.cnt.value, [{t:'osc', d:{n: 10, m: 20, o: 0.7, color:'blue'}}] )">test</button>
+		<button onclick="api.draw($('#kline')[0], document.info.stockId.value, null, document.info.offset.value, document.info.cnt.value, [{t:'rsi', d:{n: 14, m: 9, o: 0.7, color:'blue'}}] )">test</button>
 		<br>
 		<canvas name="kline" id="kline" width=1000 height=300></canvas>
 		

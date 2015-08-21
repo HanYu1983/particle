@@ -385,3 +385,16 @@
     (let [c1 (first vs)
           cn (nth vs (dec n))]
       (cons (/ c1 cn) (lazy-seq (osc-seq n (rest vs)))))))
+      
+      
+(defn rsi-seq 
+  "強弱指標"
+  [n vs]
+  (let [offsets (offset-seq vs)
+        upavg (sma-seq n (map (fn [v] (if (pos? v) v 0)) offsets))
+        downavg (sma-seq n (map (fn [v] (if (neg? v) (.abs js/Math v) 0)) offsets))]
+    (map
+      (fn [u d]
+        (/ u (+ u d)))
+      upavg
+      downavg)))

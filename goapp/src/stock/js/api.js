@@ -30,7 +30,7 @@ var api = {};
 			t: 
 	ma | ema | kd | macd | yu-clock | yu-sd | 
 	Chaikin | yu-macd | bbi | eom | yu-car |
-	sar | osc
+	sar | osc | rsi
 			d: {
 				n: int,
 				m: int,
@@ -52,6 +52,7 @@ var api = {};
 	yu-car(1, 0.025, 0.7)
 	sar(3)
 	osc(10, 20)
+	rsi(14, 9)
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
 		var params = {
