@@ -390,6 +390,14 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		Lambda.foreach(this.ary_panel_obj,function(stockMap) {
 			if(stockMap.id == id) {
 				HxOverrides.remove(_g.ary_panel_obj,stockMap);
+				var ary_lines = _g.getStockById(_g.currentStockId).lines;
+				Lambda.foreach(ary_lines,function(obj) {
+					if(obj == stockMap.data) {
+						HxOverrides.remove(ary_lines,obj);
+						return false;
+					}
+					return true;
+				});
 				return false;
 			}
 			return true;
@@ -453,6 +461,8 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,set_currentOffset: function(offset) {
 		this.currentOffset = offset;
 		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 100) this.currentOffset = this.maxCount - 100;
+		console.log("GGG");
+		return this.currentOffset;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}

@@ -94,6 +94,7 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function changeOffset( offset:Int ):Void {
+		
 		txt_offset.textbox( {
 			value:offset,
 			onChange:function(newValue, oldValue) {

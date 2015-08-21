@@ -63,6 +63,7 @@ class PanelModel extends Model implements IPanel
 		};
 		ary_panel_obj.push( obj );
 		
+		//add to model
 		if ( extra.addToModel ) {
 			getStockById( currentStockId ).lines.push( data );
 		}
@@ -74,6 +75,16 @@ class PanelModel extends Model implements IPanel
 		Lambda.foreach( ary_panel_obj, function ( stockMap ) {
 			if ( stockMap.id == id ) {
 				ary_panel_obj.remove( stockMap );
+				
+				//remove from model
+				var ary_lines:Array<Dynamic> = getStockById( currentStockId ).lines;
+				Lambda.foreach( ary_lines, function( obj ) {
+					if ( obj == stockMap.data ) {
+						ary_lines.remove( obj );
+						return false;
+					}
+					return true;
+				});
 				return false;
 			}
 			return true;
@@ -87,20 +98,7 @@ class PanelModel extends Model implements IPanel
 			facebookId:config.facebookId,
 			stocks:config.stocks
 		}
-		/*
-		var stockobj:Dynamic = Lambda.find( output.stocks, function( obj ) {
-			if ( obj.id == currentStockId ) return true;
-			return false;
-		});
-		stockobj.lines = [];
 		
-		Lambda.map( ary_panel_obj, function( stockMap ) {
-			stockobj.lines.push( {
-				id:stockMap.id,
-				type:Std.string( stockMap.type ),
-			});
-		});
-		*/
 		return output;
 	}
 	
@@ -184,6 +182,8 @@ class PanelModel extends Model implements IPanel
 	}
 	
 	function set_currentStockId( stockId:String ) {
+		
+		
 		currentStockId = stockId;
 		setStockData( switch( getStockById( stockId ) ) {
 			case null:
