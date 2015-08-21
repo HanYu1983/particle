@@ -31,7 +31,8 @@ var api = {};
 			d: {
 				n: int,
 				m: int,
-				color: red | ...
+				o: int,
+				p: int
 			}
 		}]
 	最適參數
