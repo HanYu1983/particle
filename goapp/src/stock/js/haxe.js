@@ -209,7 +209,7 @@ Main.createProp = function(ary) {
 	},[]);
 };
 Main.createNewStock = function(id,props) {
-	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,10,20,40]]),Main.createNewLine("kline")]};
+	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,deletable,props) {
 	if(deletable == null) deletable = true;

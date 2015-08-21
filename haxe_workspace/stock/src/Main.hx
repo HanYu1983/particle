@@ -173,7 +173,7 @@ class Main
 			lines:[ 
 				createNewLine( 'volume', false, [
 													['group', '均線'],
-													['ma', false, 5, 10, 20, 40 ]
+													['ma', false, 5, 0, 0, 0 ]
 												] ),
 				createNewLine( 'kline' )
 			]
