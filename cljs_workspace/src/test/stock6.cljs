@@ -32,7 +32,7 @@
           ;  (map vector z2 v-z2))
           
           dirs (stf/clock-direction v-z z)
-          bbi (stf/BBI 12 infos)
+          bbi (stf/BBI 3 6 12 24 infos)
           sar (reverse (stf/sar-seq (reverse infos)))
           acc (reverse (stf/Chaikin 3 9 (reverse infos)))
           eom (reverse (stf/EOM 14 (reverse infos)))

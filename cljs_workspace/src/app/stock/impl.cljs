@@ -197,6 +197,14 @@
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
                 {:type :grid :line vs :color "gray" :hideY true}
               ])
+              
+            "sar"
+            (let [n (get subd "n")
+                  sar (reverse (stf/sar-seq n (reverse kline)))]
+              [
+                {:type :line :line sar :color c1 :style :dot}
+              ])
+              
             {:type nil})))
       sub)
     (flatten)))

@@ -173,15 +173,15 @@
       
 (defn sar-seq 
   "拋物線指標"
-  [reverse-kline]
-  (when (>= (count reverse-kline) 3)
+  [n reverse-kline]
+  (when (>= (count reverse-kline) n)
     (let [low
           (apply
             min
             (map
               (fn [[_ _ _ low _ _]]
                 low)
-              (take 3 reverse-kline)))]
+              (take n reverse-kline)))]
       (->>
         (iterate
           (fn [[value ori prev curr act af]]
@@ -205,7 +205,7 @@
                         (map
                           (fn [[_ _ high _ _ _]]
                             high)
-                          (take 3 ori)))
+                          (take n ori)))
                           
                       :sell
                       (apply
@@ -213,7 +213,7 @@
                         (map
                           (fn [[_ _ _ low _ _]]
                             low)
-                          (take 3 ori))))
+                          (take n ori))))
                     (+ value (* af (- pl value))))
                   
                     
@@ -243,10 +243,10 @@
                       :sell :buy)
                     act)]
               [next-value (rest ori) (rest prev) (rest curr) next-act next-af]))
-          [low reverse-kline (drop 2 reverse-kline) (drop 3 reverse-kline) :buy 0.2])
+          [low reverse-kline (drop (dec n) reverse-kline) (drop n reverse-kline) :buy 0.2])
         (map first)
         (take (count reverse-kline))
-        (drop-last 2)))))
+        (drop-last (dec n))))))
         
         
 (defn AccDist 
