@@ -166,15 +166,18 @@ class Main
 			id:id,
 			count:200,
 			offset:0,
-			lines:[ createNewLine( 'kline' ) ]
+			lines:[ 
+				createNewLine( 'volume', false, [['ma', true, 5, 10, 20, 40 ]] ),
+				createNewLine( 'kline' )
+			]
 		}
 	}
 	
-	public static function createNewLine( type, ?props:Array<Dynamic> ) {
+	public static function createNewLine( type, deletable = true, ?props:Array<Dynamic> ) {
 		return {
 			id:getId(),
 			type:type,
-			deletable:true,
+			deletable:deletable,
 			sub:createProp( props == null ? [
 												['group', '均線'],
 												['ma', true, 5, 10, 20, 40 ],
