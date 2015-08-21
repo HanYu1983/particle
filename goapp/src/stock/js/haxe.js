@@ -681,6 +681,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			dom1.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m, onChange : onInputChange(dom1)});
 			dom1.find(".easyui-textbox").eq(2).textbox({ value : prop.value.o, onChange : onInputChange(dom1)});
 			dom1.find(".easyui-textbox").eq(3).textbox({ value : prop.value.p, onChange : onInputChange(dom1)});
+			dom1.find(".easyui-tooltip").tooltip({ position : "right", onShow : function(e) {
+				var self = _g.j(e.currentTarget);
+				var hoverInfo = app.config.hoverInfo.line;
+				self.tooltip("update",Reflect.field(hoverInfo,self.attr("ptype")));
+			}});
 			return true;
 		});
 	}

@@ -86,7 +86,7 @@ body{
 		<div style="position:relative; display:inline-block; width:70px; ">
 			<input id=${sid} ktype=${type} class="easyui-switchbutton" checked>
 		</div>
-		<div style="position:relative; display:inline-block;">${domName}</div>
+		<div ptype=${type} class="easyui-tooltip" style="position:relative; display:inline-block;">${domName}</div>
 	</div>
 </script>
 <body>
@@ -120,6 +120,19 @@ body{
 				<!-- for script created -->
 			</div>
         </div>
+		<div data-options="region:'east',split:true,title:'功能'" style="width:300px;">
+			<div class="easyui-tabs" data-options="tabWidth:92">
+				<div title="機器人" style="padding:10px;">
+					
+				</div>
+				<div title="資訊" style="padding:10px;">
+					
+				</div>
+				<div title="測試" style="padding:10px;">
+					
+				</div>
+			</div>
+		</div>
 		<!--
 		<div id="mm1" style="width:100px;">
 			<div data-options="iconCls:'icon-add'" onclick="addPanel();">新增</div>
@@ -144,6 +157,7 @@ body{
 	<script src='js/lib/rx.all.min.js'></script>
 	<script src='js/lib/three.min.js'></script>
 	<script src='js/lib/underscore-min.js'></script>
+	<script src="js/config.js"></script>
 	<script src='js/common.js'></script>
 	<script src='js/cljs/goog/base.js'></script>
 	<script src='js/cljs/cljs.js'></script>

@@ -259,6 +259,14 @@ class PanelView extends Model implements IPanelView
 				value:prop.value.p,
 				onChange:onInputChange( dom )
 			});
+			dom.find( '.easyui-tooltip' ).tooltip( {
+				position:'right',
+				onShow:function( e ) {
+					var self = j( e.currentTarget );
+					var hoverInfo = untyped __js__( 'app.config.hoverInfo.line' );
+					self.tooltip( 'update', Reflect.field( hoverInfo, self.attr( 'ptype' ) ) );
+				}
+			});
 			return true;
 		});
 		
