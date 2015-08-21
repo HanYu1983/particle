@@ -283,12 +283,16 @@
           (concat
             (flatten
               (condp = type
-                "volume" 
-                {:type :line :line (stl/volume kline)}
+                "volume"
+                [
+                  {:type :line :line (stl/volume kline) :color "red"}
+                ]
               
                 "clock"
                 (let [{cs :sma z :z v-z :v-z} (stf/clock 10 kline)]
-                  {:type :clock :cz z :vz v-z})
+                  [
+                    {:type :clock :cz z :vz v-z}
+                  ])
               
                 "kline"
                 [
