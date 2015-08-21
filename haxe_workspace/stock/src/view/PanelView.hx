@@ -50,10 +50,27 @@ class PanelView extends Model implements IPanelView
 			notify( ON_BTN_ADDPANEL_CLICK );
 		});
 		
-		slt_stockId = config.slt_stockId;
+		txt_offset = config.txt_offset;
+		txt_offset.textbox( {
+			onChange:function(newValue, oldValue) {
+				notify( ON_TXT_OFFSET_CHANGE, { offset:Std.parseInt( newValue ) } );
+			}
+		});
 		
 		txt_count = config.txt_count;
-		txt_offset = config.txt_offset;
+		txt_count.textbox( {
+			onChange:function(newValue, oldValue) {
+				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
+			}
+		});
+		
+		slt_stockId = config.slt_stockId;
+		slt_stockId.textbox( {
+			onChange:function(newValue, oldValue) {
+				var stockId = newValue;
+				notify( ON_SLT_STOCKID_CHANGE, { 'stockId':stockId } );
+			}
+		});
 		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
@@ -81,35 +98,17 @@ class PanelView extends Model implements IPanelView
 		var offset = stock.offset;
 		var count = stock.count;
 		
-		slt_stockId.textbox( {
-			value:stockId,
-			onChange:function(newValue, oldValue) {
-				var stockId = newValue;
-				notify( ON_SLT_STOCKID_CHANGE, { 'stockId':stockId } );
-			}
-		});
+		slt_stockId.textbox( 'setValue', stockId );
 		
-		changeOffset( offset );
 		changeCount( count );
 	}
 	
 	public function changeOffset( offset:Int ):Void {
-		
-		txt_offset.textbox( {
-			value:offset,
-			onChange:function(newValue, oldValue) {
-				notify( ON_TXT_OFFSET_CHANGE, { offset:Std.parseInt( newValue ) } );
-			}
-		});
+		txt_offset.textbox( 'setValue', Std.string( offset ) );
 	}
 	
 	public function changeCount( count:Int ):Void {
-		txt_count.textbox( {
-			value:count,
-			onChange:function(newValue, oldValue) {
-				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
-			}
-		});
+		txt_count.textbox( 'setValue', count );
 	}
 	
 	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {

@@ -209,7 +209,7 @@ class PanelModel extends Model implements IPanel
 				{
 					id:1,
 					type:'kline',
-					deletable:false,
+					deletable:true,
 					sub:[
 						{
 							show:true,

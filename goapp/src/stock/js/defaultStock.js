@@ -35,7 +35,7 @@ var defaultStock = {
 				{
 					id:1,
 					type:'kline',
-					deletable:false,
+					deletable:true,
 					sub:[
 						{
 							show:true,

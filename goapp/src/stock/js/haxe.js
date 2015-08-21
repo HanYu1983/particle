@@ -461,8 +461,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,set_currentOffset: function(offset) {
 		this.currentOffset = offset;
 		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 100) this.currentOffset = this.maxCount - 100;
-		console.log("GGG");
-		return this.currentOffset;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
@@ -504,7 +502,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.maxCount = mcount;
 	}
 	,createNewStock: function(id) {
-		return { id : id, count : 200, offset : 0, lines : [{ id : 1, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 3, m : 2, o : 6, p : 2, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 3, o : 9, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]}]};
+		return { id : id, count : 200, offset : 0, lines : [{ id : 1, type : "kline", deletable : true, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 3, m : 2, o : 6, p : 2, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 3, o : 9, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]}]};
 	}
 });
 var view_IPanelView = function() { };
@@ -529,9 +527,19 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.btn_addPanel.click(function(e) {
 			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
-		this.slt_stockId = this.config.slt_stockId;
-		this.txt_count = this.config.txt_count;
 		this.txt_offset = this.config.txt_offset;
+		this.txt_offset.textbox({ onChange : function(newValue,oldValue) {
+			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
+		}});
+		this.txt_count = this.config.txt_count;
+		this.txt_count.textbox({ onChange : function(newValue1,oldValue1) {
+			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
+		}});
+		this.slt_stockId = this.config.slt_stockId;
+		this.slt_stockId.textbox({ onChange : function(newValue2,oldValue2) {
+			var stockId = newValue2;
+			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
+		}});
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e1) {
 			var target = e1.currentTarget;
@@ -559,28 +567,17 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		});
 	}
 	,initPanel: function(model,stock) {
-		var _g = this;
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
-		this.slt_stockId.textbox({ value : stockId, onChange : function(newValue,oldValue) {
-			var stockId1 = newValue;
-			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId1});
-		}});
-		this.changeOffset(offset);
+		this.slt_stockId.textbox("setValue",stockId);
 		this.changeCount(count);
 	}
 	,changeOffset: function(offset) {
-		var _g = this;
-		this.txt_offset.textbox({ value : offset, onChange : function(newValue,oldValue) {
-			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
-		}});
+		this.txt_offset.textbox("setValue",offset == null?"null":"" + offset);
 	}
 	,changeCount: function(count) {
-		var _g = this;
-		this.txt_count.textbox({ value : count, onChange : function(newValue,oldValue) {
-			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue)});
-		}});
+		this.txt_count.textbox("setValue",count);
 	}
 	,addPanel: function(stockId,offset,count,panelData) {
 		var _g = this;
