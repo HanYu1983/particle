@@ -14,12 +14,15 @@ import view.PanelView;
  */
 class Main 
 {
-	var j:Dynamic = untyped __js__( '$' );
+	static var j:Dynamic = untyped __js__( '$' );
 	
 	var panelModel:IPanel = new PanelModel();
 	var panelView:IPanelView = new PanelView();
+	var loading:Dynamic;
 	
 	function new() {
+		slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
+		
 		panelView.config = {
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
@@ -31,6 +34,7 @@ class Main
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
+			trace( 'panelView', type );
 			switch( type ) {
 				case PanelView.ON_SLT_STOCKID_CHANGE:
 					panelModel.currentStockId = params.stockId;
@@ -55,9 +59,8 @@ class Main
 		});
 		
 		panelModel.addHandler( function( type, params ) {
+			trace( 'panelModel', type );
 			switch( type ) {
-				case PanelModel.ON_STOCKID_CHANGE:
-					panelView.initPanel( panelModel.config, params.stock );
 				case PanelModel.ON_OFFSET_CHANGE:
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.scrollTo( panelModel.getAryPanel(), 0 );
@@ -71,14 +74,14 @@ class Main
 					panelView.removePanel( params.id );
 				case PanelModel.ON_SHOWLINE_CHANGE:
 					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
+				case PanelModel.ON_STOCKID_CHANGE:
+					panelView.initPanel( panelModel.config, params.stock );
 			}
 		});
 		
 		//沒有記錄的話，用預設資料
 		panelModel.config = untyped __js__('defaultStock' );
 	}
-	
-	
 	
 	static var id = 4;
 	
@@ -91,8 +94,30 @@ class Main
 		new Main();
 	}
 	
+	public static function showLoading() {
+		j.messager.progress( {
+			title:'Please waiting',
+            msg:'Loading data...'
+		});
+	}
+	
+	public static function closeLoading() {
+		j.messager.progress('close');
+	}
+	
+	public static function slideMessage( title, msg ){
+		j.messager.show({
+			title:title,
+			msg:msg,
+			timeout:5000,
+			showType:'slide'
+		});
+	}
+	
 	public static function getStock( id:String, reset:Bool ) {
-		var d:Dynamic = untyped __js__('$').Deferred();
+		showLoading();
+		
+		var d:Dynamic = j.Deferred();
 		untyped __js__('api.stockId')( id, reset, function() {
 			d.resolve( id );
 		});
@@ -100,9 +125,11 @@ class Main
 	}
 	
 	public static function getStockInfo( id:String ):Dynamic {
-		var d:Dynamic = untyped __js__('$').Deferred();
+		var d:Dynamic = j.Deferred();
 		untyped __js__('api.stockInfo')( id, function( err, data ) {
 			d.resolve( err, data );
+			
+			closeLoading();
 		});
 		return d;
 	}

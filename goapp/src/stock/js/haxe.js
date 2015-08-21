@@ -101,10 +101,11 @@ List.prototype = {
 var Main = function() {
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
-	this.j = $;
 	var _g = this;
-	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId"), btn_controller : this.j("#btn_controller"), btn_addPanel : this.j("#btn_addPanel"), txt_count : this.j("#txt_count"), txt_offset : this.j("#txt_offset")});
+	Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
+	this.panelView.set_config({ mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset")});
 	this.panelView.addHandler(function(type,params) {
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 37, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
 		case "on_stockid_change":
 			_g.panelModel.set_currentStockId(params.stockId);
@@ -138,10 +139,8 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
-		case "on_stockid_change":
-			_g.panelView.initPanel(_g.panelModel.config,params1.stock);
-			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
 			_g.panelView.scrollTo(_g.panelModel.getAryPanel(),0);
@@ -160,6 +159,9 @@ var Main = function() {
 		case "on_showline_change":
 			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelData);
 			break;
+		case "on_stockid_change":
+			_g.panelView.initPanel(_g.panelModel.config,params1.stock);
+			break;
 		}
 	});
 	this.panelModel.set_config(defaultStock);
@@ -171,17 +173,28 @@ Main.getId = function() {
 Main.main = function() {
 	new Main();
 };
+Main.showLoading = function() {
+	Main.j.messager.progress({ title : "Please waiting", msg : "Loading data..."});
+};
+Main.closeLoading = function() {
+	Main.j.messager.progress("close");
+};
+Main.slideMessage = function(title,msg) {
+	Main.j.messager.show({ title : title, msg : msg, timeout : 5000, showType : "slide"});
+};
 Main.getStock = function(id,reset) {
-	var d = $.Deferred();
+	Main.showLoading();
+	var d = Main.j.Deferred();
 	api.stockId(id,reset,function() {
 		d.resolve(id);
 	});
 	return d;
 };
 Main.getStockInfo = function(id) {
-	var d = $.Deferred();
+	var d = Main.j.Deferred();
 	api.stockInfo(id,function(err,data) {
 		d.resolve(err,data);
+		Main.closeLoading();
 	});
 	return d;
 };
@@ -241,6 +254,11 @@ Type.createEnum = function(e,constr,params) {
 	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
 	return f;
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -253,6 +271,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -570,14 +607,14 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
-		this.slt_stockId.textbox("setValue",stockId);
+		this.slt_stockId.textbox({ value : stockId});
 		this.changeCount(count);
 	}
 	,changeOffset: function(offset) {
-		this.txt_offset.textbox("setValue",offset == null?"null":"" + offset);
+		this.txt_offset.textbox({ value : offset == null?"null":"" + offset});
 	}
 	,changeCount: function(count) {
-		this.txt_count.textbox("setValue",count);
+		this.txt_offset.textbox({ value : count == null?"null":"" + count});
 	}
 	,addPanel: function(stockId,offset,count,panelData) {
 		var _g = this;
@@ -727,6 +764,7 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 };
 String.__name__ = true;
 Array.__name__ = true;
+Main.j = $;
 Main.id = 4;
 model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_STOCKID_CHANGE = "on_stockid_change";

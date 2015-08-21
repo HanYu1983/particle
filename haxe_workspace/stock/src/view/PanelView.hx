@@ -98,17 +98,28 @@ class PanelView extends Model implements IPanelView
 		var offset = stock.offset;
 		var count = stock.count;
 		
-		slt_stockId.textbox( 'setValue', stockId );
+		//用這個下法才不會trigger事件出來
+		slt_stockId.textbox( {
+			value:stockId
+		});
 		
 		changeCount( count );
 	}
 	
 	public function changeOffset( offset:Int ):Void {
-		txt_offset.textbox( 'setValue', Std.string( offset ) );
+		
+		//用這個下法才不會trigger事件出來
+		txt_offset.textbox( {
+			value:Std.string( offset )
+		});
 	}
 	
 	public function changeCount( count:Int ):Void {
-		txt_count.textbox( 'setValue', count );
+		
+		//用這個下法才不會trigger事件出來
+		txt_offset.textbox( {
+			value:Std.string( count )
+		});
 	}
 	
 	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
@@ -128,6 +139,7 @@ class PanelView extends Model implements IPanelView
 		});
 		panelData.root = dom;
 		
+		//resize canvas
 		/*
 		if ( type != EType.clock ) {
 			var cw = untyped __js__('leo.utils.getScreenWidth' )();
@@ -150,7 +162,8 @@ class PanelView extends Model implements IPanelView
 		
 		if( props != null )
 			createProp( dom.find( '#mc_propContainer' ), props, panelData );
-			
+		
+		
 		drawCanvas( stockId, offset, count, panelData );
 	}
 	

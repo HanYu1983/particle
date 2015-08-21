@@ -131,7 +131,7 @@ class PanelModel extends Model implements IPanel
 		});
 		
 		resetPanelData();
-			
+		
 		Main.getStock( currentStockId, true ).pipe( Main.getStockInfo ).done( function( err, data ) {
 			var state = data[0];
 			var dataInfo = data[1];//[[date open high low close volume]],
@@ -182,8 +182,6 @@ class PanelModel extends Model implements IPanel
 	}
 	
 	function set_currentStockId( stockId:String ) {
-		
-		
 		currentStockId = stockId;
 		setStockData( switch( getStockById( stockId ) ) {
 			case null:
