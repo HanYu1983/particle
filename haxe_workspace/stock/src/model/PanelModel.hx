@@ -109,7 +109,8 @@ class PanelModel extends Model implements IPanel
 		var j = untyped __js__('$');
 		
 		var stock = config.stocks[0];
-		currentStockId = stock.id;
+		if( stock != null )
+			currentStockId = stock.id;
 	}
 	
 	function resetPanelData() {

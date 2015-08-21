@@ -107,7 +107,6 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function changeOffset( offset:Int ):Void {
-		
 		//用這個下法才不會trigger事件出來
 		txt_offset.textbox( {
 			value:Std.string( offset )
@@ -117,7 +116,7 @@ class PanelView extends Model implements IPanelView
 	public function changeCount( count:Int ):Void {
 		
 		//用這個下法才不會trigger事件出來
-		txt_offset.textbox( {
+		txt_count.textbox( {
 			value:Std.string( count )
 		});
 	}

@@ -426,7 +426,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		model_Model.prototype.init.call(this);
 		var j = $;
 		var stock = this.config.stocks[0];
-		this.set_currentStockId(stock.id);
+		if(stock != null) this.set_currentStockId(stock.id);
 	}
 	,resetPanelData: function() {
 		var _g = this;
@@ -584,7 +584,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.txt_offset.textbox({ value : offset == null?"null":"" + offset});
 	}
 	,changeCount: function(count) {
-		this.txt_offset.textbox({ value : count == null?"null":"" + count});
+		this.txt_count.textbox({ value : count == null?"null":"" + count});
 	}
 	,addPanel: function(stockId,offset,count,panelData) {
 		var _g = this;
