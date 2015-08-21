@@ -205,6 +205,15 @@
                 {:type :line :line sar :color c1 :style :dot}
               ])
               
+            "mtm"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  line (stf/mtm-seq n (stl/close kline))]
+              [
+                {:type :line :line line :color c1}
+                {:type :line :line (stf/sma-seq m line) :color c2}
+              ])
+              
             {:type nil})))
       sub)
     (flatten)))

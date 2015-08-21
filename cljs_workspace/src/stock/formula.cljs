@@ -376,3 +376,11 @@
             (rest up-seq)))]
     ; vector的first和list的first為倒反
     [(map second vs) (map first vs)]))
+    
+(defn mtm-seq 
+  "動量指標"
+  [n vs]
+  (when (>= (count vs) n)
+    (let [c1 (first vs)
+          cn (nth vs (dec n))]
+      (cons (- c1 cn) (lazy-seq (mtm-seq n (rest vs)))))))
