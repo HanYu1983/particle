@@ -173,15 +173,15 @@
       
 (defn sar-seq 
   "拋物線指標"
-  [reverse-kline]
-  (when (>= (count reverse-kline) 3)
+  [n reverse-kline]
+  (when (>= (count reverse-kline) n)
     (let [low
           (apply
             min
             (map
               (fn [[_ _ _ low _ _]]
                 low)
-              (take 3 reverse-kline)))]
+              (take n reverse-kline)))]
       (->>
         (iterate
           (fn [[value ori prev curr act af]]
@@ -205,7 +205,7 @@
                         (map
                           (fn [[_ _ high _ _ _]]
                             high)
-                          (take 3 ori)))
+                          (take n ori)))
                           
                       :sell
                       (apply
@@ -213,7 +213,7 @@
                         (map
                           (fn [[_ _ _ low _ _]]
                             low)
-                          (take 3 ori))))
+                          (take n ori))))
                     (+ value (* af (- pl value))))
                   
                     
@@ -243,10 +243,10 @@
                       :sell :buy)
                     act)]
               [next-value (rest ori) (rest prev) (rest curr) next-act next-af]))
-          [low reverse-kline (drop 2 reverse-kline) (drop 3 reverse-kline) :buy 0.2])
+          [low reverse-kline (drop (dec n) reverse-kline) (drop n reverse-kline) :buy 0.2])
         (map first)
         (take (count reverse-kline))
-        (drop-last 2)))))
+        (drop-last (dec n))))))
         
         
 (defn AccDist 
@@ -376,3 +376,25 @@
             (rest up-seq)))]
     ; vector的first和list的first為倒反
     [(map second vs) (map first vs)]))
+    
+(defn osc-seq 
+  "振盪量指標osc
+  可以取代mtm動量指標"
+  [n vs]
+  (when (>= (count vs) n)
+    (let [c1 (first vs)
+          cn (nth vs (dec n))]
+      (cons (/ c1 cn) (lazy-seq (osc-seq n (rest vs)))))))
+      
+      
+(defn rsi-seq 
+  "強弱指標"
+  [n vs]
+  (let [offsets (offset-seq vs)
+        upavg (sma-seq n (map (fn [v] (if (pos? v) v 0)) offsets))
+        downavg (sma-seq n (map (fn [v] (if (neg? v) (.abs js/Math v) 0)) offsets))]
+    (map
+      (fn [u d]
+        (/ u (+ u d)))
+      upavg
+      downavg)))

@@ -27,7 +27,10 @@ var api = {};
 	count: k線的數量
 	sub: 
 		[{
-			t: ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom | yu-car
+			t:
+	ma | ema | kd | macd | yu-clock | yu-sd | 
+	Chaikin | yu-macd | bbi | eom | yu-car |
+	sar | osc | rsi
 			d: {
 				n: int,
 				m: int,
@@ -41,12 +44,15 @@ var api = {};
 	kd(9, 3, 9) or kd(100, 3, 9)
 	macd(12, 26)
 	yu-clock(20, 20)
-	yu-sd(20)
-	Chaikin(3, 10, 9)
+	yu-sd(20) => 淘汰
+	Chaikin(3, 10, 9) => (派發線棒數, 派發線棒數, 均量棒數)
 	yu-macd(5, 12)
-	bbi(3, 2, 6, 2)
+	bbi(3, 2, 6, 2) => (均線棒數, 前項倍數, 指數均線棒數, 前項倍數)
 	eom(14, 3)
-	yu-car(1, 0.025, 0.7)
+	yu-car(1, 0.025, 0.7) => (現在線數的幾日K數, 學習率, 收斂係數)
+	sar(3)
+	osc(10, 20)
+	rsi(14, 9)
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
 		var params = {

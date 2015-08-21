@@ -197,6 +197,33 @@
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
                 {:type :grid :line vs :color "gray" :hideY true}
               ])
+              
+            "sar"
+            (let [n (get subd "n")
+                  sar (reverse (stf/sar-seq n (reverse kline)))]
+              [
+                {:type :line :line sar :color c1 :style :dot}
+              ])
+              
+            "osc"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  line (stf/osc-seq n (stl/close kline))]
+              [
+                {:type :line :line line :color c1}
+                {:type :line :line (stf/sma-seq m line) :color c2}
+                {:type :line :line (repeat (count kline) 1) :color "lightgray"}
+              ])
+            
+            "rsi"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  line (reverse (stf/rsi-seq n (stl/close (reverse kline))))]
+              [
+                {:type :line :line line :color c1}
+                {:type :line :line (stf/sma-seq m line) :color c2}
+                {:type :line :line (repeat (count kline) 0.5) :color "lightgray"}
+              ])
             {:type nil})))
       sub)
     (flatten)))

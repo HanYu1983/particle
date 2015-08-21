@@ -81,24 +81,43 @@
 (defmethod max-v :line [{line :line}] (apply max line))
 (defmethod min-v :line [{line :line}] (apply min line))
 (defmethod length :line [{line :line}] (count line))
-(defmethod draw-it :line [{line :line color :color offset :offset} base ctx]
+(defmethod draw-it :line [{line :line color :color offset :offset style :style} base ctx]
   (let [[w h max-v min-v offset-v offset-x pos-y] base
         offset (or offset 0)]
     (aset ctx "strokeStyle" color)
     (aset ctx "lineWidth" 1)
-    (.beginPath ctx)
-    (doseq
-      [
-        [idx prev curr]
-        (map
-          (fn [& args] args)
-          (map inc (range (count line)))
-          line
-          (rest line))
-      ]
-      (.moveTo ctx (* (+ idx offset) offset-x) (pos-y prev))
-      (.lineTo ctx (* (inc (+ idx offset)) offset-x) (pos-y curr)))
-    (.stroke ctx)))
+    
+    (condp = style
+      :dot
+      (do
+        (doseq 
+          [
+            [idx value]
+            (map
+              vector
+              (map inc (range (count line)))
+              line)
+          ]
+          (.beginPath ctx)
+          (.arc ctx (* (+ idx offset) offset-x) (pos-y value) (/ offset-x 2) 0 6.28 false)
+          (.stroke ctx)))
+      
+      (do
+        (.beginPath ctx)
+        (doseq
+          [
+            [idx prev curr]
+            (map
+              (fn [& args] args)
+              (map inc (range (count line)))
+              line
+              (rest line))
+          ]
+          (.moveTo ctx (* (+ idx offset) offset-x) (pos-y prev))
+          (.lineTo ctx (* (inc (+ idx offset)) offset-x) (pos-y curr)))
+        (.stroke ctx)))))
+    
+    
       
 ; k line
       
