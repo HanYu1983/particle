@@ -623,13 +623,18 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	}
 	,drawPrice: function(stockInfo) {
 		var _g = this;
-		this.btn_loadPrice.hide();
+		if(stockInfo == null) {
+			Main.slideMessage("警告","請先輸入股票代碼");
+			return;
+		}
+		this.btn_loadPrice.parent().parent().hide();
 		Main.showLoading();
 		haxe_Timer.delay(function() {
 			Lambda.mapi(stockInfo,function(i,obj) {
 				_g.table_stockPrice.datagrid("appendRow",{ date : obj[0], start : obj[1], top : obj[2], bottom : obj[3], close : obj[4], volume : obj[5]});
 			});
 			Main.closeLoading();
+			Main.slideMessage("警告","如果覺得會lag的話，可以把股價資訊先關起來");
 		},100);
 	}
 	,changeOffset: function(offset) {

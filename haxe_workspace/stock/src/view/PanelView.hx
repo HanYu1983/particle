@@ -121,7 +121,13 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function drawPrice( stockInfo:Dynamic ):Void {
-		btn_loadPrice.hide();
+		
+		if ( stockInfo == null ) {
+			Main.slideMessage( '警告', '請先輸入股票代碼' );
+			return ;
+		}
+		
+		btn_loadPrice.parent().parent().hide();
 		
 		Main.showLoading();
 		Timer.delay( function(){
@@ -136,6 +142,7 @@ class PanelView extends Model implements IPanelView
 				});
 			});
 			Main.closeLoading();
+			Main.slideMessage( '警告', '如果覺得會lag的話，可以把股價資訊先關起來' );
 		}, 100 );
 	}
 	
