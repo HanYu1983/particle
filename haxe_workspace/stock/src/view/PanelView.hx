@@ -26,6 +26,7 @@ class PanelView extends Model implements IPanelView
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
+	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
 	var txt_offset:Dynamic;
 	var currentScrollX:Int = null;
@@ -82,20 +83,22 @@ class PanelView extends Model implements IPanelView
 				case 'btn_first':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:-10000 } );
 				case 'btn_prev10':
-					notify( ON_BTN_CONTROLLER_CLICK, { value:-10 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:-25 } );
 				case 'btn_prev':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:-1 } );
 				case 'btn_next':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:1 } );
 				case 'btn_next10':
-					notify( ON_BTN_CONTROLLER_CLICK, { value:10 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:25 } );
 				case 'btn_last':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
 			}
 		});
+		
+		table_stockPrice = config.table_stockPrice;
 	}
 	
-	public function initPanel( model:Dynamic, stock:Dynamic ):Void {
+	public function initPanel( model:Dynamic, stock:Dynamic, stockInfo:Dynamic ):Void {
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
@@ -103,6 +106,19 @@ class PanelView extends Model implements IPanelView
 		//用這個下法才不會trigger事件出來
 		slt_stockId.textbox( {
 			value:stockId
+		});
+		
+		Lambda.mapi( stockInfo, function( i, obj ) {
+			//if ( i < 40 ) {
+				table_stockPrice.datagrid( 'appendRow', {
+					date:obj[0],
+					start:obj[1],
+					top:obj[2],
+					bottom:obj[3],
+					close:obj[4],
+					volume:obj[5]
+				});
+			//}
 		});
 		
 		changeOffset( offset );

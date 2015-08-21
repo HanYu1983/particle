@@ -30,7 +30,8 @@ class Main
 			btn_controller:j( '#btn_controller' ),
 			btn_addPanel:j( '#btn_addPanel' ),
 			txt_count:j( '#txt_count' ),
-			txt_offset:j( '#txt_offset' )
+			txt_offset:j( '#txt_offset' ),
+			table_stockPrice:j( '#table_stockPrice' )
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
@@ -75,7 +76,7 @@ class Main
 				case PanelModel.ON_SHOWLINE_CHANGE:
 					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
 				case PanelModel.ON_STOCKID_CHANGE:
-					panelView.initPanel( panelModel.config, params.stock );
+					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
 			}
 		});
 		

@@ -18,6 +18,7 @@ class PanelModel extends Model implements IPanel
 	public var currentStockId(default, set):String;
 	public var currentOffset(default, set):Int = 0;
 	public var currentCount(default, set):Int = 100;
+	public var currentStockInfo( default, set ):Dynamic;
 	public var maxCount(default, set ):Int;
 	
 	var ary_panel_obj = new Array<Dynamic>();
@@ -25,7 +26,6 @@ class PanelModel extends Model implements IPanel
 	public function new() 
 	{
 		super();
-		
 	}
 	
 	public function getAryPanel():Array<Dynamic> {
@@ -138,6 +138,7 @@ class PanelModel extends Model implements IPanel
 			var dataInfo = data[1];//[[date open high low close volume]],
 			var date = data[3];
 			
+			currentStockInfo = dataInfo;
 			maxCount = dataInfo.length;
 			
 			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
@@ -197,5 +198,9 @@ class PanelModel extends Model implements IPanel
 	
 	function set_maxCount( mcount ) {
 		return maxCount = mcount;
+	}
+	
+	function set_currentStockInfo( info ) {
+		return currentStockInfo = info;
 	}
 }

@@ -125,12 +125,28 @@ body{
 				<!-- for script created -->
 			</div>
         </div>
-		<div data-options="region:'east',split:true,title:'功能'" style="width:300px;">
-			<div class="easyui-tabs" data-options="tabWidth:92">
-				<div title="機器人" style="padding:10px;">
-					
+		<div data-options="region:'east',split:true,title:'功能'" style="width:450px;">
+			<div class="easyui-tabs" data-options="tabWidth:'130px'">
+				<div title="資訊">
+					<div class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
+						<div title="股價" style="width:100%;">
+							<table id="table_stockPrice" class="easyui-datagrid"
+								data-options="singleSelect:true,collapsible:true" style="width:100%;">
+								<thead>
+									<tr>
+										<th data-options="field:'date',width:100,align:'center'">日期</th>
+										<th data-options="field:'start',width:60,align:'center'">開盤</th>
+										<th data-options="field:'top',width:60,align:'center'">最高價</th>
+										<th data-options="field:'bottom',width:60,align:'center'">最低價</th>
+										<th data-options="field:'close',width:60,align:'center'">收盤價</th>
+										<th data-options="field:'volume',width:80,align:'center'">量</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
 				</div>
-				<div title="資訊" style="padding:10px;">
+				<div title="機器人" style="padding:10px;">
 					
 				</div>
 				<div title="測試" style="padding:10px;">
