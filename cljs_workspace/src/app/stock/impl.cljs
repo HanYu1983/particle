@@ -39,7 +39,7 @@
   (.log js/console (pr-str ctx))
   ctx)
   
-(defn jsobj->drawer-info [kline sub]
+(defn jsobj->drawer-info [type kline sub]
   (->
     (map
       (fn [data]
@@ -300,7 +300,7 @@
                   {:type :kline :kline kline}
                 ]
                 {:type nil}))
-            (jsobj->drawer-info kline sub))
+            (jsobj->drawer-info type kline sub))
         }
         (.-width canvas) (.-height canvas)
         (.getContext canvas "2d")))
