@@ -39,7 +39,7 @@
   (.log js/console (pr-str ctx))
   ctx)
   
-(defn jsobj->drawer-info [kline sub]
+(defn jsobj->drawer-info [type kline sub]
   (->
     (map
       (fn [data]
@@ -227,13 +227,12 @@
               
             "atr"
             (let [n (get subd "n")
-                  m (get subd "m")
-                  line (reverse (stf/atr-seq n (reverse kline)))]
+                  line (reverse (stf/atr-seq n (reverse kline)))
+                  avg (stf/average line)]
               [
                 {:type :line :line line :color c1}
-                ;{:type :line :line (stf/sma-seq m line) :color c2}
                 {:type :grid :line line :color "gray"}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :line :line (repeat (count kline) avg) :color "lightgray"}
               ])
               
             "dmi"
@@ -259,6 +258,17 @@
                 {:type :line :line (stf/sma-seq m dx) :color c1}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
               ])
+              
+            "AccDist"
+            (let [n (get subd "n")
+                  line (reverse (stf/AccDist (reverse kline)))]
+              [
+                {:type :line :line line :color c1}
+                {:type :line :line (stf/sma-seq n line) :color c2}
+                {:type :grid :line line :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+              ])
+              
             {:type nil})))
       sub)
     (flatten)))
@@ -300,7 +310,7 @@
                   {:type :kline :kline kline}
                 ]
                 {:type nil}))
-            (jsobj->drawer-info kline sub))
+            (jsobj->drawer-info type kline sub))
         }
         (.-width canvas) (.-height canvas)
         (.getContext canvas "2d")))
