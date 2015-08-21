@@ -38,6 +38,10 @@ var defaultStock = {
 					deletable:true,
 					sub:[
 						{
+							type:'group',
+							name:'yu'
+						},
+						{
 							show:true,
 							type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 							value: {
@@ -69,6 +73,10 @@ var defaultStock = {
 								p: 2,
 								color: ''
 							}
+						},
+						{
+							type:'group',
+							name:'haha'
 						},
 						{
 							show:false,

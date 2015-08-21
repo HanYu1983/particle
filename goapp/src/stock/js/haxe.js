@@ -669,6 +669,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			};
 		};
 		Lambda.foreach(props,function(prop) {
+			if(prop.type == "group") {
+				var dom2 = _g.j("#tmpl_group_line").tmpl(prop);
+				container.append(dom2);
+				return true;
+			}
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);

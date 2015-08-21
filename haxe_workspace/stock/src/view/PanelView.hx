@@ -216,6 +216,12 @@ class PanelView extends Model implements IPanelView
 		
 		Lambda.foreach( props, function( prop:Dynamic ) {
 			
+			if ( prop.type == 'group' ) {
+				var dom = j( '#tmpl_group_line' ).tmpl( prop );
+				container.append( dom );
+				return true;
+			}
+			
 			prop.sid = 'swb_' + prop.type;
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
