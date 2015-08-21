@@ -1,5 +1,6 @@
 package view;
 
+import haxe.Timer;
 import model.Model;
 import model.PanelModel;
 
@@ -16,6 +17,7 @@ class PanelView extends Model implements IPanelView
 	public static var ON_SWB_SHOWKLINE_CHANGE = 'on_showline_k_change';
 	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
+	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
 	
@@ -26,6 +28,7 @@ class PanelView extends Model implements IPanelView
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
+	var btn_loadPrice:Dynamic;
 	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
 	var txt_offset:Dynamic;
@@ -49,6 +52,11 @@ class PanelView extends Model implements IPanelView
 		btn_addPanel = config.btn_addPanel;
 		btn_addPanel.click( function( e ) {
 			notify( ON_BTN_ADDPANEL_CLICK );
+		});
+		
+		btn_loadPrice = config.btn_loadPrice;
+		btn_loadPrice.click( function( e ) {
+			notify( ON_BTN_LOADPRICE_CLICK );
 		});
 		
 		txt_offset = config.txt_offset;
@@ -108,8 +116,16 @@ class PanelView extends Model implements IPanelView
 			value:stockId
 		});
 		
-		Lambda.mapi( stockInfo, function( i, obj ) {
-			//if ( i < 40 ) {
+		changeOffset( offset );
+		changeCount( count );
+	}
+	
+	public function drawPrice( stockInfo:Dynamic ):Void {
+		btn_loadPrice.hide();
+		
+		Main.showLoading();
+		Timer.delay( function(){
+			Lambda.mapi( stockInfo, function( i, obj ) {
 				table_stockPrice.datagrid( 'appendRow', {
 					date:obj[0],
 					start:obj[1],
@@ -118,11 +134,9 @@ class PanelView extends Model implements IPanelView
 					close:obj[4],
 					volume:obj[5]
 				});
-			//}
-		});
-		
-		changeOffset( offset );
-		changeCount( count );
+			});
+			Main.closeLoading();
+		}, 100 );
 	}
 	
 	public function changeOffset( offset:Int ):Void {

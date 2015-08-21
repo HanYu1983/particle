@@ -99,10 +99,13 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	var _g = this;
 	Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
-	this.panelView.set_config({ mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice")});
+	this.panelView.set_config({ mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice"), btn_loadPrice : Main.j("#btn_loadPrice")});
 	this.panelView.addHandler(function(type,params) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 38, className : "Main", methodName : "new", customParams : [type]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
+		case "on_btn_loadPrice_click":
+			_g.panelView.drawPrice(_g.panelModel.currentStockInfo);
+			break;
 		case "on_stockid_change":
 			_g.panelModel.set_currentStockId(params.stockId);
 			break;
@@ -135,7 +138,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 63, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 66, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
@@ -206,11 +209,11 @@ Main.createProp = function(ary) {
 	},[]);
 };
 Main.createNewStock = function(id,props) {
-	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",true,5,10,20,40]]),Main.createNewLine("kline")]};
+	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,10,20,40]]),Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,deletable,props) {
 	if(deletable == null) deletable = true;
-	return { id : Main.getId(), type : type, deletable : deletable, sub : Main.createProp(props == null?[["group","均線"],["ma",true,5,10,20,40],["ema",false,5,10,20,40],["macd",false,12,26,0,0],["bbi",false,3,2,6,2],["group","價量"],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["group","威爾德"],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["dmi",false,14,14,0,0],["sar",false,3,0,0,0],["group","余氏"],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0],["yu-car",false,1,.025,.7,0],["group","其它"],["kd",false,9,3,9,0],["atr",false,14,0,0,0]]:props)};
+	return { id : Main.getId(), type : type, deletable : deletable, sub : Main.createProp(props == null?[["group","均線"],["ma",false,5,10,20,40],["ema",false,5,10,20,40],["macd",false,12,26,0,0],["bbi",false,3,2,6,2],["group","價量"],["AccDist",false,14,0,0,0],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["group","威爾德"],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["dmi",false,14,14,0,0],["sar",false,3,0,0,0],["group","余氏"],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0],["yu-car",false,1,.025,.7,0],["group","其它"],["kd",false,9,3,9,0],["atr",false,14,0,0,0]]:props)};
 };
 Math.__name__ = true;
 var Reflect = function() { };
@@ -243,6 +246,30 @@ var haxe_Log = function() { };
 haxe_Log.__name__ = true;
 haxe_Log.trace = function(v,infos) {
 	js_Boot.__trace(v,infos);
+};
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe_Timer.__name__ = true;
+haxe_Timer.delay = function(f,time_ms) {
+	var t = new haxe_Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+};
+haxe_Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
 };
 var js_Boot = function() { };
 js_Boot.__name__ = true;
@@ -542,6 +569,10 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.btn_addPanel.click(function(e) {
 			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
+		this.btn_loadPrice = this.config.btn_loadPrice;
+		this.btn_loadPrice.click(function(e1) {
+			_g.notify(view_PanelView.ON_BTN_LOADPRICE_CLICK);
+		});
 		this.txt_offset = this.config.txt_offset;
 		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
 			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
@@ -556,8 +587,8 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
 		this.btn_controller = this.config.btn_controller;
-		this.btn_controller.delegate(".btn_controller","click",function(e1) {
-			var target = e1.currentTarget;
+		this.btn_controller.delegate(".btn_controller","click",function(e2) {
+			var target = e2.currentTarget;
 			var id = _g.j(target).attr("id");
 			switch(id) {
 			case "btn_first":
@@ -583,16 +614,23 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.table_stockPrice = this.config.table_stockPrice;
 	}
 	,initPanel: function(model,stock,stockInfo) {
-		var _g = this;
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
 		this.slt_stockId.textbox({ value : stockId});
-		Lambda.mapi(stockInfo,function(i,obj) {
-			_g.table_stockPrice.datagrid("appendRow",{ date : obj[0], start : obj[1], top : obj[2], bottom : obj[3], close : obj[4], volume : obj[5]});
-		});
 		this.changeOffset(offset);
 		this.changeCount(count);
+	}
+	,drawPrice: function(stockInfo) {
+		var _g = this;
+		this.btn_loadPrice.hide();
+		Main.showLoading();
+		haxe_Timer.delay(function() {
+			Lambda.mapi(stockInfo,function(i,obj) {
+				_g.table_stockPrice.datagrid("appendRow",{ date : obj[0], start : obj[1], top : obj[2], bottom : obj[3], close : obj[4], volume : obj[5]});
+			});
+			Main.closeLoading();
+		},100);
 	}
 	,changeOffset: function(offset) {
 		var oldv = this.txt_offset.textbox("getValue");
@@ -737,6 +775,7 @@ view_PanelView.ON_SWB_SHOWLINE_CHANGE = "on_showline_change";
 view_PanelView.ON_SWB_SHOWKLINE_CHANGE = "on_showline_k_change";
 view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
 view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
+view_PanelView.ON_BTN_LOADPRICE_CLICK = "on_btn_loadPrice_click";
 view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
 view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
 Main.main();

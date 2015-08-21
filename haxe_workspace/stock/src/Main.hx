@@ -31,12 +31,15 @@ class Main
 			btn_addPanel:j( '#btn_addPanel' ),
 			txt_count:j( '#txt_count' ),
 			txt_offset:j( '#txt_offset' ),
-			table_stockPrice:j( '#table_stockPrice' )
+			table_stockPrice:j( '#table_stockPrice' ),
+			btn_loadPrice:j('#btn_loadPrice')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
 			trace( 'panelView', type );
 			switch( type ) {
+				case PanelView.ON_BTN_LOADPRICE_CLICK:
+					panelView.drawPrice( panelModel.currentStockInfo );
 				case PanelView.ON_SLT_STOCKID_CHANGE:
 					panelModel.currentStockId = params.stockId;
 				case PanelView.ON_BTN_CONTROLLER_CLICK:
@@ -170,7 +173,7 @@ class Main
 			lines:[ 
 				createNewLine( 'volume', false, [
 													['group', '均線'],
-													['ma', true, 5, 10, 20, 40 ]
+													['ma', false, 5, 10, 20, 40 ]
 												] ),
 				createNewLine( 'kline' )
 			]
@@ -184,12 +187,13 @@ class Main
 			deletable:deletable,
 			sub:createProp( props == null ? [
 												['group', '均線'],
-												['ma', true, 5, 10, 20, 40 ],
+												['ma', false, 5, 10, 20, 40 ],
 												['ema', false, 5, 10, 20, 40 ],
 												['macd', false, 12, 26, 0, 0 ],
 												['bbi', false, 3, 2, 6, 2 ],
 												
 												['group', '價量'],
+												['AccDist', false, 14, 0, 0, 0 ],
 												['Chaikin', false, 3, 10, 9, 0 ],
 												['eom', false, 14, 3, 9, 0 ],
 												
