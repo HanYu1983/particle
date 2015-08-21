@@ -83,7 +83,7 @@ class Main
 		panelModel.config = untyped __js__('defaultStock' );
 	}
 	
-	static var id = 4;
+	static var id = 0;
 	
 	static function getId() {
 		return id++;
@@ -167,7 +167,10 @@ class Main
 			count:200,
 			offset:0,
 			lines:[ 
-				createNewLine( 'volume', false, [['ma', true, 5, 10, 20, 40 ]] ),
+				createNewLine( 'volume', false, [
+													['group', '均線'],
+													['ma', true, 5, 10, 20, 40 ]
+												] ),
 				createNewLine( 'kline' )
 			]
 		}

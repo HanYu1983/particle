@@ -196,7 +196,7 @@ Main.createProp = function(ary) {
 	},[]);
 };
 Main.createNewStock = function(id,props) {
-	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("volume",false,[["ma",true,5,10,20,40]]),Main.createNewLine("kline")]};
+	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",true,5,10,20,40]]),Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,deletable,props) {
 	if(deletable == null) deletable = true;
@@ -702,7 +702,7 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 String.__name__ = true;
 Array.__name__ = true;
 Main.j = $;
-Main.id = 4;
+Main.id = 0;
 model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_STOCKID_CHANGE = "on_stockid_change";
 model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
