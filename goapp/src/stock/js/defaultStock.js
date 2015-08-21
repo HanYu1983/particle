@@ -83,6 +83,39 @@ var defaultStock = {
 						},
 						{
 							show:false,
+							type: 'sar', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+							value: {
+								n: 3,
+								m: 0,
+								o: 0, 
+								p: 0,
+								color: ''
+							}
+						},
+						{
+							show:false,
+							type: 'osc', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+							value: {
+								n: 10,
+								m: 30,
+								o: 0, 
+								p: 0,
+								color: ''
+							}
+						},	
+						{
+							show:false,
+							type: 'rsi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
+							value: {
+								n: 14,
+								m: 9,
+								o: 0, 
+								p: 0,
+								color: ''
+							}
+						},
+						{
+							show:false,
 							type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 							value: {
 								n: 9,
