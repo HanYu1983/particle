@@ -55,8 +55,8 @@
     (when-not hideY
       (doseq [i (range cnt)]
         (let [v (+ min-v (* i offset))]
-          (.fillText ctx (str v) (* w (/ 1 3)) (pos-y v))
-          (.fillText ctx (str v) (* w (/ 2 3)) (pos-y v))
+          (.fillText ctx (str (.toFixed v 2)) (* w (/ 1 3)) (pos-y v))
+          (.fillText ctx (str (.toFixed v 2)) (* w (/ 2 3)) (pos-y v))
           (.moveTo ctx 0 (pos-y v))
           (.lineTo ctx w (pos-y v)))))
     
