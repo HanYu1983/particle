@@ -29,7 +29,7 @@ var api = {};
 		[{
 			t:
 	均線 => ma | ema | macd | bbi
-	價量 => Chaikin | eom | AccDist
+	價量 => AccDist | Chaikin | eom
 	威爾德 => osc | rsi | dmi | sar
 	余氏 => yu-clock | yu-macd | yu-car
 	其它 => kd | atr
