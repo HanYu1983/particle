@@ -58,7 +58,7 @@ class PanelModel extends Model implements IPanel
 		var obj = {
 			id:id,
 			data:data,
-			needMove: data.type != EType.clock,
+			needMove: data.type != 'click',
 			root:null //add by panelView
 		};
 		ary_panel_obj.push( obj );
@@ -124,12 +124,12 @@ class PanelModel extends Model implements IPanel
 		
 		currentOffset = stock.offset;
 		currentCount = stock.count;
-		
+		/*
 		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
 			obj.type = Type.createEnum( EType, obj.type );
 			return true;
 		});
-		
+		*/
 		resetPanelData();
 		
 		Main.getStock( currentStockId, true ).pipe( Main.getStockInfo ).done( function( err, data ) {
@@ -185,7 +185,21 @@ class PanelModel extends Model implements IPanel
 		currentStockId = stockId;
 		setStockData( switch( getStockById( stockId ) ) {
 			case null:
-				var obj = createNewStock( stockId );
+				var obj = Main.createNewStock( stockId, [
+					['ma', true, 5, 10, 20, 40 ],
+					['ema', false, 5, 10, 20, 40 ],
+					['bbi', false, 3, 2, 6, 2 ],
+					['yu-car', false, 1, .025, .7, 0 ],
+					['sar', false, 3, 0, 0, 0 ],
+					['osc', false, 10, 20, 0, 0 ],
+					['rsi', false, 14, 9, 0, 0 ],
+					['kd', false, 9, 3, 9, 0 ],
+					['macd', false, 12, 26, 0, 0 ],
+					['Chaikin', false, 3, 10, 9, 0 ],
+					['eom', false, 14, 3, 9, 0 ],
+					['yu-clock', false, 20, 20, 0, 0 ],
+					['yu-macd', false, 5, 12, 0, 0 ]
+				] );
 				config.stocks.push( obj );
 				obj;
 			case o:
@@ -196,132 +210,5 @@ class PanelModel extends Model implements IPanel
 	
 	function set_maxCount( mcount ) {
 		return maxCount = mcount;
-	}
-	
-	function createNewStock( id ) {
-		return {
-			id:id,
-			count:200,
-			offset:0,
-			lines:[
-				{
-					id:1,
-					type:'kline',
-					deletable:true,
-					sub:[
-						{
-							show:true,
-							type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 5,
-								m: 10,
-								o: 20, 
-								p: 40,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'ema', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 5,
-								m: 10,
-								o: 20, 
-								p: 40,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'bbi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 3,
-								m: 2,
-								o: 6, 
-								p: 2,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'yu-car', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 1,
-								m: .005,
-								o: .7, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 9,
-								m: 3,
-								o: 9, 
-								p:0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 12,
-								m: 26,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 3,
-								m: 10,
-								o: 9, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 14,
-								m: 3,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 20,
-								m: 20,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
-							value: {
-								n: 5,
-								m: 12,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						}
-					]
-				}
-			]
-		}
 	}
 }

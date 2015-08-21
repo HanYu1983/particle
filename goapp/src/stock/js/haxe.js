@@ -124,7 +124,7 @@ var Main = function() {
 			_g.panelModel.changeShowK(params.id,params.show);
 			break;
 		case "on_btn_addPanel_click":
-			var penalObj = _g.createNewPanelObj();
+			var penalObj = Main.createNewLine("none",[["ma",true,5,10,20,40],["ema",false,5,10,20,40],["bbi",false,3,2,6,2],["yu-car",false,1,.025,.7,0],["sar",false,3,0,0,0],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["kd",false,9,3,9,0],["macd",false,12,26,0,0],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0]]);
 			_g.panelModel.addPanel(penalObj.id,penalObj,{ addToModel : true});
 			break;
 		case "on_btn_removePanel_click":
@@ -139,7 +139,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
@@ -203,10 +203,17 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	if(offset == null) offset = 0;
 	api.draw(canvas[0],id,Std.string(type),offset,count,sub);
 };
-Main.prototype = {
-	createNewPanelObj: function() {
-		return { id : Main.getId(), type : EType.none, deletable : true, sub : [{ show : false, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 3, m : 2, o : 6, p : 2, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 3, o : 9, p : 0, color : ""}},{ show : true, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]};
-	}
+Main.createProp = function(ary) {
+	return Lambda.fold(ary,function(obj,curr) {
+		if(obj[0] == "group") curr.push({ type : obj[0], name : obj[1]}); else curr.push({ show : obj[1], type : obj[0], value : { n : obj[2], m : obj[3], o : obj[4], p : obj[5]}});
+		return curr;
+	},[]);
+};
+Main.createNewStock = function(id,props) {
+	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("kline",props)]};
+};
+Main.createNewLine = function(type,props) {
+	return { id : Main.getId(), type : type, deletable : true, sub : Main.createProp(props)};
 };
 Math.__name__ = true;
 var Reflect = function() { };
@@ -215,18 +222,11 @@ Reflect.field = function(o,field) {
 	try {
 		return o[field];
 	} catch( e ) {
-		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
 };
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
-};
-Reflect.callMethod = function(o,func,args) {
-	return func.apply(o,args);
-};
-Reflect.isFunction = function(f) {
-	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
 };
 var Std = function() { };
 Std.__name__ = true;
@@ -242,33 +242,11 @@ Std.parseInt = function(x) {
 Std.parseFloat = function(x) {
 	return parseFloat(x);
 };
-var Type = function() { };
-Type.__name__ = true;
-Type.createEnum = function(e,constr,params) {
-	var f = Reflect.field(e,constr);
-	if(f == null) throw new js__$Boot_HaxeError("No such constructor " + constr);
-	if(Reflect.isFunction(f)) {
-		if(params == null) throw new js__$Boot_HaxeError("Constructor " + constr + " need parameters");
-		return Reflect.callMethod(e,f,params);
-	}
-	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
-	return f;
-};
 var haxe_Log = function() { };
 haxe_Log.__name__ = true;
 haxe_Log.trace = function(v,infos) {
 	js_Boot.__trace(v,infos);
 };
-var js__$Boot_HaxeError = function(val) {
-	Error.call(this);
-	this.val = val;
-	this.message = String(val);
-	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
-};
-js__$Boot_HaxeError.__name__ = true;
-js__$Boot_HaxeError.__super__ = Error;
-js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
-});
 var js_Boot = function() { };
 js_Boot.__name__ = true;
 js_Boot.__unhtml = function(s) {
@@ -326,7 +304,6 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -417,7 +394,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,addPanel: function(id,data,extra) {
-		var obj = { id : id, data : data, needMove : data.type != EType.clock, root : null};
+		var obj = { id : id, data : data, needMove : data.type != "click", root : null};
 		this.ary_panel_obj.push(obj);
 		if(extra.addToModel) this.getStockById(this.currentStockId).lines.push(data);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
@@ -463,18 +440,14 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var _g = this;
 		this.set_currentOffset(stock.offset);
 		this.set_currentCount(stock.count);
-		Lambda.foreach(stock.lines,function(obj) {
-			obj.type = Type.createEnum(EType,obj.type);
-			return true;
-		});
 		this.resetPanelData();
 		Main.getStock(this.currentStockId,true).pipe(Main.getStockInfo).done(function(err,data) {
 			var state = data[0];
 			var dataInfo = data[1];
 			var date = data[3];
 			_g.set_maxCount(dataInfo.length);
-			Lambda.foreach(stock.lines,function(obj1) {
-				_g.addPanel(obj1.id,obj1,{ addToModel : false});
+			Lambda.foreach(stock.lines,function(obj) {
+				_g.addPanel(obj.id,obj,{ addToModel : false});
 				return true;
 			});
 			_g.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stock : stock});
@@ -517,7 +490,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 				var o = _g;
 				$r = _g == null?(function($this) {
 					var $r;
-					var obj = $this.createNewStock(stockId);
+					var obj = Main.createNewStock(stockId,[["ma",true,5,10,20,40],["ema",false,5,10,20,40],["bbi",false,3,2,6,2],["yu-car",false,1,.025,.7,0],["sar",false,3,0,0,0],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["kd",false,9,3,9,0],["macd",false,12,26,0,0],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0]]);
 					$this.config.stocks.push(obj);
 					$r = obj;
 					return $r;
@@ -537,9 +510,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,set_maxCount: function(mcount) {
 		return this.maxCount = mcount;
-	}
-	,createNewStock: function(id) {
-		return { id : id, count : 200, offset : 0, lines : [{ id : 1, type : "kline", deletable : true, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 3, m : 2, o : 6, p : 2, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 3, o : 9, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]}]};
 	}
 });
 var view_IPanelView = function() { };

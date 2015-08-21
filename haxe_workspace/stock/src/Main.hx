@@ -47,7 +47,23 @@ class Main
 				case PanelView.ON_SWB_SHOWKLINE_CHANGE:
 					panelModel.changeShowK( params.id, params.show );
 				case PanelView.ON_BTN_ADDPANEL_CLICK:
-					var penalObj = createNewPanelObj();
+					var penalObj = createNewLine( 'none',
+						[
+							['ma', true, 5, 10, 20, 40 ],
+							['ema', false, 5, 10, 20, 40 ],
+							['bbi', false, 3, 2, 6, 2 ],
+							['yu-car', false, 1, .025, .7, 0 ],
+							['sar', false, 3, 0, 0, 0 ],
+							['osc', false, 10, 20, 0, 0 ],
+							['rsi', false, 14, 9, 0, 0 ],
+							['kd', false, 9, 3, 9, 0 ],
+							['macd', false, 12, 26, 0, 0 ],
+							['Chaikin', false, 3, 10, 9, 0 ],
+							['eom', false, 14, 3, 9, 0 ],
+							['yu-clock', false, 20, 20, 0, 0 ],
+							['yu-macd', false, 5, 12, 0, 0 ]
+						]
+					);
 					panelModel.addPanel( penalObj.id, penalObj, {addToModel:true} );
 				case PanelView.ON_BTN_REMOVEPANEL_CLICK:
 					panelModel.removePanel( params.id );
@@ -138,123 +154,44 @@ class Main
 		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 	
-	function createNewPanelObj() {
+	public static function createProp( ary:Array<Dynamic> ):Array<Dynamic> {
+		return Lambda.fold( ary, function( obj, curr:Array<Dynamic> ) {
+			if ( obj[0] == 'group' ) {
+				curr.push( {
+					type:obj[0],
+					name:obj[1]
+				});
+			}else{
+				curr.push( { 
+					show:obj[1],
+					type:obj[0],
+					value: {
+						n:obj[2],
+						m:obj[3],
+						o:obj[4],
+						p:obj[5],
+					}
+				} );
+			}
+			return curr;
+		}, []);
+	}
+	
+	public static function createNewStock( id, props ) {
+		return {
+			id:id,
+			count:200,
+			offset:0,
+			lines:[ createNewLine( 'kline', props ) ]
+		}
+	}
+	
+	public static function createNewLine( type, props:Array<Dynamic> ) {
 		return {
 			id:getId(),
-			type:EType.none,
+			type:type,
 			deletable:true,
-			sub:[
-				{
-					show:false,
-					type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 5,
-						m: 10,
-						o: 20, 
-						p: 40,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'ema', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 5,
-						m: 10,
-						o: 20, 
-						p: 40,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'bbi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 3,
-						m: 2,
-						o: 6, 
-						p: 2,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'yu-car', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 1,
-						m: .005,
-						o: .7, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 9,
-						m: 3,
-						o:9, 
-						p:0,
-						color: ''
-					}
-				},
-				{
-					show:true,
-					type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 12,
-						m: 26,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 3,
-						m: 10,
-						o: 9, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 14,
-						m: 3,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 20,
-						m: 20,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
-					value: {
-						n: 5,
-						m: 12,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				}
-			]
+			sub:createProp( props )
 		}
 	}
 }
