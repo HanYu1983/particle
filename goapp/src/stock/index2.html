@@ -99,17 +99,18 @@ body{
         <div data-options="region:'north',split:false,title:'余氏k線圖'" style="height:70px; padding:5px;">
 			<div style="position:relative; left:0; top:0; display:inline-block;">
 				<select id="slt_stockId" class="easyui-textbox" style="width:70px;"></select>
+				<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" ></a>
 				<a href="#" id="btn_addPanel" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增K線</a>
 			</div>
 			<div style="position:relative; display:inline-block;">
+				<div style="position:relative; left:0; top:0; display:inline-block;">數量</div>
 				<div style="position:relative; left:0; top:0; display:inline-block; width:60px; ">
 					<select id="txt_count" class="easyui-textbox" style="width:100%;"></select>
 				</div>
-				<div style="position:relative; left:0; top:0; display:inline-block;">數量</div>
+				<div style="position:relative; left:0; top:0; display:inline-block;">偏移</div>
 				<div style="position:relative; left:0; top:0; display:inline-block; width:60px; ">
 					<select id="txt_offset" class="easyui-textbox" style="width:100%;"></select>
 				</div>
-				<div style="position:relative; left:0; top:0; display:inline-block;">偏移</div>
 			</div>
 			<div id="btn_controller" style="position:relative; left:0; top:0; display:inline-block; vertical-align:middle; ">
 				<div id="btn_first" class="btn_controller pagination-first"></div>
