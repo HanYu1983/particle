@@ -58,26 +58,23 @@
             (let [n (get subd "n")
                   m (get subd "m")
                   o (get subd "o")
-                  p (get subd "p")
-                  color (get subd "color")]
-              [
-                {:type :line :line (stf/sma-seq n vs) :color c1}
-                {:type :line :line (stf/sma-seq m vs) :color c2}
-                {:type :line :line (stf/sma-seq o vs) :color c3}
-                {:type :line :line (stf/sma-seq p vs) :color c4}
-              ])
+                  p (get subd "p")]
+              (cond->> '()
+                (> n 0) (cons {:type :line :line (stf/sma-seq n vs) :color c1})
+                (> m 0) (cons {:type :line :line (stf/sma-seq m vs) :color c2})
+                (> o 0) (cons {:type :line :line (stf/sma-seq o vs) :color c3})
+                (> p 0) (cons {:type :line :line (stf/sma-seq p vs) :color c4})))
             
             "ema"
             (let [n (get subd "n")
                   m (get subd "m")
                   o (get subd "o")
                   p (get subd "p")]
-              [
-                {:type :line :line (reverse (stf/ema-seq n (reverse vs))) :color c1}
-                {:type :line :line (reverse (stf/ema-seq m (reverse vs))) :color c2}
-                {:type :line :line (reverse (stf/ema-seq o (reverse vs))) :color c3}
-                {:type :line :line (reverse (stf/ema-seq p (reverse vs))) :color c4}
-              ])
+              (cond->> '()
+                (> n 0) (cons {:type :line :line (reverse (stf/ema-seq n (reverse vs))) :color c1})
+                (> m 0) (cons {:type :line :line (reverse (stf/ema-seq m (reverse vs))) :color c2})
+                (> o 0) (cons {:type :line :line (reverse (stf/ema-seq o (reverse vs))) :color c3})
+                (> p 0) (cons {:type :line :line (reverse (stf/ema-seq p (reverse vs))) :color c4})))
           
             "bbi"
             (let [n (get subd "n")
