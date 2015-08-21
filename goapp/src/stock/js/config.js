@@ -16,6 +16,7 @@ app.config.hoverInfo = {
 		'rsi':'相對強弱指標',
 		'sar':'拋物線指標',
 		'dmi':'趨勢指標',
-		'atr':'真實波幅'
+		'atr':'真實波幅',
+		'AccDist': '累積/派發線'
 	}
 }
