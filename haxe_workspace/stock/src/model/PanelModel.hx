@@ -40,7 +40,7 @@ class PanelModel extends Model implements IPanel
 	
 	public function changeShowK( id:Dynamic, show:Bool ):Void {
 		var panelData:Dynamic = getPanelById( id );
-		panelData.data.type = show ? EType.kline : EType.none;
+		panelData.data.type = show ? 'kline' : 'none';
 		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
 	}
 	
@@ -54,18 +54,24 @@ class PanelModel extends Model implements IPanel
 		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
 	}
 	
-	public function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void{
+	public function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void {
+		//add to model
+		if ( extra.addToModel ) {
+			var stock = getStockById( currentStockId );
+			if ( stock == null ) {
+				Main.slideMessage( '錯誤', '請先輸入股票代碼!' );
+				return;
+			}
+			stock.lines.push( data );
+		}
+		
 		var obj = {
 			id:id,
 			data:data,
-			needMove: data.type != EType.clock,
+			needMove: data.type != 'click',
 			root:null //add by panelView
 		};
 		ary_panel_obj.push( obj );
-		
-		if ( extra.addToModel ) {
-			getStockById( currentStockId ).lines.push( data );
-		}
 		
 		notify( ON_ADD_PANEL, {stockId:currentStockId, panelObj:obj } );
 	}
@@ -74,6 +80,16 @@ class PanelModel extends Model implements IPanel
 		Lambda.foreach( ary_panel_obj, function ( stockMap ) {
 			if ( stockMap.id == id ) {
 				ary_panel_obj.remove( stockMap );
+				
+				//remove from model
+				var ary_lines:Array<Dynamic> = getStockById( currentStockId ).lines;
+				Lambda.foreach( ary_lines, function( obj ) {
+					if ( obj == stockMap.data ) {
+						ary_lines.remove( obj );
+						return false;
+					}
+					return true;
+				});
 				return false;
 			}
 			return true;
@@ -87,20 +103,7 @@ class PanelModel extends Model implements IPanel
 			facebookId:config.facebookId,
 			stocks:config.stocks
 		}
-		/*
-		var stockobj:Dynamic = Lambda.find( output.stocks, function( obj ) {
-			if ( obj.id == currentStockId ) return true;
-			return false;
-		});
-		stockobj.lines = [];
 		
-		Lambda.map( ary_panel_obj, function( stockMap ) {
-			stockobj.lines.push( {
-				id:stockMap.id,
-				type:Std.string( stockMap.type ),
-			});
-		});
-		*/
 		return output;
 	}
 	
@@ -111,7 +114,8 @@ class PanelModel extends Model implements IPanel
 		var j = untyped __js__('$');
 		
 		var stock = config.stocks[0];
-		currentStockId = stock.id;
+		if( stock != null )
+			currentStockId = stock.id;
 	}
 	
 	function resetPanelData() {
@@ -126,14 +130,9 @@ class PanelModel extends Model implements IPanel
 		
 		currentOffset = stock.offset;
 		currentCount = stock.count;
-		
-		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
-			obj.type = Type.createEnum( EType, obj.type );
-			return true;
-		});
-		
+	
 		resetPanelData();
-			
+		
 		Main.getStock( currentStockId, true ).pipe( Main.getStockInfo ).done( function( err, data ) {
 			var state = data[0];
 			var dataInfo = data[1];//[[date open high low close volume]],
@@ -187,7 +186,7 @@ class PanelModel extends Model implements IPanel
 		currentStockId = stockId;
 		setStockData( switch( getStockById( stockId ) ) {
 			case null:
-				var obj = createNewStock( stockId );
+				var obj = Main.createNewStock( stockId );
 				config.stocks.push( obj );
 				obj;
 			case o:
@@ -198,132 +197,5 @@ class PanelModel extends Model implements IPanel
 	
 	function set_maxCount( mcount ) {
 		return maxCount = mcount;
-	}
-	
-	function createNewStock( id ) {
-		return {
-			id:id,
-			count:200,
-			offset:0,
-			lines:[
-				{
-					id:1,
-					type:'kline',
-					deletable:false,
-					sub:[
-						{
-							show:true,
-							type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 5,
-								m: 10,
-								o: 20, 
-								p: 40,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'ema', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 5,
-								m: 10,
-								o: 20, 
-								p: 40,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'bbi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 12,
-								m: 0,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'yu-car', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 1,
-								m: .005,
-								o: .7, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 9,
-								m: 3,
-								o: 9, 
-								p:0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 12,
-								m: 26,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 3,
-								m: 10,
-								o: 9, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 14,
-								m: 3,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-							value: {
-								n: 20,
-								m: 20,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						},
-						{
-							show:false,
-							type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
-							value: {
-								n: 5,
-								m: 12,
-								o: 0, 
-								p: 0,
-								color: ''
-							}
-						}
-					]
-				}
-			]
-		}
 	}
 }

@@ -14,12 +14,15 @@ import view.PanelView;
  */
 class Main 
 {
-	var j:Dynamic = untyped __js__( '$' );
+	static var j:Dynamic = untyped __js__( '$' );
 	
 	var panelModel:IPanel = new PanelModel();
 	var panelView:IPanelView = new PanelView();
+	var loading:Dynamic;
 	
 	function new() {
+		slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
+		
 		panelView.config = {
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
@@ -31,6 +34,7 @@ class Main
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
+			trace( 'panelView', type );
 			switch( type ) {
 				case PanelView.ON_SLT_STOCKID_CHANGE:
 					panelModel.currentStockId = params.stockId;
@@ -43,7 +47,7 @@ class Main
 				case PanelView.ON_SWB_SHOWKLINE_CHANGE:
 					panelModel.changeShowK( params.id, params.show );
 				case PanelView.ON_BTN_ADDPANEL_CLICK:
-					var penalObj = createNewPanelObj();
+					var penalObj = createNewLine( 'none' );
 					panelModel.addPanel( penalObj.id, penalObj, {addToModel:true} );
 				case PanelView.ON_BTN_REMOVEPANEL_CLICK:
 					panelModel.removePanel( params.id );
@@ -55,9 +59,8 @@ class Main
 		});
 		
 		panelModel.addHandler( function( type, params ) {
+			trace( 'panelModel', type );
 			switch( type ) {
-				case PanelModel.ON_STOCKID_CHANGE:
-					panelView.initPanel( panelModel.config, params.stock );
 				case PanelModel.ON_OFFSET_CHANGE:
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.scrollTo( panelModel.getAryPanel(), 0 );
@@ -71,14 +74,14 @@ class Main
 					panelView.removePanel( params.id );
 				case PanelModel.ON_SHOWLINE_CHANGE:
 					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
+				case PanelModel.ON_STOCKID_CHANGE:
+					panelView.initPanel( panelModel.config, params.stock );
 			}
 		});
 		
 		//沒有記錄的話，用預設資料
 		panelModel.config = untyped __js__('defaultStock' );
 	}
-	
-	
 	
 	static var id = 4;
 	
@@ -91,8 +94,30 @@ class Main
 		new Main();
 	}
 	
+	public static function showLoading() {
+		j.messager.progress( {
+			title:'Please waiting',
+            msg:'Loading data...'
+		});
+	}
+	
+	public static function closeLoading() {
+		j.messager.progress('close');
+	}
+	
+	public static function slideMessage( title, msg ){
+		j.messager.show({
+			title:title,
+			msg:msg,
+			timeout:5000,
+			showType:'slide'
+		});
+	}
+	
 	public static function getStock( id:String, reset:Bool ) {
-		var d:Dynamic = untyped __js__('$').Deferred();
+		showLoading();
+		
+		var d:Dynamic = j.Deferred();
 		untyped __js__('api.stockId')( id, reset, function() {
 			d.resolve( id );
 		});
@@ -100,134 +125,82 @@ class Main
 	}
 	
 	public static function getStockInfo( id:String ):Dynamic {
-		var d:Dynamic = untyped __js__('$').Deferred();
+		var d:Dynamic = j.Deferred();
 		untyped __js__('api.stockInfo')( id, function( err, data ) {
 			d.resolve( err, data );
+			
+			closeLoading();
 		});
 		return d;
 	}
 	
-	public static function drawStock( canvas:Dynamic, id:String, type:EType, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
+	public static function drawStock( canvas:Dynamic, id:String, type:String, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
 		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 	
-	function createNewPanelObj() {
+	public static function createProp( ary:Array<Dynamic> ):Array<Dynamic> {
+		return Lambda.fold( ary, function( obj, curr:Array<Dynamic> ) {
+			if ( obj[0] == 'group' ) {
+				curr.push( {
+					type:obj[0],
+					name:obj[1]
+				});
+			}else{
+				curr.push( { 
+					show:obj[1],
+					type:obj[0],
+					value: {
+						n:obj[2],
+						m:obj[3],
+						o:obj[4],
+						p:obj[5],
+					}
+				} );
+			}
+			return curr;
+		}, []);
+	}
+	
+	public static function createNewStock( id, ?props ) {
+		return {
+			id:id,
+			count:200,
+			offset:0,
+			lines:[ createNewLine( 'kline' ) ]
+		}
+	}
+	
+	public static function createNewLine( type, ?props:Array<Dynamic> ) {
 		return {
 			id:getId(),
-			type:EType.none,
+			type:type,
 			deletable:true,
-			sub:[
-				{
-					show:false,
-					type: 'ma', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 5,
-						m: 10,
-						o: 20, 
-						p: 40,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'ema', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 5,
-						m: 10,
-						o: 20, 
-						p: 40,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'bbi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 12,
-						m: 0,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'yu-car', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 1,
-						m: .005,
-						o: .7, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'kd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 9,
-						m: 3,
-						o:9, 
-						p:0,
-						color: ''
-					}
-				},
-				{
-					show:true,
-					type: 'macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 12,
-						m: 26,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'Chaikin', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 3,
-						m: 10,
-						o: 9, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'eom', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 14,
-						m: 3,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'yu-clock', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
-					value: {
-						n: 20,
-						m: 20,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				},
-				{
-					show:false,
-					type: 'yu-macd', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin | yu-macd | bbi | eom
-					value: {
-						n: 5,
-						m: 12,
-						o: 0, 
-						p: 0,
-						color: ''
-					}
-				}
-			]
+			sub:createProp( props == null ? [
+												['group', '均線'],
+												['ma', true, 5, 10, 20, 40 ],
+												['ema', false, 5, 10, 20, 40 ],
+												['macd', false, 12, 26, 0, 0 ],
+												['bbi', false, 3, 2, 6, 2 ],
+												
+												['group', '價量'],
+												['Chaikin', false, 3, 10, 9, 0 ],
+												['eom', false, 14, 3, 9, 0 ],
+												
+												['group', '威爾德'],
+												['osc', false, 10, 20, 0, 0 ],
+												['rsi', false, 14, 9, 0, 0 ],
+												['dmi', false, 14, 14, 0, 0 ],
+												['sar', false, 3, 0, 0, 0 ],
+												
+												['group', '余氏'],
+												['yu-clock', false, 20, 20, 0, 0 ],
+												['yu-macd', false, 5, 12, 0, 0 ],
+												['yu-car', false, 1, .025, .7, 0 ],
+												
+												['group', '其它'],
+												['kd', false, 9, 3, 9, 0 ],
+												['atr', false, 14, 0, 0, 0 ]
+											] : props )
 		}
 	}
 }

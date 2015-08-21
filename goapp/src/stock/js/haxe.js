@@ -1,24 +1,10 @@
 (function (console) { "use strict";
-var $estr = function() { return js_Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline","none"] };
-EType.volume = ["volume",0];
-EType.volume.toString = $estr;
-EType.volume.__enum__ = EType;
-EType.clock = ["clock",1];
-EType.clock.toString = $estr;
-EType.clock.__enum__ = EType;
-EType.kline = ["kline",2];
-EType.kline.toString = $estr;
-EType.kline.__enum__ = EType;
-EType.none = ["none",3];
-EType.none.toString = $estr;
-EType.none.__enum__ = EType;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
@@ -101,10 +87,11 @@ List.prototype = {
 var Main = function() {
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
-	this.j = $;
 	var _g = this;
-	this.panelView.set_config({ mc_accordionContainer : this.j("#mc_accordionContainer"), tmpl_panel : this.j("#tmpl_panel"), slt_stockId : this.j("#slt_stockId"), btn_controller : this.j("#btn_controller"), btn_addPanel : this.j("#btn_addPanel"), txt_count : this.j("#txt_count"), txt_offset : this.j("#txt_offset")});
+	Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
+	this.panelView.set_config({ mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset")});
 	this.panelView.addHandler(function(type,params) {
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 37, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
 		case "on_stockid_change":
 			_g.panelModel.set_currentStockId(params.stockId);
@@ -123,7 +110,7 @@ var Main = function() {
 			_g.panelModel.changeShowK(params.id,params.show);
 			break;
 		case "on_btn_addPanel_click":
-			var penalObj = _g.createNewPanelObj();
+			var penalObj = Main.createNewLine("none");
 			_g.panelModel.addPanel(penalObj.id,penalObj,{ addToModel : true});
 			break;
 		case "on_btn_removePanel_click":
@@ -138,10 +125,8 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
-		case "on_stockid_change":
-			_g.panelView.initPanel(_g.panelModel.config,params1.stock);
-			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
 			_g.panelView.scrollTo(_g.panelModel.getAryPanel(),0);
@@ -160,6 +145,9 @@ var Main = function() {
 		case "on_showline_change":
 			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelData);
 			break;
+		case "on_stockid_change":
+			_g.panelView.initPanel(_g.panelModel.config,params1.stock);
+			break;
 		}
 	});
 	this.panelModel.set_config(defaultStock);
@@ -171,29 +159,47 @@ Main.getId = function() {
 Main.main = function() {
 	new Main();
 };
+Main.showLoading = function() {
+	Main.j.messager.progress({ title : "Please waiting", msg : "Loading data..."});
+};
+Main.closeLoading = function() {
+	Main.j.messager.progress("close");
+};
+Main.slideMessage = function(title,msg) {
+	Main.j.messager.show({ title : title, msg : msg, timeout : 5000, showType : "slide"});
+};
 Main.getStock = function(id,reset) {
-	var d = $.Deferred();
+	Main.showLoading();
+	var d = Main.j.Deferred();
 	api.stockId(id,reset,function() {
 		d.resolve(id);
 	});
 	return d;
 };
 Main.getStockInfo = function(id) {
-	var d = $.Deferred();
+	var d = Main.j.Deferred();
 	api.stockInfo(id,function(err,data) {
 		d.resolve(err,data);
+		Main.closeLoading();
 	});
 	return d;
 };
 Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	if(count == null) count = 100;
 	if(offset == null) offset = 0;
-	api.draw(canvas[0],id,Std.string(type),offset,count,sub);
+	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
-Main.prototype = {
-	createNewPanelObj: function() {
-		return { id : Main.getId(), type : EType.none, deletable : true, sub : [{ show : false, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 3, o : 9, p : 0, color : ""}},{ show : true, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]};
-	}
+Main.createProp = function(ary) {
+	return Lambda.fold(ary,function(obj,curr) {
+		if(obj[0] == "group") curr.push({ type : obj[0], name : obj[1]}); else curr.push({ show : obj[1], type : obj[0], value : { n : obj[2], m : obj[3], o : obj[4], p : obj[5]}});
+		return curr;
+	},[]);
+};
+Main.createNewStock = function(id,props) {
+	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("kline")]};
+};
+Main.createNewLine = function(type,props) {
+	return { id : Main.getId(), type : type, deletable : true, sub : Main.createProp(props == null?[["group","均線"],["ma",true,5,10,20,40],["ema",false,5,10,20,40],["macd",false,12,26,0,0],["bbi",false,3,2,6,2],["group","價量"],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["group","威爾德"],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["dmi",false,14,14,0,0],["sar",false,3,0,0,0],["group","余氏"],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0],["yu-car",false,1,.025,.7,0],["group","其它"],["kd",false,9,3,9,0],["atr",false,14,0,0,0]]:props)};
 };
 Math.__name__ = true;
 var Reflect = function() { };
@@ -202,18 +208,11 @@ Reflect.field = function(o,field) {
 	try {
 		return o[field];
 	} catch( e ) {
-		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
 };
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
-};
-Reflect.callMethod = function(o,func,args) {
-	return func.apply(o,args);
-};
-Reflect.isFunction = function(f) {
-	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
 };
 var Std = function() { };
 Std.__name__ = true;
@@ -229,30 +228,32 @@ Std.parseInt = function(x) {
 Std.parseFloat = function(x) {
 	return parseFloat(x);
 };
-var Type = function() { };
-Type.__name__ = true;
-Type.createEnum = function(e,constr,params) {
-	var f = Reflect.field(e,constr);
-	if(f == null) throw new js__$Boot_HaxeError("No such constructor " + constr);
-	if(Reflect.isFunction(f)) {
-		if(params == null) throw new js__$Boot_HaxeError("Constructor " + constr + " need parameters");
-		return Reflect.callMethod(e,f,params);
-	}
-	if(params != null && params.length != 0) throw new js__$Boot_HaxeError("Constructor " + constr + " does not need parameters");
-	return f;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
 };
-var js__$Boot_HaxeError = function(val) {
-	Error.call(this);
-	this.val = val;
-	this.message = String(val);
-	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
-};
-js__$Boot_HaxeError.__name__ = true;
-js__$Boot_HaxeError.__super__ = Error;
-js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
-});
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -289,7 +290,6 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -367,7 +367,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,changeShowK: function(id,show) {
 		var panelData = this.getPanelById(id);
-		if(show) panelData.data.type = EType.kline; else panelData.data.type = EType.none;
+		if(show) panelData.data.type = "kline"; else panelData.data.type = "none";
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,changeShowValue: function(id,type,value) {
@@ -380,9 +380,16 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,addPanel: function(id,data,extra) {
-		var obj = { id : id, data : data, needMove : data.type != EType.clock, root : null};
+		if(extra.addToModel) {
+			var stock = this.getStockById(this.currentStockId);
+			if(stock == null) {
+				Main.slideMessage("錯誤","請先輸入股票代碼!");
+				return;
+			}
+			stock.lines.push(data);
+		}
+		var obj = { id : id, data : data, needMove : data.type != "click", root : null};
 		this.ary_panel_obj.push(obj);
-		if(extra.addToModel) this.getStockById(this.currentStockId).lines.push(data);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
 	,removePanel: function(id) {
@@ -390,6 +397,14 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		Lambda.foreach(this.ary_panel_obj,function(stockMap) {
 			if(stockMap.id == id) {
 				HxOverrides.remove(_g.ary_panel_obj,stockMap);
+				var ary_lines = _g.getStockById(_g.currentStockId).lines;
+				Lambda.foreach(ary_lines,function(obj) {
+					if(obj == stockMap.data) {
+						HxOverrides.remove(ary_lines,obj);
+						return false;
+					}
+					return true;
+				});
 				return false;
 			}
 			return true;
@@ -404,7 +419,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		model_Model.prototype.init.call(this);
 		var j = $;
 		var stock = this.config.stocks[0];
-		this.set_currentStockId(stock.id);
+		if(stock != null) this.set_currentStockId(stock.id);
 	}
 	,resetPanelData: function() {
 		var _g = this;
@@ -418,18 +433,14 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var _g = this;
 		this.set_currentOffset(stock.offset);
 		this.set_currentCount(stock.count);
-		Lambda.foreach(stock.lines,function(obj) {
-			obj.type = Type.createEnum(EType,obj.type);
-			return true;
-		});
 		this.resetPanelData();
 		Main.getStock(this.currentStockId,true).pipe(Main.getStockInfo).done(function(err,data) {
 			var state = data[0];
 			var dataInfo = data[1];
 			var date = data[3];
 			_g.set_maxCount(dataInfo.length);
-			Lambda.foreach(stock.lines,function(obj1) {
-				_g.addPanel(obj1.id,obj1,{ addToModel : false});
+			Lambda.foreach(stock.lines,function(obj) {
+				_g.addPanel(obj.id,obj,{ addToModel : false});
 				return true;
 			});
 			_g.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stock : stock});
@@ -472,7 +483,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 				var o = _g;
 				$r = _g == null?(function($this) {
 					var $r;
-					var obj = $this.createNewStock(stockId);
+					var obj = Main.createNewStock(stockId);
 					$this.config.stocks.push(obj);
 					$r = obj;
 					return $r;
@@ -492,9 +503,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,set_maxCount: function(mcount) {
 		return this.maxCount = mcount;
-	}
-	,createNewStock: function(id) {
-		return { id : id, count : 200, offset : 0, lines : [{ id : 1, type : "kline", deletable : false, sub : [{ show : true, type : "ma", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "ema", value : { n : 5, m : 10, o : 20, p : 40, color : ""}},{ show : false, type : "bbi", value : { n : 12, m : 0, o : 0, p : 0, color : ""}},{ show : false, type : "yu-car", value : { n : 1, m : .005, o : .7, p : 0, color : ""}},{ show : false, type : "kd", value : { n : 9, m : 3, o : 9, p : 0, color : ""}},{ show : false, type : "macd", value : { n : 12, m : 26, o : 0, p : 0, color : ""}},{ show : false, type : "Chaikin", value : { n : 3, m : 10, o : 9, p : 0, color : ""}},{ show : false, type : "eom", value : { n : 14, m : 3, o : 0, p : 0, color : ""}},{ show : false, type : "yu-clock", value : { n : 20, m : 20, o : 0, p : 0, color : ""}},{ show : false, type : "yu-macd", value : { n : 5, m : 12, o : 0, p : 0, color : ""}}]}]};
 	}
 });
 var view_IPanelView = function() { };
@@ -519,9 +527,19 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.btn_addPanel.click(function(e) {
 			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
-		this.slt_stockId = this.config.slt_stockId;
-		this.txt_count = this.config.txt_count;
 		this.txt_offset = this.config.txt_offset;
+		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
+			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
+		}});
+		this.txt_count = this.config.txt_count;
+		this.txt_count.textbox({ value : 200, onChange : function(newValue1,oldValue1) {
+			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
+		}});
+		this.slt_stockId = this.config.slt_stockId;
+		this.slt_stockId.textbox({ onChange : function(newValue2,oldValue2) {
+			var stockId = newValue2;
+			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
+		}});
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e1) {
 			var target = e1.currentTarget;
@@ -549,28 +567,19 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		});
 	}
 	,initPanel: function(model,stock) {
-		var _g = this;
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
-		this.slt_stockId.textbox({ value : stockId, onChange : function(newValue,oldValue) {
-			var stockId1 = newValue;
-			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId1});
-		}});
+		this.slt_stockId.textbox({ value : stockId});
 		this.changeOffset(offset);
 		this.changeCount(count);
 	}
 	,changeOffset: function(offset) {
-		var _g = this;
-		this.txt_offset.textbox({ value : offset, onChange : function(newValue,oldValue) {
-			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
-		}});
+		var oldv = this.txt_offset.textbox("getValue");
+		if(oldv != offset) this.txt_offset.textbox({ value : offset == null?"null":"" + offset});
 	}
 	,changeCount: function(count) {
-		var _g = this;
-		this.txt_count.textbox({ value : count, onChange : function(newValue,oldValue) {
-			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue)});
-		}});
+		this.txt_count.textbox({ value : count == null?"null":"" + count});
 	}
 	,addPanel: function(stockId,offset,count,panelData) {
 		var _g = this;
@@ -582,7 +591,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
 		panelData.root = dom;
-		if(type == EType.kline || type == EType.none) dom.find("#slt_showKline").switchbutton({ checked : type == EType.kline, onChange : function(checked) {
+		if(type == "kline" || type == "none") dom.find("#slt_showKline").switchbutton({ checked : type == "kline", onChange : function(checked) {
 			_g.notify(view_PanelView.ON_SWB_SHOWKLINE_CHANGE,{ id : panelData.id, show : checked});
 		}});
 		dom.find("#btn_removePanel").click(function() {
@@ -625,44 +634,15 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			};
 		};
 		Lambda.foreach(props,function(prop) {
+			if(prop.type == "group") {
+				var dom2 = _g.j("#tmpl_group_line").tmpl(prop);
+				container.append(dom2);
+				return true;
+			}
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
-			var _g1 = prop.type;
-			switch(_g1) {
-			case "ma":
-				prop.domName = "均線 ma";
-				break;
-			case "macd":
-				prop.domName = "指數差離 macd";
-				break;
-			case "ema":
-				prop.domName = "指數均線 ema";
-				break;
-			case "bbi":
-				prop.domName = "多空指標 bbi";
-				break;
-			case "kd":
-				prop.domName = "隨機指標 kd";
-				break;
-			case "Chaikin":
-				prop.domName = "蔡金 Chaikin";
-				break;
-			case "eom":
-				prop.domName = "簡易波動 eom";
-				break;
-			case "yu-car":
-				prop.domName = "方向盤";
-				break;
-			case "yu-clock":
-				prop.domName = "背離線";
-				break;
-			case "yu-macd":
-				prop.domName = "余氏線";
-				break;
-			default:
-				prop.domName = prop.type;
-			}
+			prop.domName = prop.type;
 			var dom1 = _g.j("#tmpl_avg").tmpl(prop);
 			container.append(dom1);
 			dom1.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {
@@ -674,6 +654,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			dom1.find(".easyui-textbox").eq(1).textbox({ value : prop.value.m, onChange : onInputChange(dom1)});
 			dom1.find(".easyui-textbox").eq(2).textbox({ value : prop.value.o, onChange : onInputChange(dom1)});
 			dom1.find(".easyui-textbox").eq(3).textbox({ value : prop.value.p, onChange : onInputChange(dom1)});
+			dom1.find(".easyui-tooltip").tooltip({ position : "right", onShow : function(e) {
+				var self = _g.j(e.currentTarget);
+				var hoverInfo = app.config.hoverInfo.line;
+				self.tooltip("update",Reflect.field(hoverInfo,self.attr("ptype")));
+			}});
 			return true;
 		});
 	}
@@ -715,6 +700,7 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 };
 String.__name__ = true;
 Array.__name__ = true;
+Main.j = $;
 Main.id = 4;
 model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_STOCKID_CHANGE = "on_stockid_change";

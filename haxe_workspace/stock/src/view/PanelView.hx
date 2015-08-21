@@ -50,10 +50,29 @@ class PanelView extends Model implements IPanelView
 			notify( ON_BTN_ADDPANEL_CLICK );
 		});
 		
-		slt_stockId = config.slt_stockId;
+		txt_offset = config.txt_offset;
+		txt_offset.textbox( {
+			value:0,
+			onChange:function(newValue, oldValue) {
+				notify( ON_TXT_OFFSET_CHANGE, { offset:Std.parseInt( newValue ) } );
+			}
+		});
 		
 		txt_count = config.txt_count;
-		txt_offset = config.txt_offset;
+		txt_count.textbox( {
+			value:200,
+			onChange:function(newValue, oldValue) {
+				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
+			}
+		});
+		
+		slt_stockId = config.slt_stockId;
+		slt_stockId.textbox( {
+			onChange:function(newValue, oldValue) {
+				var stockId = newValue;
+				notify( ON_SLT_STOCKID_CHANGE, { 'stockId':stockId } );
+			}
+		});
 		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
@@ -81,12 +100,9 @@ class PanelView extends Model implements IPanelView
 		var offset = stock.offset;
 		var count = stock.count;
 		
+		//用這個下法才不會trigger事件出來
 		slt_stockId.textbox( {
-			value:stockId,
-			onChange:function(newValue, oldValue) {
-				var stockId = newValue;
-				notify( ON_SLT_STOCKID_CHANGE, { 'stockId':stockId } );
-			}
+			value:stockId
 		});
 		
 		changeOffset( offset );
@@ -94,20 +110,19 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function changeOffset( offset:Int ):Void {
-		txt_offset.textbox( {
-			value:offset,
-			onChange:function(newValue, oldValue) {
-				notify( ON_TXT_OFFSET_CHANGE, { offset:Std.parseInt( newValue ) } );
-			}
-		});
+		//用這個下法才不會trigger事件出來
+		var oldv = txt_offset.textbox( 'getValue' );
+		if ( oldv != offset ) {
+			txt_offset.textbox( {
+				value:Std.string( offset )
+			});
+		}
 	}
 	
 	public function changeCount( count:Int ):Void {
+		//用這個下法才不會trigger事件出來
 		txt_count.textbox( {
-			value:count,
-			onChange:function(newValue, oldValue) {
-				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
-			}
+			value:Std.string( count )
 		});
 	}
 	
@@ -128,6 +143,7 @@ class PanelView extends Model implements IPanelView
 		});
 		panelData.root = dom;
 		
+		//resize canvas
 		/*
 		if ( type != EType.clock ) {
 			var cw = untyped __js__('leo.utils.getScreenWidth' )();
@@ -135,9 +151,9 @@ class PanelView extends Model implements IPanelView
 		}
 		*/
 		
-		if ( type == EType.kline || type == EType.none ){
+		if ( type == 'kline' || type == 'none' ){
 			dom.find( '#slt_showKline' ).switchbutton( {
-				checked:type == EType.kline,
+				checked:type == 'kline',
 				onChange:function( checked ) {
 					notify( ON_SWB_SHOWKLINE_CHANGE, { id:panelData.id, show:checked } );
 				}
@@ -150,7 +166,8 @@ class PanelView extends Model implements IPanelView
 		
 		if( props != null )
 			createProp( dom.find( '#mc_propContainer' ), props, panelData );
-			
+		
+		
 		drawCanvas( stockId, offset, count, panelData );
 	}
 	
@@ -203,10 +220,19 @@ class PanelView extends Model implements IPanelView
 		
 		Lambda.foreach( props, function( prop:Dynamic ) {
 			
+			if ( prop.type == 'group' ) {
+				var dom = j( '#tmpl_group_line' ).tmpl( prop );
+				container.append( dom );
+				return true;
+			}
+			
 			prop.sid = 'swb_' + prop.type;
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
 			
+			prop.domName = prop.type;
+			
+			/*
 			prop.domName = switch( prop.type ) {
 				case 'ma':
 					'均線 ma';
@@ -231,7 +257,7 @@ class PanelView extends Model implements IPanelView
 				case _:
 					prop.type;
 			}
-			
+			*/
 			var dom = j( '#tmpl_avg' ).tmpl( prop );
 			container.append( dom );
 			
@@ -258,6 +284,14 @@ class PanelView extends Model implements IPanelView
 			dom.find( '.easyui-textbox' ).eq(3).textbox( {
 				value:prop.value.p,
 				onChange:onInputChange( dom )
+			});
+			dom.find( '.easyui-tooltip' ).tooltip( {
+				position:'right',
+				onShow:function( e ) {
+					var self = j( e.currentTarget );
+					var hoverInfo = untyped __js__( 'app.config.hoverInfo.line' );
+					self.tooltip( 'update', Reflect.field( hoverInfo, self.attr( 'ptype' ) ) );
+				}
 			});
 			return true;
 		});
