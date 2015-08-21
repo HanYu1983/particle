@@ -237,10 +237,10 @@ class PanelModel extends Model implements IPanel
 							show:false,
 							type: 'bbi', // ma | ema | kd | macd | yu-clock | yu-sd | Chaikin
 							value: {
-								n: 12,
-								m: 0,
-								o: 0, 
-								p: 0,
+								n: 3,
+								m: 2,
+								o: 6, 
+								p: 2,
 								color: ''
 							}
 						},
