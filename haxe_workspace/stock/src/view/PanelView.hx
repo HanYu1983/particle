@@ -52,6 +52,7 @@ class PanelView extends Model implements IPanelView
 		
 		txt_offset = config.txt_offset;
 		txt_offset.textbox( {
+			value:0,
 			onChange:function(newValue, oldValue) {
 				notify( ON_TXT_OFFSET_CHANGE, { offset:Std.parseInt( newValue ) } );
 			}
@@ -59,6 +60,7 @@ class PanelView extends Model implements IPanelView
 		
 		txt_count = config.txt_count;
 		txt_count.textbox( {
+			value:200,
 			onChange:function(newValue, oldValue) {
 				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
 			}

@@ -528,11 +528,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
 		this.txt_offset = this.config.txt_offset;
-		this.txt_offset.textbox({ onChange : function(newValue,oldValue) {
+		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
 			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
 		}});
 		this.txt_count = this.config.txt_count;
-		this.txt_count.textbox({ onChange : function(newValue1,oldValue1) {
+		this.txt_count.textbox({ value : 200, onChange : function(newValue1,oldValue1) {
 			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
 		}});
 		this.slt_stockId = this.config.slt_stockId;
