@@ -146,9 +146,9 @@ class PanelView extends Model implements IPanelView
 		}
 		*/
 		
-		if ( type == EType.kline || type == EType.none ){
+		if ( type == 'kline' || type == 'none' ){
 			dom.find( '#slt_showKline' ).switchbutton( {
-				checked:type == EType.kline,
+				checked:type == 'kline',
 				onChange:function( checked ) {
 					notify( ON_SWB_SHOWKLINE_CHANGE, { id:panelData.id, show:checked } );
 				}

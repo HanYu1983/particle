@@ -1,24 +1,10 @@
 (function (console) { "use strict";
-var $estr = function() { return js_Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EType = { __ename__ : true, __constructs__ : ["volume","clock","kline","none"] };
-EType.volume = ["volume",0];
-EType.volume.toString = $estr;
-EType.volume.__enum__ = EType;
-EType.clock = ["clock",1];
-EType.clock.toString = $estr;
-EType.clock.__enum__ = EType;
-EType.kline = ["kline",2];
-EType.kline.toString = $estr;
-EType.kline.__enum__ = EType;
-EType.none = ["none",3];
-EType.none.toString = $estr;
-EType.none.__enum__ = EType;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
@@ -201,7 +187,7 @@ Main.getStockInfo = function(id) {
 Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	if(count == null) count = 100;
 	if(offset == null) offset = 0;
-	api.draw(canvas[0],id,Std.string(type),offset,count,sub);
+	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.createProp = function(ary) {
 	return Lambda.fold(ary,function(obj,curr) {
@@ -381,7 +367,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,changeShowK: function(id,show) {
 		var panelData = this.getPanelById(id);
-		if(show) panelData.data.type = EType.kline; else panelData.data.type = EType.none;
+		if(show) panelData.data.type = "kline"; else panelData.data.type = "none";
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,changeShowValue: function(id,type,value) {
@@ -596,7 +582,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
 		panelData.root = dom;
-		if(type == EType.kline || type == EType.none) dom.find("#slt_showKline").switchbutton({ checked : type == EType.kline, onChange : function(checked) {
+		if(type == "kline" || type == "none") dom.find("#slt_showKline").switchbutton({ checked : type == "kline", onChange : function(checked) {
 			_g.notify(view_PanelView.ON_SWB_SHOWKLINE_CHANGE,{ id : panelData.id, show : checked});
 		}});
 		dom.find("#btn_removePanel").click(function() {

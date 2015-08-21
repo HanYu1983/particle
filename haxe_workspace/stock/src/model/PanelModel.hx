@@ -40,7 +40,7 @@ class PanelModel extends Model implements IPanel
 	
 	public function changeShowK( id:Dynamic, show:Bool ):Void {
 		var panelData:Dynamic = getPanelById( id );
-		panelData.data.type = show ? EType.kline : EType.none;
+		panelData.data.type = show ? 'kline' : 'none';
 		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
 	}
 	
@@ -125,12 +125,7 @@ class PanelModel extends Model implements IPanel
 		
 		currentOffset = stock.offset;
 		currentCount = stock.count;
-		/*
-		Lambda.foreach( stock.lines, function( obj:Dynamic ) {
-			obj.type = Type.createEnum( EType, obj.type );
-			return true;
-		});
-		*/
+	
 		resetPanelData();
 		
 		Main.getStock( currentStockId, true ).pipe( Main.getStockInfo ).done( function( err, data ) {

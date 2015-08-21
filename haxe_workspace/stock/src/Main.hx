@@ -150,7 +150,7 @@ class Main
 		return d;
 	}
 	
-	public static function drawStock( canvas:Dynamic, id:String, type:EType, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
+	public static function drawStock( canvas:Dynamic, id:String, type:String, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
 		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 	
