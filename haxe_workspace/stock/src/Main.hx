@@ -38,8 +38,8 @@ class Main
 		panelView.addHandler( function( type, params:Dynamic ) {
 			trace( 'panelView', type );
 			switch( type ) {
-				case PanelView.ON_BTN_LOADPRICE_CLICK:
-					panelView.drawPrice( panelModel.currentStockInfo );
+				//case PanelView.ON_BTN_LOADPRICE_CLICK:
+				//	panelView.drawPrice( panelModel.currentStockInfo );
 				case PanelView.ON_SLT_STOCKID_CHANGE:
 					panelModel.currentStockId = params.stockId;
 				case PanelView.ON_BTN_CONTROLLER_CLICK:
@@ -67,6 +67,7 @@ class Main
 			switch( type ) {
 				case PanelModel.ON_OFFSET_CHANGE:
 					panelView.changeOffset( panelModel.currentOffset );
+					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 					panelView.scrollTo( panelModel.getAryPanel(), 0 );
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_COUNT_CHANGE:
@@ -80,6 +81,7 @@ class Main
 					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
 				case PanelModel.ON_STOCKID_CHANGE:
 					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
+					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 			}
 		});
 		

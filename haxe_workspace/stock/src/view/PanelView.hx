@@ -17,7 +17,7 @@ class PanelView extends Model implements IPanelView
 	public static var ON_SWB_SHOWKLINE_CHANGE = 'on_showline_k_change';
 	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
-	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
+//	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
 	
@@ -28,7 +28,7 @@ class PanelView extends Model implements IPanelView
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
-	var btn_loadPrice:Dynamic;
+	//var btn_loadPrice:Dynamic;
 	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
 	var txt_offset:Dynamic;
@@ -53,12 +53,12 @@ class PanelView extends Model implements IPanelView
 		btn_addPanel.click( function( e ) {
 			notify( ON_BTN_ADDPANEL_CLICK );
 		});
-		
+		/*
 		btn_loadPrice = config.btn_loadPrice;
 		btn_loadPrice.click( function( e ) {
 			notify( ON_BTN_LOADPRICE_CLICK );
 		});
-		
+		*/
 		txt_offset = config.txt_offset;
 		txt_offset.textbox( {
 			value:0,
@@ -120,30 +120,35 @@ class PanelView extends Model implements IPanelView
 		changeCount( count );
 	}
 	
-	public function drawPrice( stockInfo:Dynamic ):Void {
+	public function drawPrice( stockInfo:Dynamic, offset:Int = 0 ):Void {
 		
 		if ( stockInfo == null ) {
-			Main.slideMessage( '警告', '請先輸入股票代碼' );
 			return ;
 		}
 		
-		btn_loadPrice.parent().parent().hide();
+		//btn_loadPrice.parent().parent().hide();
+		var eid = switch( offset + 1 ) {
+			case o if ( o > stockInfo.length ):
+				stockInfo.length;
+			case o:
+				o;
+		}
 		
-		Main.showLoading();
-		Timer.delay( function(){
-			Lambda.mapi( stockInfo, function( i, obj ) {
-				table_stockPrice.datagrid( 'appendRow', {
-					date:obj[0],
-					start:obj[1],
-					top:obj[2],
-					bottom:obj[3],
-					close:obj[4],
-					volume:obj[5]
-				});
+		var oldrow = table_stockPrice.datagrid( 'getRows' ).length;
+		while ( oldrow > 0 ) 
+			table_stockPrice.datagrid( 'deleteRow', --oldrow );
+		
+		Lambda.foreach( stockInfo.slice( offset, eid ), function( obj ) {
+			table_stockPrice.datagrid( 'appendRow', {
+				date:obj[0],
+				start:obj[1],
+				top:obj[2],
+				bottom:obj[3],
+				close:obj[4],
+				volume:obj[5]
 			});
-			Main.closeLoading();
-			Main.slideMessage( '警告', '如果覺得會lag的話，可以把股價資訊先關起來' );
-		}, 100 );
+			return true;
+		});
 	}
 	
 	public function changeOffset( offset:Int ):Void {

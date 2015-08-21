@@ -128,28 +128,19 @@ body{
 		<div data-options="region:'east',split:true,title:'功能'" style="width:450px;">
 			<div class="easyui-tabs" data-options="tabWidth:'130px'">
 				<div title="資訊">
-					<div class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
-						<div title="股價" style="width:100%;">
-							<div style="position:relative; width:100%; text-align:center; margin-top:5px; margin-bottom:5px; ">
-								<div style="position:relative;">
-									<a href="#" id="btn_loadPrice" class="easyui-linkbutton">取得所有股價</a>
-								</div>
-							</div>
-							<table id="table_stockPrice" class="easyui-datagrid"
-								data-options="singleSelect:true,collapsible:true" style="width:100%;">
-								<thead>
-									<tr>
-										<th data-options="field:'date',width:100,align:'center'">日期</th>
-										<th data-options="field:'start',width:60,align:'center'">開盤</th>
-										<th data-options="field:'top',width:60,align:'center'">最高價</th>
-										<th data-options="field:'bottom',width:60,align:'center'">最低價</th>
-										<th data-options="field:'close',width:60,align:'center'">收盤價</th>
-										<th data-options="field:'volume',width:80,align:'center'">量</th>
-									</tr>
-								</thead>
-							</table>
-						</div>
-					</div>
+					<table id="table_stockPrice" class="easyui-datagrid"
+						data-options="singleSelect:true,collapsible:true" style="width:100%;">
+						<thead>
+							<tr>
+								<th data-options="field:'date',width:100,align:'center'">日期</th>
+								<th data-options="field:'start',width:60,align:'center'">開盤</th>
+								<th data-options="field:'top',width:60,align:'center'">最高價</th>
+								<th data-options="field:'bottom',width:60,align:'center'">最低價</th>
+								<th data-options="field:'close',width:60,align:'center'">收盤價</th>
+								<th data-options="field:'volume',width:80,align:'center'">量</th>
+							</tr>
+						</thead>
+					</table>
 				</div>
 				<div title="機器人" style="padding:10px;">
 					

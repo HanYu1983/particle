@@ -48,16 +48,6 @@ Lambda.map = function(it,f) {
 	}
 	return l;
 };
-Lambda.mapi = function(it,f) {
-	var l = new List();
-	var i = 0;
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var x = $it0.next();
-		l.add(f(i++,x));
-	}
-	return l;
-};
 Lambda.foreach = function(it,f) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -103,9 +93,6 @@ var Main = function() {
 	this.panelView.addHandler(function(type,params) {
 		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
-		case "on_btn_loadPrice_click":
-			_g.panelView.drawPrice(_g.panelModel.currentStockInfo);
-			break;
 		case "on_stockid_change":
 			_g.panelModel.set_currentStockId(params.stockId);
 			break;
@@ -142,6 +129,7 @@ var Main = function() {
 		switch(type1) {
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
+			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
 			_g.panelView.scrollTo(_g.panelModel.getAryPanel(),0);
 			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
@@ -160,6 +148,7 @@ var Main = function() {
 			break;
 		case "on_stockid_change":
 			_g.panelView.initPanel(_g.panelModel.config,params1.stock,_g.panelModel.currentStockInfo);
+			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
 			break;
 		}
 	});
@@ -246,30 +235,6 @@ var haxe_Log = function() { };
 haxe_Log.__name__ = true;
 haxe_Log.trace = function(v,infos) {
 	js_Boot.__trace(v,infos);
-};
-var haxe_Timer = function(time_ms) {
-	var me = this;
-	this.id = setInterval(function() {
-		me.run();
-	},time_ms);
-};
-haxe_Timer.__name__ = true;
-haxe_Timer.delay = function(f,time_ms) {
-	var t = new haxe_Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	};
-	return t;
-};
-haxe_Timer.prototype = {
-	stop: function() {
-		if(this.id == null) return;
-		clearInterval(this.id);
-		this.id = null;
-	}
-	,run: function() {
-	}
 };
 var js_Boot = function() { };
 js_Boot.__name__ = true;
@@ -569,10 +534,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.btn_addPanel.click(function(e) {
 			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
-		this.btn_loadPrice = this.config.btn_loadPrice;
-		this.btn_loadPrice.click(function(e1) {
-			_g.notify(view_PanelView.ON_BTN_LOADPRICE_CLICK);
-		});
 		this.txt_offset = this.config.txt_offset;
 		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
 			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
@@ -587,8 +548,8 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
 		this.btn_controller = this.config.btn_controller;
-		this.btn_controller.delegate(".btn_controller","click",function(e2) {
-			var target = e2.currentTarget;
+		this.btn_controller.delegate(".btn_controller","click",function(e1) {
+			var target = e1.currentTarget;
 			var id = _g.j(target).attr("id");
 			switch(id) {
 			case "btn_first":
@@ -621,21 +582,23 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.changeOffset(offset);
 		this.changeCount(count);
 	}
-	,drawPrice: function(stockInfo) {
+	,drawPrice: function(stockInfo,offset) {
+		if(offset == null) offset = 0;
 		var _g = this;
-		if(stockInfo == null) {
-			Main.slideMessage("警告","請先輸入股票代碼");
-			return;
+		if(stockInfo == null) return;
+		var eid;
+		var _g1 = offset + 1;
+		var o = _g1;
+		if(o > stockInfo.length) eid = stockInfo.length; else {
+			var o1 = _g1;
+			eid = o1;
 		}
-		this.btn_loadPrice.parent().parent().hide();
-		Main.showLoading();
-		haxe_Timer.delay(function() {
-			Lambda.mapi(stockInfo,function(i,obj) {
-				_g.table_stockPrice.datagrid("appendRow",{ date : obj[0], start : obj[1], top : obj[2], bottom : obj[3], close : obj[4], volume : obj[5]});
-			});
-			Main.closeLoading();
-			Main.slideMessage("警告","如果覺得會lag的話，可以把股價資訊先關起來");
-		},100);
+		var oldrow = this.table_stockPrice.datagrid("getRows").length;
+		while(oldrow > 0) this.table_stockPrice.datagrid("deleteRow",--oldrow);
+		Lambda.foreach(stockInfo.slice(offset,eid),function(obj) {
+			_g.table_stockPrice.datagrid("appendRow",{ date : obj[0], start : obj[1], top : obj[2], bottom : obj[3], close : obj[4], volume : obj[5]});
+			return true;
+		});
 	}
 	,changeOffset: function(offset) {
 		var oldv = this.txt_offset.textbox("getValue");
@@ -780,7 +743,6 @@ view_PanelView.ON_SWB_SHOWLINE_CHANGE = "on_showline_change";
 view_PanelView.ON_SWB_SHOWKLINE_CHANGE = "on_showline_k_change";
 view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
 view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
-view_PanelView.ON_BTN_LOADPRICE_CLICK = "on_btn_loadPrice_click";
 view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
 view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
 Main.main();
