@@ -199,7 +199,7 @@ Main.createNewStock = function(id,props) {
 	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,props) {
-	return { id : Main.getId(), type : type, deletable : true, sub : Main.createProp(props == null?[["group","常用"],["ma",true,5,10,20,40],["ema",false,5,10,20,40],["bbi",false,3,2,6,2],["sar",false,3,0,0,0],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["kd",false,9,3,9,0],["macd",false,12,26,0,0],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["group","余氏"],["yu-car",false,1,.025,.7,0],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0]]:props)};
+	return { id : Main.getId(), type : type, deletable : true, sub : Main.createProp(props == null?[["group","均線"],["ma",true,5,10,20,40],["ema",false,5,10,20,40],["macd",false,12,26,0,0],["bbi",false,3,2,6,2],["group","價量"],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["group","威爾德"],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["dmi",false,14,14,0,0],["sar",false,3,0,0,0],["group","余氏"],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0],["yu-car",false,1,.025,.7,0],["group","其它"],["kd",false,9,3,9,0],["atr",false,14,0,0,0]]:props)};
 };
 Math.__name__ = true;
 var Reflect = function() { };
