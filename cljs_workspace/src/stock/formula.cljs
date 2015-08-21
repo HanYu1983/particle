@@ -398,3 +398,29 @@
         (/ u (+ u d)))
       upavg
       downavg)))
+      
+      
+(defn tr-seq [kline]
+  (when (>= (count kline) 2)
+    (let [[_ _ _ _ close _] (first kline)
+          [_ _ high low _ _] (second kline)
+          v (max (- high low) (.abs js/Math (- high close)) (.abs js/Math (- low close)))]
+      (cons v (lazy-seq (tr-seq (rest kline)))))))
+      
+(defn dm-seq [kline]
+  (when (>= (count kline) 2)
+    (let [[_ _ a b _ _] (first kline)
+          [_ _ c d _ _] (second kline)
+          v1 (max 0 (- c a))
+          v2 (max 0 (- b d))
+          v
+          (condp = (max v1 v2)
+            v1 v1
+            v2 (- v2)
+            0)]
+      (cons v (lazy-seq (dm-seq (rest kline)))))))
+      
+(defn atr-seq 
+  "真實波幅"
+  [n kline]
+  (sma-seq n (tr-seq kline)))

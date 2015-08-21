@@ -224,6 +224,41 @@
                 {:type :line :line (stf/sma-seq m line) :color c2}
                 {:type :line :line (repeat (count kline) 0.5) :color "lightgray"}
               ])
+              
+            "atr"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  line (reverse (stf/atr-seq n (reverse kline)))]
+              [
+                {:type :line :line line :color c1}
+                ;{:type :line :line (stf/sma-seq m line) :color c2}
+                {:type :grid :line line :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+              ])
+              
+            "dmi"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  atr (reverse (stf/tr-seq (reverse kline)))
+                  dm (reverse (stf/dm-seq (reverse kline)))
+                  dip (map (fn [v v2] (if (pos? v) (/ v v2) 0)) dm atr)
+                  did (map (fn [v v2] (if (neg? v) (/ (.abs js/Math v) v2) 0)) dm atr)
+                  adip (stf/sma-seq n dip)
+                  adid (stf/sma-seq n did)
+                  dx 
+                  (map
+                    (fn [v1 v2]
+                      (if (zero? (+ v1 v2))
+                        0
+                        (/ (.abs js/Math (- v1 v2)) (+ v1 v2))))
+                    adip 
+                    adid)]
+              [
+                {:type :line :line adip :color "red"}
+                {:type :line :line adid :color "green"}
+                {:type :line :line (stf/sma-seq m dx) :color c1}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+              ])
             {:type nil})))
       sub)
     (flatten)))
