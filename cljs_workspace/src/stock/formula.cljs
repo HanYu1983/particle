@@ -377,10 +377,11 @@
     ; vector的first和list的first為倒反
     [(map second vs) (map first vs)]))
     
-(defn mtm-seq 
-  "動量指標"
+(defn osc-seq 
+  "振盪量指標osc
+  可以取代mtm動量指標"
   [n vs]
   (when (>= (count vs) n)
     (let [c1 (first vs)
           cn (nth vs (dec n))]
-      (cons (- c1 cn) (lazy-seq (mtm-seq n (rest vs)))))))
+      (cons (/ c1 cn) (lazy-seq (osc-seq n (rest vs)))))))

@@ -205,13 +205,14 @@
                 {:type :line :line sar :color c1 :style :dot}
               ])
               
-            "mtm"
+            "osc"
             (let [n (get subd "n")
                   m (get subd "m")
-                  line (stf/mtm-seq n (stl/close kline))]
+                  line (stf/osc-seq n (stl/close kline))]
               [
                 {:type :line :line line :color c1}
                 {:type :line :line (stf/sma-seq m line) :color c2}
+                {:type :line :line (repeat (count kline) 1) :color "lightgray"}
               ])
               
             {:type nil})))
