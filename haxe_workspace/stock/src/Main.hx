@@ -47,23 +47,7 @@ class Main
 				case PanelView.ON_SWB_SHOWKLINE_CHANGE:
 					panelModel.changeShowK( params.id, params.show );
 				case PanelView.ON_BTN_ADDPANEL_CLICK:
-					var penalObj = createNewLine( 'none',
-						[
-							['ma', true, 5, 10, 20, 40 ],
-							['ema', false, 5, 10, 20, 40 ],
-							['bbi', false, 3, 2, 6, 2 ],
-							['yu-car', false, 1, .025, .7, 0 ],
-							['sar', false, 3, 0, 0, 0 ],
-							['osc', false, 10, 20, 0, 0 ],
-							['rsi', false, 14, 9, 0, 0 ],
-							['kd', false, 9, 3, 9, 0 ],
-							['macd', false, 12, 26, 0, 0 ],
-							['Chaikin', false, 3, 10, 9, 0 ],
-							['eom', false, 14, 3, 9, 0 ],
-							['yu-clock', false, 20, 20, 0, 0 ],
-							['yu-macd', false, 5, 12, 0, 0 ]
-						]
-					);
+					var penalObj = createNewLine( 'none' );
 					panelModel.addPanel( penalObj.id, penalObj, {addToModel:true} );
 				case PanelView.ON_BTN_REMOVEPANEL_CLICK:
 					panelModel.removePanel( params.id );
@@ -177,21 +161,36 @@ class Main
 		}, []);
 	}
 	
-	public static function createNewStock( id, props ) {
+	public static function createNewStock( id, ?props ) {
 		return {
 			id:id,
 			count:200,
 			offset:0,
-			lines:[ createNewLine( 'kline', props ) ]
+			lines:[ createNewLine( 'kline' ) ]
 		}
 	}
 	
-	public static function createNewLine( type, props:Array<Dynamic> ) {
+	public static function createNewLine( type, ?props:Array<Dynamic> ) {
 		return {
 			id:getId(),
 			type:type,
 			deletable:true,
-			sub:createProp( props )
+			sub:createProp( props == null ? [
+												['group', '常用'],
+												['ma', true, 5, 10, 20, 40 ],
+												['ema', false, 5, 10, 20, 40 ],
+												['bbi', false, 3, 2, 6, 2 ],
+												['sar', false, 3, 0, 0, 0 ],
+												['osc', false, 10, 20, 0, 0 ],
+												['rsi', false, 14, 9, 0, 0 ],
+												['kd', false, 9, 3, 9, 0 ],
+												['macd', false, 12, 26, 0, 0 ],
+												['Chaikin', false, 3, 10, 9, 0 ],
+												['eom', false, 14, 3, 9, 0 ],
+												['group', '余氏'],
+												['yu-car', false, 1, .025, .7, 0 ],
+												['yu-clock', false, 20, 20, 0, 0 ],
+												['yu-macd', false, 5, 12, 0, 0 ]] : props )
 		}
 	}
 }

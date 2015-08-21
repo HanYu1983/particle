@@ -54,7 +54,17 @@ class PanelModel extends Model implements IPanel
 		notify( ON_SHOWLINE_CHANGE, { panelData:panelData } );
 	}
 	
-	public function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void{
+	public function addPanel( id:Dynamic, data:Dynamic, ?extra:Dynamic ):Void {
+		//add to model
+		if ( extra.addToModel ) {
+			var stock = getStockById( currentStockId );
+			if ( stock == null ) {
+				Main.slideMessage( '錯誤', '請先輸入股票代碼!' );
+				return;
+			}
+			stock.lines.push( data );
+		}
+		
 		var obj = {
 			id:id,
 			data:data,
@@ -62,11 +72,6 @@ class PanelModel extends Model implements IPanel
 			root:null //add by panelView
 		};
 		ary_panel_obj.push( obj );
-		
-		//add to model
-		if ( extra.addToModel ) {
-			getStockById( currentStockId ).lines.push( data );
-		}
 		
 		notify( ON_ADD_PANEL, {stockId:currentStockId, panelObj:obj } );
 	}
@@ -181,21 +186,7 @@ class PanelModel extends Model implements IPanel
 		currentStockId = stockId;
 		setStockData( switch( getStockById( stockId ) ) {
 			case null:
-				var obj = Main.createNewStock( stockId, [
-					['ma', true, 5, 10, 20, 40 ],
-					['ema', false, 5, 10, 20, 40 ],
-					['bbi', false, 3, 2, 6, 2 ],
-					['yu-car', false, 1, .025, .7, 0 ],
-					['sar', false, 3, 0, 0, 0 ],
-					['osc', false, 10, 20, 0, 0 ],
-					['rsi', false, 14, 9, 0, 0 ],
-					['kd', false, 9, 3, 9, 0 ],
-					['macd', false, 12, 26, 0, 0 ],
-					['Chaikin', false, 3, 10, 9, 0 ],
-					['eom', false, 14, 3, 9, 0 ],
-					['yu-clock', false, 20, 20, 0, 0 ],
-					['yu-macd', false, 5, 12, 0, 0 ]
-				] );
+				var obj = Main.createNewStock( stockId );
 				config.stocks.push( obj );
 				obj;
 			case o:

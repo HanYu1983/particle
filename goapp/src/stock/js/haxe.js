@@ -110,7 +110,7 @@ var Main = function() {
 			_g.panelModel.changeShowK(params.id,params.show);
 			break;
 		case "on_btn_addPanel_click":
-			var penalObj = Main.createNewLine("none",[["ma",true,5,10,20,40],["ema",false,5,10,20,40],["bbi",false,3,2,6,2],["yu-car",false,1,.025,.7,0],["sar",false,3,0,0,0],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["kd",false,9,3,9,0],["macd",false,12,26,0,0],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0]]);
+			var penalObj = Main.createNewLine("none");
 			_g.panelModel.addPanel(penalObj.id,penalObj,{ addToModel : true});
 			break;
 		case "on_btn_removePanel_click":
@@ -125,7 +125,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
@@ -196,10 +196,10 @@ Main.createProp = function(ary) {
 	},[]);
 };
 Main.createNewStock = function(id,props) {
-	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("kline",props)]};
+	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,props) {
-	return { id : Main.getId(), type : type, deletable : true, sub : Main.createProp(props)};
+	return { id : Main.getId(), type : type, deletable : true, sub : Main.createProp(props == null?[["group","常用"],["ma",true,5,10,20,40],["ema",false,5,10,20,40],["bbi",false,3,2,6,2],["sar",false,3,0,0,0],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["kd",false,9,3,9,0],["macd",false,12,26,0,0],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["group","余氏"],["yu-car",false,1,.025,.7,0],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0]]:props)};
 };
 Math.__name__ = true;
 var Reflect = function() { };
@@ -380,9 +380,16 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_SHOWLINE_CHANGE,{ panelData : panelData});
 	}
 	,addPanel: function(id,data,extra) {
+		if(extra.addToModel) {
+			var stock = this.getStockById(this.currentStockId);
+			if(stock == null) {
+				Main.slideMessage("錯誤","請先輸入股票代碼!");
+				return;
+			}
+			stock.lines.push(data);
+		}
 		var obj = { id : id, data : data, needMove : data.type != "click", root : null};
 		this.ary_panel_obj.push(obj);
-		if(extra.addToModel) this.getStockById(this.currentStockId).lines.push(data);
 		this.notify(model_PanelModel.ON_ADD_PANEL,{ stockId : this.currentStockId, panelObj : obj});
 	}
 	,removePanel: function(id) {
@@ -476,7 +483,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 				var o = _g;
 				$r = _g == null?(function($this) {
 					var $r;
-					var obj = Main.createNewStock(stockId,[["ma",true,5,10,20,40],["ema",false,5,10,20,40],["bbi",false,3,2,6,2],["yu-car",false,1,.025,.7,0],["sar",false,3,0,0,0],["osc",false,10,20,0,0],["rsi",false,14,9,0,0],["kd",false,9,3,9,0],["macd",false,12,26,0,0],["Chaikin",false,3,10,9,0],["eom",false,14,3,9,0],["yu-clock",false,20,20,0,0],["yu-macd",false,5,12,0,0]]);
+					var obj = Main.createNewStock(stockId);
 					$this.config.stocks.push(obj);
 					$r = obj;
 					return $r;
@@ -564,10 +571,12 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var offset = stock.offset;
 		var count = stock.count;
 		this.slt_stockId.textbox({ value : stockId});
+		this.changeOffset(offset);
 		this.changeCount(count);
 	}
 	,changeOffset: function(offset) {
-		this.txt_offset.textbox({ value : offset == null?"null":"" + offset});
+		var oldv = this.txt_offset.textbox("getValue");
+		if(oldv != offset) this.txt_offset.textbox({ value : offset == null?"null":"" + offset});
 	}
 	,changeCount: function(count) {
 		this.txt_count.textbox({ value : count == null?"null":"" + count});
@@ -633,41 +642,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
-			var _g1 = prop.type;
-			switch(_g1) {
-			case "ma":
-				prop.domName = "均線 ma";
-				break;
-			case "macd":
-				prop.domName = "指數差離 macd";
-				break;
-			case "ema":
-				prop.domName = "指數均線 ema";
-				break;
-			case "bbi":
-				prop.domName = "多空指標 bbi";
-				break;
-			case "kd":
-				prop.domName = "隨機指標 kd";
-				break;
-			case "Chaikin":
-				prop.domName = "蔡金 Chaikin";
-				break;
-			case "eom":
-				prop.domName = "簡易波動 eom";
-				break;
-			case "yu-car":
-				prop.domName = "方向盤";
-				break;
-			case "yu-clock":
-				prop.domName = "背離線";
-				break;
-			case "yu-macd":
-				prop.domName = "余氏線";
-				break;
-			default:
-				prop.domName = prop.type;
-			}
+			prop.domName = prop.type;
 			var dom1 = _g.j("#tmpl_avg").tmpl(prop);
 			container.append(dom1);
 			dom1.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {

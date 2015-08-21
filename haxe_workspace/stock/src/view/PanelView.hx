@@ -103,18 +103,21 @@ class PanelView extends Model implements IPanelView
 			value:stockId
 		});
 		
+		changeOffset( offset );
 		changeCount( count );
 	}
 	
 	public function changeOffset( offset:Int ):Void {
 		//用這個下法才不會trigger事件出來
-		txt_offset.textbox( {
-			value:Std.string( offset )
-		});
+		var oldv = txt_offset.textbox( 'getValue' );
+		if ( oldv != offset ) {
+			txt_offset.textbox( {
+				value:Std.string( offset )
+			});
+		}
 	}
 	
 	public function changeCount( count:Int ):Void {
-		
 		//用這個下法才不會trigger事件出來
 		txt_count.textbox( {
 			value:Std.string( count )
@@ -225,6 +228,9 @@ class PanelView extends Model implements IPanelView
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
 			
+			prop.domName = prop.type;
+			
+			/*
 			prop.domName = switch( prop.type ) {
 				case 'ma':
 					'均線 ma';
@@ -249,7 +255,7 @@ class PanelView extends Model implements IPanelView
 				case _:
 					prop.type;
 			}
-			
+			*/
 			var dom = j( '#tmpl_avg' ).tmpl( prop );
 			container.append( dom );
 			
