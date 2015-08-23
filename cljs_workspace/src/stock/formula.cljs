@@ -263,12 +263,12 @@
       kline)))
       
 (defn Chaikin
-  "蔡金指標"
+  "蔡金指標, 很像算錯了，後來修正"
   [n m kline]
   (map
     #(- %1 %2)
-    (ema-seq n (AccDist kline))
-    (ema-seq m (AccDist kline))))
+    (reverse (ema-seq n (AccDist (reverse kline))))
+    (reverse (ema-seq m (AccDist (reverse kline))))))
     
     
 (defn EOM 

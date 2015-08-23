@@ -176,7 +176,7 @@
                   m (get subd "m")
                   o (get subd "o")
                   vs 
-                  (reverse (stf/Chaikin n m (reverse kline)))]
+                  (stf/Chaikin n m kline)]
               [
                 {:type :line :line vs :color c1}
                 {:type :line :line (stf/sma-seq o vs) :color c2}

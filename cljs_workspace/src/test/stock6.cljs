@@ -33,7 +33,7 @@
           
           dirs (stf/clock-direction v-z z)
           bbi (stf/BBI 3 6 12 24 infos)
-          sar (reverse (stf/sar-seq (reverse infos)))
+          sar (reverse (stf/sar-seq 3 (reverse infos)))
           acc (reverse (stf/Chaikin 3 9 (reverse infos)))
           eom (reverse (stf/EOM 14 (reverse infos)))
           gv (stf/yu-gv 20 infos)
