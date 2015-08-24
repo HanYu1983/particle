@@ -14,11 +14,18 @@
   "移動平均線"
   [n vs]
   (when (>= (count vs) n)
-    (cons 
-      (->
-        (apply + (take n vs))
-        (/ n))
-      (lazy-seq (sma-seq n (rest vs))))))
+    (let [fv (average (take n vs))]
+      (reductions
+        (fn [ma v]
+          (+ (* ma (/ (dec n) n)) (/ v n)))
+        fv
+        (drop n vs)))))
+  ;(when (>= (count vs) n)
+  ;  (cons 
+  ;    (->
+  ;      (apply + (take n vs))
+  ;      (/ n))
+  ;    (lazy-seq (sma-seq n (rest vs))))))
       
 (defn ema-seq 
   "指數移動平均線"
@@ -107,7 +114,7 @@
         projs
         (map
           (fn [prev curr]
-            (let [dir (mapv - prev curr)]
+            (let [dir (mapv - curr prev)]
               (dot (normalize dir) axis)))
           ps
           (rest ps))]
@@ -150,10 +157,10 @@
   "Bull and Bear Index 多空指標
   利用ema(5)和BBI(12)的差離值(macd)的圖形，和rsv(100)後的sma(3)和sma(9)的曲線圖形幾乎無二致!!"
   [n m o p vs]
-  (let [n1 (sma-seq n vs)
-        n2 (sma-seq m vs)
-        n3 (sma-seq o vs)
-        n4 (sma-seq p vs)]
+  (let [n1 (reverse (sma-seq n (reverse vs)))
+        n2 (reverse (sma-seq m (reverse vs)))
+        n3 (reverse (sma-seq o (reverse vs)))
+        n4 (reverse (sma-seq p (reverse vs)))]
     (map
       (fn [& args]
         (-> (apply + args) (/ 4)))
@@ -162,10 +169,10 @@
 (defn EBBI 
   "指數多空指標"
   [n m o p vs]
-  (let [n1 (ema-seq n vs)
-        n2 (ema-seq m vs)
-        n3 (ema-seq o vs)
-        n4 (ema-seq p vs)]
+  (let [n1 (reverse (ema-seq n (reverse vs)))
+        n2 (reverse (ema-seq m (reverse vs)))
+        n3 (reverse (ema-seq o (reverse vs)))
+        n4 (reverse (ema-seq p (reverse vs)))]
     (map
       (fn [& args]
         (-> (apply + args) (/ 4)))
@@ -263,10 +270,10 @@
       kline)))
       
 (defn Chaikin
-  "蔡金指標, 很像算錯了，後來修正"
+  "蔡金指標"
   [n m kline]
   (map
-    #(- %1 %2)
+    -
     (reverse (ema-seq n (AccDist (reverse kline))))
     (reverse (ema-seq m (AccDist (reverse kline))))))
     
@@ -291,7 +298,7 @@
           #(/ %1 %2)
           mid-move
           (rest BoxRatio))]
-    (sma-seq n eom)))
+    (reverse (sma-seq n (reverse eom)))))
     
   
 (defn yu-gv 

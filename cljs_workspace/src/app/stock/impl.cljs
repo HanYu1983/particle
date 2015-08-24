@@ -60,10 +60,10 @@
                   o (get subd "o")
                   p (get subd "p")]
               (cond->> '()
-                (> n 0) (cons {:type :line :line (stf/sma-seq n vs) :color c1})
-                (> m 0) (cons {:type :line :line (stf/sma-seq m vs) :color c2})
-                (> o 0) (cons {:type :line :line (stf/sma-seq o vs) :color c3})
-                (> p 0) (cons {:type :line :line (stf/sma-seq p vs) :color c4})))
+                (> n 0) (cons {:type :line :line (reverse (stf/sma-seq n (reverse vs))) :color c1})
+                (> m 0) (cons {:type :line :line (reverse (stf/sma-seq m (reverse vs))) :color c2})
+                (> o 0) (cons {:type :line :line (reverse (stf/sma-seq o (reverse vs))) :color c3})
+                (> p 0) (cons {:type :line :line (reverse (stf/sma-seq p (reverse vs))) :color c4})))
             
             "ema"
             (let [n (get subd "n")
@@ -82,8 +82,16 @@
                   o (get subd "o")
                   p (get subd "p")]
               [
-                {:type :line :line (stf/BBI n (* n m) (* n m m) (* n m m m) vs) :color c1}
-                {:type :line :line (stf/EBBI o (* o p) (* o p p) (* o p p p) vs) :color c2}
+                {:type :line :line (stf/BBI n m o p vs) :color c1}
+              ])
+              
+            "ebbi"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  o (get subd "o")
+                  p (get subd "p")]
+              [
+                {:type :line :line (stf/EBBI n m o p vs) :color c2}
               ])
               
             "yu-car"
@@ -100,12 +108,13 @@
             "yu-macd"
             (let [n (get subd "n")
                   m (get subd "m")
+                  o (get subd "o")
                   ema (reverse (stf/ema-seq n (reverse vs)))
                   bbi (stf/BBI m (* m 2) (* m 4) (* m 8) vs)
                   dif (map - ema bbi)]
               [
                 {:type :line :line dif :color c1}
-                {:type :line :line (stf/sma-seq 9 dif) :color c2}
+                {:type :line :line (reverse (stf/sma-seq o (reverse dif))) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
                 {:type :grid :line dif :color "gray" :hideY true}
               ])
@@ -113,10 +122,12 @@
             "yu-clock"
             (let [n (get subd "n")
                   m (get subd "m")
-                  vs (stf/sma-seq m (stf/yu-clock n kline))]
+                  vs (stf/sma-seq m (stf/yu-clock n (reverse kline)))]
               [
-                {:type :line :line vs :color c1}
+                {:type :line :line (reverse vs) :color c1}
+                {:type :line :line (repeat (count kline) 1) :color "lightgray"}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :line :line (repeat (count kline) -1) :color "lightgray"}
                 {:type :grid :line vs :color "gray" :hideY true}
               ])
               
@@ -151,10 +162,11 @@
             "macd"
             (let [n (get subd "n")
                   m (get subd "m")
+                  o (get subd "o")
                   dif (stf/macd-dif n m kline)]
               [
                 {:type :line :line dif :color c1}
-                {:type :line :line (stf/sma-seq 9 dif) :color c2}
+                {:type :line :line (reverse (stf/sma-seq o (reverse dif))) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
                 {:type :grid :line dif :color "gray" :hideY true}
               ])
@@ -163,10 +175,12 @@
             (let [n (get subd "n")
                   m (get subd "m")
                   o (get subd "o")
-                  rsv (stf/rsv-seq n kline)]
+                  rsv (stf/rsv-seq n kline)
+                  k (reverse (stf/sma-seq m (reverse rsv)))
+                  d (reverse (stf/sma-seq o (reverse k)))]
               [
-                {:type :line :line (stf/sma-seq m rsv) :color c1}
-                {:type :line :line (stf/sma-seq o rsv) :color c2}
+                {:type :line :line k :color c1}
+                {:type :line :line d :color c2}
                 {:type :line :line (repeat (count kline) 50) :color "lightgray"}
                 {:type :grid :line rsv :color "gray"}
               ])
@@ -179,7 +193,7 @@
                   (stf/Chaikin n m kline)]
               [
                 {:type :line :line vs :color c1}
-                {:type :line :line (stf/sma-seq o vs) :color c2}
+                {:type :line :line (reverse (stf/sma-seq o (reverse vs))) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
                 {:type :grid :line vs :color "gray"}
               ])
@@ -190,7 +204,7 @@
                   vs (stf/EOM n kline)]
               [
                 {:type :line :line vs :color c1}
-                {:type :line :line (stf/sma-seq m vs) :color c2}
+                {:type :line :line (reverse (stf/sma-seq m (reverse vs))) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
                 {:type :grid :line vs :color "gray" :hideY true}
               ])
@@ -208,17 +222,17 @@
                   line (stf/osc-seq n (stl/close kline))]
               [
                 {:type :line :line line :color c1}
-                {:type :line :line (stf/sma-seq m line) :color c2}
+                {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
                 {:type :line :line (repeat (count kline) 1) :color "lightgray"}
               ])
             
             "rsi"
             (let [n (get subd "n")
                   m (get subd "m")
-                  line (reverse (stf/rsi-seq n (stl/close (reverse kline))))]
+                  line (stf/rsi-seq n (stl/close (reverse kline)))]
               [
-                {:type :line :line line :color c1}
-                {:type :line :line (stf/sma-seq m line) :color c2}
+                {:type :line :line (reverse line) :color c1}
+                {:type :line :line (reverse (stf/sma-seq m line)) :color c2}
                 {:type :line :line (repeat (count kline) 0.5) :color "lightgray"}
               ])
               
@@ -235,8 +249,8 @@
             "dmi"
             (let [n (get subd "n")
                   m (get subd "m")
-                  atr (reverse (stf/tr-seq (reverse kline)))
-                  dm (reverse (stf/dm-seq (reverse kline)))
+                  atr (stf/tr-seq (reverse kline))
+                  dm (stf/dm-seq (reverse kline))
                   dip (map (fn [v v2] (if (pos? v) (/ v v2) 0)) dm atr)
                   did (map (fn [v v2] (if (neg? v) (/ (.abs js/Math v) v2) 0)) dm atr)
                   adip (stf/sma-seq n dip)
@@ -250,18 +264,18 @@
                     adip 
                     adid)]
               [
-                {:type :line :line adip :color "red"}
-                {:type :line :line adid :color "green"}
-                {:type :line :line (stf/sma-seq m dx) :color c1}
+                {:type :line :line (reverse adip) :color "red"}
+                {:type :line :line (reverse adid) :color "green"}
+                {:type :line :line (reverse (stf/sma-seq m dx)) :color c1}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
               ])
               
             "AccDist"
             (let [n (get subd "n")
-                  line (reverse (stf/AccDist (reverse kline)))]
+                  line (stf/AccDist (reverse kline))]
               [
-                {:type :line :line line :color c1}
-                {:type :line :line (stf/sma-seq n line) :color c2}
+                {:type :line :line (reverse line) :color c1}
+                {:type :line :line (reverse (stf/sma-seq n line)) :color c2}
                 {:type :grid :line line :color "gray"}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
               ])
