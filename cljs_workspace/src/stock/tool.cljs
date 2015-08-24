@@ -7,7 +7,7 @@
 
 (defn goog-finance-getprices-url [id ran]
   (str
-    "http://www.google.com/finance/getprices?q=" id
+    "https://www.google.com/finance/getprices?q=" id
     "&x=TPE&i=86400&p=" ran
     "&f=d,c,h,l,o,v"))
 
@@ -38,7 +38,7 @@
               [d o h l c v]))
           data)
         
-        ; 剩下字串的數字是和種子日期的interval間隔，計算出數字與上一個數字的差，為了用累計計算。注意，又將結果轉為數字，為了和種子做區別
+        ; 剩下字串的數字是和種子日期的interval間隔數量，計算出數字與上一個數字的差，為了用累計計算。注意，又將結果轉為文字，為了和種子做區別
         pass2
         (cons
           (first pass1)
