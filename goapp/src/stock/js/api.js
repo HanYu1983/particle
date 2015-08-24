@@ -31,7 +31,7 @@ var api = {};
 	均線 => ma | ema | bbi | ebbi | macd
 	價量 => AccDist | Chaikin | eom
 	威爾德 => osc | rsi | dmi | sar
-	余氏 => yu-clock | yu-macd | yu-car
+	余氏 => yu-clock | yu-macd | yu-car | yu-kd
 	其它 => kd | atr
 			d: {
 				n: int,
@@ -59,6 +59,7 @@ var api = {};
 	真實波幅 atr(14)
 	趨勢 dmi(14, 14)
 	累積/派發線 AccDist(1)
+	kd線圖yu-kd(9)
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
 		var params = {

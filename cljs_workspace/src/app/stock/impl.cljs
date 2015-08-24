@@ -110,8 +110,8 @@
                   m (get subd "m")
                   o (get subd "o")
                   ema (reverse (stf/ema-seq n (reverse vs)))
-                  bbi (stf/BBI m (* m 2) (* m 4) (* m 8) vs)
-                  dif (map - ema bbi)]
+                  ebbi (stf/EBBI m (* m 2) (* m 4) (* m 8) vs)
+                  dif (map - ema ebbi)]
               [
                 {:type :line :line dif :color c1}
                 {:type :line :line (reverse (stf/sma-seq o (reverse dif))) :color c2}
@@ -185,7 +185,7 @@
                 {:type :grid :line rsv :color "gray"}
               ])
               
-            "kd-line"
+            "yu-kd"
             (let [n (get subd "n")
                   h9 (stf/maxN-seq n #(apply max %) (stl/high kline))
                   l9 (stf/maxN-seq n #(apply min %) (stl/low kline))
