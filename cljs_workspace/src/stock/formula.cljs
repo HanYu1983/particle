@@ -40,14 +40,6 @@
     (reverse (ema-seq n (reverse (stl/close kline))))
     (reverse (ema-seq m (reverse (stl/close kline))))))
     
-  ;(->>
-  ;  (map
-  ;    -
-  ;    (reverse (ema-seq n (reverse (stl/close kline))))
-  ;    (reverse (ema-seq m (reverse (stl/close kline)))))
-  ;  (reverse)
-  ;  (into (repeat (dec m) 0))))
-    
       
 (defn StandardDeviation
   "Standard Deviation 標準差"
@@ -307,36 +299,24 @@
       (cons (first z) (lazy-seq (yu-gv n (rest kline)))))))
       
 
+(defn maxN-seq 
+  [n f vs]
+  (when (>= (count vs))
+    (let [g (take n vs)
+          k (f g)]
+      (cons k (lazy-seq (maxN-seq n f (rest vs)))))))
+
 (defn rsv-seq
-  "未成熟隨機值" 
+  "未成熟隨機值"
   [n kline]
-  (when (>= (count kline) n)
-    (let [group (take n kline)
-          [_ _ _ _ ct _] (first group)
-          L 
-          (apply
-            min
-            (map
-              (fn [[_ _ _ low _ _]]
-                low)
-              group))
-          H
-          (apply
-            max
-            (map
-              (fn [[_ _ high _ _ _]]
-                high)
-              group))
-          v 
-          (->
-            (* 
-              (- ct L) 
-              (/ 1 (- H L))
-              100)
-            int)]
-      (cons v (lazy-seq (rsv-seq n (rest kline)))))))
-      
-      
+  (let [h9 (maxN-seq 9 #(apply max %) (stl/high kline))
+        l9 (maxN-seq 9 #(apply min %) (stl/low kline))
+        c (stl/close kline)]
+    (map
+      (fn [c l h]
+        (* (- c l) (/ 1 (- h l))))
+      c l9 h9)))
+
 (defn yu-car
   "余氏方向盤指標"
   [n w d reverse-kline]

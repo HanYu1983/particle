@@ -181,7 +181,7 @@
               [
                 {:type :line :line k :color c1}
                 {:type :line :line d :color c2}
-                {:type :line :line (repeat (count kline) 50) :color "lightgray"}
+                {:type :line :line (repeat (count kline) 0.5) :color "lightgray"}
                 {:type :grid :line rsv :color "gray"}
               ])
           

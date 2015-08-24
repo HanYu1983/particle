@@ -5,8 +5,73 @@
     [cljs.core.async :refer [>! <! close! chan]]
     [clojure.string :as str]))
 
+(defn goog-finance-getprices-url [id ran]
+  (str
+    "http://www.google.com/finance/getprices?q=" id
+    "&x=TPE&i=86400&p=" ran
+    "&f=d,c,h,l,o,v"))
 
-(defn stock-url [id startdate start num]
+(defn parse-getprices [content]
+  (let [infos
+        (re-seq
+          (->
+            (str
+              "([a\\d]\\d*),(\\d+\\.?\\d*),(\\d+\\.?\\d*),(\\d+\\.?\\d*),(\\d+\\.?\\d*),(\\d+)")
+            re-pattern)
+          (->
+            content
+            (str/replace #"\n" " ")))]
+    (for
+      [
+        [_ date close high low open volume]
+        infos
+      ]
+      [date (js/parseFloat open) (js/parseFloat high) (js/parseFloat low) (js/parseFloat close) (js/parseInt volume)])))
+
+(defn format-getprices [interval data]
+  (let [; 先把種子日期變為數字（1970到現在的豪秒數，非微秒）
+        pass1
+        (map
+          (fn [[d o h l c v]]
+            (if (= \a (first d))
+              [(js/parseInt (subs d 1)) o h l c v]
+              [d o h l c v]))
+          data)
+        
+        ; 剩下字串的數字是和種子日期的interval間隔，計算出數字與上一個數字的差，為了用累計計算。注意，又將結果轉為數字，為了和種子做區別
+        pass2
+        (cons
+          (first pass1)
+          (map
+            (fn [[d1 _ _ _ _ _ :as prev] [d2 o h l c v :as curr]]
+              (if (and (string? d1) (string? d2))
+                (let [offset (- (js/parseInt d2) (js/parseInt d1))]
+                  [(str offset) o h l c v])
+                  curr))
+            pass1
+            (rest pass1)))
+        
+        ; 累算時間
+        pass3
+        (reductions
+          (fn [[d1 _ _ _ _ _ :as prev] [d2 o h l c v :as curr]]
+            (if (and (number? d1) (string? d2))
+              (let [n (js/parseInt d2)]
+                [(+ d1 (* n interval)) o h l c v])
+              curr))
+          (first pass2)
+          (rest pass2))
+          
+        ; 將豪秒變為微秒建立Date物件，使用它的時間字串
+        pass4
+        (map
+          (fn [[d o h l c v]]
+            (let [date (js/Date. (* d 1000))]
+              [(.toString date) o h l c v]))
+          pass3)]
+    pass4))
+
+(defn goog-finance-historical-url [id startdate start num]
   (str
     "https://www.google.com/finance/historical?q=TPE:" id
     "&startdate=" startdate
@@ -41,7 +106,7 @@
 ;<td class="rgt">146.50
 ;<td class="rgt rm">43,496,000
 
-(defn parse-info [content]
+(defn parse-historical [content]
   (let [infos
         (re-seq
           (->
@@ -65,15 +130,15 @@
       [date (js/parseFloat open) (js/parseFloat high) (js/parseFloat low) (js/parseFloat close) (-> volume (str/replace #"," "") js/parseInt)])))
 
 ; num最高為200
-(defn stock-info [all id startdate start num]
+(defn goog-historical-info [all id startdate start num]
   (go
-    (let [url (stock-url id startdate start num)
+    (let [url (goog-finance-historical-url id startdate start num)
           [err content] (<! (content url))]
       (if err
         [err]
-        (let [infos (parse-info content)]
+        (let [infos (parse-historical content)]
           (if (= num (count infos))
-            (<! (stock-info (concat all infos) id startdate (+ start num) num))
+            (<! (goog-historical-info (concat all infos) id startdate (+ start num) num))
             [nil (concat all infos)]))))))
             
 

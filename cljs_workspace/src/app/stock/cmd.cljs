@@ -14,7 +14,13 @@
       (a/>! ch ["loadStock" [(first result) (second result) (nth result 2) (nth result 3) request]])))
   ([ch id date request]
     (am/go
-      (let [[err infos] (a/<! (stl/stock-info nil id date 0 200))]
+      (let [[err infos] (a/<! (stl/content (stl/goog-finance-getprices-url id "1Y")))
+            infos
+            (->>
+              infos
+              stl/parse-getprices
+              (stl/format-getprices 86400)
+              reverse)]
         (a/>! ch ["loadStock" [err infos id date request]])))))
       
       
