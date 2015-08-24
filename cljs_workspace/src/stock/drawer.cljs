@@ -90,6 +90,7 @@
     (condp = style
       :dot
       (do
+        (aset ctx "fillStyle" color)
         (doseq 
           [
             [idx value]
@@ -99,8 +100,9 @@
               line)
           ]
           (.beginPath ctx)
-          (.arc ctx (* (+ idx offset) offset-x) (pos-y value) (/ offset-x 2) 0 6.28 false)
-          (.stroke ctx)))
+          (.arc ctx (* (+ idx offset) offset-x) (pos-y value) (/ offset-x 4) 0 6.28 false)
+          (.closePath ctx)
+          (.fill ctx)))
       
       (do
         (.beginPath ctx)

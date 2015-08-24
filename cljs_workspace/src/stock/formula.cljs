@@ -20,12 +20,6 @@
           (+ (* ma (/ (dec n) n)) (/ v n)))
         fv
         (drop n vs)))))
-  ;(when (>= (count vs) n)
-  ;  (cons 
-  ;    (->
-  ;      (apply + (take n vs))
-  ;      (/ n))
-  ;    (lazy-seq (sma-seq n (rest vs))))))
       
 (defn ema-seq 
   "指數移動平均線"
