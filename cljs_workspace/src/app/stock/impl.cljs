@@ -184,7 +184,18 @@
                 {:type :line :line (repeat (count kline) 0.5) :color "lightgray"}
                 {:type :grid :line rsv :color "gray"}
               ])
-          
+              
+            "kd-line"
+            (let [n (get subd "n")
+                  h9 (stf/maxN-seq n #(apply max %) (stl/high kline))
+                  l9 (stf/maxN-seq n #(apply min %) (stl/low kline))
+                  c (stl/close kline)]
+              [
+                {:type :line :line h9 :color c1}
+                {:type :line :line l9 :color c1}
+                {:type :line :line c :color c2}
+              ])
+              
             "Chaikin"
             (let [n (get subd "n")
                   m (get subd "m")

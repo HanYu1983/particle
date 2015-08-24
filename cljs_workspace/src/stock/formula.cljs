@@ -301,7 +301,7 @@
 
 (defn maxN-seq 
   [n f vs]
-  (when (>= (count vs))
+  (when (>= (count vs) n)
     (let [g (take n vs)
           k (f g)]
       (cons k (lazy-seq (maxN-seq n f (rest vs)))))))
