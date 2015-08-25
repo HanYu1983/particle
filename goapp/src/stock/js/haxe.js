@@ -133,6 +133,9 @@ var Main = function() {
 	this.panelModel.addHandler(function(type1,params1) {
 		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 74, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
+		case "on_init":
+			_g.panelView.setFavorsSelect(params1.favorList);
+			break;
 		case "on_favor_list_change":
 			_g.panelView.setFavorsSelect(params1.favorList);
 			break;
@@ -432,6 +435,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var j = $;
 		var stock = this.config.stocks[0];
 		if(stock != null) this.set_currentStockId(stock.id);
+		this.notify(model_PanelModel.ON_INIT,{ favorList : this.getFavorList()});
 	}
 	,resetPanelData: function() {
 		var _g = this;
@@ -445,6 +449,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var _g = this;
 		this.set_currentOffset(stock.offset);
 		this.set_currentCount(stock.count);
+		this.set_currentFavor(stock.favor);
 		this.resetPanelData();
 		Main.getStock(this.currentStockId,true).pipe(Main.getStockInfo).done(function(err,data) {
 			var state = data[0];
@@ -474,15 +479,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			return obj.id == stockId;
 		});
 	}
-	,addToFavorList: function() {
-		var favorList = this.config.favors;
-		if(HxOverrides.indexOf(favorList,this.currentStockId,0) == -1) favorList.push(this.currentStockId);
-		this.notify(model_PanelModel.ON_FAVOR_LIST_CHANGE,{ favorList : favorList});
-	}
-	,removeFromFavorList: function() {
-		var favorList = this.config.favors;
-		if(HxOverrides.indexOf(favorList,this.currentStockId,0) != -1) HxOverrides.remove(favorList,this.currentStockId);
-		this.notify(model_PanelModel.ON_FAVOR_LIST_CHANGE,{ favorList : favorList});
+	,getFavorList: function() {
+		return Lambda.fold(this.config.stocks,function(stockobj,curr) {
+			if(stockobj.favor) curr.push(stockobj.id);
+			return curr;
+		},[]);
 	}
 	,set_currentOffset: function(offset) {
 		this.currentOffset = offset;
@@ -535,7 +536,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,set_currentFavor: function(favor) {
 		if(this.getStockById(this.currentStockId) == null) return this.currentFavor = false;
 		this.getStockById(this.currentStockId).favor = favor;
-		if(favor) this.addToFavorList(); else this.removeFromFavorList();
+		this.notify(model_PanelModel.ON_FAVOR_LIST_CHANGE,{ favorList : this.getFavorList()});
 		return this.currentFavor = favor;
 	}
 });
@@ -658,7 +659,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			var value = record.value;
 			_g1.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
 		}});
-		this.setFavorsSelect([]);
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e4) {
 			var target = e4.currentTarget;
@@ -691,10 +691,13 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var offset = stock.offset;
 		var count = stock.count;
 		var favor = stock.favor;
-		this.slt_stockId.textbox({ value : stockId});
+		this.setTxtStockId(stockId);
 		this.swb_favor.switchbutton({ checked : favor});
 		this.changeOffset(offset);
 		this.changeCount(count);
+	}
+	,setTxtStockId: function(stockId) {
+		this.slt_stockId.textbox({ value : stockId});
 	}
 	,setFavorsSelect: function(favors) {
 		var _g = this;

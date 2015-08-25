@@ -194,8 +194,6 @@ class PanelView extends Model implements IPanelView
 			}
 		});
 		
-		setFavorsSelect([]);
-		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
 			var target = e.currentTarget;
@@ -227,10 +225,7 @@ class PanelView extends Model implements IPanelView
 		var count = stock.count;
 		var favor = stock.favor;
 		
-		//用這個下法才不會trigger事件出來
-		slt_stockId.textbox( {
-			value:stockId
-		});
+		setTxtStockId( stockId );
 		
 		swb_favor.switchbutton( {
 			checked:favor
@@ -238,6 +233,13 @@ class PanelView extends Model implements IPanelView
 		
 		changeOffset( offset );
 		changeCount( count );
+	}
+	
+	public function setTxtStockId( stockId:String ):Void {
+		//用這個下法才不會trigger事件出來
+		slt_stockId.textbox( {
+			value:stockId
+		});
 	}
 	
 	public function setFavorsSelect( favors:Array<String> ):Void {

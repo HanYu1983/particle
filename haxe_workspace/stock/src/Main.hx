@@ -73,6 +73,8 @@ class Main
 		panelModel.addHandler( function( type, params ) {
 			trace( 'panelModel', type );
 			switch( type ) {
+				case PanelModel.ON_INIT:
+					panelView.setFavorsSelect( params.favorList );
 				case PanelModel.ON_FAVOR_LIST_CHANGE:
 					panelView.setFavorsSelect( params.favorList );
 				case PanelModel.ON_OFFSET_CHANGE:

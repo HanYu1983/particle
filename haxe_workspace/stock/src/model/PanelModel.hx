@@ -118,6 +118,8 @@ class PanelModel extends Model implements IPanel
 		var stock = config.stocks[0];
 		if( stock != null )
 			currentStockId = stock.id;
+		
+		notify( ON_INIT, { favorList:getFavorList()} );
 	}
 	
 	function resetPanelData() {
@@ -132,6 +134,7 @@ class PanelModel extends Model implements IPanel
 		
 		currentOffset = stock.offset;
 		currentCount = stock.count;
+		currentFavor = stock.favor;
 	
 		resetPanelData();
 		
@@ -170,20 +173,11 @@ class PanelModel extends Model implements IPanel
 		});
 	}
 	
-	function addToFavorList() {
-		var favorList:Array<String> = config.favors;
-		if ( favorList.indexOf( currentStockId ) == -1 ) {
-			favorList.push( currentStockId );
-		}
-		notify( ON_FAVOR_LIST_CHANGE, { favorList:favorList } );
-	}
-	
-	function removeFromFavorList() {
-		var favorList:Array<String> = config.favors;
-		if ( favorList.indexOf( currentStockId ) != -1 ) {
-			favorList.remove( currentStockId );
-		}
-		notify( ON_FAVOR_LIST_CHANGE, { favorList:favorList } );
+	function getFavorList() {
+		return Lambda.fold( config.stocks, function( stockobj, curr ) {
+			if ( stockobj.favor ) curr.push( stockobj.id );
+			return curr;
+		}, []);
 	}
 	
 	function set_currentOffset( offset:Int ) {
@@ -229,7 +223,9 @@ class PanelModel extends Model implements IPanel
 			return currentFavor = false;
 		}
 		getStockById( currentStockId ).favor = favor; 
-		favor ? addToFavorList() : removeFromFavorList();
+		
+		notify( ON_FAVOR_LIST_CHANGE, { favorList:getFavorList()} );
+		
 		return currentFavor = favor;
 	}
 }
