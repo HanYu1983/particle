@@ -19,17 +19,17 @@ app.config.index = [
 						['dmi', false, 14, 14, 0, 0, '//wiki.mbalib.com/wiki/动向指数' ],
 						['sar', false, 3, 0, 0, 0, '//wiki.mbalib.com/wiki/抛物线转向' ],
 						
+						['group', '其它'],
+						['kd', false, 9, 3, 3, 0, '//wiki.mbalib.com/wiki/随机指标' ],
+						['atr', false, 14, 0, 0, 0, '//wiki.mbalib.com/zh-tw/真实波幅' ],
+						['cv', false, 10, 10, 0, 0, '//wiki.mbalib.com/zh-tw/佳庆离散指标' ],
+						['cci', false, 10, 0, 0, 0, '//wiki.mbalib.com/wiki/顺势指标' ],
+	
 						['group', '余氏'],
 						['yu-clock', false, 20, 20, 0, 0 ],
 						['yu-macd', false, 5, 12, 9, 0 ],
 						['yu-car', false, 1, .025, .7, 0 ],
 						['yu-kd', false, 9, 0, 0, 0 ],
-						
-						['group', '其它'],
-						['kd', false, 9, 3, 3, 0, '//wiki.mbalib.com/wiki/随机指标' ],
-						['atr', false, 14, 0, 0, 0, '//wiki.mbalib.com/zh-tw/真实波幅' ],
-						['cv', false, 10, 10, 0, 0, '//wiki.mbalib.com/zh-tw/佳庆离散指标' ],
-						['cci', false, 10, 0, 0, 0, '//wiki.mbalib.com/wiki/顺势指标' ]
 					];
 app.config.hoverInfo = {
 	line:{
