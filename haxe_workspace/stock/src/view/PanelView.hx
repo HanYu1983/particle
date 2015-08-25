@@ -187,7 +187,7 @@ class PanelView extends Model implements IPanelView
 		});
 		
 		combo_favor = config.combo_favor;
-		combo_favor.combobox({
+		combo_favor.combobox( {
 			onSelect:function( record ) {
 				var value = record.value;
 				notify( ON_COMBO_FAVOR_CHANGE, { stockId:value } );
@@ -244,6 +244,7 @@ class PanelView extends Model implements IPanelView
 	
 	public function setFavorsSelect( favors:Array<String> ):Void {
 		combo_favor.empty();
+		combo_favor.append( '<option value="999">------<option>' );
 		Lambda.foreach( favors, function( str ) {
 			combo_favor.append( '<option value="' + str + '">' + str + '<option>' );
 			return true;

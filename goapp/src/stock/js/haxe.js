@@ -702,6 +702,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	,setFavorsSelect: function(favors) {
 		var _g = this;
 		this.combo_favor.empty();
+		this.combo_favor.append("<option value=\"999\">------<option>");
 		Lambda.foreach(favors,function(str) {
 			_g.combo_favor.append("<option value=\"" + str + "\">" + str + "<option>");
 			return true;
