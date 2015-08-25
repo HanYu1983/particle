@@ -41,7 +41,7 @@ body{
 	{{if type == 'kline' || type == 'none'}}
 	<div class="easyui-layout" style="width:100%;height:330px; left:0; top:0;">
 	{{/if}}
-		<div id="mc_propContainer" data-options="region:'west',split:true" title="參數列" style="width:360px; padding:5px;">
+		<div id="mc_propContainer" data-options="region:'west',split:true" title="參數列" style="width:400px; padding:5px;">
 			<!-- for script created -->
 		</div>
 		<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center'">
@@ -86,7 +86,11 @@ body{
 		<div style="position:relative; display:inline-block; width:70px; ">
 			<input id=${sid} ktype=${type} class="easyui-switchbutton" checked>
 		</div>
-		<div ptype=${type} class="easyui-tooltip" style="position:relative; display:inline-block;">${domName}</div>
+		{{if url == ''}}
+		<div ptype=${type} class="easyui-tooltip" style="position:relative; display:inline-block; width:100px;">${domName}</div>
+		{{else}}
+		<div ptype=${type} class="easyui-tooltip" style="position:relative; display:inline-block; width:100px;"><a href=${url}  class="easyui-linkbutton" data-options="iconCls:'icon-search'"  style="width:100%;" target="_blank" >${domName}</a></div>
+		{{/if}}
 	</div>
 </script>
 <script id="tmpl_group_line" type="jquery-x-tmpl">

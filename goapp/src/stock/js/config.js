@@ -2,7 +2,7 @@ var app = app || {};
 app.config = app.config || {};
 app.config.index = [
 						['group', '均線'],
-						['ma', false, 5, 10, 20, 40 ],
+						['ma', false, 5, 10, 20, 40, 'http://www.yahoo.com.tw' ],
 						['ema', false, 5, 10, 20, 40 ],
 						['bbi', false, 3, 6, 12, 24 ],
 						['ebbi', false, 6, 18, 54, 162 ],
