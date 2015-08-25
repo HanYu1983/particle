@@ -21,6 +21,7 @@ class PanelModel extends Model implements IPanel
 	public var currentCount(default, set):Int = 100;
 	public var currentStockInfo( default, set ):Dynamic;
 	public var currentFavor( default, set ):Dynamic;
+	public var currentNote( default, set ):Dynamic;
 	public var maxCount(default, set ):Int;
 	
 	var ary_panel_obj = new Array<Dynamic>();
@@ -181,6 +182,7 @@ class PanelModel extends Model implements IPanel
 	}
 	
 	function set_currentOffset( offset:Int ) {
+		if ( getStockById( currentStockId ) == null ) return currentOffset;
 		currentOffset = offset;
 		if ( currentOffset < 0 ) currentOffset = 0;
 		else if ( currentOffset > maxCount - 100 ) currentOffset = maxCount - 100;
@@ -227,5 +229,13 @@ class PanelModel extends Model implements IPanel
 		notify( ON_FAVOR_LIST_CHANGE, { favorList:getFavorList()} );
 		
 		return currentFavor = favor;
+	}
+	
+	function set_currentNote( note ) {
+		if ( getStockById( currentStockId ) == null ) {
+			return currentNote = '';
+		}
+		getStockById( currentStockId ).note = note; 
+		return currentNote = note;
 	}
 }

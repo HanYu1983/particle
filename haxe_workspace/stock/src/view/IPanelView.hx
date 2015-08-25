@@ -12,6 +12,7 @@ interface IPanelView extends IModel
 	function removePanel( id:String ):Void;
 	function setFavorsSelect( favors:Array<String> ):Void;
 	function setTxtStockId( stockId:String ):Void;
+	function setTxtNote( note:String ):Void;
 	function drawPrice( stockInfo:Dynamic, offset:Int = 0 ):Void;
 	function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void;
 	function resetAllCanvasListener( ary_panel_obj:Array<Dynamic> ):Void;

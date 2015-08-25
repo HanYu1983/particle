@@ -35,6 +35,7 @@ class Main
 			btn_addPanel:j( '#btn_addPanel' ),
 			txt_count:j( '#txt_count' ),
 			txt_offset:j( '#txt_offset' ),
+			txt_note:j( '#txt_note' ),
 			table_stockPrice:j( '#table_stockPrice' )
 		//	btn_loadPrice:j('#btn_loadPrice')
 		}
@@ -44,6 +45,8 @@ class Main
 			switch( type ) {
 				//case PanelView.ON_BTN_LOADPRICE_CLICK:
 				//	panelView.drawPrice( panelModel.currentStockInfo );
+				case PanelView.ON_TXT_NOTE_CHANGE:
+					panelModel.currentNote = params.note;
 				case PanelView.ON_COMBO_FAVOR_CHANGE:
 					panelModel.currentStockId = params.stockId;
 				case PanelView.ON_SWB_FAVOR_CHANGE:
@@ -186,6 +189,7 @@ class Main
 			count:200,
 			offset:0,
 			favor:false,
+			note:'這個人很懶，什麼都沒有記下=3=',
 			lines:[ 
 				createNewLine( 'volume', false, [
 													['group', '均線'],

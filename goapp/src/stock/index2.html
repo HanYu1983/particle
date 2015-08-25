@@ -30,6 +30,13 @@ body{
 	display:inline-block; 
 	cursor:pointer;
 }
+.line{
+	position:relative; 
+	width:99%; 
+	margin-bottom:5px;  
+	text-align:center; 
+	border-bottom:1px solid lightgray;
+}
 </style>
 <script id="tmpl_panel" type="jquery-x-tmpl">
 	{{if type == 'clock'}}
@@ -142,11 +149,10 @@ body{
 				<!-- for script created -->
 			</div>
         </div>
-		<div data-options="region:'east',split:true,title:'功能'" style="width:450px;">
-			<div class="easyui-tabs" data-options="tabWidth:'130px'">
-				<div title="資訊">
-					<table id="table_stockPrice" class="easyui-datagrid"
-						data-options="singleSelect:true,collapsible:true" style="width:100%;">
+		<div data-options="region:'east',split:true,title:'功能'" style="width:450px; height:100%;">
+			<div class="easyui-tabs" data-options="tabWidth:'130px'" style="width:100%;">
+				<div title="資訊" style="width:100%; height:100%;">
+					<table id="table_stockPrice" class="easyui-datagrid" data-options="singleSelect:true,collapsible:true" style="width:100%;">
 						<thead>
 							<tr>
 								<th data-options="field:'date',width:100,align:'center'">日期</th>
@@ -158,6 +164,10 @@ body{
 							</tr>
 						</thead>
 					</table>
+					<div style="position:relative; width:100%; top:0px;">
+						<div class="line" style="margin-top:30px; ">NOTE</div>
+						<input id="txt_note" class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px;"></input>
+					</div>
 				</div>
 				<div title="機器人" style="padding:10px;">
 					

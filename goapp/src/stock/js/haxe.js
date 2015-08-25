@@ -89,10 +89,13 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	var _g = this;
 	Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice")});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice")});
 	this.panelView.addHandler(function(type,params) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "new", customParams : [type]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 44, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
+		case "on_txt_note_change":
+			_g.panelModel.set_currentNote(params.note);
+			break;
 		case "on_combo_favor_change":
 			_g.panelModel.set_currentStockId(params.stockId);
 			break;
@@ -131,7 +134,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 74, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
 		case "on_init":
 			_g.panelView.setFavorsSelect(params1.favorList);
@@ -210,7 +213,7 @@ Main.createProp = function(ary) {
 	},[]);
 };
 Main.createNewStock = function(id,props) {
-	return { id : id, count : 200, offset : 0, favor : false, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
+	return { id : id, count : 200, offset : 0, favor : false, note : "這個人很懶，什麼都沒有記下=3=", lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,deletable,props) {
 	if(deletable == null) deletable = true;
@@ -486,6 +489,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		},[]);
 	}
 	,set_currentOffset: function(offset) {
+		if(this.getStockById(this.currentStockId) == null) return this.currentOffset;
 		this.currentOffset = offset;
 		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 100) this.currentOffset = this.maxCount - 100;
 		this.getStockById(this.currentStockId).offset = this.currentOffset;
@@ -539,6 +543,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_FAVOR_LIST_CHANGE,{ favorList : this.getFavorList()});
 		return this.currentFavor = favor;
 	}
+	,set_currentNote: function(note) {
+		if(this.getStockById(this.currentStockId) == null) return this.currentNote = "";
+		this.getStockById(this.currentStockId).note = note;
+		return this.currentNote = note;
+	}
 });
 var view_IPanelView = function() { };
 view_IPanelView.__name__ = true;
@@ -578,7 +587,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			}
 		});
 		this.doc.keyup(function(e1) {
-			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 79, className : "view.PanelView", methodName : "init"});
+			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 81, className : "view.PanelView", methodName : "init"});
 			var _g2 = e1.which;
 			switch(_g2) {
 			case 16:
@@ -641,6 +650,10 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
 			_g1.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
 		}});
+		this.txt_note = this.config.txt_note;
+		this.txt_note.textbox({ onChange : function(newv,oldv) {
+			_g1.notify(view_PanelView.ON_TXT_NOTE_CHANGE,{ note : newv});
+		}});
 		this.txt_count = this.config.txt_count;
 		this.txt_count.textbox({ value : 200, onChange : function(newValue1,oldValue1) {
 			_g1.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
@@ -691,13 +704,18 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var offset = stock.offset;
 		var count = stock.count;
 		var favor = stock.favor;
+		var note = stock.note;
 		this.setTxtStockId(stockId);
+		this.setTxtNote(note);
 		this.swb_favor.switchbutton({ checked : favor});
 		this.changeOffset(offset);
 		this.changeCount(count);
 	}
 	,setTxtStockId: function(stockId) {
 		this.slt_stockId.textbox({ value : stockId});
+	}
+	,setTxtNote: function(note) {
+		this.txt_note.textbox({ value : note});
 	}
 	,setFavorsSelect: function(favors) {
 		var _g = this;
@@ -883,6 +901,7 @@ view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
 view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
 view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
 view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
+view_PanelView.ON_TXT_NOTE_CHANGE = "on_txt_note_change";
 view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

@@ -21,6 +21,7 @@ class PanelView extends Model implements IPanelView
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
+	public static var ON_TXT_NOTE_CHANGE = 'on_txt_note_change';
 	public static var ON_COMBO_FAVOR_CHANGE = 'on_combo_favor_change';
 	
 	var j:Dynamic = untyped __js__('$');
@@ -38,6 +39,7 @@ class PanelView extends Model implements IPanelView
 	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
 	var txt_offset:Dynamic;
+	var txt_note:Dynamic;
 	var currentScrollX:Int = null;
 	
 	public function new() 
@@ -163,6 +165,13 @@ class PanelView extends Model implements IPanelView
 			}
 		});
 		
+		txt_note = config.txt_note;
+		txt_note.textbox( {
+			onChange:function( newv, oldv ) {
+				notify( ON_TXT_NOTE_CHANGE, { note:newv } );
+			}
+		});
+		
 		txt_count = config.txt_count;
 		txt_count.textbox( {
 			value:200,
@@ -224,8 +233,10 @@ class PanelView extends Model implements IPanelView
 		var offset = stock.offset;
 		var count = stock.count;
 		var favor = stock.favor;
+		var note = stock.note;
 		
 		setTxtStockId( stockId );
+		setTxtNote( note );
 		
 		swb_favor.switchbutton( {
 			checked:favor
@@ -239,6 +250,12 @@ class PanelView extends Model implements IPanelView
 		//用這個下法才不會trigger事件出來
 		slt_stockId.textbox( {
 			value:stockId
+		});
+	}
+	
+	public function setTxtNote( note:String ):Void {
+		txt_note.textbox( {
+			value:note
 		});
 	}
 	
