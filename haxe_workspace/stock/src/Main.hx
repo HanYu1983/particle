@@ -29,6 +29,7 @@ class Main
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
 			slt_stockId:j( '#slt_stockId' ),
+			swb_favor:j('#swb_favor'),
 			btn_controller:j( '#btn_controller' ),
 			btn_addPanel:j( '#btn_addPanel' ),
 			txt_count:j( '#txt_count' ),
@@ -42,6 +43,8 @@ class Main
 			switch( type ) {
 				//case PanelView.ON_BTN_LOADPRICE_CLICK:
 				//	panelView.drawPrice( panelModel.currentStockInfo );
+				case PanelView.ON_SWB_FAVOR_CHANGE:
+					panelModel.currentFavor = params.favor;
 				case PanelView.ON_SLT_STOCKID_CHANGE:
 					panelModel.currentStockId = params.stockId;
 				case PanelView.ON_BTN_CONTROLLER_CLICK:
@@ -175,6 +178,7 @@ class Main
 			id:id,
 			count:200,
 			offset:0,
+			favor:false,
 			lines:[ 
 				createNewLine( 'volume', false, [
 													['group', '均線'],

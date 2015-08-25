@@ -89,10 +89,13 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	var _g = this;
 	Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice")});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice")});
 	this.panelView.addHandler(function(type,params) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 41, className : "Main", methodName : "new", customParams : [type]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 42, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
+		case "on_favor_change":
+			_g.panelModel.set_currentFavor(params.favor);
+			break;
 		case "on_stockid_change":
 			_g.panelModel.set_currentStockId(params.stockId);
 			break;
@@ -125,7 +128,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 68, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 71, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
@@ -198,7 +201,7 @@ Main.createProp = function(ary) {
 	},[]);
 };
 Main.createNewStock = function(id,props) {
-	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
+	return { id : id, count : 200, offset : 0, favor : false, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,deletable,props) {
 	if(deletable == null) deletable = true;
@@ -468,6 +471,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,set_currentOffset: function(offset) {
 		this.currentOffset = offset;
 		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 100) this.currentOffset = this.maxCount - 100;
+		this.getStockById(this.currentStockId).offset = this.currentOffset;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
@@ -475,6 +479,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.currentCount = count;
 		if(this.currentCount < 50) this.currentCount = 50;
 		this.notify(model_PanelModel.ON_COUNT_CHANGE,{ stockId : this.currentStockId, count : this.currentCount});
+		this.getStockById(this.currentStockId).count = this.currentCount;
 		return this.currentCount;
 	}
 	,set_currentStockId: function(stockId) {
@@ -510,6 +515,10 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,set_currentStockInfo: function(info) {
 		return this.currentStockInfo = info;
+	}
+	,set_currentFavor: function(favor) {
+		this.getStockById(this.currentStockId).favor = favor;
+		return this.currentFavor = favor;
 	}
 });
 var view_IPanelView = function() { };
@@ -550,7 +559,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			}
 		});
 		this.doc.keyup(function(e1) {
-			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 75, className : "view.PanelView", methodName : "init"});
+			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 77, className : "view.PanelView", methodName : "init"});
 			var _g2 = e1.which;
 			switch(_g2) {
 			case 16:
@@ -622,6 +631,10 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			var stockId = newValue2;
 			_g1.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
+		this.swb_favor = this.config.swb_favor;
+		this.swb_favor.switchbutton({ onChange : function(checked) {
+			_g1.notify(view_PanelView.ON_SWB_FAVOR_CHANGE,{ favor : checked});
+		}});
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e4) {
 			var target = e4.currentTarget;
@@ -650,10 +663,13 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.table_stockPrice = this.config.table_stockPrice;
 	}
 	,initPanel: function(model,stock,stockInfo) {
+		haxe_Log.trace(stock,{ fileName : "PanelView.hx", lineNumber : 211, className : "view.PanelView", methodName : "initPanel"});
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
+		var favor = stock.favor;
 		this.slt_stockId.textbox({ value : stockId});
+		this.swb_favor.switchbutton({ checked : favor});
 		this.changeOffset(offset);
 		this.changeCount(count);
 	}
@@ -825,6 +841,7 @@ view_PanelView.ON_BTN_CONTROLLER_CLICK = "on_offset_change";
 view_PanelView.ON_TXT_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
 view_PanelView.ON_SWB_SHOWLINE_CHANGE = "on_showline_change";
 view_PanelView.ON_SWB_SHOWKLINE_CHANGE = "on_showline_k_change";
+view_PanelView.ON_SWB_FAVOR_CHANGE = "on_favor_change";
 view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
 view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
 view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";

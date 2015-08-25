@@ -15,6 +15,7 @@ class PanelView extends Model implements IPanelView
 	public static var ON_TXT_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
 	public static var ON_SWB_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_SWB_SHOWKLINE_CHANGE = 'on_showline_k_change';
+	public static var ON_SWB_FAVOR_CHANGE = 'on_favor_change';
 	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
@@ -27,6 +28,7 @@ class PanelView extends Model implements IPanelView
 	var body:Dynamic;
 	var tmpl_panel:Dynamic;
 	var slt_stockId:Dynamic;
+	var swb_favor:Dynamic;
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
@@ -175,6 +177,13 @@ class PanelView extends Model implements IPanelView
 			}
 		});
 		
+		swb_favor = config.swb_favor;
+		swb_favor.switchbutton( {
+			onChange:function( checked ) {
+				notify( ON_SWB_FAVOR_CHANGE, { favor:checked } );
+			}
+		});
+		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
 			var target = e.currentTarget;
@@ -199,13 +208,20 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function initPanel( model:Dynamic, stock:Dynamic, stockInfo:Dynamic ):Void {
+		trace( stock );
+		
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
+		var favor = stock.favor;
 		
 		//用這個下法才不會trigger事件出來
 		slt_stockId.textbox( {
 			value:stockId
+		});
+		
+		swb_favor.switchbutton( {
+			checked:favor
 		});
 		
 		changeOffset( offset );
