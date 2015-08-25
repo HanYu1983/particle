@@ -398,20 +398,30 @@
       downavg)))
       
       
-(defn tr-seq [kline]
-  (when (>= (count kline) 2)
-    (let [[_ _ _ _ close _] (first kline)
-          [_ _ high low _ _] (second kline)
-          v (max (- high low) (.abs js/Math (- high close)) (.abs js/Math (- low close)))]
-      (cons v (lazy-seq (tr-seq (rest kline)))))))
+(defn tr-seq 
+  "真實波幅
+  從前面計算"
+  [kline]
+  (map
+    (fn [close high low]
+      (max (- high low) (.abs js/Math (- high close)) (.abs js/Math (- low close))))
+    (stl/close kline)
+    (rest (stl/high kline))
+    (rest (stl/low kline))))
       
-(defn tl-seq [kline]
+(defn tl-seq
+  "真實低價
+  從前面計算"
+  [kline]
   (map
     (partial min)
     (stl/close kline)
     (rest (stl/low kline))))
       
-(defn uos-seq [m n o kline]
+(defn uos-seq 
+  "終極指標
+  從前面計算"
+  [m n o kline]
   (let [tl (tl-seq kline)
         bp (map - (rest (stl/close kline)) tl)
         tr (tr-seq kline)
@@ -431,19 +441,26 @@
           ruo)]
     (reverse uos)))
       
-(defn dm-seq [kline]
-  (when (>= (count kline) 2)
-    (let [[_ _ a b _ _] (first kline)
-          [_ _ c d _ _] (second kline)
-          v1 (max 0 (- c a))
-          v2 (max 0 (- b d))
-          v
-          (condp = (max v1 v2)
-            v1 v1
-            v2 (- v2)
-            0)]
-      (cons v (lazy-seq (dm-seq (rest kline)))))))
-      
+(defn dm-seq 
+  "趨向變動值
+  從前面計算"
+  [kline]
+  (->>
+    (map
+      (fn [a b c d]
+        [(max 0 (- c a)) (max 0 (- b d))])
+      (stl/high kline)
+      (stl/low kline)
+      (rest (stl/high kline))
+      (rest (stl/low kline)))
+    (map
+      (fn [[v1 v2]]
+        (condp = (max v1 v2)
+          v1 v1
+          v2 (- v2)
+          0)))))
+          
+
 (defn atr-seq 
   "真實波幅"
   [n kline]
