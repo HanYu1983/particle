@@ -313,14 +313,49 @@
               
             "cci"
             (let [n (get subd "n")
-                  line (stf/cci n (reverse kline))]
+                  line (stf/cci-seq n (reverse kline))]
               [
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
                 {:type :line :line (repeat (count kline) 100) :color "white"}
                 {:type :line :line (repeat (count kline) -100) :color "white"}
               ])
+            
+            "dpo"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  line (stf/dpo-seq n kline)]
+              [
+                {:type :line :line line :color c1}
+                {:type :grid :line line :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :line :line (repeat (count kline) m) :color "lightgray"}
+                {:type :line :line (repeat (count kline) (- m)) :color "lightgray"}
+              ])
               
+            "trix"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  line (stf/trix-seq n (stl/close kline))]
+              [
+                {:type :line :line line :color c1}
+                {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+              ])
+              
+            "uos"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  o (get subd "o")
+                  p (get subd "p")
+                  line (stf/uos-seq n m o (reverse kline))]
+              [
+                {:type :line :line (reverse line) :color c1}
+                {:type :line :line (reverse (stf/sma-seq p line)) :color c2}
+                {:type :line :line (repeat (count kline) 50) :color "lightgray"}
+                {:type :line :line (repeat (count kline) 30) :color "white"}
+                {:type :line :line (repeat (count kline) 70) :color "white"}
+              ])
             {:type nil})))
       sub)
     (flatten)))

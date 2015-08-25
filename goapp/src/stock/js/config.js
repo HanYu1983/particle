@@ -24,6 +24,9 @@ app.config.index = [
 						['atr', false, 14, 0, 0, 0, '//wiki.mbalib.com/zh-tw/真实波幅' ],
 						['cv', false, 10, 10, 0, 0, '//wiki.mbalib.com/zh-tw/佳庆离散指标' ],
 						['cci', false, 10, 0, 0, 0, '//wiki.mbalib.com/wiki/顺势指标' ],
+						['dpo', false, 20, 9, 0, 0, '//wiki.mbalib.com/wiki/区间震荡线' ],
+						['trix', false, 12, 9, 0, 0, '//wiki.mbalib.com/wiki/TRIX指标' ],
+						['uos', false, 7, 14, 28, 9, '//www.taindicators.com/2010/04/ultimate-ultimate-oscillator.html' ],
 	
 						['group', '余氏'],
 						['yu-clock', false, 20, 20, 0, 0 ],
@@ -33,7 +36,7 @@ app.config.index = [
 					];
 app.config.hoverInfo = {
 	line:{
-		default:'請點我學習指標!'
+		default:'點我學習!'
 	}
 }
 
