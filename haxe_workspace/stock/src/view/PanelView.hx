@@ -23,6 +23,8 @@ class PanelView extends Model implements IPanelView
 	
 	var j:Dynamic = untyped __js__('$');
 	
+	var doc:Dynamic;
+	var body:Dynamic;
 	var tmpl_panel:Dynamic;
 	var slt_stockId:Dynamic;
 	var mc_accordionContainer:Dynamic;
@@ -43,6 +45,68 @@ class PanelView extends Model implements IPanelView
 	override function init() 
 	{
 		super.init();
+		
+		var isCtrl = false;
+		var isShift = false;
+		
+		doc = config.doc;
+		doc.keydown( function( e ) {
+			switch( e.which ) {
+				//shift
+				case 16:isShift = true;
+				//ctrl
+				case 17:isCtrl = true;
+				//alt
+				case 18:
+			}
+		});
+		doc.keyup( function( e ) {
+			trace( e.which );
+			switch( e.which ) {
+				//shift
+				case 16:isShift = false;
+				//ctrl
+				case 17:isCtrl = false;
+				//alt
+				case 18:
+				//up
+				case 38:
+				//left
+				case 37:
+					if( isCtrl && isShift ) notify( ON_BTN_CONTROLLER_CLICK, { value:-10000 } );
+					else if ( isCtrl )
+						notify( ON_BTN_CONTROLLER_CLICK, { value: -20 } );
+					else
+						notify( ON_BTN_CONTROLLER_CLICK, { value: -1 } );
+				//down
+				case 40:
+				//right
+				case 39:
+					if( isCtrl && isShift ) notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
+					else if ( isCtrl )
+						notify( ON_BTN_CONTROLLER_CLICK, { value: 20 } );
+					else
+						notify( ON_BTN_CONTROLLER_CLICK, { value: 1 } );
+				//d
+				case 68:
+				//f
+				case 70:
+			}
+		});
+		
+		body = config.body;
+		body.find( '.easyui-tooltip' ).tooltip( {
+			position:'right',
+			onShow:function( e ) {
+				var self = j( e.currentTarget );
+				var hoverInfo = untyped __js__( 'app.config.hoverInfo' );
+				var hoverstr = switch( Reflect.field( hoverInfo, self.attr( 'id' ) ) ) {
+					case null:Reflect.field( hoverInfo, 'default' );
+					case hstr:hstr;
+				}
+				self.tooltip( 'update', hoverstr );
+			}
+		});
 		
 		mc_accordionContainer = config.mc_accordionContainer;
 		mc_accordionContainer.accordion();
@@ -91,13 +155,13 @@ class PanelView extends Model implements IPanelView
 				case 'btn_first':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:-10000 } );
 				case 'btn_prev10':
-					notify( ON_BTN_CONTROLLER_CLICK, { value:-25 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:-20 } );
 				case 'btn_prev':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:-1 } );
 				case 'btn_next':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:1 } );
 				case 'btn_next10':
-					notify( ON_BTN_CONTROLLER_CLICK, { value:25 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:20 } );
 				case 'btn_last':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
 			}

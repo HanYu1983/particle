@@ -89,9 +89,9 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	var _g = this;
 	Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
-	this.panelView.set_config({ mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice"), btn_loadPrice : Main.j("#btn_loadPrice")});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice")});
 	this.panelView.addHandler(function(type,params) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "new", customParams : [type]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 41, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
 		case "on_stockid_change":
 			_g.panelModel.set_currentStockId(params.stockId);
@@ -125,7 +125,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 66, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 68, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
@@ -525,50 +525,108 @@ view_PanelView.__interfaces__ = [view_IPanelView];
 view_PanelView.__super__ = model_Model;
 view_PanelView.prototype = $extend(model_Model.prototype,{
 	init: function() {
-		var _g = this;
+		var _g1 = this;
 		model_Model.prototype.init.call(this);
+		var isCtrl = false;
+		var isShift = false;
+		this.doc = this.config.doc;
+		this.doc.keydown(function(e) {
+			var _g = e.which;
+			switch(_g) {
+			case 16:
+				isShift = true;
+				break;
+			case 17:
+				isCtrl = true;
+				break;
+			case 18:
+				break;
+			}
+		});
+		this.doc.keyup(function(e1) {
+			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 64, className : "view.PanelView", methodName : "init"});
+			var _g2 = e1.which;
+			switch(_g2) {
+			case 16:
+				isShift = false;
+				break;
+			case 17:
+				isCtrl = false;
+				break;
+			case 18:
+				break;
+			case 38:
+				break;
+			case 37:
+				if(isCtrl && isShift) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000}); else if(isCtrl) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
+				break;
+			case 40:
+				break;
+			case 39:
+				if(isCtrl && isShift) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000}); else if(isCtrl) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
+				break;
+			case 68:
+				break;
+			case 70:
+				break;
+			}
+		});
+		this.body = this.config.body;
+		this.body.find(".easyui-tooltip").tooltip({ position : "right", onShow : function(e2) {
+			haxe_Log.trace("GGG",{ fileName : "PanelView.hx", lineNumber : 101, className : "view.PanelView", methodName : "init"});
+			var self = _g1.j(e2.currentTarget);
+			var hoverInfo = app.config.hoverInfo;
+			var hoverstr;
+			var _g3 = Reflect.field(hoverInfo,self.attr("id"));
+			var hstr = _g3;
+			if(_g3 == null) hoverstr = Reflect.field(hoverInfo,"default"); else switch(_g3) {
+			default:
+				hoverstr = hstr;
+			}
+			self.tooltip("update",hoverstr);
+		}});
 		this.mc_accordionContainer = this.config.mc_accordionContainer;
 		this.mc_accordionContainer.accordion();
 		this.tmpl_panel = this.config.tmpl_panel;
 		this.btn_addPanel = this.config.btn_addPanel;
-		this.btn_addPanel.click(function(e) {
-			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
+		this.btn_addPanel.click(function(e3) {
+			_g1.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
 		this.txt_offset = this.config.txt_offset;
 		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
-			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
+			_g1.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
 		}});
 		this.txt_count = this.config.txt_count;
 		this.txt_count.textbox({ value : 200, onChange : function(newValue1,oldValue1) {
-			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
+			_g1.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
 		}});
 		this.slt_stockId = this.config.slt_stockId;
 		this.slt_stockId.textbox({ onChange : function(newValue2,oldValue2) {
 			var stockId = newValue2;
-			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
+			_g1.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
 		this.btn_controller = this.config.btn_controller;
-		this.btn_controller.delegate(".btn_controller","click",function(e1) {
-			var target = e1.currentTarget;
-			var id = _g.j(target).attr("id");
+		this.btn_controller.delegate(".btn_controller","click",function(e4) {
+			var target = e4.currentTarget;
+			var id = _g1.j(target).attr("id");
 			switch(id) {
 			case "btn_first":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000});
 				break;
 			case "btn_prev10":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -25});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20});
 				break;
 			case "btn_prev":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
 				break;
 			case "btn_next":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
 				break;
 			case "btn_next10":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 25});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20});
 				break;
 			case "btn_last":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
 				break;
 			}
 		});

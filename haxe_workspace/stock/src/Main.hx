@@ -24,6 +24,8 @@ class Main
 		slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
 	
 		panelView.config = {
+			doc:j( untyped __js__('document') ),
+			body:j( j('body')),
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
 			slt_stockId:j( '#slt_stockId' ),
@@ -31,8 +33,8 @@ class Main
 			btn_addPanel:j( '#btn_addPanel' ),
 			txt_count:j( '#txt_count' ),
 			txt_offset:j( '#txt_offset' ),
-			table_stockPrice:j( '#table_stockPrice' ),
-			btn_loadPrice:j('#btn_loadPrice')
+			table_stockPrice:j( '#table_stockPrice' )
+		//	btn_loadPrice:j('#btn_loadPrice')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {

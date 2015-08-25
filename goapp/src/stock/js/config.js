@@ -32,6 +32,13 @@ app.config.index = [
 						['cci', false, 10, 0, 0, 0, '//wiki.mbalib.com/wiki/顺势指标' ]
 					];
 app.config.hoverInfo = {
+	default:'',
+	'btn_first':'返回最新<span style="color:yellow">[shift+ctrl+left]</span>',
+	'btn_prev10':'下十日<span style="color:yellow">[ctrl+left]</span>',
+	'btn_prev':'下一日<span style="color:yellow">[left]</span>',
+	'btn_next':'上一日<span style="color:yellow">[right]</span>',
+	'btn_next10':'上十日<span style="color:yellow">[ctrl+right]</span>',
+	'btn_last':'返回最早<span style="color:yellow">[shift+ctrl+right]</span>',
 	line:{
 		default:'請點我學習指標!'
 	}
