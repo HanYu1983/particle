@@ -155,6 +155,7 @@ class Main
 				curr.push( { 
 					show:obj[1],
 					type:obj[0],
+					url:obj[6],
 					value: {
 						n:obj[2],
 						m:obj[3],

@@ -193,7 +193,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 };
 Main.createProp = function(ary) {
 	return Lambda.fold(ary,function(obj,curr) {
-		if(obj[0] == "group") curr.push({ type : obj[0], name : obj[1]}); else curr.push({ show : obj[1], type : obj[0], value : { n : obj[2], m : obj[3], o : obj[4], p : obj[5]}});
+		if(obj[0] == "group") curr.push({ type : obj[0], name : obj[1]}); else curr.push({ show : obj[1], type : obj[0], url : obj[6], value : { n : obj[2], m : obj[3], o : obj[4], p : obj[5]}});
 		return curr;
 	},[]);
 };
@@ -669,8 +669,10 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
 			prop.domName = prop.type;
+			if(prop.url == null) prop.url = "";
 			var dom1 = _g.j("#tmpl_avg").tmpl(prop);
 			container.append(dom1);
+			dom1.find(".easyui-linkbutton").linkbutton();
 			dom1.find(".easyui-switchbutton").switchbutton({ checked : prop.show, onChange : function(checked) {
 				var target1 = _g.j(this);
 				var type1 = target1.attr("ktype");

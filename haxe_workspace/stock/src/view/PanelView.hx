@@ -273,7 +273,7 @@ class PanelView extends Model implements IPanelView
 			prop.mid = 'input_m_' + prop.type;
 			
 			prop.domName = prop.type;
-			
+			if ( prop.url == null ) prop.url = '';
 			/*
 			prop.domName = switch( prop.type ) {
 				case 'ma':
@@ -302,6 +302,8 @@ class PanelView extends Model implements IPanelView
 			*/
 			var dom = j( '#tmpl_avg' ).tmpl( prop );
 			container.append( dom );
+			
+			dom.find( '.easyui-linkbutton' ).linkbutton();
 			
 			dom.find( '.easyui-switchbutton' ).switchbutton( {
 				checked:prop.show,
