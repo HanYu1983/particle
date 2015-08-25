@@ -15,16 +15,22 @@ class PanelView extends Model implements IPanelView
 	public static var ON_TXT_SHOWLINE_VALUE_CHANGE = 'on_showline_value_change';
 	public static var ON_SWB_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_SWB_SHOWKLINE_CHANGE = 'on_showline_k_change';
+	public static var ON_SWB_FAVOR_CHANGE = 'on_favor_change';
 	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
+	public static var ON_COMBO_FAVOR_CHANGE = 'on_combo_favor_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	
+	var doc:Dynamic;
+	var body:Dynamic;
 	var tmpl_panel:Dynamic;
 	var slt_stockId:Dynamic;
+	var swb_favor:Dynamic;
+	var combo_favor:Dynamic;
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
@@ -43,6 +49,96 @@ class PanelView extends Model implements IPanelView
 	override function init() 
 	{
 		super.init();
+		
+		var isDot = false;
+		var isComma = false;
+		
+		doc = config.doc;
+		doc.keydown( function( e ) {
+			
+			switch( e.which ) {
+				//shift
+				case 16:
+					
+				//ctrl
+				case 17:
+					
+				//alt
+				case 18:
+				//,
+				case 188:
+					isComma = true;
+				//.
+				case 190:
+					isDot = true;
+				///
+				case 191:
+			}
+		});
+		doc.keyup( function( e ) {
+			trace( e.which );
+			switch( e.which ) {
+				//shift
+				case 16:
+					
+				//ctrl
+				case 17:
+				//,
+				case 188:
+					isComma = false;
+				//.
+				case 190:
+					isDot = false;
+				///
+				case 191:
+				//w
+				case 87:
+				//a
+				case 65:
+					if( isDot && isComma ) notify( ON_BTN_CONTROLLER_CLICK, { value:-10000 } );
+					else if ( isComma )
+						notify( ON_BTN_CONTROLLER_CLICK, { value: -20 } );
+					else
+						notify( ON_BTN_CONTROLLER_CLICK, { value: -1 } );
+				//s
+				case 83:
+				//d
+				case 68:
+					if( isDot && isComma ) notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
+					else if ( isComma )
+						notify( ON_BTN_CONTROLLER_CLICK, { value: 20 } );
+					else
+						notify( ON_BTN_CONTROLLER_CLICK, { value: 1 } );
+				//alt
+				case 18:
+				//up
+				case 38:
+				//left
+				case 37:
+					
+				//down
+				case 40:
+				//right
+				case 39:
+					
+				//f
+				case 70:
+			}
+		});
+		
+		body = config.body;
+		body.find( '.easyui-tooltip' ).tooltip( {
+			position:'right',
+			onShow:function( e ) {
+				var self = j( e.currentTarget );
+				var hoverInfo = untyped __js__( 'app.config.hoverInfo' );
+				var hoverstr = switch( Reflect.field( hoverInfo, self.attr( 'id' ) ) ) {
+					case null:Reflect.field( hoverInfo, 'default' );
+					case hstr:hstr;
+				}
+				self.tooltip( 'update', hoverstr );
+			}
+		});
 		
 		mc_accordionContainer = config.mc_accordionContainer;
 		mc_accordionContainer.accordion();
@@ -83,6 +179,21 @@ class PanelView extends Model implements IPanelView
 			}
 		});
 		
+		swb_favor = config.swb_favor;
+		swb_favor.switchbutton( {
+			onChange:function( checked ) {
+				notify( ON_SWB_FAVOR_CHANGE, { favor:checked } );
+			}
+		});
+		
+		combo_favor = config.combo_favor;
+		combo_favor.combobox({
+			onSelect:function( record ) {
+				var value = record.value;
+				notify( ON_COMBO_FAVOR_CHANGE, { stockId:value } );
+			}
+		});
+		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
 			var target = e.currentTarget;
@@ -91,13 +202,13 @@ class PanelView extends Model implements IPanelView
 				case 'btn_first':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:-10000 } );
 				case 'btn_prev10':
-					notify( ON_BTN_CONTROLLER_CLICK, { value:-25 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:-20 } );
 				case 'btn_prev':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:-1 } );
 				case 'btn_next':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:1 } );
 				case 'btn_next10':
-					notify( ON_BTN_CONTROLLER_CLICK, { value:25 } );
+					notify( ON_BTN_CONTROLLER_CLICK, { value:20 } );
 				case 'btn_last':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
 			}
@@ -107,17 +218,37 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function initPanel( model:Dynamic, stock:Dynamic, stockInfo:Dynamic ):Void {
+		//trace( stock );
+		
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
+		var favor = stock.favor;
 		
-		//用這個下法才不會trigger事件出來
-		slt_stockId.textbox( {
-			value:stockId
+		setTxtStockId( stockId );
+		
+		swb_favor.switchbutton( {
+			checked:favor
 		});
 		
 		changeOffset( offset );
 		changeCount( count );
+	}
+	
+	public function setTxtStockId( stockId:String ):Void {
+		//用這個下法才不會trigger事件出來
+		slt_stockId.textbox( {
+			value:stockId
+		});
+	}
+	
+	public function setFavorsSelect( favors:Array<String> ):Void {
+		combo_favor.empty();
+		Lambda.foreach( favors, function( str ) {
+			combo_favor.append( '<option value="' + str + '">' + str + '<option>' );
+			return true;
+		});
+		combo_favor.combobox();
 	}
 	
 	public function drawPrice( stockInfo:Dynamic, offset:Int = 0 ):Void {

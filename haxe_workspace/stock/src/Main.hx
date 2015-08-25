@@ -24,15 +24,19 @@ class Main
 		slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
 	
 		panelView.config = {
+			doc:j( untyped __js__('document') ),
+			body:j( j('body')),
 			mc_accordionContainer:j("#mc_accordionContainer" ),
 			tmpl_panel:j("#tmpl_panel"),
 			slt_stockId:j( '#slt_stockId' ),
+			swb_favor:j('#swb_favor'),
+			combo_favor:j( '#combo_favor' ),
 			btn_controller:j( '#btn_controller' ),
 			btn_addPanel:j( '#btn_addPanel' ),
 			txt_count:j( '#txt_count' ),
 			txt_offset:j( '#txt_offset' ),
-			table_stockPrice:j( '#table_stockPrice' ),
-			btn_loadPrice:j('#btn_loadPrice')
+			table_stockPrice:j( '#table_stockPrice' )
+		//	btn_loadPrice:j('#btn_loadPrice')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
@@ -40,6 +44,10 @@ class Main
 			switch( type ) {
 				//case PanelView.ON_BTN_LOADPRICE_CLICK:
 				//	panelView.drawPrice( panelModel.currentStockInfo );
+				case PanelView.ON_COMBO_FAVOR_CHANGE:
+					panelModel.currentStockId = params.stockId;
+				case PanelView.ON_SWB_FAVOR_CHANGE:
+					panelModel.currentFavor = params.favor;
 				case PanelView.ON_SLT_STOCKID_CHANGE:
 					panelModel.currentStockId = params.stockId;
 				case PanelView.ON_BTN_CONTROLLER_CLICK:
@@ -65,6 +73,10 @@ class Main
 		panelModel.addHandler( function( type, params ) {
 			trace( 'panelModel', type );
 			switch( type ) {
+				case PanelModel.ON_INIT:
+					panelView.setFavorsSelect( params.favorList );
+				case PanelModel.ON_FAVOR_LIST_CHANGE:
+					panelView.setFavorsSelect( params.favorList );
 				case PanelModel.ON_OFFSET_CHANGE:
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
@@ -173,6 +185,7 @@ class Main
 			id:id,
 			count:200,
 			offset:0,
+			favor:false,
 			lines:[ 
 				createNewLine( 'volume', false, [
 													['group', '均線'],
@@ -192,23 +205,3 @@ class Main
 		}
 	}
 }
-
-/*
-draw($("#canvas_exchange")[0], 2330, "volume", 
-	{
-		sub:[
-			{t: "ma", d: {n: 5, color: "blue"}}
-		]
-	}
-)
-
-draw($("#canvas_clock")[0], 2330, "clock", {})
-
-draw($("#canvas_kline")[0], 2330, null, 
-	{
-		sub:[
-			{t: "ma", d: {n: 5, color: "blue"}}, 
-			{t: "ma", d: {n: 10, color: "yellow"}} 
-		]
-	}
-)*/

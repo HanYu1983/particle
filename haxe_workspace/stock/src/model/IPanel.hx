@@ -10,6 +10,7 @@ interface IPanel extends IModel
 	var currentOffset(default, set):Int;
 	var currentCount(default, set):Int;
 	var currentStockInfo( default, set ):Dynamic;
+	var currentFavor( default, set ):Dynamic;
 	var maxCount(default, set ):Int;
 	
 	function getAryPanel():Array<Dynamic>;

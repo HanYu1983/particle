@@ -14,11 +14,13 @@ class PanelModel extends Model implements IPanel
 	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
+	public static var ON_FAVOR_LIST_CHANGE = 'on_favor_list_change';
 	
 	public var currentStockId(default, set):String;
 	public var currentOffset(default, set):Int = 0;
 	public var currentCount(default, set):Int = 100;
 	public var currentStockInfo( default, set ):Dynamic;
+	public var currentFavor( default, set ):Dynamic;
 	public var maxCount(default, set ):Int;
 	
 	var ary_panel_obj = new Array<Dynamic>();
@@ -116,6 +118,8 @@ class PanelModel extends Model implements IPanel
 		var stock = config.stocks[0];
 		if( stock != null )
 			currentStockId = stock.id;
+		
+		notify( ON_INIT, { favorList:getFavorList()} );
 	}
 	
 	function resetPanelData() {
@@ -130,6 +134,7 @@ class PanelModel extends Model implements IPanel
 		
 		currentOffset = stock.offset;
 		currentCount = stock.count;
+		currentFavor = stock.favor;
 	
 		resetPanelData();
 		
@@ -168,10 +173,18 @@ class PanelModel extends Model implements IPanel
 		});
 	}
 	
+	function getFavorList() {
+		return Lambda.fold( config.stocks, function( stockobj, curr ) {
+			if ( stockobj.favor ) curr.push( stockobj.id );
+			return curr;
+		}, []);
+	}
+	
 	function set_currentOffset( offset:Int ) {
 		currentOffset = offset;
 		if ( currentOffset < 0 ) currentOffset = 0;
 		else if ( currentOffset > maxCount - 100 ) currentOffset = maxCount - 100;
+		getStockById( currentStockId ).offset = currentOffset; 
 		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
 		return currentOffset;
 	}
@@ -180,6 +193,7 @@ class PanelModel extends Model implements IPanel
 		currentCount = count;
 		if ( currentCount < 50 ) currentCount = 50;
 		notify( ON_COUNT_CHANGE, { stockId:currentStockId, count:currentCount } );
+		getStockById( currentStockId ).count = currentCount; 
 		return currentCount;
 	}
 	
@@ -202,5 +216,16 @@ class PanelModel extends Model implements IPanel
 	
 	function set_currentStockInfo( info ) {
 		return currentStockInfo = info;
+	}
+	
+	function set_currentFavor( favor ) {
+		if ( getStockById( currentStockId ) == null ) {
+			return currentFavor = false;
+		}
+		getStockById( currentStockId ).favor = favor; 
+		
+		notify( ON_FAVOR_LIST_CHANGE, { favorList:getFavorList()} );
+		
+		return currentFavor = favor;
 	}
 }

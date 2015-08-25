@@ -89,10 +89,16 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	var _g = this;
 	Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
-	this.panelView.set_config({ mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice"), btn_loadPrice : Main.j("#btn_loadPrice")});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice")});
 	this.panelView.addHandler(function(type,params) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "new", customParams : [type]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
+		case "on_combo_favor_change":
+			_g.panelModel.set_currentStockId(params.stockId);
+			break;
+		case "on_favor_change":
+			_g.panelModel.set_currentFavor(params.favor);
+			break;
 		case "on_stockid_change":
 			_g.panelModel.set_currentStockId(params.stockId);
 			break;
@@ -125,8 +131,14 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 66, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 74, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
+		case "on_init":
+			_g.panelView.setFavorsSelect(params1.favorList);
+			break;
+		case "on_favor_list_change":
+			_g.panelView.setFavorsSelect(params1.favorList);
+			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
@@ -198,7 +210,7 @@ Main.createProp = function(ary) {
 	},[]);
 };
 Main.createNewStock = function(id,props) {
-	return { id : id, count : 200, offset : 0, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
+	return { id : id, count : 200, offset : 0, favor : false, lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,deletable,props) {
 	if(deletable == null) deletable = true;
@@ -423,6 +435,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var j = $;
 		var stock = this.config.stocks[0];
 		if(stock != null) this.set_currentStockId(stock.id);
+		this.notify(model_PanelModel.ON_INIT,{ favorList : this.getFavorList()});
 	}
 	,resetPanelData: function() {
 		var _g = this;
@@ -436,6 +449,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var _g = this;
 		this.set_currentOffset(stock.offset);
 		this.set_currentCount(stock.count);
+		this.set_currentFavor(stock.favor);
 		this.resetPanelData();
 		Main.getStock(this.currentStockId,true).pipe(Main.getStockInfo).done(function(err,data) {
 			var state = data[0];
@@ -465,9 +479,16 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			return obj.id == stockId;
 		});
 	}
+	,getFavorList: function() {
+		return Lambda.fold(this.config.stocks,function(stockobj,curr) {
+			if(stockobj.favor) curr.push(stockobj.id);
+			return curr;
+		},[]);
+	}
 	,set_currentOffset: function(offset) {
 		this.currentOffset = offset;
 		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 100) this.currentOffset = this.maxCount - 100;
+		this.getStockById(this.currentStockId).offset = this.currentOffset;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
@@ -475,6 +496,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.currentCount = count;
 		if(this.currentCount < 50) this.currentCount = 50;
 		this.notify(model_PanelModel.ON_COUNT_CHANGE,{ stockId : this.currentStockId, count : this.currentCount});
+		this.getStockById(this.currentStockId).count = this.currentCount;
 		return this.currentCount;
 	}
 	,set_currentStockId: function(stockId) {
@@ -511,6 +533,12 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,set_currentStockInfo: function(info) {
 		return this.currentStockInfo = info;
 	}
+	,set_currentFavor: function(favor) {
+		if(this.getStockById(this.currentStockId) == null) return this.currentFavor = false;
+		this.getStockById(this.currentStockId).favor = favor;
+		this.notify(model_PanelModel.ON_FAVOR_LIST_CHANGE,{ favorList : this.getFavorList()});
+		return this.currentFavor = favor;
+	}
 });
 var view_IPanelView = function() { };
 view_IPanelView.__name__ = true;
@@ -525,50 +553,134 @@ view_PanelView.__interfaces__ = [view_IPanelView];
 view_PanelView.__super__ = model_Model;
 view_PanelView.prototype = $extend(model_Model.prototype,{
 	init: function() {
-		var _g = this;
+		var _g1 = this;
 		model_Model.prototype.init.call(this);
+		var isDot = false;
+		var isComma = false;
+		this.doc = this.config.doc;
+		this.doc.keydown(function(e) {
+			var _g = e.which;
+			switch(_g) {
+			case 16:
+				break;
+			case 17:
+				break;
+			case 18:
+				break;
+			case 188:
+				isComma = true;
+				break;
+			case 190:
+				isDot = true;
+				break;
+			case 191:
+				break;
+			}
+		});
+		this.doc.keyup(function(e1) {
+			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 79, className : "view.PanelView", methodName : "init"});
+			var _g2 = e1.which;
+			switch(_g2) {
+			case 16:
+				break;
+			case 17:
+				break;
+			case 188:
+				isComma = false;
+				break;
+			case 190:
+				isDot = false;
+				break;
+			case 191:
+				break;
+			case 87:
+				break;
+			case 65:
+				if(isDot && isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000}); else if(isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
+				break;
+			case 83:
+				break;
+			case 68:
+				if(isDot && isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000}); else if(isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
+				break;
+			case 18:
+				break;
+			case 38:
+				break;
+			case 37:
+				break;
+			case 40:
+				break;
+			case 39:
+				break;
+			case 70:
+				break;
+			}
+		});
+		this.body = this.config.body;
+		this.body.find(".easyui-tooltip").tooltip({ position : "right", onShow : function(e2) {
+			var self = _g1.j(e2.currentTarget);
+			var hoverInfo = app.config.hoverInfo;
+			var hoverstr;
+			var _g3 = Reflect.field(hoverInfo,self.attr("id"));
+			var hstr = _g3;
+			if(_g3 == null) hoverstr = Reflect.field(hoverInfo,"default"); else switch(_g3) {
+			default:
+				hoverstr = hstr;
+			}
+			self.tooltip("update",hoverstr);
+		}});
 		this.mc_accordionContainer = this.config.mc_accordionContainer;
 		this.mc_accordionContainer.accordion();
 		this.tmpl_panel = this.config.tmpl_panel;
 		this.btn_addPanel = this.config.btn_addPanel;
-		this.btn_addPanel.click(function(e) {
-			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
+		this.btn_addPanel.click(function(e3) {
+			_g1.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
 		this.txt_offset = this.config.txt_offset;
 		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
-			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
+			_g1.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
 		}});
 		this.txt_count = this.config.txt_count;
 		this.txt_count.textbox({ value : 200, onChange : function(newValue1,oldValue1) {
-			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
+			_g1.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
 		}});
 		this.slt_stockId = this.config.slt_stockId;
 		this.slt_stockId.textbox({ onChange : function(newValue2,oldValue2) {
 			var stockId = newValue2;
-			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
+			_g1.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
+		}});
+		this.swb_favor = this.config.swb_favor;
+		this.swb_favor.switchbutton({ onChange : function(checked) {
+			_g1.notify(view_PanelView.ON_SWB_FAVOR_CHANGE,{ favor : checked});
+		}});
+		this.combo_favor = this.config.combo_favor;
+		this.combo_favor.combobox({ onSelect : function(record) {
+			var value = record.value;
+			_g1.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
 		}});
 		this.btn_controller = this.config.btn_controller;
-		this.btn_controller.delegate(".btn_controller","click",function(e1) {
-			var target = e1.currentTarget;
-			var id = _g.j(target).attr("id");
+		this.btn_controller.delegate(".btn_controller","click",function(e4) {
+			var target = e4.currentTarget;
+			var id = _g1.j(target).attr("id");
 			switch(id) {
 			case "btn_first":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000});
 				break;
 			case "btn_prev10":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -25});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20});
 				break;
 			case "btn_prev":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
 				break;
 			case "btn_next":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
 				break;
 			case "btn_next10":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 25});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20});
 				break;
 			case "btn_last":
-				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
+				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
 				break;
 			}
 		});
@@ -578,9 +690,23 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
-		this.slt_stockId.textbox({ value : stockId});
+		var favor = stock.favor;
+		this.setTxtStockId(stockId);
+		this.swb_favor.switchbutton({ checked : favor});
 		this.changeOffset(offset);
 		this.changeCount(count);
+	}
+	,setTxtStockId: function(stockId) {
+		this.slt_stockId.textbox({ value : stockId});
+	}
+	,setFavorsSelect: function(favors) {
+		var _g = this;
+		this.combo_favor.empty();
+		Lambda.foreach(favors,function(str) {
+			_g.combo_favor.append("<option value=\"" + str + "\">" + str + "<option>");
+			return true;
+		});
+		this.combo_favor.combobox();
 	}
 	,drawPrice: function(stockInfo,offset) {
 		if(offset == null) offset = 0;
@@ -745,15 +871,18 @@ model_PanelModel.ON_COUNT_CHANGE = "on_count_change";
 model_PanelModel.ON_SHOWLINE_CHANGE = "on_showline_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
+model_PanelModel.ON_FAVOR_LIST_CHANGE = "on_favor_list_change";
 view_PanelView.ON_SLT_STOCKID_CHANGE = "on_stockid_change";
 view_PanelView.ON_BTN_CONTROLLER_CLICK = "on_offset_change";
 view_PanelView.ON_TXT_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
 view_PanelView.ON_SWB_SHOWLINE_CHANGE = "on_showline_change";
 view_PanelView.ON_SWB_SHOWKLINE_CHANGE = "on_showline_k_change";
+view_PanelView.ON_SWB_FAVOR_CHANGE = "on_favor_change";
 view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
 view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
 view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
 view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
+view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
