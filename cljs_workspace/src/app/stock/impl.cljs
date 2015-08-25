@@ -82,7 +82,7 @@
                   o (get subd "o")
                   p (get subd "p")]
               [
-                {:type :line :line (stf/BBI n m o p vs) :color c1}
+                {:type :line :line (stf/BBI n m o p vs) :color c3}
               ])
               
             "ebbi"
@@ -91,7 +91,7 @@
                   o (get subd "o")
                   p (get subd "p")]
               [
-                {:type :line :line (stf/EBBI n m o p vs) :color c2}
+                {:type :line :line (stf/EBBI n m o p vs) :color c4}
               ])
               
             "yu-car"
@@ -348,10 +348,13 @@
                   m (get subd "m")
                   o (get subd "o")
                   p (get subd "p")
-                  line (stf/uos-seq n m o (reverse kline))]
+                  line (stf/uos-seq n m o (reverse kline))
+                  ma (reverse (stf/sma-seq p line))
+                  ma2 (reverse (stf/sma-seq p (reverse ma)))]
               [
                 {:type :line :line (reverse line) :color c1}
-                {:type :line :line (reverse (stf/sma-seq p line)) :color c2}
+                {:type :line :line ma :color c2}
+                {:type :line :line ma2 :color c3}
                 {:type :line :line (repeat (count kline) 50) :color "lightgray"}
                 {:type :line :line (repeat (count kline) 30) :color "white"}
                 {:type :line :line (repeat (count kline) 70) :color "white"}
