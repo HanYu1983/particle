@@ -685,7 +685,14 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			dom1.find(".easyui-tooltip").tooltip({ position : "right", onShow : function(e) {
 				var self = _g.j(e.currentTarget);
 				var hoverInfo = app.config.hoverInfo.line;
-				self.tooltip("update",Reflect.field(hoverInfo,self.attr("ptype")));
+				var hoverstr;
+				var _g1 = Reflect.field(hoverInfo,self.attr("ptype"));
+				var hstr = _g1;
+				if(_g1 == null) hoverstr = Reflect.field(hoverInfo,"default"); else switch(_g1) {
+				default:
+					hoverstr = hstr;
+				}
+				self.tooltip("update",hoverstr);
 			}});
 			return true;
 		});
