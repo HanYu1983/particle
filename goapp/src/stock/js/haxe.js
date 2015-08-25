@@ -89,10 +89,13 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	var _g = this;
 	Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice")});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), table_stockPrice : Main.j("#table_stockPrice")});
 	this.panelView.addHandler(function(type,params) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 42, className : "Main", methodName : "new", customParams : [type]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "new", customParams : [type]});
 		switch(type) {
+		case "on_combo_favor_change":
+			_g.panelModel.set_currentStockId(params.stockId);
+			break;
 		case "on_favor_change":
 			_g.panelModel.set_currentFavor(params.favor);
 			break;
@@ -128,8 +131,11 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 71, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 74, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
+		case "on_favor_list_change":
+			_g.panelView.setFavorsSelect(params1.favorList);
+			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
@@ -468,6 +474,16 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			return obj.id == stockId;
 		});
 	}
+	,addToFavorList: function() {
+		var favorList = this.config.favors;
+		if(HxOverrides.indexOf(favorList,this.currentStockId,0) == -1) favorList.push(this.currentStockId);
+		this.notify(model_PanelModel.ON_FAVOR_LIST_CHANGE,{ favorList : favorList});
+	}
+	,removeFromFavorList: function() {
+		var favorList = this.config.favors;
+		if(HxOverrides.indexOf(favorList,this.currentStockId,0) != -1) HxOverrides.remove(favorList,this.currentStockId);
+		this.notify(model_PanelModel.ON_FAVOR_LIST_CHANGE,{ favorList : favorList});
+	}
 	,set_currentOffset: function(offset) {
 		this.currentOffset = offset;
 		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 100) this.currentOffset = this.maxCount - 100;
@@ -517,7 +533,9 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentStockInfo = info;
 	}
 	,set_currentFavor: function(favor) {
+		if(this.getStockById(this.currentStockId) == null) return this.currentFavor = false;
 		this.getStockById(this.currentStockId).favor = favor;
+		if(favor) this.addToFavorList(); else this.removeFromFavorList();
 		return this.currentFavor = favor;
 	}
 });
@@ -559,7 +577,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			}
 		});
 		this.doc.keyup(function(e1) {
-			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 77, className : "view.PanelView", methodName : "init"});
+			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 79, className : "view.PanelView", methodName : "init"});
 			var _g2 = e1.which;
 			switch(_g2) {
 			case 16:
@@ -635,6 +653,12 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.swb_favor.switchbutton({ onChange : function(checked) {
 			_g1.notify(view_PanelView.ON_SWB_FAVOR_CHANGE,{ favor : checked});
 		}});
+		this.combo_favor = this.config.combo_favor;
+		this.combo_favor.combobox({ onSelect : function(record) {
+			var value = record.value;
+			if(value != "999") _g1.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
+		}});
+		this.setFavorsSelect([]);
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e4) {
 			var target = e4.currentTarget;
@@ -663,7 +687,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.table_stockPrice = this.config.table_stockPrice;
 	}
 	,initPanel: function(model,stock,stockInfo) {
-		haxe_Log.trace(stock,{ fileName : "PanelView.hx", lineNumber : 211, className : "view.PanelView", methodName : "initPanel"});
+		haxe_Log.trace(stock,{ fileName : "PanelView.hx", lineNumber : 224, className : "view.PanelView", methodName : "initPanel"});
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
@@ -672,6 +696,16 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.swb_favor.switchbutton({ checked : favor});
 		this.changeOffset(offset);
 		this.changeCount(count);
+	}
+	,setFavorsSelect: function(favors) {
+		var _g = this;
+		this.combo_favor.empty();
+		this.combo_favor.append("<option value=\"999\">我關注的</option>");
+		Lambda.foreach(favors,function(str) {
+			_g.combo_favor.append("<option value=\"" + str + "\">" + str + "<option>");
+			return true;
+		});
+		this.combo_favor.combobox({ value : "999"});
 	}
 	,drawPrice: function(stockInfo,offset) {
 		if(offset == null) offset = 0;
@@ -836,6 +870,7 @@ model_PanelModel.ON_COUNT_CHANGE = "on_count_change";
 model_PanelModel.ON_SHOWLINE_CHANGE = "on_showline_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
+model_PanelModel.ON_FAVOR_LIST_CHANGE = "on_favor_list_change";
 view_PanelView.ON_SLT_STOCKID_CHANGE = "on_stockid_change";
 view_PanelView.ON_BTN_CONTROLLER_CLICK = "on_offset_change";
 view_PanelView.ON_TXT_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
@@ -846,6 +881,7 @@ view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
 view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
 view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
 view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
+view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

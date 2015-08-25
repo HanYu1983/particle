@@ -21,6 +21,7 @@ class PanelView extends Model implements IPanelView
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
+	public static var ON_COMBO_FAVOR_CHANGE = 'on_combo_favor_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -29,6 +30,7 @@ class PanelView extends Model implements IPanelView
 	var tmpl_panel:Dynamic;
 	var slt_stockId:Dynamic;
 	var swb_favor:Dynamic;
+	var combo_favor:Dynamic;
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
@@ -184,6 +186,17 @@ class PanelView extends Model implements IPanelView
 			}
 		});
 		
+		combo_favor = config.combo_favor;
+		combo_favor.combobox({
+			onSelect:function( record ) {
+				var value = record.value;
+				if ( value != '999' )
+					notify( ON_COMBO_FAVOR_CHANGE, { stockId:value } );
+			}
+		});
+		
+		setFavorsSelect([]);
+		
 		btn_controller = config.btn_controller;
 		btn_controller.delegate( '.btn_controller', 'click', function( e ) {
 			var target = e.currentTarget;
@@ -226,6 +239,18 @@ class PanelView extends Model implements IPanelView
 		
 		changeOffset( offset );
 		changeCount( count );
+	}
+	
+	public function setFavorsSelect( favors:Array<String> ):Void {
+		combo_favor.empty();
+		combo_favor.append( '<option value="999">我關注的</option>' );
+		Lambda.foreach( favors, function( str ) {
+			combo_favor.append( '<option value="' + str + '">' + str + '<option>' );
+			return true;
+		});
+		combo_favor.combobox( {
+			value:'999'
+		});
 	}
 	
 	public function drawPrice( stockInfo:Dynamic, offset:Int = 0 ):Void {

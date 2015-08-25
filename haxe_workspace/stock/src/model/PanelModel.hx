@@ -14,6 +14,7 @@ class PanelModel extends Model implements IPanel
 	public static var ON_SHOWLINE_CHANGE = 'on_showline_change';
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
+	public static var ON_FAVOR_LIST_CHANGE = 'on_favor_list_change';
 	
 	public var currentStockId(default, set):String;
 	public var currentOffset(default, set):Int = 0;
@@ -169,6 +170,22 @@ class PanelModel extends Model implements IPanel
 		});
 	}
 	
+	function addToFavorList() {
+		var favorList:Array<String> = config.favors;
+		if ( favorList.indexOf( currentStockId ) == -1 ) {
+			favorList.push( currentStockId );
+		}
+		notify( ON_FAVOR_LIST_CHANGE, { favorList:favorList } );
+	}
+	
+	function removeFromFavorList() {
+		var favorList:Array<String> = config.favors;
+		if ( favorList.indexOf( currentStockId ) != -1 ) {
+			favorList.remove( currentStockId );
+		}
+		notify( ON_FAVOR_LIST_CHANGE, { favorList:favorList } );
+	}
+	
 	function set_currentOffset( offset:Int ) {
 		currentOffset = offset;
 		if ( currentOffset < 0 ) currentOffset = 0;
@@ -208,7 +225,11 @@ class PanelModel extends Model implements IPanel
 	}
 	
 	function set_currentFavor( favor ) {
+		if ( getStockById( currentStockId ) == null ) {
+			return currentFavor = false;
+		}
 		getStockById( currentStockId ).favor = favor; 
+		favor ? addToFavorList() : removeFromFavorList();
 		return currentFavor = favor;
 	}
 }
