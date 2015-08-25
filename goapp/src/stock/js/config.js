@@ -33,12 +33,12 @@ app.config.index = [
 					];
 app.config.hoverInfo = {
 	default:'',
-	'btn_first':'返回最新<span style="color:yellow">[shift+ctrl+left]</span>',
-	'btn_prev10':'下十日<span style="color:yellow">[ctrl+left]</span>',
-	'btn_prev':'下一日<span style="color:yellow">[left]</span>',
-	'btn_next':'上一日<span style="color:yellow">[right]</span>',
-	'btn_next10':'上十日<span style="color:yellow">[ctrl+right]</span>',
-	'btn_last':'返回最早<span style="color:yellow">[shift+ctrl+right]</span>',
+	'btn_first':'返回最新<span style="color:yellow">[ , + . + A ]</span>',
+	'btn_prev10':'下十日<span style="color:yellow">[ , + A ]</span>',
+	'btn_prev':'下一日<span style="color:yellow">[ A ]</span>',
+	'btn_next':'上一日<span style="color:yellow">[ D ]</span>',
+	'btn_next10':'上十日<span style="color:yellow">[ , + D ]</span>',
+	'btn_last':'返回最早<span style="color:yellow">[ , + . + D ]</span>',
 	line:{
 		default:'請點我學習指標!'
 	}

@@ -527,45 +527,63 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	init: function() {
 		var _g1 = this;
 		model_Model.prototype.init.call(this);
-		var isCtrl = false;
-		var isShift = false;
+		var isDot = false;
+		var isComma = false;
 		this.doc = this.config.doc;
 		this.doc.keydown(function(e) {
 			var _g = e.which;
 			switch(_g) {
 			case 16:
-				isShift = true;
 				break;
 			case 17:
-				isCtrl = true;
 				break;
 			case 18:
+				break;
+			case 188:
+				isComma = true;
+				break;
+			case 190:
+				isDot = true;
+				break;
+			case 191:
 				break;
 			}
 		});
 		this.doc.keyup(function(e1) {
-			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 64, className : "view.PanelView", methodName : "init"});
+			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 75, className : "view.PanelView", methodName : "init"});
 			var _g2 = e1.which;
 			switch(_g2) {
 			case 16:
-				isShift = false;
 				break;
 			case 17:
-				isCtrl = false;
+				break;
+			case 188:
+				isComma = false;
+				break;
+			case 190:
+				isDot = false;
+				break;
+			case 191:
+				break;
+			case 87:
+				break;
+			case 65:
+				if(isDot && isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000}); else if(isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
+				break;
+			case 83:
+				break;
+			case 68:
+				if(isDot && isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000}); else if(isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
 				break;
 			case 18:
 				break;
 			case 38:
 				break;
 			case 37:
-				if(isCtrl && isShift) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000}); else if(isCtrl) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
 				break;
 			case 40:
 				break;
 			case 39:
-				if(isCtrl && isShift) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000}); else if(isCtrl) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
-				break;
-			case 68:
 				break;
 			case 70:
 				break;
@@ -573,7 +591,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		});
 		this.body = this.config.body;
 		this.body.find(".easyui-tooltip").tooltip({ position : "right", onShow : function(e2) {
-			haxe_Log.trace("GGG",{ fileName : "PanelView.hx", lineNumber : 101, className : "view.PanelView", methodName : "init"});
 			var self = _g1.j(e2.currentTarget);
 			var hoverInfo = app.config.hoverInfo;
 			var hoverstr;
