@@ -361,20 +361,29 @@
 (defn volatility-seq 
   "計算波動"
   [n vs]
-  (when (>= (count vs) n)
-    (let [c1 (first vs)
-          cn (nth vs (dec n))]
-      (cons (/ (- c1 cn) cn) (lazy-seq (volatility-seq n (rest vs)))))))
-    
+  (map
+    #(/ (- %1 %2) %2)
+    vs
+    (drop n vs)))
+
 (defn osc-seq 
   "振盪量指標osc
   可以取代mtm動量指標"
   [n vs]
-  (when (>= (count vs) n)
-    (let [c1 (first vs)
-          cn (nth vs (dec n))]
-      (cons (/ c1 cn) (lazy-seq (osc-seq n (rest vs)))))))
-      
+  (map
+    #(/ %1 %2)
+    vs
+    (drop n vs)))
+    
+(defn dpo-seq 
+  "Detrended Price Oscillator (DPO) 區間震蕩線"
+  [n kline]
+  (let [ma (reverse (sma-seq n (stl/close (reverse kline))))
+        c (stl/close kline)]
+    (map
+      -
+      c
+      (drop (inc (/ n 2)) ma))))
       
 (defn rsi-seq 
   "強弱指標"
@@ -396,6 +405,32 @@
           v (max (- high low) (.abs js/Math (- high close)) (.abs js/Math (- low close)))]
       (cons v (lazy-seq (tr-seq (rest kline)))))))
       
+(defn tl-seq [kline]
+  (map
+    (partial min)
+    (stl/close kline)
+    (rest (stl/low kline))))
+      
+(defn uos-seq [m n o kline]
+  (let [tl (tl-seq kline)
+        bp (map - (rest (stl/close kline)) tl)
+        tr (tr-seq kline)
+        ruo
+        (map
+          (fn [b1 b2 b3 t1 t2 t3]
+            (+ (* 4 (/ b1 t1)) (* 2 (/ b2 t2)) (/ b3 t3)))
+          (reverse (map #(* m %) (sma-seq m bp)))
+          (reverse (map #(* n %) (sma-seq n bp)))
+          (reverse (map #(* o %) (sma-seq o bp)))
+          (reverse (map #(* m %) (sma-seq m tr)))
+          (reverse (map #(* n %) (sma-seq n tr)))
+          (reverse (map #(* o %) (sma-seq o tr))))
+        uos
+        (map
+          #(* (/ 100 7) %)
+          ruo)]
+    (reverse uos)))
+      
 (defn dm-seq [kline]
   (when (>= (count kline) 2)
     (let [[_ _ a b _ _] (first kline)
@@ -415,7 +450,9 @@
   (sma-seq n (tr-seq kline)))
   
 
-(defn cci [n kline]
+(defn cci-seq 
+  "Commodity Channel Index (CCI) 順勢指標"
+  [n kline]
   (when (>= (count kline) n)
     (let [factor (/ 1 0.015)
           ps (take n (stl/typical kline))
@@ -423,4 +460,13 @@
           ps-sd (StandardDeviation ps-avg ps)
           z (last (z-score ps-avg ps-sd ps))
           v (* factor z)]
-        (cons v (lazy-seq (cci n (rest kline)))))))
+        (cons v (lazy-seq (cci-seq n (rest kline)))))))
+        
+(defn trix-seq 
+  "Triple Exponential (TRIX) 三重指數平滑移動平均指標"
+  [n vs]
+  (let [ax (ema-seq n (reverse vs))
+        bx (ema-seq n ax)
+        cx (ema-seq n bx)
+        vs (volatility-seq 1 (reverse cx))]
+    vs))
