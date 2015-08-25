@@ -429,7 +429,7 @@
         (map
           #(* (/ 100 7) %)
           ruo)]
-    uos))
+    (reverse uos)))
       
 (defn dm-seq [kline]
   (when (>= (count kline) 2)
