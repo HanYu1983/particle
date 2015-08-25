@@ -334,7 +334,11 @@ class PanelView extends Model implements IPanelView
 				onShow:function( e ) {
 					var self = j( e.currentTarget );
 					var hoverInfo = untyped __js__( 'app.config.hoverInfo.line' );
-					self.tooltip( 'update', Reflect.field( hoverInfo, self.attr( 'ptype' ) ) );
+					var hoverstr = switch( Reflect.field( hoverInfo, self.attr( 'ptype' ) ) ) {
+						case null:Reflect.field( hoverInfo, 'default' );
+						case hstr:hstr;
+					}
+					self.tooltip( 'update', hoverstr );
 				}
 			});
 			return true;
