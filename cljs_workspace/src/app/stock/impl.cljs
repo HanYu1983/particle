@@ -317,8 +317,8 @@
               [
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :line :line (repeat (count kline) 100) :color "lightgray"}
-                {:type :line :line (repeat (count kline) -100) :color "lightgray"}
+                {:type :line :line (repeat (count kline) 100) :color "white"}
+                {:type :line :line (repeat (count kline) -100) :color "white"}
               ])
               
             {:type nil})))
