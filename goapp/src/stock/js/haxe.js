@@ -656,7 +656,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.combo_favor = this.config.combo_favor;
 		this.combo_favor.combobox({ onSelect : function(record) {
 			var value = record.value;
-			if(value != "999") _g1.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
+			_g1.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
 		}});
 		this.setFavorsSelect([]);
 		this.btn_controller = this.config.btn_controller;
@@ -687,7 +687,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.table_stockPrice = this.config.table_stockPrice;
 	}
 	,initPanel: function(model,stock,stockInfo) {
-		haxe_Log.trace(stock,{ fileName : "PanelView.hx", lineNumber : 224, className : "view.PanelView", methodName : "initPanel"});
 		var stockId = stock.id;
 		var offset = stock.offset;
 		var count = stock.count;
@@ -700,12 +699,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	,setFavorsSelect: function(favors) {
 		var _g = this;
 		this.combo_favor.empty();
-		this.combo_favor.append("<option value=\"999\">我關注的</option>");
 		Lambda.foreach(favors,function(str) {
 			_g.combo_favor.append("<option value=\"" + str + "\">" + str + "<option>");
 			return true;
 		});
-		this.combo_favor.combobox({ value : "999"});
+		this.combo_favor.combobox();
 	}
 	,drawPrice: function(stockInfo,offset) {
 		if(offset == null) offset = 0;

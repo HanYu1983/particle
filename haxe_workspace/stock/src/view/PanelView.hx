@@ -190,8 +190,7 @@ class PanelView extends Model implements IPanelView
 		combo_favor.combobox({
 			onSelect:function( record ) {
 				var value = record.value;
-				if ( value != '999' )
-					notify( ON_COMBO_FAVOR_CHANGE, { stockId:value } );
+				notify( ON_COMBO_FAVOR_CHANGE, { stockId:value } );
 			}
 		});
 		
@@ -221,7 +220,7 @@ class PanelView extends Model implements IPanelView
 	}
 	
 	public function initPanel( model:Dynamic, stock:Dynamic, stockInfo:Dynamic ):Void {
-		trace( stock );
+		//trace( stock );
 		
 		var stockId = stock.id;
 		var offset = stock.offset;
@@ -243,14 +242,11 @@ class PanelView extends Model implements IPanelView
 	
 	public function setFavorsSelect( favors:Array<String> ):Void {
 		combo_favor.empty();
-		combo_favor.append( '<option value="999">我關注的</option>' );
 		Lambda.foreach( favors, function( str ) {
 			combo_favor.append( '<option value="' + str + '">' + str + '<option>' );
 			return true;
 		});
-		combo_favor.combobox( {
-			value:'999'
-		});
+		combo_favor.combobox();
 	}
 	
 	public function drawPrice( stockInfo:Dynamic, offset:Int = 0 ):Void {
