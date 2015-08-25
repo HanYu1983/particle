@@ -309,8 +309,8 @@
 (defn rsv-seq
   "未成熟隨機值"
   [n kline]
-  (let [h9 (maxN-seq 9 #(apply max %) (stl/high kline))
-        l9 (maxN-seq 9 #(apply min %) (stl/low kline))
+  (let [h9 (maxN-seq n #(apply max %) (stl/high kline))
+        l9 (maxN-seq n #(apply min %) (stl/low kline))
         c (stl/close kline)]
     (map
       (fn [c l h]
