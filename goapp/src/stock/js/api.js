@@ -32,7 +32,7 @@ var api = {};
 	價量 => AccDist | Chaikin | eom
 	威爾德 => osc | rsi | dmi | sar
 	余氏 => yu-clock | yu-macd | yu-car | yu-kd
-	其它 => kd | atr
+	其它 => kd | atr | cv | cci
 			d: {
 				n: int,
 				m: int,
@@ -60,6 +60,8 @@ var api = {};
 	趨勢 dmi(14, 14)
 	累積/派發線 AccDist(1)
 	kd線圖yu-kd(9)
+	蔡金波動性指標cv(10, 10)
+	順勢指標cci(10)
 	*/
 	function draw( canvas, id, type, offset, count, sub ){
 		var params = {

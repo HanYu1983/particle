@@ -55,7 +55,9 @@ app.config.hoverInfo = {
 			'</div>'
 		].join('<br>'),
 		
-		'yu-kd':'<h2>kd圖表線</h2>'
+		'yu-kd':'<h2>kd圖表線</h2>',
+		'cv':'<h2>蔡金波動性指標</h2>',
+		'cci':'<h2>順勢指標</h2>'
 	}
 }
 

@@ -358,6 +358,14 @@
     ; vector的first和list的first為倒反
     [(map second vs) (map first vs)]))
     
+(defn volatility-seq 
+  "計算波動"
+  [n vs]
+  (when (>= (count vs) n)
+    (let [c1 (first vs)
+          cn (nth vs (dec n))]
+      (cons (/ (- c1 cn) cn) (lazy-seq (volatility-seq n (rest vs)))))))
+    
 (defn osc-seq 
   "振盪量指標osc
   可以取代mtm動量指標"
@@ -405,3 +413,14 @@
   "真實波幅"
   [n kline]
   (sma-seq n (tr-seq kline)))
+  
+
+(defn cci [n kline]
+  (when (>= (count kline) n)
+    (let [factor (/ 1 0.015)
+          ps (take n (stl/typical kline))
+          ps-avg (average ps)
+          ps-sd (StandardDeviation ps-avg ps)
+          z (last (z-score ps-avg ps-sd ps))
+          v (* factor z)]
+        (cons v (lazy-seq (cci n (rest kline)))))))

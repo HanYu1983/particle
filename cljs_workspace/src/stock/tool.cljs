@@ -181,6 +181,11 @@
 (defn mid [kline]
   (if (seq? kline)
     (map mid kline)
+    (let [[_ _ high low _ _] kline]
+      (/ (+ high low) 2))))
+      
+(defn typical [kline]
+  (if (seq? kline)
+    (map typical kline)
     (let [[_ _ high low close _] kline]
       (/ (+ high low close) 3))))
-      

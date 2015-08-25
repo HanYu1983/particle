@@ -208,6 +208,26 @@
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
                 {:type :grid :line vs :color "gray"}
               ])
+              
+            "cv"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  rema 
+                  (->>
+                    (map 
+                      - 
+                      (stf/maxN-seq n #(apply max %) (stl/high kline))
+                      (stf/maxN-seq n #(apply min %) (stl/low kline)))
+                    reverse
+                    (stf/ema-seq 1)
+                    reverse)
+                  vs
+                  (stf/volatility-seq m rema)]
+              [
+                {:type :line :line vs :color c1}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line vs :color "gray"}
+              ])
             
             "eom"
             (let [n (get subd "n")
@@ -289,6 +309,16 @@
                 {:type :line :line (reverse (stf/sma-seq n line)) :color c2}
                 {:type :grid :line line :color "gray"}
                 {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+              ])
+              
+            "cci"
+            (let [n (get subd "n")
+                  line (stf/cci n (reverse kline))]
+              [
+                {:type :line :line (reverse line) :color c1}
+                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :line :line (repeat (count kline) 100) :color "lightgray"}
+                {:type :line :line (repeat (count kline) -100) :color "lightgray"}
               ])
               
             {:type nil})))
