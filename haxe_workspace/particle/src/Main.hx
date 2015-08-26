@@ -17,6 +17,7 @@ class Main
 
 	public function new() 
 	{
+		//正要寫parser
 		
 		treeView.config = {
 			//table_props:j( '#table_props' ),
