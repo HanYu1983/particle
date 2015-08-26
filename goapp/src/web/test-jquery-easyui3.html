@@ -36,14 +36,25 @@
 			<div class="hori">
 				<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
 			</div>
+			<div class="hori">
+				<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"></a>
+			</div>
 		</div>
 	</script>
 	<body>
 		
 		<div class="easyui-layout" style="width:100%;height:100%;">
-			<div data-options="region:'west',split:true" title="樹狀圖" style="width:250px;">
+			<div data-options="region:'west',split:true" title="樹狀圖" style="width:280px;">
 				<div class="easyui-layout" style="width:100%;height:100%;">
 					<div data-options="region:'north',split:true" style="height:200px">
+						<div class="group" style="text-align:center;">
+							<div class="hori">
+								<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
+							</div>
+							<div class="hori">
+								<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
+							</div>
+						</div>	
 						<ul class="easyui-tree" data-options="animate:true,checkbox:true,dnd:true">
 							<li>
 								<span>My Documents</span>
@@ -80,7 +91,7 @@
 					</div>
 					
 					<div title="初始屬性" data-options="region:'center'" style="padding:10px;">
-						<div id="mc_props_container" class="group" >
+						<div id="mc_props_container" class="group" style="min-width:250px;" >
 							<!-- created by script -->
 						</div>
 					</div>
@@ -93,6 +104,8 @@
 				<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
 					<div class="hori">
 						<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
+						<a href="#" class="easyui-linkbutton" >上移</a>
+						<a href="#" class="easyui-linkbutton" >下移</a>
 					</div>
 					<div class="hori">
 						<select class="easyui-combobox" name="state" style="width:80px;">
@@ -113,9 +126,7 @@
 				<div class="group" style="text-align:center">
 					<div class="hori" style="width:758px;">
 						<table id="table_props" style="width:100%;"
-							data-options="singleSelect:true,collapsible:false,
-								remoteSort:false,
-								multiSort:true">
+							data-options="singleSelect:true,collapsible:false,remoteSort:false,multiSort:true">
 							<thead>
 								<tr>
 									<th data-options="field:'name',width:100,sortable:true" >屬性</th>
@@ -145,6 +156,8 @@
 	<script src='res/cljs/cljs.js'></script>
 	<script>
 	var ary_props = [ 	{id:'mass', name:'質量'}, 
+						{id:'pos_x', name:'位置x'}, 
+						{id:'pos_y', name:'位置y'}, 
 						{id:'pos_r', name:'角度'}, 
 						{id:'vel_x', name:'速度x'}, 
 						{id:'vel_y', name:'速度y'}, 
