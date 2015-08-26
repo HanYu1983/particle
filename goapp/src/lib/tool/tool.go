@@ -11,7 +11,18 @@ import (
   "net/url"
   "io/ioutil"
   "appengine"
+  "html/template"
 )
+
+func TemplateWithFile(key string, path string) *template.Template{
+  t := template.New(key)
+  var err error
+  t, err = t.Parse(StringWithFilePath(path))
+  if err != nil {
+    panic( err.Error() )
+  }
+  return t
+}
 
 func ReadAll(res *http.Response) ([]byte, error) {
   defer res.Body.Close()

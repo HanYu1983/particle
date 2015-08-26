@@ -63,3 +63,41 @@ func GetFile (ctx appengine.Context, id int64) (DBFile, error) {
   err := datastore.Get(ctx, key, &file)
   return file, err
 }
+
+func DeleteFile (ctx appengine.Context, id int64) error {
+  file, err := GetFile( ctx, id )
+  if err != nil {
+    return err
+  }
+  
+  if file.IsDir {
+    files, err := FileList( ctx, id )
+    if err != nil {
+      return err
+    }
+    
+    for _, file := range files {
+      err := DeleteFile( ctx, file.Key )
+      if err != nil {
+        return err
+      }
+    }
+    
+    key := db.GetKey( ctx, Kind, id, nil )
+    err = datastore.Delete( ctx, key )
+    if err != nil {
+      return err
+    }
+    
+  } else {
+    key := db.GetKey( ctx, Kind, id, nil )
+    err := datastore.Delete( ctx, key )
+    if err != nil {
+      return err
+    }
+    
+  }
+  
+  return nil
+  
+}
