@@ -49,43 +49,15 @@
 					<div data-options="region:'north',split:true" style="height:200px">
 						<div class="group" style="text-align:center;">
 							<div class="hori">
-								<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
+								<a href="#" id="btn_addTreeNode" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
 							</div>
 							<div class="hori">
-								<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
+								<a href="#" id="btn_removeTreeNode" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
 							</div>
 						</div>	
-						<ul class="easyui-tree" data-options="animate:true,checkbox:true,dnd:true">
+						<ul id="tree_particle" class="easyui-tree" data-options="animate:true,checkbox:true,dnd:true">
 							<li>
-								<span>My Documents</span>
-								<ul>
-									<li data-options="state:'closed'">
-										<span>Photos</span>
-										<ul>
-											<li>
-												<span>Friend</span>
-											</li>
-											<li>
-												<span>Wife</span>
-											</li>
-											<li>
-												<span>Company</span>
-											</li>
-										</ul>
-									</li>
-									<li>
-										<span>Program Files</span>
-										<ul>
-											<li>Intel</li>
-											<li>Java</li>
-											<li>Microsoft Office</li>
-											<li>Games</li>
-										</ul>
-									</li>
-									<li>index.html</li>
-									<li>about.html</li>
-									<li>welcome.html</li>
-								</ul>
+								<span>root</span>
 							</li>
 						</ul>
 					</div>
@@ -151,7 +123,7 @@
 	<script src='res/js/lib/three.min.js'></script>
 	<script src='res/js/lib/underscore-min.js'></script>
 	<script src='res/js/common.js'></script>
-	<script src="res/js/haxe.js"></script>
+	
 	<script src='res/cljs/goog/base.js'></script>
 	<script src='res/cljs/cljs.js'></script>
 	<script>
@@ -176,15 +148,9 @@
 	for( var i = 0; i < ary_props.length; ++i ){
 		mc_props_container.append( tmpl_prop.tmpl( ary_props[i] ));
 	}
-	
+	/*
 	var table_props = $('#table_props' );
-	
 	table_props.datagrid();
-	//table_props.datagrid('deleteRow', 0);
-	//table_props.datagrid('refreshRow', 0);
-	
-	console.log("GG");	
-	
 	$('#table_props').datagrid('appendRow',{
 		name: 'new name',
 		type: 30,
@@ -207,7 +173,7 @@
 	$("#cpk_color").spectrum({
 		color: "#f00"
 	});
-	
+	*/
 	common.onModel.subscribe(function(data){
 		//console.log( data )
 	})
@@ -223,7 +189,7 @@
 	<script>
 	
 	//測試用讀取資料
-	var testLoadData = { 	id:'root', 
+	var testLoadData = { 	id:0, 
 							lifetime:5,
 							mass:3,
 							color:'#33ddff',
@@ -234,7 +200,7 @@
 									angle:0,
 									range:0,
 									force:0,
-									prototype:[ { 	id:'root_particle', 
+									prototype:[ { 	id:1, 
 													lifetime:3,
 													mass:3,
 													color:'#33ddff',
@@ -242,51 +208,6 @@
 													pos:[0, 0, 0], vel:[0, 0, 0] }] }}
 	
 	//goog.require("app.main2");
-	//window.haxeStart();
 	</script>
-	
-	
-	<!-- script test -->
-	<script>
-	/*
-	console.log("GG");
-	$('#slr_life' ).slider({
-		onChange:function( newv, old ){
-			console.log( newv, old );
-		}
-	});
-	*/
-	//jquery easyui spinner event have bugs
-	/*
-	$('#txt_life' ).spinner({
-		onSpinUp:function(){
-			console.log("U");
-		}
-	});
-	*/
-	
-	//不知道怎麼在tree_particle 上用
-	/*
-	$('#tree_particle').bind('contextmenu',function(e){
-                e.preventDefault();
-                $('#menu_particleTree').menu('show', {
-                    left: e.pageX,
-                    top: e.pageY
-                });
-            });
-			*/
-	/*
-	$('#tree_particle').tree({
-		onClick: function(node){
-			alert(node.text);  // alert node text property when clicked
-		},
-		onDrop:function( target,source,point ){
-			console.log( target );
-			console.log( source );
-			console.log( point );
-		
-		}
-	});
-	*/
-	</script>
+	<script src="res/js/haxe.js"></script>
 </html>
