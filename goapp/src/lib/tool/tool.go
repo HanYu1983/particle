@@ -98,7 +98,7 @@ func Assert( fn func()(bool, string) ){
   }
 }
 
-func ifError( err error ) func()(bool, string){
+func IfError( err error ) func()(bool, string){
   return func()(bool, string){
     if err != nil {
       return true, err.Error()

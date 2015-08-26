@@ -35,7 +35,6 @@ func MakeDir (ctx appengine.Context, position int64, name string) (int64, error)
   key := db.NewKey( ctx, Kind, nil )
   
   file := DBFile{
-    Key: 0,
     Position: position,
     IsDir: true,
     Name: name,
@@ -51,8 +50,8 @@ func FileList (ctx appengine.Context, position int64) ([]DBFile, error) {
   
   var entities []DBFile
   keys, err := q.GetAll(ctx, &entities)
-  for idx, entity := range entities {
-    entity.Key = keys[idx].IntID()
+  for idx, _ := range entities {
+    entities[idx].Key = keys[idx].IntID()
   }
   
   return entities, err
