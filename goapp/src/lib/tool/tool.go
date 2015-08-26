@@ -1,4 +1,4 @@
-package hello
+package tool
 
 import (
   "bytes"
@@ -11,7 +11,18 @@ import (
   "net/url"
   "io/ioutil"
   "appengine"
+  "html/template"
 )
+
+func TemplateWithFile(key string, path string) *template.Template{
+  t := template.New(key)
+  var err error
+  t, err = t.Parse(StringWithFilePath(path))
+  if err != nil {
+    panic( err.Error() )
+  }
+  return t
+}
 
 func ReadAll(res *http.Response) ([]byte, error) {
   defer res.Body.Close()
@@ -98,7 +109,7 @@ func Assert( fn func()(bool, string) ){
   }
 }
 
-func ifError( err error ) func()(bool, string){
+func IfError( err error ) func()(bool, string){
   return func()(bool, string){
     if err != nil {
       return true, err.Error()

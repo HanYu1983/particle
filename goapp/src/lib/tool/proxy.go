@@ -1,4 +1,4 @@
-package hello
+package tool
 
 import (
   "net/http"
@@ -18,13 +18,13 @@ func Proxy(w http.ResponseWriter, r *http.Request){
   url := r.Form["url"][0]
 
   req, err := GetRequest( url, nil )
-  Assert( ifError( err ) )
+  Assert( IfError( err ) )
 
   res, err := DoRequest( req, ctx )
-  Assert( ifError( err ) )
+  Assert( IfError( err ) )
 
   body, err := ReadAll( res )
-  Assert( ifError( err ) )
+  Assert( IfError( err ) )
 
   w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d, public", 60* 60* 24))
   fmt.Fprint(w, string(body[:]))
