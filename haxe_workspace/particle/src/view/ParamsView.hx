@@ -25,20 +25,20 @@ class ParamsView extends Model
 		currentParticleObj = particleObj;
 		var particle = particleObj.particle;
 		
-		setPropValue( 'lifetime', particle.lifetime );
+		setPropValue( 'lifetime', particle.lifetime * 1000 );
 		setPropValue( 'mass', particle.mass );
 		setPropValue( 'size_x', particle.size[0] );
 		setPropValue( 'size_y', particle.size[1] );
 		setPropValue( 'vel_x', particle.vel[0] );
 		setPropValue( 'vel_y', particle.vel[1] );
-		setPropValue( 'vel_r', particle.vel[2] );
-		setPropValue( 'pos_r', particle.pos[2] );
+		setPropValue( 'vel_r', particle.vel[2] / Math.PI * 180 );
+		setPropValue( 'pos_r', particle.pos[2] / Math.PI * 180 );
 		
 		if ( particle.emit != null ) {
 			setPropValue( 'count', particle.emit.count );
-			setPropValue( 'duration', particle.emit.duration );
-			setPropValue( 'angle', particle.emit.angle );
-			setPropValue( 'range', particle.emit.range );
+			setPropValue( 'duration', particle.emit.duration * 1000 );
+			setPropValue( 'angle', particle.emit.angle / Math.PI * 180 );
+			setPropValue( 'range', particle.emit.range / Math.PI * 180 );
 			setPropValue( 'force', particle.emit.force );
 			
 			getPropContainer( 'count' ).show();
@@ -64,9 +64,19 @@ class ParamsView extends Model
 		root.find( '.easyui-numberspinner-code' ).numberspinner( {
 			onChange:function(newv, oldv ) {
 				trace( newv, oldv );
+				
+				var newValue = Std.parseFloat( newv );
 				var jdom = j( untyped __js__( 'this' ) );
 				var proptype = jdom.parent().parent().attr( 'proptype' );
-				notify( ON_PROP_CHANGE, { id:currentParticleObj.id, proptype:proptype, value:newv } );
+				
+				switch( proptype ) {
+					case 'duration', 'lifetime':
+						newValue /= 1000;
+					case 'angle', 'range', 'pos_r', 'vel_r':
+						newValue = newValue / 180 * Math.PI;
+				}
+				
+				notify( ON_PROP_CHANGE, { id:currentParticleObj.id, proptype:proptype, value:newValue } );
 				//trace( jdom.parent().parent().attr( 'proptype' ));
 				currentPropSpr = jdom;
 			},
@@ -85,7 +95,7 @@ class ParamsView extends Model
 		Main.addMouseWheelEvent( j( 'body' ), onBodyWheel );
 	}
 	
-	function setPropValue( type, value ) {
+	function setPropValue( type, value:Float ) {
 		getPropContainer( type ).find( '.easyui-numberspinner-code' ).numberspinner( 'setValue', value );
 	}
 	

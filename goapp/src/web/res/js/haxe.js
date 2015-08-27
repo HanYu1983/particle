@@ -297,6 +297,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,setParticleProps: function(id,type,value) {
 		if(!this.findParticleById(id)) return;
+		haxe_Log.trace(id,{ fileName : "PanelModel.hx", lineNumber : 45, className : "model.PanelModel", methodName : "setParticleProps", customParams : [type,value]});
 		switch(type) {
 		case "size_x":
 			this.findParticleById(id).particle.size[0] = value;
@@ -325,6 +326,8 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		default:
 			Reflect.setField(this.findParticleById(id).particle,type,value);
 		}
+		haxe_Log.trace("GGGGGGGGGGGGGGGGGGGGGGGGGGGGG",{ fileName : "PanelModel.hx", lineNumber : 67, className : "model.PanelModel", methodName : "setParticleProps"});
+		haxe_Log.trace(this.findParticleById(id).particle,{ fileName : "PanelModel.hx", lineNumber : 68, className : "model.PanelModel", methodName : "setParticleProps"});
 		this.notify(model_PanelModel.ON_PROPS_CAHNGE);
 	}
 	,findParticleById: function(id) {
@@ -401,19 +404,19 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 	setValues: function(particleObj) {
 		this.currentParticleObj = particleObj;
 		var particle = particleObj.particle;
-		this.setPropValue("lifetime",particle.lifetime);
+		this.setPropValue("lifetime",particle.lifetime * 1000);
 		this.setPropValue("mass",particle.mass);
 		this.setPropValue("size_x",particle.size[0]);
 		this.setPropValue("size_y",particle.size[1]);
 		this.setPropValue("vel_x",particle.vel[0]);
 		this.setPropValue("vel_y",particle.vel[1]);
-		this.setPropValue("vel_r",particle.vel[2]);
-		this.setPropValue("pos_r",particle.pos[2]);
+		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
+		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
 		if(particle.emit != null) {
 			this.setPropValue("count",particle.emit.count);
-			this.setPropValue("duration",particle.emit.duration);
-			this.setPropValue("angle",particle.emit.angle);
-			this.setPropValue("range",particle.emit.range);
+			this.setPropValue("duration",particle.emit.duration * 1000);
+			this.setPropValue("angle",particle.emit.angle / Math.PI * 180);
+			this.setPropValue("range",particle.emit.range / Math.PI * 180);
 			this.setPropValue("force",particle.emit.force);
 			this.getPropContainer("count").show();
 			this.getPropContainer("duration").show();
@@ -434,9 +437,18 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.root = this.config.root;
 		this.root.find(".easyui-numberspinner-code").numberspinner({ onChange : function(newv,oldv) {
 			haxe_Log.trace(newv,{ fileName : "ParamsView.hx", lineNumber : 66, className : "view.ParamsView", methodName : "init", customParams : [oldv]});
+			var newValue = parseFloat(newv);
 			var jdom = _g.j(this);
 			var proptype = jdom.parent().parent().attr("proptype");
-			_g.notify(view_ParamsView.ON_PROP_CHANGE,{ id : _g.currentParticleObj.id, proptype : proptype, value : newv});
+			switch(proptype) {
+			case "duration":case "lifetime":
+				newValue /= 1000;
+				break;
+			case "angle":case "range":case "pos_r":case "vel_r":
+				newValue = newValue / 180 * Math.PI;
+				break;
+			}
+			_g.notify(view_ParamsView.ON_PROP_CHANGE,{ id : _g.currentParticleObj.id, proptype : proptype, value : newValue});
 			_g.currentPropSpr = jdom;
 		}, onSpinUp : function() {
 			var jdom1 = _g.j(this);

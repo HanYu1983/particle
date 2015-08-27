@@ -42,6 +42,7 @@ class PanelModel extends Model
 	public function setParticleProps( id:Int, type:String, value:Dynamic ) {
 		if ( !findParticleById( id )) return;
 		
+		trace( id, type, value );
 		switch( type ) {
 			case 'size_x':
 				findParticleById( id ).particle.size[0] = value;
@@ -62,6 +63,9 @@ class PanelModel extends Model
 			case _:
 				Reflect.setField( findParticleById( id ).particle, type, value );
 		}
+		
+		trace("GGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+		trace( findParticleById( id ).particle );
 		
 		notify( ON_PROPS_CAHNGE );
 	}
