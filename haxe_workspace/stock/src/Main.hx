@@ -47,7 +47,6 @@ class Main
 			table_stockPrice:j( '#table_stockPrice' ),
 			btn_login:j('#btn_login' ),
 			btn_logout:j('#btn_logout' )
-		//	btn_loadPrice:j('#btn_loadPrice')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
@@ -55,14 +54,22 @@ class Main
 			saver.startAuto();
 			switch( type ) {
 				case PanelView.ON_BTN_LOGIN_CLICK:
+					showLoading();
+					
 					fb_login( function( e ) {
 						var authResponse  = e.authResponse;
 						switch( e.status ) {
 							case 'connected':
 								panelModel.currentFbId = authResponse.userID;
+								load( panelModel.currentFbId, function( err, params ) {
+									if ( err == null ) {
+										closeLoading();
+										panelModel.config = ( params == null ? panelModel.config : params );
+									}
+								});
 								slideMessage( '提示', '歡迎登入!' );
 							case 'unknown':
-								panelModel.currentFbId = '';
+								closeLoading();
 						}
 					});
 				case PanelView.ON_BTN_LOGOUT_CLICK:
@@ -130,22 +137,32 @@ class Main
 			}
 		});
 		
+		
+		
 		fb_init( '425311264344425', function() {
+			
+			showLoading();
+			
 			fb_loginStatus( function( e ) {
 				slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
 				var authResponse  = e.authResponse;
 				switch( e.status ) {
 					case 'connected':
+						
 						panelModel.currentFbId = authResponse.userID;
-						panelModel.config = newUser();
 						load( panelModel.currentFbId, function( err, params ) {
-							trace( err, params );
-							//panelModel.config = ( loadData == null ? newUser() : loadData );
-							//panelModel.config = newUser();
+							if ( err == null ) {
+								
+								closeLoading();
+								panelModel.config = ( params == null ? newUser() : params );
+							}
 						});
 						
 						slideMessage( '提示', '歡迎登入!' );
 					case 'unknown':
+						
+						closeLoading();
+						
 						panelModel.currentFbId = '';
 						panelModel.config = newUser();
 				}
@@ -166,6 +183,10 @@ class Main
 	static function main() 
 	{
 		new Main();
+	}
+	
+	static function checkError() {
+		
 	}
 	
 	public static function showLoading() {

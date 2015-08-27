@@ -98,20 +98,27 @@ var Main = function() {
 	});
 	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout")});
 	this.panelView.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 54, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "new", customParams : [type1]});
 		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
+			Main.showLoading();
 			Main.fb_login(function(e) {
 				var authResponse = e.authResponse;
 				var _g1 = e.status;
 				switch(_g1) {
 				case "connected":
 					_g.panelModel.set_currentFbId(authResponse.userID);
+					Main.load(_g.panelModel.currentFbId,function(err,params2) {
+						if(err == null) {
+							Main.closeLoading();
+							_g.panelModel.set_config(params2 == null?_g.panelModel.config:params2);
+						}
+					});
 					Main.slideMessage("提示","歡迎登入!");
 					break;
 				case "unknown":
-					_g.panelModel.set_currentFbId("");
+					Main.closeLoading();
 					break;
 				}
 			});
@@ -161,15 +168,15 @@ var Main = function() {
 			break;
 		}
 	});
-	this.panelModel.addHandler(function(type2,params2) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 101, className : "Main", methodName : "new", customParams : [params2]});
+	this.panelModel.addHandler(function(type2,params3) {
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 108, className : "Main", methodName : "new", customParams : [params3]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
-			_g.panelView.setFavorsSelect(params2.favorList);
+			_g.panelView.setFavorsSelect(params3.favorList);
 			break;
 		case "on_favor_list_change":
-			_g.panelView.setFavorsSelect(params2.favorList);
+			_g.panelView.setFavorsSelect(params3.favorList);
 			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
@@ -181,27 +188,28 @@ var Main = function() {
 			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_add_panel":
-			_g.panelView.addPanel(params2.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params2.panelObj);
+			_g.panelView.addPanel(params3.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelObj);
 			_g.panelView.resetAllCanvasListener(_g.panelModel.getAryPanel());
 			break;
 		case "on_remove_panel":
-			_g.panelView.removePanel(params2.id);
+			_g.panelView.removePanel(params3.id);
 			break;
 		case "on_showline_change":
-			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params2.panelData);
+			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelData);
 			break;
 		case "on_stockid_change":
-			_g.panelView.initPanel(_g.panelModel.config,params2.stock,_g.panelModel.currentStockInfo);
+			_g.panelView.initPanel(_g.panelModel.config,params3.stock,_g.panelModel.currentStockInfo);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
 			_g.saver.startAuto();
 			break;
 		case "on_login_change":
-			_g.saver.set_fbid(params2.fbid);
-			_g.panelView.setLogin(params2.fbid != "");
+			_g.saver.set_fbid(params3.fbid);
+			_g.panelView.setLogin(params3.fbid != "");
 			break;
 		}
 	});
 	Main.fb_init("425311264344425",function() {
+		Main.showLoading();
 		Main.fb_loginStatus(function(e2) {
 			Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
 			var authResponse1 = e2.authResponse;
@@ -209,13 +217,16 @@ var Main = function() {
 			switch(_g2) {
 			case "connected":
 				_g.panelModel.set_currentFbId(authResponse1.userID);
-				_g.panelModel.set_config(_g.newUser());
-				Main.load(_g.panelModel.currentFbId,function(err,params3) {
-					haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 142, className : "Main", methodName : "new", customParams : [params3]});
+				Main.load(_g.panelModel.currentFbId,function(err1,params4) {
+					if(err1 == null) {
+						Main.closeLoading();
+						_g.panelModel.set_config(params4 == null?_g.newUser():params4);
+					}
 				});
 				Main.slideMessage("提示","歡迎登入!");
 				break;
 			case "unknown":
+				Main.closeLoading();
 				_g.panelModel.set_currentFbId("");
 				_g.panelModel.set_config(_g.newUser());
 				break;
@@ -229,6 +240,8 @@ Main.getId = function() {
 };
 Main.main = function() {
 	new Main();
+};
+Main.checkError = function() {
 };
 Main.showLoading = function() {
 	Main.j.messager.progress({ title : "Please waiting", msg : "Loading data..."});
@@ -261,7 +274,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
-	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 215, className : "Main", methodName : "save"});
+	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 236, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
 };
 Main.load = function(fbid,cb) {
