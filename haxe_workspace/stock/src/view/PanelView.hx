@@ -8,7 +8,7 @@ import model.PanelModel;
  * ...
  * @author vic
  */
-class PanelView extends Model implements IPanelView
+class PanelView extends Model
 {
 	public static var ON_SLT_STOCKID_CHANGE = 'on_stockid_change';
 	public static var ON_BTN_CONTROLLER_CLICK = 'on_offset_change';
@@ -18,6 +18,8 @@ class PanelView extends Model implements IPanelView
 	public static var ON_SWB_FAVOR_CHANGE = 'on_favor_change';
 	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
+	public static var ON_BTN_LOGIN_CLICK = 'on_btn_login_click';
+	public static var ON_BTN_LOGOUT_CLICK = 'on_btn_logout_click';
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
@@ -35,6 +37,8 @@ class PanelView extends Model implements IPanelView
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
+	var btn_login:Dynamic;
+	var btn_logout:Dynamic;
 	//var btn_loadPrice:Dynamic;
 	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
@@ -151,6 +155,17 @@ class PanelView extends Model implements IPanelView
 		btn_addPanel.click( function( e ) {
 			notify( ON_BTN_ADDPANEL_CLICK );
 		});
+		
+		btn_login = config.btn_login;
+		btn_login.click( function() {
+			notify( ON_BTN_LOGIN_CLICK );
+		});
+		
+		btn_logout = config.btn_logout;
+		btn_logout.click( function() {
+			notify( ON_BTN_LOGOUT_CLICK );
+		});
+		
 		/*
 		btn_loadPrice = config.btn_loadPrice;
 		btn_loadPrice.click( function( e ) {
@@ -244,6 +259,16 @@ class PanelView extends Model implements IPanelView
 		
 		changeOffset( offset );
 		changeCount( count );
+	}
+	
+	public function setLogin( login:Bool ) {
+		if ( login ) {
+			btn_login.hide();
+			btn_logout.show();
+		}else {
+			btn_login.show();
+			btn_logout.hide();
+		}
 	}
 	
 	public function setTxtStockId( stockId:String ):Void {
