@@ -89,7 +89,6 @@ var Main = function() {
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
 	var _g = this;
-	this.saver.set_fbid("abc");
 	this.saver.addHandler(function(type,params) {
 		switch(type) {
 		case "ON_SAVE_SUCCESS":
@@ -99,7 +98,7 @@ var Main = function() {
 	});
 	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout")});
 	this.panelView.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 56, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 54, className : "Main", methodName : "new", customParams : [type1]});
 		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
@@ -163,9 +162,10 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params2) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 105, className : "Main", methodName : "new", customParams : [type2]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 101, className : "Main", methodName : "new", customParams : [params2]});
 		switch(type2) {
 		case "on_init":
+			_g.saver.set_saveobj(_g.panelModel.config);
 			_g.panelView.setFavorsSelect(params2.favorList);
 			break;
 		case "on_favor_list_change":
@@ -196,27 +196,25 @@ var Main = function() {
 			_g.saver.startAuto();
 			break;
 		case "on_login_change":
-			haxe_Log.trace(params2.login,{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "new"});
 			_g.saver.set_fbid(params2.fbid);
 			_g.panelView.setLogin(params2.fbid != "");
 			break;
 		}
 	});
-	this.panelModel.set_config(defaultStock);
-	this.saver.set_saveobj(this.panelModel.config);
 	Main.fb_init("425311264344425",function() {
 		Main.fb_loginStatus(function(e2) {
-			haxe_Log.trace(e2,{ fileName : "Main.hx", lineNumber : 144, className : "Main", methodName : "new"});
 			Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
 			var authResponse1 = e2.authResponse;
 			var _g2 = e2.status;
 			switch(_g2) {
 			case "connected":
 				_g.panelModel.set_currentFbId(authResponse1.userID);
+				_g.panelModel.set_config(_g.newUser());
 				Main.slideMessage("提示","歡迎登入!");
 				break;
 			case "unknown":
 				_g.panelModel.set_currentFbId("");
+				_g.panelModel.set_config(_g.newUser());
 				break;
 			}
 		});
@@ -260,7 +258,11 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
+	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 215, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
+};
+Main.load = function(fbid,cb) {
+	api.load(fbid,cb);
 };
 Main.fb_init = function(appId,cb) {
 	myapp.facebook.init(appId,cb);
@@ -286,6 +288,11 @@ Main.createNewStock = function(id,props) {
 Main.createNewLine = function(type,deletable,props) {
 	if(deletable == null) deletable = true;
 	return { id : Main.getId(), type : type, deletable : deletable, sub : Main.createProp(props == null?app.config.index:props)};
+};
+Main.prototype = {
+	newUser: function() {
+		return { stocks : []};
+	}
 };
 Math.__name__ = true;
 var Reflect = function() { };
@@ -520,10 +527,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		});
 		this.notify(model_PanelModel.ON_REMOVE_PANEL,{ id : id});
 	}
-	,getSaveData: function() {
-		var output = { facebookId : this.config.facebookId, stocks : this.config.stocks};
-		return output;
-	}
 	,init: function() {
 		model_Model.prototype.init.call(this);
 		var j = $;
@@ -641,7 +644,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,set_currentFbId: function(fbid) {
 		this.currentFbId = fbid;
-		this.config.facebookId = fbid;
 		this.notify(model_PanelModel.ON_LOGIN_CHANGE,{ fbid : this.currentFbId});
 		return this.currentFbId;
 	}
@@ -656,7 +658,7 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 	startAuto: function() {
 		if(this.fbid == "") return;
 		if(this._timer != null) this._timer.stop();
-		this._timer = haxe_Timer.delay($bind(this,this.save),10000);
+		this._timer = haxe_Timer.delay($bind(this,this.save),3000);
 	}
 	,save: function() {
 		if(this.fbid == "") return;
