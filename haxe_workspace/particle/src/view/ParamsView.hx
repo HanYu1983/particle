@@ -63,8 +63,6 @@ class ParamsView extends Model
 		
 		root.find( '.easyui-numberspinner-code' ).numberspinner( {
 			onChange:function(newv, oldv ) {
-				trace( newv, oldv );
-				
 				var newValue = Std.parseFloat( newv );
 				var jdom = j( untyped __js__( 'this' ) );
 				var proptype = jdom.parent().parent().attr( 'proptype' );

@@ -25,9 +25,10 @@ class PanelModel extends Model
 	{
 		if ( findParticleById( id )) return;
 		_ary_partiles.push( { id:id, particle:particle } );
-		notify( ON_ADD_PARTICLE, { id:id, parentId:parentId, particle:particle } );
 		
-		log();
+		setParticleIsEmit( parentId );
+		
+		notify( ON_ADD_PARTICLE, { id:id, parentId:parentId, particle:particle } );
 	}
 	
 	public function removeParticle(id:Int, ?extra:Dynamic):Void 
@@ -35,14 +36,17 @@ class PanelModel extends Model
 		if ( !findParticleById( id )) return;
 		_ary_partiles.remove( findParticleById( id ));
 		notify( ON_REMOVE_PARTICLE, { id:id } );
-		
-		log();
+	}
+	
+	public function setParticleIsEmit( id:Int ) {
+		var parentParticle = findParticleById( id );
+		if ( parentParticle != null && parentParticle.particle.emit == null ) {
+			parentParticle.particle.emit = Main.createNewEmit();
+		}
 	}
 	
 	public function setParticleProps( id:Int, type:String, value:Dynamic ) {
 		if ( !findParticleById( id )) return;
-		
-		trace( id, type, value );
 		switch( type ) {
 			case 'size_x':
 				findParticleById( id ).particle.size[0] = value;
@@ -60,12 +64,11 @@ class PanelModel extends Model
 				findParticleById( id ).particle.vel[1] = value;
 			case 'vel_r':
 				findParticleById( id ).particle.vel[2] = value;
+			case 'count','duration','angle','range','force':
+				Reflect.setField( findParticleById( id ).particle.emit, type, value );
 			case _:
 				Reflect.setField( findParticleById( id ).particle, type, value );
 		}
-		
-		trace("GGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-		trace( findParticleById( id ).particle );
 		
 		notify( ON_PROPS_CAHNGE );
 	}
@@ -124,9 +127,6 @@ class PanelModel extends Model
 		}
 		
 		foreachObj( config );
-		
-		log();
-		
 	}
 	
 	
@@ -136,9 +136,6 @@ class PanelModel extends Model
 		return currentParticle = particle;
 	}
 	
-	function log() {
-		//trace( _ary_partiles );
-	}
 }
 
 /*

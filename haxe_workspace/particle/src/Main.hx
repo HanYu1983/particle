@@ -38,15 +38,17 @@ class Main
 				case TreeView.ON_TREE_NODE_CLICK:
 					paramsView.setValues( model.findParticleById( params.node.id ) );
 				case TreeView.ON_BTN_ADD_TREE_NODE_CLICK:
-					model.addParticle( getId(), params.selectNode.id, createNewParticle() );
+					var newId = getId();
+					model.addParticle( newId, params.selectNode.id, createNewParticle( newId ) );
 				case TreeView.ON_BTN_REMOVE_TREE_NODE_CLICK:
 					model.removeParticle( params.selectNode.id );
 				case TreeView.ON_TREE_DRAG:
+					model.setParticleIsEmit( params.toId );
 			}
 		});
 		
 		paramsView.addHandler( function( type, params) {
-			trace( type, params );
+			//trace( type, params );
 			switch( type ) {
 				case ParamsView.ON_PROP_CHANGE:
 					model.setParticleProps( params.id, params.proptype, params.value );
@@ -79,15 +81,25 @@ class Main
 		webgl.mousemove( onMousemove );
 	}
 	
-	function createNewParticle() {
+	function createNewParticle( id ) {
 		return {
-			id:0, 
+			id:id, 
 			lifetime:5,
 			mass:3,
 			color:'#33ddff',
 			size:[10, 10],
 			pos:[0, 0, 0], 
 			vel:[0, 0, 0]
+		}
+	}
+	
+	public static function createNewEmit() {
+		return { 
+			count:0,
+			duration:0,
+			angle:0,
+			range:0,
+			force:0
 		}
 	}
 	
@@ -102,9 +114,6 @@ class Main
 		
 		model.setParticleProps( 0, 'pos_x', px );
 		model.setParticleProps( 0, 'pos_y', py );
-		trace( px, py );
-		//onView.moveRoot( px, py );
-		//onView.setObject( tree.outputData() );
 	}
 	
 	static var id = 2;
@@ -114,7 +123,6 @@ class Main
 	}
 	
 	static function updateParticle( particleData:Dynamic ) {
-		trace( Json.stringify( particleData ) );
 		untyped __js__( 'common.onView.onNext' )( ['edit-particle', particleData] );
 	}
 	

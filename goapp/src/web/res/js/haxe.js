@@ -86,17 +86,18 @@ var Main = function() {
 			_g.paramsView.setValues(_g.model.findParticleById(params.node.id));
 			break;
 		case "ON_BTN_ADD_TREE_NODE_CLICK":
-			_g.model.addParticle(Main.getId(),params.selectNode.id,_g.createNewParticle());
+			var newId = Main.getId();
+			_g.model.addParticle(newId,params.selectNode.id,_g.createNewParticle(newId));
 			break;
 		case "ON_BTN_REMOVE_TREE_NODE_CLICK":
 			_g.model.removeParticle(params.selectNode.id);
 			break;
 		case "ON_TREE_DRAG":
+			_g.model.setParticleIsEmit(params.toId);
 			break;
 		}
 	});
 	this.paramsView.addHandler(function(type1,params1) {
-		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 49, className : "Main", methodName : "new", customParams : [params1]});
 		switch(type1) {
 		case "ON_PROP_CHANGE":
 			_g.model.setParticleProps(params1.id,params1.proptype,params1.value);
@@ -105,7 +106,7 @@ var Main = function() {
 	});
 	this.paramsView.set_config({ root : mc_props_container});
 	this.model.addHandler(function(type2,params2) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 61, className : "Main", methodName : "new", customParams : [params2]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 63, className : "Main", methodName : "new", customParams : [params2]});
 		switch(type2) {
 		case "ON_ADD_PARTICLE":
 			_g.treeView.appendNode(params2.id,params2.parentId);
@@ -123,11 +124,13 @@ var Main = function() {
 	this.webgl.mousemove($bind(this,this.onMousemove));
 };
 Main.__name__ = true;
+Main.createNewEmit = function() {
+	return { count : 0, duration : 0, angle : 0, range : 0, force : 0};
+};
 Main.getId = function() {
 	return Main.id++;
 };
 Main.updateParticle = function(particleData) {
-	haxe_Log.trace(JSON.stringify(particleData),{ fileName : "Main.hx", lineNumber : 117, className : "Main", methodName : "updateParticle"});
 	common.onView.onNext(["edit-particle",particleData]);
 };
 Main.addMouseWheelEvent = function(jdom,func) {
@@ -140,8 +143,8 @@ Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	createNewParticle: function() {
-		return { id : 0, lifetime : 5, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0]};
+	createNewParticle: function(id) {
+		return { id : id, lifetime : 5, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0]};
 	}
 	,onResize: function(e) {
 		this.webgl.attr("width",this.canvas_container.width());
@@ -152,7 +155,6 @@ Main.prototype = {
 		var py = e.offsetY;
 		this.model.setParticleProps(0,"pos_x",px);
 		this.model.setParticleProps(0,"pos_y",py);
-		haxe_Log.trace(px,{ fileName : "Main.hx", lineNumber : 105, className : "Main", methodName : "onMousemove", customParams : [py]});
 	}
 };
 Math.__name__ = true;
@@ -285,19 +287,21 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	addParticle: function(id,parentId,particle,extra) {
 		if(this.findParticleById(id)) return;
 		this._ary_partiles.push({ id : id, particle : particle});
+		this.setParticleIsEmit(parentId);
 		this.notify(model_PanelModel.ON_ADD_PARTICLE,{ id : id, parentId : parentId, particle : particle});
-		this.log();
 	}
 	,removeParticle: function(id,extra) {
 		if(!this.findParticleById(id)) return;
 		var x = this.findParticleById(id);
 		HxOverrides.remove(this._ary_partiles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
-		this.log();
+	}
+	,setParticleIsEmit: function(id) {
+		var parentParticle = this.findParticleById(id);
+		if(parentParticle != null && parentParticle.particle.emit == null) parentParticle.particle.emit = Main.createNewEmit();
 	}
 	,setParticleProps: function(id,type,value) {
 		if(!this.findParticleById(id)) return;
-		haxe_Log.trace(id,{ fileName : "PanelModel.hx", lineNumber : 45, className : "model.PanelModel", methodName : "setParticleProps", customParams : [type,value]});
 		switch(type) {
 		case "size_x":
 			this.findParticleById(id).particle.size[0] = value;
@@ -323,11 +327,12 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		case "vel_r":
 			this.findParticleById(id).particle.vel[2] = value;
 			break;
+		case "count":case "duration":case "angle":case "range":case "force":
+			Reflect.setField(this.findParticleById(id).particle.emit,type,value);
+			break;
 		default:
 			Reflect.setField(this.findParticleById(id).particle,type,value);
 		}
-		haxe_Log.trace("GGGGGGGGGGGGGGGGGGGGGGGGGGGGG",{ fileName : "PanelModel.hx", lineNumber : 67, className : "model.PanelModel", methodName : "setParticleProps"});
-		haxe_Log.trace(this.findParticleById(id).particle,{ fileName : "PanelModel.hx", lineNumber : 68, className : "model.PanelModel", methodName : "setParticleProps"});
 		this.notify(model_PanelModel.ON_PROPS_CAHNGE);
 	}
 	,findParticleById: function(id) {
@@ -386,12 +391,9 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		};
 		foreachObj = foreachObj1;
 		foreachObj(this.config);
-		this.log();
 	}
 	,set_currentParticle: function(particle) {
 		return this.currentParticle = particle;
-	}
-	,log: function() {
 	}
 });
 var view_ParamsView = function() {
@@ -436,7 +438,6 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		model_Model.prototype.init.call(this);
 		this.root = this.config.root;
 		this.root.find(".easyui-numberspinner-code").numberspinner({ onChange : function(newv,oldv) {
-			haxe_Log.trace(newv,{ fileName : "ParamsView.hx", lineNumber : 66, className : "view.ParamsView", methodName : "init", customParams : [oldv]});
 			var newValue = parseFloat(newv);
 			var jdom = _g.j(this);
 			var proptype = jdom.parent().parent().attr("proptype");
