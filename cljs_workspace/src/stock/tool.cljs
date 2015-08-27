@@ -62,14 +62,25 @@
           (first pass2)
           (rest pass2))
           
-        ; 將豪秒變為微秒建立Date物件，使用它的時間字串
+        ; 2014/12/27的量有問題所以過慮掉
         pass4
+        (filter
+          (fn [[d o h l c v]]
+            (let [date (js/Date. (* d 1000))]
+              (or 
+                (not= (.getFullYear date) 2014)
+                (not= (.getMonth date) (dec 12))
+                (not= (.getDate date) 27))))
+          pass3)
+          
+        ; 將豪秒變為微秒建立Date物件，使用它的時間字串
+        pass5
         (map
           (fn [[d o h l c v]]
             (let [date (js/Date. (* d 1000))]
               [(.toString date) o h l c v]))
-          pass3)]
-    pass4))
+          pass4)]
+    pass5))
 
 (defn goog-finance-historical-url [id startdate start num]
   (str
