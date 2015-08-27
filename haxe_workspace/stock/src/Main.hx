@@ -98,7 +98,7 @@ class Main
 		});
 		
 		panelModel.addHandler( function( type, params ) {
-			trace( 'panelModel', type );
+			trace( type, params );
 			
 			switch( type ) {
 				case PanelModel.ON_INIT:
@@ -137,17 +137,16 @@ class Main
 				switch( e.status ) {
 					case 'connected':
 						panelModel.currentFbId = authResponse.userID;
-						saver.fbid = panelModel.currentFbId;
-						
-						load( panelModel.currentFbId, function( loadData ) {
-							panelModel.config = ( loadData == null ? newUser() : loadData );
-						});
+						panelModel.config = newUser();
+					//	load( panelModel.currentFbId, function( ret ) {
+							//trace( ret );
+							//panelModel.config = ( loadData == null ? newUser() : loadData );
+							//panelModel.config = newUser();
+					//	});
 						
 						slideMessage( '提示', '歡迎登入!' );
 					case 'unknown':
 						panelModel.currentFbId = '';
-						
-						//沒有記錄的話，用預設資料
 						panelModel.config = newUser();
 				}
 			});

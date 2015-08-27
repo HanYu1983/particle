@@ -231,16 +231,9 @@ class PanelModel extends Model
 		getStockById( currentStockId ).note = note; 
 		return currentNote = note;
 	}
-	/*
-	function set_currentLogin( login ) {
-		currentLogin = login;
-		notify( ON_LOGIN_CHANGE, { login:login } );
-		return currentLogin;
-	}*/
 	
 	function set_currentFbId( fbid ) {
 		currentFbId = fbid;
-		//config.facebookId = fbid;
 		notify( ON_LOGIN_CHANGE, { fbid:currentFbId } );
 		return currentFbId;
 	}

@@ -162,7 +162,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params2) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 101, className : "Main", methodName : "new", customParams : [type2]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 101, className : "Main", methodName : "new", customParams : [params2]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
@@ -209,10 +209,7 @@ var Main = function() {
 			switch(_g2) {
 			case "connected":
 				_g.panelModel.set_currentFbId(authResponse1.userID);
-				_g.saver.set_fbid(_g.panelModel.currentFbId);
-				Main.load(_g.panelModel.currentFbId,function(loadData) {
-					_g.panelModel.set_config(loadData == null?_g.newUser():loadData);
-				});
+				_g.panelModel.set_config(_g.newUser());
 				Main.slideMessage("提示","歡迎登入!");
 				break;
 			case "unknown":
@@ -261,7 +258,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
-	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 216, className : "Main", methodName : "save"});
+	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 215, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
 };
 Main.load = function(fbid,cb) {
