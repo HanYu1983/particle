@@ -23,7 +23,6 @@ class PanelModel extends Model
 	{
 		if ( findParticleById( id )) return;
 		_ary_partiles.push( { id:id, particle:particle } );
-		//addToChild( findParticleById( parentId ), id );
 		notify( ON_ADD_PARTICLE, { id:id, parentId:parentId, particle:particle } );
 		
 		log();
@@ -32,9 +31,7 @@ class PanelModel extends Model
 	public function removeParticle(id:Int, ?extra:Dynamic):Void 
 	{
 		if ( !findParticleById( id )) return;
-		removeParticle( id );
-		//removeChildById( id );
-	//	removeChildFromParentById( id );
+		_ary_partiles.remove( findParticleById( id ));
 		notify( ON_REMOVE_PARTICLE, { id:id } );
 		
 		log();

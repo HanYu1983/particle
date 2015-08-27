@@ -7,6 +7,24 @@ function $extend(from, fields) {
 }
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.indexOf = function(a,obj,i) {
+	var len = a.length;
+	if(i < 0) {
+		i += len;
+		if(i < 0) i = 0;
+	}
+	while(i < len) {
+		if(a[i] === obj) return i;
+		i++;
+	}
+	return -1;
+};
+HxOverrides.remove = function(a,obj) {
+	var i = HxOverrides.indexOf(a,obj,0);
+	if(i == -1) return false;
+	a.splice(i,1);
+	return true;
+};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -68,7 +86,8 @@ var Main = function() {
 			_g.model.removeParticle(params.selectNode.id);
 			break;
 		case "ON_TREE_DRAG":
-			haxe_Log.trace(_g.model.getOutputData(_g.treeView.getRootNode()),{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
+			haxe_Log.trace(_g.model.getOutputData(_g.treeView.getRoots()),{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
+			haxe_Log.trace(_g.treeView.getRoots(),{ fileName : "Main.hx", lineNumber : 41, className : "Main", methodName : "new"});
 			break;
 		}
 	});
@@ -227,11 +246,27 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,removeParticle: function(id,extra) {
 		if(!this.findParticleById(id)) return;
-		this.removeParticle(id);
+		var x = this.findParticleById(id);
+		HxOverrides.remove(this._ary_partiles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
 		this.log();
 	}
-	,getOutputData: function(node) {
+	,getOutputData: function(treeRoots) {
+		haxe_Log.trace(treeRoots,{ fileName : "PanelModel.hx", lineNumber : 41, className : "model.PanelModel", methodName : "getOutputData"});
+		var output = { };
+		var parse;
+		var parse1 = null;
+		parse1 = function(ary) {
+			Lambda.foreach(ary,function(obj) {
+				haxe_Log.trace(obj.id,{ fileName : "PanelModel.hx", lineNumber : 46, className : "model.PanelModel", methodName : "getOutputData"});
+				if(obj.id != null) {
+				}
+				if(obj.children != null) parse1(obj.children);
+				return true;
+			});
+		};
+		parse = parse1;
+		parse(treeRoots);
 		return { };
 	}
 	,init: function() {
@@ -260,7 +295,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentParticle = particle;
 	}
 	,log: function() {
-		haxe_Log.trace(this._ary_partiles,{ fileName : "PanelModel.hx", lineNumber : 188, className : "model.PanelModel", methodName : "log"});
+		haxe_Log.trace(this._ary_partiles,{ fileName : "PanelModel.hx", lineNumber : 140, className : "model.PanelModel", methodName : "log"});
 	}
 });
 var view_TreeView = function() {
@@ -271,9 +306,6 @@ view_TreeView.__super__ = model_Model;
 view_TreeView.prototype = $extend(model_Model.prototype,{
 	getRoots: function() {
 		return this.tree_particle.tree("getRoots");
-	}
-	,getRootNode: function() {
-		return this.tree_particle.tree("getRoot");
 	}
 	,init: function() {
 		var _g = this;
@@ -307,6 +339,9 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 			return node;
 		}
 	}
+	,getRootNode: function() {
+		return this.tree_particle.tree("getRoot");
+	}
 	,getSelectedNode: function() {
 		var _g = this.tree_particle.tree("getSelected");
 		var node = _g;
@@ -328,6 +363,9 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
+if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
+	return Array.prototype.indexOf.call(a,o,i);
+};
 String.__name__ = true;
 Array.__name__ = true;
 Main.j = $;
