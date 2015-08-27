@@ -40,26 +40,70 @@ class PanelModel extends Model
 		log();
 	}
 	
-	public function getOutputData( treeRoots:Dynamic ) {
-		trace( treeRoots );
+	public function getOutputData( node:Dynamic ) {
+		/*
+		{ 	id:'root', 
+	lifetime:5,
+	mass:3,
+	color:'#33ddff',
+	size:[10, 10],
+	pos:[0, 0, 0], vel:[0, 0, 0],
+	emit: { count:1,
+			duration:.5,
+			angle:0,
+			range:0,
+			force:0,
+			prototype:[ { 	id:'root_particle', 
+							lifetime:3,
+							mass:3,
+							color:'#33ddff',
+							size:[10, 10],
+							pos:[0, 0, 0], vel:[0, 0, 0] } ] }}
+							*/
+							
+		trace( node );
 		var output = { };
 		
-		function parse( ary:Array<Dynamic> ) {
-			Lambda.foreach( ary, function( obj ) {
-				trace( obj.id );
-				if ( obj.id != null ) {
-					
+		var retobj:Dynamic = { };
+		function _loopNode( node:Dynamic, outputData:Dynamic ) {
+			trace( node );
+			if ( node.id == null ) {
+				
+			}
+			/*
+			var id = node.id;
+			var particleData = findParticleById( id );
+			outputData.id = particleData.id;
+			
+			outputData.lifetime = particleData.lifetime;
+			outputData.vel = particleData.vel;
+			outputData.pos = particleData.pos;
+			outputData.mass = particleData.mass;
+			outputData.color = particleData.color;
+			outputData.size = particleData.size;
+			*/
+			if ( node.children && node.children.length > 0 ) {
+				outputData.emit = { prototype:[] }
+			/*	
+				outputData.emit.count = particleData.emit.count;
+				outputData.emit.duration = particleData.emit.duration;
+				outputData.emit.angle = particleData.emit.angle;
+				outputData.emit.range = particleData.emit.range;
+				outputData.emit.force = particleData.emit.force;
+				*/
+				for ( i in 0...node.children.length ) {
+					var obj = { };
+					outputData.emit.prototype.push( obj );
+					_loopNode( node.children[i], obj );
 				}
-				if ( obj.children != null ) {
-					parse( obj.children );
-				}
-				return true;
-			});
+			}
 		}
+		_loopNode( node, retobj );
 		
-		parse( treeRoots );
 		
-		return { };
+		trace( retobj );
+		
+		return retobj;
 	}
 	/*
 	public function moveParticle(id:Int, toId:Int, ?extra:Dynamic):Void 
@@ -92,6 +136,7 @@ class PanelModel extends Model
 		foreachObj( config );
 		
 		log();
+		
 	}
 	/*
 	function addToChild( parent:Dynamic, id:Int ) {

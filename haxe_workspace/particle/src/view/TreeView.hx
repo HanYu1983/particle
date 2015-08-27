@@ -27,6 +27,11 @@ class TreeView extends Model
 		return tree_particle.tree('getRoots' );
 	}
 	
+	public function getRootNode():Dynamic 
+	{
+		return tree_particle.tree( 'getRoot' );
+	}
+	
 	override function init() 
 	{
 		super.init();
@@ -67,11 +72,6 @@ class TreeView extends Model
 			case null: getRootNode();
 			case node: node;
 		}
-	}
-	
-	function getRootNode():Dynamic 
-	{
-		return tree_particle.tree( 'getRoot' );
 	}
 	
 	function getSelectedNode():Dynamic 

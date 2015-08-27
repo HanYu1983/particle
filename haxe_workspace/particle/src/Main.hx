@@ -37,8 +37,8 @@ class Main
 				case TreeView.ON_BTN_REMOVE_TREE_NODE_CLICK:
 					model.removeParticle( params.selectNode.id );
 				case TreeView.ON_TREE_DRAG:
-					trace( model.getOutputData( treeView.getRoots() ));
-					trace( treeView.getRoots() );
+					trace( model.getOutputData( treeView.getRootNode() ));
+				//	trace( treeView.getRoots() );
 				//	model.moveParticle( params.moveId, params.toId );
 				//	trace( params );
 					

@@ -59,7 +59,7 @@ var Main = function() {
 	var _g = this;
 	this.treeView.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 	this.treeView.addHandler(function(type,params) {
-		haxe_Log.trace(type,{ fileName : "Main.hx", lineNumber : 29, className : "Main", methodName : "new", customParams : [params]});
+		haxe_Log.trace(type,{ fileName : "Main.hx", lineNumber : 30, className : "Main", methodName : "new", customParams : [params]});
 		switch(type) {
 		case "ON_BTN_ADD_TREE_NODE_CLICK":
 			if(params.selectNode.id == null) _g.model.addParticle(Main.getId(),999,{ }); else _g.model.addParticle(Main.getId(),params.selectNode.id,{ });
@@ -68,13 +68,12 @@ var Main = function() {
 			_g.model.removeParticle(params.selectNode.id);
 			break;
 		case "ON_TREE_DRAG":
-			haxe_Log.trace(_g.model.getOutputData(_g.treeView.getRoots()),{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "new"});
-			haxe_Log.trace(_g.treeView.getRoots(),{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
+			haxe_Log.trace(_g.model.getOutputData(_g.treeView.getRootNode()),{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
 			break;
 		}
 	});
 	this.model.addHandler(function(type1,params1) {
-		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 50, className : "Main", methodName : "new", customParams : [params1]});
+		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 51, className : "Main", methodName : "new", customParams : [params1]});
 		switch(type1) {
 		case "ON_ADD_PARTICLE":
 			_g.treeView.appendNode(params1.id,params1.parentId);
@@ -232,23 +231,30 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
 		this.log();
 	}
-	,getOutputData: function(treeRoots) {
-		haxe_Log.trace(treeRoots,{ fileName : "PanelModel.hx", lineNumber : 44, className : "model.PanelModel", methodName : "getOutputData"});
+	,getOutputData: function(node) {
+		haxe_Log.trace(node,{ fileName : "PanelModel.hx", lineNumber : 64, className : "model.PanelModel", methodName : "getOutputData"});
 		var output = { };
-		var parse;
-		var parse1 = null;
-		parse1 = function(ary) {
-			Lambda.foreach(ary,function(obj) {
-				haxe_Log.trace(obj.id,{ fileName : "PanelModel.hx", lineNumber : 49, className : "model.PanelModel", methodName : "getOutputData"});
-				if(obj.id != null) {
+		var retobj = { };
+		var _loopNode;
+		var _loopNode1 = null;
+		_loopNode1 = function(node1,outputData) {
+			haxe_Log.trace(node1,{ fileName : "PanelModel.hx", lineNumber : 69, className : "model.PanelModel", methodName : "getOutputData"});
+			if(node1.children && node1.children.length > 0) {
+				outputData.emit = { prototype : []};
+				var _g1 = 0;
+				var _g = node1.children.length;
+				while(_g1 < _g) {
+					var i = _g1++;
+					var obj = { };
+					outputData.emit.prototype.push(obj);
+					_loopNode1(node1.children[i],obj);
 				}
-				if(obj.children != null) parse1(obj.children);
-				return true;
-			});
+			}
 		};
-		parse = parse1;
-		parse(treeRoots);
-		return { };
+		_loopNode = _loopNode1;
+		_loopNode(node,retobj);
+		haxe_Log.trace(retobj,{ fileName : "PanelModel.hx", lineNumber : 101, className : "model.PanelModel", methodName : "getOutputData"});
+		return retobj;
 	}
 	,init: function() {
 		var _g = this;
@@ -276,7 +282,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentParticle = particle;
 	}
 	,log: function() {
-		haxe_Log.trace(this._ary_partiles,{ fileName : "PanelModel.hx", lineNumber : 143, className : "model.PanelModel", methodName : "log"});
+		haxe_Log.trace(this._ary_partiles,{ fileName : "PanelModel.hx", lineNumber : 185, className : "model.PanelModel", methodName : "log"});
 	}
 });
 var view_TreeView = function() {
@@ -287,6 +293,9 @@ view_TreeView.__super__ = model_Model;
 view_TreeView.prototype = $extend(model_Model.prototype,{
 	getRoots: function() {
 		return this.tree_particle.tree("getRoots");
+	}
+	,getRootNode: function() {
+		return this.tree_particle.tree("getRoot");
 	}
 	,init: function() {
 		var _g = this;
@@ -319,9 +328,6 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 		default:
 			return node;
 		}
-	}
-	,getRootNode: function() {
-		return this.tree_particle.tree("getRoot");
 	}
 	,getSelectedNode: function() {
 		var _g = this.tree_particle.tree("getSelected");
