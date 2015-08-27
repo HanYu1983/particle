@@ -7,6 +7,24 @@ function $extend(from, fields) {
 }
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.indexOf = function(a,obj,i) {
+	var len = a.length;
+	if(i < 0) {
+		i += len;
+		if(i < 0) i = 0;
+	}
+	while(i < len) {
+		if(a[i] === obj) return i;
+		i++;
+	}
+	return -1;
+};
+HxOverrides.remove = function(a,obj) {
+	var i = HxOverrides.indexOf(a,obj,0);
+	if(i == -1) return false;
+	a.splice(i,1);
+	return true;
+};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -59,7 +77,7 @@ var Main = function() {
 	var _g = this;
 	this.treeView.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 	this.treeView.addHandler(function(type,params) {
-		haxe_Log.trace(type,{ fileName : "Main.hx", lineNumber : 29, className : "Main", methodName : "new", customParams : [params]});
+		haxe_Log.trace(type,{ fileName : "Main.hx", lineNumber : 30, className : "Main", methodName : "new", customParams : [params]});
 		switch(type) {
 		case "ON_BTN_ADD_TREE_NODE_CLICK":
 			if(params.selectNode.id == null) _g.model.addParticle(Main.getId(),999,{ }); else _g.model.addParticle(Main.getId(),params.selectNode.id,{ });
@@ -68,13 +86,13 @@ var Main = function() {
 			_g.model.removeParticle(params.selectNode.id);
 			break;
 		case "ON_TREE_DRAG":
-			haxe_Log.trace(_g.model.getOutputData(_g.treeView.getRoots()),{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "new"});
-			haxe_Log.trace(_g.treeView.getRoots(),{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
+			haxe_Log.trace(_g.model.getOutputData(_g.treeView.getRoots()),{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
+			haxe_Log.trace(_g.treeView.getRoots(),{ fileName : "Main.hx", lineNumber : 41, className : "Main", methodName : "new"});
 			break;
 		}
 	});
 	this.model.addHandler(function(type1,params1) {
-		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 50, className : "Main", methodName : "new", customParams : [params1]});
+		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 51, className : "Main", methodName : "new", customParams : [params1]});
 		switch(type1) {
 		case "ON_ADD_PARTICLE":
 			_g.treeView.appendNode(params1.id,params1.parentId);
@@ -228,18 +246,19 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,removeParticle: function(id,extra) {
 		if(!this.findParticleById(id)) return;
-		this.removeParticle(id);
+		var x = this.findParticleById(id);
+		HxOverrides.remove(this._ary_partiles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
 		this.log();
 	}
 	,getOutputData: function(treeRoots) {
-		haxe_Log.trace(treeRoots,{ fileName : "PanelModel.hx", lineNumber : 44, className : "model.PanelModel", methodName : "getOutputData"});
+		haxe_Log.trace(treeRoots,{ fileName : "PanelModel.hx", lineNumber : 41, className : "model.PanelModel", methodName : "getOutputData"});
 		var output = { };
 		var parse;
 		var parse1 = null;
 		parse1 = function(ary) {
 			Lambda.foreach(ary,function(obj) {
-				haxe_Log.trace(obj.id,{ fileName : "PanelModel.hx", lineNumber : 49, className : "model.PanelModel", methodName : "getOutputData"});
+				haxe_Log.trace(obj.id,{ fileName : "PanelModel.hx", lineNumber : 46, className : "model.PanelModel", methodName : "getOutputData"});
 				if(obj.id != null) {
 				}
 				if(obj.children != null) parse1(obj.children);
@@ -276,7 +295,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentParticle = particle;
 	}
 	,log: function() {
-		haxe_Log.trace(this._ary_partiles,{ fileName : "PanelModel.hx", lineNumber : 143, className : "model.PanelModel", methodName : "log"});
+		haxe_Log.trace(this._ary_partiles,{ fileName : "PanelModel.hx", lineNumber : 140, className : "model.PanelModel", methodName : "log"});
 	}
 });
 var view_TreeView = function() {
@@ -344,6 +363,9 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
+if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
+	return Array.prototype.indexOf.call(a,o,i);
+};
 String.__name__ = true;
 Array.__name__ = true;
 Main.j = $;
