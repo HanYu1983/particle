@@ -9,6 +9,7 @@ class PanelModel extends Model
 {
 	public static var ON_ADD_PARTICLE = 'ON_ADD_PARTICLE';
 	public static var ON_REMOVE_PARTICLE = 'ON_REMOVE_PARTICLE';
+	public static var ON_PROPS_CAHNGE = 'ON_PROPS_CAHNGE';
 	
 	public var currentParticle(default, set):Dynamic;
 	
@@ -38,32 +39,61 @@ class PanelModel extends Model
 		log();
 	}
 	
+	public function setParticleProps( id:Int, type:String, value:Dynamic ) {
+		if ( !findParticleById( id )) return;
+		
+		switch( type ) {
+			case 'size_x':
+				findParticleById( id ).particle.size[0] = value;
+			case 'size_y':
+				findParticleById( id ).particle.size[1] = value;
+			case 'pos_x':
+				findParticleById( id ).particle.pos[0] = value;
+			case 'pos_y':
+				findParticleById( id ).particle.pos[1] = value;
+			case 'pos_r':
+				findParticleById( id ).particle.pos[2] = value;
+			case 'vel_x':
+				findParticleById( id ).particle.vel[0] = value;
+			case 'vel_y':
+				findParticleById( id ).particle.vel[1] = value;
+			case 'vel_r':
+				findParticleById( id ).particle.vel[2] = value;
+			case _:
+				Reflect.setField( findParticleById( id ).particle, type, value );
+		}
+		
+		notify( ON_PROPS_CAHNGE );
+	}
+	
+	public function findParticleById( id:Int ):Dynamic {
+		return Lambda.find( _ary_partiles, function( p:Dynamic ) {
+			if ( p.id == id ) return true;
+			return false;
+		});
+	}
+	
 	public function getOutputData( node:Dynamic ) {
 		var retobj:Dynamic = { };
 		function _loopNode( node:Dynamic, outputData:Dynamic ) {
 			var id = node.id;
-			var particleData = findParticleById( id );
-			outputData.id = particleData.id;
-			/*
-			var particleData = findParticleById( id );
-			outputData.id = particleData.id;
+			var particle = findParticleById( id ).particle;
+			outputData.id = particle.id;
+			outputData.lifetime = particle.lifetime;
+			outputData.vel = particle.vel;
+			outputData.pos = particle.pos;
+			outputData.mass = particle.mass;
+			outputData.color = particle.color;
+			outputData.size = particle.size;
 			
-			outputData.lifetime = particleData.lifetime;
-			outputData.vel = particleData.vel;
-			outputData.pos = particleData.pos;
-			outputData.mass = particleData.mass;
-			outputData.color = particleData.color;
-			outputData.size = particleData.size;
-			*/
 			if ( node.children && node.children.length > 0 ) {
 				outputData.emit = { 'prototype':[] }
-				/*
-				outputData.emit.count = particleData.emit.count;
-				outputData.emit.duration = particleData.emit.duration;
-				outputData.emit.angle = particleData.emit.angle;
-				outputData.emit.range = particleData.emit.range;
-				outputData.emit.force = particleData.emit.force;
-				*/
+				outputData.emit.count = particle.emit.count;
+				outputData.emit.duration = particle.emit.duration;
+				outputData.emit.angle = particle.emit.angle;
+				outputData.emit.range = particle.emit.range;
+				outputData.emit.force = particle.emit.force;
+				
 				for ( i in 0...node.children.length ) {
 					var obj = { };
 					outputData.emit.prototype.push( obj );
@@ -95,12 +125,7 @@ class PanelModel extends Model
 		
 	}
 	
-	function findParticleById( id:Int ):Dynamic {
-		return Lambda.find( _ary_partiles, function( p:Dynamic ) {
-			if ( p.id == id ) return true;
-			return false;
-		});
-	}
+	
 	
 	function set_currentParticle( particle:Dynamic ):Dynamic 
 	{

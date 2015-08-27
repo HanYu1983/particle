@@ -8,6 +8,7 @@
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
 		
 		
 		<script type="text/javascript" src="res/js/lib/spectrum/spectrum.js"></script>
@@ -28,13 +29,10 @@
 	}
 	</style>
 	<script id="tmpl_prop" type="jquery-x-tmpl">
-		<div class="hori" style="margin-bottom:5px;">
+		<div proptype=${id} class="hori" style="margin-bottom:5px;">
 			<div class="hori" style="width:60px; text-align:right;">${name}</div>
 			<div class="hori">
-				<input class="easyui-numberspinner" style="width:80px;"/>
-			</div>
-			<div class="hori">
-				<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
+				<input id="spr_value" class="easyui-numberspinner-code" style="width:80px;"/>
 			</div>
 			<div class="hori">
 				<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"></a>
@@ -63,7 +61,7 @@
 					</div>
 					
 					<div title="初始屬性" data-options="region:'center'" style="padding:10px;">
-						<div id="mc_props_container" class="group" style="min-width:250px;" >
+						<div id="mc_props_container" class="group" style="min-width:200px;" >
 							<!-- created by script -->
 						</div>
 					</div>
@@ -71,13 +69,26 @@
 				</div>
 				
 			</div>
-			<div data-options="region:'center'"></div>
+			<div data-options="region:'center'" style="width:100%; height:100%">
+				<div id="canvas_container" style="width:100%; height:100%">
+					<canvas id='webgl' width="1920" height="1080"></canvas>
+				</div>
+			</div>
 			<div title="動態屬性" data-options="region:'south',split:true" style="width:100%; height:200px; padding:10px;">
 				<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
 					<div class="hori">
+						<a href="#" id="btn_addDynamic" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
 						<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
 						<a href="#" class="easyui-linkbutton" >上移</a>
 						<a href="#" class="easyui-linkbutton" >下移</a>
+					</div>
+					<div class="hori">
+						<select class="easyui-combobox" name="state" style="width:80px;">
+							<option>none</option>
+							<option>sin</option>
+							<option>cos</option>
+							<option>custom</option>
+						</select>
 					</div>
 					<div class="hori">
 						<select class="easyui-combobox" name="state" style="width:80px;">
@@ -127,9 +138,10 @@
 	<script src='res/cljs/goog/base.js'></script>
 	<script src='res/cljs/cljs.js'></script>
 	<script>
-	var ary_props = [ 	{id:'mass', name:'質量'}, 
-						{id:'pos_x', name:'位置x'}, 
-						{id:'pos_y', name:'位置y'}, 
+	var ary_props = [ 	{id:'lifetime', name:'生命'}, 
+						{id:'mass', name:'質量'}, 
+					/*	{id:'pos_x', name:'位置x'}, 
+						{id:'pos_y', name:'位置y'}, */
 						{id:'pos_r', name:'角度'}, 
 						{id:'vel_x', name:'速度x'}, 
 						{id:'vel_y', name:'速度y'}, 
@@ -207,7 +219,7 @@
 													size:[10, 10],
 													pos:[0, 0, 0], vel:[0, 0, 0] }] }}
 	
-	//goog.require("app.main2");
+	goog.require("app.main2");
 	</script>
 	<script src="res/js/haxe.js"></script>
 </html>

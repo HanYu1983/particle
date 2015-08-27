@@ -8,6 +8,7 @@ import model.Model;
  */
 class TreeView extends Model
 {
+	public static var ON_TREE_NODE_CLICK = 'ON_TREE_NODE_CLICK';
 	public static var ON_BTN_ADD_TREE_NODE_CLICK = 'ON_BTN_ADD_TREE_NODE_CLICK';
 	public static var ON_BTN_REMOVE_TREE_NODE_CLICK = 'ON_BTN_REMOVE_TREE_NODE_CLICK';
 	public static var ON_TREE_DRAG = 'ON_TREE_DRAG';
@@ -50,13 +51,13 @@ class TreeView extends Model
 		
 		tree_particle = config.tree_particle;
 		tree_particle.tree( {
+			onClick:function( node ) {
+				notify( ON_TREE_NODE_CLICK, {node:node} );
+			},
 			onDrop:function( target, source, point ) {
 				notify( ON_TREE_DRAG, { moveId:source.id, toId:getNodeByDom( target ).id } );
 			}
 		});
-		
-	//	getRootNode().id = 999;
-	//	getRootNode().text = '顯示層';
 		
 		btn_addTreeNode = config.btn_addTreeNode;
 		btn_removeTreeNode = config.btn_removeTreeNode;
@@ -69,6 +70,7 @@ class TreeView extends Model
 			notify( ON_BTN_REMOVE_TREE_NODE_CLICK, { selectNode:getSelectedNode() } );
 		});
 	}
+	
 	
 	function getNodeByDom( dom:Dynamic ):Dynamic {
 		return switch( tree_particle.tree('getNode', dom ) ) {
@@ -91,6 +93,7 @@ class TreeView extends Model
 	
 	public function focusNode( node:Dynamic ) {
 		tree_particle.tree( 'select', node.target);
+		notify( ON_TREE_NODE_CLICK, {node:node} );
 	}
 	
 	public function appendNode( nodeId:Int, toNodeId:Int ):Void {
