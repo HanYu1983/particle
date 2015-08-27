@@ -21,7 +21,7 @@ class ParamsView extends Model
 		
 	}
 	
-	public function setValues( particleObj:Dynamic ) {
+	public function setValues( particleObj:Dynamic, isEmit:Bool ) {
 		currentParticleObj = particleObj;
 		var particle = particleObj.particle;
 		
@@ -34,7 +34,9 @@ class ParamsView extends Model
 		setPropValue( 'vel_r', particle.vel[2] / Math.PI * 180 );
 		setPropValue( 'pos_r', particle.pos[2] / Math.PI * 180 );
 		
-		if ( particle.emit != null ) {
+		trace( 'isEmit', isEmit );
+		
+		if ( isEmit ) {
 			setPropValue( 'count', particle.emit.count );
 			setPropValue( 'duration', particle.emit.duration * 1000 );
 			setPropValue( 'angle', particle.emit.angle / Math.PI * 180 );

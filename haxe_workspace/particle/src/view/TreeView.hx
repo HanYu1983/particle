@@ -102,6 +102,7 @@ class TreeView extends Model
 			getRootNode().text = nodeId;
 			return ;
 		}
+		
 		tree_particle.tree('append', {
 			parent: findNode( toNodeId ).target,
 			data: [{

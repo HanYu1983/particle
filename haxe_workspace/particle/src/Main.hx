@@ -36,14 +36,14 @@ class Main
 			trace( type, params );
 			switch( type ) {
 				case TreeView.ON_TREE_NODE_CLICK:
-					paramsView.setValues( model.findParticleById( params.node.id ) );
+					paramsView.setValues( model.findParticleById( params.node.id ), treeView.findNode( params.node.id ).children != null );
 				case TreeView.ON_BTN_ADD_TREE_NODE_CLICK:
 					var newId = getId();
 					model.addParticle( newId, params.selectNode.id, createNewParticle( newId ) );
 				case TreeView.ON_BTN_REMOVE_TREE_NODE_CLICK:
 					model.removeParticle( params.selectNode.id );
 				case TreeView.ON_TREE_DRAG:
-					model.setParticleIsEmit( params.toId );
+					treeView.focusNode( treeView.findNode( params.toId ) );
 			}
 		});
 		
@@ -71,7 +71,15 @@ class Main
 			updateParticle( model.getOutputData( treeView.findNode( 999 ) ) );
 		});
 		
-		model.config = untyped __js__('testLoadData');
+		var initObj:Dynamic = createNewParticle( getId() );
+		initObj.emit.prototype = [
+			createNewParticle( getId() )
+		];
+		
+	//	trace( Json.stringify( initObj ) );
+	//	trace( Json.stringify( untyped __js__('testLoadData') ) );
+		model.config = initObj;
+	//	model.config = untyped __js__('testLoadData');
 		
 		treeView.focusNode( treeView.findNode( 0 ) );
 		
@@ -89,17 +97,18 @@ class Main
 			color:'#33ddff',
 			size:[10, 10],
 			pos:[0, 0, 0], 
-			vel:[0, 0, 0]
+			vel:[0, 0, 0],
+			emit:createNewEmit()
 		}
 	}
 	
 	public static function createNewEmit() {
 		return { 
-			count:0,
-			duration:0,
+			count:1,
+			duration:0.5,
 			angle:0,
 			range:0,
-			force:0
+			force:100
 		}
 	}
 	
@@ -116,14 +125,14 @@ class Main
 		model.setParticleProps( 0, 'pos_y', py );
 	}
 	
-	static var id = 2;
+	static var id = 0;
 	
 	public static function getId() {
 		return id++;
 	}
 	
 	static function updateParticle( particleData:Dynamic ) {
-		untyped __js__( 'common.onView.onNext' )( ['edit-particle', particleData] );
+		//untyped __js__( 'common.onView.onNext' )( ['edit-particle', particleData] );
 	}
 	
 	public static function addMouseWheelEvent( jdom, func ) {

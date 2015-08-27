@@ -26,7 +26,7 @@ class PanelModel extends Model
 		if ( findParticleById( id )) return;
 		_ary_partiles.push( { id:id, particle:particle } );
 		
-		setParticleIsEmit( parentId );
+		//setParticleIsEmit( parentId );
 		
 		notify( ON_ADD_PARTICLE, { id:id, parentId:parentId, particle:particle } );
 	}
@@ -37,14 +37,14 @@ class PanelModel extends Model
 		_ary_partiles.remove( findParticleById( id ));
 		notify( ON_REMOVE_PARTICLE, { id:id } );
 	}
-	
+	/*
 	public function setParticleIsEmit( id:Int ) {
 		var parentParticle = findParticleById( id );
 		if ( parentParticle != null && parentParticle.particle.emit == null ) {
 			parentParticle.particle.emit = Main.createNewEmit();
 		}
 	}
-	
+	*/
 	public function setParticleProps( id:Int, type:String, value:Dynamic ) {
 		if ( !findParticleById( id )) return;
 		switch( type ) {
@@ -83,6 +83,8 @@ class PanelModel extends Model
 	public function getOutputData( node:Dynamic ) {
 		var retobj:Dynamic = { };
 		function _loopNode( node:Dynamic, outputData:Dynamic ) {
+			
+			
 			var id = node.id;
 			var particle = findParticleById( id ).particle;
 			outputData.id = particle.id;

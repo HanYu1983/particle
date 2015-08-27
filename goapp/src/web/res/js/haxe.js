@@ -83,7 +83,7 @@ var Main = function() {
 		haxe_Log.trace(type,{ fileName : "Main.hx", lineNumber : 36, className : "Main", methodName : "new", customParams : [params]});
 		switch(type) {
 		case "ON_TREE_NODE_CLICK":
-			_g.paramsView.setValues(_g.model.findParticleById(params.node.id));
+			_g.paramsView.setValues(_g.model.findParticleById(params.node.id),_g.treeView.findNode(params.node.id).children != null);
 			break;
 		case "ON_BTN_ADD_TREE_NODE_CLICK":
 			var newId = Main.getId();
@@ -93,7 +93,7 @@ var Main = function() {
 			_g.model.removeParticle(params.selectNode.id);
 			break;
 		case "ON_TREE_DRAG":
-			_g.model.setParticleIsEmit(params.toId);
+			_g.treeView.focusNode(_g.treeView.findNode(params.toId));
 			break;
 		}
 	});
@@ -117,7 +117,9 @@ var Main = function() {
 		}
 		Main.updateParticle(_g.model.getOutputData(_g.treeView.findNode(999)));
 	});
-	this.model.set_config(testLoadData);
+	var initObj = this.createNewParticle(Main.getId());
+	initObj.emit.prototype = [this.createNewParticle(Main.getId())];
+	this.model.set_config(initObj);
 	this.treeView.focusNode(this.treeView.findNode(0));
 	this.onResize(null);
 	Main.j(window).resize($bind(this,this.onResize));
@@ -125,13 +127,12 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.createNewEmit = function() {
-	return { count : 0, duration : 0, angle : 0, range : 0, force : 0};
+	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 100};
 };
 Main.getId = function() {
 	return Main.id++;
 };
 Main.updateParticle = function(particleData) {
-	common.onView.onNext(["edit-particle",particleData]);
 };
 Main.addMouseWheelEvent = function(jdom,func) {
 	leo.utils.addMouseWheelEvent(jdom,func);
@@ -144,7 +145,7 @@ Main.main = function() {
 };
 Main.prototype = {
 	createNewParticle: function(id) {
-		return { id : id, lifetime : 5, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0]};
+		return { id : id, lifetime : 5, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
 	}
 	,onResize: function(e) {
 		this.webgl.attr("width",this.canvas_container.width());
@@ -287,18 +288,12 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	addParticle: function(id,parentId,particle,extra) {
 		if(this.findParticleById(id)) return;
 		this._ary_partiles.push({ id : id, particle : particle});
-		this.setParticleIsEmit(parentId);
-		this.notify(model_PanelModel.ON_ADD_PARTICLE,{ id : id, parentId : parentId, particle : particle});
 	}
 	,removeParticle: function(id,extra) {
 		if(!this.findParticleById(id)) return;
 		var x = this.findParticleById(id);
 		HxOverrides.remove(this._ary_partiles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
-	}
-	,setParticleIsEmit: function(id) {
-		var parentParticle = this.findParticleById(id);
-		if(parentParticle != null && parentParticle.particle.emit == null) parentParticle.particle.emit = Main.createNewEmit();
 	}
 	,setParticleProps: function(id,type,value) {
 		if(!this.findParticleById(id)) return;
@@ -403,7 +398,7 @@ var view_ParamsView = function() {
 view_ParamsView.__name__ = true;
 view_ParamsView.__super__ = model_Model;
 view_ParamsView.prototype = $extend(model_Model.prototype,{
-	setValues: function(particleObj) {
+	setValues: function(particleObj,isEmit) {
 		this.currentParticleObj = particleObj;
 		var particle = particleObj.particle;
 		this.setPropValue("lifetime",particle.lifetime * 1000);
@@ -414,7 +409,8 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.setPropValue("vel_y",particle.vel[1]);
 		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
 		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
-		if(particle.emit != null) {
+		haxe_Log.trace("isEmit",{ fileName : "ParamsView.hx", lineNumber : 37, className : "view.ParamsView", methodName : "setValues", customParams : [isEmit]});
+		if(isEmit) {
 			this.setPropValue("count",particle.emit.count);
 			this.setPropValue("duration",particle.emit.duration * 1000);
 			this.setPropValue("angle",particle.emit.angle / Math.PI * 180);
@@ -552,7 +548,7 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 String.__name__ = true;
 Array.__name__ = true;
 Main.j = $;
-Main.id = 2;
+Main.id = 0;
 model_PanelModel.ON_ADD_PARTICLE = "ON_ADD_PARTICLE";
 model_PanelModel.ON_REMOVE_PARTICLE = "ON_REMOVE_PARTICLE";
 model_PanelModel.ON_PROPS_CAHNGE = "ON_PROPS_CAHNGE";
