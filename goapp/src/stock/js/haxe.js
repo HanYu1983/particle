@@ -219,10 +219,8 @@ var Main = function() {
 				_g.panelModel.set_currentFbId(authResponse1.userID);
 				Main.load(_g.panelModel.currentFbId,function(err1,params4) {
 					haxe_Log.trace(err1,{ fileName : "Main.hx", lineNumber : 154, className : "Main", methodName : "new", customParams : [params4]});
-					if(err1 == null) {
-						Main.closeLoading();
-						_g.panelModel.set_config(params4 == null?_g.newUser():params4);
-					} else {
+					Main.closeLoading();
+					if(err1 == null) _g.panelModel.set_config(params4 == null?_g.newUser():params4); else {
 						js_Browser.alert(err1);
 						_g.panelModel.set_config(_g.newUser());
 					}
@@ -278,7 +276,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
-	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 240, className : "Main", methodName : "save"});
+	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 241, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
 };
 Main.load = function(fbid,cb) {

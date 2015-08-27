@@ -152,9 +152,10 @@ class Main
 						panelModel.currentFbId = authResponse.userID;
 						load( panelModel.currentFbId, function( err, params ) {
 							trace( err, params );
+							
+							closeLoading();
+							
 							if ( err == null ) {
-								
-								closeLoading();
 								panelModel.config = ( params == null ? newUser() : params );
 							}else {
 								Browser.alert( err );
