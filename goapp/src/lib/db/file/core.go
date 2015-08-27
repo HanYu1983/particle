@@ -47,7 +47,7 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
  
   if len( keys ) > 0 {
     if override == false {
-      return 0, errors.New("file exists!")
+      return keys[0].IntID(), errors.New("file exists!")
       
     } else {
       key = keys[0]
@@ -77,7 +77,7 @@ func MakeDir (ctx appengine.Context, position int64, name string) (int64, error)
   }
   
   if len( keys ) > 0 {
-    return 0, errors.New("file exists!")
+    return keys[0].IntID(), errors.New("file exists!")
   }
   
   key := db.NewKey( ctx, Kind, nil )
