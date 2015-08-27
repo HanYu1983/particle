@@ -481,7 +481,8 @@
         (cons v (lazy-seq (cci-seq n (rest kline)))))))
         
 (defn trix-seq 
-  "Triple Exponential (TRIX) 三重指數平滑移動平均指標"
+  "Triple Exponential (TRIX) 三重指數平滑移動平均指標
+  從後面算"
   [n vs]
   (let [ax (ema-seq n (reverse vs))
         bx (ema-seq n ax)
