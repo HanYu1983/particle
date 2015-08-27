@@ -1,6 +1,7 @@
 package dbfile
 
 import (
+  "errors"
   "appengine"
   "appengine/datastore"
   db "lib/db"
@@ -16,8 +17,18 @@ type DBFile struct {
   Content []byte
 }
 
-func MakeFile (ctx appengine.Context, position int64, name string, content []byte) (int64, error) {
-  key := db.NewKey( ctx, Kind, nil )
+func QueryKeys (ctx appengine.Context, position int64, name string) ([]DBFile, []*datastore.Key, error){
+  q := db.NewQuery( Kind ).Filter("Position =", position).Filter("Name =", name)
+  
+  var entities []DBFile
+  keys, err := q.GetAll(ctx, &entities)
+  for idx, _ := range entities {
+    entities[idx].Key = keys[idx].IntID()
+  }
+  return entities, keys, err
+}
+
+func MakeFile (ctx appengine.Context, position int64, name string, content []byte, override bool) (int64, error) {
   
   file := DBFile{
     Key: 0,
@@ -27,13 +38,32 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
     Content: content,
   }
   
+  _, keys, err := QueryKeys( ctx, position, name )
+  if err != nil {
+    return 0, err
+  }
+  
+  var key *datastore.Key
+ 
+  if len( keys ) > 0 {
+    if override == false {
+      return 0, errors.New("file exists!")
+      
+    } else {
+      key = keys[0]
+      
+    }
+    
+  } else {
+    key = db.NewKey( ctx, Kind, nil )
+    
+  }
+  
   nkey, err := datastore.Put(ctx, key, &file)
   return nkey.IntID(), err
 }
 
 func MakeDir (ctx appengine.Context, position int64, name string) (int64, error){
-  key := db.NewKey( ctx, Kind, nil )
-  
   file := DBFile{
     Position: position,
     IsDir: true,
@@ -41,6 +71,16 @@ func MakeDir (ctx appengine.Context, position int64, name string) (int64, error)
     Content: nil,
   }
   
+  _, keys, err := QueryKeys( ctx, position, name )
+  if err != nil {
+    return 0, err
+  }
+  
+  if len( keys ) > 0 {
+    return 0, errors.New("file exists!")
+  }
+  
+  key := db.NewKey( ctx, Kind, nil )
   nkey, err := datastore.Put(ctx, key, &file)
   return nkey.IntID(), err
 }

@@ -22,10 +22,12 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
   defer tool.Recover( tool.WriteErrorJson(w) )
   ctx := appengine.NewContext( r )
   
+  // post的話，執行新增檔案或新增資料夾
   if r.Method == "POST" {
     form, err := tool.ReadAjaxPost( r )
     tool.Assert( tool.IfError( err ) ) 
     
+    // 若有Delete參數，執行刪除
     if len( form["Delete"] ) > 0 {
       tool.Assert( tool.ParameterIsNotExist( form, "Key" ) )
       key, err := strconv.ParseInt( form["Key"][0], 10, 0 )
@@ -34,6 +36,7 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
       return
     }
     
+    // 執行新增
     tool.Assert( tool.ParameterIsNotExist( form, "Parent" ) ) 
     tool.Assert( tool.ParameterIsNotExist( form, "Name" ) )
     
@@ -41,6 +44,8 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
     tool.Assert( tool.IfError( err ) ) 
     name := form["Name"][0]
     
+    // 0代表最頂層，所以不必判斷
+    // 非0的話則判斷該資料夾在不在
     if parent != 0 {
       parentFile, err := GetFile( ctx, parent )
       tool.Assert( tool.IfError( err ) ) 
@@ -50,9 +55,17 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
       }
     }
     
+    // 有Content參數代表要建檔案，不然為建資料夾
     if len( form["Content"] ) > 0 {
+      tool.Assert( tool.ParameterIsNotExist( form, "Override" ) ) 
       content := form["Content"][0]
-      _, err := MakeFile( ctx, parent, name, []byte(content) )
+      var override bool
+      if form["Override"][0] == "on" {
+        override = true
+      } else {
+        override = false
+      }
+      _, err := MakeFile( ctx, parent, name, []byte(content), override )
       tool.Assert( tool.IfError( err ) ) 
       
     } else {
@@ -64,6 +77,7 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
     return
   }
   
+  // get為顯示資料
   pathToken := strings.Split(r.URL.Path, "/")
   
   position, err := strconv.ParseInt( pathToken[len(pathToken)-1], 10, 0 )
@@ -101,7 +115,7 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
     } else {
       filetype := filepath.Ext( file.Name )[1:]  //delete first "."
       switch filetype {
-      case "txt":
+      case "txt", "json":
         w.Header().Set("Content-Type", "text/plain; charset=utf8")
         fmt.Fprintf(w, "%s", string( file.Content ))
         break;
