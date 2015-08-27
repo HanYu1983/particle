@@ -138,11 +138,11 @@ class Main
 					case 'connected':
 						panelModel.currentFbId = authResponse.userID;
 						panelModel.config = newUser();
-					//	load( panelModel.currentFbId, function( ret ) {
-							//trace( ret );
+						load( panelModel.currentFbId, function( ret ) {
+							trace( ret );
 							//panelModel.config = ( loadData == null ? newUser() : loadData );
 							//panelModel.config = newUser();
-					//	});
+						});
 						
 						slideMessage( '提示', '歡迎登入!' );
 					case 'unknown':
