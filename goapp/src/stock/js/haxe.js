@@ -90,11 +90,18 @@ var Main = function() {
 	this.panelModel = new model_PanelModel();
 	var _g = this;
 	this.saver.set_fbid("abc");
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout")});
-	this.panelView.addHandler(function(type,params) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 49, className : "Main", methodName : "new", customParams : [type]});
-		_g.saver.startAuto();
+	this.saver.addHandler(function(type,params) {
 		switch(type) {
+		case "ON_SAVE_SUCCESS":
+			Main.slideMessage("提示","自動儲存成功!");
+			break;
+		}
+	});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout")});
+	this.panelView.addHandler(function(type1,params1) {
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 56, className : "Main", methodName : "new", customParams : [type1]});
+		_g.saver.startAuto();
+		switch(type1) {
 		case "on_btn_login_click":
 			Main.fb_login(function(e) {
 				var authResponse = e.authResponse;
@@ -102,6 +109,7 @@ var Main = function() {
 				switch(_g1) {
 				case "connected":
 					_g.panelModel.set_currentFbId(authResponse.userID);
+					Main.slideMessage("提示","歡迎登入!");
 					break;
 				case "unknown":
 					_g.panelModel.set_currentFbId("");
@@ -115,53 +123,53 @@ var Main = function() {
 			});
 			break;
 		case "on_txt_note_change":
-			_g.panelModel.set_currentNote(params.note);
+			_g.panelModel.set_currentNote(params1.note);
 			break;
 		case "on_combo_favor_change":
-			_g.panelModel.set_currentStockId(params.stockId);
+			_g.panelModel.set_currentStockId(params1.stockId);
 			break;
 		case "on_favor_change":
-			_g.panelModel.set_currentFavor(params.favor);
+			_g.panelModel.set_currentFavor(params1.favor);
 			break;
 		case "on_stockid_change":
-			_g.panelModel.set_currentStockId(params.stockId);
+			_g.panelModel.set_currentStockId(params1.stockId);
 			break;
 		case "on_offset_change":
 			var _g11 = _g.panelModel;
-			_g11.set_currentOffset(_g11.currentOffset + params.value);
+			_g11.set_currentOffset(_g11.currentOffset + params1.value);
 			break;
 		case "on_showline_change":
-			_g.panelModel.changeShow(params.id,params.type,params.show);
+			_g.panelModel.changeShow(params1.id,params1.type,params1.show);
 			break;
 		case "on_showline_value_change":
-			_g.panelModel.changeShowValue(params.id,params.type,params.value);
+			_g.panelModel.changeShowValue(params1.id,params1.type,params1.value);
 			break;
 		case "on_showline_k_change":
-			_g.panelModel.changeShowK(params.id,params.show);
+			_g.panelModel.changeShowK(params1.id,params1.show);
 			break;
 		case "on_btn_addPanel_click":
 			var penalObj = Main.createNewLine("none");
 			_g.panelModel.addPanel(penalObj.id,penalObj,{ addToModel : true});
 			break;
 		case "on_btn_removePanel_click":
-			_g.panelModel.removePanel(params.id);
+			_g.panelModel.removePanel(params1.id);
 			break;
 		case "on_txt_offset_change":
-			_g.panelModel.set_currentOffset(params.offset);
+			_g.panelModel.set_currentOffset(params1.offset);
 			break;
 		case "on_txt_count_change":
-			_g.panelModel.set_currentCount(params.count);
+			_g.panelModel.set_currentCount(params1.count);
 			break;
 		}
 	});
-	this.panelModel.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 97, className : "Main", methodName : "new", customParams : [type1]});
-		switch(type1) {
+	this.panelModel.addHandler(function(type2,params2) {
+		haxe_Log.trace("panelModel",{ fileName : "Main.hx", lineNumber : 105, className : "Main", methodName : "new", customParams : [type2]});
+		switch(type2) {
 		case "on_init":
-			_g.panelView.setFavorsSelect(params1.favorList);
+			_g.panelView.setFavorsSelect(params2.favorList);
 			break;
 		case "on_favor_list_change":
-			_g.panelView.setFavorsSelect(params1.favorList);
+			_g.panelView.setFavorsSelect(params2.favorList);
 			break;
 		case "on_offset_change":
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
@@ -173,24 +181,24 @@ var Main = function() {
 			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_add_panel":
-			_g.panelView.addPanel(params1.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelObj);
+			_g.panelView.addPanel(params2.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params2.panelObj);
 			_g.panelView.resetAllCanvasListener(_g.panelModel.getAryPanel());
 			break;
 		case "on_remove_panel":
-			_g.panelView.removePanel(params1.id);
+			_g.panelView.removePanel(params2.id);
 			break;
 		case "on_showline_change":
-			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params1.panelData);
+			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params2.panelData);
 			break;
 		case "on_stockid_change":
-			_g.panelView.initPanel(_g.panelModel.config,params1.stock,_g.panelModel.currentStockInfo);
+			_g.panelView.initPanel(_g.panelModel.config,params2.stock,_g.panelModel.currentStockInfo);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
 			_g.saver.startAuto();
 			break;
 		case "on_login_change":
-			haxe_Log.trace(params1.login,{ fileName : "Main.hx", lineNumber : 123, className : "Main", methodName : "new"});
-			_g.saver.set_fbid(params1.fbid);
-			_g.panelView.setLogin(params1.fbid != "");
+			haxe_Log.trace(params2.login,{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "new"});
+			_g.saver.set_fbid(params2.fbid);
+			_g.panelView.setLogin(params2.fbid != "");
 			break;
 		}
 	});
@@ -198,13 +206,14 @@ var Main = function() {
 	this.saver.set_saveobj(this.panelModel.config);
 	Main.fb_init("425311264344425",function() {
 		Main.fb_loginStatus(function(e2) {
-			haxe_Log.trace(e2,{ fileName : "Main.hx", lineNumber : 136, className : "Main", methodName : "new"});
+			haxe_Log.trace(e2,{ fileName : "Main.hx", lineNumber : 144, className : "Main", methodName : "new"});
 			Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
 			var authResponse1 = e2.authResponse;
 			var _g2 = e2.status;
 			switch(_g2) {
 			case "connected":
 				_g.panelModel.set_currentFbId(authResponse1.userID);
+				Main.slideMessage("提示","歡迎登入!");
 				break;
 			case "unknown":
 				_g.panelModel.set_currentFbId("");
@@ -573,14 +582,14 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,set_currentOffset: function(offset) {
 		if(this.getStockById(this.currentStockId) == null) return this.currentOffset;
 		this.currentOffset = offset;
-		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 100) this.currentOffset = this.maxCount - 100;
+		if(this.currentOffset < 0) this.currentOffset = 0; else if(this.currentOffset > this.maxCount - 1) this.currentOffset = this.maxCount - 1;
 		this.getStockById(this.currentStockId).offset = this.currentOffset;
 		this.notify(model_PanelModel.ON_OFFSET_CHANGE,{ stockId : this.currentStockId, offset : this.currentOffset});
 		return this.currentOffset;
 	}
 	,set_currentCount: function(count) {
 		this.currentCount = count;
-		if(this.currentCount < 50) this.currentCount = 50;
+		if(this.currentCount < 0) this.currentCount = 0;
 		this.notify(model_PanelModel.ON_COUNT_CHANGE,{ stockId : this.currentStockId, count : this.currentCount});
 		this.getStockById(this.currentStockId).count = this.currentCount;
 		return this.currentCount;
@@ -646,19 +655,16 @@ model_Saver.__super__ = model_Model;
 model_Saver.prototype = $extend(model_Model.prototype,{
 	startAuto: function() {
 		if(this.fbid == "") return;
-		haxe_Log.trace("startAuto",{ fileName : "Saver.hx", lineNumber : 25, className : "model.Saver", methodName : "startAuto"});
 		if(this._timer != null) this._timer.stop();
-		this._timer = haxe_Timer.delay($bind(this,this.save),3000);
+		this._timer = haxe_Timer.delay($bind(this,this.save),10000);
 	}
 	,save: function() {
 		if(this.fbid == "") return;
-		haxe_Log.trace("save",{ fileName : "Saver.hx", lineNumber : 32, className : "model.Saver", methodName : "save"});
 		Main.save(this.fbid,this.saveobj,$bind(this,this.onSaveOk));
 	}
 	,load: function() {
 	}
 	,onSaveOk: function(e) {
-		haxe_Log.trace(e,{ fileName : "Saver.hx", lineNumber : 41, className : "model.Saver", methodName : "onSaveOk"});
 		this.notify(model_Saver.ON_SAVE_SUCCESS);
 	}
 	,set_fbid: function(fbid) {

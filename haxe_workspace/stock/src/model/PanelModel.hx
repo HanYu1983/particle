@@ -188,7 +188,7 @@ class PanelModel extends Model
 		if ( getStockById( currentStockId ) == null ) return currentOffset;
 		currentOffset = offset;
 		if ( currentOffset < 0 ) currentOffset = 0;
-		else if ( currentOffset > maxCount - 100 ) currentOffset = maxCount - 100;
+		else if ( currentOffset > maxCount - 1 ) currentOffset = maxCount - 1;
 		getStockById( currentStockId ).offset = currentOffset; 
 		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
 		return currentOffset;
@@ -196,7 +196,7 @@ class PanelModel extends Model
 	
 	function set_currentCount( count:Int ) {
 		currentCount = count;
-		if ( currentCount < 50 ) currentCount = 50;
+		if ( currentCount < 0 ) currentCount = 0;
 		notify( ON_COUNT_CHANGE, { stockId:currentStockId, count:currentCount } );
 		getStockById( currentStockId ).count = currentCount; 
 		return currentCount;

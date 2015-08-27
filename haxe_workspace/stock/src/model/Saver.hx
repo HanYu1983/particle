@@ -22,14 +22,12 @@ class Saver extends Model
 	
 	public function startAuto() {
 		if ( fbid == '' ) return;
-		trace( 'startAuto' );
 		if ( _timer != null ) _timer.stop();
-		_timer = Timer.delay( save, 3000 );
+		_timer = Timer.delay( save, 10000 );
 	}
 	
 	public function save() {
 		if ( fbid == '' ) return;
-		trace( 'save' );
 		Main.save( fbid, saveobj, onSaveOk );
 	}
 	
@@ -38,7 +36,6 @@ class Saver extends Model
 	}
 	
 	function onSaveOk( e ) {
-		trace( e );
 		notify( ON_SAVE_SUCCESS );
 	}
 	

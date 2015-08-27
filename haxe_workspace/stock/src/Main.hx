@@ -26,6 +26,13 @@ class Main
 		
 		saver.fbid = 'abc';
 		
+		saver.addHandler( function( type, params:Dynamic ) {
+			switch( type ) {
+				case Saver.ON_SAVE_SUCCESS:
+					slideMessage( '提示', '自動儲存成功!' );
+			}
+		});
+		
 		panelView.config = {
 			doc:j( untyped __js__('document') ),
 			body:j( j('body')),
@@ -57,6 +64,7 @@ class Main
 						switch( e.status ) {
 							case 'connected':
 								panelModel.currentFbId = authResponse.userID;
+								slideMessage( '提示', '歡迎登入!' );
 							case 'unknown':
 								panelModel.currentFbId = '';
 						}
@@ -139,6 +147,7 @@ class Main
 				switch( e.status ) {
 					case 'connected':
 						panelModel.currentFbId = authResponse.userID;
+						slideMessage( '提示', '歡迎登入!' );
 					case 'unknown':
 						panelModel.currentFbId = '';
 				}
