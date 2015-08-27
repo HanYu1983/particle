@@ -359,6 +359,46 @@
                 {:type :line :line (repeat (count kline) 30) :color "white"}
                 {:type :line :line (repeat (count kline) 70) :color "white"}
               ])
+              
+            "yu-test"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  o (get subd "o")
+                  p (get subd "p")
+                  upr (stf/up-rate (reverse (stl/volume kline)))
+                  l1 (stf/kline-red (reverse kline))
+                  l2 (stf/kline-green (reverse kline))
+                  l3 
+                  (->
+                    (map
+                      *
+                      (reverse (map #(max 0 %) upr))
+                      (reverse l1))
+                    reverse)
+                  l4
+                  (->
+                    (map
+                      #(* (- %1) %2)
+                      (reverse (map #(min 0 %) upr))
+                      (reverse l2))
+                    reverse)
+                  l5 (reductions (fn [p v] (+ (* p m) v)) 2 l1)
+                  l6 (reductions (fn [p v] (+ (* p m) v)) 1 l2)
+                  ;dif (map - l5 l6)
+                  dif (map #(/ %1 (+ %1 %2)) l5 l6)
+                  upr2 (stf/up-rate dif)]
+                  ;(.log js/console (pr-str upr2))
+              [
+                ;{:type :line :line (reverse upr2) :color "red"}
+                ;{:type :line :line (reverse (stf/sma-seq n l5)) :color "red"}
+                ;{:type :line :line (reverse (stf/sma-seq n l6)) :color "green"}
+                {:type :line :line (reverse dif) :color "white"}
+                
+                ;{:type :line :line (repeat (count kline) 3) :color "lightgray"}
+                ;{:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                ;{:type :line :line (repeat (count kline) -3) :color "lightgray"}
+                {:type :grid :line dif :color "gray"}
+              ])
             {:type nil})))
       sub)
     (flatten)))

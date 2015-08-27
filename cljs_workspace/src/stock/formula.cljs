@@ -359,7 +359,8 @@
     [(map second vs) (map first vs)]))
     
 (defn volatility-seq 
-  "計算波動"
+  "計算波動
+  從後面計算"
   [n vs]
   (map
     #(/ (- %1 %2) %2)
@@ -487,3 +488,22 @@
         cx (ema-seq n bx)
         vs (volatility-seq 1 (reverse cx))]
     vs))
+    
+(defn kline-red [kline]
+  (map 
+    (fn [[_ o h l c _]]
+      (+ (max 0 (- h o)) (max 0 (- c l))))
+    kline))
+    
+(defn kline-green [kline]
+  (map 
+    (fn [[_ o h l c _]]
+      (+ (max 0 (- o l)) (max 0 (- h c))))
+    kline))
+    
+(defn up-rate [vs]
+  (map
+    (fn [p c]
+      (/ (- c p) p))
+    vs
+    (rest vs)))

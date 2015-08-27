@@ -33,6 +33,7 @@ app.config.index = [
 						['yu-macd', false, 5, 12, 9, 0 ],
 						['yu-car', false, 1, .025, .7, 0 ],
 						['yu-kd', false, 9, 0, 0, 0 ],
+						['yu-test', false, 1, 1, 0, 0 ],
 					];
 app.config.hoverInfo = {
 	default:'',
