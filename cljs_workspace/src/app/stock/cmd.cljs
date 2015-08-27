@@ -6,8 +6,6 @@
     [stock.tool :as stl]
     [cljs.core.async :as a]))
 
-(def stockDir 5489861557485568)
-
 (defn loadStock
   "request是用來記錄呼叫來源，會附加在結果裡，用來前台做callback的資訊"
   ([ch id date request result]
@@ -27,7 +25,9 @@
       
 (defn loadUser [ch fbid request]
   (am/go
-    (let [[_ userDir] (<! (db/name->id stockDir fbid))
+    (let [[_ rootDir] (<! (db/name->id 0 "root"))
+          [_ stockDir] (<! (db/name->id rootDir "stock"))
+          [_ userDir] (<! (db/name->id stockDir fbid))
           [_ fileId] (<! (db/name->id userDir "userinfo.json"))
           [err content] (<! (db/file fileId "json"))]
       (a/>! ch ["view" [err content request]]))))
@@ -36,7 +36,9 @@
     
 (defn saveUser [ch fbid data request]
   (am/go
-    (let [[_ _] (<! (db/makeDir stockDir fbid))
+    (let [[_ rootDir] (<! (db/name->id 0 "root"))
+          [_ stockDir] (<! (db/name->id rootDir "stock"))
+          [_ _] (<! (db/makeDir stockDir fbid))
           _ (<! (a/timeout 1000)) ;不等一點時間新增的資料取不到!!
           [_ userDir] (<! (db/name->id stockDir fbid))
           [err ret] (<! (db/makeFile userDir "userinfo.json" (.stringify js/JSON data) true))]
