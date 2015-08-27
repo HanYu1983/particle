@@ -5,6 +5,7 @@
     [stock.tool :as stl]
     [cljs.core.async :as a]))
 
+(def dirId 5136918324969472)
 (def save-data (atom {}))
 
 (defn loadStock
