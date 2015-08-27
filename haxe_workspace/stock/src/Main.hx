@@ -5,6 +5,7 @@ import js.Browser;
 import js.Lib;
 import model.IPanel;
 import model.PanelModel;
+import model.Saver;
 import view.IPanelView;
 import view.PanelView;
 
@@ -16,13 +17,22 @@ class Main
 {
 	static var j:Dynamic = untyped __js__( '$' );
 	
-	var panelModel:IPanel = new PanelModel();
-	var panelView:IPanelView = new PanelView();
+	var panelModel = new PanelModel();
+	var panelView = new PanelView();
+	var saver = new Saver();
 	var loading:Dynamic;
 	
 	function new() {
-		slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
-	
+		
+		saver.fbid = 'abc';
+		
+		saver.addHandler( function( type, params:Dynamic ) {
+			switch( type ) {
+				case Saver.ON_SAVE_SUCCESS:
+					slideMessage( '提示', '自動儲存成功!' );
+			}
+		});
+		
 		panelView.config = {
 			doc:j( untyped __js__('document') ),
 			body:j( j('body')),
@@ -36,15 +46,33 @@ class Main
 			txt_count:j( '#txt_count' ),
 			txt_offset:j( '#txt_offset' ),
 			txt_note:j( '#txt_note' ),
-			table_stockPrice:j( '#table_stockPrice' )
+			table_stockPrice:j( '#table_stockPrice' ),
+			btn_login:j('#btn_login' ),
+			btn_logout:j('#btn_logout' )
 		//	btn_loadPrice:j('#btn_loadPrice')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
 			trace( 'panelView', type );
+			saver.startAuto();
 			switch( type ) {
 				//case PanelView.ON_BTN_LOADPRICE_CLICK:
 				//	panelView.drawPrice( panelModel.currentStockInfo );
+				case PanelView.ON_BTN_LOGIN_CLICK:
+					fb_login( function( e ) {
+						var authResponse  = e.authResponse;
+						switch( e.status ) {
+							case 'connected':
+								panelModel.currentFbId = authResponse.userID;
+								slideMessage( '提示', '歡迎登入!' );
+							case 'unknown':
+								panelModel.currentFbId = '';
+						}
+					});
+				case PanelView.ON_BTN_LOGOUT_CLICK:
+					fb_logout( function( e ) {
+						panelModel.currentFbId = '';
+					});
 				case PanelView.ON_TXT_NOTE_CHANGE:
 					panelModel.currentNote = params.note;
 				case PanelView.ON_COMBO_FAVOR_CHANGE:
@@ -75,6 +103,7 @@ class Main
 		
 		panelModel.addHandler( function( type, params ) {
 			trace( 'panelModel', type );
+			
 			switch( type ) {
 				case PanelModel.ON_INIT:
 					panelView.setFavorsSelect( params.favorList );
@@ -97,11 +126,33 @@ class Main
 				case PanelModel.ON_STOCKID_CHANGE:
 					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
+					saver.startAuto();
+				case PanelModel.ON_LOGIN_CHANGE:
+					trace( params.login );
+					saver.fbid = params.fbid;
+					panelView.setLogin( params.fbid != '' );
 			}
 		});
 		
 		//沒有記錄的話，用預設資料
 		panelModel.config = untyped __js__('defaultStock' );
+		
+		saver.saveobj = panelModel.config;
+		
+		fb_init( '425311264344425', function() {
+			fb_loginStatus( function( e ) {
+				trace( e );
+				slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
+				var authResponse  = e.authResponse;
+				switch( e.status ) {
+					case 'connected':
+						panelModel.currentFbId = authResponse.userID;
+						slideMessage( '提示', '歡迎登入!' );
+					case 'unknown':
+						panelModel.currentFbId = '';
+				}
+			});
+		});
 	}
 	
 	static var id = 0;
@@ -149,7 +200,6 @@ class Main
 		var d:Dynamic = j.Deferred();
 		untyped __js__('api.stockInfo')( id, function( err, data ) {
 			d.resolve( err, data );
-			
 			closeLoading();
 		});
 		return d;
@@ -157,6 +207,26 @@ class Main
 	
 	public static function drawStock( canvas:Dynamic, id:String, type:String, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
 		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
+	}
+	
+	public static function save( fbid:String, data:Dynamic, cb:Dynamic -> Void ) {
+		untyped __js__('api.save')(fbid, data, cb );
+	}
+	
+	public static function fb_init( appId:String, cb:Void -> Void ) {
+		untyped __js__('myapp.facebook.init')( appId, cb );
+	}
+	
+	public static function fb_login( cb:Dynamic -> Void ) {
+		untyped __js__('myapp.facebook.login')( cb );
+	}
+	
+	public static function fb_logout( cb:Dynamic -> Void ) {
+		untyped __js__('myapp.facebook.logout')( cb );
+	}
+	
+	public static function fb_loginStatus( cb:Dynamic -> Void ) {
+		untyped __js__('myapp.facebook.getLoginStatus')( cb );
 	}
 	
 	public static function createProp( ary:Array<Dynamic> ):Array<Dynamic> {

@@ -4,7 +4,7 @@ package model;
  * ...
  * @author vic
  */
-class PanelModel extends Model implements IPanel
+class PanelModel extends Model
 {
 	public static var ON_INIT = 'on_init';
 	public static var ON_STOCKID_CHANGE = 'on_stockid_change';
@@ -15,6 +15,7 @@ class PanelModel extends Model implements IPanel
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	public static var ON_FAVOR_LIST_CHANGE = 'on_favor_list_change';
+	public static var ON_LOGIN_CHANGE = 'on_login_change';
 	
 	public var currentStockId(default, set):String;
 	public var currentOffset(default, set):Int = 0;
@@ -22,6 +23,8 @@ class PanelModel extends Model implements IPanel
 	public var currentStockInfo( default, set ):Dynamic;
 	public var currentFavor( default, set ):Dynamic;
 	public var currentNote( default, set ):Dynamic;
+//	public var currentLogin( default, set ):Bool;
+	public var currentFbId( default, set ):String;
 	public var maxCount(default, set ):Int;
 	
 	var ary_panel_obj = new Array<Dynamic>();
@@ -123,14 +126,6 @@ class PanelModel extends Model implements IPanel
 		notify( ON_INIT, { favorList:getFavorList()} );
 	}
 	
-	function resetPanelData() {
-		Lambda.foreach( ary_panel_obj, function( panelObj ) {
-			notify( ON_REMOVE_PANEL, { id:panelObj.id } );
-			return true;
-		});
-		ary_panel_obj = [];
-	}
-	
 	public function setStockData( stock:Dynamic ):Void {
 		
 		currentOffset = stock.offset;
@@ -154,6 +149,14 @@ class PanelModel extends Model implements IPanel
 			
 			notify( ON_STOCKID_CHANGE, { stock:stock } );
 		});	
+	}
+	
+	function resetPanelData() {
+		Lambda.foreach( ary_panel_obj, function( panelObj ) {
+			notify( ON_REMOVE_PANEL, { id:panelObj.id } );
+			return true;
+		});
+		ary_panel_obj = [];
 	}
 	
 	function getPanelById( id ) {
@@ -185,7 +188,7 @@ class PanelModel extends Model implements IPanel
 		if ( getStockById( currentStockId ) == null ) return currentOffset;
 		currentOffset = offset;
 		if ( currentOffset < 0 ) currentOffset = 0;
-		else if ( currentOffset > maxCount - 100 ) currentOffset = maxCount - 100;
+		else if ( currentOffset > maxCount - 1 ) currentOffset = maxCount - 1;
 		getStockById( currentStockId ).offset = currentOffset; 
 		notify( ON_OFFSET_CHANGE, { stockId:currentStockId, offset:currentOffset } );
 		return currentOffset;
@@ -193,7 +196,7 @@ class PanelModel extends Model implements IPanel
 	
 	function set_currentCount( count:Int ) {
 		currentCount = count;
-		if ( currentCount < 50 ) currentCount = 50;
+		if ( currentCount < 0 ) currentCount = 0;
 		notify( ON_COUNT_CHANGE, { stockId:currentStockId, count:currentCount } );
 		getStockById( currentStockId ).count = currentCount; 
 		return currentCount;
@@ -237,5 +240,18 @@ class PanelModel extends Model implements IPanel
 		}
 		getStockById( currentStockId ).note = note; 
 		return currentNote = note;
+	}
+	/*
+	function set_currentLogin( login ) {
+		currentLogin = login;
+		notify( ON_LOGIN_CHANGE, { login:login } );
+		return currentLogin;
+	}*/
+	
+	function set_currentFbId( fbid ) {
+		currentFbId = fbid;
+		config.facebookId = fbid;
+		notify( ON_LOGIN_CHANGE, { fbid:currentFbId } );
+		return currentFbId;
 	}
 }
