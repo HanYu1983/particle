@@ -32,6 +32,14 @@ class TreeView extends Model
 		return tree_particle.tree( 'getRoot' );
 	}
 	
+	public function findNode(nodeId:Int):Dynamic 
+	{
+		return switch( tree_particle.tree('find', nodeId) ) {
+			case null: getRootNode();
+			case node: node;
+		}
+	}
+	
 	override function init() 
 	{
 		super.init();
@@ -47,6 +55,9 @@ class TreeView extends Model
 			}
 		});
 		
+	//	getRootNode().id = 999;
+	//	getRootNode().text = '顯示層';
+		
 		btn_addTreeNode = config.btn_addTreeNode;
 		btn_removeTreeNode = config.btn_removeTreeNode;
 		
@@ -57,14 +68,6 @@ class TreeView extends Model
 		btn_removeTreeNode.click( function() {
 			notify( ON_BTN_REMOVE_TREE_NODE_CLICK, { selectNode:getSelectedNode() } );
 		});
-	}
-	
-	function findNode(nodeId:Int):Dynamic 
-	{
-		return switch( tree_particle.tree('find', nodeId) ) {
-			case null: getRootNode();
-			case node: node;
-		}
 	}
 	
 	function getNodeByDom( dom:Dynamic ):Dynamic {
@@ -91,6 +94,11 @@ class TreeView extends Model
 	}
 	
 	public function appendNode( nodeId:Int, toNodeId:Int ):Void {
+		if ( toNodeId == 999 ) {
+			getRootNode().id = nodeId;
+			getRootNode().text = nodeId;
+			return ;
+		}
 		tree_particle.tree('append', {
 			parent: findNode( toNodeId ).target,
 			data: [{

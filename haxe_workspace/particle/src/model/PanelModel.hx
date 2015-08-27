@@ -1,4 +1,5 @@
 package model;
+import haxe.Json;
 
 /**
  * ...
@@ -38,37 +39,12 @@ class PanelModel extends Model
 	}
 	
 	public function getOutputData( node:Dynamic ) {
-		/*
-		{ 	id:'root', 
-	lifetime:5,
-	mass:3,
-	color:'#33ddff',
-	size:[10, 10],
-	pos:[0, 0, 0], vel:[0, 0, 0],
-	emit: { count:1,
-			duration:.5,
-			angle:0,
-			range:0,
-			force:0,
-			prototype:[ { 	id:'root_particle', 
-							lifetime:3,
-							mass:3,
-							color:'#33ddff',
-							size:[10, 10],
-							pos:[0, 0, 0], vel:[0, 0, 0] } ] }}
-							*/
-							/*
-		trace( node );
-		var output = { };
-		
 		var retobj:Dynamic = { };
 		function _loopNode( node:Dynamic, outputData:Dynamic ) {
-			trace( node );
-			if ( node.id == null ) {
-				
-			}
-			
 			var id = node.id;
+			var particleData = findParticleById( id );
+			outputData.id = particleData.id;
+			/*
 			var particleData = findParticleById( id );
 			outputData.id = particleData.id;
 			
@@ -78,16 +54,16 @@ class PanelModel extends Model
 			outputData.mass = particleData.mass;
 			outputData.color = particleData.color;
 			outputData.size = particleData.size;
-			
+			*/
 			if ( node.children && node.children.length > 0 ) {
-				outputData.emit = { prototype:[] }
-				
+				outputData.emit = { 'prototype':[] }
+				/*
 				outputData.emit.count = particleData.emit.count;
 				outputData.emit.duration = particleData.emit.duration;
 				outputData.emit.angle = particleData.emit.angle;
 				outputData.emit.range = particleData.emit.range;
 				outputData.emit.force = particleData.emit.force;
-				
+				*/
 				for ( i in 0...node.children.length ) {
 					var obj = { };
 					outputData.emit.prototype.push( obj );
@@ -97,25 +73,8 @@ class PanelModel extends Model
 		}
 		_loopNode( node, retobj );
 		
-		
-		trace( retobj );
-		*/
-		return {};
+		return retobj;
 	}
-	/*
-	public function moveParticle(id:Int, toId:Int, ?extra:Dynamic):Void 
-	{
-		//trace( id, toId );
-		var moveParticle = findParticleById( id );
-		var toParticle = findParticleById( toId );
-		
-		//trace( moveParticle );
-		//trace( toParticle.id );
-		//removeChildFromParentById( moveParticle.id );
-		//addToChild( toParticle, moveParticle.id );
-		log();
-	}
-	*/
 	override function init() 
 	{
 		super.init();
@@ -135,40 +94,7 @@ class PanelModel extends Model
 		log();
 		
 	}
-	/*
-	function addToChild( parent:Dynamic, id:Int ) {
-		if ( parent == null ) return;
-		if ( parent.child == null ) {
-			parent.child = [];
-		}
-		parent.child.push( id );
-	}
 	
-	function removeChildById( id ) {
-		
-		var p = findParticleById( id );
-		if ( p != null ) {
-			if ( p.child != null ) {
-				Lambda.foreach( p.child, function( _id ) {
-					removeChildById( _id );
-					return true;
-				});
-			}
-			_ary_partiles.remove( p );
-		}
-	}
-	
-	function removeChildFromParentById( id ) {
-		Lambda.foreach( _ary_partiles, function( p:Dynamic ) {
-			if ( p.child != null ) {
-				if ( Lambda.indexOf( p.child, id ) != -1 ) {
-					p.child.splice( Lambda.indexOf( p.child, id ), 1 );
-				}
-			}
-			return true;
-		});
-	}
-	*/
 	function findParticleById( id:Int ):Dynamic {
 		return Lambda.find( _ary_partiles, function( p:Dynamic ) {
 			if ( p.id == id ) return true;
@@ -182,9 +108,7 @@ class PanelModel extends Model
 	}
 	
 	function log() {
-		trace( _ary_partiles );
-		
-		
+		//trace( _ary_partiles );
 	}
 }
 

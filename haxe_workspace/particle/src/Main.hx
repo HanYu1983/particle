@@ -1,4 +1,5 @@
 package;
+import haxe.Json;
 import model.IPanelModel;
 import model.PanelModel;
 import view.TreeView;
@@ -37,7 +38,8 @@ class Main
 				case TreeView.ON_BTN_REMOVE_TREE_NODE_CLICK:
 					model.removeParticle( params.selectNode.id );
 				case TreeView.ON_TREE_DRAG:
-					trace( model.getOutputData( treeView.getRootNode() ));
+					var savestr = Json.stringify( model.getOutputData( treeView.findNode( 999 ) ) );
+					trace( savestr );
 				//	trace( treeView.getRoots() );
 				//	model.moveParticle( params.moveId, params.toId );
 				//	trace( params );
