@@ -92,7 +92,7 @@ var Main = function() {
 		}
 	});
 	this.model.addHandler(function(type1,params1) {
-		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "new", customParams : [params1]});
+		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 49, className : "Main", methodName : "new", customParams : [params1]});
 		switch(type1) {
 		case "ON_ADD_PARTICLE":
 			_g.treeView.appendNode(params1.id,params1.parentId);

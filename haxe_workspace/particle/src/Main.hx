@@ -40,10 +40,6 @@ class Main
 				case TreeView.ON_TREE_DRAG:
 					var savestr = Json.stringify( model.getOutputData( treeView.findNode( 999 ) ) );
 					trace( savestr );
-				//	trace( treeView.getRoots() );
-				//	model.moveParticle( params.moveId, params.toId );
-				//	trace( params );
-					
 			}
 		});
 		
