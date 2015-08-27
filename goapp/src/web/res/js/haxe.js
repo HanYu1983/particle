@@ -232,29 +232,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.log();
 	}
 	,getOutputData: function(node) {
-		haxe_Log.trace(node,{ fileName : "PanelModel.hx", lineNumber : 64, className : "model.PanelModel", methodName : "getOutputData"});
-		var output = { };
-		var retobj = { };
-		var _loopNode;
-		var _loopNode1 = null;
-		_loopNode1 = function(node1,outputData) {
-			haxe_Log.trace(node1,{ fileName : "PanelModel.hx", lineNumber : 69, className : "model.PanelModel", methodName : "getOutputData"});
-			if(node1.children && node1.children.length > 0) {
-				outputData.emit = { prototype : []};
-				var _g1 = 0;
-				var _g = node1.children.length;
-				while(_g1 < _g) {
-					var i = _g1++;
-					var obj = { };
-					outputData.emit.prototype.push(obj);
-					_loopNode1(node1.children[i],obj);
-				}
-			}
-		};
-		_loopNode = _loopNode1;
-		_loopNode(node,retobj);
-		haxe_Log.trace(retobj,{ fileName : "PanelModel.hx", lineNumber : 101, className : "model.PanelModel", methodName : "getOutputData"});
-		return retobj;
+		return { };
 	}
 	,init: function() {
 		var _g = this;
@@ -282,7 +260,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentParticle = particle;
 	}
 	,log: function() {
-		haxe_Log.trace(this._ary_partiles,{ fileName : "PanelModel.hx", lineNumber : 185, className : "model.PanelModel", methodName : "log"});
+		haxe_Log.trace(this._ary_partiles,{ fileName : "PanelModel.hx", lineNumber : 188, className : "model.PanelModel", methodName : "log"});
 	}
 });
 var view_TreeView = function() {

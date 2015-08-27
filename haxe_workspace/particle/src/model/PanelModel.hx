@@ -60,7 +60,7 @@ class PanelModel extends Model
 							size:[10, 10],
 							pos:[0, 0, 0], vel:[0, 0, 0] } ] }}
 							*/
-							
+							/*
 		trace( node );
 		var output = { };
 		
@@ -70,7 +70,7 @@ class PanelModel extends Model
 			if ( node.id == null ) {
 				
 			}
-			/*
+			
 			var id = node.id;
 			var particleData = findParticleById( id );
 			outputData.id = particleData.id;
@@ -81,16 +81,16 @@ class PanelModel extends Model
 			outputData.mass = particleData.mass;
 			outputData.color = particleData.color;
 			outputData.size = particleData.size;
-			*/
+			
 			if ( node.children && node.children.length > 0 ) {
 				outputData.emit = { prototype:[] }
-			/*	
+				
 				outputData.emit.count = particleData.emit.count;
 				outputData.emit.duration = particleData.emit.duration;
 				outputData.emit.angle = particleData.emit.angle;
 				outputData.emit.range = particleData.emit.range;
 				outputData.emit.force = particleData.emit.force;
-				*/
+				
 				for ( i in 0...node.children.length ) {
 					var obj = { };
 					outputData.emit.prototype.push( obj );
@@ -102,8 +102,8 @@ class PanelModel extends Model
 		
 		
 		trace( retobj );
-		
-		return retobj;
+		*/
+		return {};
 	}
 	/*
 	public function moveParticle(id:Int, toId:Int, ?extra:Dynamic):Void 
