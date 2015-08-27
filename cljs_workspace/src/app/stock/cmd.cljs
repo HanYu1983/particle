@@ -26,14 +26,14 @@
 (defn loadUser [ch fbid request]
   (am/go
     (let [[err content] (<! (db/load "stock" fbid))]
-      (a/>! ch ["view" [err content request]]))))
+      (a/>! ch ["view" [(or err (.-error content)) content request]]))))
   ;(am/go
   ;  (a/>! ch ["view" [nil (get @save-data (str fbid)) request]])))
     
 (defn saveUser [ch fbid data request]
   (am/go
     (let [[err ret] (<! (db/save "stock" fbid (.stringify js/JSON data)))]
-      (a/>! ch ["view" [err ret request]]))))
+      (a/>! ch ["view" [(or err (.-error ret)) ret request]]))))
   ;(swap! save-data assoc (str fbid) data)
   ;(am/go
   ;  (a/>! ch ["view" [nil nil request]])))
