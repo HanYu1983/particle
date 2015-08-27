@@ -134,8 +134,7 @@ class Main
 			}
 		});
 		
-		//沒有記錄的話，用預設資料
-		panelModel.config = untyped __js__('defaultStock' );
+		
 		
 		saver.saveobj = panelModel.config;
 		
@@ -147,9 +146,19 @@ class Main
 				switch( e.status ) {
 					case 'connected':
 						panelModel.currentFbId = authResponse.userID;
+						
+						/*
+						load( panelModel.currentFbId, function( loadData ) {
+							trace( loadData );
+							panelModel.config = loadData;
+						});
+						*/
 						slideMessage( '提示', '歡迎登入!' );
 					case 'unknown':
 						panelModel.currentFbId = '';
+						
+						//沒有記錄的話，用預設資料
+						//panelModel.config = untyped __js__('defaultStock' );
 				}
 			});
 		});
@@ -211,6 +220,10 @@ class Main
 	
 	public static function save( fbid:String, data:Dynamic, cb:Dynamic -> Void ) {
 		untyped __js__('api.save')(fbid, data, cb );
+	}
+	
+	public static function load( fbid:String, cb:Dynamic -> Void ) {
+		//untyped __js__('api.load')(fbid, cb ); 
 	}
 	
 	public static function fb_init( appId:String, cb:Void -> Void ) {

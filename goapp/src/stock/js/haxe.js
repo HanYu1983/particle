@@ -202,11 +202,10 @@ var Main = function() {
 			break;
 		}
 	});
-	this.panelModel.set_config(defaultStock);
 	this.saver.set_saveobj(this.panelModel.config);
 	Main.fb_init("425311264344425",function() {
 		Main.fb_loginStatus(function(e2) {
-			haxe_Log.trace(e2,{ fileName : "Main.hx", lineNumber : 144, className : "Main", methodName : "new"});
+			haxe_Log.trace(e2,{ fileName : "Main.hx", lineNumber : 143, className : "Main", methodName : "new"});
 			Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
 			var authResponse1 = e2.authResponse;
 			var _g2 = e2.status;
@@ -261,6 +260,8 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 };
 Main.save = function(fbid,data,cb) {
 	api.save(fbid,data,cb);
+};
+Main.load = function(fbid,cb) {
 };
 Main.fb_init = function(appId,cb) {
 	myapp.facebook.init(appId,cb);
