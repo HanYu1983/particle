@@ -57,7 +57,7 @@
       "Data" data)))
       
 (defn load [target fbid]
-  (ajax "../simple/save" "POST" "json"
+  (ajax "../simple/load" "POST" "json"
     (js-obj
       "Target" target
       "FBID" fbid)))
