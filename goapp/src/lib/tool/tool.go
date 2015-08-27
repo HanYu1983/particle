@@ -87,7 +87,7 @@ func Recover(do func(err error)){
 func WriteErrorJson(w http.ResponseWriter) func(err error){
   return func(err error){
     w.Header().Set("Content-Type", "application/json; charset=utf8")
-    fmt.Fprintf(w, "{'error': '%s'}", err.Error())
+    fmt.Fprintf(w, "{\"error\": \"%s\"}", err.Error())
   }
 }
 

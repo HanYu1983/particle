@@ -7,6 +7,16 @@
     [app.stock.abstract :as abstract]
     [app.stock.impl]))
 
+
+(defn main2 []
+  (am/go
+    (let [[err ret] (<! (db/makeDir 5489861557485568 "han"))
+          [err dir] (<! (db/name->id 5489861557485568 "han"))
+          [err ret] (<! (db/makeFile dir "userinfo.json" "{}" true))
+          [err id] (<! (db/name->id dir "userinfo.json"))
+          [err content] (<! (db/file id "json"))]
+      (.log js/console err content))))
+
 (defn main []
   (let [onView (a/chan)
         onModel (a/chan)

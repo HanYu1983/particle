@@ -26,15 +26,19 @@
 (defn fileList [dirId]
   (ajax (str "../dbfile/" dirId) "GET" "json" nil))
   
+(defn file [id type]
+  (ajax (str "../dbfile/" id) "GET" type nil))
+  
 (defn makeDir [parent dirname]
   (ajax "../dbfile/" "POST" nil 
     (js-obj
       "Parent" parent
       "Name" dirname)))
       
-(defn makeFile [parent filename content]
+(defn makeFile [parent filename content override]
   (ajax "../dbfile/" "POST" nil 
     (js-obj
+      "Override" (if override "on" "off")
       "Parent" parent
       "Name" filename
       "Content" content)))
@@ -52,9 +56,6 @@
         [err]
         (let [origin (filter (fn [data] (= (.-Name data) filename)) content)
               exist? (not (empty? origin))]
-              (.log js/console (pr-str origin))
-              (.log js/console exist?)
-              (.log js/console (-> (first origin) (.-Key)))
           (if exist?
             [nil (-> (first origin) (.-Key))]
             [nil nil]))))))
