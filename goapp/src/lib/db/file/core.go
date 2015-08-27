@@ -7,7 +7,8 @@ import (
   db "lib/db"
 )
 
-const Kind = "__dbfile__"
+// Kind不能使用__xxx__雙底線！！！是保留字。正式機會存取不到db
+const Kind = "dbfile"
 
 type DBFile struct {
   Key int64
@@ -64,6 +65,7 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
 }
 
 func MakeDir (ctx appengine.Context, position int64, name string) (int64, error){
+  
   file := DBFile{
     Position: position,
     IsDir: true,
