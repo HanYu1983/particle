@@ -33,7 +33,7 @@ class Main
 		}
 		
 		treeView.addHandler( function ( type:String, params:Dynamic ):Void {
-			trace( type, params );
+			//trace( type, params );
 			switch( type ) {
 				case TreeView.ON_TREE_NODE_CLICK:
 					paramsView.setValues( model.findParticleById( params.node.id ), treeView.findNode( params.node.id ).children != null );
@@ -60,7 +60,7 @@ class Main
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
-			trace( type, params );
+			//trace( type, params );
 			switch( type ){
 				case PanelModel.ON_ADD_PARTICLE:
 					treeView.appendNode( params.id, params.parentId );
@@ -76,10 +76,7 @@ class Main
 			createNewParticle( getId() )
 		];
 		
-	//	trace( Json.stringify( initObj ) );
-	//	trace( Json.stringify( untyped __js__('testLoadData') ) );
 		model.config = initObj;
-	//	model.config = untyped __js__('testLoadData');
 		
 		treeView.focusNode( treeView.findNode( 0 ) );
 		
@@ -132,7 +129,7 @@ class Main
 	}
 	
 	static function updateParticle( particleData:Dynamic ) {
-		//untyped __js__( 'common.onView.onNext' )( ['edit-particle', particleData] );
+		untyped __js__( 'common.onView.onNext' )( ['edit-particle', particleData] );
 	}
 	
 	public static function addMouseWheelEvent( jdom, func ) {

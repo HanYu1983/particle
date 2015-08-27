@@ -34,8 +34,6 @@ class ParamsView extends Model
 		setPropValue( 'vel_r', particle.vel[2] / Math.PI * 180 );
 		setPropValue( 'pos_r', particle.pos[2] / Math.PI * 180 );
 		
-		trace( 'isEmit', isEmit );
-		
 		if ( isEmit ) {
 			setPropValue( 'count', particle.emit.count );
 			setPropValue( 'duration', particle.emit.duration * 1000 );

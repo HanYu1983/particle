@@ -120,7 +120,7 @@ class PanelModel extends Model
 		
 		function foreachObj( obj:Dynamic, ?pid:Int ) {
 			addParticle( obj.id, pid == null ? 999 : pid, obj );
-			if ( obj.emit != null ) {
+			if ( obj.emit != null && obj.emit.prototype != null  ) {
 				Lambda.foreach( obj.emit.prototype, function( _obj:Dynamic ) {
 					foreachObj( _obj, obj.id );
 					return true;

@@ -6,7 +6,6 @@ function $extend(from, fields) {
 	return proto;
 }
 var HxOverrides = function() { };
-HxOverrides.__name__ = true;
 HxOverrides.indexOf = function(a,obj,i) {
 	var len = a.length;
 	if(i < 0) {
@@ -33,7 +32,6 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
-Lambda.__name__ = true;
 Lambda.map = function(it,f) {
 	var l = new List();
 	var $it0 = $iterator(it)();
@@ -62,7 +60,6 @@ Lambda.find = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
-List.__name__ = true;
 List.prototype = {
 	add: function(item) {
 		var x = [item];
@@ -80,7 +77,6 @@ var Main = function() {
 	this.webgl = Main.j("#webgl");
 	this.treeView.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 	this.treeView.addHandler(function(type,params) {
-		haxe_Log.trace(type,{ fileName : "Main.hx", lineNumber : 36, className : "Main", methodName : "new", customParams : [params]});
 		switch(type) {
 		case "ON_TREE_NODE_CLICK":
 			_g.paramsView.setValues(_g.model.findParticleById(params.node.id),_g.treeView.findNode(params.node.id).children != null);
@@ -106,7 +102,6 @@ var Main = function() {
 	});
 	this.paramsView.set_config({ root : mc_props_container});
 	this.model.addHandler(function(type2,params2) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 63, className : "Main", methodName : "new", customParams : [params2]});
 		switch(type2) {
 		case "ON_ADD_PARTICLE":
 			_g.treeView.appendNode(params2.id,params2.parentId);
@@ -125,7 +120,6 @@ var Main = function() {
 	Main.j(window).resize($bind(this,this.onResize));
 	this.webgl.mousemove($bind(this,this.onMousemove));
 };
-Main.__name__ = true;
 Main.createNewEmit = function() {
 	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 100};
 };
@@ -133,6 +127,7 @@ Main.getId = function() {
 	return Main.id++;
 };
 Main.updateParticle = function(particleData) {
+	common.onView.onNext(["edit-particle",particleData]);
 };
 Main.addMouseWheelEvent = function(jdom,func) {
 	leo.utils.addMouseWheelEvent(jdom,func);
@@ -158,109 +153,13 @@ Main.prototype = {
 		this.model.setParticleProps(0,"pos_y",py);
 	}
 };
-Math.__name__ = true;
 var Reflect = function() { };
-Reflect.__name__ = true;
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
-};
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
-var js_Boot = function() { };
-js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
-js_Boot.__string_rec = function(o,s) {
-	if(o == null) return "null";
-	if(s.length >= 5) return "<...>";
-	var t = typeof(o);
-	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
-	switch(t) {
-	case "object":
-		if(o instanceof Array) {
-			if(o.__enum__) {
-				if(o.length == 2) return o[0];
-				var str2 = o[0] + "(";
-				s += "\t";
-				var _g1 = 2;
-				var _g = o.length;
-				while(_g1 < _g) {
-					var i1 = _g1++;
-					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
-				}
-				return str2 + ")";
-			}
-			var l = o.length;
-			var i;
-			var str1 = "[";
-			s += "\t";
-			var _g2 = 0;
-			while(_g2 < l) {
-				var i2 = _g2++;
-				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
-			}
-			str1 += "]";
-			return str1;
-		}
-		var tostr;
-		try {
-			tostr = o.toString;
-		} catch( e ) {
-			return "???";
-		}
-		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
-			var s2 = o.toString();
-			if(s2 != "[object Object]") return s2;
-		}
-		var k = null;
-		var str = "{\n";
-		s += "\t";
-		var hasp = o.hasOwnProperty != null;
-		for( var k in o ) {
-		if(hasp && !o.hasOwnProperty(k)) {
-			continue;
-		}
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
-			continue;
-		}
-		if(str.length != 2) str += ", \n";
-		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
-		}
-		s = s.substring(1);
-		str += "\n" + s + "}";
-		return str;
-	case "function":
-		return "<function>";
-	case "string":
-		return o;
-	default:
-		return String(o);
-	}
 };
 var model_Model = function() {
 	this._ary_handler = [];
 };
-model_Model.__name__ = true;
 model_Model.prototype = {
 	addHandler: function(handler) {
 		this._ary_handler.push(handler);
@@ -282,12 +181,12 @@ var model_PanelModel = function() {
 	this._ary_partiles = [];
 	model_Model.call(this);
 };
-model_PanelModel.__name__ = true;
 model_PanelModel.__super__ = model_Model;
 model_PanelModel.prototype = $extend(model_Model.prototype,{
 	addParticle: function(id,parentId,particle,extra) {
 		if(this.findParticleById(id)) return;
 		this._ary_partiles.push({ id : id, particle : particle});
+		this.notify(model_PanelModel.ON_ADD_PARTICLE,{ id : id, parentId : parentId, particle : particle});
 	}
 	,removeParticle: function(id,extra) {
 		if(!this.findParticleById(id)) return;
@@ -379,7 +278,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var foreachObj1 = null;
 		foreachObj1 = function(obj,pid) {
 			_g.addParticle(obj.id,pid == null?999:pid,obj);
-			if(obj.emit != null) Lambda.foreach(obj.emit.prototype,function(_obj) {
+			if(obj.emit != null && obj.emit.prototype != null) Lambda.foreach(obj.emit.prototype,function(_obj) {
 				foreachObj1(_obj,obj.id);
 				return true;
 			});
@@ -395,7 +294,6 @@ var view_ParamsView = function() {
 	this.j = $;
 	model_Model.call(this);
 };
-view_ParamsView.__name__ = true;
 view_ParamsView.__super__ = model_Model;
 view_ParamsView.prototype = $extend(model_Model.prototype,{
 	setValues: function(particleObj,isEmit) {
@@ -409,7 +307,6 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.setPropValue("vel_y",particle.vel[1]);
 		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
 		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
-		haxe_Log.trace("isEmit",{ fileName : "ParamsView.hx", lineNumber : 37, className : "view.ParamsView", methodName : "setValues", customParams : [isEmit]});
 		if(isEmit) {
 			this.setPropValue("count",particle.emit.count);
 			this.setPropValue("duration",particle.emit.duration * 1000);
@@ -472,7 +369,6 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 var view_TreeView = function() {
 	model_Model.call(this);
 };
-view_TreeView.__name__ = true;
 view_TreeView.__super__ = model_Model;
 view_TreeView.prototype = $extend(model_Model.prototype,{
 	getRoots: function() {
@@ -545,8 +441,6 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
-String.__name__ = true;
-Array.__name__ = true;
 Main.j = $;
 Main.id = 0;
 model_PanelModel.ON_ADD_PARTICLE = "ON_ADD_PARTICLE";
