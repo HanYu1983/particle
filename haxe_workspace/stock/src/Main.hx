@@ -24,8 +24,6 @@ class Main
 	
 	function new() {
 		
-		saver.fbid = 'abc';
-		
 		saver.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
 				case Saver.ON_SAVE_SUCCESS:
@@ -56,8 +54,6 @@ class Main
 			trace( 'panelView', type );
 			saver.startAuto();
 			switch( type ) {
-				//case PanelView.ON_BTN_LOADPRICE_CLICK:
-				//	panelView.drawPrice( panelModel.currentStockInfo );
 				case PanelView.ON_BTN_LOGIN_CLICK:
 					fb_login( function( e ) {
 						var authResponse  = e.authResponse;
@@ -106,6 +102,7 @@ class Main
 			
 			switch( type ) {
 				case PanelModel.ON_INIT:
+					saver.saveobj = panelModel.config;
 					panelView.setFavorsSelect( params.favorList );
 				case PanelModel.ON_FAVOR_LIST_CHANGE:
 					panelView.setFavorsSelect( params.favorList );
@@ -128,40 +125,37 @@ class Main
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 					saver.startAuto();
 				case PanelModel.ON_LOGIN_CHANGE:
-					trace( params.login );
 					saver.fbid = params.fbid;
 					panelView.setLogin( params.fbid != '' );
 			}
 		});
 		
-		
-		
-		saver.saveobj = panelModel.config;
-		
 		fb_init( '425311264344425', function() {
 			fb_loginStatus( function( e ) {
-				trace( e );
 				slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
 				var authResponse  = e.authResponse;
 				switch( e.status ) {
 					case 'connected':
 						panelModel.currentFbId = authResponse.userID;
+						saver.fbid = panelModel.currentFbId;
 						
-						/*
 						load( panelModel.currentFbId, function( loadData ) {
-							trace( loadData );
-							panelModel.config = loadData;
+							panelModel.config = ( loadData == null ? newUser() : loadData );
 						});
-						*/
+						
 						slideMessage( '提示', '歡迎登入!' );
 					case 'unknown':
 						panelModel.currentFbId = '';
 						
 						//沒有記錄的話，用預設資料
-						//panelModel.config = untyped __js__('defaultStock' );
+						panelModel.config = newUser();
 				}
 			});
 		});
+	}
+	
+	function newUser() {
+		return { stocks:[] };
 	}
 	
 	static var id = 0;
@@ -219,11 +213,12 @@ class Main
 	}
 	
 	public static function save( fbid:String, data:Dynamic, cb:Dynamic -> Void ) {
+		trace( data );
 		untyped __js__('api.save')(fbid, data, cb );
 	}
 	
 	public static function load( fbid:String, cb:Dynamic -> Void ) {
-		//untyped __js__('api.load')(fbid, cb ); 
+		untyped __js__('api.load')(fbid, cb ); 
 	}
 	
 	public static function fb_init( appId:String, cb:Void -> Void ) {

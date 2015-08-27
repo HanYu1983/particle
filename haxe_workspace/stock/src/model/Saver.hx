@@ -23,7 +23,7 @@ class Saver extends Model
 	public function startAuto() {
 		if ( fbid == '' ) return;
 		if ( _timer != null ) _timer.stop();
-		_timer = Timer.delay( save, 10000 );
+		_timer = Timer.delay( save, 3000 );
 	}
 	
 	public function save() {

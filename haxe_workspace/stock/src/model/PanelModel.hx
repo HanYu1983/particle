@@ -103,16 +103,6 @@ class PanelModel extends Model
 		notify( ON_REMOVE_PANEL, { id:id } );
 	}
 	
-	public function getSaveData():Dynamic {
-		
-		var output = {
-			facebookId:config.facebookId,
-			stocks:config.stocks
-		}
-		
-		return output;
-	}
-	
 	override function init() 
 	{
 		super.init();
@@ -250,7 +240,7 @@ class PanelModel extends Model
 	
 	function set_currentFbId( fbid ) {
 		currentFbId = fbid;
-		config.facebookId = fbid;
+		//config.facebookId = fbid;
 		notify( ON_LOGIN_CHANGE, { fbid:currentFbId } );
 		return currentFbId;
 	}
