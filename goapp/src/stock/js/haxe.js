@@ -210,8 +210,8 @@ var Main = function() {
 			case "connected":
 				_g.panelModel.set_currentFbId(authResponse1.userID);
 				_g.panelModel.set_config(_g.newUser());
-				Main.load(_g.panelModel.currentFbId,function(ret) {
-					haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 142, className : "Main", methodName : "new"});
+				Main.load(_g.panelModel.currentFbId,function(err,params3) {
+					haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 142, className : "Main", methodName : "new", customParams : [params3]});
 				});
 				Main.slideMessage("提示","歡迎登入!");
 				break;

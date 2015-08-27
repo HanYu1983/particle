@@ -138,8 +138,8 @@ class Main
 					case 'connected':
 						panelModel.currentFbId = authResponse.userID;
 						panelModel.config = newUser();
-						load( panelModel.currentFbId, function( ret ) {
-							trace( ret );
+						load( panelModel.currentFbId, function( err, params ) {
+							trace( err, params );
 							//panelModel.config = ( loadData == null ? newUser() : loadData );
 							//panelModel.config = newUser();
 						});
@@ -216,7 +216,7 @@ class Main
 		untyped __js__('api.save')(fbid, data, cb );
 	}
 	
-	public static function load( fbid:String, cb:Dynamic -> Void ) {
+	public static function load( fbid:String, cb:Dynamic -> Dynamic -> Void ) {
 		untyped __js__('api.load')(fbid, cb ); 
 	}
 	
