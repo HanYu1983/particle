@@ -49,6 +49,19 @@
       "Key" id
       "Delete" true)))
       
+(defn save [target fbid data]
+  (ajax "../simple/save" "POST" nil
+    (js-obj
+      "Target" target
+      "FBID" fbid
+      "Data" data)))
+      
+(defn load [target fbid]
+  (ajax "../simple/save" "POST" "json"
+    (js-obj
+      "Target" target
+      "FBID" fbid)))
+      
 (defn name->id [dir filename]
   (am/go
     (let [[err content] (a/<! (fileList dir))]
