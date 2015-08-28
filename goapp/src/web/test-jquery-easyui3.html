@@ -91,11 +91,8 @@
 						<a href="#" class="easyui-linkbutton" >下移</a>
 					</div>
 					<div class="hori">
-						<select class="easyui-combobox" name="state" style="width:80px;">
-							<option>none</option>
-							<option>sin</option>
-							<option>cos</option>
-							<option>custom</option>
+						<select id="combo_props" name="state" style="width:80px;">
+							<!-- created by script below -->
 						</select>
 					</div>
 					<div class="hori">
@@ -107,11 +104,11 @@
 						</select>
 					</div>
 					<div class="hori">
-						<input class="easyui-numberspinner" style="width:80px;"/>
-						<input class="easyui-numberspinner" style="width:80px;"/>
-						<input class="easyui-numberspinner" style="width:80px;"/>
-						<input class="easyui-numberspinner" style="width:80px;"/>
-						<input class="easyui-numberspinner" style="width:80px;"/>
+						<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+						<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+						<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+						<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+						<input class="easyui-numberspinner" value="0" style="width:80px;"/>
 					</div>
 				</div>
 				<div class="group" style="text-align:center">
@@ -168,6 +165,28 @@
 	for( var i = 0; i < ary_props.length; ++i ){
 		mc_props_container.append( tmpl_prop.tmpl( ary_props[i] ));
 	}
+	
+	var combo_props = $('#combo_props' );
+	ary_props = [ 	{id:'lifetime', name:'生命'}, 
+					{id:'mass', name:'質量'}, 
+					{id:'pos_x', name:'位置x'}, 
+					{id:'pos_y', name:'位置y'}, 
+					{id:'pos_r', name:'角度'}, 
+					{id:'vel_x', name:'速度x'}, 
+					{id:'vel_y', name:'速度y'}, 
+					{id:'vel_r', name:'旋轉速度'}, 
+					{id:'size_x', name:'粒子寬度'}, 
+					{id:'size_y', name:'粒子高度'}, 
+					{id:'count', name:'發射數目'}, 
+					{id:'duration', name:'週期毫秒'}, 
+					{id:'angle', name:'發射角度'}, 
+					{id:'range', name:'發射範圍'}, 
+					{id:'force', name:'發射力道'}];
+					
+	for( var i = 0; i < ary_props.length; ++i ){
+		combo_props.append( '<option value="' + ary_props[i].id + '">' + ary_props[i].name + '</option>' );
+	}
+	combo_props.combobox();
 	/*
 	var table_props = $('#table_props' );
 	table_props.datagrid();
