@@ -2,6 +2,7 @@ package;
 import haxe.Json;
 import js.Browser;
 import model.PanelModel;
+import view.DynamicView;
 import view.ParamsView;
 import view.TreeView;
 
@@ -18,6 +19,7 @@ class Main
 	
 	var treeView = new TreeView();
 	var paramsView = new ParamsView();
+	var dynamicView = new DynamicView();
 	var model = new PanelModel();
 	
 	public function new() 
@@ -26,7 +28,6 @@ class Main
 		webgl = j( '#webgl' );
 		
 		treeView.config = {
-			//table_props:j( '#table_props' ),
 			btn_addTreeNode:j('#btn_addTreeNode' ),
 			btn_removeTreeNode:j('#btn_removeTreeNode' ),
 			tree_particle:j( '#tree_particle' )
@@ -65,6 +66,10 @@ class Main
 			root:untyped __js__('mc_props_container'),
 			btn_confirmName:j('#btn_confirmName'),
 			txt_name:j('#txt_name')
+		}
+		
+		dynamicView.config = {
+			table_props:j( '#table_props' )
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {

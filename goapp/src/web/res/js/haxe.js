@@ -73,6 +73,7 @@ List.prototype = {
 };
 var Main = function() {
 	this.model = new model_PanelModel();
+	this.dynamicView = new view_DynamicView();
 	this.paramsView = new view_ParamsView();
 	this.treeView = new view_TreeView();
 	var _g = this;
@@ -101,7 +102,7 @@ var Main = function() {
 		}
 	});
 	this.paramsView.addHandler(function(type1,params1) {
-		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 55, className : "Main", methodName : "new", customParams : [params1]});
+		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 56, className : "Main", methodName : "new", customParams : [params1]});
 		switch(type1) {
 		case "ON_PROP_CHANGE":
 			_g.model.setParticleProps(params1.id,params1.proptype,params1.value);
@@ -112,8 +113,9 @@ var Main = function() {
 		}
 	});
 	this.paramsView.set_config({ root : mc_props_container, btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
+	this.dynamicView.set_config({ table_props : Main.j("#table_props")});
 	this.model.addHandler(function(type2,params2) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 71, className : "Main", methodName : "new", customParams : [params2]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 76, className : "Main", methodName : "new", customParams : [params2]});
 		switch(type2) {
 		case "ON_ADD_PARTICLE":
 			_g.treeView.appendNode(params2.id,params2.particle.name,params2.parentId);
@@ -138,6 +140,12 @@ var Main = function() {
 Main.__name__ = true;
 Main.createNewEmit = function() {
 	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 0};
+};
+Main.showLoading = function() {
+	Main.j.messager.progress({ title : "Please waiting", msg : "Loading data..."});
+};
+Main.closeLoading = function() {
+	Main.j.messager.progress("close");
 };
 Main.showMessage = function(msg) {
 	Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
@@ -417,6 +425,18 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentParticle = particle;
 	}
 });
+var view_DynamicView = function() {
+	model_Model.call(this);
+};
+view_DynamicView.__name__ = true;
+view_DynamicView.__super__ = model_Model;
+view_DynamicView.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.table_props = this.config.table_props;
+		this.table_props.datagrid();
+	}
+});
 var view_ParamsView = function() {
 	this.j = $;
 	model_Model.call(this);
@@ -523,7 +543,7 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 		return this.tree_particle.tree("getRoot");
 	}
 	,setNodeNameById: function(id,name) {
-		haxe_Log.trace(id,{ fileName : "TreeView.hx", lineNumber : 37, className : "view.TreeView", methodName : "setNodeNameById", customParams : [name]});
+		haxe_Log.trace(id,{ fileName : "TreeView.hx", lineNumber : 36, className : "view.TreeView", methodName : "setNodeNameById", customParams : [name]});
 		this.tree_particle.tree("update",{ target : this.findNode(id).target, text : name});
 	}
 	,findNode: function(nodeId) {

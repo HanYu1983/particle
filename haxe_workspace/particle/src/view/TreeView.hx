@@ -13,7 +13,6 @@ class TreeView extends Model
 	public static var ON_BTN_REMOVE_TREE_NODE_CLICK = 'ON_BTN_REMOVE_TREE_NODE_CLICK';
 	public static var ON_TREE_DRAG = 'ON_TREE_DRAG';
 	
-	//var table_props:Dynamic;
 	var tree_particle:Dynamic;
 	var btn_addTreeNode:Dynamic;
 	var btn_removeTreeNode:Dynamic;
@@ -77,10 +76,6 @@ class TreeView extends Model
 	override function init() 
 	{
 		super.init();
-		/*
-		table_props = config.table_props;
-		table_props.datagrid();
-		*/
 		
 		tree_particle = config.tree_particle;
 		tree_particle.tree( {
