@@ -41,6 +41,10 @@ class Main
 					var newId = getId();
 					model.addParticle( newId, params.selectNode.id, createNewParticle( newId ) );
 				case TreeView.ON_BTN_REMOVE_TREE_NODE_CLICK:
+					if ( treeView.getRootNode().id == params.selectNode.id ) {
+						showMessage( '不能刪除此發射器哦' );
+						return;
+					}
 					model.removeParticle( params.selectNode.id );
 				case TreeView.ON_TREE_DRAG:
 					treeView.focusNode( treeView.findNode( params.toId ) );
@@ -130,6 +134,26 @@ class Main
 	}
 	
 	static var id = 0;
+	
+	public static function showLoading() {
+		j.messager.progress( {
+			title:'Please waiting',
+            msg:'Loading data...'
+		});
+	}
+	
+	public static function closeLoading() {
+		j.messager.progress('close');
+	}
+	
+	public static function showMessage( msg ){
+		j.messager.show({
+			title:'提示',
+			msg:msg,
+			timeout:5000,
+			showType:'slide'
+		});
+	}
 	
 	public static function getId() {
 		return id++;

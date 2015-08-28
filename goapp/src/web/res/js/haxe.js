@@ -89,6 +89,10 @@ var Main = function() {
 			_g.model.addParticle(newId,params.selectNode.id,_g.createNewParticle(newId));
 			break;
 		case "ON_BTN_REMOVE_TREE_NODE_CLICK":
+			if(_g.treeView.getRootNode().id == params.selectNode.id) {
+				Main.showMessage("不能刪除此發射器哦");
+				return;
+			}
 			_g.model.removeParticle(params.selectNode.id);
 			break;
 		case "ON_TREE_DRAG":
@@ -97,7 +101,7 @@ var Main = function() {
 		}
 	});
 	this.paramsView.addHandler(function(type1,params1) {
-		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 51, className : "Main", methodName : "new", customParams : [params1]});
+		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 55, className : "Main", methodName : "new", customParams : [params1]});
 		switch(type1) {
 		case "ON_PROP_CHANGE":
 			_g.model.setParticleProps(params1.id,params1.proptype,params1.value);
@@ -109,7 +113,7 @@ var Main = function() {
 	});
 	this.paramsView.set_config({ root : mc_props_container, btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
 	this.model.addHandler(function(type2,params2) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 67, className : "Main", methodName : "new", customParams : [params2]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 71, className : "Main", methodName : "new", customParams : [params2]});
 		switch(type2) {
 		case "ON_ADD_PARTICLE":
 			_g.treeView.appendNode(params2.id,params2.particle.name,params2.parentId);
@@ -134,6 +138,9 @@ var Main = function() {
 Main.__name__ = true;
 Main.createNewEmit = function() {
 	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 0};
+};
+Main.showMessage = function(msg) {
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
 };
 Main.getId = function() {
 	return Main.id++;
