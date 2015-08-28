@@ -14,6 +14,8 @@ class ParamsView extends Model
 	var root:Dynamic;
 	var currentPropSpr:Dynamic;
 	var currentParticleObj:Dynamic;
+	var btn_confirmName:Dynamic;
+	var txt_name:Dynamic;
 
 	public function new() 
 	{
@@ -97,6 +99,9 @@ class ParamsView extends Model
 			var proptype = jdom.parent().parent().attr( 'proptype' );
 			currentPropSpr = null;
 		});
+		
+		btn_confirmName = config.btn_confirmName;
+		txt_name = config.txt_name;
 		
 		Main.addMouseWheelEvent( j( 'body' ), onBodyWheel );
 	}

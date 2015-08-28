@@ -42,7 +42,7 @@
 	<body>
 		
 		<div class="easyui-layout" style="width:100%;height:100%;">
-			<div data-options="region:'west',split:true" title="樹狀圖" style="width:280px;">
+			<div data-options="region:'west',split:true" title="樹狀圖" style="width:230px;">
 				<div class="easyui-layout" style="width:100%;height:100%;">
 					<div data-options="region:'north',split:true" style="height:200px">
 						<div class="group" style="text-align:center;">
@@ -53,7 +53,7 @@
 								<a href="#" id="btn_removeTreeNode" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
 							</div>
 						</div>	
-						<ul id="tree_particle" class="easyui-tree" data-options="animate:true,checkbox:true,dnd:true">
+						<ul id="tree_particle" class="easyui-tree" data-options="animate:true,checkbox:false,dnd:true">
 							<li>
 								<span>root</span>
 							</li>
@@ -61,7 +61,15 @@
 					</div>
 					
 					<div title="初始屬性" data-options="region:'center'" style="padding:10px;">
-						<div id="mc_props_container" class="group" style="min-width:200px;" >
+						<div class="group" style="text-align:center; margin-bottom:10px; ">
+							<div class="hori" style="width:60px; ">
+								<input id="txt_name" class="easyui-textbox" data-options="prompt:'輸入名稱'" style="width:100%;" >
+							</div>
+							<div class="hori">
+								<a href="#" id="btn_confirmName" class="easyui-linkbutton" data-options="iconCls:'icon-ok'">確定</a>
+							</div>
+						</div>
+						<div id="mc_props_container" class="group" style="min-width:150px;" >
 							<!-- created by script -->
 						</div>
 					</div>

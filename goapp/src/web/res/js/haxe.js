@@ -6,6 +6,7 @@ function $extend(from, fields) {
 	return proto;
 }
 var HxOverrides = function() { };
+HxOverrides.__name__ = true;
 HxOverrides.indexOf = function(a,obj,i) {
 	var len = a.length;
 	if(i < 0) {
@@ -32,6 +33,7 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
+Lambda.__name__ = true;
 Lambda.map = function(it,f) {
 	var l = new List();
 	var $it0 = $iterator(it)();
@@ -60,6 +62,7 @@ Lambda.find = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
+List.__name__ = true;
 List.prototype = {
 	add: function(item) {
 		var x = [item];
@@ -100,11 +103,11 @@ var Main = function() {
 			break;
 		}
 	});
-	this.paramsView.set_config({ root : mc_props_container});
+	this.paramsView.set_config({ root : mc_props_container, btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
 	this.model.addHandler(function(type2,params2) {
 		switch(type2) {
 		case "ON_ADD_PARTICLE":
-			_g.treeView.appendNode(params2.id,params2.parentId);
+			_g.treeView.appendNode(params2.id,params2.particle.name,params2.parentId);
 			break;
 		case "ON_REMOVE_PARTICLE":
 			_g.treeView.removeNode(params2.id);
@@ -120,6 +123,7 @@ var Main = function() {
 	Main.j(window).resize($bind(this,this.onResize));
 	this.webgl.mousemove($bind(this,this.onMousemove));
 };
+Main.__name__ = true;
 Main.createNewEmit = function() {
 	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 0};
 };
@@ -140,7 +144,7 @@ Main.main = function() {
 };
 Main.prototype = {
 	createNewParticle: function(id) {
-		return { id : id, lifetime : 5, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
 	}
 	,onResize: function(e) {
 		this.webgl.attr("width",this.canvas_container.width());
@@ -153,13 +157,90 @@ Main.prototype = {
 		this.model.setParticleProps(0,"pos_y",py);
 	}
 };
+Math.__name__ = true;
 var Reflect = function() { };
+Reflect.__name__ = true;
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
+};
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
 };
 var model_Model = function() {
 	this._ary_handler = [];
 };
+model_Model.__name__ = true;
 model_Model.prototype = {
 	addHandler: function(handler) {
 		this._ary_handler.push(handler);
@@ -181,6 +262,7 @@ var model_PanelModel = function() {
 	this._ary_partiles = [];
 	model_Model.call(this);
 };
+model_PanelModel.__name__ = true;
 model_PanelModel.__super__ = model_Model;
 model_PanelModel.prototype = $extend(model_Model.prototype,{
 	addParticle: function(id,parentId,particle,extra) {
@@ -294,6 +376,7 @@ var view_ParamsView = function() {
 	this.j = $;
 	model_Model.call(this);
 };
+view_ParamsView.__name__ = true;
 view_ParamsView.__super__ = model_Model;
 view_ParamsView.prototype = $extend(model_Model.prototype,{
 	setValues: function(particleObj,isEmit) {
@@ -361,6 +444,8 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			var proptype2 = jdom4.parent().parent().attr("proptype");
 			_g.currentPropSpr = null;
 		});
+		this.btn_confirmName = this.config.btn_confirmName;
+		this.txt_name = this.config.txt_name;
 		Main.addMouseWheelEvent(this.j("body"),$bind(this,this.onBodyWheel));
 	}
 	,setPropValue: function(type,value) {
@@ -379,6 +464,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 var view_TreeView = function() {
 	model_Model.call(this);
 };
+view_TreeView.__name__ = true;
 view_TreeView.__super__ = model_Model;
 view_TreeView.prototype = $extend(model_Model.prototype,{
 	getRoots: function() {
@@ -436,13 +522,13 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 		this.tree_particle.tree("select",node.target);
 		this.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : node});
 	}
-	,appendNode: function(nodeId,toNodeId) {
+	,appendNode: function(nodeId,name,toNodeId) {
 		if(toNodeId == 999) {
 			this.getRootNode().id = nodeId;
-			this.getRootNode().text = nodeId;
+			this.getRootNode().text = name;
 			return;
 		}
-		this.tree_particle.tree("append",{ parent : this.findNode(toNodeId).target, data : [{ id : nodeId, text : nodeId}]});
+		this.tree_particle.tree("append",{ parent : this.findNode(toNodeId).target, data : [{ id : nodeId, text : name}]});
 	}
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
@@ -451,6 +537,8 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
+String.__name__ = true;
+Array.__name__ = true;
 Main.j = $;
 Main.id = 0;
 model_PanelModel.ON_ADD_PARTICLE = "ON_ADD_PARTICLE";

@@ -96,10 +96,10 @@ class TreeView extends Model
 		notify( ON_TREE_NODE_CLICK, {node:node} );
 	}
 	
-	public function appendNode( nodeId:Int, toNodeId:Int ):Void {
+	public function appendNode( nodeId:Int, name:String, toNodeId:Int ):Void {
 		if ( toNodeId == 999 ) {
 			getRootNode().id = nodeId;
-			getRootNode().text = nodeId;
+			getRootNode().text = name;
 			return ;
 		}
 		
@@ -107,7 +107,7 @@ class TreeView extends Model
 			parent: findNode( toNodeId ).target,
 			data: [{
 				id: nodeId,
-				text:nodeId
+				text: name
 			}]
 		});
 	}

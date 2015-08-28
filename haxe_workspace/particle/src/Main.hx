@@ -56,14 +56,16 @@ class Main
 		});
 		
 		paramsView.config = {
-			root:untyped __js__('mc_props_container')
+			root:untyped __js__('mc_props_container'),
+			btn_confirmName:j('#btn_confirmName'),
+			txt_name:j('#txt_name')
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
 			//trace( type, params );
 			switch( type ){
 				case PanelModel.ON_ADD_PARTICLE:
-					treeView.appendNode( params.id, params.parentId );
+					treeView.appendNode( params.id, params.particle.name, params.parentId );
 				case PanelModel.ON_REMOVE_PARTICLE:
 					treeView.removeNode( params.id );
 			}
@@ -86,9 +88,10 @@ class Main
 		webgl.mousemove( onMousemove );
 	}
 	
-	function createNewParticle( id ) {
+	function createNewParticle( id:Dynamic ) {
 		return {
 			id:id, 
+			name:'粒子_' + id,
 			lifetime:5,
 			mass:3,
 			color:'#33ddff',
