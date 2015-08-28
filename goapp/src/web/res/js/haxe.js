@@ -97,20 +97,28 @@ var Main = function() {
 		}
 	});
 	this.paramsView.addHandler(function(type1,params1) {
+		haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 51, className : "Main", methodName : "new", customParams : [params1]});
 		switch(type1) {
 		case "ON_PROP_CHANGE":
 			_g.model.setParticleProps(params1.id,params1.proptype,params1.value);
+			break;
+		case "ON_TXT_NAME_CHANGE":
+			_g.model.setParticleName(params1.id,params1.name);
 			break;
 		}
 	});
 	this.paramsView.set_config({ root : mc_props_container, btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
 	this.model.addHandler(function(type2,params2) {
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 67, className : "Main", methodName : "new", customParams : [params2]});
 		switch(type2) {
 		case "ON_ADD_PARTICLE":
 			_g.treeView.appendNode(params2.id,params2.particle.name,params2.parentId);
 			break;
 		case "ON_REMOVE_PARTICLE":
 			_g.treeView.removeNode(params2.id);
+			break;
+		case "ON_NAME_CHANGE":
+			_g.treeView.setNodeNameById(params2.id,params2.name);
 			break;
 		}
 		Main.updateParticle(_g.model.getOutputData(_g.treeView.findNode(999)));
@@ -168,8 +176,32 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -276,6 +308,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		HxOverrides.remove(this._ary_partiles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
 	}
+	,setParticleName: function(id,name) {
+		if(!this.findParticleById(id)) return;
+		this.findParticleById(id).particle.name = name;
+		this.notify(model_PanelModel.ON_NAME_CHANGE,{ id : id, name : name});
+	}
 	,setParticleProps: function(id,type,value) {
 		if(!this.findParticleById(id)) return;
 		switch(type) {
@@ -326,6 +363,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			var id = node1.id;
 			var particle = _g.findParticleById(id).particle;
 			outputData.id = particle.id;
+			outputData.name = particle.name;
 			outputData.lifetime = particle.lifetime;
 			outputData.vel = particle.vel;
 			outputData.pos = particle.pos;
@@ -382,6 +420,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 	setValues: function(particleObj,isEmit) {
 		this.currentParticleObj = particleObj;
 		var particle = particleObj.particle;
+		this.txt_name.textbox({ value : particle.name});
 		this.setPropValue("lifetime",particle.lifetime * 1000);
 		this.setPropValue("mass",particle.mass);
 		this.setPropValue("size_x",particle.size[0]);
@@ -446,6 +485,9 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		});
 		this.btn_confirmName = this.config.btn_confirmName;
 		this.txt_name = this.config.txt_name;
+		this.txt_name.textbox({ onChange : function(newv1,oldv1) {
+			_g.notify(view_ParamsView.ON_TXT_NAME_CHANGE,{ id : _g.currentParticleObj.id, name : newv1});
+		}});
 		Main.addMouseWheelEvent(this.j("body"),$bind(this,this.onBodyWheel));
 	}
 	,setPropValue: function(type,value) {
@@ -473,6 +515,10 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 	,getRootNode: function() {
 		return this.tree_particle.tree("getRoot");
 	}
+	,setNodeNameById: function(id,name) {
+		haxe_Log.trace(id,{ fileName : "TreeView.hx", lineNumber : 37, className : "view.TreeView", methodName : "setNodeNameById", customParams : [name]});
+		this.tree_particle.tree("update",{ target : this.findNode(id).target, text : name});
+	}
 	,findNode: function(nodeId) {
 		var _g = this.tree_particle.tree("find",nodeId);
 		var node = _g;
@@ -480,6 +526,21 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 		default:
 			return node;
 		}
+	}
+	,removeNode: function(nodeId) {
+		this.tree_particle.tree("remove",this.findNode(nodeId).target);
+	}
+	,focusNode: function(node) {
+		this.tree_particle.tree("select",node.target);
+		this.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : node});
+	}
+	,appendNode: function(nodeId,name,toNodeId) {
+		if(toNodeId == 999) {
+			this.getRootNode().id = nodeId;
+			this.getRootNode().text = name;
+			return;
+		}
+		this.tree_particle.tree("append",{ parent : this.findNode(toNodeId).target, data : [{ id : nodeId, text : name}]});
 	}
 	,init: function() {
 		var _g = this;
@@ -515,21 +576,6 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 			return node;
 		}
 	}
-	,removeNode: function(nodeId) {
-		this.tree_particle.tree("remove",this.findNode(nodeId).target);
-	}
-	,focusNode: function(node) {
-		this.tree_particle.tree("select",node.target);
-		this.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : node});
-	}
-	,appendNode: function(nodeId,name,toNodeId) {
-		if(toNodeId == 999) {
-			this.getRootNode().id = nodeId;
-			this.getRootNode().text = name;
-			return;
-		}
-		this.tree_particle.tree("append",{ parent : this.findNode(toNodeId).target, data : [{ id : nodeId, text : name}]});
-	}
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
@@ -544,7 +590,9 @@ Main.id = 0;
 model_PanelModel.ON_ADD_PARTICLE = "ON_ADD_PARTICLE";
 model_PanelModel.ON_REMOVE_PARTICLE = "ON_REMOVE_PARTICLE";
 model_PanelModel.ON_PROPS_CAHNGE = "ON_PROPS_CAHNGE";
+model_PanelModel.ON_NAME_CHANGE = "ON_NAME_CHANGE";
 view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
+view_ParamsView.ON_TXT_NAME_CHANGE = "ON_TXT_NAME_CHANGE";
 view_TreeView.ON_TREE_NODE_CLICK = "ON_TREE_NODE_CLICK";
 view_TreeView.ON_BTN_ADD_TREE_NODE_CLICK = "ON_BTN_ADD_TREE_NODE_CLICK";
 view_TreeView.ON_BTN_REMOVE_TREE_NODE_CLICK = "ON_BTN_REMOVE_TREE_NODE_CLICK";

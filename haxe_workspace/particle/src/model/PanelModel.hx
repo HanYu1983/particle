@@ -10,6 +10,7 @@ class PanelModel extends Model
 	public static var ON_ADD_PARTICLE = 'ON_ADD_PARTICLE';
 	public static var ON_REMOVE_PARTICLE = 'ON_REMOVE_PARTICLE';
 	public static var ON_PROPS_CAHNGE = 'ON_PROPS_CAHNGE';
+	public static var ON_NAME_CHANGE = 'ON_NAME_CHANGE';
 	
 	public var currentParticle(default, set):Dynamic;
 	
@@ -37,14 +38,14 @@ class PanelModel extends Model
 		_ary_partiles.remove( findParticleById( id ));
 		notify( ON_REMOVE_PARTICLE, { id:id } );
 	}
-	/*
-	public function setParticleIsEmit( id:Int ) {
-		var parentParticle = findParticleById( id );
-		if ( parentParticle != null && parentParticle.particle.emit == null ) {
-			parentParticle.particle.emit = Main.createNewEmit();
-		}
+	
+	public function setParticleName( id:Int, name:String ) {
+		if ( !findParticleById( id )) return;
+		findParticleById( id ).particle.name = name;
+		
+		notify( ON_NAME_CHANGE, {id:id, name:name } );
 	}
-	*/
+	
 	public function setParticleProps( id:Int, type:String, value:Dynamic ) {
 		if ( !findParticleById( id )) return;
 		switch( type ) {
@@ -88,6 +89,7 @@ class PanelModel extends Model
 			var id = node.id;
 			var particle = findParticleById( id ).particle;
 			outputData.id = particle.id;
+			outputData.name = particle.name;
 			outputData.lifetime = particle.lifetime;
 			outputData.vel = particle.vel;
 			outputData.pos = particle.pos;

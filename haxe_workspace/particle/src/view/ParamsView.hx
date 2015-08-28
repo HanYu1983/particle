@@ -9,6 +9,7 @@ import model.Model;
 class ParamsView extends Model
 {
 	public static var ON_PROP_CHANGE = 'ON_PROP_CHANGE';
+	public static var ON_TXT_NAME_CHANGE = 'ON_TXT_NAME_CHANGE';
 	
 	var j:Dynamic = untyped __js__( '$' );
 	var root:Dynamic;
@@ -26,6 +27,10 @@ class ParamsView extends Model
 	public function setValues( particleObj:Dynamic, isEmit:Bool ) {
 		currentParticleObj = particleObj;
 		var particle = particleObj.particle;
+		
+		txt_name.textbox( {
+			value:particle.name
+		});
 		
 		setPropValue( 'lifetime', particle.lifetime * 1000 );
 		setPropValue( 'mass', particle.mass );
@@ -101,7 +106,13 @@ class ParamsView extends Model
 		});
 		
 		btn_confirmName = config.btn_confirmName;
+		
 		txt_name = config.txt_name;
+		txt_name.textbox( {
+			onChange:function( newv, oldv ) {
+				notify( ON_TXT_NAME_CHANGE, {id:currentParticleObj.id, name:newv} );
+			}
+		});
 		
 		Main.addMouseWheelEvent( j( 'body' ), onBodyWheel );
 	}

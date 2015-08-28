@@ -48,10 +48,12 @@ class Main
 		});
 		
 		paramsView.addHandler( function( type, params) {
-			//trace( type, params );
+			trace( type, params );
 			switch( type ) {
 				case ParamsView.ON_PROP_CHANGE:
 					model.setParticleProps( params.id, params.proptype, params.value );
+				case ParamsView.ON_TXT_NAME_CHANGE:
+					model.setParticleName( params.id, params.name );
 			}
 		});
 		
@@ -62,12 +64,14 @@ class Main
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
-			//trace( type, params );
+			trace( type, params );
 			switch( type ){
 				case PanelModel.ON_ADD_PARTICLE:
 					treeView.appendNode( params.id, params.particle.name, params.parentId );
 				case PanelModel.ON_REMOVE_PARTICLE:
 					treeView.removeNode( params.id );
+				case PanelModel.ON_NAME_CHANGE:
+					treeView.setNodeNameById( params.id, params.name );
 			}
 			
 			updateParticle( model.getOutputData( treeView.findNode( 999 ) ) );

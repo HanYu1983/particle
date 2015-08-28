@@ -33,12 +33,45 @@ class TreeView extends Model
 		return tree_particle.tree( 'getRoot' );
 	}
 	
+	public function setNodeNameById( id:Int, name:String ) {
+		trace( id, name );
+		tree_particle.tree('update', {
+			target: findNode( id ).target,
+			text: name
+		});
+	}
+	
 	public function findNode(nodeId:Int):Dynamic 
 	{
 		return switch( tree_particle.tree('find', nodeId) ) {
 			case null: getRootNode();
 			case node: node;
 		}
+	}
+	
+	public function removeNode( nodeId:Dynamic ):Void {
+		tree_particle.tree('remove', findNode( nodeId ).target );
+	}
+	
+	public function focusNode( node:Dynamic ) {
+		tree_particle.tree( 'select', node.target);
+		notify( ON_TREE_NODE_CLICK, {node:node} );
+	}
+	
+	public function appendNode( nodeId:Int, name:String, toNodeId:Int ):Void {
+		if ( toNodeId == 999 ) {
+			getRootNode().id = nodeId;
+			getRootNode().text = name;
+			return ;
+		}
+		
+		tree_particle.tree('append', {
+			parent: findNode( toNodeId ).target,
+			data: [{
+				id: nodeId,
+				text: name
+			}]
+		});
 	}
 	
 	override function init() 
@@ -71,7 +104,6 @@ class TreeView extends Model
 		});
 	}
 	
-	
 	function getNodeByDom( dom:Dynamic ):Dynamic {
 		return switch( tree_particle.tree('getNode', dom ) ) {
 			case null: getRootNode();
@@ -85,30 +117,5 @@ class TreeView extends Model
 			case null: getRootNode();
 			case node: node;
 		}
-	}
-	
-	public function removeNode( nodeId:Dynamic ):Void {
-		tree_particle.tree('remove', findNode( nodeId ).target );
-	}
-	
-	public function focusNode( node:Dynamic ) {
-		tree_particle.tree( 'select', node.target);
-		notify( ON_TREE_NODE_CLICK, {node:node} );
-	}
-	
-	public function appendNode( nodeId:Int, name:String, toNodeId:Int ):Void {
-		if ( toNodeId == 999 ) {
-			getRootNode().id = nodeId;
-			getRootNode().text = name;
-			return ;
-		}
-		
-		tree_particle.tree('append', {
-			parent: findNode( toNodeId ).target,
-			data: [{
-				id: nodeId,
-				text: name
-			}]
-		});
 	}
 }
