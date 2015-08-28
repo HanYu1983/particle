@@ -92,7 +92,6 @@ var Main = function() {
 	this.saver.addHandler(function(type,params) {
 		switch(type) {
 		case "ON_SAVE_SUCCESS":
-			Main.slideMessage("提示","自動儲存成功!");
 			break;
 		}
 	});
@@ -208,33 +207,8 @@ var Main = function() {
 			break;
 		}
 	});
-	Main.fb_init("425311264344425",function() {
-		Main.showLoading();
-		Main.fb_loginStatus(function(e2) {
-			Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
-			var authResponse1 = e2.authResponse;
-			var _g2 = e2.status;
-			switch(_g2) {
-			case "connected":
-				_g.panelModel.set_currentFbId(authResponse1.userID);
-				Main.load(_g.panelModel.currentFbId,function(err1,params4) {
-					haxe_Log.trace(err1,{ fileName : "Main.hx", lineNumber : 154, className : "Main", methodName : "new", customParams : [params4]});
-					Main.closeLoading();
-					if(err1 == null) _g.panelModel.set_config(params4 == null?_g.newUser():params4); else {
-						js_Browser.alert(err1);
-						_g.panelModel.set_config(_g.newUser());
-					}
-				});
-				Main.slideMessage("提示","歡迎登入!");
-				break;
-			case "unknown":
-				Main.closeLoading();
-				_g.panelModel.set_currentFbId("");
-				_g.panelModel.set_config(_g.newUser());
-				break;
-			}
-		});
-	});
+	this.panelModel.set_currentFbId("");
+	this.panelModel.set_config(this.newUser());
 };
 Main.__name__ = true;
 Main.getId = function() {
@@ -276,7 +250,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
-	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 241, className : "Main", methodName : "save"});
+	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 245, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
 };
 Main.load = function(fbid,cb) {
@@ -455,11 +429,6 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
-};
-var js_Browser = function() { };
-js_Browser.__name__ = true;
-js_Browser.alert = function(v) {
-	window.alert(js_Boot.__string_rec(v,""));
 };
 var model_IModel = function() { };
 model_IModel.__name__ = true;
@@ -711,78 +680,19 @@ view_PanelView.__name__ = true;
 view_PanelView.__super__ = model_Model;
 view_PanelView.prototype = $extend(model_Model.prototype,{
 	init: function() {
-		var _g1 = this;
+		var _g = this;
 		model_Model.prototype.init.call(this);
-		var isDot = false;
-		var isComma = false;
 		this.doc = this.config.doc;
-		this.doc.keydown(function(e) {
-			var _g = e.which;
-			switch(_g) {
-			case 16:
-				break;
-			case 17:
-				break;
-			case 18:
-				break;
-			case 188:
-				isComma = true;
-				break;
-			case 190:
-				isDot = true;
-				break;
-			case 191:
-				break;
-			}
-		});
-		this.doc.keyup(function(e1) {
-			haxe_Log.trace(e1.which,{ fileName : "PanelView.hx", lineNumber : 85, className : "view.PanelView", methodName : "init"});
-			var _g2 = e1.which;
-			switch(_g2) {
-			case 16:
-				break;
-			case 17:
-				break;
-			case 188:
-				isComma = false;
-				break;
-			case 190:
-				isDot = false;
-				break;
-			case 191:
-				break;
-			case 87:
-				break;
-			case 65:
-				if(isDot && isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000}); else if(isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
-				break;
-			case 83:
-				break;
-			case 68:
-				if(isDot && isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000}); else if(isComma) _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20}); else _g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
-				break;
-			case 18:
-				break;
-			case 38:
-				break;
-			case 37:
-				break;
-			case 40:
-				break;
-			case 39:
-				break;
-			case 70:
-				break;
-			}
-		});
+		this.doc.keydown($bind(this,this.onKeyDown));
+		this.doc.keyup($bind(this,this.onKeyUp));
 		this.body = this.config.body;
-		this.body.find(".easyui-tooltip").tooltip({ position : "right", onShow : function(e2) {
-			var self = _g1.j(e2.currentTarget);
+		this.body.find(".easyui-tooltip").tooltip({ position : "right", onShow : function(e) {
+			var self = _g.j(e.currentTarget);
 			var hoverInfo = app.config.hoverInfo;
 			var hoverstr;
-			var _g3 = Reflect.field(hoverInfo,self.attr("id"));
-			var hstr = _g3;
-			if(_g3 == null) hoverstr = Reflect.field(hoverInfo,"default"); else switch(_g3) {
+			var _g1 = Reflect.field(hoverInfo,self.attr("id"));
+			var hstr = _g1;
+			if(_g1 == null) hoverstr = Reflect.field(hoverInfo,"default"); else switch(_g1) {
 			default:
 				hoverstr = hstr;
 			}
@@ -792,65 +702,73 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.mc_accordionContainer.accordion();
 		this.tmpl_panel = this.config.tmpl_panel;
 		this.btn_addPanel = this.config.btn_addPanel;
-		this.btn_addPanel.click(function(e3) {
-			_g1.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
+		this.btn_addPanel.click(function(e1) {
+			_g.notify(view_PanelView.ON_BTN_ADDPANEL_CLICK);
 		});
 		this.btn_login = this.config.btn_login;
 		this.btn_login.click(function() {
-			_g1.notify(view_PanelView.ON_BTN_LOGIN_CLICK);
+			_g.notify(view_PanelView.ON_BTN_LOGIN_CLICK);
 		});
 		this.btn_logout = this.config.btn_logout;
 		this.btn_logout.click(function() {
-			_g1.notify(view_PanelView.ON_BTN_LOGOUT_CLICK);
+			_g.notify(view_PanelView.ON_BTN_LOGOUT_CLICK);
 		});
 		this.txt_offset = this.config.txt_offset;
 		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
-			_g1.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
+			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
 		}});
 		this.txt_note = this.config.txt_note;
 		this.txt_note.textbox({ onChange : function(newv,oldv) {
-			_g1.notify(view_PanelView.ON_TXT_NOTE_CHANGE,{ note : newv});
+			_g.notify(view_PanelView.ON_TXT_NOTE_CHANGE,{ note : newv});
 		}});
+		this.txt_note.parent().focusin(function() {
+			_g.doc.off("keydown");
+			_g.doc.off("keyup");
+		});
+		this.txt_note.parent().focusout(function() {
+			_g.doc.keydown($bind(_g,_g.onKeyDown));
+			_g.doc.keyup($bind(_g,_g.onKeyUp));
+		});
 		this.txt_count = this.config.txt_count;
 		this.txt_count.textbox({ value : 200, onChange : function(newValue1,oldValue1) {
-			_g1.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
+			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
 		}});
 		this.slt_stockId = this.config.slt_stockId;
 		this.slt_stockId.textbox({ onChange : function(newValue2,oldValue2) {
 			var stockId = newValue2;
-			_g1.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
+			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
 		this.swb_favor = this.config.swb_favor;
 		this.swb_favor.switchbutton({ onChange : function(checked) {
-			_g1.notify(view_PanelView.ON_SWB_FAVOR_CHANGE,{ favor : checked});
+			_g.notify(view_PanelView.ON_SWB_FAVOR_CHANGE,{ favor : checked});
 		}});
 		this.combo_favor = this.config.combo_favor;
 		this.combo_favor.combobox({ onSelect : function(record) {
 			var value = record.value;
-			_g1.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
+			_g.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
 		}});
 		this.btn_controller = this.config.btn_controller;
-		this.btn_controller.delegate(".btn_controller","click",function(e4) {
-			var target = e4.currentTarget;
-			var id = _g1.j(target).attr("id");
+		this.btn_controller.delegate(".btn_controller","click",function(e2) {
+			var target = e2.currentTarget;
+			var id = _g.j(target).attr("id");
 			switch(id) {
 			case "btn_first":
-				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000});
 				break;
 			case "btn_prev10":
-				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20});
 				break;
 			case "btn_prev":
-				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
 				break;
 			case "btn_next":
-				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
 				break;
 			case "btn_next10":
-				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20});
 				break;
 			case "btn_last":
-				_g1.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
+				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
 				break;
 			}
 		});
@@ -1036,6 +954,71 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 				container.scrollLeft(_g.currentScrollX);
 			}
 		});
+	}
+	,onKeyDown: function(e) {
+		var _g = e.which;
+		switch(_g) {
+		case 16:
+			break;
+		case 17:
+			break;
+		case 18:
+			break;
+		case 188:
+			break;
+		case 190:
+			break;
+		case 191:
+			break;
+		}
+	}
+	,onKeyUp: function(e) {
+		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 513, className : "view.PanelView", methodName : "onKeyUp"});
+		var _g = e.which;
+		switch(_g) {
+		case 66:
+			this.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -10000});
+			break;
+		case 78:
+			this.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -20});
+			break;
+		case 77:
+			this.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : -1});
+			break;
+		case 188:
+			this.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 1});
+			break;
+		case 190:
+			this.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 20});
+			break;
+		case 191:
+			this.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
+			break;
+		case 16:
+			break;
+		case 17:
+			break;
+		case 87:
+			break;
+		case 65:
+			break;
+		case 83:
+			break;
+		case 68:
+			break;
+		case 18:
+			break;
+		case 38:
+			break;
+		case 37:
+			break;
+		case 40:
+			break;
+		case 39:
+			break;
+		case 70:
+			break;
+		}
 	}
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }

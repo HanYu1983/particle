@@ -56,81 +56,10 @@ class PanelView extends Model
 	{
 		super.init();
 		
-		var isDot = false;
-		var isComma = false;
 		
 		doc = config.doc;
-		doc.keydown( function( e ) {
-			
-			switch( e.which ) {
-				//shift
-				case 16:
-					
-				//ctrl
-				case 17:
-					
-				//alt
-				case 18:
-				//,
-				case 188:
-					isComma = true;
-				//.
-				case 190:
-					isDot = true;
-				///
-				case 191:
-			}
-		});
-		doc.keyup( function( e ) {
-			trace( e.which );
-			switch( e.which ) {
-				//shift
-				case 16:
-					
-				//ctrl
-				case 17:
-				//,
-				case 188:
-					isComma = false;
-				//.
-				case 190:
-					isDot = false;
-				///
-				case 191:
-				//w
-				case 87:
-				//a
-				case 65:
-					if( isDot && isComma ) notify( ON_BTN_CONTROLLER_CLICK, { value:-10000 } );
-					else if ( isComma )
-						notify( ON_BTN_CONTROLLER_CLICK, { value: -20 } );
-					else
-						notify( ON_BTN_CONTROLLER_CLICK, { value: -1 } );
-				//s
-				case 83:
-				//d
-				case 68:
-					if( isDot && isComma ) notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
-					else if ( isComma )
-						notify( ON_BTN_CONTROLLER_CLICK, { value: 20 } );
-					else
-						notify( ON_BTN_CONTROLLER_CLICK, { value: 1 } );
-				//alt
-				case 18:
-				//up
-				case 38:
-				//left
-				case 37:
-					
-				//down
-				case 40:
-				//right
-				case 39:
-					
-				//f
-				case 70:
-			}
-		});
+		doc.keydown( onKeyDown );
+		doc.keyup( onKeyUp );
 		
 		body = config.body;
 		body.find( '.easyui-tooltip' ).tooltip( {
@@ -185,6 +114,16 @@ class PanelView extends Model
 			onChange:function( newv, oldv ) {
 				notify( ON_TXT_NOTE_CHANGE, { note:newv } );
 			}
+		});
+		
+		txt_note.parent().focusin( function() {
+			doc.off( 'keydown' );
+			doc.off( 'keyup' );
+		});
+		
+		txt_note.parent().focusout( function() {
+			doc.keydown( onKeyDown );
+			doc.keyup( onKeyUp );
 		});
 		
 		txt_count = config.txt_count;
@@ -548,5 +487,76 @@ class PanelView extends Model
 				container.scrollLeft( currentScrollX );
 			}
 		});
+	}
+	
+	function onKeyDown( e ) {
+		switch( e.which ) {
+			//shift
+			case 16:
+				
+			//ctrl
+			case 17:
+				
+			//alt
+			case 18:
+			//,
+			case 188:
+			//.
+			case 190:
+				
+			///
+			case 191:
+		}
+	}
+	
+	function onKeyUp( e ) {
+		trace( e.which );
+		switch( e.which ) {
+			//b
+			case 66:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: -10000 } );
+			//n
+			case 78:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: -20 } );
+			//m
+			case 77:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: -1 } );
+			//,
+			case 188:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: 1 } );
+			//.
+			case 190:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: 20 } );
+			///
+			case 191:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: 10000 } );
+			//shift
+			case 16:
+				
+			//ctrl
+			case 17:
+			//w
+			case 87:
+			//a
+			case 65:
+			//s
+			case 83:
+			//d
+			case 68:
+			//alt
+			case 18:
+			//up
+			case 38:
+			//left
+			case 37:
+				
+			//down
+			case 40:
+			//right
+			case 39:
+				
+			//f
+			case 70:
+		}
 	}
 }

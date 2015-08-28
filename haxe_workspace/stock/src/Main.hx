@@ -27,7 +27,7 @@ class Main
 		saver.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
 				case Saver.ON_SAVE_SUCCESS:
-					slideMessage( '提示', '自動儲存成功!' );
+					//slideMessage( '提示', '自動儲存成功!' );
 			}
 		});
 		
@@ -138,7 +138,10 @@ class Main
 		});
 		
 		
-		
+		#if debug
+		panelModel.currentFbId = '';
+		panelModel.config = newUser();
+		#else
 		fb_init( '425311264344425', function() {
 			
 			showLoading();
@@ -173,6 +176,7 @@ class Main
 				}
 			});
 		});
+		#end
 	}
 	
 	function newUser() {
