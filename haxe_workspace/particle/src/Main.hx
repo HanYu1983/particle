@@ -105,7 +105,7 @@ class Main
 			duration:0.5,
 			angle:0,
 			range:0,
-			force:100
+			force:0
 		}
 	}
 	

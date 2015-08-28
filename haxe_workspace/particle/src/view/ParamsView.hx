@@ -10,7 +10,7 @@ class ParamsView extends Model
 {
 	public static var ON_PROP_CHANGE = 'ON_PROP_CHANGE';
 	
-	var j = untyped __js__( '$' );
+	var j:Dynamic = untyped __js__( '$' );
 	var root:Dynamic;
 	var currentPropSpr:Dynamic;
 	var currentParticleObj:Dynamic;
@@ -60,7 +60,6 @@ class ParamsView extends Model
 		super.init();
 		
 		root = config.root;
-		
 		root.find( '.easyui-numberspinner-code' ).numberspinner( {
 			onChange:function(newv, oldv ) {
 				var newValue = Std.parseFloat( newv );
@@ -75,19 +74,28 @@ class ParamsView extends Model
 				}
 				
 				notify( ON_PROP_CHANGE, { id:currentParticleObj.id, proptype:proptype, value:newValue } );
-				//trace( jdom.parent().parent().attr( 'proptype' ));
 				currentPropSpr = jdom;
 			},
 			onSpinUp:function() {
 				var jdom = j( untyped __js__( 'this' ) );
-				//trace( jdom.parent().parent().attr( 'proptype' ));
 				currentPropSpr = jdom;
 			},
 			onSpinDown:function() {
 				var jdom = j( untyped __js__( 'this' ) );
-				//trace( jdom.parent().parent().attr( 'proptype' ));
 				currentPropSpr = jdom;
 			}
+		});
+		
+		root.find( '.easyui-numberspinner-code' ).parent().focusin( function( e:Dynamic ) {
+			var jdom:Dynamic = j( e.currentTarget ).find( '.easyui-numberspinner-code' );
+			var proptype = jdom.parent().parent().attr( 'proptype' );
+			currentPropSpr = jdom;
+		});
+		
+		root.find( '.easyui-numberspinner-code' ).parent().focusout( function( e:Dynamic ) {
+			var jdom:Dynamic = j( e.currentTarget ).find( '.easyui-numberspinner-code' );
+			var proptype = jdom.parent().parent().attr( 'proptype' );
+			currentPropSpr = null;
 		});
 		
 		Main.addMouseWheelEvent( j( 'body' ), onBodyWheel );

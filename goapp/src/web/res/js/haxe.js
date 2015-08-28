@@ -121,7 +121,7 @@ var Main = function() {
 	this.webgl.mousemove($bind(this,this.onMousemove));
 };
 Main.createNewEmit = function() {
-	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 100};
+	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 0};
 };
 Main.getId = function() {
 	return Main.id++;
@@ -351,6 +351,16 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			var jdom2 = _g.j(this);
 			_g.currentPropSpr = jdom2;
 		}});
+		this.root.find(".easyui-numberspinner-code").parent().focusin(function(e) {
+			var jdom3 = _g.j(e.currentTarget).find(".easyui-numberspinner-code");
+			var proptype1 = jdom3.parent().parent().attr("proptype");
+			_g.currentPropSpr = jdom3;
+		});
+		this.root.find(".easyui-numberspinner-code").parent().focusout(function(e1) {
+			var jdom4 = _g.j(e1.currentTarget).find(".easyui-numberspinner-code");
+			var proptype2 = jdom4.parent().parent().attr("proptype");
+			_g.currentPropSpr = null;
+		});
 		Main.addMouseWheelEvent(this.j("body"),$bind(this,this.onBodyWheel));
 	}
 	,setPropValue: function(type,value) {
