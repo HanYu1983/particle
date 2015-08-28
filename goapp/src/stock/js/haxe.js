@@ -207,8 +207,33 @@ var Main = function() {
 			break;
 		}
 	});
-	this.panelModel.set_currentFbId("");
-	this.panelModel.set_config(this.newUser());
+	Main.fb_init("425311264344425",function() {
+		Main.showLoading();
+		Main.fb_loginStatus(function(e2) {
+			Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
+			var authResponse1 = e2.authResponse;
+			var _g2 = e2.status;
+			switch(_g2) {
+			case "connected":
+				_g.panelModel.set_currentFbId(authResponse1.userID);
+				Main.load(_g.panelModel.currentFbId,function(err1,params4) {
+					haxe_Log.trace(err1,{ fileName : "Main.hx", lineNumber : 157, className : "Main", methodName : "new", customParams : [params4]});
+					Main.closeLoading();
+					if(err1 == null) _g.panelModel.set_config(params4 == null?_g.newUser():params4); else {
+						js_Browser.alert(err1);
+						_g.panelModel.set_config(_g.newUser());
+					}
+				});
+				Main.slideMessage("提示","歡迎登入!");
+				break;
+			case "unknown":
+				Main.closeLoading();
+				_g.panelModel.set_currentFbId("");
+				_g.panelModel.set_config(_g.newUser());
+				break;
+			}
+		});
+	});
 };
 Main.__name__ = true;
 Main.getId = function() {
@@ -429,6 +454,11 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
 };
 var model_IModel = function() { };
 model_IModel.__name__ = true;
@@ -1058,5 +1088,3 @@ view_PanelView.ON_TXT_NOTE_CHANGE = "on_txt_note_change";
 view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=haxe.js.map
