@@ -45,7 +45,7 @@
 (defmethod draw-it :grid [{line :line kline :kline color :color hideY :hideY} base ctx]
   (let [[w h max-v min-v offset-v offset-x pos-y] base
         cnt 6
-        cntx 25
+        cntx 20
         offset (-> (- max-v min-v) (/ cnt))]
     (aset ctx "strokeStyle" color)
     (aset ctx "fillStyle" color)
