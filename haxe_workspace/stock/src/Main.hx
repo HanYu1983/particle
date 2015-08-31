@@ -27,8 +27,11 @@ class Main
 		
 		saver.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
+				case Saver.ON_SAVE_NO_FBID:
+					slideMessage( '提示', '請先登入facebook' );
 				case Saver.ON_SAVE_SUCCESS:
-					//slideMessage( '提示', '自動儲存成功!' );
+					slideMessage( '提示', '儲存成功!' );
+					panelView.setSavable( false );
 			}
 		});
 		
@@ -48,6 +51,7 @@ class Main
 			combo_prefer:j( '#combo_prefer' ),
 			btn_controller:j( '#btn_controller' ),
 			btn_addPanel:j( '#btn_addPanel' ),
+			btn_save:j('#btn_save' ),
 			txt_count:j( '#txt_count' ),
 			txt_offset:j( '#txt_offset' ),
 			txt_note:j( '#txt_note' ),
@@ -60,6 +64,7 @@ class Main
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
 		//	trace( 'panelView', type );
+			
 			saver.startAuto();
 			switch( type ) {
 				case PanelView.ON_BTN_LOGIN_CLICK:
@@ -88,6 +93,8 @@ class Main
 					fb_logout( function( e ) {
 						panelModel.currentFbId = '';
 					});
+				case PanelView.ON_BTN_SAVE_CLICK:
+					saver.save();
 				case PanelView.ON_TXT_NOTE_CHANGE:
 					panelModel.currentNote = params.note;
 				case PanelView.ON_COMBO_FAVOR_CHANGE:
@@ -126,22 +133,29 @@ class Main
 					saver.saveobj = panelModel.config;
 					panelView.setFavorsSelect( params.favorList );
 				case PanelModel.ON_FAVOR_LIST_CHANGE:
+					panelView.setSavable( true );
 					panelView.setFavorsSelect( params.favorList );
 				case PanelModel.ON_OFFSET_CHANGE:
+					panelView.setSavable( true );
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 					panelView.scrollTo( panelModel.getAryPanel(), 0 );
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_COUNT_CHANGE:
+					panelView.setSavable( true );
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_ADD_PANEL:
+					panelView.setSavable( true );
 					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
 					panelView.resetAllCanvasListener( panelModel.getAryPanel() );
 				case PanelModel.ON_REMOVE_PANEL:
+					panelView.setSavable( true );
 					panelView.removePanel( params.id );
 				case PanelModel.ON_SHOWLINE_CHANGE:
+					panelView.setSavable( true );
 					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
 				case PanelModel.ON_STOCKID_CHANGE:
+					panelView.setSavable( true );
 					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 					saver.startAuto();

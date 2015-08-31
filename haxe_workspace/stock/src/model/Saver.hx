@@ -8,6 +8,7 @@ import haxe.Timer;
 class Saver extends Model
 {
 	public static var ON_SAVE_SUCCESS = 'ON_SAVE_SUCCESS'; 
+	public static var ON_SAVE_NO_FBID = 'ON_SAVE_NO_FBID'; 
 	
 	public var fbid(default, set ):String = '';
 	public var saveobj(default, set ):Dynamic;
@@ -23,11 +24,14 @@ class Saver extends Model
 	public function startAuto() {
 		if ( fbid == '' ) return;
 		if ( _timer != null ) _timer.stop();
-		_timer = Timer.delay( save, 3000 );
+		_timer = Timer.delay( save, 1000 * 60 * 10 );
 	}
 	
 	public function save() {
-		if ( fbid == '' ) return;
+		if ( fbid == '' ) {
+			notify( ON_SAVE_NO_FBID );
+			return;
+		}
 		Main.save( fbid, optmize(), onSaveOk );
 	}
 	
@@ -53,4 +57,5 @@ class Saver extends Model
 	function set_saveobj( saveobj ) {
 		return this.saveobj = saveobj;
 	}
+	
 }

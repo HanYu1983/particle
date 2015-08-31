@@ -20,6 +20,7 @@ class PanelView extends Model
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
 	public static var ON_BTN_LOGIN_CLICK = 'on_btn_login_click';
 	public static var ON_BTN_LOGOUT_CLICK = 'on_btn_logout_click';
+	public static var ON_BTN_SAVE_CLICK = 'ON_BTN_SAVE_CLICK';
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
@@ -41,6 +42,7 @@ class PanelView extends Model
 	var btn_addPanel:Dynamic;
 	var btn_login:Dynamic;
 	var btn_logout:Dynamic;
+	var btn_save:Dynamic;
 	var btn_about:Dynamic;
 	//var btn_loadPrice:Dynamic;
 	var table_stockPrice:Dynamic;
@@ -112,6 +114,14 @@ class PanelView extends Model
 			}
 		});
 		
+		txt_count = config.txt_count;
+		txt_count.textbox( {
+			value:200,
+			onChange:function(newValue, oldValue) {
+				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
+			}
+		});
+		
 		txt_note = config.txt_note;
 		txt_note.textbox( {
 			onChange:function( newv, oldv ) {
@@ -127,14 +137,6 @@ class PanelView extends Model
 		txt_note.parent().focusout( function() {
 			doc.keydown( onKeyDown );
 			doc.keyup( onKeyUp );
-		});
-		
-		txt_count = config.txt_count;
-		txt_count.textbox( {
-			value:200,
-			onChange:function(newValue, oldValue) {
-				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
-			}
 		});
 		
 		slt_stockId = config.slt_stockId;
@@ -215,6 +217,12 @@ class PanelView extends Model
 			}
 		});
 		
+		btn_save = config.btn_save;
+		btn_save.click( function() {
+			notify( ON_BTN_SAVE_CLICK );
+		});
+		btn_save.linkbutton();
+		
 		table_stockPrice = config.table_stockPrice;
 	}
 	
@@ -236,6 +244,14 @@ class PanelView extends Model
 		
 		changeOffset( offset );
 		changeCount( count );
+	}
+	
+	public function setSavable( savable ) {
+		if ( savable ) {
+			btn_save.linkbutton('enable');
+		}else {
+			btn_save.linkbutton('disable');
+		}
 	}
 	
 	public function setLogin( login:Bool ) {
