@@ -3,6 +3,8 @@
     [cljs.core.async.macros :as am])
   (:require
     [cljs.core.async :as a]))
+    
+(def *domain* (atom "../"))
 
 (defn ajax [url type dataType data]
   (let [ret (a/chan)]
@@ -24,19 +26,19 @@
     ret))
     
 (defn fileList [dirId]
-  (ajax (str "../dbfile/" dirId) "GET" "json" nil))
+  (ajax (str @*domain* "dbfile/" dirId) "GET" "json" nil))
   
 (defn file [id type]
-  (ajax (str "../dbfile/" id) "GET" type nil))
+  (ajax (str @*domain* "dbfile/" id) "GET" type nil))
   
 (defn makeDir [parent dirname]
-  (ajax "../dbfile/" "POST" nil 
+  (ajax (str @*domain* "dbfile/") "POST" nil 
     (js-obj
       "Parent" parent
       "Name" dirname)))
       
 (defn makeFile [parent filename content override]
-  (ajax "../dbfile/" "POST" nil 
+  (ajax (str @*domain* "dbfile/") "POST" nil 
     (js-obj
       "Override" (if override "on" "off")
       "Parent" parent
@@ -44,20 +46,20 @@
       "Content" content)))
       
 (defn deleteFile [id]
-  (ajax "../dbfile/" "POST" nil
+  (ajax (str @*domain* "dbfile/") "POST" nil
     (js-obj
       "Key" id
       "Delete" true)))
       
 (defn save [target fbid data]
-  (ajax "../simple/save" "POST" nil
+  (ajax (str @*domain* "simple/save") "POST" nil
     (js-obj
       "Target" target
       "FBID" fbid
       "Data" data)))
       
 (defn load [target fbid]
-  (ajax "../simple/load" "POST" "json"
+  (ajax (str @*domain* "simple/load") "POST" "json"
     (js-obj
       "Target" target
       "FBID" fbid)))
