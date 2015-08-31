@@ -249,8 +249,14 @@ class PanelView extends Model
 	
 	public function setSavable( savable ) {
 		if ( savable ) {
+			btn_save.linkbutton( {
+				text:'同步'
+			});
 			btn_save.linkbutton('enable');
 		}else {
+			btn_save.linkbutton( {
+				text:'已同步'
+			});
 			btn_save.linkbutton('disable');
 		}
 	}

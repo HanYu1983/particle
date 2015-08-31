@@ -873,7 +873,13 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.changeCount(count);
 	}
 	,setSavable: function(savable) {
-		if(savable) this.btn_save.linkbutton("enable"); else this.btn_save.linkbutton("disable");
+		if(savable) {
+			this.btn_save.linkbutton({ text : "同步"});
+			this.btn_save.linkbutton("enable");
+		} else {
+			this.btn_save.linkbutton({ text : "已同步"});
+			this.btn_save.linkbutton("disable");
+		}
 	}
 	,setLogin: function(login) {
 		if(login) {
