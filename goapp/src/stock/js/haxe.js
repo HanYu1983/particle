@@ -925,6 +925,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
 		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
 		panelData.root = dom;
+		if(type != "clock") {
+			var cw = leo.utils.getScreenWidth();
+			console.log(dom.find("canvas").parent().width());
+			dom.find("canvas").attr("width",cw - 50);
+		}
 		if(type == "kline" || type == "none") dom.find("#slt_showKline").switchbutton({ checked : type == "kline", onChange : function(checked) {
 			_g.notify(view_PanelView.ON_SWB_SHOWKLINE_CHANGE,{ id : panelData.id, show : checked});
 		}});

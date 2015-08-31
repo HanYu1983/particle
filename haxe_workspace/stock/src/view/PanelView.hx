@@ -353,12 +353,12 @@ class PanelView extends Model
 		panelData.root = dom;
 		
 		//resize canvas
-		/*
-		if ( type != EType.clock ) {
+		
+		if ( type != 'clock' ) {
 			var cw = untyped __js__('leo.utils.getScreenWidth' )();
-			dom.find( 'canvas' ).attr( 'width', cw - 50 )
+			trace( dom.find( 'canvas' ).parent().width() );
+			dom.find( 'canvas' ).attr( 'width', cw - 50 );
 		}
-		*/
 		
 		if ( type == 'kline' || type == 'none' ){
 			dom.find( '#slt_showKline' ).switchbutton( {
