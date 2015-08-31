@@ -92,10 +92,14 @@ var Main = function() {
 	var _g = this;
 	this.saver.addHandler(function(type,params) {
 		switch(type) {
+		case "ON_SAVE_START":
+			Main.showLoading();
+			break;
 		case "ON_SAVE_NO_FBID":
 			Main.slideMessage("提示","請先登入facebook");
 			break;
 		case "ON_SAVE_SUCCESS":
+			Main.closeLoading();
 			Main.slideMessage("提示","儲存成功!");
 			_g.panelView.setSavable(false);
 			break;
@@ -677,6 +681,7 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 			this.notify(model_Saver.ON_SAVE_NO_FBID);
 			return;
 		}
+		this.notify(model_Saver.ON_SAVE_START);
 		Main.save(this.fbid,this.optmize(),$bind(this,this.onSaveOk));
 	}
 	,optmize: function() {
@@ -1115,6 +1120,7 @@ model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 model_PanelModel.ON_FAVOR_LIST_CHANGE = "on_favor_list_change";
 model_PanelModel.ON_LOGIN_CHANGE = "on_login_change";
+model_Saver.ON_SAVE_START = "ON_SAVE_START";
 model_Saver.ON_SAVE_SUCCESS = "ON_SAVE_SUCCESS";
 model_Saver.ON_SAVE_NO_FBID = "ON_SAVE_NO_FBID";
 view_PanelView.ON_SLT_STOCKID_CHANGE = "on_stockid_change";

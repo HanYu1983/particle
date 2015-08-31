@@ -7,6 +7,7 @@ import haxe.Timer;
  */
 class Saver extends Model
 {
+	public static var ON_SAVE_START = 'ON_SAVE_START'; 
 	public static var ON_SAVE_SUCCESS = 'ON_SAVE_SUCCESS'; 
 	public static var ON_SAVE_NO_FBID = 'ON_SAVE_NO_FBID'; 
 	
@@ -32,6 +33,7 @@ class Saver extends Model
 			notify( ON_SAVE_NO_FBID );
 			return;
 		}
+		notify( ON_SAVE_START );
 		Main.save( fbid, optmize(), onSaveOk );
 	}
 	

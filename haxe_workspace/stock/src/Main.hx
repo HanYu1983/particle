@@ -27,9 +27,12 @@ class Main
 		
 		saver.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
+				case Saver.ON_SAVE_START:
+					showLoading();
 				case Saver.ON_SAVE_NO_FBID:
 					slideMessage( '提示', '請先登入facebook' );
 				case Saver.ON_SAVE_SUCCESS:
+					closeLoading();
 					slideMessage( '提示', '儲存成功!' );
 					panelView.setSavable( false );
 			}
