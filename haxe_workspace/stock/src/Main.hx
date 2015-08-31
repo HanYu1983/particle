@@ -45,6 +45,7 @@ class Main
 			slt_stockId:j( '#slt_stockId' ),
 			swb_favor:j('#swb_favor'),
 			combo_favor:j( '#combo_favor' ),
+			combo_prefer:j( '#combo_prefer' ),
 			btn_controller:j( '#btn_controller' ),
 			btn_addPanel:j( '#btn_addPanel' ),
 			txt_count:j( '#txt_count' ),
@@ -87,6 +88,8 @@ class Main
 				case PanelView.ON_TXT_NOTE_CHANGE:
 					panelModel.currentNote = params.note;
 				case PanelView.ON_COMBO_FAVOR_CHANGE:
+					panelModel.currentStockId = params.stockId;
+				case PanelView.ON_COMBO_PREFER_CHANGE:
 					panelModel.currentStockId = params.stockId;
 				case PanelView.ON_SWB_FAVOR_CHANGE:
 					panelModel.currentFavor = params.favor;

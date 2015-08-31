@@ -25,6 +25,7 @@ class PanelView extends Model
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
 	public static var ON_TXT_NOTE_CHANGE = 'on_txt_note_change';
 	public static var ON_COMBO_FAVOR_CHANGE = 'on_combo_favor_change';
+	public static var ON_COMBO_PREFER_CHANGE = 'ON_COMBO_PREFER_CHANGE';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -34,6 +35,7 @@ class PanelView extends Model
 	var slt_stockId:Dynamic;
 	var swb_favor:Dynamic;
 	var combo_favor:Dynamic;
+	var combo_prefer:Dynamic;
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
@@ -57,7 +59,6 @@ class PanelView extends Model
 	override function init() 
 	{
 		super.init();
-		
 		
 		doc = config.doc;
 		doc.keydown( onKeyDown );
@@ -155,7 +156,22 @@ class PanelView extends Model
 		combo_favor.combobox( {
 			onSelect:function( record ) {
 				var value = record.value;
+				if ( value == '' ) return;
 				notify( ON_COMBO_FAVOR_CHANGE, { stockId:value } );
+			}
+		});
+		
+		combo_prefer = config.combo_prefer;
+		combo_prefer.append( '<option value="">推介列表<option>' );
+		Lambda.foreach( untyped __js__('app.config.preferStocks' ), function( ary ) {
+			combo_prefer.append( '<option value="' + ary[0] + '">' + ary[0] + ' ' + ary[1] + '<option>' );
+			return true;
+		});
+		combo_prefer.combobox( {
+			onSelect:function( record ) {
+				var value = record.value;
+				if ( value == '' ) return;
+				notify( ON_COMBO_PREFER_CHANGE, { stockId:value } );
 			}
 		});
 		

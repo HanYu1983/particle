@@ -97,9 +97,9 @@ var Main = function() {
 		}
 	});
 	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
 	this.panelView.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 61, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "new", customParams : [type1]});
 		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
@@ -133,6 +133,9 @@ var Main = function() {
 			_g.panelModel.set_currentNote(params1.note);
 			break;
 		case "on_combo_favor_change":
+			_g.panelModel.set_currentStockId(params1.stockId);
+			break;
+		case "ON_COMBO_PREFER_CHANGE":
 			_g.panelModel.set_currentStockId(params1.stockId);
 			break;
 		case "on_favor_change":
@@ -170,7 +173,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 116, className : "Main", methodName : "new", customParams : [params3]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 119, className : "Main", methodName : "new", customParams : [params3]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
@@ -252,7 +255,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
-	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 253, className : "Main", methodName : "save"});
+	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 256, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
 };
 Main.load = function(fbid,cb) {
@@ -758,7 +761,19 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.combo_favor = this.config.combo_favor;
 		this.combo_favor.combobox({ onSelect : function(record) {
 			var value = record.value;
+			if(value == "") return;
 			_g.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
+		}});
+		this.combo_prefer = this.config.combo_prefer;
+		this.combo_prefer.append("<option value=\"\">推介列表<option>");
+		Lambda.foreach(app.config.preferStocks,function(ary) {
+			_g.combo_prefer.append("<option value=\"" + ary[0] + "\">" + ary[0] + " " + ary[1] + "<option>");
+			return true;
+		});
+		this.combo_prefer.combobox({ onSelect : function(record1) {
+			var value1 = record1.value;
+			if(value1 == "") return;
+			_g.notify(view_PanelView.ON_COMBO_PREFER_CHANGE,{ stockId : value1});
 		}});
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e2) {
@@ -1001,7 +1016,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		}
 	}
 	,onKeyUp: function(e) {
-		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 509, className : "view.PanelView", methodName : "onKeyUp"});
+		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 525, className : "view.PanelView", methodName : "onKeyUp"});
 		var _g = e.which;
 		switch(_g) {
 		case 66:
@@ -1084,6 +1099,7 @@ view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
 view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
 view_PanelView.ON_TXT_NOTE_CHANGE = "on_txt_note_change";
 view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
+view_PanelView.ON_COMBO_PREFER_CHANGE = "ON_COMBO_PREFER_CHANGE";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
