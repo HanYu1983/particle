@@ -90,6 +90,7 @@ var Main = function() {
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
 	var _g = this;
+	Main.slideMessage("test","01");
 	this.saver.addHandler(function(type,params) {
 		switch(type) {
 		case "ON_SAVE_START":
@@ -106,7 +107,9 @@ var Main = function() {
 		}
 	});
 	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
+	Main.slideMessage("test","02");
 	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
+	Main.slideMessage("test","03");
 	this.panelView.addHandler(function(type1,params1) {
 		_g.saver.startAuto();
 		switch(type1) {
@@ -187,6 +190,7 @@ var Main = function() {
 			break;
 		}
 	});
+	Main.slideMessage("test","04");
 	this.panelModel.addHandler(function(type2,params3) {
 		switch(type2) {
 		case "on_init":
@@ -222,6 +226,7 @@ var Main = function() {
 			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelData);
 			break;
 		case "on_stockid_change":
+			Main.slideMessage("test","07");
 			_g.panelView.setSavable(true);
 			_g.panelView.initPanel(_g.panelModel.config,params3.stock,_g.panelModel.currentStockInfo);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
@@ -233,11 +238,14 @@ var Main = function() {
 			break;
 		}
 	});
+	Main.slideMessage("test","05");
+	Main.slideMessage("test","06");
 	Main.showLoading();
 	Main.fb_init("425311264344425",function() {
 		_g.panelModel.set_currentFbId("");
 		_g.panelModel.set_config(_g.newUser());
 		Main.closeLoading();
+		Main.slideMessage("test","07");
 	});
 };
 Main.__name__ = true;
@@ -256,6 +264,7 @@ Main.closeLoading = function() {
 	Main.j.messager.progress("close");
 };
 Main.slideMessage = function(title,msg) {
+	js_Browser.alert(msg);
 	Main.j.messager.show({ title : title, msg : msg, timeout : 5000, showType : "slide"});
 };
 Main.getStock = function(id,reset) {
@@ -434,6 +443,11 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
 };
 var model_IModel = function() { };
 model_IModel.__name__ = true;
