@@ -1,9 +1,9 @@
 var app = app || {};
 app.config = app.config || {};
-app.config.about = '<div>第一行</div>';
-app.config.about += '<div>第二行第二行第二行第二行第二行第二行第二行</div>';
-app.config.about += '<div><span style="color:red;">第三行</span>hahah</div>';
-app.config.about += '<div><a href="//gamer.com.tw" target="_blank">第四行</a></div>';
+app.config.about = [
+	"版本1.0",
+	"上善若水APP"
+].join("<br>")
 app.config.index = [
 						['yu-test', 'N日K線' , false, 5, 0, 0, 0 ],
 	
@@ -38,7 +38,7 @@ app.config.index = [
 						['yu-clock', '背離線' , false, 20, 20, 0, 0 ],
 						['yu-macd', '均多差離' , false, 5, 12, 9, 0 ],
 						['yu-car', '方向盤' , false, 1, .025, .7, 0 ],
-						['yu-kd', '隨機線圖' , false, 9, 0, 0, 0 ],
+						['yu-kd', '隨機線圖' , false, 9, 0, 0, 0 ]
 					];
 app.config.hoverInfo = {
 	default:'',
@@ -65,15 +65,15 @@ app.config.hoverInfo = {
 		'sar':'以極點價當停損（停利）點。不突破極點價，就持股。突破後平倉再反向操做',
 		'kd':'N日的淨支撐起伏曲線',
 		'atr':'可以當成價格的振蕩來看，越大代表趨勢越容易轉變；越小代表順勢操做即可',
-		'cv':'目前沒什想法'
-		'cci':'區間價格的z分數<br>基本上可以當成cci來看，但是依計算方式，這個合理些',
+		'cv':'目前沒什想法',
+		'cci':'區間價格的z分數<br>基本上可以當成dpo來看，但是依計算方式，這個合理些',
 		'dpo':'將均線拉平－去掉趨勢，只留下波動<br>注意其背離信號',
 		'trix':'將價格三重指數平均化增加快慢線當成進出信號',
 		'uos':'目前沒什想法',
 		'yu-clock':'將逆時鐘曲線2維化，修改逆時鐘難以辨視的缺點<br>在0軸上方代表轉多的背離（價跌量增、價跌量穩）；0軸下方代表轉空的背離（價增量跌、價增量穩）',
 		'yu-macd':'ema和ebbi的差離<br>看法同macd，為長線的買賣指標',
 		'yu-car':'預測股價路線<br>想像振蕩是轉彎，一直彎來彎去代表上下軌越大，一直不用轉彎上下軌就會收縮<br>基本上K線都會在上下軌之內，上下軌越大代表震蕩量越大，就有了投機空間；上下軌越小代表小紅小黑沒什振蕩，就順方向盤方向買賣就可以了',
-		'yu-kd':'將KD線的計算在K線上展開，方便配合其它指標',
+		'yu-kd':'將KD線的計算在K線上展開，方便配合其它指標'
 	}
 }
 app.config.preferStocks = [
