@@ -242,7 +242,7 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.getId = function() {
-	return Math.floor(Math.random() * 26) + new Date().getTime();
+	return Math.floor(Math.random() * 10000000) + new Date().getTime();
 };
 Main.main = function() {
 	new Main();

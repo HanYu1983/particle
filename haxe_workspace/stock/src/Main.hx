@@ -222,7 +222,7 @@ class Main
 	}
 	
 	static function getId() {
-		return Math.floor(Math.random() * 26) + Date.now().getTime();
+		return Math.floor(Math.random() * 10000000) + Date.now().getTime();
 	}
 	
 	static function main() 
