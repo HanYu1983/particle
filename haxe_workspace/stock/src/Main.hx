@@ -183,10 +183,8 @@ class Main
 		return { stocks:[] };
 	}
 	
-	static var id = 0;
-	
 	static function getId() {
-		return id++;
+		return Math.floor(Math.random() * 26) + Date.now().getTime();
 	}
 	
 	static function main() 
