@@ -99,7 +99,6 @@ var Main = function() {
 	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
 	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
 	this.panelView.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "new", customParams : [type1]});
 		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
@@ -111,8 +110,12 @@ var Main = function() {
 				case "connected":
 					_g.panelModel.set_currentFbId(authResponse.userID);
 					Main.load(_g.panelModel.currentFbId,function(err,params2) {
-						if(err == null) {
+						switch(err) {
+						case "runtime error: index out of range":
 							Main.closeLoading();
+							_g.panelModel.set_config(params2 == null?_g.panelModel.config:_g.newUser());
+							break;
+						default:
 							_g.panelModel.set_config(params2 == null?_g.panelModel.config:params2);
 						}
 					});
@@ -173,7 +176,6 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 119, className : "Main", methodName : "new", customParams : [params3]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
@@ -212,8 +214,12 @@ var Main = function() {
 			break;
 		}
 	});
-	this.panelModel.set_currentFbId("");
-	this.panelModel.set_config(this.newUser());
+	Main.showLoading();
+	Main.fb_init("425311264344425",function() {
+		_g.panelModel.set_currentFbId("");
+		_g.panelModel.set_config(_g.newUser());
+		Main.closeLoading();
+	});
 };
 Main.__name__ = true;
 Main.getId = function() {
@@ -255,7 +261,6 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
-	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 256, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
 };
 Main.load = function(fbid,cb) {
@@ -318,11 +323,6 @@ Std.parseInt = function(x) {
 Std.parseFloat = function(x) {
 	return parseFloat(x);
 };
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -349,25 +349,6 @@ haxe_Timer.prototype = {
 };
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -527,12 +508,31 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,init: function() {
 		model_Model.prototype.init.call(this);
 		var j = $;
-		var stock = this.config.stocks[0];
+		var stock;
+		var _g = this.config.current;
+		var sid = _g;
+		if(_g == null) {
+			var _g1 = this.config.stocks[0];
+			var stockobj = _g1;
+			if(_g1 == null) stock = null; else switch(_g1) {
+			default:
+				stock = stockobj;
+			}
+		} else switch(_g) {
+		default:
+			var _g11 = this.getStockById(sid);
+			var stockobj1 = _g11;
+			if(_g11 == null) stock = Main.createNewStock(sid); else switch(_g11) {
+			default:
+				stock = stockobj1;
+			}
+		}
 		if(stock != null) this.set_currentStockId(stock.id);
 		this.notify(model_PanelModel.ON_INIT,{ favorList : this.getFavorList()});
 	}
 	,setStockData: function(stock) {
 		var _g = this;
+		this.config.current = stock.id;
 		this.set_currentOffset(stock.offset);
 		this.set_currentCount(stock.count);
 		this.set_currentFavor(stock.favor);
@@ -659,9 +659,14 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 	}
 	,save: function() {
 		if(this.fbid == "") return;
-		Main.save(this.fbid,this.saveobj,$bind(this,this.onSaveOk));
+		Main.save(this.fbid,this.optmize(),$bind(this,this.onSaveOk));
 	}
-	,load: function() {
+	,optmize: function() {
+		var saveobj2 = { current : this.saveobj.current, stocks : Lambda.fold(this.saveobj.stocks,function(s,curr) {
+			if(s.favor) curr.push(s);
+			return curr;
+		},[])};
+		return saveobj2;
 	}
 	,onSaveOk: function(e) {
 		this.notify(model_Saver.ON_SAVE_SUCCESS);
@@ -1016,7 +1021,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		}
 	}
 	,onKeyUp: function(e) {
-		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 525, className : "view.PanelView", methodName : "onKeyUp"});
+		console.log(e.which);
 		var _g = e.which;
 		switch(_g) {
 		case 66:
@@ -1102,5 +1107,3 @@ view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
 view_PanelView.ON_COMBO_PREFER_CHANGE = "ON_COMBO_PREFER_CHANGE";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=haxe.js.map

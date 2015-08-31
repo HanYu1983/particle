@@ -28,11 +28,18 @@ class Saver extends Model
 	
 	public function save() {
 		if ( fbid == '' ) return;
-		Main.save( fbid, saveobj, onSaveOk );
+		Main.save( fbid, optmize(), onSaveOk );
 	}
 	
-	public function load() {
-		
+	function optmize() {
+		var saveobj2 = {
+			current:saveobj.current,
+			stocks:Lambda.fold( saveobj.stocks, function( s, curr ) {
+				if ( s.favor ) curr.push( s );
+				return curr;
+			}, [])
+		}
+		return saveobj2;
 	}
 	
 	function onSaveOk( e ) {

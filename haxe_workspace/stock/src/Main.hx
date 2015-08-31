@@ -59,7 +59,7 @@ class Main
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
-			trace( 'panelView', type );
+		//	trace( 'panelView', type );
 			saver.startAuto();
 			switch( type ) {
 				case PanelView.ON_BTN_LOGIN_CLICK:
@@ -71,9 +71,12 @@ class Main
 							case 'connected':
 								panelModel.currentFbId = authResponse.userID;
 								load( panelModel.currentFbId, function( err, params ) {
-									if ( err == null ) {
-										closeLoading();
-										panelModel.config = ( params == null ? panelModel.config : params );
+									switch( err ) {
+										case 'runtime error: index out of range':
+											closeLoading();
+											panelModel.config = ( params == null ? panelModel.config : newUser() );
+										case _:
+											panelModel.config = ( params == null ? panelModel.config : params );
 									}
 								});
 								slideMessage( '提示', '歡迎登入!' );
@@ -116,7 +119,7 @@ class Main
 		});
 		
 		panelModel.addHandler( function( type, params ) {
-			trace( type, params );
+		//	trace( type, params );
 			
 			switch( type ) {
 				case PanelModel.ON_INIT:
@@ -156,7 +159,11 @@ class Main
 		
 		showLoading();
 		fb_init( '425311264344425', function() {
+			panelModel.currentFbId = '';
+			panelModel.config = newUser();
+			
 			closeLoading();
+		
 			/*
 			fb_loginStatus( function( e ) {
 				slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
@@ -253,7 +260,6 @@ class Main
 	}
 	
 	public static function save( fbid:String, data:Dynamic, cb:Dynamic -> Void ) {
-		trace( data );
 		untyped __js__('api.save')(fbid, data, cb );
 	}
 	
