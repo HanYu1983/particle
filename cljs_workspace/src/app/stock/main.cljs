@@ -18,6 +18,8 @@
       (.log js/console err content))))
 
 (defn main []
+  (reset! db/*domain* "https://particle-979.appspot.com/")
+  
   (let [onView (a/chan)
         onModel (a/chan)
         onSys (a/chan)]

@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8"/>
-	<title>proj</title>
+	<title>余氏k線圖</title>
 	<meta name="description" content="" />
+	<meta name="viewport" content="width=device-width , user-scalable=no">
 	
 	<link rel="stylesheet" type="text/css" href="js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
 	<link rel="stylesheet" type="text/css" href="js/lib/jquery-easyui-1.4.3/themes/icon.css">
 	<link rel="stylesheet" type="text/css" href="js/lib/jquery-easyui-1.4.3/demo/demo.css">
 	<link rel="stylesheet" type="text/css" href="css/normalize.css">
 		
+	<script type="text/javascript" src="js/lib/leo.utils.js"></script>
 	<script type="text/javascript" src="js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="js/lib/jquery/jquery.tmpl.min.js"></script>
+	<script type="text/javascript" src="js/lib/myapp.facebook.js"></script>
 </head>
 <style>
 body{
@@ -21,79 +24,177 @@ body{
 	height:100%;
 	padding:0;
 }
+
+.btn_controller{
+	width:15px; 
+	height:15px; 
+	display:inline-block; 
+	cursor:pointer;
+}
+.line{
+	position:relative; 
+	width:99%; 
+	margin-bottom:5px;  
+	text-align:center; 
+	border-bottom:1px solid lightgray;
+}
+
+.hori{
+	position:relative; 
+	left:0; 
+	top:0; 
+	display:inline-block;
+}
 </style>
+
 <script id="tmpl_panel" type="jquery-x-tmpl">
-	<div class="easyui-layout" style="width:100%;height:200px; left:0; top:0;">
-		<div data-options="region:'north',split:true,title:'股票'" style="height:70px; padding:5px;">
-			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="removdPanel(this);">刪除</a>
+	{{if type == 'clock'}}
+	<div class="easyui-layout" style="width:100%;height:435px; left:0; top:0;">
+	{{/if}}
+	{{if type == 'volume'}}
+	<div class="easyui-layout" style="width:100%;height:130px; left:0; top:0;">
+	{{/if}}
+	{{if type == 'kline' || type == 'none'}}
+	<div class="easyui-layout" style="width:100%;height:330px; left:0; top:0;">
+	{{/if}}
+		<div id="mc_propContainer" data-options="region:'west',split:true,collapsed:true" title="參數列" style="width:400px; padding:5px;">
+			<!-- for script created -->
 		</div>
-		<div data-options="region:'west',split:true" title="west" style="width:300px; padding:10px;">
-			<div style="position:relative; width:100%; margin-bottom:5px;">
-				<div style="position:relative; display:inline-block; width:70px; ">
-					<input class="easyui-switchbutton" checked>
-				</div>
-				<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
+		<div class="canvasContainer" style="width:100%; height:100%;" data-options="region:'center'">
+			<div style="position:relative; width:2000px; height:100%; top:0; left:0; background-color:black; ">
+				{{if type == 'clock'}}
+				<canvas id="canvas_kline" width=400 height=400 style="position:absolute; left:50%; margin-left:-200px; top:0;"></canvas>
+				{{/if}}
+				{{if type == 'volume'}}
+				<canvas id="canvas_kline" width=2000 height=100 style="position:absolute; left:0; top:0;"></canvas>
+				{{/if}}
+				{{if type == 'kline' || type == 'none'}}
+				<canvas id="canvas_kline" width=2000 height=300 style="position:absolute; left:0; top:0;"></canvas>
+				{{/if}}
 			</div>
-			<div style="position:relative; width:100%; margin-bottom:5px;">
-				<div style="position:relative; display:inline-block; width:70px; ">
-					<input class="easyui-switchbutton">
+			<div style="position:absolute; right:30px; top:5px; ">
+				{{if type == 'kline' || type == 'none'}}
+				<div style="position:relative; display:inline-block;">
+					<input id="slt_showKline" class="easyui-switchbutton" checked>
 				</div>
-				<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
+				<div style="position:relative; display:inline-block; ">
+					<a href="#" id="btn_removePanel" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
+				</div>
+				{{/if}}
 			</div>
 		</div>
-		<div data-options="region:'center',title:'Main Title',iconCls:'icon-ok'">
+	</div>
+</script>
+<script id="tmpl_avg" type="jquery-x-tmpl">
+	<div style="position:relative; width:100%; min-width:400px;  margin-bottom:5px;">
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select id=${nid} class="easyui-textbox" style="width:100%;"></select>
 		</div>
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select id=${mid} class="easyui-textbox" style="width:100%;"></select>
+		</div>
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select class="easyui-textbox" style="width:100%;"></select>
+		</div>
+		<div style="position:relative; display:inline-block; width:40px; ">
+			<select class="easyui-textbox" style="width:100%;"></select>
+		</div>
+		<div style="position:relative; display:inline-block; width:70px; ">
+			<input id=${sid} ktype=${type} class="easyui-switchbutton" checked>
+		</div>
+		{{if url == ''}}
+		<div ptype=${type} class="easyui-tooltip" style="position:relative; display:inline-block; width:60px; text-align:center;">${domName}</div>
+		{{else}}
+		<div ptype=${type} style="position:relative; display:inline-block; width:60px; text-align:center;">${domName}</div>
+		<div class="hori">
+			<a href=${url}  class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-search'"  target="_blank" ></a>
+		</div>
+		{{/if}}
+	</div>
+</script>
+<script id="tmpl_group_line" type="jquery-x-tmpl">
+	<div style="position:relative; width:99%; margin-bottom:5px;  text-align:center; border-bottom:1px solid lightgray;">
+		${name}
 	</div>
 </script>
 <body>
 	<div id="mc_rootPanel" class="easyui-layout" style="width:100%;height:100%; left:0; top:0;">
-        <div data-options="region:'north',split:false,title:'余氏k線圖'" style="height:70px; padding:5px;">
-			<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="addPanel()">新增K線</a>
-			<input id="chk_exchange" class="easyui-switchbutton" checked><span style="margin-left:5px;" >成交量</span>
-			<input class="easyui-switchbutton" checked><span style="margin-left:5px;" >逆時鐘曲線</span>
-		</div>
-        <div id="mc_mainContainer" data-options="region:'center',title:'內容'">
-			<div id="mc_exchange" class="easyui-layout" style="width:100%;height:200px; left:0; top:0;">
-				<div data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
-					<div style="position:relative; width:100%; margin-bottom:5px;">
-						<div style="position:relative; display:inline-block; width:70px; ">
-							<input class="easyui-switchbutton" checked>
-						</div>
-						<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
+        <div data-options="region:'north'" style="height:40px; padding:5px;">
+			<div style="position:relative; float:left;">
+				<div style="position:relative; display:inline-block;">
+					<select id="combo_favor" class="easyui-combobox" style="width:50px;" name="state" data-options="prompt:'關注'"></select>
+				</div>
+				<div style="position:relative; display:inline-block;">
+					<select id="slt_stockId" class="easyui-textbox" style="width:70px;" data-options="prompt:'輸入代碼'"></select>
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" ></a>
+					<a href="#" id="btn_addPanel" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增K線</a>
+				</div>
+				<div style="position:relative; display:inline-block;">
+					<div class="hori">數量</div>
+					<div class="hori" style="width:50px; ">
+						<select id="txt_count" class="easyui-textbox" style="width:100%;"></select>
 					</div>
-					<div style="position:relative; width:100%; margin-bottom:5px;">
-						<div style="position:relative; display:inline-block; width:70px; ">
-							<input class="easyui-switchbutton">
-						</div>
-						<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
+					<div class="hori">偏移</div>
+					<div class="hori" style="width:50px; ">
+						<select id="txt_offset" class="easyui-textbox" style="width:100%;"></select>
 					</div>
 				</div>
-				<div data-options="region:'center',title:'成交量'">
+				<div id="btn_controller" class="hori" style="vertical-align:middle; ">
+					<div id="btn_first" class="btn_controller pagination-first easyui-tooltip"></div>
+					<div id="btn_prev10" class="btn_controller pagination-prev easyui-tooltip"></div>
+					<div id="btn_prev" class="btn_controller pagination-prev easyui-tooltip"></div>
+					<div id="btn_next" class="btn_controller pagination-next easyui-tooltip"></div>
+					<div id="btn_next10" class="btn_controller pagination-next easyui-tooltip"></div>
+					<div id="btn_last" class="btn_controller pagination-last easyui-tooltip"></div>
 				</div>
 			</div>
-            <div class="easyui-layout" style="width:100%;height:200px; left:0; top:0;">
-				<div data-options="region:'north'" style="height:40px; padding:5px;">
-					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="removdPanel(this);">刪除</a>
+			<div style="position:relative; float:right">
+				
+				<div class="hori">關注</div>
+				<div class="hori" style="width:60px; ">
+					<input id="swb_favor" class="easyui-switchbutton" >
 				</div>
-				<div data-options="region:'west',split:true" title="顯示" style="width:300px; padding:10px;">
-					<div style="position:relative; width:100%; margin-bottom:5px;">
-						<div style="position:relative; display:inline-block; width:70px; ">
-							<input class="easyui-switchbutton" checked>
-						</div>
-						<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
-					</div>
-					<div style="position:relative; width:100%; margin-bottom:5px;">
-						<div style="position:relative; display:inline-block; width:70px; ">
-							<input class="easyui-switchbutton">
-						</div>
-						<div style="position:relative; display:inline-block; width:70px; ">5日均</div>
-					</div>
+				<div class="hori">
+					<a href="#" id="btn_login" class="easyui-linkbutton" data-options="iconCls:'icon-fb-login'">登入</a>
+					<a href="#" id="btn_logout" class="easyui-linkbutton" style="display:none;" data-options="iconCls:'icon-fb-login'">登出</a>
 				</div>
-				<div data-options="region:'center',title:'k線'">
-				</div>
+			</div>
+			
+		</div>
+        <div id="mc_mainContainer" data-options="region:'center'">
+			<div id="mc_accordionContainer" class="easyui-accordion" data-options="multiple:true" style="width:100%;height1:100%;">
+				<!-- for script created -->
 			</div>
         </div>
-						
+		<div data-options="region:'east',split:true,title:'功能',collapsed:true" style="width:450px; height:100%;">
+			<div class="easyui-tabs" data-options="tabWidth:'130px'" style="width:100%;">
+				<div title="資訊" style="width:100%; height:100%;">
+					<table id="table_stockPrice" class="easyui-datagrid" data-options="singleSelect:true,collapsible:true" style="width:100%;">
+						<thead>
+							<tr>
+								<th data-options="field:'date',width:100,align:'center'">日期</th>
+								<th data-options="field:'start',width:60,align:'center'">開盤</th>
+								<th data-options="field:'top',width:60,align:'center'">最高價</th>
+								<th data-options="field:'bottom',width:60,align:'center'">最低價</th>
+								<th data-options="field:'close',width:60,align:'center'">收盤價</th>
+								<th data-options="field:'volume',width:80,align:'center'">量</th>
+							</tr>
+						</thead>
+					</table>
+					<div style="position:relative; width:100%; top:0px;">
+						<div class="line" style="margin-top:30px; ">NOTE</div>
+						<input id="txt_note" class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px;"></input>
+					</div>
+				</div>
+				<div title="機器人" style="padding:10px;">
+					
+				</div>
+				<div title="測試" style="padding:10px;">
+					
+				</div>
+			</div>
+		</div>
+		<!--
 		<div id="mm1" style="width:100px;">
 			<div data-options="iconCls:'icon-add'" onclick="addPanel();">新增</div>
 		</div>
@@ -106,50 +207,25 @@ body{
 			<img src="http://www.jeasyui.com/images/logo1.png" style="width:150px;height:50px">
 			<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 		</div>
+		-->
     </div>
 	<!--
 	<div id="w" class="easyui-window" title="Basic Window" data-options="iconCls:'icon-save'" style="width:500px;height:200px;padding:10px;">
         The window content.
     </div>
 	-->
+	<script src='js/lib/async.js'></script>
+	<script src='js/lib/rx.all.min.js'></script>
+	<script src='js/lib/three.min.js'></script>
+	<script src='js/lib/underscore-min.js'></script>
+	<script src="js/config.js"></script>
+	<script src='js/common.js'></script>
+	<script src='js/cljs/goog/base.js'></script>
+	<script src='js/cljs/cljs.js'></script>
+	<script src='js/api.js'></script>
 	<script>
-	var tmpl_panel = $("#tmpl_panel");
-	var mc_mainContainer = $("#mc_mainContainer");
-	var mc_rootPanel = $("#mc_rootPanel" );
-	var tmpl_window = $("#tmpl_window" );
-	var tmpl_panel2 = $("#tmpl_panel2" );
-	var mc_exchange = $("#mc_exchange" );
-	var chk_exchange = $("#chk_exchange" );
-	
-	chk_exchange.switchbutton({
-		checked: true,
-		onChange: function(checked){
-			checked ? mc_exchange.show() : mc_exchange.hide();
-		}
-	})
-
-	
-	function onChkExchangeChange( target ){
-		console.log( target );
-	}
-	
-	function addPanel(){
-		var dom = tmpl_panel.tmpl();
-		mc_mainContainer.append(dom);
-		dom.layout();
-		dom.find( '.easyui-switchbutton' ).switchbutton();
-		dom.find( '.easyui-linkbutton' ).linkbutton();
-	}
-	
-	function removdPanel( target ){
-		$( target ).parent().parent().parent().remove();
-	}
-	
-	function addExchange(){
-		var dom = tmpl_exchange.tmpl();
-		
-	}
+	goog.require("app.stock.main")
 	</script>
-	<script src="js/proj.js"></script>
+	<script src="js/haxe.js"></script>
 </body>
 </html>
