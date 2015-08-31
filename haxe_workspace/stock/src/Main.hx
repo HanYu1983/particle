@@ -222,7 +222,7 @@ class Main
 	}
 	
 	static function getId() {
-		return Math.floor(Math.random() * 10000000) + Date.now().getTime();
+		return untyped __js__('leo.utils.generateUUID' )();
 	}
 	
 	static function main() 

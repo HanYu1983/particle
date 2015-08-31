@@ -242,7 +242,7 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.getId = function() {
-	return Math.floor(Math.random() * 10000000) + new Date().getTime();
+	return leo.utils.generateUUID();
 };
 Main.main = function() {
 	new Main();
@@ -1114,7 +1114,6 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 };
 String.__name__ = true;
 Array.__name__ = true;
-Date.__name__ = ["Date"];
 Main.j = $;
 model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_STOCKID_CHANGE = "on_stockid_change";
