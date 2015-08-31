@@ -273,14 +273,15 @@ class Main
 				});
 			}else{
 				curr.push( { 
-					show:obj[1],
+					show:obj[2],
 					type:obj[0],
-					url:obj[6],
+					name:obj[1],
+					url:obj[7],
 					value: {
-						n:obj[2],
-						m:obj[3],
-						o:obj[4],
-						p:obj[5],
+						n:obj[3],
+						m:obj[4],
+						o:obj[5],
+						p:obj[6],
 					}
 				} );
 			}

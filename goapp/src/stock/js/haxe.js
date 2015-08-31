@@ -270,7 +270,7 @@ Main.fb_loginStatus = function(cb) {
 };
 Main.createProp = function(ary) {
 	return Lambda.fold(ary,function(obj,curr) {
-		if(obj[0] == "group") curr.push({ type : obj[0], name : obj[1]}); else curr.push({ show : obj[1], type : obj[0], url : obj[6], value : { n : obj[2], m : obj[3], o : obj[4], p : obj[5]}});
+		if(obj[0] == "group") curr.push({ type : obj[0], name : obj[1]}); else curr.push({ show : obj[2], type : obj[0], name : obj[1], url : obj[7], value : { n : obj[3], m : obj[4], o : obj[5], p : obj[6]}});
 		return curr;
 	},[]);
 };
@@ -897,7 +897,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
-			prop.domName = prop.type;
+			prop.domName = prop.name;
 			if(prop.url == null) prop.url = "";
 			var dom1 = _g.j("#tmpl_avg").tmpl(prop);
 			container.append(dom1);
@@ -973,7 +973,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		}
 	}
 	,onKeyUp: function(e) {
-		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 513, className : "view.PanelView", methodName : "onKeyUp"});
+		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 487, className : "view.PanelView", methodName : "onKeyUp"});
 		var _g = e.which;
 		switch(_g) {
 		case 66:

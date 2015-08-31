@@ -385,34 +385,8 @@ class PanelView extends Model
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
 			
-			prop.domName = prop.type;
+			prop.domName = prop.name;
 			if ( prop.url == null ) prop.url = '';
-			/*
-			prop.domName = switch( prop.type ) {
-				case 'ma':
-					'均線 ma';
-				case 'macd':
-					'指數差離 macd';
-				case 'ema':
-					'指數均線 ema';
-				case 'bbi':
-					'多空指標 bbi';
-				case 'kd':
-					'隨機指標 kd';
-				case 'Chaikin':
-					'蔡金 Chaikin';
-				case 'eom':
-					'簡易波動 eom';
-				case 'yu-car':
-					'方向盤';
-				case 'yu-clock':
-					'背離線';
-				case 'yu-macd':
-					'余氏線';
-				case _:
-					prop.type;
-			}
-			*/
 			var dom = j( '#tmpl_avg' ).tmpl( prop );
 			container.append( dom );
 			
