@@ -13,6 +13,7 @@ class Saver extends Model
 	
 	public var fbid(default, set ):String = '';
 	public var saveobj(default, set ):Dynamic;
+	public var showLoading = false;
 	
 	var _timer:Timer;
 
@@ -25,6 +26,7 @@ class Saver extends Model
 	public function startAuto() {
 		if ( fbid == '' ) return;
 		if ( _timer != null ) _timer.stop();
+		showLoading = false;
 		_timer = Timer.delay( save, 1000 * 10 );
 	}
 	

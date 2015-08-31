@@ -93,7 +93,7 @@ var Main = function() {
 	this.saver.addHandler(function(type,params) {
 		switch(type) {
 		case "ON_SAVE_START":
-			Main.showLoading();
+			if(_g.saver.showLoading) Main.showLoading();
 			break;
 		case "ON_SAVE_NO_FBID":
 			Main.slideMessage("提示","請先登入facebook");
@@ -146,6 +146,7 @@ var Main = function() {
 			});
 			break;
 		case "ON_BTN_SAVE_CLICK":
+			_g.saver.showLoading = true;
 			_g.saver.save();
 			break;
 		case "on_txt_note_change":
@@ -674,6 +675,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 });
 var model_Saver = function() {
+	this.showLoading = false;
 	this.fbid = "";
 	model_Model.call(this);
 };
@@ -683,6 +685,7 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 	startAuto: function() {
 		if(this.fbid == "") return;
 		if(this._timer != null) this._timer.stop();
+		this.showLoading = false;
 		this._timer = haxe_Timer.delay($bind(this,this.save),10000);
 	}
 	,save: function() {

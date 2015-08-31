@@ -28,7 +28,8 @@ class Main
 		saver.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
 				case Saver.ON_SAVE_START:
-					showLoading();
+					if( saver.showLoading )
+						showLoading();
 				case Saver.ON_SAVE_NO_FBID:
 					slideMessage( '提示', '請先登入facebook' );
 				case Saver.ON_SAVE_SUCCESS:
@@ -106,6 +107,7 @@ class Main
 						panelModel.currentFbId = '';
 					});
 				case PanelView.ON_BTN_SAVE_CLICK:
+					saver.showLoading = true;
 					saver.save();
 				case PanelView.ON_TXT_NOTE_CHANGE:
 					panelModel.currentNote = params.note;
