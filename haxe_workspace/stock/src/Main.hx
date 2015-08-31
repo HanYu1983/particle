@@ -79,12 +79,14 @@ class Main
 							case 'connected':
 								panelModel.currentFbId = authResponse.userID;
 								load( panelModel.currentFbId, function( err, params ) {
+									closeLoading();
 									switch( err ) {
+										case null:
+											panelModel.config = ( params == null ? panelModel.config : params );
 										case 'runtime error: index out of range':
-											closeLoading();
 											panelModel.config = ( params == null ? panelModel.config : newUser() );
 										case _:
-											panelModel.config = ( params == null ? panelModel.config : params );
+											slideMessage( '錯誤', err );
 									}
 								});
 								slideMessage( '提示', '歡迎登入!' );

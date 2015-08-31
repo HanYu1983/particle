@@ -119,13 +119,13 @@ var Main = function() {
 				case "connected":
 					_g.panelModel.set_currentFbId(authResponse.userID);
 					Main.load(_g.panelModel.currentFbId,function(err,params2) {
-						switch(err) {
+						Main.closeLoading();
+						if(err == null) _g.panelModel.set_config(params2 == null?_g.panelModel.config:params2); else switch(err) {
 						case "runtime error: index out of range":
-							Main.closeLoading();
 							_g.panelModel.set_config(params2 == null?_g.panelModel.config:_g.newUser());
 							break;
 						default:
-							_g.panelModel.set_config(params2 == null?_g.panelModel.config:params2);
+							Main.slideMessage("錯誤",err);
 						}
 					});
 					Main.slideMessage("提示","歡迎登入!");
