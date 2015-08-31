@@ -100,7 +100,6 @@ var Main = function() {
 			break;
 		case "ON_SAVE_SUCCESS":
 			Main.closeLoading();
-			Main.slideMessage("提示","儲存成功!");
 			_g.panelView.setSavable(false);
 			break;
 		}
@@ -125,7 +124,8 @@ var Main = function() {
 							_g.panelModel.set_config(params2 == null?_g.panelModel.config:_g.newUser());
 							break;
 						default:
-							Main.slideMessage("錯誤",err);
+							js_Browser.alert("程式崩潰，請重新整理");
+							window.location.reload();
 						}
 					});
 					Main.slideMessage("提示","歡迎登入!");
@@ -435,6 +435,11 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
+};
 var model_IModel = function() { };
 model_IModel.__name__ = true;
 var model_IPanel = function() { };
@@ -674,7 +679,7 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 	startAuto: function() {
 		if(this.fbid == "") return;
 		if(this._timer != null) this._timer.stop();
-		this._timer = haxe_Timer.delay($bind(this,this.save),600000);
+		this._timer = haxe_Timer.delay($bind(this,this.save),10000);
 	}
 	,save: function() {
 		if(this.fbid == "") {

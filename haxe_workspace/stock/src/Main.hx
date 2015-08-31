@@ -33,7 +33,7 @@ class Main
 					slideMessage( '提示', '請先登入facebook' );
 				case Saver.ON_SAVE_SUCCESS:
 					closeLoading();
-					slideMessage( '提示', '儲存成功!' );
+				//	slideMessage( '提示', '儲存成功!' );
 					panelView.setSavable( false );
 			}
 		});
@@ -86,7 +86,12 @@ class Main
 										case 'runtime error: index out of range':
 											panelModel.config = ( params == null ? panelModel.config : newUser() );
 										case _:
+											#if debug
 											slideMessage( '錯誤', err );
+											#else
+											Browser.alert( '程式崩潰，請重新整理' );
+											Browser.window.location.reload();
+											#end
 									}
 								});
 								slideMessage( '提示', '歡迎登入!' );
