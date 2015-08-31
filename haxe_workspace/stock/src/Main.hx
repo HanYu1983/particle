@@ -25,8 +25,6 @@ class Main
 	
 	function new() {
 		
-		slideMessage( 'test', '01' );
-		
 		saver.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
 				case Saver.ON_SAVE_START:
@@ -44,8 +42,6 @@ class Main
 			mc_txtContainer:j( '#mc_txtContainer' ),
 			aboutConfig:untyped __js__('app.config.about' )
 		}
-		
-		slideMessage( 'test', '02' );
 		
 		panelView.config = {
 			doc:j( untyped __js__('document') ),
@@ -68,8 +64,6 @@ class Main
 			btn_about:j('#btn_about' ),
 			dia_about:j('#dia_about')
 		}
-		
-		slideMessage( 'test', '03' );
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
 		//	trace( 'panelView', type );
@@ -134,8 +128,6 @@ class Main
 			}
 		});
 		
-		slideMessage( 'test', '04' );
-		
 		panelModel.addHandler( function( type, params ) {
 		//	trace( type, params );
 			
@@ -166,7 +158,6 @@ class Main
 					panelView.setSavable( true );
 					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
 				case PanelModel.ON_STOCKID_CHANGE:
-					slideMessage( 'test', '07' );
 					panelView.setSavable( true );
 					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
@@ -177,14 +168,10 @@ class Main
 			}
 		});
 		
-		slideMessage( 'test', '05' );
-		
 		#if debug
 		panelModel.currentFbId = '';
 		panelModel.config = newUser();
 		#else
-		
-		slideMessage( 'test', '06' );
 		
 		showLoading();
 		fb_init( '425311264344425', function() {
@@ -193,8 +180,6 @@ class Main
 			
 			closeLoading();
 			
-			slideMessage( 'test', '07' );
-		
 			/*
 			fb_loginStatus( function( e ) {
 				slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
@@ -259,8 +244,6 @@ class Main
 	}
 	
 	public static function slideMessage( title, msg ) {
-		Browser.alert( msg );
-		
 		j.messager.show({
 			title:title,
 			msg:msg,
