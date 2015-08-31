@@ -82,9 +82,11 @@ class Main
 									closeLoading();
 									switch( err ) {
 										case null:
-											panelModel.config = ( params == null ? panelModel.config : params );
+											if ( params != null ) {
+												panelModel.config = params;
+												saver.saveobj = panelModel.config;
+											}
 										case 'runtime error: index out of range':
-											panelModel.config = ( params == null ? panelModel.config : newUser() );
 										case _:
 											#if debug
 											slideMessage( '錯誤', err );

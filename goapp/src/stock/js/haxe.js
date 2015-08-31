@@ -119,9 +119,13 @@ var Main = function() {
 					_g.panelModel.set_currentFbId(authResponse.userID);
 					Main.load(_g.panelModel.currentFbId,function(err,params2) {
 						Main.closeLoading();
-						if(err == null) _g.panelModel.set_config(params2 == null?_g.panelModel.config:params2); else switch(err) {
+						if(err == null) {
+							if(params2 != null) {
+								_g.panelModel.set_config(params2);
+								_g.saver.set_saveobj(_g.panelModel.config);
+							}
+						} else switch(err) {
 						case "runtime error: index out of range":
-							_g.panelModel.set_config(params2 == null?_g.panelModel.config:_g.newUser());
 							break;
 						default:
 							js_Browser.alert("程式崩潰，請重新整理");
