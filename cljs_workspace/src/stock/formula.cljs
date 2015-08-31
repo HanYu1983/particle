@@ -10,6 +10,36 @@
 (defn offset-seq [vs]
   (map #(- %2 %1) vs (rest vs)))
 
+(defn nkline [cnt kline]
+  (let [group (take cnt kline)
+        [date open _ _ _ _] (last group)
+
+        high
+        (apply
+          max
+          (map
+            (fn [[_ _ high _ _ _]] high)
+            group))
+
+        low
+        (apply
+          min
+          (map
+            (fn [[_ _ _ low _ _]] low)
+            group))
+
+        [_ _ _ _ close _] (first group)
+
+        volume
+        (apply
+          +
+          (map
+            (fn [[_ _ _ _ _ volume]] volume)
+             group))]
+    (when-not (zero? (count group))
+      (cons [date open high low close volume] (lazy-seq (nkline cnt (drop cnt kline)))))))
+
+
 (defn sma-seq 
   "移動平均線"
   [n vs]
