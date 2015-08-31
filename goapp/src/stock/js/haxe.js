@@ -86,6 +86,7 @@ List.prototype = {
 };
 var Main = function() {
 	this.saver = new model_Saver();
+	this.aboutView = new view_AboutView();
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
 	var _g = this;
@@ -95,9 +96,10 @@ var Main = function() {
 			break;
 		}
 	});
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout")});
+	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
 	this.panelView.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 61, className : "Main", methodName : "new", customParams : [type1]});
 		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
@@ -168,7 +170,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 108, className : "Main", methodName : "new", customParams : [params3]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 116, className : "Main", methodName : "new", customParams : [params3]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
@@ -250,7 +252,7 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
-	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 243, className : "Main", methodName : "save"});
+	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 253, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
 };
 Main.load = function(fbid,cb) {
@@ -668,9 +670,20 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 		return this.saveobj = saveobj;
 	}
 });
-var view_IPanelView = function() { };
-view_IPanelView.__name__ = true;
-view_IPanelView.__interfaces__ = [model_IModel];
+var view_AboutView = function() {
+	model_Model.call(this);
+};
+view_AboutView.__name__ = true;
+view_AboutView.__super__ = model_Model;
+view_AboutView.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.mc_txtContainer = this.config.mc_txtContainer;
+		this.aboutConfig = this.config.aboutConfig;
+		this.dia_about = this.config.dia_about;
+		this.mc_txtContainer.append(this.aboutConfig);
+	}
+});
 var view_PanelView = function() {
 	this.currentScrollX = null;
 	this.j = $;
@@ -770,6 +783,21 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			case "btn_last":
 				_g.notify(view_PanelView.ON_BTN_CONTROLLER_CLICK,{ value : 10000});
 				break;
+			}
+		});
+		this.dia_about = this.config.dia_about;
+		this.dia_about.attr("isOpen",0);
+		this.dia_about.dialog({ closed : true, onClose : function() {
+			_g.dia_about.attr("isOpen",0);
+		}});
+		this.btn_about = this.config.btn_about;
+		this.btn_about.click(function() {
+			if(_g.dia_about.attr("isOpen") == 1) {
+				_g.dia_about.dialog("close");
+				_g.dia_about.attr("isOpen",0);
+			} else {
+				_g.dia_about.dialog("open");
+				_g.dia_about.attr("isOpen",1);
 			}
 		});
 		this.table_stockPrice = this.config.table_stockPrice;
@@ -973,7 +1001,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		}
 	}
 	,onKeyUp: function(e) {
-		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 487, className : "view.PanelView", methodName : "onKeyUp"});
+		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 509, className : "view.PanelView", methodName : "onKeyUp"});
 		var _g = e.which;
 		switch(_g) {
 		case 66:

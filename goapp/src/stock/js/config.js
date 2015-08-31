@@ -1,5 +1,9 @@
 var app = app || {};
 app.config = app.config || {};
+app.config.about = '<div>第一行</div>';
+app.config.about += '<div>第二行第二行第二行第二行第二行第二行第二行</div>';
+app.config.about += '<div><span style="color:red;">第三行</span>hahah</div>';
+app.config.about += '<div><a href="//gamer.com.tw" target="_blank">第四行</a></div>';
 app.config.index = [
 						['group', '均線'],
 						['ma','name', false, 5, 10, 20, 40, '//wiki.mbalib.com/wiki/Sma' ],

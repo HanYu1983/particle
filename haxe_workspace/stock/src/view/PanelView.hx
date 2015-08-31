@@ -39,11 +39,13 @@ class PanelView extends Model
 	var btn_addPanel:Dynamic;
 	var btn_login:Dynamic;
 	var btn_logout:Dynamic;
+	var btn_about:Dynamic;
 	//var btn_loadPrice:Dynamic;
 	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
 	var txt_offset:Dynamic;
 	var txt_note:Dynamic;
+	var dia_about:Dynamic;
 	var currentScrollX:Int = null;
 	
 	public function new() 
@@ -174,6 +176,26 @@ class PanelView extends Model
 					notify( ON_BTN_CONTROLLER_CLICK, { value:20 } );
 				case 'btn_last':
 					notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
+			}
+		});
+		
+		dia_about = config.dia_about;
+		dia_about.attr( 'isOpen', 0 );
+		dia_about.dialog( {
+			closed:true,
+			onClose:function() {
+				dia_about.attr( 'isOpen', 0 );
+			}
+		});
+		
+		btn_about = config.btn_about;
+		btn_about.click( function() {
+			if ( dia_about.attr( 'isOpen' ) == 1) {
+				dia_about.dialog( 'close' );
+				dia_about.attr( 'isOpen', 0 );
+			}else {
+				dia_about.dialog( 'open' );
+				dia_about.attr( 'isOpen', 1 );
 			}
 		});
 		

@@ -6,7 +6,7 @@ import js.Lib;
 import model.IPanel;
 import model.PanelModel;
 import model.Saver;
-import view.IPanelView;
+import view.AboutView;
 import view.PanelView;
 
 /**
@@ -19,6 +19,7 @@ class Main
 	
 	var panelModel = new PanelModel();
 	var panelView = new PanelView();
+	var aboutView = new AboutView();
 	var saver = new Saver();
 	var loading:Dynamic;
 	
@@ -30,6 +31,11 @@ class Main
 					//slideMessage( '提示', '自動儲存成功!' );
 			}
 		});
+		
+		aboutView.config = {
+			mc_txtContainer:j( '#mc_txtContainer' ),
+			aboutConfig:untyped __js__('app.config.about' )
+		}
 		
 		panelView.config = {
 			doc:j( untyped __js__('document') ),
@@ -46,7 +52,9 @@ class Main
 			txt_note:j( '#txt_note' ),
 			table_stockPrice:j( '#table_stockPrice' ),
 			btn_login:j('#btn_login' ),
-			btn_logout:j('#btn_logout' )
+			btn_logout:j('#btn_logout' ),
+			btn_about:j('#btn_about' ),
+			dia_about:j('#dia_about')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
@@ -142,10 +150,11 @@ class Main
 		panelModel.currentFbId = '';
 		panelModel.config = newUser();
 		#else
+		
+		showLoading();
 		fb_init( '425311264344425', function() {
-			
-			showLoading();
-			
+			closeLoading();
+			/*
 			fb_loginStatus( function( e ) {
 				slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
 				var authResponse  = e.authResponse;
@@ -175,6 +184,7 @@ class Main
 						panelModel.config = newUser();
 				}
 			});
+			*/
 		});
 		#end
 	}
