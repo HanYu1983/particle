@@ -45,7 +45,7 @@
 (defmethod draw-it :grid [{line :line kline :kline color :color hideY :hideY} base ctx]
   (let [[w h max-v min-v offset-v offset-x pos-y] base
         cnt 6
-        cntx 20
+        cntx 5
         offset (-> (- max-v min-v) (/ cnt))]
     (aset ctx "strokeStyle" color)
     (aset ctx "fillStyle" color)
@@ -64,7 +64,7 @@
       (doseq [i (range (count kline))]
         (when (zero? (mod i cntx))
           (let [posx (+ (/ offset-x 2) (* i offset-x))]
-            (.fillText ctx (stl/date (nth kline i)) posx  h)
+            ;(.fillText ctx (stl/date (nth kline i)) posx  h)
             (.moveTo ctx posx 0)
             (.lineTo ctx posx h)))))
             
