@@ -269,11 +269,14 @@
               
             "atr"
             (let [n (get subd "n")
-                  line (reverse (stf/atr-seq n (reverse kline)))
+                  m (get subd "m")
+                  line (stf/atr-seq n (reverse kline))
+                  line2 (stf/sma-seq m line)
                   avg (stf/average line)]
               [
-                {:type :line :line line :color c1}
-                {:type :grid :line line :color "gray"}
+                {:type :line :line (reverse line) :color c1}
+                {:type :line :line (reverse line2) :color c2}
+                {:type :grid :line (reverse line) :color "gray"}
                 {:type :line :line (repeat (count kline) avg) :color "lightgray"}
               ])
               
