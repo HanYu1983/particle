@@ -102,12 +102,11 @@ body{
 		<div style="position:relative; display:inline-block; width:70px; ">
 			<input id=${sid} ktype=${type} class="easyui-switchbutton" checked>
 		</div>
-		{{if url == ''}}
 		<div ptype=${type} class="easyui-tooltip" style="position:relative; display:inline-block; width:60px; text-align:center;">${domName}</div>
+		{{if url == ''}}
 		{{else}}
-		<div ptype=${type} style="position:relative; display:inline-block; width:60px; text-align:center;">${domName}</div>
 		<div class="hori">
-			<a href=${url}  class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-search'"  target="_blank" ></a>
+			<a href=${url} class="easyui-linkbutton" data-options="iconCls:'icon-search'"  target="_blank" ></a>
 		</div>
 		{{/if}}
 	</div>

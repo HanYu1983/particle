@@ -143,6 +143,7 @@ class PanelView extends Model
 		slt_stockId.textbox( {
 			onChange:function(newValue, oldValue) {
 				var stockId = newValue;
+				if ( stockId.length != 4 ) return;
 				notify( ON_SLT_STOCKID_CHANGE, { 'stockId':stockId } );
 			}
 		});
@@ -346,7 +347,7 @@ class PanelView extends Model
 		var dom:Dynamic = tmpl_panel.tmpl( {id:id, type:type, deletable:deletable } );
 		mc_accordionContainer.accordion('add', {
 			id:'k_' + id,
-			title: 'k線: ' + id,
+			title: '線圖: ' + id,
 			content: dom,
 			selected: true
 		});
@@ -381,7 +382,7 @@ class PanelView extends Model
 	}
 	
 	public function removePanel( id:String ):Void {
-		var deleteName = 'k線: ' + id;
+		var deleteName = '線圖: ' + id;
 		mc_accordionContainer.accordion( 'remove', deleteName );
 	}
 	

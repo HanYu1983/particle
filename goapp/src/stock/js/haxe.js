@@ -780,6 +780,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.slt_stockId = this.config.slt_stockId;
 		this.slt_stockId.textbox({ onChange : function(newValue2,oldValue2) {
 			var stockId = newValue2;
+			if(stockId.length != 4) return;
 			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
 		this.swb_favor = this.config.swb_favor;
@@ -923,7 +924,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var props = stockData.sub;
 		var deletable = stockData.deletable;
 		var dom = this.tmpl_panel.tmpl({ id : id, type : type, deletable : deletable});
-		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "k線: " + id, content : dom, selected : true});
+		this.mc_accordionContainer.accordion("add",{ id : "k_" + id, title : "線圖: " + id, content : dom, selected : true});
 		panelData.root = dom;
 		if(type != "clock") {
 			var cw = leo.utils.getScreenWidth();
@@ -940,7 +941,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.drawCanvas(stockId,offset,count,panelData);
 	}
 	,removePanel: function(id) {
-		var deleteName = "k線: " + id;
+		var deleteName = "線圖: " + id;
 		this.mc_accordionContainer.accordion("remove",deleteName);
 	}
 	,drawCanvas: function(stockId,offset,count,panelData) {
