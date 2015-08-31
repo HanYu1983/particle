@@ -793,7 +793,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
 		}});
 		this.combo_prefer = this.config.combo_prefer;
-		this.combo_prefer.append("<option value=\"\">推介列表<option>");
+		this.combo_prefer.append("<option value=\"\"><option>");
 		Lambda.foreach(app.config.preferStocks,function(ary) {
 			_g.combo_prefer.append("<option value=\"" + ary[0] + "\">" + ary[0] + " " + ary[1] + "<option>");
 			return true;
@@ -883,7 +883,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	,setFavorsSelect: function(favors) {
 		var _g = this;
 		this.combo_favor.empty();
-		this.combo_favor.append("<option value=\"999\">------<option>");
+		this.combo_favor.append("<option value=\"999\"><option>");
 		Lambda.foreach(favors,function(str) {
 			_g.combo_favor.append("<option value=\"" + str + "\">" + str + "<option>");
 			return true;
