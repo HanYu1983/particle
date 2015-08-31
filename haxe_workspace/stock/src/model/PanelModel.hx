@@ -109,7 +109,23 @@ class PanelModel extends Model
 		
 		var j = untyped __js__('$');
 		
-		var stock = config.stocks[0];
+		var stock = switch( config.current ) {
+			case null:
+				switch( config.stocks[0] ) {
+					case null: 
+						null;
+					case stockobj:
+						stockobj;
+				}
+			case sid:
+				switch( getStockById( sid ) ) {
+					case null:
+						Main.createNewStock( sid );
+					case stockobj:
+						stockobj;
+				}
+		}
+		
 		if( stock != null )
 			currentStockId = stock.id;
 		
@@ -117,6 +133,7 @@ class PanelModel extends Model
 	}
 	
 	public function setStockData( stock:Dynamic ):Void {
+		config.current = stock.id;
 		
 		currentOffset = stock.offset;
 		currentCount = stock.count;

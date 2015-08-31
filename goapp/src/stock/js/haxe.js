@@ -86,18 +86,28 @@ List.prototype = {
 };
 var Main = function() {
 	this.saver = new model_Saver();
+	this.aboutView = new view_AboutView();
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
 	var _g = this;
 	this.saver.addHandler(function(type,params) {
 		switch(type) {
+		case "ON_SAVE_START":
+			Main.showLoading();
+			break;
+		case "ON_SAVE_NO_FBID":
+			Main.slideMessage("提示","請先登入facebook");
+			break;
 		case "ON_SAVE_SUCCESS":
+			Main.closeLoading();
+			Main.slideMessage("提示","儲存成功!");
+			_g.panelView.setSavable(false);
 			break;
 		}
 	});
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout")});
+	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
 	this.panelView.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "new", customParams : [type1]});
 		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
@@ -109,8 +119,12 @@ var Main = function() {
 				case "connected":
 					_g.panelModel.set_currentFbId(authResponse.userID);
 					Main.load(_g.panelModel.currentFbId,function(err,params2) {
-						if(err == null) {
+						switch(err) {
+						case "runtime error: index out of range":
 							Main.closeLoading();
+							_g.panelModel.set_config(params2 == null?_g.panelModel.config:_g.newUser());
+							break;
+						default:
 							_g.panelModel.set_config(params2 == null?_g.panelModel.config:params2);
 						}
 					});
@@ -127,10 +141,16 @@ var Main = function() {
 				_g.panelModel.set_currentFbId("");
 			});
 			break;
+		case "ON_BTN_SAVE_CLICK":
+			_g.saver.save();
+			break;
 		case "on_txt_note_change":
 			_g.panelModel.set_currentNote(params1.note);
 			break;
 		case "on_combo_favor_change":
+			_g.panelModel.set_currentStockId(params1.stockId);
+			break;
+		case "ON_COMBO_PREFER_CHANGE":
 			_g.panelModel.set_currentStockId(params1.stockId);
 			break;
 		case "on_favor_change":
@@ -168,35 +188,41 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 108, className : "Main", methodName : "new", customParams : [params3]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
 			_g.panelView.setFavorsSelect(params3.favorList);
 			break;
 		case "on_favor_list_change":
+			_g.panelView.setSavable(true);
 			_g.panelView.setFavorsSelect(params3.favorList);
 			break;
 		case "on_offset_change":
+			_g.panelView.setSavable(true);
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
 			_g.panelView.scrollTo(_g.panelModel.getAryPanel(),0);
 			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_count_change":
+			_g.panelView.setSavable(true);
 			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_add_panel":
+			_g.panelView.setSavable(true);
 			_g.panelView.addPanel(params3.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelObj);
 			_g.panelView.resetAllCanvasListener(_g.panelModel.getAryPanel());
 			break;
 		case "on_remove_panel":
+			_g.panelView.setSavable(true);
 			_g.panelView.removePanel(params3.id);
 			break;
 		case "on_showline_change":
+			_g.panelView.setSavable(true);
 			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelData);
 			break;
 		case "on_stockid_change":
+			_g.panelView.setSavable(true);
 			_g.panelView.initPanel(_g.panelModel.config,params3.stock,_g.panelModel.currentStockInfo);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
 			_g.saver.startAuto();
@@ -207,37 +233,16 @@ var Main = function() {
 			break;
 		}
 	});
+	Main.showLoading();
 	Main.fb_init("425311264344425",function() {
-		Main.showLoading();
-		Main.fb_loginStatus(function(e2) {
-			Main.slideMessage("歡迎使用","余氏k線圖幫您變成操盤達人!");
-			var authResponse1 = e2.authResponse;
-			var _g2 = e2.status;
-			switch(_g2) {
-			case "connected":
-				_g.panelModel.set_currentFbId(authResponse1.userID);
-				Main.load(_g.panelModel.currentFbId,function(err1,params4) {
-					haxe_Log.trace(err1,{ fileName : "Main.hx", lineNumber : 157, className : "Main", methodName : "new", customParams : [params4]});
-					Main.closeLoading();
-					if(err1 == null) _g.panelModel.set_config(params4 == null?_g.newUser():params4); else {
-						js_Browser.alert(err1);
-						_g.panelModel.set_config(_g.newUser());
-					}
-				});
-				Main.slideMessage("提示","歡迎登入!");
-				break;
-			case "unknown":
-				Main.closeLoading();
-				_g.panelModel.set_currentFbId("");
-				_g.panelModel.set_config(_g.newUser());
-				break;
-			}
-		});
+		_g.panelModel.set_currentFbId("");
+		_g.panelModel.set_config(_g.newUser());
+		Main.closeLoading();
 	});
 };
 Main.__name__ = true;
 Main.getId = function() {
-	return Main.id++;
+	return Math.floor(Math.random() * 26) + new Date().getTime();
 };
 Main.main = function() {
 	new Main();
@@ -275,7 +280,6 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
 Main.save = function(fbid,data,cb) {
-	haxe_Log.trace(data,{ fileName : "Main.hx", lineNumber : 245, className : "Main", methodName : "save"});
 	api.save(fbid,data,cb);
 };
 Main.load = function(fbid,cb) {
@@ -295,7 +299,7 @@ Main.fb_loginStatus = function(cb) {
 };
 Main.createProp = function(ary) {
 	return Lambda.fold(ary,function(obj,curr) {
-		if(obj[0] == "group") curr.push({ type : obj[0], name : obj[1]}); else curr.push({ show : obj[1], type : obj[0], url : obj[6], value : { n : obj[2], m : obj[3], o : obj[4], p : obj[5]}});
+		if(obj[0] == "group") curr.push({ type : obj[0], name : obj[1]}); else curr.push({ show : obj[2], type : obj[0], name : obj[1], url : obj[7], value : { n : obj[3], m : obj[4], o : obj[5], p : obj[6]}});
 		return curr;
 	},[]);
 };
@@ -338,11 +342,6 @@ Std.parseInt = function(x) {
 Std.parseFloat = function(x) {
 	return parseFloat(x);
 };
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -369,25 +368,6 @@ haxe_Timer.prototype = {
 };
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -454,11 +434,6 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
-};
-var js_Browser = function() { };
-js_Browser.__name__ = true;
-js_Browser.alert = function(v) {
-	window.alert(js_Boot.__string_rec(v,""));
 };
 var model_IModel = function() { };
 model_IModel.__name__ = true;
@@ -552,12 +527,31 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,init: function() {
 		model_Model.prototype.init.call(this);
 		var j = $;
-		var stock = this.config.stocks[0];
+		var stock;
+		var _g = this.config.current;
+		var sid = _g;
+		if(_g == null) {
+			var _g1 = this.config.stocks[0];
+			var stockobj = _g1;
+			if(_g1 == null) stock = null; else switch(_g1) {
+			default:
+				stock = stockobj;
+			}
+		} else switch(_g) {
+		default:
+			var _g11 = this.getStockById(sid);
+			var stockobj1 = _g11;
+			if(_g11 == null) stock = Main.createNewStock(sid); else switch(_g11) {
+			default:
+				stock = stockobj1;
+			}
+		}
 		if(stock != null) this.set_currentStockId(stock.id);
 		this.notify(model_PanelModel.ON_INIT,{ favorList : this.getFavorList()});
 	}
 	,setStockData: function(stock) {
 		var _g = this;
+		this.config.current = stock.id;
 		this.set_currentOffset(stock.offset);
 		this.set_currentCount(stock.count);
 		this.set_currentFavor(stock.favor);
@@ -680,13 +674,22 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 	startAuto: function() {
 		if(this.fbid == "") return;
 		if(this._timer != null) this._timer.stop();
-		this._timer = haxe_Timer.delay($bind(this,this.save),3000);
+		this._timer = haxe_Timer.delay($bind(this,this.save),600000);
 	}
 	,save: function() {
-		if(this.fbid == "") return;
-		Main.save(this.fbid,this.saveobj,$bind(this,this.onSaveOk));
+		if(this.fbid == "") {
+			this.notify(model_Saver.ON_SAVE_NO_FBID);
+			return;
+		}
+		this.notify(model_Saver.ON_SAVE_START);
+		Main.save(this.fbid,this.optmize(),$bind(this,this.onSaveOk));
 	}
-	,load: function() {
+	,optmize: function() {
+		var saveobj2 = { current : this.saveobj.current, stocks : Lambda.fold(this.saveobj.stocks,function(s,curr) {
+			if(s.favor) curr.push(s);
+			return curr;
+		},[])};
+		return saveobj2;
 	}
 	,onSaveOk: function(e) {
 		this.notify(model_Saver.ON_SAVE_SUCCESS);
@@ -698,9 +701,20 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 		return this.saveobj = saveobj;
 	}
 });
-var view_IPanelView = function() { };
-view_IPanelView.__name__ = true;
-view_IPanelView.__interfaces__ = [model_IModel];
+var view_AboutView = function() {
+	model_Model.call(this);
+};
+view_AboutView.__name__ = true;
+view_AboutView.__super__ = model_Model;
+view_AboutView.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.mc_txtContainer = this.config.mc_txtContainer;
+		this.aboutConfig = this.config.aboutConfig;
+		this.dia_about = this.config.dia_about;
+		this.mc_txtContainer.append(this.aboutConfig);
+	}
+});
 var view_PanelView = function() {
 	this.currentScrollX = null;
 	this.j = $;
@@ -747,6 +761,10 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.txt_offset.textbox({ value : 0, onChange : function(newValue,oldValue) {
 			_g.notify(view_PanelView.ON_TXT_OFFSET_CHANGE,{ offset : Std.parseInt(newValue)});
 		}});
+		this.txt_count = this.config.txt_count;
+		this.txt_count.textbox({ value : 200, onChange : function(newValue1,oldValue1) {
+			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
+		}});
 		this.txt_note = this.config.txt_note;
 		this.txt_note.textbox({ onChange : function(newv,oldv) {
 			_g.notify(view_PanelView.ON_TXT_NOTE_CHANGE,{ note : newv});
@@ -759,10 +777,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			_g.doc.keydown($bind(_g,_g.onKeyDown));
 			_g.doc.keyup($bind(_g,_g.onKeyUp));
 		});
-		this.txt_count = this.config.txt_count;
-		this.txt_count.textbox({ value : 200, onChange : function(newValue1,oldValue1) {
-			_g.notify(view_PanelView.ON_TXT_COUNT_CHANGE,{ count : Std.parseInt(newValue1)});
-		}});
 		this.slt_stockId = this.config.slt_stockId;
 		this.slt_stockId.textbox({ onChange : function(newValue2,oldValue2) {
 			var stockId = newValue2;
@@ -775,7 +789,19 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.combo_favor = this.config.combo_favor;
 		this.combo_favor.combobox({ onSelect : function(record) {
 			var value = record.value;
+			if(value == "") return;
 			_g.notify(view_PanelView.ON_COMBO_FAVOR_CHANGE,{ stockId : value});
+		}});
+		this.combo_prefer = this.config.combo_prefer;
+		this.combo_prefer.append("<option value=\"\">推介列表<option>");
+		Lambda.foreach(app.config.preferStocks,function(ary) {
+			_g.combo_prefer.append("<option value=\"" + ary[0] + "\">" + ary[0] + " " + ary[1] + "<option>");
+			return true;
+		});
+		this.combo_prefer.combobox({ onSelect : function(record1) {
+			var value1 = record1.value;
+			if(value1 == "") return;
+			_g.notify(view_PanelView.ON_COMBO_PREFER_CHANGE,{ stockId : value1});
 		}});
 		this.btn_controller = this.config.btn_controller;
 		this.btn_controller.delegate(".btn_controller","click",function(e2) {
@@ -802,6 +828,26 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 				break;
 			}
 		});
+		this.dia_about = this.config.dia_about;
+		this.dia_about.attr("isOpen",0);
+		this.dia_about.dialog({ closed : true, onClose : function() {
+			_g.dia_about.attr("isOpen",0);
+		}});
+		this.btn_about = this.config.btn_about;
+		this.btn_about.click(function() {
+			if(_g.dia_about.attr("isOpen") == 1) {
+				_g.dia_about.dialog("close");
+				_g.dia_about.attr("isOpen",0);
+			} else {
+				_g.dia_about.dialog("open");
+				_g.dia_about.attr("isOpen",1);
+			}
+		});
+		this.btn_save = this.config.btn_save;
+		this.btn_save.click(function() {
+			_g.notify(view_PanelView.ON_BTN_SAVE_CLICK);
+		});
+		this.btn_save.linkbutton();
 		this.table_stockPrice = this.config.table_stockPrice;
 	}
 	,initPanel: function(model,stock,stockInfo) {
@@ -815,6 +861,9 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.swb_favor.switchbutton({ checked : favor});
 		this.changeOffset(offset);
 		this.changeCount(count);
+	}
+	,setSavable: function(savable) {
+		if(savable) this.btn_save.linkbutton("enable"); else this.btn_save.linkbutton("disable");
 	}
 	,setLogin: function(login) {
 		if(login) {
@@ -927,7 +976,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			prop.sid = "swb_" + Std.string(prop.type);
 			prop.nid = "input_n_" + Std.string(prop.type);
 			prop.mid = "input_m_" + Std.string(prop.type);
-			prop.domName = prop.type;
+			prop.domName = prop.name;
 			if(prop.url == null) prop.url = "";
 			var dom1 = _g.j("#tmpl_avg").tmpl(prop);
 			container.append(dom1);
@@ -1003,7 +1052,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		}
 	}
 	,onKeyUp: function(e) {
-		haxe_Log.trace(e.which,{ fileName : "PanelView.hx", lineNumber : 513, className : "view.PanelView", methodName : "onKeyUp"});
+		console.log(e.which);
 		var _g = e.which;
 		switch(_g) {
 		case 66:
@@ -1059,8 +1108,8 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 };
 String.__name__ = true;
 Array.__name__ = true;
+Date.__name__ = ["Date"];
 Main.j = $;
-Main.id = 0;
 model_PanelModel.ON_INIT = "on_init";
 model_PanelModel.ON_STOCKID_CHANGE = "on_stockid_change";
 model_PanelModel.ON_CHANGE_STOCK_SUCCESS = "on_change_stock_success";
@@ -1071,7 +1120,9 @@ model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 model_PanelModel.ON_FAVOR_LIST_CHANGE = "on_favor_list_change";
 model_PanelModel.ON_LOGIN_CHANGE = "on_login_change";
+model_Saver.ON_SAVE_START = "ON_SAVE_START";
 model_Saver.ON_SAVE_SUCCESS = "ON_SAVE_SUCCESS";
+model_Saver.ON_SAVE_NO_FBID = "ON_SAVE_NO_FBID";
 view_PanelView.ON_SLT_STOCKID_CHANGE = "on_stockid_change";
 view_PanelView.ON_BTN_CONTROLLER_CLICK = "on_offset_change";
 view_PanelView.ON_TXT_SHOWLINE_VALUE_CHANGE = "on_showline_value_change";
@@ -1082,9 +1133,11 @@ view_PanelView.ON_BTN_ADDPANEL_CLICK = "on_btn_addPanel_click";
 view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
 view_PanelView.ON_BTN_LOGIN_CLICK = "on_btn_login_click";
 view_PanelView.ON_BTN_LOGOUT_CLICK = "on_btn_logout_click";
+view_PanelView.ON_BTN_SAVE_CLICK = "ON_BTN_SAVE_CLICK";
 view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
 view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
 view_PanelView.ON_TXT_NOTE_CHANGE = "on_txt_note_change";
 view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
+view_PanelView.ON_COMBO_PREFER_CHANGE = "ON_COMBO_PREFER_CHANGE";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

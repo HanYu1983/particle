@@ -20,11 +20,13 @@ class PanelView extends Model
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
 	public static var ON_BTN_LOGIN_CLICK = 'on_btn_login_click';
 	public static var ON_BTN_LOGOUT_CLICK = 'on_btn_logout_click';
+	public static var ON_BTN_SAVE_CLICK = 'ON_BTN_SAVE_CLICK';
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
 	public static var ON_TXT_NOTE_CHANGE = 'on_txt_note_change';
 	public static var ON_COMBO_FAVOR_CHANGE = 'on_combo_favor_change';
+	public static var ON_COMBO_PREFER_CHANGE = 'ON_COMBO_PREFER_CHANGE';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -34,16 +36,20 @@ class PanelView extends Model
 	var slt_stockId:Dynamic;
 	var swb_favor:Dynamic;
 	var combo_favor:Dynamic;
+	var combo_prefer:Dynamic;
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
 	var btn_login:Dynamic;
 	var btn_logout:Dynamic;
+	var btn_save:Dynamic;
+	var btn_about:Dynamic;
 	//var btn_loadPrice:Dynamic;
 	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
 	var txt_offset:Dynamic;
 	var txt_note:Dynamic;
+	var dia_about:Dynamic;
 	var currentScrollX:Int = null;
 	
 	public function new() 
@@ -55,7 +61,6 @@ class PanelView extends Model
 	override function init() 
 	{
 		super.init();
-		
 		
 		doc = config.doc;
 		doc.keydown( onKeyDown );
@@ -109,6 +114,14 @@ class PanelView extends Model
 			}
 		});
 		
+		txt_count = config.txt_count;
+		txt_count.textbox( {
+			value:200,
+			onChange:function(newValue, oldValue) {
+				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
+			}
+		});
+		
 		txt_note = config.txt_note;
 		txt_note.textbox( {
 			onChange:function( newv, oldv ) {
@@ -124,14 +137,6 @@ class PanelView extends Model
 		txt_note.parent().focusout( function() {
 			doc.keydown( onKeyDown );
 			doc.keyup( onKeyUp );
-		});
-		
-		txt_count = config.txt_count;
-		txt_count.textbox( {
-			value:200,
-			onChange:function(newValue, oldValue) {
-				notify( ON_TXT_COUNT_CHANGE, { count:Std.parseInt( newValue ) } );
-			}
 		});
 		
 		slt_stockId = config.slt_stockId;
@@ -153,7 +158,22 @@ class PanelView extends Model
 		combo_favor.combobox( {
 			onSelect:function( record ) {
 				var value = record.value;
+				if ( value == '' ) return;
 				notify( ON_COMBO_FAVOR_CHANGE, { stockId:value } );
+			}
+		});
+		
+		combo_prefer = config.combo_prefer;
+		combo_prefer.append( '<option value="">推介列表<option>' );
+		Lambda.foreach( untyped __js__('app.config.preferStocks' ), function( ary ) {
+			combo_prefer.append( '<option value="' + ary[0] + '">' + ary[0] + ' ' + ary[1] + '<option>' );
+			return true;
+		});
+		combo_prefer.combobox( {
+			onSelect:function( record ) {
+				var value = record.value;
+				if ( value == '' ) return;
+				notify( ON_COMBO_PREFER_CHANGE, { stockId:value } );
 			}
 		});
 		
@@ -177,6 +197,32 @@ class PanelView extends Model
 			}
 		});
 		
+		dia_about = config.dia_about;
+		dia_about.attr( 'isOpen', 0 );
+		dia_about.dialog( {
+			closed:true,
+			onClose:function() {
+				dia_about.attr( 'isOpen', 0 );
+			}
+		});
+		
+		btn_about = config.btn_about;
+		btn_about.click( function() {
+			if ( dia_about.attr( 'isOpen' ) == 1) {
+				dia_about.dialog( 'close' );
+				dia_about.attr( 'isOpen', 0 );
+			}else {
+				dia_about.dialog( 'open' );
+				dia_about.attr( 'isOpen', 1 );
+			}
+		});
+		
+		btn_save = config.btn_save;
+		btn_save.click( function() {
+			notify( ON_BTN_SAVE_CLICK );
+		});
+		btn_save.linkbutton();
+		
 		table_stockPrice = config.table_stockPrice;
 	}
 	
@@ -198,6 +244,14 @@ class PanelView extends Model
 		
 		changeOffset( offset );
 		changeCount( count );
+	}
+	
+	public function setSavable( savable ) {
+		if ( savable ) {
+			btn_save.linkbutton('enable');
+		}else {
+			btn_save.linkbutton('disable');
+		}
 	}
 	
 	public function setLogin( login:Bool ) {
@@ -385,34 +439,8 @@ class PanelView extends Model
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
 			
-			prop.domName = prop.type;
+			prop.domName = prop.name;
 			if ( prop.url == null ) prop.url = '';
-			/*
-			prop.domName = switch( prop.type ) {
-				case 'ma':
-					'均線 ma';
-				case 'macd':
-					'指數差離 macd';
-				case 'ema':
-					'指數均線 ema';
-				case 'bbi':
-					'多空指標 bbi';
-				case 'kd':
-					'隨機指標 kd';
-				case 'Chaikin':
-					'蔡金 Chaikin';
-				case 'eom':
-					'簡易波動 eom';
-				case 'yu-car':
-					'方向盤';
-				case 'yu-clock':
-					'背離線';
-				case 'yu-macd':
-					'余氏線';
-				case _:
-					prop.type;
-			}
-			*/
 			var dom = j( '#tmpl_avg' ).tmpl( prop );
 			container.append( dom );
 			

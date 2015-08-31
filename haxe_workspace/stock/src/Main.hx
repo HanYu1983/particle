@@ -6,7 +6,7 @@ import js.Lib;
 import model.IPanel;
 import model.PanelModel;
 import model.Saver;
-import view.IPanelView;
+import view.AboutView;
 import view.PanelView;
 
 /**
@@ -19,6 +19,7 @@ class Main
 	
 	var panelModel = new PanelModel();
 	var panelView = new PanelView();
+	var aboutView = new AboutView();
 	var saver = new Saver();
 	var loading:Dynamic;
 	
@@ -26,10 +27,21 @@ class Main
 		
 		saver.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
+				case Saver.ON_SAVE_START:
+					showLoading();
+				case Saver.ON_SAVE_NO_FBID:
+					slideMessage( '提示', '請先登入facebook' );
 				case Saver.ON_SAVE_SUCCESS:
-					//slideMessage( '提示', '自動儲存成功!' );
+					closeLoading();
+					slideMessage( '提示', '儲存成功!' );
+					panelView.setSavable( false );
 			}
 		});
+		
+		aboutView.config = {
+			mc_txtContainer:j( '#mc_txtContainer' ),
+			aboutConfig:untyped __js__('app.config.about' )
+		}
 		
 		panelView.config = {
 			doc:j( untyped __js__('document') ),
@@ -39,18 +51,23 @@ class Main
 			slt_stockId:j( '#slt_stockId' ),
 			swb_favor:j('#swb_favor'),
 			combo_favor:j( '#combo_favor' ),
+			combo_prefer:j( '#combo_prefer' ),
 			btn_controller:j( '#btn_controller' ),
 			btn_addPanel:j( '#btn_addPanel' ),
+			btn_save:j('#btn_save' ),
 			txt_count:j( '#txt_count' ),
 			txt_offset:j( '#txt_offset' ),
 			txt_note:j( '#txt_note' ),
 			table_stockPrice:j( '#table_stockPrice' ),
 			btn_login:j('#btn_login' ),
-			btn_logout:j('#btn_logout' )
+			btn_logout:j('#btn_logout' ),
+			btn_about:j('#btn_about' ),
+			dia_about:j('#dia_about')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
-			trace( 'panelView', type );
+		//	trace( 'panelView', type );
+			
 			saver.startAuto();
 			switch( type ) {
 				case PanelView.ON_BTN_LOGIN_CLICK:
@@ -62,9 +79,12 @@ class Main
 							case 'connected':
 								panelModel.currentFbId = authResponse.userID;
 								load( panelModel.currentFbId, function( err, params ) {
-									if ( err == null ) {
-										closeLoading();
-										panelModel.config = ( params == null ? panelModel.config : params );
+									switch( err ) {
+										case 'runtime error: index out of range':
+											closeLoading();
+											panelModel.config = ( params == null ? panelModel.config : newUser() );
+										case _:
+											panelModel.config = ( params == null ? panelModel.config : params );
 									}
 								});
 								slideMessage( '提示', '歡迎登入!' );
@@ -76,9 +96,13 @@ class Main
 					fb_logout( function( e ) {
 						panelModel.currentFbId = '';
 					});
+				case PanelView.ON_BTN_SAVE_CLICK:
+					saver.save();
 				case PanelView.ON_TXT_NOTE_CHANGE:
 					panelModel.currentNote = params.note;
 				case PanelView.ON_COMBO_FAVOR_CHANGE:
+					panelModel.currentStockId = params.stockId;
+				case PanelView.ON_COMBO_PREFER_CHANGE:
 					panelModel.currentStockId = params.stockId;
 				case PanelView.ON_SWB_FAVOR_CHANGE:
 					panelModel.currentFavor = params.favor;
@@ -105,29 +129,36 @@ class Main
 		});
 		
 		panelModel.addHandler( function( type, params ) {
-			trace( type, params );
+		//	trace( type, params );
 			
 			switch( type ) {
 				case PanelModel.ON_INIT:
 					saver.saveobj = panelModel.config;
 					panelView.setFavorsSelect( params.favorList );
 				case PanelModel.ON_FAVOR_LIST_CHANGE:
+					panelView.setSavable( true );
 					panelView.setFavorsSelect( params.favorList );
 				case PanelModel.ON_OFFSET_CHANGE:
+					panelView.setSavable( true );
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 					panelView.scrollTo( panelModel.getAryPanel(), 0 );
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_COUNT_CHANGE:
+					panelView.setSavable( true );
 					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_ADD_PANEL:
+					panelView.setSavable( true );
 					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
 					panelView.resetAllCanvasListener( panelModel.getAryPanel() );
 				case PanelModel.ON_REMOVE_PANEL:
+					panelView.setSavable( true );
 					panelView.removePanel( params.id );
 				case PanelModel.ON_SHOWLINE_CHANGE:
+					panelView.setSavable( true );
 					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
 				case PanelModel.ON_STOCKID_CHANGE:
+					panelView.setSavable( true );
 					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 					saver.startAuto();
@@ -142,10 +173,15 @@ class Main
 		panelModel.currentFbId = '';
 		panelModel.config = newUser();
 		#else
+		
+		showLoading();
 		fb_init( '425311264344425', function() {
+			panelModel.currentFbId = '';
+			panelModel.config = newUser();
 			
-			showLoading();
-			
+			closeLoading();
+		
+			/*
 			fb_loginStatus( function( e ) {
 				slideMessage( '歡迎使用', '余氏k線圖幫您變成操盤達人!' );
 				var authResponse  = e.authResponse;
@@ -175,6 +211,7 @@ class Main
 						panelModel.config = newUser();
 				}
 			});
+			*/
 		});
 		#end
 	}
@@ -183,10 +220,8 @@ class Main
 		return { stocks:[] };
 	}
 	
-	static var id = 0;
-	
 	static function getId() {
-		return id++;
+		return Math.floor(Math.random() * 26) + Date.now().getTime();
 	}
 	
 	static function main() 
@@ -242,7 +277,6 @@ class Main
 	}
 	
 	public static function save( fbid:String, data:Dynamic, cb:Dynamic -> Void ) {
-		trace( data );
 		untyped __js__('api.save')(fbid, data, cb );
 	}
 	
@@ -275,14 +309,15 @@ class Main
 				});
 			}else{
 				curr.push( { 
-					show:obj[1],
+					show:obj[2],
 					type:obj[0],
-					url:obj[6],
+					name:obj[1],
+					url:obj[7],
 					value: {
-						n:obj[2],
-						m:obj[3],
-						o:obj[4],
-						p:obj[5],
+						n:obj[3],
+						m:obj[4],
+						o:obj[5],
+						p:obj[6],
 					}
 				} );
 			}
