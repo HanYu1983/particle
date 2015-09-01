@@ -166,7 +166,7 @@ class Main
 				case PanelModel.ON_PERIOD_CHANGE:
 					panelView.setPeriod( params.period );
 					panelView.setSavable( true );
-					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentPeriod, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_NOTE_CHANGE:
 					panelView.setSavable( true );
 				case PanelModel.ON_FAVOR_LIST_CHANGE:
@@ -177,20 +177,20 @@ class Main
 					panelView.changeOffset( panelModel.currentOffset );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 					panelView.scrollTo( panelModel.getAryPanel(), 0 );
-					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentPeriod, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_COUNT_CHANGE:
 					panelView.setSavable( true );
-					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentPeriod, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_ADD_PANEL:
 					panelView.setSavable( true );
-					panelView.addPanel( params.stockId, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
+					panelView.addPanel( params.stockId, panelModel.currentPeriod, panelModel.currentOffset, panelModel.currentCount, params.panelObj );
 					panelView.resetAllCanvasListener( panelModel.getAryPanel() );
 				case PanelModel.ON_REMOVE_PANEL:
 					panelView.setSavable( true );
 					panelView.removePanel( params.id );
 				case PanelModel.ON_SHOWLINE_CHANGE:
 					panelView.setSavable( true );
-					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, params.panelData );
+					panelView.drawCanvas( panelModel.currentStockId, panelModel.currentPeriod, panelModel.currentOffset, panelModel.currentCount, params.panelData );
 				case PanelModel.ON_STOCKID_CHANGE:
 					panelView.setSavable( true );
 					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
@@ -297,17 +297,17 @@ class Main
 		return d;
 	}
 	
-	public static function getStockInfo( id:String ):Dynamic {
+	public static function getStockInfo( id:String, period:Int ):Dynamic {
 		var d:Dynamic = j.Deferred();
-		untyped __js__('api.stockInfo')( id, function( err, data ) {
+		untyped __js__('api.stockInfo')( id, period, function( err, data ) {
 			d.resolve( err, data );
 			closeLoading();
 		});
 		return d;
 	}
 	
-	public static function drawStock( canvas:Dynamic, id:String, type:String, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
-		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
+	public static function drawStock( canvas:Dynamic, id:String, type:String, period:Int, offset:Int = 0, count:Int = 100, ?sub:Dynamic ) {
+		untyped __js__('api.draw')( canvas[0], id, type, period, offset, count, sub );
 	}
 	
 	public static function save( fbid:String, accessToken:String, data:Dynamic, cb:Dynamic -> Dynamic -> Void ) {

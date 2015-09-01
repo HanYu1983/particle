@@ -15,7 +15,7 @@ class PanelModel extends Model
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	public static var ON_FAVOR_LIST_CHANGE = 'on_favor_list_change';
-	//public static var ON_LOGIN_CHANGE = 'on_login_change';
+	public static var ON_LOGIN_CHANGE = 'on_login_change';
 	public static var ON_PERIOD_CHANGE = 'ON_PERIOD_CHANGE';
 	public static var ON_NOTE_CHANGE = 'ON_NOTE_CHANGE';
 	
@@ -145,6 +145,33 @@ class PanelModel extends Model
 	
 		resetPanelData();
 		
+		Main.getStock( currentStockId, true ).done( function( id ) {
+			var periodCount = switch( currentPeriod ) {
+				case 'd':1;
+				case 'w':5;
+				case 'm':20;
+				case _:1;
+			}
+			
+			trace( currentPeriod );
+			Main.getStockInfo( id, periodCount ).done( function( err, data ) {
+				var state = data[0];
+				var dataInfo = data[1];//[[date open high low close volume]],
+				var date = data[3];
+				
+				currentStockInfo = dataInfo;
+				maxCount = dataInfo.length;
+				
+				Lambda.foreach( stock.lines, function( obj:Dynamic ) {
+					addPanel( obj.id, obj, {addToModel:false} );
+					return true;
+				});
+				
+				notify( ON_STOCKID_CHANGE, { stock:stock } );
+			});
+		});
+		
+		/*
 		Main.getStock( currentStockId, true ).pipe( Main.getStockInfo ).done( function( err, data ) {
 			var state = data[0];
 			var dataInfo = data[1];//[[date open high low close volume]],
@@ -160,6 +187,7 @@ class PanelModel extends Model
 			
 			notify( ON_STOCKID_CHANGE, { stock:stock } );
 		});	
+		*/
 	}
 	
 	function resetPanelData() {

@@ -375,7 +375,7 @@ class PanelView extends Model
 		});
 	}
 	
-	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+	public function addPanel( stockId:String, period:String, offset:Int, count:Int, panelData:Dynamic ):Void {
 		
 		var stockData = panelData.data;
 		var id = stockData.id;
@@ -429,7 +429,7 @@ class PanelView extends Model
 			createProp( dom.find( '#mc_propContainer' ), props, panelData );
 		
 		
-		drawCanvas( stockId, offset, count, panelData );
+		drawCanvas( stockId, period, offset, count, panelData );
 	}
 	
 	public function removePanel( id:String ):Void {
@@ -437,13 +437,19 @@ class PanelView extends Model
 		mc_accordionContainer.accordion( 'remove', deleteName );
 	}
 	
-	public function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
-		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
+	public function drawCanvas( stockId:String, period:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+		var periodCount = switch( period ) {
+			case 'd':1;
+			case 'w':5;
+			case 'm':20;
+			case _:1;
+		}
+		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, periodCount, offset, count, propsToDraw( panelData.data.sub ) );
 	}
 	
-	public function drawAllCanvas( stockId:String, offset:Int = 0, count:Int, ary_panel:Array<Dynamic> ):Void {
+	public function drawAllCanvas( stockId:String, period:String, offset:Int = 0, count:Int, ary_panel:Array<Dynamic> ):Void {
 		Lambda.map( ary_panel, function( panelData ) {
-			drawCanvas( stockId, offset, count, panelData );
+			drawCanvas( stockId, period, offset, count, panelData );
 		});
 	}
 	

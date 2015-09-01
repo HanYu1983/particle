@@ -214,7 +214,7 @@ var Main = function() {
 		case "ON_PERIOD_CHANGE":
 			_g.panelView.setPeriod(params3.period);
 			_g.panelView.setSavable(true);
-			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
+			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentPeriod,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "ON_NOTE_CHANGE":
 			_g.panelView.setSavable(true);
@@ -228,15 +228,15 @@ var Main = function() {
 			_g.panelView.changeOffset(_g.panelModel.currentOffset);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
 			_g.panelView.scrollTo(_g.panelModel.getAryPanel(),0);
-			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
+			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentPeriod,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_count_change":
 			_g.panelView.setSavable(true);
-			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
+			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentPeriod,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "on_add_panel":
 			_g.panelView.setSavable(true);
-			_g.panelView.addPanel(params3.stockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelObj);
+			_g.panelView.addPanel(params3.stockId,_g.panelModel.currentPeriod,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelObj);
 			_g.panelView.resetAllCanvasListener(_g.panelModel.getAryPanel());
 			break;
 		case "on_remove_panel":
@@ -245,7 +245,7 @@ var Main = function() {
 			break;
 		case "on_showline_change":
 			_g.panelView.setSavable(true);
-			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelData);
+			_g.panelView.drawCanvas(_g.panelModel.currentStockId,_g.panelModel.currentPeriod,_g.panelModel.currentOffset,_g.panelModel.currentCount,params3.panelData);
 			break;
 		case "on_stockid_change":
 			_g.panelView.setSavable(true);
@@ -289,18 +289,18 @@ Main.getStock = function(id,reset) {
 	});
 	return d;
 };
-Main.getStockInfo = function(id) {
+Main.getStockInfo = function(id,period) {
 	var d = Main.j.Deferred();
-	api.stockInfo(id,function(err,data) {
+	api.stockInfo(id,period,function(err,data) {
 		d.resolve(err,data);
 		Main.closeLoading();
 	});
 	return d;
 };
-Main.drawStock = function(canvas,id,type,offset,count,sub) {
+Main.drawStock = function(canvas,id,type,period,offset,count,sub) {
 	if(count == null) count = 100;
 	if(offset == null) offset = 0;
-	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
+	api.draw(canvas[0],id,type,period,offset,count,sub);
 };
 Main.save = function(fbid,accessToken,data,cb) {
 	api.save(fbid,accessToken,data,cb);
@@ -609,17 +609,35 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.set_currentFavor(stock.favor);
 		this.set_currentPeriod(stock.period);
 		this.resetPanelData();
-		Main.getStock(this.currentStockId,true).pipe(Main.getStockInfo).done(function(err,data) {
-			var state = data[0];
-			var dataInfo = data[1];
-			var date = data[3];
-			_g.set_currentStockInfo(dataInfo);
-			_g.set_maxCount(dataInfo.length);
-			Lambda.foreach(stock.lines,function(obj) {
-				_g.addPanel(obj.id,obj,{ addToModel : false});
-				return true;
+		Main.getStock(this.currentStockId,true).done(function(id) {
+			var periodCount;
+			var _g1 = _g.currentPeriod;
+			switch(_g1) {
+			case "d":
+				periodCount = 1;
+				break;
+			case "w":
+				periodCount = 5;
+				break;
+			case "m":
+				periodCount = 20;
+				break;
+			default:
+				periodCount = 1;
+			}
+			haxe_Log.trace(_g.currentPeriod,{ fileName : "PanelModel.hx", lineNumber : 156, className : "model.PanelModel", methodName : "setStockData"});
+			Main.getStockInfo(id,periodCount).done(function(err,data) {
+				var state = data[0];
+				var dataInfo = data[1];
+				var date = data[3];
+				_g.set_currentStockInfo(dataInfo);
+				_g.set_maxCount(dataInfo.length);
+				Lambda.foreach(stock.lines,function(obj) {
+					_g.addPanel(obj.id,obj,{ addToModel : false});
+					return true;
+				});
+				_g.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stock : stock});
 			});
-			_g.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stock : stock});
 		});
 	}
 	,resetPanelData: function() {
@@ -995,7 +1013,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	,setPeriod: function(period) {
 		this.btn_period.find("a[ptype=\"" + period + "\"]").linkbutton({ selected : true});
 	}
-	,addPanel: function(stockId,offset,count,panelData) {
+	,addPanel: function(stockId,period,offset,count,panelData) {
 		var _g = this;
 		var stockData = panelData.data;
 		var id = stockData.id;
@@ -1028,20 +1046,34 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			self.tooltip("update",hoverstr);
 		}});
 		if(props != null) this.createProp(dom.find("#mc_propContainer"),props,panelData);
-		this.drawCanvas(stockId,offset,count,panelData);
+		this.drawCanvas(stockId,period,offset,count,panelData);
 	}
 	,removePanel: function(id) {
 		var deleteName = "線圖: " + id;
 		this.mc_accordionContainer.accordion("remove",deleteName);
 	}
-	,drawCanvas: function(stockId,offset,count,panelData) {
-		Main.drawStock(panelData.root.find("#canvas_kline"),stockId,panelData.data.type,offset,count,this.propsToDraw(panelData.data.sub));
+	,drawCanvas: function(stockId,period,offset,count,panelData) {
+		var periodCount;
+		switch(period) {
+		case "d":
+			periodCount = 1;
+			break;
+		case "w":
+			periodCount = 5;
+			break;
+		case "m":
+			periodCount = 20;
+			break;
+		default:
+			periodCount = 1;
+		}
+		Main.drawStock(panelData.root.find("#canvas_kline"),stockId,panelData.data.type,periodCount,offset,count,this.propsToDraw(panelData.data.sub));
 	}
-	,drawAllCanvas: function(stockId,offset,count,ary_panel) {
+	,drawAllCanvas: function(stockId,period,offset,count,ary_panel) {
 		if(offset == null) offset = 0;
 		var _g = this;
 		Lambda.map(ary_panel,function(panelData) {
-			_g.drawCanvas(stockId,offset,count,panelData);
+			_g.drawCanvas(stockId,period,offset,count,panelData);
 		});
 	}
 	,propsToDraw: function(props) {
@@ -1213,6 +1245,7 @@ model_PanelModel.ON_SHOWLINE_CHANGE = "on_showline_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 model_PanelModel.ON_FAVOR_LIST_CHANGE = "on_favor_list_change";
+model_PanelModel.ON_LOGIN_CHANGE = "on_login_change";
 model_PanelModel.ON_PERIOD_CHANGE = "ON_PERIOD_CHANGE";
 model_PanelModel.ON_NOTE_CHANGE = "ON_NOTE_CHANGE";
 model_Saver.ON_SAVE_START = "ON_SAVE_START";
