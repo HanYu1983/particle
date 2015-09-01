@@ -76,7 +76,6 @@ class Main
 		panelView.addHandler( function( type, params:Dynamic ) {
 			trace( 'panelView', type );
 			
-			saver.startAuto();
 			switch( type ) {
 				case PanelView.ON_BTN_LOGIN_CLICK:
 					showLoading();
@@ -118,6 +117,7 @@ class Main
 					});
 				case PanelView.ON_BTN_PERIOD_CLICK:
 					panelModel.currentPeriod = params.period;
+					panelModel.getStockInfoAndSet();
 				case PanelView.ON_BTN_LOGOUT_CLICK:
 					fb_logout( function( e ) {
 						saver.fbid = '';
@@ -158,6 +158,7 @@ class Main
 		
 		panelModel.addHandler( function( type, params:Dynamic ) {
 			trace( type, params );
+			saver.startAuto();
 			
 			switch( type ) {
 				case PanelModel.ON_INIT:
@@ -195,14 +196,14 @@ class Main
 					panelView.setSavable( true );
 					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
-					saver.startAuto();
 				//case PanelModel.ON_LOGIN_CHANGE:
 				//	saver.fbid = params.fbid;
 			}
 		});
 		
 		#if debug
-		panelModel.currentFbId = '';
+		saver.fbid = '';
+		saver.fbtoken = '';
 		panelModel.config = newUser();
 		#else
 		

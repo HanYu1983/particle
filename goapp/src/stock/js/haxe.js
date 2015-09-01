@@ -114,7 +114,6 @@ var Main = function() {
 	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), toggle_favor : Main.j("#toggle_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), btn_period : Main.j("#btn_period"), dia_about : Main.j("#dia_about")});
 	this.panelView.addHandler(function(type1,params1) {
 		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "new", customParams : [type1]});
-		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
 			Main.showLoading();
@@ -151,6 +150,7 @@ var Main = function() {
 			break;
 		case "ON_BTN_PERIOD_CLICK":
 			_g.panelModel.set_currentPeriod(params1.period);
+			_g.panelModel.getStockInfoAndSet();
 			break;
 		case "on_btn_logout_click":
 			Main.fb_logout(function(e1) {
@@ -206,6 +206,7 @@ var Main = function() {
 	});
 	this.panelModel.addHandler(function(type2,params3) {
 		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 160, className : "Main", methodName : "new", customParams : [params3]});
+		_g.saver.startAuto();
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
@@ -251,7 +252,6 @@ var Main = function() {
 			_g.panelView.setSavable(true);
 			_g.panelView.initPanel(_g.panelModel.config,params3.stock,_g.panelModel.currentStockInfo);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
-			_g.saver.startAuto();
 			break;
 		}
 	});
@@ -609,35 +609,41 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.set_currentFavor(stock.favor);
 		this.set_currentPeriod(stock.period);
 		this.resetPanelData();
-		Main.getStock(this.currentStockId,true).done(function(id) {
-			var periodCount;
-			var _g1 = _g.currentPeriod;
-			switch(_g1) {
-			case "d":
-				periodCount = 1;
-				break;
-			case "w":
-				periodCount = 5;
-				break;
-			case "m":
-				periodCount = 20;
-				break;
-			default:
-				periodCount = 1;
-			}
-			haxe_Log.trace(_g.currentPeriod,{ fileName : "PanelModel.hx", lineNumber : 156, className : "model.PanelModel", methodName : "setStockData"});
-			Main.getStockInfo(id,periodCount).done(function(err,data) {
-				var state = data[0];
-				var dataInfo = data[1];
-				var date = data[3];
-				_g.set_currentStockInfo(dataInfo);
-				_g.set_maxCount(dataInfo.length);
-				Lambda.foreach(stock.lines,function(obj) {
-					_g.addPanel(obj.id,obj,{ addToModel : false});
-					return true;
-				});
-				_g.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stock : stock});
+		Main.getStock(this.currentStockId,true).done(function() {
+			_g.getStockInfoAndSet(true);
+		});
+	}
+	,getStockInfoAndSet: function(parser) {
+		if(parser == null) parser = false;
+		var _g = this;
+		if(this.getStockById(this.currentStockId) == null) return;
+		var periodCount;
+		var _g1 = this.currentPeriod;
+		switch(_g1) {
+		case "d":
+			periodCount = 1;
+			break;
+		case "w":
+			periodCount = 5;
+			break;
+		case "m":
+			periodCount = 20;
+			break;
+		default:
+			periodCount = 1;
+		}
+		Main.getStockInfo(this.currentStockId,periodCount).done(function(err,data) {
+			var state = data[0];
+			var dataInfo = data[1];
+			var date = data[3];
+			var stock = _g.getStockById(_g.currentStockId);
+			_g.set_currentStockInfo(dataInfo);
+			_g.set_maxCount(dataInfo.length);
+			if(parser) Lambda.foreach(stock.lines,function(obj) {
+				_g.addPanel(obj.id,obj,{ addToModel : false});
+				return true;
 			});
+			_g.notify(model_PanelModel.ON_STOCKID_CHANGE,{ stock : stock});
 		});
 	}
 	,resetPanelData: function() {

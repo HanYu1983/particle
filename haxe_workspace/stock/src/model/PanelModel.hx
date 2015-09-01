@@ -145,49 +145,39 @@ class PanelModel extends Model
 	
 		resetPanelData();
 		
-		Main.getStock( currentStockId, true ).done( function( id ) {
-			var periodCount = switch( currentPeriod ) {
-				case 'd':1;
-				case 'w':5;
-				case 'm':20;
-				case _:1;
-			}
-			
-			trace( currentPeriod );
-			Main.getStockInfo( id, periodCount ).done( function( err, data ) {
-				var state = data[0];
-				var dataInfo = data[1];//[[date open high low close volume]],
-				var date = data[3];
-				
-				currentStockInfo = dataInfo;
-				maxCount = dataInfo.length;
-				
-				Lambda.foreach( stock.lines, function( obj:Dynamic ) {
-					addPanel( obj.id, obj, {addToModel:false} );
-					return true;
-				});
-				
-				notify( ON_STOCKID_CHANGE, { stock:stock } );
-			});
+		Main.getStock( currentStockId, true ).done( function() {
+			getStockInfoAndSet( true );
 		});
+	}
+	
+	public function getStockInfoAndSet( ?parser = false ) {
+		if ( getStockById( currentStockId ) == null ) return;
 		
-		/*
-		Main.getStock( currentStockId, true ).pipe( Main.getStockInfo ).done( function( err, data ) {
+		var periodCount = switch( currentPeriod ) {
+			case 'd':1;
+			case 'w':5;
+			case 'm':20;
+			case _:1;
+		}
+		
+		Main.getStockInfo( currentStockId, periodCount ).done( function( err, data ) {
 			var state = data[0];
 			var dataInfo = data[1];//[[date open high low close volume]],
 			var date = data[3];
+			var stock = getStockById( currentStockId );
 			
 			currentStockInfo = dataInfo;
 			maxCount = dataInfo.length;
 			
-			Lambda.foreach( stock.lines, function( obj:Dynamic ) {
-				addPanel( obj.id, obj, {addToModel:false} );
-				return true;
-			});
+			if( parser ){
+				Lambda.foreach( stock.lines, function( obj:Dynamic ) {
+					addPanel( obj.id, obj, {addToModel:false} );
+					return true;
+				});
+			}
 			
 			notify( ON_STOCKID_CHANGE, { stock:stock } );
-		});	
-		*/
+		});
 	}
 	
 	function resetPanelData() {
