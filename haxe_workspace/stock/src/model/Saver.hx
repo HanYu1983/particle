@@ -12,6 +12,7 @@ class Saver extends Model
 	public static var ON_SAVE_NO_FBID = 'ON_SAVE_NO_FBID'; 
 	
 	public var fbid(default, set ):String = '';
+	public var fbtoken(default, set ):String = '';
 	public var saveobj(default, set ):Dynamic;
 	public var showLoading = false;
 	
@@ -36,7 +37,7 @@ class Saver extends Model
 			return;
 		}
 		notify( ON_SAVE_START );
-		Main.save( fbid, optmize(), onSaveOk );
+		Main.save( fbid, fbtoken, optmize(), onSaveOk );
 	}
 	
 	function optmize() {
@@ -62,4 +63,7 @@ class Saver extends Model
 		return this.saveobj = saveobj;
 	}
 	
+	function set_fbtoken( token ) {
+		return fbtoken = token;
+	}
 }

@@ -51,6 +51,7 @@ class Main
 			tmpl_panel:j("#tmpl_panel"),
 			slt_stockId:j( '#slt_stockId' ),
 			swb_favor:j('#swb_favor'),
+			toggle_favor:j( '#toggle_favor' ),
 			combo_favor:j( '#combo_favor' ),
 			combo_prefer:j( '#combo_prefer' ),
 			btn_controller:j( '#btn_controller' ),
@@ -63,11 +64,12 @@ class Main
 			btn_login:j('#btn_login' ),
 			btn_logout:j('#btn_logout' ),
 			btn_about:j('#btn_about' ),
+			btn_period:j('#btn_period' ),
 			dia_about:j('#dia_about')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
-		//	trace( 'panelView', type );
+			trace( 'panelView', type );
 			
 			saver.startAuto();
 			switch( type ) {
@@ -78,14 +80,18 @@ class Main
 						var authResponse  = e.authResponse;
 						switch( e.status ) {
 							case 'connected':
-								panelModel.currentFbId = authResponse.userID;
-								load( panelModel.currentFbId, function( err, params ) {
+								var token = authResponse.accessToken;
+								saver.fbtoken = token;
+								saver.fbid = authResponse.userID;
+								//panelModel.currentFbId = authResponse.userID;
+								load( saver.fbid, saver.fbtoken, function( err, params ) {
+									
+									trace( err, params );
 									closeLoading();
 									switch( err ) {
 										case null:
 											if ( params != null ) {
 												panelModel.config = params;
-												saver.saveobj = panelModel.config;
 											}
 										case 'runtime error: index out of range':
 										case _:
@@ -93,7 +99,7 @@ class Main
 											slideMessage( '錯誤', err );
 											#else
 											Browser.alert( '程式崩潰，請重新整理' );
-											Browser.window.location.reload();
+											//Browser.window.location.reload();
 											#end
 									}
 								});
@@ -102,9 +108,12 @@ class Main
 								closeLoading();
 						}
 					});
+				case PanelView.ON_BTN_PERIOD_CLICK:
+					panelModel.currentPeriod = params.period;
 				case PanelView.ON_BTN_LOGOUT_CLICK:
 					fb_logout( function( e ) {
-						panelModel.currentFbId = '';
+						saver.fbid = '';
+						//panelModel.currentFbId = '';
 					});
 				case PanelView.ON_BTN_SAVE_CLICK:
 					saver.showLoading = true;
@@ -139,13 +148,17 @@ class Main
 			}
 		});
 		
-		panelModel.addHandler( function( type, params ) {
-		//	trace( type, params );
+		panelModel.addHandler( function( type, params:Dynamic ) {
+			trace( type, params );
 			
 			switch( type ) {
 				case PanelModel.ON_INIT:
 					saver.saveobj = panelModel.config;
 					panelView.setFavorsSelect( params.favorList );
+				case PanelModel.ON_PERIOD_CHANGE:
+					panelView.setPeriod( params.period );
+					panelView.setSavable( true );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_NOTE_CHANGE:
 					panelView.setSavable( true );
 				case PanelModel.ON_FAVOR_LIST_CHANGE:
@@ -186,9 +199,12 @@ class Main
 		panelModel.config = newUser();
 		#else
 		
+		var fbappid = untyped __js__('app.config.fbappid[app.config.fbappid.which]');
+		
 		showLoading();
-		fb_init( '425311264344425', function() {
-			panelModel.currentFbId = '';
+		fb_init( fbappid, function() {
+		//	panelModel.currentFbId = '';
+			saver.config = '';
 			panelModel.config = newUser();
 			
 			closeLoading();
@@ -288,12 +304,12 @@ class Main
 		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 	
-	public static function save( fbid:String, data:Dynamic, cb:Dynamic -> Void ) {
-		untyped __js__('api.save')(fbid, data, cb );
+	public static function save( fbid:String, accessToken:String, data:Dynamic, cb:Dynamic -> Void ) {
+		untyped __js__('api.save')(fbid, accessToken, data, cb );
 	}
 	
-	public static function load( fbid:String, cb:Dynamic -> Dynamic -> Void ) {
-		untyped __js__('api.load')(fbid, cb ); 
+	public static function load( fbid:String, accessToken:String, cb:Dynamic -> Dynamic -> Void ) {
+		untyped __js__('api.load')(fbid, accessToken, cb ); 
 	}
 	
 	public static function fb_init( appId:String, cb:Void -> Void ) {
@@ -343,6 +359,7 @@ class Main
 			count:200,
 			offset:0,
 			favor:false,
+			period:'d',
 			note:'這個人很懶，什麼都沒有記下=3=',
 			lines:[ 
 				createNewLine( 'volume', false, [
