@@ -102,12 +102,18 @@ var Main = function() {
 			Main.closeLoading();
 			_g.panelView.setSavable(false);
 			break;
+		case "ON_SAVE_ERROR":
+			Main.slideMessage("提示","同步失敗，請再試一次");
+			_g.saver.set_fbtoken("");
+			_g.saver.set_fbid("");
+			_g.panelView.setLogin(false);
+			break;
 		}
 	});
 	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
 	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), toggle_favor : Main.j("#toggle_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), btn_period : Main.j("#btn_period"), dia_about : Main.j("#dia_about")});
 	this.panelView.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 72, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "new", customParams : [type1]});
 		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
@@ -120,21 +126,24 @@ var Main = function() {
 					var token = authResponse.accessToken;
 					_g.saver.set_fbtoken(token);
 					_g.saver.set_fbid(authResponse.userID);
+					_g.panelView.setLogin(true);
 					Main.load(_g.saver.fbid,_g.saver.fbtoken,function(err,params2) {
-						haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 89, className : "Main", methodName : "new", customParams : [params2]});
 						Main.closeLoading();
 						if(err == null) {
 							if(params2 != null) _g.panelModel.set_config(params2);
+							Main.slideMessage("提示","歡迎登入!");
 						} else switch(err) {
 						case "runtime error: index out of range":
+							Main.slideMessage("提示","歡迎登入!");
 							break;
 						default:
 							js_Browser.alert("程式崩潰，請重新整理");
+							window.location.reload();
 						}
 					});
-					Main.slideMessage("提示","歡迎登入!");
 					break;
 				case "unknown":
+					_g.panelView.setLogin(false);
 					Main.closeLoading();
 					break;
 				}
@@ -196,7 +205,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 152, className : "Main", methodName : "new", customParams : [params3]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 160, className : "Main", methodName : "new", customParams : [params3]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
@@ -243,10 +252,6 @@ var Main = function() {
 			_g.panelView.initPanel(_g.panelModel.config,params3.stock,_g.panelModel.currentStockInfo);
 			_g.panelView.drawPrice(_g.panelModel.currentStockInfo,_g.panelModel.currentOffset);
 			_g.saver.startAuto();
-			break;
-		case "on_login_change":
-			_g.saver.set_fbid(params3.fbid);
-			_g.panelView.setLogin(params3.fbid != "");
 			break;
 		}
 	});
@@ -745,8 +750,8 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 		},[])};
 		return saveobj2;
 	}
-	,onSaveOk: function(e) {
-		this.notify(model_Saver.ON_SAVE_SUCCESS);
+	,onSaveOk: function(err,params) {
+		if(err == null) this.notify(model_Saver.ON_SAVE_SUCCESS); else this.notify(model_Saver.ON_SAVE_ERROR,{ err : err});
 	}
 	,set_fbid: function(fbid) {
 		return this.fbid = fbid;
@@ -1196,11 +1201,11 @@ model_PanelModel.ON_SHOWLINE_CHANGE = "on_showline_change";
 model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 model_PanelModel.ON_FAVOR_LIST_CHANGE = "on_favor_list_change";
-model_PanelModel.ON_LOGIN_CHANGE = "on_login_change";
 model_PanelModel.ON_PERIOD_CHANGE = "ON_PERIOD_CHANGE";
 model_PanelModel.ON_NOTE_CHANGE = "ON_NOTE_CHANGE";
 model_Saver.ON_SAVE_START = "ON_SAVE_START";
 model_Saver.ON_SAVE_SUCCESS = "ON_SAVE_SUCCESS";
+model_Saver.ON_SAVE_ERROR = "ON_SAVE_ERROR";
 model_Saver.ON_SAVE_NO_FBID = "ON_SAVE_NO_FBID";
 view_PanelView.ON_SLT_STOCKID_CHANGE = "on_stockid_change";
 view_PanelView.ON_BTN_CONTROLLER_CLICK = "on_offset_change";

@@ -9,6 +9,7 @@ class Saver extends Model
 {
 	public static var ON_SAVE_START = 'ON_SAVE_START'; 
 	public static var ON_SAVE_SUCCESS = 'ON_SAVE_SUCCESS'; 
+	public static var ON_SAVE_ERROR = 'ON_SAVE_ERROR'; 
 	public static var ON_SAVE_NO_FBID = 'ON_SAVE_NO_FBID'; 
 	
 	public var fbid(default, set ):String = '';
@@ -51,8 +52,12 @@ class Saver extends Model
 		return saveobj2;
 	}
 	
-	function onSaveOk( e ) {
-		notify( ON_SAVE_SUCCESS );
+	function onSaveOk( err, params ) {
+		if ( err == null ) {
+			notify( ON_SAVE_SUCCESS );
+		}else {
+			notify( ON_SAVE_ERROR, {err:err } );
+		}
 	}
 	
 	function set_fbid( fbid ) {

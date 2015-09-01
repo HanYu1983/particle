@@ -15,7 +15,7 @@ class PanelModel extends Model
 	public static var ON_ADD_PANEL = 'on_add_panel';
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	public static var ON_FAVOR_LIST_CHANGE = 'on_favor_list_change';
-	public static var ON_LOGIN_CHANGE = 'on_login_change';
+	//public static var ON_LOGIN_CHANGE = 'on_login_change';
 	public static var ON_PERIOD_CHANGE = 'ON_PERIOD_CHANGE';
 	public static var ON_NOTE_CHANGE = 'ON_NOTE_CHANGE';
 	

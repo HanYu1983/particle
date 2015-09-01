@@ -36,6 +36,11 @@ class Main
 					closeLoading();
 				//	slideMessage( '提示', '儲存成功!' );
 					panelView.setSavable( false );
+				case Saver.ON_SAVE_ERROR:
+					slideMessage( '提示','同步失敗，請再試一次' );
+					saver.fbtoken = '';
+					saver.fbid = '';
+					panelView.setLogin( false );
 			}
 		});
 		
@@ -83,28 +88,31 @@ class Main
 								var token = authResponse.accessToken;
 								saver.fbtoken = token;
 								saver.fbid = authResponse.userID;
-								//panelModel.currentFbId = authResponse.userID;
+								panelView.setLogin( true );
+								
 								load( saver.fbid, saver.fbtoken, function( err, params ) {
 									
-									trace( err, params );
 									closeLoading();
 									switch( err ) {
 										case null:
 											if ( params != null ) {
 												panelModel.config = params;
 											}
+											slideMessage( '提示', '歡迎登入!' );
 										case 'runtime error: index out of range':
+											slideMessage( '提示', '歡迎登入!' );
 										case _:
 											#if debug
 											slideMessage( '錯誤', err );
 											#else
 											Browser.alert( '程式崩潰，請重新整理' );
-											//Browser.window.location.reload();
+											Browser.window.location.reload();
 											#end
 									}
 								});
-								slideMessage( '提示', '歡迎登入!' );
+								
 							case 'unknown':
+								panelView.setLogin( false );
 								closeLoading();
 						}
 					});
@@ -188,9 +196,8 @@ class Main
 					panelView.initPanel( panelModel.config, params.stock, panelModel.currentStockInfo );
 					panelView.drawPrice( panelModel.currentStockInfo, panelModel.currentOffset );
 					saver.startAuto();
-				case PanelModel.ON_LOGIN_CHANGE:
-					saver.fbid = params.fbid;
-					panelView.setLogin( params.fbid != '' );
+				//case PanelModel.ON_LOGIN_CHANGE:
+				//	saver.fbid = params.fbid;
 			}
 		});
 		
@@ -203,7 +210,6 @@ class Main
 		
 		showLoading();
 		fb_init( fbappid, function() {
-		//	panelModel.currentFbId = '';
 			saver.config = '';
 			panelModel.config = newUser();
 			
@@ -304,7 +310,7 @@ class Main
 		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 	
-	public static function save( fbid:String, accessToken:String, data:Dynamic, cb:Dynamic -> Void ) {
+	public static function save( fbid:String, accessToken:String, data:Dynamic, cb:Dynamic -> Dynamic -> Void ) {
 		untyped __js__('api.save')(fbid, accessToken, data, cb );
 	}
 	
