@@ -181,7 +181,7 @@ class PanelView extends Model
 		});
 		
 		combo_prefer = config.combo_prefer;
-		combo_prefer.append( '<option value=""><option>' );
+		combo_prefer.append( '<option value=""></option>' );
 		Lambda.foreach( untyped __js__('app.config.preferStocks' ), function( ary ) {
 			combo_prefer.append( '<option value="' + ary[0] + '">' + ary[0] + ' ' + ary[1] + '</option>' );
 			return true;
@@ -313,7 +313,7 @@ class PanelView extends Model
 	
 	public function setFavorsSelect( favors:Array<String> ):Void {
 		combo_favor.empty();
-		combo_favor.append( '<option value="999"><option>' );
+		combo_favor.append( '<option value="999"></option>' );
 		Lambda.foreach( favors, function( str ) {
 			combo_favor.append( '<option value="' + str + '">' + str + '</option>' );
 			return true;
