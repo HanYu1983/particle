@@ -51,6 +51,7 @@ class Main
 			tmpl_panel:j("#tmpl_panel"),
 			slt_stockId:j( '#slt_stockId' ),
 			swb_favor:j('#swb_favor'),
+			toggle_favor:j( '#toggle_favor' ),
 			combo_favor:j( '#combo_favor' ),
 			combo_prefer:j( '#combo_prefer' ),
 			btn_controller:j( '#btn_controller' ),
@@ -186,8 +187,10 @@ class Main
 		panelModel.config = newUser();
 		#else
 		
+		var fbappid = untyped __js__('app.config.fbappid[app.config.fbappid.which]');
+		
 		showLoading();
-		fb_init( '425311264344425', function() {
+		fb_init( fbappid, function() {
 			panelModel.currentFbId = '';
 			panelModel.config = newUser();
 			

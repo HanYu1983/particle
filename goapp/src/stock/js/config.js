@@ -1,5 +1,10 @@
 var app = app || {};
 app.config = app.config || {};
+app.config.fbappid = {
+	local:'679171275511375',
+	online:'425311264344425',
+	which:'local'
+}
 app.config.about = [
 	"版本1.0",
 	"上善若水APP"

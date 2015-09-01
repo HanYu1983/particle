@@ -8,7 +8,6 @@
 	
 	<link rel="stylesheet" type="text/css" href="js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
 	<link rel="stylesheet" type="text/css" href="js/lib/jquery-easyui-1.4.3/themes/icon.css">
-	<link rel="stylesheet" type="text/css" href="js/lib/jquery-easyui-1.4.3/demo/demo.css">
 	<link rel="stylesheet" type="text/css" href="css/normalize.css">
 		
 	<script type="text/javascript" src="js/lib/leo.utils.js"></script>
@@ -120,9 +119,13 @@ body{
 	<div id="mc_rootPanel" class="easyui-layout" style="width:100%;height:100%; left:0; top:0;">
         <div data-options="region:'north'" style="height:40px; padding:5px;">
 			<div style="position:relative; float:left;">
-				<div class="hori" style="margin-right:10px; ">
+				
+				<div class="hori">
+					 <a href="#" id="toggle_favor" class="easyui-linkbutton" data-options="iconCls:'icon-heart',toggle:true"></a>
+					<!--
 					<div class="hori">關注</div>
 					<input id="swb_favor" class="easyui-switchbutton" >
+						-->
 				</div>
 				<div class="hori" style="margin-right:10px;">
 					<select id="combo_favor" class="easyui-combobox" style="width:50px;" name="state" data-options="prompt:'關注'"></select>
@@ -144,6 +147,11 @@ body{
 						<select id="txt_offset" class="easyui-textbox" style="width:100%;"></select>
 					</div>
 				</div>
+				<!--
+				<div class="hori">
+					<a href="#" class="easyui-menubutton" data-options="menu:'#menu_observer',iconCls:'icon-edit'">觀察</a>
+				</div>
+				-->
 				<div id="btn_controller" class="hori" style="vertical-align:middle; ">
 					<div id="btn_first" class="btn_controller pagination-first easyui-tooltip"></div>
 					<div id="btn_prev10" class="btn_controller pagination-prev easyui-tooltip"></div>
@@ -202,6 +210,33 @@ body{
 		</div>
 		<div id="dia_about" class="easyui-dialog" title="關於 余氏k線圖" data-options="iconCls:'icon-help'" style="padding:10px">
 			<div id="mc_txtContainer" style="position:relative; width:100%; height:100%; text-align:center;"></div>
+		</div>
+				
+		<div id="menu_observer" style="width:150px;">
+			<div>日線</div>
+			<div>週線</div>
+			<div>月線</div>
+			<div class="menu-sep"></div>
+			<div>返回最新</div>
+			<div>下20K</div>
+			<div>下1日</div>
+			<div>上1日</div>
+			<div>上20K</div>
+			<div>返回最早</div>
+			<!--
+			<div>
+				<span>Toolbar</span>
+				<div>
+					<div>Address</div>
+					<div>Link</div>
+					<div>Navigation Toolbar</div>
+					<div>Bookmark Toolbar</div>
+					<div class="menu-sep"></div>
+					<div>New Toolbar...</div>
+				</div>
+			</div>
+			<div data-options="iconCls:'icon-remove'">Delete</div>
+			-->
 		</div>
     </div>
 	<script type="text/javascript" src="js/lib/async.js"></script>

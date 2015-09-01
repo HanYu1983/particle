@@ -105,7 +105,7 @@ var Main = function() {
 		}
 	});
 	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), toggle_favor : Main.j("#toggle_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
 	this.panelView.addHandler(function(type1,params1) {
 		_g.saver.startAuto();
 		switch(type1) {
@@ -241,8 +241,9 @@ var Main = function() {
 			break;
 		}
 	});
+	var fbappid = app.config.fbappid[app.config.fbappid.which];
 	Main.showLoading();
-	Main.fb_init("425311264344425",function() {
+	Main.fb_init(fbappid,function() {
 		_g.panelModel.set_currentFbId("");
 		_g.panelModel.set_config(_g.newUser());
 		Main.closeLoading();
@@ -799,9 +800,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 			if(stockId.length != 4) return;
 			_g.notify(view_PanelView.ON_SLT_STOCKID_CHANGE,{ 'stockId' : stockId});
 		}});
-		this.swb_favor = this.config.swb_favor;
-		this.swb_favor.switchbutton({ onChange : function(checked) {
-			_g.notify(view_PanelView.ON_SWB_FAVOR_CHANGE,{ favor : checked});
+		this.toggle_favor = this.config.toggle_favor;
+		this.toggle_favor.attr("favor",0);
+		this.toggle_favor.linkbutton({ onClick : function() {
+			if(_g.toggle_favor.attr("favor") == 0) _g.toggle_favor.attr("favor",1); else _g.toggle_favor.attr("favor",0);
+			_g.notify(view_PanelView.ON_SWB_FAVOR_CHANGE,{ favor : _g.toggle_favor.attr("favor") == 1});
 		}});
 		this.combo_favor = this.config.combo_favor;
 		this.combo_favor.combobox({ onSelect : function(record) {
@@ -875,7 +878,8 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		var note = stock.note;
 		this.setTxtStockId(stockId);
 		this.setTxtNote(note);
-		this.swb_favor.switchbutton({ checked : favor});
+		this.toggle_favor.linkbutton({ selected : favor});
+		this.toggle_favor.attr("favor",favor?1:0);
 		this.changeOffset(offset);
 		this.changeCount(count);
 	}

@@ -34,7 +34,8 @@ class PanelView extends Model
 	var body:Dynamic;
 	var tmpl_panel:Dynamic;
 	var slt_stockId:Dynamic;
-	var swb_favor:Dynamic;
+	//var swb_favor:Dynamic;
+	var toggle_favor:Dynamic;
 	var combo_favor:Dynamic;
 	var combo_prefer:Dynamic;
 	var mc_accordionContainer:Dynamic;
@@ -147,11 +148,24 @@ class PanelView extends Model
 				notify( ON_SLT_STOCKID_CHANGE, { 'stockId':stockId } );
 			}
 		});
-		
+		/*
 		swb_favor = config.swb_favor;
 		swb_favor.switchbutton( {
 			onChange:function( checked ) {
 				notify( ON_SWB_FAVOR_CHANGE, { favor:checked } );
+			}
+		});
+		*/
+		toggle_favor = config.toggle_favor;
+		toggle_favor.attr( 'favor', 0 );
+		toggle_favor.linkbutton( {
+			onClick:function() {
+				if ( toggle_favor.attr( 'favor' ) == 0 ) {
+					toggle_favor.attr( 'favor', 1 );
+				}else {
+					toggle_favor.attr( 'favor', 0 );
+				}
+				notify( ON_SWB_FAVOR_CHANGE, { favor: toggle_favor.attr( 'favor' ) == 1 } );
 			}
 		});
 		
@@ -239,10 +253,15 @@ class PanelView extends Model
 		setTxtStockId( stockId );
 		setTxtNote( note );
 		
+		toggle_favor.linkbutton( {
+			selected:favor
+		});
+		toggle_favor.attr( 'favor', favor ? 1 : 0 );
+		/*
 		swb_favor.switchbutton( {
 			checked:favor
 		});
-		
+		*/
 		changeOffset( offset );
 		changeCount( count );
 	}
