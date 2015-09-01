@@ -146,6 +146,8 @@ class Main
 				case PanelModel.ON_INIT:
 					saver.saveobj = panelModel.config;
 					panelView.setFavorsSelect( params.favorList );
+				case PanelModel.ON_NOTE_CHANGE:
+					panelView.setSavable( true );
 				case PanelModel.ON_FAVOR_LIST_CHANGE:
 					panelView.setSavable( true );
 					panelView.setFavorsSelect( params.favorList );
