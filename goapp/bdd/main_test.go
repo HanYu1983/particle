@@ -9,6 +9,7 @@ import (
   _ "appengine/datastore"
   dbfile "lib/db/file"
   _ "lib/db"
+  "lib/tool"
 )
 
 func TestSuit(t *testing.T){
@@ -18,7 +19,21 @@ func TestSuit(t *testing.T){
   
   It := bdd.GenIt( c, t )
   
+  FB( It )
   DBFileSystem( It )
+  
+}
+
+
+func FB ( It bdd.ItFn ){
+  It( "test auth", func( ctx appengine.Context ){
+    
+    _, err := tool.AuthFB( ctx, "922170944477800", "CAACEdEose0cBAJoTJPxWUIbWZAhfP4dQ3XOn7IdhrjjyU0rYMuHGebsgdOE8ZC9jZAqfLpZCw7NxBEAiZCanr0weWhCUA61iFqz5qrHr8yyMVJQsJZAA8GWqLOcWUloyhLuqUVWWRlfu563FqCymJGZA3OleXsNYILZBKI8DQnpBmSjQxN1aQ05ilrqzxjHVV92PaFPqKjsnjz9ZBPHwFbXPe" )
+    if err != nil {
+      panic( err )
+    }
+    
+  })
 }
 
 func DBFileSystem ( It bdd.ItFn ){
@@ -28,7 +43,7 @@ func DBFileSystem ( It bdd.ItFn ){
   It( "create file to root", func( ctx appengine.Context ){
     
     var err error
-    keyId, err = dbfile.MakeFile( ctx, 0, "test.txt", []byte("ahaha"))
+    keyId, err = dbfile.MakeFile( ctx, 0, "test.txt", []byte("ahaha"), false)
     
     if err != nil {
       panic( err )
@@ -72,8 +87,8 @@ func DBFileSystem ( It bdd.ItFn ){
       panic( "should be dir" )
     }
     
-    k1, err := dbfile.MakeFile( ctx, dirPosition, "wow.txt", []byte("ahaha") )
-    k2, err := dbfile.MakeFile( ctx, dirPosition, "wow2.txt", []byte("ahaha") )
+    k1, err := dbfile.MakeFile( ctx, dirPosition, "wow.txt", []byte("ahaha"), false )
+    k2, err := dbfile.MakeFile( ctx, dirPosition, "wow2.txt", []byte("ahaha"), false )
     
     dbfile.GetFile( ctx, k1 )
     dbfile.GetFile( ctx, k2 )
