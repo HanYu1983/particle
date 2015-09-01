@@ -412,6 +412,19 @@ class PanelView extends Model
 			notify( ON_BTN_REMOVEPANEL_CLICK, { id:panelData.id } );
 		});
 		
+		dom.find( '.easyui-tooltip' ).tooltip( {
+			position:'right',
+			onShow:function( e ) {
+				var self = j( e.currentTarget );
+				var hoverInfo = untyped __js__( 'app.config.hoverInfo' );
+				var hoverstr = switch( Reflect.field( hoverInfo, self.attr( 'id' ) ) ) {
+					case null:Reflect.field( hoverInfo, 'default' );
+					case hstr:hstr;
+				}
+				self.tooltip( 'update', hoverstr );
+			}
+		});
+		
 		if( props != null )
 			createProp( dom.find( '#mc_propContainer' ), props, panelData );
 		
@@ -509,6 +522,7 @@ class PanelView extends Model
 				value:prop.value.p,
 				onChange:onInputChange( dom )
 			});
+			
 			dom.find( '.easyui-tooltip' ).tooltip( {
 				position:'right',
 				onShow:function( e ) {

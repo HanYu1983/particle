@@ -8,7 +8,7 @@ app.config.fbappid = {
 app.config.about = [
 	"版本1.0",
 	"上善若水APP",
-	"https://www.facebook.com/pages/上善若水/1653920964852269"
+	'<a href="https://www.facebook.com/pages/上善若水/1653920964852269" target="_blank">https://www.facebook.com/pages/上善若水/1653920964852269</a>'
 ].join("<br>")
 app.config.index = [
 						['yu-test', 'N日K線' , false, 5, 0, 0, 0 ],
@@ -56,6 +56,8 @@ app.config.hoverInfo = {
 	'btn_last':'最早<span style="color:yellow"> / </span>',
 	'toggle_favor':'加入關注',
 	'btn_addPanel':'加入新的指標畫布',
+	'btn_removePanel':'移除此畫布',
+	'mc_showKline':'是否顯示k線',
 	line:{
 		default:'點我學習!',
 		'yu-test':'N日的K線。請把K線的顯示設為off',

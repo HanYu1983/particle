@@ -72,11 +72,11 @@ body{
 			</div>
 			<div style="position:absolute; right:30px; top:5px; ">
 				{{if type == 'kline' || type == 'none'}}
-				<div style="position:relative; display:inline-block;">
+				<div id="mc_showKline" class="easyui-tooltip" style="position:relative; display:inline-block;">
 					<input id="slt_showKline" class="easyui-switchbutton" checked>
 				</div>
 				<div style="position:relative; display:inline-block; ">
-					<a href="#" id="btn_removePanel" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
+					<a href="#" id="btn_removePanel" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-remove'">刪除</a>
 				</div>
 				{{/if}}
 			</div>
@@ -104,7 +104,7 @@ body{
 		{{if url == ''}}
 		{{else}}
 		<div class="hori">
-			<a href=${url} class="easyui-linkbutton" data-options="iconCls:'icon-search'"  target="_blank" ></a>
+			<a href=${url} title='點我學習' class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-search'"  target="_blank" ></a>
 		</div>
 		{{/if}}
 	</div>
