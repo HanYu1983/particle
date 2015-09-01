@@ -70,7 +70,8 @@ var api = {};
 			type: type,
 			offset: offset,
 			count: count,
-			sub: sub
+			sub: sub,
+			group: 20
 		}
 		common.onView.onNext(["draw", params])
 	}
@@ -105,7 +106,8 @@ var api = {};
 	*/
 	function stockInfo( id, cb ){
 		var params = {
-			id: id
+			id: id,
+			group: 20
 		}
 		params.cbid = cbid++
 		cbs[ params.cbid+"" ] = cb
@@ -147,11 +149,23 @@ var api = {};
 		common.onView.onNext(["save", params])
 	}
 	
+	/**
+	將K線群組化=週K線/月K線
+	*/
+	function group( id, n ) {
+		var params = {
+			id: id,
+			'n': n
+		}
+		common.onView.onNext(["group", params])
+	}
+	
 	pkg.draw = draw
 	pkg.stockId = stockId
 	pkg.stockInfo = stockInfo
 	pkg.print = print
 	pkg.load = load
 	pkg.save = save
+	pkg.group = group
 	
 })(api)

@@ -383,11 +383,13 @@
         canvas (aget data "canvas")
         offset (aget data "offset")
         cnt (aget data "count")
+        group (or (aget data "group") 1)
         sub (js->clj (aget data "sub"))
         [err kline id date :as stock] (get-in ctx [:temp "stocks" stockId])
         kline 
         (->>
           kline
+          (stf/nkline group)
           (drop offset)
           (take cnt))]
     (when kline
@@ -435,21 +437,13 @@
         
 (defmethod abstract/onViewCommand "stockInfo" [_ data ctx]
   (let [onSys (:onSys ctx)
-        stock-id (aget data "id")
-        stock-info (get-in ctx [:temp "stocks" stock-id])]
+        stockId (aget data "id")
+        group (or (aget data "group") 1)
+        [err kline id date :as stock-info] (get-in ctx [:temp "stocks" stockId])]
     (am/go
-      (a/>! onSys ["view" [nil (clj->js stock-info) data]])))
+      (a/>! onSys ["view" [nil (clj->js [err (stf/nkline group kline) id date]) data]])))
   ctx)
   
-(defmethod abstract/onViewCommand "group" [_ data ctx]
-  (let [onSys (:onSys ctx)
-        stock-id (aget data "id")
-        n (aget data "n")
-        stock-info (get-in ctx [:temp "stocks" stock-id])]
-    (if stock-info
-      (assoc-in ctx [:temp "stocks" stock-id] (stf/nkline n stock-info))
-      ctx)))
-        
 (defmethod abstract/onViewCommand "load" [type data {onSys :onSys :as ctx}]
   (let [fbid (aget data "fbid")
         accessToken (aget data "accessToken")]
