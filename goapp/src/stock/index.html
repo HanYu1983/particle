@@ -120,18 +120,21 @@ body{
 	<div id="mc_rootPanel" class="easyui-layout" style="width:100%;height:100%; left:0; top:0;">
         <div data-options="region:'north'" style="height:40px; padding:5px;">
 			<div style="position:relative; float:left;">
-				<div style="position:relative; display:inline-block;">
+				<div class="hori" style="margin-right:10px; ">
+					<div class="hori">關注</div>
+					<input id="swb_favor" class="easyui-switchbutton" >
+				</div>
+				<div class="hori" style="margin-right:10px;">
 					<select id="combo_favor" class="easyui-combobox" style="width:50px;" name="state" data-options="prompt:'關注'"></select>
-				</div>
-				<div style="position:relative; display:inline-block;">
 					<select id="combo_prefer" class="easyui-combobox" style="width:100px;" name="state" data-options="prompt:'台灣50股票'"></select>
-				</div>
-				<div style="position:relative; display:inline-block;">
 					<select id="slt_stockId" class="easyui-textbox" style="width:70px;" data-options="prompt:'輸入代碼'"></select>
 					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" ></a>
+				</div>
+				
+				<div class="hori">
 					<a href="#" id="btn_addPanel" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增K線</a>
 				</div>
-				<div style="position:relative; display:inline-block;">
+				<div class="hori">
 					<div class="hori">數量</div>
 					<div class="hori" style="width:50px; ">
 						<select id="txt_count" class="easyui-textbox" style="width:100%;"></select>
@@ -151,10 +154,6 @@ body{
 				</div>
 			</div>
 			<div style="position:relative; float:right">
-				<div class="hori">關注</div>
-				<div class="hori" style="width:60px; ">
-					<input id="swb_favor" class="easyui-switchbutton" >
-				</div>
 				<div class="hori">
 					<a href="#" id="btn_save" class="easyui-linkbutton" data-options="iconCls:'icon-save'">同步</a>
 				</div>
