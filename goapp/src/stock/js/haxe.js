@@ -884,7 +884,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.combo_prefer = this.config.combo_prefer;
 		this.combo_prefer.append("<option value=\"\"><option>");
 		Lambda.foreach(app.config.preferStocks,function(ary) {
-			_g.combo_prefer.append("<option value=\"" + ary[0] + "\">" + ary[0] + " " + ary[1] + "<option>");
+			_g.combo_prefer.append("<option value=\"" + ary[0] + "\">" + ary[0] + " " + ary[1] + "</option>");
 			return true;
 		});
 		this.combo_prefer.combobox({ onSelect : function(record1) {
@@ -986,7 +986,7 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		this.combo_favor.empty();
 		this.combo_favor.append("<option value=\"999\"><option>");
 		Lambda.foreach(favors,function(str) {
-			_g.combo_favor.append("<option value=\"" + str + "\">" + str + "<option>");
+			_g.combo_favor.append("<option value=\"" + str + "\">" + str + "</option>");
 			return true;
 		});
 		this.combo_favor.combobox();
