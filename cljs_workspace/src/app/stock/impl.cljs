@@ -440,6 +440,15 @@
     (am/go
       (a/>! onSys ["view" [nil (clj->js stock-info) data]])))
   ctx)
+  
+(defmethod abstract/onViewCommand "group" [_ data ctx]
+  (let [onSys (:onSys ctx)
+        stock-id (aget data "id")
+        n (aget data "n")
+        stock-info (get-in ctx [:temp "stocks" stock-id])]
+    (if stock-info
+      (assoc-in ctx [:temp "stocks" stock-id] (stf/nkline n stock-info))
+      ctx)))
         
 (defmethod abstract/onViewCommand "load" [type data {onSys :onSys :as ctx}]
   (let [fbid (aget data "fbid")
