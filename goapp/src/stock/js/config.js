@@ -12,7 +12,7 @@ app.config.about = [
 	'<a href="https://www.facebook.com/pages/上善若水/1653920964852269" target="_blank">https://www.facebook.com/pages/上善若水/1653920964852269</a>'
 ].join("<br>")
 app.config.index = [
-						['yu-test', 'N日K線' , false, 5, 0, 0, 0 ],
+						['yu-test', 'N棒K線' , false, 5, 0, 0, 0 ],
 	
 						['group', '均線'],
 						['ma','sma', false, 5, 10, 20, 40, '//wiki.mbalib.com/wiki/Sma' ],
