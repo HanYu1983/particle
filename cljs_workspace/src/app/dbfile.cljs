@@ -51,18 +51,20 @@
       "Key" id
       "Delete" true)))
       
-(defn save [target fbid data]
+(defn save [target fbid accessToken data]
   (ajax (str @*domain* "simple/save") "POST" nil
     (js-obj
       "Target" target
       "FBID" fbid
+      "AccessToken" accessToken
       "Data" data)))
       
-(defn load [target fbid]
+(defn load [target fbid accessToken]
   (ajax (str @*domain* "simple/load") "POST" "json"
     (js-obj
       "Target" target
-      "FBID" fbid)))
+      "FBID" fbid
+      "AccessToken" accessToken)))
       
 (defn name->id [dir filename]
   (am/go

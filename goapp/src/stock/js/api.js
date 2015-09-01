@@ -123,9 +123,10 @@ var api = {};
 	/**
 	讀取使用者資料
 	*/
-	function load( fbid, cb ){
+	function load( fbid, accessToken, cb ){
 		var params = {
 			fbid: fbid,
+			accessToken: accessToken,
 			"cbid": cbid++
 		}
 		cbs[ params.cbid+"" ] = cb
@@ -135,9 +136,10 @@ var api = {};
 	/**
 	記錄使用者資料
 	*/
-	function save( fbid, data, cb ){
+	function save( fbid, accessToken, data, cb ){
 		var params = {
 			fbid: fbid,
+			accessToken: accessToken,
 			cbid: cbid++,
 			user: data
 		}

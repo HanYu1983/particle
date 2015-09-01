@@ -128,3 +128,32 @@ func ParameterIsNotExist( v url.Values, key string ) func()(bool, string){
     }
   }
 }
+
+func AuthFB ( ctx appengine.Context, fbid string, token string )(bool, error){
+  param := url.Values{}
+  param.Set("access_token", token)
+  r, err := GetRequest("https://graph.facebook.com/" + fbid, param )
+  if err != nil {
+    return false, err
+  }
+  res, err := DoRequest( r, ctx )
+  if err != nil {
+    return false, err
+  }
+  body, err := ReadAll( res )
+  if err != nil {
+    return false, err
+  }
+  json, err := Byte2Json( body )
+  if err != nil {
+    return false, err
+  }
+  if err, exist := json["error"]; exist {
+    return false, errors.New( err.(map[string]interface{})["message"].(string) )
+  }
+  isMatchId := json["id"].(string) == fbid
+  if isMatchId == false {
+    return false, errors.New( "id can not match" )
+  }
+  return true, nil
+}

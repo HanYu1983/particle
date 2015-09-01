@@ -442,12 +442,14 @@
   ctx)
         
 (defmethod abstract/onViewCommand "load" [type data {onSys :onSys :as ctx}]
-  (let [fbid (aget data "fbid")]
-    (cmd/loadUser onSys fbid data))
+  (let [fbid (aget data "fbid")
+        accessToken (aget data "accessToken")]
+    (cmd/loadUser onSys fbid accessToken data))
   ctx)
   
 (defmethod abstract/onViewCommand "save" [type data {onSys :onSys :as ctx}]
   (let [fbid (aget data "fbid")
+        accessToken (aget data "accessToken")
         user (aget data "user")]
-    (cmd/saveUser onSys fbid user data))
+    (cmd/saveUser onSys fbid accessToken user data))
   ctx)
