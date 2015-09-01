@@ -48,12 +48,14 @@ app.config.index = [
 					];
 app.config.hoverInfo = {
 	default:'',
-	'btn_first':'返回最新<span style="color:yellow"> B </span>',
-	'btn_prev10':'下20K<span style="color:yellow"> N </span>',
-	'btn_prev':'下1日<span style="color:yellow"> M </span>',
-	'btn_next':'上1日<span style="color:yellow"> , </span>',
-	'btn_next10':'上20K<span style="color:yellow"> . </span>',
-	'btn_last':'返回最早<span style="color:yellow"> / </span>',
+	'btn_first':'最新<span style="color:yellow"> B </span>',
+	'btn_prev10':'往後20日<span style="color:yellow"> N </span>',
+	'btn_prev':'往後1日<span style="color:yellow"> M </span>',
+	'btn_next':'往前1日<span style="color:yellow"> , </span>',
+	'btn_next10':'往前20日<span style="color:yellow"> . </span>',
+	'btn_last':'最早<span style="color:yellow"> / </span>',
+	'toggle_favor':'加入關注',
+	'btn_addPanel':'加入新的指標畫布',
 	line:{
 		default:'點我學習!',
 		'yu-test':'N日的K線。請把K線的顯示設為off',
