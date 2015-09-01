@@ -101,5 +101,5 @@ func Save(w http.ResponseWriter, r *http.Request){
   _, err = dbfile.MakeFile( ctx, userDir, "save.json", []byte(data), true )
   tool.Assert( tool.IfError( err ) ) 
   
-  fmt.Fprintf(w, "{}", nil)
+  fmt.Fprintf(w, "%s", "{}")
 }
