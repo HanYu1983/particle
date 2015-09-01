@@ -16,6 +16,7 @@ class PanelModel extends Model
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	public static var ON_FAVOR_LIST_CHANGE = 'on_favor_list_change';
 	public static var ON_LOGIN_CHANGE = 'on_login_change';
+	public static var ON_NOTE_CHANGE = 'ON_NOTE_CHANGE';
 	
 	public var currentStockId(default, set):String;
 	public var currentOffset(default, set):Int = 0;
@@ -246,6 +247,7 @@ class PanelModel extends Model
 			return currentNote = '';
 		}
 		getStockById( currentStockId ).note = note; 
+		notify( ON_NOTE_CHANGE );
 		return currentNote = note;
 	}
 	

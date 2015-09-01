@@ -198,6 +198,9 @@ var Main = function() {
 			_g.saver.set_saveobj(_g.panelModel.config);
 			_g.panelView.setFavorsSelect(params3.favorList);
 			break;
+		case "ON_NOTE_CHANGE":
+			_g.panelView.setSavable(true);
+			break;
 		case "on_favor_list_change":
 			_g.panelView.setSavable(true);
 			_g.panelView.setFavorsSelect(params3.favorList);
@@ -666,6 +669,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,set_currentNote: function(note) {
 		if(this.getStockById(this.currentStockId) == null) return this.currentNote = "";
 		this.getStockById(this.currentStockId).note = note;
+		this.notify(model_PanelModel.ON_NOTE_CHANGE);
 		return this.currentNote = note;
 	}
 	,set_currentFbId: function(fbid) {
@@ -1143,6 +1147,7 @@ model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 model_PanelModel.ON_FAVOR_LIST_CHANGE = "on_favor_list_change";
 model_PanelModel.ON_LOGIN_CHANGE = "on_login_change";
+model_PanelModel.ON_NOTE_CHANGE = "ON_NOTE_CHANGE";
 model_Saver.ON_SAVE_START = "ON_SAVE_START";
 model_Saver.ON_SAVE_SUCCESS = "ON_SAVE_SUCCESS";
 model_Saver.ON_SAVE_NO_FBID = "ON_SAVE_NO_FBID";
