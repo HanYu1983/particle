@@ -117,8 +117,11 @@ var Main = function() {
 				var _g1 = e.status;
 				switch(_g1) {
 				case "connected":
-					_g.panelModel.set_currentFbId(authResponse.userID);
-					Main.load(_g.panelModel.currentFbId,function(err,params2) {
+					var token = authResponse.accessToken;
+					_g.saver.set_fbtoken(token);
+					_g.saver.set_fbid(authResponse.userID);
+					Main.load(_g.saver.fbid,_g.saver.fbtoken,function(err,params2) {
+						haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 89, className : "Main", methodName : "new", customParams : [params2]});
 						Main.closeLoading();
 						if(err == null) {
 							if(params2 != null) _g.panelModel.set_config(params2);
@@ -127,7 +130,6 @@ var Main = function() {
 							break;
 						default:
 							js_Browser.alert("程式崩潰，請重新整理");
-							window.location.reload();
 						}
 					});
 					Main.slideMessage("提示","歡迎登入!");
@@ -143,7 +145,7 @@ var Main = function() {
 			break;
 		case "on_btn_logout_click":
 			Main.fb_logout(function(e1) {
-				_g.panelModel.set_currentFbId("");
+				_g.saver.set_fbid("");
 			});
 			break;
 		case "ON_BTN_SAVE_CLICK":
@@ -194,7 +196,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 146, className : "Main", methodName : "new", customParams : [params3]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 152, className : "Main", methodName : "new", customParams : [params3]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
@@ -251,7 +253,7 @@ var Main = function() {
 	var fbappid = app.config.fbappid[app.config.fbappid.which];
 	Main.showLoading();
 	Main.fb_init(fbappid,function() {
-		_g.panelModel.set_currentFbId("");
+		_g.saver.set_config("");
 		_g.panelModel.set_config(_g.newUser());
 		Main.closeLoading();
 	});
@@ -295,11 +297,11 @@ Main.drawStock = function(canvas,id,type,offset,count,sub) {
 	if(offset == null) offset = 0;
 	api.draw(canvas[0],id,type == null?"null":"" + type,offset,count,sub);
 };
-Main.save = function(fbid,data,cb) {
-	api.save(fbid,data,cb);
+Main.save = function(fbid,accessToken,data,cb) {
+	api.save(fbid,accessToken,data,cb);
 };
-Main.load = function(fbid,cb) {
-	api.load(fbid,cb);
+Main.load = function(fbid,accessToken,cb) {
+	api.load(fbid,accessToken,cb);
 };
 Main.fb_init = function(appId,cb) {
 	myapp.facebook.init(appId,cb);
@@ -705,11 +707,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_NOTE_CHANGE);
 		return this.currentNote = note;
 	}
-	,set_currentFbId: function(fbid) {
-		this.currentFbId = fbid;
-		this.notify(model_PanelModel.ON_LOGIN_CHANGE,{ fbid : this.currentFbId});
-		return this.currentFbId;
-	}
 	,set_currentPeriod: function(period) {
 		if(this.getStockById(this.currentStockId) == null) return this.currentPeriod = "d";
 		this.currentPeriod = period;
@@ -720,6 +717,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 });
 var model_Saver = function() {
 	this.showLoading = false;
+	this.fbtoken = "";
 	this.fbid = "";
 	model_Model.call(this);
 };
@@ -738,7 +736,7 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 			return;
 		}
 		this.notify(model_Saver.ON_SAVE_START);
-		Main.save(this.fbid,this.optmize(),$bind(this,this.onSaveOk));
+		Main.save(this.fbid,this.fbtoken,this.optmize(),$bind(this,this.onSaveOk));
 	}
 	,optmize: function() {
 		var saveobj2 = { current : this.saveobj.current, stocks : Lambda.fold(this.saveobj.stocks,function(s,curr) {
@@ -755,6 +753,9 @@ model_Saver.prototype = $extend(model_Model.prototype,{
 	}
 	,set_saveobj: function(saveobj) {
 		return this.saveobj = saveobj;
+	}
+	,set_fbtoken: function(token) {
+		return this.fbtoken = token;
 	}
 });
 var view_AboutView = function() {

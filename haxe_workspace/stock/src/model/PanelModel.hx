@@ -26,7 +26,7 @@ class PanelModel extends Model
 	public var currentFavor( default, set ):Dynamic;
 	public var currentNote( default, set ):Dynamic;
 //	public var currentLogin( default, set ):Bool;
-	public var currentFbId( default, set ):String;
+//	public var currentFbId( default, set ):String;
 	public var currentPeriod( default, set ):String;
 	public var maxCount(default, set ):Int;
 	
@@ -253,13 +253,13 @@ class PanelModel extends Model
 		notify( ON_NOTE_CHANGE );
 		return currentNote = note;
 	}
-	
+	/*
 	function set_currentFbId( fbid ) {
 		currentFbId = fbid;
 		notify( ON_LOGIN_CHANGE, { fbid:currentFbId } );
 		return currentFbId;
 	}
-	
+	*/
 	function set_currentPeriod( period ) {
 		if ( getStockById( currentStockId ) == null ) {
 			return currentPeriod = 'd';

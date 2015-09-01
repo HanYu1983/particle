@@ -80,8 +80,13 @@ class Main
 						var authResponse  = e.authResponse;
 						switch( e.status ) {
 							case 'connected':
-								panelModel.currentFbId = authResponse.userID;
-								load( panelModel.currentFbId, function( err, params ) {
+								var token = authResponse.accessToken;
+								saver.fbtoken = token;
+								saver.fbid = authResponse.userID;
+								//panelModel.currentFbId = authResponse.userID;
+								load( saver.fbid, saver.fbtoken, function( err, params ) {
+									
+									trace( err, params );
 									closeLoading();
 									switch( err ) {
 										case null:
@@ -94,7 +99,7 @@ class Main
 											slideMessage( '錯誤', err );
 											#else
 											Browser.alert( '程式崩潰，請重新整理' );
-											Browser.window.location.reload();
+											//Browser.window.location.reload();
 											#end
 									}
 								});
@@ -107,7 +112,8 @@ class Main
 					panelModel.currentPeriod = params.period;
 				case PanelView.ON_BTN_LOGOUT_CLICK:
 					fb_logout( function( e ) {
-						panelModel.currentFbId = '';
+						saver.fbid = '';
+						//panelModel.currentFbId = '';
 					});
 				case PanelView.ON_BTN_SAVE_CLICK:
 					saver.showLoading = true;
@@ -197,7 +203,8 @@ class Main
 		
 		showLoading();
 		fb_init( fbappid, function() {
-			panelModel.currentFbId = '';
+		//	panelModel.currentFbId = '';
+			saver.config = '';
 			panelModel.config = newUser();
 			
 			closeLoading();
@@ -297,12 +304,12 @@ class Main
 		untyped __js__('api.draw')( canvas[0], id, Std.string( type ), offset, count, sub );
 	}
 	
-	public static function save( fbid:String, data:Dynamic, cb:Dynamic -> Void ) {
-		untyped __js__('api.save')(fbid, data, cb );
+	public static function save( fbid:String, accessToken:String, data:Dynamic, cb:Dynamic -> Void ) {
+		untyped __js__('api.save')(fbid, accessToken, data, cb );
 	}
 	
-	public static function load( fbid:String, cb:Dynamic -> Dynamic -> Void ) {
-		untyped __js__('api.load')(fbid, cb ); 
+	public static function load( fbid:String, accessToken:String, cb:Dynamic -> Dynamic -> Void ) {
+		untyped __js__('api.load')(fbid, accessToken, cb ); 
 	}
 	
 	public static function fb_init( appId:String, cb:Void -> Void ) {
