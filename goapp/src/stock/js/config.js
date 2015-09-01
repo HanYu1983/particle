@@ -3,11 +3,12 @@ app.config = app.config || {};
 app.config.fbappid = {
 	local:'679171275511375',
 	online:'425311264344425',
-	which:'local'
+	which:'online'
 }
 app.config.about = [
 	"版本1.0",
 	"上善若水APP",
+	"<img src='images/logo.jpg' width=100 height=100>",
 	'<a href="https://www.facebook.com/pages/上善若水/1653920964852269" target="_blank">https://www.facebook.com/pages/上善若水/1653920964852269</a>'
 ].join("<br>")
 app.config.index = [
