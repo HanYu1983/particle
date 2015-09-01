@@ -64,11 +64,12 @@ class Main
 			btn_login:j('#btn_login' ),
 			btn_logout:j('#btn_logout' ),
 			btn_about:j('#btn_about' ),
+			btn_period:j('#btn_period' ),
 			dia_about:j('#dia_about')
 		}
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
-		//	trace( 'panelView', type );
+			trace( 'panelView', type );
 			
 			saver.startAuto();
 			switch( type ) {
@@ -86,7 +87,6 @@ class Main
 										case null:
 											if ( params != null ) {
 												panelModel.config = params;
-												saver.saveobj = panelModel.config;
 											}
 										case 'runtime error: index out of range':
 										case _:
@@ -103,6 +103,8 @@ class Main
 								closeLoading();
 						}
 					});
+				case PanelView.ON_BTN_PERIOD_CLICK:
+					panelModel.currentPeriod = params.period;
 				case PanelView.ON_BTN_LOGOUT_CLICK:
 					fb_logout( function( e ) {
 						panelModel.currentFbId = '';
@@ -140,13 +142,17 @@ class Main
 			}
 		});
 		
-		panelModel.addHandler( function( type, params ) {
-		//	trace( type, params );
+		panelModel.addHandler( function( type, params:Dynamic ) {
+			trace( type, params );
 			
 			switch( type ) {
 				case PanelModel.ON_INIT:
 					saver.saveobj = panelModel.config;
 					panelView.setFavorsSelect( params.favorList );
+				case PanelModel.ON_PERIOD_CHANGE:
+					panelView.setPeriod( params.period );
+					panelView.setSavable( true );
+					panelView.drawAllCanvas( panelModel.currentStockId, panelModel.currentOffset, panelModel.currentCount, panelModel.getAryPanel() );
 				case PanelModel.ON_NOTE_CHANGE:
 					panelView.setSavable( true );
 				case PanelModel.ON_FAVOR_LIST_CHANGE:
@@ -346,6 +352,7 @@ class Main
 			count:200,
 			offset:0,
 			favor:false,
+			period:'d',
 			note:'這個人很懶，什麼都沒有記下=3=',
 			lines:[ 
 				createNewLine( 'volume', false, [

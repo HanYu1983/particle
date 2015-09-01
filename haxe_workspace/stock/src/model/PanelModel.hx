@@ -16,6 +16,7 @@ class PanelModel extends Model
 	public static var ON_REMOVE_PANEL = 'on_remove_panel';
 	public static var ON_FAVOR_LIST_CHANGE = 'on_favor_list_change';
 	public static var ON_LOGIN_CHANGE = 'on_login_change';
+	public static var ON_PERIOD_CHANGE = 'ON_PERIOD_CHANGE';
 	public static var ON_NOTE_CHANGE = 'ON_NOTE_CHANGE';
 	
 	public var currentStockId(default, set):String;
@@ -26,6 +27,7 @@ class PanelModel extends Model
 	public var currentNote( default, set ):Dynamic;
 //	public var currentLogin( default, set ):Bool;
 	public var currentFbId( default, set ):String;
+	public var currentPeriod( default, set ):String;
 	public var maxCount(default, set ):Int;
 	
 	var ary_panel_obj = new Array<Dynamic>();
@@ -139,6 +141,7 @@ class PanelModel extends Model
 		currentOffset = stock.offset;
 		currentCount = stock.count;
 		currentFavor = stock.favor;
+		currentPeriod = stock.period;
 	
 		resetPanelData();
 		
@@ -255,5 +258,15 @@ class PanelModel extends Model
 		currentFbId = fbid;
 		notify( ON_LOGIN_CHANGE, { fbid:currentFbId } );
 		return currentFbId;
+	}
+	
+	function set_currentPeriod( period ) {
+		if ( getStockById( currentStockId ) == null ) {
+			return currentPeriod = 'd';
+		}
+		currentPeriod = period;
+		getStockById( currentStockId ).period = period; 
+		notify( ON_PERIOD_CHANGE, { period: currentPeriod } );
+		return currentPeriod;
 	}
 }

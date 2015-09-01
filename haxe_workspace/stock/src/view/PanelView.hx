@@ -21,6 +21,7 @@ class PanelView extends Model
 	public static var ON_BTN_LOGIN_CLICK = 'on_btn_login_click';
 	public static var ON_BTN_LOGOUT_CLICK = 'on_btn_logout_click';
 	public static var ON_BTN_SAVE_CLICK = 'ON_BTN_SAVE_CLICK';
+	public static var ON_BTN_PERIOD_CLICK = 'ON_BTN_PERIOD_CLICK';
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
@@ -45,6 +46,7 @@ class PanelView extends Model
 	var btn_logout:Dynamic;
 	var btn_save:Dynamic;
 	var btn_about:Dynamic;
+	var btn_period:Dynamic;
 	//var btn_loadPrice:Dynamic;
 	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
@@ -232,6 +234,12 @@ class PanelView extends Model
 			}
 		});
 		
+		btn_period = config.btn_period;
+		btn_period.find( '.easyui-linkbutton' ).click( function() {
+			var dom = j( untyped __js__('this') );
+			notify( ON_BTN_PERIOD_CLICK, {period: dom.attr('ptype') } );
+		});
+		
 		btn_save = config.btn_save;
 		btn_save.click( function() {
 			notify( ON_BTN_SAVE_CLICK );
@@ -361,6 +369,12 @@ class PanelView extends Model
 		});
 	}
 	
+	public function setPeriod( period ) {
+		btn_period.find( 'a[ptype="' + period + '"]' ).linkbutton( {
+			selected:true
+		});
+	}
+	
 	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
 		
 		var stockData = panelData.data;
@@ -382,7 +396,6 @@ class PanelView extends Model
 		
 		if ( type != 'clock' ) {
 			var cw = untyped __js__('leo.utils.getScreenWidth' )();
-			trace( dom.find( 'canvas' ).parent().width() );
 			dom.find( 'canvas' ).attr( 'width', cw - 50 );
 		}
 		
@@ -564,7 +577,6 @@ class PanelView extends Model
 	}
 	
 	function onKeyUp( e ) {
-		trace( e.which );
 		switch( e.which ) {
 			//b
 			case 66:

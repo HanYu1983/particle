@@ -105,8 +105,9 @@ var Main = function() {
 		}
 	});
 	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
-	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), toggle_favor : Main.j("#toggle_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), dia_about : Main.j("#dia_about")});
+	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), toggle_favor : Main.j("#toggle_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), btn_period : Main.j("#btn_period"), dia_about : Main.j("#dia_about")});
 	this.panelView.addHandler(function(type1,params1) {
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 72, className : "Main", methodName : "new", customParams : [type1]});
 		_g.saver.startAuto();
 		switch(type1) {
 		case "on_btn_login_click":
@@ -120,10 +121,7 @@ var Main = function() {
 					Main.load(_g.panelModel.currentFbId,function(err,params2) {
 						Main.closeLoading();
 						if(err == null) {
-							if(params2 != null) {
-								_g.panelModel.set_config(params2);
-								_g.saver.set_saveobj(_g.panelModel.config);
-							}
+							if(params2 != null) _g.panelModel.set_config(params2);
 						} else switch(err) {
 						case "runtime error: index out of range":
 							break;
@@ -139,6 +137,9 @@ var Main = function() {
 					break;
 				}
 			});
+			break;
+		case "ON_BTN_PERIOD_CLICK":
+			_g.panelModel.set_currentPeriod(params1.period);
 			break;
 		case "on_btn_logout_click":
 			Main.fb_logout(function(e1) {
@@ -193,10 +194,16 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 146, className : "Main", methodName : "new", customParams : [params3]});
 		switch(type2) {
 		case "on_init":
 			_g.saver.set_saveobj(_g.panelModel.config);
 			_g.panelView.setFavorsSelect(params3.favorList);
+			break;
+		case "ON_PERIOD_CHANGE":
+			_g.panelView.setPeriod(params3.period);
+			_g.panelView.setSavable(true);
+			_g.panelView.drawAllCanvas(_g.panelModel.currentStockId,_g.panelModel.currentOffset,_g.panelModel.currentCount,_g.panelModel.getAryPanel());
 			break;
 		case "ON_NOTE_CHANGE":
 			_g.panelView.setSavable(true);
@@ -313,7 +320,7 @@ Main.createProp = function(ary) {
 	},[]);
 };
 Main.createNewStock = function(id,props) {
-	return { id : id, count : 200, offset : 0, favor : false, note : "這個人很懶，什麼都沒有記下=3=", lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
+	return { id : id, count : 200, offset : 0, favor : false, period : "d", note : "這個人很懶，什麼都沒有記下=3=", lines : [Main.createNewLine("volume",false,[["group","均線"],["ma",false,5,0,0,0]]),Main.createNewLine("kline")]};
 };
 Main.createNewLine = function(type,deletable,props) {
 	if(deletable == null) deletable = true;
@@ -351,6 +358,11 @@ Std.parseInt = function(x) {
 Std.parseFloat = function(x) {
 	return parseFloat(x);
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -377,6 +389,25 @@ haxe_Timer.prototype = {
 };
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -569,6 +600,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.set_currentOffset(stock.offset);
 		this.set_currentCount(stock.count);
 		this.set_currentFavor(stock.favor);
+		this.set_currentPeriod(stock.period);
 		this.resetPanelData();
 		Main.getStock(this.currentStockId,true).pipe(Main.getStockInfo).done(function(err,data) {
 			var state = data[0];
@@ -677,6 +709,13 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.currentFbId = fbid;
 		this.notify(model_PanelModel.ON_LOGIN_CHANGE,{ fbid : this.currentFbId});
 		return this.currentFbId;
+	}
+	,set_currentPeriod: function(period) {
+		if(this.getStockById(this.currentStockId) == null) return this.currentPeriod = "d";
+		this.currentPeriod = period;
+		this.getStockById(this.currentStockId).period = period;
+		this.notify(model_PanelModel.ON_PERIOD_CHANGE,{ period : this.currentPeriod});
+		return this.currentPeriod;
 	}
 });
 var model_Saver = function() {
@@ -863,6 +902,11 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 				_g.dia_about.attr("isOpen",1);
 			}
 		});
+		this.btn_period = this.config.btn_period;
+		this.btn_period.find(".easyui-linkbutton").click(function() {
+			var dom = _g.j(this);
+			_g.notify(view_PanelView.ON_BTN_PERIOD_CLICK,{ period : dom.attr("ptype")});
+		});
 		this.btn_save = this.config.btn_save;
 		this.btn_save.click(function() {
 			_g.notify(view_PanelView.ON_BTN_SAVE_CLICK);
@@ -942,6 +986,9 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 	,changeCount: function(count) {
 		this.txt_count.textbox({ value : count == null?"null":"" + count});
 	}
+	,setPeriod: function(period) {
+		this.btn_period.find("a[ptype=\"" + period + "\"]").linkbutton({ selected : true});
+	}
 	,addPanel: function(stockId,offset,count,panelData) {
 		var _g = this;
 		var stockData = panelData.data;
@@ -954,7 +1001,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		panelData.root = dom;
 		if(type != "clock") {
 			var cw = leo.utils.getScreenWidth();
-			console.log(dom.find("canvas").parent().width());
 			dom.find("canvas").attr("width",cw - 50);
 		}
 		if(type == "kline" || type == "none") dom.find("#slt_showKline").switchbutton({ checked : type == "kline", onChange : function(checked) {
@@ -1084,7 +1130,6 @@ view_PanelView.prototype = $extend(model_Model.prototype,{
 		}
 	}
 	,onKeyUp: function(e) {
-		console.log(e.which);
 		var _g = e.which;
 		switch(_g) {
 		case 66:
@@ -1151,6 +1196,7 @@ model_PanelModel.ON_ADD_PANEL = "on_add_panel";
 model_PanelModel.ON_REMOVE_PANEL = "on_remove_panel";
 model_PanelModel.ON_FAVOR_LIST_CHANGE = "on_favor_list_change";
 model_PanelModel.ON_LOGIN_CHANGE = "on_login_change";
+model_PanelModel.ON_PERIOD_CHANGE = "ON_PERIOD_CHANGE";
 model_PanelModel.ON_NOTE_CHANGE = "ON_NOTE_CHANGE";
 model_Saver.ON_SAVE_START = "ON_SAVE_START";
 model_Saver.ON_SAVE_SUCCESS = "ON_SAVE_SUCCESS";
@@ -1166,6 +1212,7 @@ view_PanelView.ON_BTN_REMOVEPANEL_CLICK = "on_btn_removePanel_click";
 view_PanelView.ON_BTN_LOGIN_CLICK = "on_btn_login_click";
 view_PanelView.ON_BTN_LOGOUT_CLICK = "on_btn_logout_click";
 view_PanelView.ON_BTN_SAVE_CLICK = "ON_BTN_SAVE_CLICK";
+view_PanelView.ON_BTN_PERIOD_CLICK = "ON_BTN_PERIOD_CLICK";
 view_PanelView.ON_TXT_OFFSET_CHANGE = "on_txt_offset_change";
 view_PanelView.ON_TXT_COUNT_CHANGE = "on_txt_count_change";
 view_PanelView.ON_TXT_NOTE_CHANGE = "on_txt_note_change";

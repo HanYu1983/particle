@@ -128,11 +128,10 @@ body{
 					<select id="slt_stockId" class="easyui-textbox" style="width:50px;" data-options="prompt:'輸入代碼'"></select>
 					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" ></a>
 				</div>
-				
 				<div class="hori">
 					<a href="#" id="btn_addPanel" class="easyui-linkbutton" data-options="iconCls:'icon-add'">指標</a>
 				</div>
-				<div class="hori">
+				<div class="hori" style="margin-right:10px;">
 					<div class="hori">數量</div>
 					<div class="hori" style="width:50px; ">
 						<select id="txt_count" class="easyui-textbox" style="width:100%;"></select>
@@ -147,6 +146,12 @@ body{
 					<a href="#" class="easyui-menubutton" data-options="menu:'#menu_observer',iconCls:'icon-edit'">觀察</a>
 				</div>
 				-->
+				
+				<div id="btn_period" class="hori" style="margin-right:10px;">
+					<a ptype="d" href="#" class="easyui-linkbutton" data-options="toggle:true,group:'g1'">日</a>
+					<a ptype="w" href="#" class="easyui-linkbutton" data-options="toggle:true,group:'g1'">週</a>
+					<a ptype="m" href="#" class="easyui-linkbutton" data-options="toggle:true,group:'g1'">月</a>
+				</div>
 				<div id="btn_controller" class="hori" style="vertical-align:middle; ">
 					<div id="btn_first" class="btn_controller pagination-first easyui-tooltip"></div>
 					<div id="btn_prev10" class="btn_controller pagination-prev easyui-tooltip"></div>
