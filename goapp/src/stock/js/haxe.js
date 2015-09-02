@@ -136,8 +136,7 @@ var Main = function() {
 							Main.slideMessage("提示","歡迎登入!");
 							break;
 						default:
-							js_Browser.alert("程式崩潰，請重新整理");
-							window.location.reload();
+							Main.slideMessage("錯誤",err);
 						}
 					});
 					break;
@@ -255,13 +254,9 @@ var Main = function() {
 			break;
 		}
 	});
-	var fbappid = app.config.fbappid[app.config.fbappid.which];
-	Main.showLoading();
-	Main.fb_init(fbappid,function() {
-		_g.saver.set_config("");
-		_g.panelModel.set_config(_g.newUser());
-		Main.closeLoading();
-	});
+	this.saver.set_fbid("");
+	this.saver.set_fbtoken("");
+	this.panelModel.set_config(this.newUser());
 };
 Main.__name__ = true;
 Main.getId = function() {
@@ -481,11 +476,6 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
-};
-var js_Browser = function() { };
-js_Browser.__name__ = true;
-js_Browser.alert = function(v) {
-	window.alert(js_Boot.__string_rec(v,""));
 };
 var model_IModel = function() { };
 model_IModel.__name__ = true;
@@ -1277,3 +1267,5 @@ view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
 view_PanelView.ON_COMBO_PREFER_CHANGE = "ON_COMBO_PREFER_CHANGE";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=haxe.js.map
