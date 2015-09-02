@@ -24,7 +24,6 @@ class Main
 	var loading:Dynamic;
 	
 	function new() {
-		Browser.alert( '1' );
 		
 		saver.addHandler( function( type, params:Dynamic ) {
 			switch( type ) {
@@ -50,8 +49,6 @@ class Main
 			aboutConfig:untyped __js__('app.config.about' )
 		}
 		
-		Browser.alert( '2' );
-		
 		panelView.config = {
 			doc:j( untyped __js__('document') ),
 			body:j( j('body')),
@@ -75,8 +72,6 @@ class Main
 			btn_period:j('#btn_period' ),
 			dia_about:j('#dia_about')
 		}
-		
-		Browser.alert( '3' );
 		
 		panelView.addHandler( function( type, params:Dynamic ) {
 			trace( 'panelView', type );
@@ -161,8 +156,6 @@ class Main
 			}
 		});
 		
-		Browser.alert( '4' );
-		
 		panelModel.addHandler( function( type, params:Dynamic ) {
 			trace( type, params );
 			saver.startAuto();
@@ -208,18 +201,11 @@ class Main
 			}
 		});
 		
-		Browser.alert( '5' );
-		
 		#if debug
-		
-		Browser.alert( 'start' );
-		
 		saver.fbid = '';
 		saver.fbtoken = '';
 		panelModel.config = newUser();
 		#else
-		
-		
 		
 		showLoading();
 		fb_init( untyped __js__('app.config.fbappid[app.config.fbappid.which]'), function() {
