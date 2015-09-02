@@ -1,135 +1,128 @@
-package ;
-
-import component.EParticleType;
-import component.OnView;
-import component.ParamsPanel;
-import component.Tree;
-import inter.AbstractTree;
-import inter.IDom;
-import inter.ITree;
+package;
+import haxe.Json;
 import js.Browser;
-import js.JQuery;
-import js.Lib;
-using Reflect;
+import model.PanelModel;
+import view.DynamicView;
+import view.ParamsView;
+import view.TreeView;
+
 /**
  * ...
  * @author vic
  */
-
-class Main 
+class Main
 {
-	var j:Dynamic = untyped __js__('$');
+	static var j:Dynamic = untyped __js__('$');
+	
 	var canvas_container:Dynamic;
-	var tree_particle:Dynamic;
 	var webgl:Dynamic;
-	var paramsPanel:Dynamic;
-	var tree:AbstractTree;
-	var onView = component.OnView.inst;
-	var panel:ParamsPanel;
 	
-	public function new() {
-		Browser.window.setField( 'haxeStart', start );
-		Browser.window.setField( 'onHtmlClick', onHtmlClick );
-	}
+	var treeView = new TreeView();
+	var paramsView = new ParamsView();
+	var dynamicView = new DynamicView();
+	var model = new PanelModel();
 	
-	function start() {
+	public function new() 
+	{
 		canvas_container = j( '#canvas_container' );
 		webgl = j( '#webgl' );
-		tree_particle = j( '#tree_particle' );
-		paramsPanel = j( '#paramsPanel' );
 		
-		tree = new Tree( tree_particle );
-		panel = new ParamsPanel( paramsPanel );
+		treeView.config = {
+			btn_addTreeNode:j('#btn_addTreeNode' ),
+			btn_removeTreeNode:j('#btn_removeTreeNode' ),
+			tree_particle:j( '#tree_particle' )
+		}
 		
-		
-		onResize( null );
-		
-		tree.parserLoadData( loadSaveData() );
-		onView.setObject( loadSaveData() );
-		
-		resetPanel( tree.getSelectedNode() );
-		
-		addListener();
-		
-	}
-	
-	function onHtmlClick( target ) {
-		
-		function checkNodeAndThen( fn ) {
-			var selectNode = tree.getSelectedNode();
-			if ( selectNode == null ) {
-				Browser.alert( '請選擇發射器' );
-				return;
-			}else if( selectNode.type == EParticleType.PARTICLE ) {
-				Browser.alert( '只能增加粒子在發射器下' );
-				return;
+		treeView.addHandler( function ( type:String, params:Dynamic ):Void {
+			//trace( type, params );
+			switch( type ) {
+				case TreeView.ON_TREE_NODE_CLICK:
+					paramsView.setValues( model.findParticleById( params.node.id ), treeView.findNode( params.node.id ).children != null );
+				case TreeView.ON_BTN_ADD_TREE_NODE_CLICK:
+					var newId = getId();
+					model.addParticle( newId, params.selectNode.id, createNewParticle( newId ) );
+				case TreeView.ON_BTN_REMOVE_TREE_NODE_CLICK:
+					if ( treeView.getRootNode().id == params.selectNode.id ) {
+						showMessage( '不能刪除此發射器哦' );
+						return;
+					}
+					model.removeParticle( params.selectNode.id );
+				case TreeView.ON_TREE_DRAG:
+					treeView.focusNode( treeView.findNode( params.toId ) );
 			}
-			fn( selectNode );
+		});
+		
+		paramsView.addHandler( function( type, params) {
+			trace( type, params );
+			switch( type ) {
+				case ParamsView.ON_PROP_CHANGE:
+					model.setParticleProps( params.id, params.proptype, params.value );
+				case ParamsView.ON_TXT_NAME_CHANGE:
+					model.setParticleName( params.id, params.name );
+			}
+		});
+		
+		paramsView.config = {
+			root:untyped __js__('mc_props_container'),
+			btn_confirmName:j('#btn_confirmName'),
+			txt_name:j('#txt_name')
 		}
 		
-		switch( target.id ) {
-			case 'btn_addParticle':
-				checkNodeAndThen( function( node ) {
-					tree.addParticle( node, createNewParticleObj( getId() ), 'test_particle' );
-				});
-			case 'btn_remove':
-				var selectNode = tree.getSelectedNode();
-				tree.removeParticle( selectNode );
+		dynamicView.config = {
+			table_props:j( '#table_props' )
 		}
-	}
-	
-	function createEmitterAttribute( obj:Dynamic ) {
-		if ( obj.emit != null ) return;
-		obj.emit = { prototype:[] };
-		obj.emit.count = 1;
-		obj.emit.duration = .5;
-		obj.emit.angle = 0;
-		obj.emit.range = 0;
-		obj.emit.force = 0;
-	}
-	
-	function createNewParticleObj( id ) {
-		return {id:id, 
-				lifetime:3,
-				mass:3,
-				color:'#33ddff',
-				size:[10, 10],
-				pos:[0, 0, 0], vel:[0, 0, 0] };
-	}
-	
-	function resetPanel( node:Dynamic ) {
-		var particleData = node.particleData;
-		trace( 'particleData', particleData) ;
-		if ( particleData == null ) return;
-		if ( node.children != null && node.children.length > 0 ) {
-			createEmitterAttribute( particleData );
-			panel.setData( particleData, EParticleType.EMITTER );
-		}else {
-			panel.setData( particleData, EParticleType.PARTICLE );
-		}
-	}
-	
-	function addListener() {
-		webgl.mousemove( onMousemove );
+		
+		model.addHandler( function ( type:String, params:Dynamic ):Void {
+			trace( type, params );
+			switch( type ){
+				case PanelModel.ON_ADD_PARTICLE:
+					treeView.appendNode( params.id, params.particle.name, params.parentId );
+				case PanelModel.ON_REMOVE_PARTICLE:
+					treeView.removeNode( params.id );
+				case PanelModel.ON_NAME_CHANGE:
+					treeView.setNodeNameById( params.id, params.name );
+			}
+			
+			updateParticle( model.getOutputData( treeView.findNode( 999 ) ) );
+		});
+		
+		var initObj:Dynamic = createNewParticle( getId() );
+		initObj.emit.prototype = [
+			createNewParticle( getId() )
+		];
+		
+		model.config = initObj;
+		
+		treeView.focusNode( treeView.findNode( 0 ) );
+		
+		
+		onResize(null );
 		j( Browser.window ).resize( onResize );
-		
-		tree.on( Tree.ON_TREE_NODE_CLICK, function( e, params:Dynamic ) {
-			resetPanel( params.node );
-		});
-		tree.on( Tree.ADD_NODE, function( e, params:Dynamic ) {
-			resetPanel( params.parentNode );
-		});
-		tree.on( Tree.ON_TREE_DROP_NODE, function( e, params:Dynamic ) {
-			var targetNode = params.targetNode;
-			createEmitterAttribute( targetNode.particleData );
-		});
-		panel.on( ParamsPanel.ON_PARAMS_CHANGE, function( e, params:Dynamic ) {
-			onView.setObject( tree.outputData() );
-		});
+		webgl.mousemove( onMousemove );
 	}
 	
-	function loadSaveData():Dynamic {
-		return untyped __js__( 'testLoadData' );
+	function createNewParticle( id:Dynamic ) {
+		return {
+			id:id, 
+			name:'粒子_' + id,
+			lifetime:5,
+			mass:3,
+			color:'#33ddff',
+			size:[10, 10],
+			pos:[0, 0, 0], 
+			vel:[0, 0, 0],
+			emit:createNewEmit()
+		}
+	}
+	
+	public static function createNewEmit() {
+		return { 
+			count:1,
+			duration:0.5,
+			angle:0,
+			range:0,
+			force:0
+		}
 	}
 	
 	function onResize( e ) {
@@ -140,19 +133,50 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		onView.moveRoot( px, py );
-		onView.setObject( tree.outputData() );
+		
+		model.setParticleProps( 0, 'pos_x', px );
+		model.setParticleProps( 0, 'pos_y', py );
+	}
+	
+	static var id = 0;
+	
+	public static function showLoading() {
+		j.messager.progress( {
+			title:'Please waiting',
+            msg:'Loading data...'
+		});
+	}
+	
+	public static function closeLoading() {
+		j.messager.progress('close');
+	}
+	
+	public static function showMessage( msg ){
+		j.messager.show({
+			title:'提示',
+			msg:msg,
+			timeout:5000,
+			showType:'slide'
+		});
 	}
 	
 	public static function getId() {
-		return Math.floor( Math.random() * 10000 ) + '';
+		return id++;
 	}
 	
-	static function main() 
-	{
+	static function updateParticle( particleData:Dynamic ) {
+		untyped __js__( 'common.onView.onNext' )( ['edit-particle', particleData] );
+	}
+	
+	public static function addMouseWheelEvent( jdom, func ) {
+		untyped __js__( 'leo.utils.addMouseWheelEvent' )( jdom, func );
+	}
+	
+	public static function removeMouseWheelEvent( jdom ) {
+		untyped __js__( 'leo.utils.removeMouseWheelEvent' )( jdom );
+	}
+	
+	static function main() {
 		new Main();
-		
-		
 	}
-	
 }
