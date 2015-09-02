@@ -3,6 +3,8 @@
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
     [cljs.core.async :refer [>! <! alts! chan timeout]]
+    [app.particle.abstract :as abstract]
+    [app.particle.impl]
     [app.particle.draw :as d]
     [tool.particle :as part]))
 
@@ -80,36 +82,8 @@
             onView
             (let [event (aget v 0)
                   params (aget v 1)]
-              (condp = event
-                "edit-particle"
-                (let [partInfo params
-                      target (first (filter #(= (:id %) (.-id partInfo)) (get-in ctx [:part :ps])))
-                      newpart (part/jsobj->particle partInfo)]
-                  (if (some? target)
-                    (-> ctx
-                      (update-in
-                        [:part :ps]
-                        (partial 
-                          replace
-                          {
-                            target 
-                            (merge 
-                              newpart
-                              ; preserve attributes
-                              {
-                                :timer (:timer target)
-                                :emit-times (:emit-times target)
-                              })
-                          })))
-                          
-                    (-> ctx
-                      (update-in
-                        [:part :ps]
-                        conj newpart))))
-                :else
-                ctx))
-                
-            :else
+              (abstract/onViewCommand event params ctx))
+              
             ctx))))
             
   
