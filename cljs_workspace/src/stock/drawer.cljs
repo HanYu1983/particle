@@ -62,6 +62,13 @@
     
     (when kline
       (doseq [i (range (count kline))]
+        ;(let [color
+        ;      (if (odd? (int (/ i cntx)))
+        ;        "white"
+        ;        "lightgray")
+        ;      posx (+ (/ offset-x 2) (* i offset-x))]
+        ;  (aset ctx "fillStyle" color)
+        ;  (.fillRect ctx posx 0 (inc offset-x) h))))
         (when (zero? (mod i cntx))
           (let [posx (+ (/ offset-x 2) (* i offset-x))]
             ;(.fillText ctx (stl/date (nth kline i)) posx  h)
