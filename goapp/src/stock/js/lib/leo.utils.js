@@ -155,6 +155,31 @@ leo.utils = leo.utils || {};
 		return noOfDays / daysInYear;
 	}
 	
+	function csvJSON(csv){
+		var lines=csv.split("\n");
+		var result = [];
+		var headers=lines[0].split(",");
+		for(var i=1;i<lines.length;i++){
+			var obj = {};
+			var currentline=lines[i].split(",");
+			for(var j=0;j<headers.length;j++){
+				obj[headers[j]] = currentline[j];
+			}
+			result.push(obj);
+		}
+		return result; //JSON
+	}
+	
+	function generateUUID() {
+		var d = new Date().getTime();
+		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = (d + Math.random()*16)%16 | 0;
+			d = Math.floor(d/16);
+			return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+		});
+		return uuid;
+	};
+	
 	leo.utils.checkValidName = checkValidName;
 	leo.utils.checkValidEmail = checkValidEmail;
 	leo.utils.checkValidNumber = checkValidNumber;
@@ -169,4 +194,6 @@ leo.utils = leo.utils || {};
 	leo.utils.isIE8Browser = isIE8Browser;
 	leo.utils.detectBrowser = detectBrowser;
 	leo.utils.getAge = getAge;
+	leo.utils.csvJSON = csvJSON;
+	leo.utils.generateUUID = generateUUID;
 })();

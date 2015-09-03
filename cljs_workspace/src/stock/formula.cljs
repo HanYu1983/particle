@@ -10,6 +10,36 @@
 (defn offset-seq [vs]
   (map #(- %2 %1) vs (rest vs)))
 
+(defn nkline [cnt kline]
+  (let [group (take cnt kline)
+        [date open _ _ _ _] (last group)
+
+        high
+        (apply
+          max
+          (map
+            (fn [[_ _ high _ _ _]] high)
+            group))
+
+        low
+        (apply
+          min
+          (map
+            (fn [[_ _ _ low _ _]] low)
+            group))
+
+        [_ _ _ _ close _] (first group)
+
+        volume
+        (apply
+          +
+          (map
+            (fn [[_ _ _ _ _ volume]] volume)
+             group))]
+    (when-not (zero? (count group))
+      (cons [date open high low close volume] (lazy-seq (nkline cnt (drop cnt kline)))))))
+
+
 (defn sma-seq 
   "移動平均線"
   [n vs]
@@ -309,8 +339,8 @@
 (defn rsv-seq
   "未成熟隨機值"
   [n kline]
-  (let [h9 (maxN-seq 9 #(apply max %) (stl/high kline))
-        l9 (maxN-seq 9 #(apply min %) (stl/low kline))
+  (let [h9 (maxN-seq n #(apply max %) (stl/high kline))
+        l9 (maxN-seq n #(apply min %) (stl/low kline))
         c (stl/close kline)]
     (map
       (fn [c l h]
@@ -359,7 +389,8 @@
     [(map second vs) (map first vs)]))
     
 (defn volatility-seq 
-  "計算波動"
+  "計算波動
+  從後面計算"
   [n vs]
   (map
     #(/ (- %1 %2) %2)
@@ -480,10 +511,30 @@
         (cons v (lazy-seq (cci-seq n (rest kline)))))))
         
 (defn trix-seq 
-  "Triple Exponential (TRIX) 三重指數平滑移動平均指標"
+  "Triple Exponential (TRIX) 三重指數平滑移動平均指標
+  從後面算"
   [n vs]
   (let [ax (ema-seq n (reverse vs))
         bx (ema-seq n ax)
         cx (ema-seq n bx)
         vs (volatility-seq 1 (reverse cx))]
     vs))
+    
+(defn kline-red [kline]
+  (map 
+    (fn [[_ o h l c _]]
+      (+ (max 0 (- h o)) (max 0 (- c l))))
+    kline))
+    
+(defn kline-green [kline]
+  (map 
+    (fn [[_ o h l c _]]
+      (+ (max 0 (- o l)) (max 0 (- h c))))
+    kline))
+    
+(defn up-rate [vs]
+  (map
+    (fn [p c]
+      (/ (- c p) p))
+    vs
+    (rest vs)))

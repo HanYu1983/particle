@@ -2,10 +2,9 @@
   (:require-macros
     [cljs.core.async.macros :as am])
   (:require
+    [app.dbfile :as db]
     [stock.tool :as stl]
     [cljs.core.async :as a]))
-
-(def save-data (atom {}))
 
 (defn loadStock
   "request是用來記錄呼叫來源，會附加在結果裡，用來前台做callback的資訊"
@@ -24,11 +23,17 @@
         (a/>! ch ["loadStock" [err infos id date request]])))))
       
       
-(defn loadUser [ch fbid request]
+(defn loadUser [ch fbid accessToken request]
   (am/go
-    (a/>! ch ["view" [nil (get @save-data (str fbid)) request]])))
+    (let [[err content] (<! (db/load "stock" fbid accessToken))]
+      (a/>! ch ["view" [(or err (.-error content)) content request]]))))
+  ;(am/go
+  ;  (a/>! ch ["view" [nil (get @save-data (str fbid)) request]])))
     
-(defn saveUser [ch fbid data request]
-  (swap! save-data assoc (str fbid) data)
+(defn saveUser [ch fbid accessToken data request]
   (am/go
-    (a/>! ch ["view" [nil nil request]])))
+    (let [[err ret] (<! (db/save "stock" fbid accessToken (.stringify js/JSON data)))]
+      (a/>! ch ["view" [(or err (.-error ret)) ret request]]))))
+  ;(swap! save-data assoc (str fbid) data)
+  ;(am/go
+  ;  (a/>! ch ["view" [nil nil request]])))

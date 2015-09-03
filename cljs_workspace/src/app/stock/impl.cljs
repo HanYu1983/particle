@@ -269,11 +269,14 @@
               
             "atr"
             (let [n (get subd "n")
-                  line (reverse (stf/atr-seq n (reverse kline)))
+                  m (get subd "m")
+                  line (stf/atr-seq n (reverse kline))
+                  line2 (stf/sma-seq m line)
                   avg (stf/average line)]
               [
-                {:type :line :line line :color c1}
-                {:type :grid :line line :color "gray"}
+                {:type :line :line (reverse line) :color c1}
+                {:type :line :line (reverse line2) :color c2}
+                {:type :grid :line (reverse line) :color "gray"}
                 {:type :line :line (repeat (count kline) avg) :color "lightgray"}
               ])
               
@@ -359,6 +362,17 @@
                 {:type :line :line (repeat (count kline) 30) :color "white"}
                 {:type :line :line (repeat (count kline) 70) :color "white"}
               ])
+              
+            "yu-test"
+            (let [n (get subd "n")
+                  kline 
+                  (->>
+                    (stf/nkline n kline)
+                    (take (int (/ (count kline) n))))]
+              [
+                {:type :grid :kline kline :color "gray"}
+                {:type :kline :kline kline}
+              ])
             {:type nil})))
       sub)
     (flatten)))
@@ -369,11 +383,13 @@
         canvas (aget data "canvas")
         offset (aget data "offset")
         cnt (aget data "count")
+        group (or (aget data "group") 1)
         sub (js->clj (aget data "sub"))
         [err kline id date :as stock] (get-in ctx [:temp "stocks" stockId])
         kline 
         (->>
           kline
+          (stf/nkline group)
           (drop offset)
           (take cnt))]
     (when kline
@@ -421,19 +437,22 @@
         
 (defmethod abstract/onViewCommand "stockInfo" [_ data ctx]
   (let [onSys (:onSys ctx)
-        stock-id (aget data "id")
-        stock-info (get-in ctx [:temp "stocks" stock-id])]
+        stockId (aget data "id")
+        group (or (aget data "group") 1)
+        [err kline id date :as stock-info] (get-in ctx [:temp "stocks" stockId])]
     (am/go
-      (a/>! onSys ["view" [nil (clj->js stock-info) data]])))
+      (a/>! onSys ["view" [nil (clj->js [err (stf/nkline group kline) id date]) data]])))
   ctx)
-        
+  
 (defmethod abstract/onViewCommand "load" [type data {onSys :onSys :as ctx}]
-  (let [fbid (aget data "fbid")]
-    (cmd/loadUser onSys fbid data))
+  (let [fbid (aget data "fbid")
+        accessToken (aget data "accessToken")]
+    (cmd/loadUser onSys fbid accessToken data))
   ctx)
   
 (defmethod abstract/onViewCommand "save" [type data {onSys :onSys :as ctx}]
   (let [fbid (aget data "fbid")
+        accessToken (aget data "accessToken")
         user (aget data "user")]
-    (cmd/saveUser onSys fbid user data))
+    (cmd/saveUser onSys fbid accessToken user data))
   ctx)

@@ -8,7 +8,7 @@ import model.PanelModel;
  * ...
  * @author vic
  */
-class PanelView extends Model implements IPanelView
+class PanelView extends Model
 {
 	public static var ON_SLT_STOCKID_CHANGE = 'on_stockid_change';
 	public static var ON_BTN_CONTROLLER_CLICK = 'on_offset_change';
@@ -18,11 +18,16 @@ class PanelView extends Model implements IPanelView
 	public static var ON_SWB_FAVOR_CHANGE = 'on_favor_change';
 	public static var ON_BTN_ADDPANEL_CLICK = 'on_btn_addPanel_click';
 	public static var ON_BTN_REMOVEPANEL_CLICK = 'on_btn_removePanel_click';
+	public static var ON_BTN_LOGIN_CLICK = 'on_btn_login_click';
+	public static var ON_BTN_LOGOUT_CLICK = 'on_btn_logout_click';
+	public static var ON_BTN_SAVE_CLICK = 'ON_BTN_SAVE_CLICK';
+	public static var ON_BTN_PERIOD_CLICK = 'ON_BTN_PERIOD_CLICK';
 //	public static var ON_BTN_LOADPRICE_CLICK = 'on_btn_loadPrice_click';
 	public static var ON_TXT_OFFSET_CHANGE = 'on_txt_offset_change';
 	public static var ON_TXT_COUNT_CHANGE = 'on_txt_count_change';
 	public static var ON_TXT_NOTE_CHANGE = 'on_txt_note_change';
 	public static var ON_COMBO_FAVOR_CHANGE = 'on_combo_favor_change';
+	public static var ON_COMBO_PREFER_CHANGE = 'ON_COMBO_PREFER_CHANGE';
 	
 	var j:Dynamic = untyped __js__('$');
 	
@@ -30,16 +35,24 @@ class PanelView extends Model implements IPanelView
 	var body:Dynamic;
 	var tmpl_panel:Dynamic;
 	var slt_stockId:Dynamic;
-	var swb_favor:Dynamic;
+	//var swb_favor:Dynamic;
+	var toggle_favor:Dynamic;
 	var combo_favor:Dynamic;
+	var combo_prefer:Dynamic;
 	var mc_accordionContainer:Dynamic;
 	var btn_controller:Dynamic;
 	var btn_addPanel:Dynamic;
+	var btn_login:Dynamic;
+	var btn_logout:Dynamic;
+	var btn_save:Dynamic;
+	var btn_about:Dynamic;
+	var btn_period:Dynamic;
 	//var btn_loadPrice:Dynamic;
 	var table_stockPrice:Dynamic;
 	var txt_count:Dynamic;
 	var txt_offset:Dynamic;
 	var txt_note:Dynamic;
+	var dia_about:Dynamic;
 	var currentScrollX:Int = null;
 	
 	public function new() 
@@ -52,81 +65,9 @@ class PanelView extends Model implements IPanelView
 	{
 		super.init();
 		
-		var isDot = false;
-		var isComma = false;
-		
 		doc = config.doc;
-		doc.keydown( function( e ) {
-			
-			switch( e.which ) {
-				//shift
-				case 16:
-					
-				//ctrl
-				case 17:
-					
-				//alt
-				case 18:
-				//,
-				case 188:
-					isComma = true;
-				//.
-				case 190:
-					isDot = true;
-				///
-				case 191:
-			}
-		});
-		doc.keyup( function( e ) {
-			trace( e.which );
-			switch( e.which ) {
-				//shift
-				case 16:
-					
-				//ctrl
-				case 17:
-				//,
-				case 188:
-					isComma = false;
-				//.
-				case 190:
-					isDot = false;
-				///
-				case 191:
-				//w
-				case 87:
-				//a
-				case 65:
-					if( isDot && isComma ) notify( ON_BTN_CONTROLLER_CLICK, { value:-10000 } );
-					else if ( isComma )
-						notify( ON_BTN_CONTROLLER_CLICK, { value: -20 } );
-					else
-						notify( ON_BTN_CONTROLLER_CLICK, { value: -1 } );
-				//s
-				case 83:
-				//d
-				case 68:
-					if( isDot && isComma ) notify( ON_BTN_CONTROLLER_CLICK, { value:10000 } );
-					else if ( isComma )
-						notify( ON_BTN_CONTROLLER_CLICK, { value: 20 } );
-					else
-						notify( ON_BTN_CONTROLLER_CLICK, { value: 1 } );
-				//alt
-				case 18:
-				//up
-				case 38:
-				//left
-				case 37:
-					
-				//down
-				case 40:
-				//right
-				case 39:
-					
-				//f
-				case 70:
-			}
-		});
+		doc.keydown( onKeyDown );
+		doc.keyup( onKeyUp );
 		
 		body = config.body;
 		body.find( '.easyui-tooltip' ).tooltip( {
@@ -151,6 +92,17 @@ class PanelView extends Model implements IPanelView
 		btn_addPanel.click( function( e ) {
 			notify( ON_BTN_ADDPANEL_CLICK );
 		});
+		
+		btn_login = config.btn_login;
+		btn_login.click( function() {
+			notify( ON_BTN_LOGIN_CLICK );
+		});
+		
+		btn_logout = config.btn_logout;
+		btn_logout.click( function() {
+			notify( ON_BTN_LOGOUT_CLICK );
+		});
+		
 		/*
 		btn_loadPrice = config.btn_loadPrice;
 		btn_loadPrice.click( function( e ) {
@@ -165,13 +117,6 @@ class PanelView extends Model implements IPanelView
 			}
 		});
 		
-		txt_note = config.txt_note;
-		txt_note.textbox( {
-			onChange:function( newv, oldv ) {
-				notify( ON_TXT_NOTE_CHANGE, { note:newv } );
-			}
-		});
-		
 		txt_count = config.txt_count;
 		txt_count.textbox( {
 			value:200,
@@ -180,18 +125,49 @@ class PanelView extends Model implements IPanelView
 			}
 		});
 		
+		txt_note = config.txt_note;
+		txt_note.textbox( {
+			onChange:function( newv, oldv ) {
+				notify( ON_TXT_NOTE_CHANGE, { note:newv } );
+			}
+		});
+		
+		txt_note.parent().focusin( function() {
+			doc.off( 'keydown' );
+			doc.off( 'keyup' );
+		});
+		
+		txt_note.parent().focusout( function() {
+			doc.keydown( onKeyDown );
+			doc.keyup( onKeyUp );
+		});
+		
 		slt_stockId = config.slt_stockId;
 		slt_stockId.textbox( {
 			onChange:function(newValue, oldValue) {
 				var stockId = newValue;
+				if ( stockId.length != 4 ) return;
 				notify( ON_SLT_STOCKID_CHANGE, { 'stockId':stockId } );
 			}
 		});
-		
+		/*
 		swb_favor = config.swb_favor;
 		swb_favor.switchbutton( {
 			onChange:function( checked ) {
 				notify( ON_SWB_FAVOR_CHANGE, { favor:checked } );
+			}
+		});
+		*/
+		toggle_favor = config.toggle_favor;
+		toggle_favor.attr( 'favor', 0 );
+		toggle_favor.linkbutton( {
+			onClick:function() {
+				if ( toggle_favor.attr( 'favor' ) == 0 ) {
+					toggle_favor.attr( 'favor', 1 );
+				}else {
+					toggle_favor.attr( 'favor', 0 );
+				}
+				notify( ON_SWB_FAVOR_CHANGE, { favor: toggle_favor.attr( 'favor' ) == 1 } );
 			}
 		});
 		
@@ -199,7 +175,22 @@ class PanelView extends Model implements IPanelView
 		combo_favor.combobox( {
 			onSelect:function( record ) {
 				var value = record.value;
+				if ( value == '' ) return;
 				notify( ON_COMBO_FAVOR_CHANGE, { stockId:value } );
+			}
+		});
+		
+		combo_prefer = config.combo_prefer;
+		combo_prefer.append( '<option value=""></option>' );
+		Lambda.foreach( untyped __js__('app.config.preferStocks' ), function( ary ) {
+			combo_prefer.append( '<option value="' + ary[0] + '">' + ary[0] + ' ' + ary[1] + '</option>' );
+			return true;
+		});
+		combo_prefer.combobox( {
+			onSelect:function( record ) {
+				var value = record.value;
+				if ( value == '' ) return;
+				notify( ON_COMBO_PREFER_CHANGE, { stockId:value } );
 			}
 		});
 		
@@ -223,6 +214,38 @@ class PanelView extends Model implements IPanelView
 			}
 		});
 		
+		dia_about = config.dia_about;
+		dia_about.attr( 'isOpen', 0 );
+		dia_about.dialog( {
+			closed:true,
+			onClose:function() {
+				dia_about.attr( 'isOpen', 0 );
+			}
+		});
+		
+		btn_about = config.btn_about;
+		btn_about.click( function() {
+			if ( dia_about.attr( 'isOpen' ) == 1) {
+				dia_about.dialog( 'close' );
+				dia_about.attr( 'isOpen', 0 );
+			}else {
+				dia_about.dialog( 'open' );
+				dia_about.attr( 'isOpen', 1 );
+			}
+		});
+		
+		btn_period = config.btn_period;
+		btn_period.find( '.easyui-linkbutton' ).click( function() {
+			var dom = j( untyped __js__('this') );
+			notify( ON_BTN_PERIOD_CLICK, {period: dom.attr('ptype') } );
+		});
+		
+		btn_save = config.btn_save;
+		btn_save.click( function() {
+			notify( ON_BTN_SAVE_CLICK );
+		});
+		btn_save.linkbutton();
+		
 		table_stockPrice = config.table_stockPrice;
 	}
 	
@@ -238,12 +261,41 @@ class PanelView extends Model implements IPanelView
 		setTxtStockId( stockId );
 		setTxtNote( note );
 		
+		toggle_favor.linkbutton( {
+			selected:favor
+		});
+		toggle_favor.attr( 'favor', favor ? 1 : 0 );
+		/*
 		swb_favor.switchbutton( {
 			checked:favor
 		});
-		
+		*/
 		changeOffset( offset );
 		changeCount( count );
+	}
+	
+	public function setSavable( savable ) {
+		if ( savable ) {
+			btn_save.linkbutton( {
+				text:'同步'
+			});
+			btn_save.linkbutton('enable');
+		}else {
+			btn_save.linkbutton( {
+				text:'已同步'
+			});
+			btn_save.linkbutton('disable');
+		}
+	}
+	
+	public function setLogin( login:Bool ) {
+		if ( login ) {
+			btn_login.hide();
+			btn_logout.show();
+		}else {
+			btn_login.show();
+			btn_logout.hide();
+		}
 	}
 	
 	public function setTxtStockId( stockId:String ):Void {
@@ -261,9 +313,9 @@ class PanelView extends Model implements IPanelView
 	
 	public function setFavorsSelect( favors:Array<String> ):Void {
 		combo_favor.empty();
-		combo_favor.append( '<option value="999">------<option>' );
+		combo_favor.append( '<option value="999"></option>' );
 		Lambda.foreach( favors, function( str ) {
-			combo_favor.append( '<option value="' + str + '">' + str + '<option>' );
+			combo_favor.append( '<option value="' + str + '">' + str + '</option>' );
 			return true;
 		});
 		combo_favor.combobox();
@@ -317,7 +369,13 @@ class PanelView extends Model implements IPanelView
 		});
 	}
 	
-	public function addPanel( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+	public function setPeriod( period ) {
+		btn_period.find( 'a[ptype="' + period + '"]' ).linkbutton( {
+			selected:true
+		});
+	}
+	
+	public function addPanel( stockId:String, period:String, offset:Int, count:Int, panelData:Dynamic ):Void {
 		
 		var stockData = panelData.data;
 		var id = stockData.id;
@@ -328,19 +386,18 @@ class PanelView extends Model implements IPanelView
 		var dom:Dynamic = tmpl_panel.tmpl( {id:id, type:type, deletable:deletable } );
 		mc_accordionContainer.accordion('add', {
 			id:'k_' + id,
-			title: 'k線: ' + id,
+			title: '線圖: ' + id,
 			content: dom,
 			selected: true
 		});
 		panelData.root = dom;
 		
 		//resize canvas
-		/*
-		if ( type != EType.clock ) {
+		
+		if ( type != 'clock' ) {
 			var cw = untyped __js__('leo.utils.getScreenWidth' )();
-			dom.find( 'canvas' ).attr( 'width', cw - 50 )
+			dom.find( 'canvas' ).attr( 'width', cw - 50 );
 		}
-		*/
 		
 		if ( type == 'kline' || type == 'none' ){
 			dom.find( '#slt_showKline' ).switchbutton( {
@@ -355,25 +412,44 @@ class PanelView extends Model implements IPanelView
 			notify( ON_BTN_REMOVEPANEL_CLICK, { id:panelData.id } );
 		});
 		
+		dom.find( '.easyui-tooltip' ).tooltip( {
+			position:'right',
+			onShow:function( e ) {
+				var self = j( e.currentTarget );
+				var hoverInfo = untyped __js__( 'app.config.hoverInfo' );
+				var hoverstr = switch( Reflect.field( hoverInfo, self.attr( 'id' ) ) ) {
+					case null:Reflect.field( hoverInfo, 'default' );
+					case hstr:hstr;
+				}
+				self.tooltip( 'update', hoverstr );
+			}
+		});
+		
 		if( props != null )
 			createProp( dom.find( '#mc_propContainer' ), props, panelData );
 		
 		
-		drawCanvas( stockId, offset, count, panelData );
+		drawCanvas( stockId, period, offset, count, panelData );
 	}
 	
 	public function removePanel( id:String ):Void {
-		var deleteName = 'k線: ' + id;
+		var deleteName = '線圖: ' + id;
 		mc_accordionContainer.accordion( 'remove', deleteName );
 	}
 	
-	public function drawCanvas( stockId:String, offset:Int, count:Int, panelData:Dynamic ):Void {
-		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, offset, count, propsToDraw( panelData.data.sub ) );
+	public function drawCanvas( stockId:String, period:String, offset:Int, count:Int, panelData:Dynamic ):Void {
+		var periodCount = switch( period ) {
+			case 'd':1;
+			case 'w':5;
+			case 'm':20;
+			case _:1;
+		}
+		Main.drawStock( panelData.root.find( '#canvas_kline' ), stockId, panelData.data.type, periodCount, offset, count, propsToDraw( panelData.data.sub ) );
 	}
 	
-	public function drawAllCanvas( stockId:String, offset:Int = 0, count:Int, ary_panel:Array<Dynamic> ):Void {
+	public function drawAllCanvas( stockId:String, period:String, offset:Int = 0, count:Int, ary_panel:Array<Dynamic> ):Void {
 		Lambda.map( ary_panel, function( panelData ) {
-			drawCanvas( stockId, offset, count, panelData );
+			drawCanvas( stockId, period, offset, count, panelData );
 		});
 	}
 	
@@ -421,34 +497,8 @@ class PanelView extends Model implements IPanelView
 			prop.nid = 'input_n_' + prop.type;
 			prop.mid = 'input_m_' + prop.type;
 			
-			prop.domName = prop.type;
+			prop.domName = prop.name;
 			if ( prop.url == null ) prop.url = '';
-			/*
-			prop.domName = switch( prop.type ) {
-				case 'ma':
-					'均線 ma';
-				case 'macd':
-					'指數差離 macd';
-				case 'ema':
-					'指數均線 ema';
-				case 'bbi':
-					'多空指標 bbi';
-				case 'kd':
-					'隨機指標 kd';
-				case 'Chaikin':
-					'蔡金 Chaikin';
-				case 'eom':
-					'簡易波動 eom';
-				case 'yu-car':
-					'方向盤';
-				case 'yu-clock':
-					'背離線';
-				case 'yu-macd':
-					'余氏線';
-				case _:
-					prop.type;
-			}
-			*/
 			var dom = j( '#tmpl_avg' ).tmpl( prop );
 			container.append( dom );
 			
@@ -478,6 +528,7 @@ class PanelView extends Model implements IPanelView
 				value:prop.value.p,
 				onChange:onInputChange( dom )
 			});
+			
 			dom.find( '.easyui-tooltip' ).tooltip( {
 				position:'right',
 				onShow:function( e ) {
@@ -523,5 +574,75 @@ class PanelView extends Model implements IPanelView
 				container.scrollLeft( currentScrollX );
 			}
 		});
+	}
+	
+	function onKeyDown( e ) {
+		switch( e.which ) {
+			//shift
+			case 16:
+				
+			//ctrl
+			case 17:
+				
+			//alt
+			case 18:
+			//,
+			case 188:
+			//.
+			case 190:
+				
+			///
+			case 191:
+		}
+	}
+	
+	function onKeyUp( e ) {
+		switch( e.which ) {
+			//b
+			case 66:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: -10000 } );
+			//n
+			case 78:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: -20 } );
+			//m
+			case 77:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: -1 } );
+			//,
+			case 188:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: 1 } );
+			//.
+			case 190:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: 20 } );
+			///
+			case 191:
+				notify( ON_BTN_CONTROLLER_CLICK, { value: 10000 } );
+			//shift
+			case 16:
+				
+			//ctrl
+			case 17:
+			//w
+			case 87:
+			//a
+			case 65:
+			//s
+			case 83:
+			//d
+			case 68:
+			//alt
+			case 18:
+			//up
+			case 38:
+			//left
+			case 37:
+				
+			//down
+			case 40:
+			//right
+			case 39:
+				
+			//f
+			case 70:
+		}
 	}
 }

@@ -63,14 +63,15 @@ var api = {};
 	蔡金波動性指標cv(10, 10)
 	順勢指標cci(10)
 	*/
-	function draw( canvas, id, type, offset, count, sub ){
+	function draw( canvas, id, type, period, offset, count, sub ){
 		var params = {
 			canvas : canvas,
 			id: id,
 			type: type,
 			offset: offset,
 			count: count,
-			sub: sub
+			sub: sub,
+			group: period
 		}
 		common.onView.onNext(["draw", params])
 	}
@@ -103,9 +104,10 @@ var api = {};
 		]
 	}
 	*/
-	function stockInfo( id, cb ){
+	function stockInfo( id, period, cb ){
 		var params = {
-			id: id
+			id: id,
+			group: period
 		}
 		params.cbid = cbid++
 		cbs[ params.cbid+"" ] = cb
@@ -123,9 +125,10 @@ var api = {};
 	/**
 	讀取使用者資料
 	*/
-	function load( fbid, cb ){
+	function load( fbid, accessToken, cb ){
 		var params = {
 			fbid: fbid,
+			accessToken: accessToken,
 			"cbid": cbid++
 		}
 		cbs[ params.cbid+"" ] = cb
@@ -135,9 +138,10 @@ var api = {};
 	/**
 	記錄使用者資料
 	*/
-	function save( fbid, data, cb ){
+	function save( fbid, accessToken, data, cb ){
 		var params = {
 			fbid: fbid,
+			accessToken: accessToken,
 			cbid: cbid++,
 			user: data
 		}
