@@ -63,7 +63,7 @@
           (mesh/draw gl mesh nil)))
         
       (.enable gl (.-BLEND gl))
-      (.blendFunc gl (.-ONE gl) (.-ONE gl))
+      (.blendFunc gl (.-SRC_ALPHA gl) (.-ONE gl))
     
       (when-some [faceImg (get-in ctx [:image :face])]
         (let [tex (cacheTex gl faceImg)]

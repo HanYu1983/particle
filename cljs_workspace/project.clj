@@ -7,19 +7,19 @@
     :builds [
     {
       :id "stock"
-      :source-paths ["../src"]
+      :source-paths ["src"]
       :compiler {
-        :output-to "../../goapp/src/stock/js/cljs/cljs.js"
-        :output-dir "../../goapp/src/stock/js/cljs"
+        :output-to "../goapp/src/stock/js/cljs/cljs.js"
+        :output-dir "../goapp/src/stock/js/cljs"
         :optimizations :none
         :pretty-print true}
     }
     {
       :id "particle"
-      :source-paths ["../src"]
+      :source-paths ["src"]
       :compiler {
-        :output-to "../../goapp/src/web/res/cljs/cljs.js"
-        :output-dir "../../goapp/src/web/res/cljs"
+        :output-to "../goapp/src/web/res/cljs/cljs.js"
+        :output-dir "../goapp/src/web/res/cljs"
         :optimizations :none
         :pretty-print true
       }

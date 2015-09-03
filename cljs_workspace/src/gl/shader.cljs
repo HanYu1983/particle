@@ -106,10 +106,10 @@
 
       "void main(){"
       " vec4 pos = u_projection* u_transform* a_position;"
-      " gl_Position = vec4(pos.x, -pos.y, pos.z, pos.w);" 
       ; 1. 因為我會將物件都畫在xy平面的第一象現內（y朝上）
       ; 2. 從html的image創建的材質貼圖剛好為上下相反的
       ; 所以直接將座標系上下反轉（y朝下）就可以模擬2D座標系
+      " gl_Position = vec4(pos.x, -pos.y, pos.z, pos.w);"
       " v_texCoord = ( u_texTransform* vec3( a_texCoord.st, 1 )).xy;"
       "}")
     (str
