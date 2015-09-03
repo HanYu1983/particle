@@ -57,7 +57,6 @@ class TreeView extends Model
 	}
 	
 	public function focusNode( node:Dynamic ) {
-		return ;
 		tree_particle.tree( 'select', node.target);
 		notify( ON_TREE_NODE_CLICK, {node:node} );
 	}

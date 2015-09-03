@@ -556,7 +556,6 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 		this.tree_particle.tree("remove",this.findNode(nodeId).target);
 	}
 	,focusNode: function(node) {
-		return;
 		this.tree_particle.tree("select",node.target);
 		this.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : node});
 	}

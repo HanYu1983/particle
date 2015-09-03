@@ -231,24 +231,10 @@
 			mc_props_container.append( jdom );
 		}
 	}
-
-	
-	
-</script>
-
-<script>
-common.onModel.subscribe(function(data){
-//console.log( data )
-})
-
-common.onView.subscribe(function(data){
-	//console.log( data )
-})
-
-common.onModel.onNext(['testmodel', {}])
-common.onView.onNext(['testview', {}])
-
-goog.require("app.particle.main");
 </script>
 <script src="res/js/haxe.js"></script>
+<script>
+goog.require("app.particle.main");
+</script>
+
 </html>

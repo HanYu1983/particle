@@ -95,7 +95,6 @@ class Main
 		
 		treeView.focusNode( treeView.findNode( 0 ) );
 		
-		
 		onResize(null );
 		j( Browser.window ).resize( onResize );
 		webgl.mousemove( onMousemove );
