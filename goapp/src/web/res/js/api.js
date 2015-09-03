@@ -76,6 +76,7 @@ var api = api || {};
 		common.onView.onNext(['info', param])
 	}
 	
+	pkg.editParticle = editParticle
 	pkg.changeCenterPos = changeCenterPos
 	pkg.info = info
 	
