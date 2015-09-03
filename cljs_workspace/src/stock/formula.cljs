@@ -520,6 +520,21 @@
         vs (volatility-seq 1 (reverse cx))]
     vs))
     
+(defn money-line [n vs]
+  (when (>= (count vs) n)
+    (let [group (take n vs)
+          start (last group)
+          offset
+          (map
+            #(- % start)
+            group)
+          v
+          (->
+            (apply + offset)
+            (/ n)
+            (/ start))]
+      (cons v (lazy-seq (money-line n (rest vs)))))))
+    
 (defn kline-red [kline]
   (map 
     (fn [[_ o h l c _]]

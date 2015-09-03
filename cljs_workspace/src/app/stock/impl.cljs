@@ -363,7 +363,7 @@
                 {:type :line :line (repeat (count kline) 70) :color "white"}
               ])
               
-            "yu-test"
+            "nkline"
             (let [n (get subd "n")
                   kline 
                   (->>
@@ -373,6 +373,17 @@
                 {:type :grid :kline kline :color "gray"}
                 {:type :kline :kline kline}
               ])
+              
+            "yu-money"
+            (let [n (get subd "n")
+                  m (get subd "m")
+                  line (stf/money-line n (stl/close kline))]
+              [
+                {:type :line :line line :color c1}
+                {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
+                {:type :grid :line line :color "gray"}
+              ])
+              
             {:type nil})))
       sub)
     (flatten)))
