@@ -2,9 +2,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		
-		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.base.css" type="text/css" />
-		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.metrodark.css" type="text/css" />
-		<link rel="stylesheet" type="text/css" href="res/css/normalize.css">
+		
 			
 		<script type="text/javascript" src="res/js/lib/jquery/jquery-1.11.1.min.js"></script>	
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxcore.js"></script>
@@ -20,6 +18,10 @@
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
 		
+		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.base.css" type="text/css" />
+		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.metrodark.css" type="text/css" />
+		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="res/css/normalize.css">
 	</head>
 	<style>
 	body{
@@ -73,6 +75,7 @@
 	
          $(document).ready(function () {
 			var theme = 'metrodark';
+			//var theme = 'arctic';
 			initJqx( $('body'), theme );
 			
 			/*
@@ -116,58 +119,76 @@
 <body>
 	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{"size":"80%","collapsible":false}, {"collapsed":false}]}'>
 		<div>
-			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": "250px" }]}'>
+			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": "250px","min":"250px" }]}'>
 				<div>
 					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
-						<div>
-							<div id="exp_tree" jqx="jqxExpander" data-options='{"toggleMode":"none","width":"100%","height":"100%","showArrow":false}'>
+						<div class="">
+							<div class="group" style="text-align:center;">
+								<div class="hori">
+									<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
+								</div>
+								<div class="hori">
+									<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+								</div>
+							</div>	
+							<div id="tree_particle" jqx="jqxTree" data-options='{"allowDrag": true, "allowDrop": true, "height": "100%", "width": "100%"}'>
+								<ul>
+									<li item-expanded='true' id="t1">
+										<img style='float: left; margin-right: 5px;' src='../../images/contactsIcon.png' /><span
+											item-title="true">News and Blogs</span>
+										<ul>
+											<li>
+												<img style='float: left; margin-right: 5px;' src='../../images/favorites.png' /><span
+													item-title="true">Favorites</span>
+												<ul>
+													<li>
+														<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+															item-title="true">ScienceDaily</span> </li>
+												</ul>
+											</li>
+											<li>
+												<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+													item-title="true">Geek.com</span> </li>
+											<li>
+												<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+													item-title="true">CNN.com</span> </li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<!--
+						<div id="exp_tree" jqx="jqxExpander" data-options='{"toggleMode":"none","width":"100%","height":"100%","showArrow":false}'>
 								<div>
 									樹狀圖
 								</div>
 								<div class="">
-									<div class="group" style="text-align:center;">
-										<div class="hori">
-											<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
-										</div>
-										<div class="hori">
-											<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
-										</div>
-									</div>	
-									<ul id="tree_particle" jqx="jqxTree" data-options='{"allowDrag": true, "allowDrop": true, "height": "100%", "width": "100%"}'>
-										<ul>
-											<li id='home' item-selected='true'>Home</li>
-											<li item-expanded='true'>Solutions
-												<ul>
-													<li>Education</li>
-												</ul>
-											</li>
-											<li>Financial services</li>
-											<li>Community</li>
-										</ul>
-									</ul>
+									
 								</div>
 							</div>
-							
+							-->
 						</div>
 						<div>
+							<div class="group" style="text-align:center; margin-bottom:10px; ">
+								<div class="hori" style="width:100px; ">
+									<input id="txt_name" type="text" jqx="jqxInput" style="width:100%; " >
+								</div>
+								<div class="hori">
+									<input id="btn_confirmName" type="button" jqx="jqxButton" value="確定" >
+								</div>
+							</div>
+							<div id="mc_props_container" class="group" style="min-width:150px;" >
+								<!-- created by script -->
+							</div>
+							
+								<!--
 							<div jqx="jqxExpander" data-options='{"toggleMode":"none","width":"100%","height":"100%","showArrow":false}'>
 								<div>
 									初始屬性
 								</div>
 								<div>
-									<div class="group" style="text-align:center; margin-bottom:10px; ">
-										<div class="hori" style="width:100px; ">
-											<input id="txt_name" type="text" jqx="jqxInput" style="width:100%; " >
-										</div>
-										<div class="hori">
-											<input id="btn_confirmName" type="button" jqx="jqxButton" value="確定" >
-										</div>
-									</div>
-									<div id="mc_props_container" class="group" style="min-width:150px;" >
-										<!-- created by script -->
-									</div>
 								</div>
 							</div>
+							-->
 						</div>
 					</div>
 					
