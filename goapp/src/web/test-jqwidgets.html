@@ -75,6 +75,12 @@
 			var theme = 'metrodark';
 			initJqx( $('body'), theme );
 			
+			/*
+			$("#exp_tree").jqxExpander({ toggleMode: 'none', showArrow: false, width: "100%", height: "100%",  initContent: function () {
+				$('#tree_particle').jqxTree({ width: '100%', height: '100%' });
+			}});
+			*/
+	
 			var ary_props = [ 	{id:'lifetime', name:'生命'}, 
 								{id:'mass', name:'質量'}, 
 							/*	{id:'pos_x', name:'位置x'}, 
@@ -114,11 +120,11 @@
 				<div>
 					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
 						<div>
-							<div id="exp_tree" jqx="jqxExpander"data-options='{"toggleMode":"none","width":"100%","height":"100%","showArrow":false}'>
+							<div id="exp_tree" jqx="jqxExpander" data-options='{"toggleMode":"none","width":"100%","height":"100%","showArrow":false}'>
 								<div>
 									樹狀圖
 								</div>
-								<div>
+								<div class="">
 									<div class="group" style="text-align:center;">
 										<div class="hori">
 											<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
