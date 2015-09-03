@@ -37,6 +37,80 @@
     :emit-times 0
     :forceVel [0 0 0]
   })
+  
+  
+(defn jsobj->target [jsobj]
+  (condp = jsobj
+    "x"
+    [:pos 0]
+    
+    "y"
+    [:pos 1]
+    
+    "rot"
+    [:pos 2]
+    
+    "vx"
+    [:vel 0]
+    
+    "vy"
+    [:vel 1]
+    
+    "vr"
+    [:vel 2]
+    
+    "scale-x"
+    [:size 0]
+    
+    "scale-y"
+    [:size 1]
+    
+    "r"
+    [:color 0]
+    
+    "g"
+    [:color 1]
+    
+    "b"
+    [:color 2]
+    
+    "a"
+    [:color 3]
+    
+    "emit-angle"
+    [:emit :angle]
+    
+    "emit-range"
+    [:emit :range]
+    
+    "emit-count"
+    [:emit :count]
+    
+    "emit-duration"
+    [:emit :duration]
+    
+    "emit-force"
+    [:emit :force]
+    nil))
+  
+(defn jsobj->formula [jsobj]
+  (let [target (get jsobj 0)
+        type (get jsobj 1)
+        p1 (get jsobj 2)
+        p2 (get jsobj 3)
+        p3 (get jsobj 4)
+        p4 (get jsobj 5)
+        p5 (get jsobj 6)]
+    (when-let [t (jsobj->target target)]
+      (when-let [f
+                (condp = type
+                  "linear"
+                  (fn [life v]
+                    (let [offset (- p2 p1)
+                          adj (+ p1 (* offset life))]
+                      (+ 0 adj)))
+                  nil)]
+        [t f]))))
 
 (defn jsobj->particle [jsobj]
   (let [obj 
@@ -46,9 +120,21 @@
               [(keyword k) v])
             (js->clj jsobj)))
             
+        formula
+        (if (:formulaList obj)
+          (assoc obj :formulaList
+            (reduce
+              (fn [all curr]
+                (if-let [f (jsobj->formula curr)]
+                  (cons f all)
+                  all))
+              '()
+              (:formulaList obj)))
+          obj)
+            
         emit
-        (if (:emit obj)
-          (update-in obj [:emit]
+        (if (:emit formula)
+          (update-in formula [:emit]
             (fn [ori]
               (->
                 (into {}
@@ -59,7 +145,7 @@
                 (update-in
                   [:prototype]
                   (fn [ps] (mapv jsobj->particle ps))))))
-          obj)]
+          formula)]
     (particle emit)))
 
 (defn updatePos [{pos :pos vel :vel fvel :forceVel :as particle} t]

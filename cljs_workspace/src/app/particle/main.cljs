@@ -74,21 +74,29 @@
             "id" "x1"
             "emit" 
             (js-obj
-              "duration" 1
+              "duration" 0.05
               "angle" 0
-              "force" 100
-              "range" 6.28
+              "force" 200
+              "range" 0
               "prototype"
               (array
                 (js-obj
                   "position" (array 0 0 0)
                   "color" (array 1 0 1 1)
                   "size" (array 10 20)
-                  "vel" (array 100 0 3.14))))
+                  "vel" (array 0 0 3.14))))
             "color" (array 0 0 1 1)
             "size" (array 30 10)
             "pos" (array 10 10 0) 
-            "vel" (array 100 100 0)))))
+            "vel" (array 0 0 0)
+            "formulaList"
+            (array
+              (array "vx" "linear" 300 -300 0 0 0)
+              (array "vy" "linear" 300 -300 0 0 0)
+              (array "emit-angle" "linear" 0 6.28 0 0 0)
+              (array "emit-force" "linear" 100 2000 0 0 0)
+              )
+            ))))
             
     (comment "end let")))
   
