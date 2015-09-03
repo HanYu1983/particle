@@ -1,0 +1,268 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		
+		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.base.css" type="text/css" />
+		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.metrodark.css" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="res/css/normalize.css">
+			
+		<script type="text/javascript" src="res/js/lib/jquery/jquery-1.11.1.min.js"></script>	
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxcore.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxbuttons.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxsplitter.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxdragdrop.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxInput.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxtree.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxNumberInput.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxexpander.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxscrollbar.js"></script>
+			
+		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
+		
+	</head>
+	<style>
+	body{
+		padding:0;
+		position:absolute;
+		width:100%;
+		height:100%;
+		
+	}
+	input{
+		font-family:Microsoft JhengHei;
+	}
+	
+	.hori{
+		display:inline-block;
+	}
+	
+	.group{
+		position:relative; 
+		width:100%;
+	}
+	</style>
+	<script id="tmpl_prop" type="jquery-x-tmpl">
+		<div proptype=${id} class="hori" style="margin-bottom:5px;">
+			<div class="hori" style="width:60px; text-align:right;">${name}</div>
+			<div class="hori">
+				<div id="spr_value" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+			</div>
+			<div class="hori">
+				<input jqx="jqxButton" type="button" value="察看" />
+			</div>
+		</div>
+	</script>
+	<script type="text/javascript">
+					
+		function initJqx( root, theme ){
+			root.find('[jqx]').each( function( id, dom ){
+				var jdom = $( dom );
+				var jqxType = jdom.attr( 'jqx' );
+				var constr = jdom.attr( 'data-options' );
+				var constrobj;
+				if( constr == undefined ){
+					constrobj = {};
+				}else{
+					constrobj = JSON.parse( constr );
+				}
+				constrobj.theme = theme;
+				jdom[jqxType]( constrobj );
+			});
+		}
+	
+         $(document).ready(function () {
+			var theme = 'metrodark';
+			initJqx( $('body'), theme );
+			
+			var ary_props = [ 	{id:'lifetime', name:'生命'}, 
+								{id:'mass', name:'質量'}, 
+							/*	{id:'pos_x', name:'位置x'}, 
+								{id:'pos_y', name:'位置y'}, */
+								{id:'pos_r', name:'角度'}, 
+								{id:'vel_x', name:'速度x'}, 
+								{id:'vel_y', name:'速度y'}, 
+								{id:'vel_r', name:'旋轉速度'}, 
+								{id:'size_x', name:'粒子寬度'}, 
+								{id:'size_y', name:'粒子高度'}, 
+								{id:'count', name:'發射數目'}, 
+								{id:'duration', name:'週期毫秒'}, 
+								{id:'angle', name:'發射角度'}, 
+								{id:'range', name:'發射範圍'}, 
+								{id:'force', name:'發射力道'}];
+								
+			var tmpl_prop = $('#tmpl_prop' );
+			var mc_props_container = $('#mc_props_container');
+			
+			for( var i = 0; i < ary_props.length; ++i ){
+				var jdom = tmpl_prop.tmpl( ary_props[i] ) ;
+				initJqx( jdom, theme );
+				mc_props_container.append( jdom );
+			}
+			
+         });
+		 
+			 
+		
+    </script>
+	
+</head>
+<body>
+	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{"size":"80%","collapsible":false}, {"collapsed":false}]}'>
+		<div>
+			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": "250px" }]}'>
+				<div>
+					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
+						<div>
+							<div id="exp_tree" jqx="jqxExpander"data-options='{"toggleMode":"none","width":"100%","height":"100%","showArrow":false}'>
+								<div>
+									樹狀圖
+								</div>
+								<div>
+									<div class="group" style="text-align:center;">
+										<div class="hori">
+											<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
+										</div>
+										<div class="hori">
+											<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+										</div>
+									</div>	
+									<ul id="tree_particle" jqx="jqxTree" data-options='{"allowDrag": true, "allowDrop": true, "height": "100%", "width": "100%"}'>
+										<ul>
+											<li id='home' item-selected='true'>Home</li>
+											<li item-expanded='true'>Solutions
+												<ul>
+													<li>Education</li>
+												</ul>
+											</li>
+											<li>Financial services</li>
+											<li>Community</li>
+										</ul>
+									</ul>
+								</div>
+							</div>
+							
+						</div>
+						<div>
+							<div jqx="jqxExpander" data-options='{"toggleMode":"none","width":"100%","height":"100%","showArrow":false}'>
+								<div>
+									初始屬性
+								</div>
+								<div>
+									<div class="group" style="text-align:center; margin-bottom:10px; ">
+										<div class="hori" style="width:100px; ">
+											<input id="txt_name" type="text" jqx="jqxInput" style="width:100%; " >
+										</div>
+										<div class="hori">
+											<input id="btn_confirmName" type="button" jqx="jqxButton" value="確定" >
+										</div>
+									</div>
+									<div id="mc_props_container" class="group" style="min-width:150px;" >
+										<!-- created by script -->
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<div>
+					
+				</div>
+			</div>
+		</div>
+		<div></div>
+		
+		<!--
+		<div data-options="region:'west',split:true" title="樹狀圖" style="width:230px;">
+			<div class="easyui-layout" style="width:100%;height:100%;">
+				<div data-options="region:'north',split:true" style="height:200px">
+					<div class="group" style="text-align:center;">
+						<div class="hori">
+							<a href="#" id="btn_addTreeNode" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
+						</div>
+						<div class="hori">
+							<a href="#" id="btn_removeTreeNode" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
+						</div>
+					</div>	
+					<ul id="tree_particle" class="easyui-tree" data-options="animate:true,checkbox:false,dnd:true">
+						<li>
+							<span>root</span>
+						</li>
+					</ul>
+				</div>
+				
+				<div title="初始屬性" data-options="region:'center'" style="padding:10px;">
+					<div class="group" style="text-align:center; margin-bottom:10px; ">
+						<div class="hori" style="width:100px; ">
+							<input id="txt_name" class="easyui-textbox" data-options="prompt:'輸入名稱'" style="width:100%;" >
+						</div>
+						<div class="hori">
+							<a href="#" id="btn_confirmName" class="easyui-linkbutton" data-options="iconCls:'icon-ok'">確定</a>
+						</div>
+					</div>
+					<div id="mc_props_container" class="group" style="min-width:150px;" >
+						
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+		<div data-options="region:'center'" style="width:100%; height:100%">
+			<div id="canvas_container" style="width:100%; height:100%">
+				<canvas id='webgl'></canvas>
+			</div>
+		</div>
+		<div title="動態屬性" data-options="region:'south',split:true,collapsed:false" style="width:100%; height:200px; padding:10px;">
+			<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
+				<div class="hori">
+					<a href="#" id="btn_addDynamic" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">刪除</a>
+					<a href="#" class="easyui-linkbutton" >上移</a>
+					<a href="#" class="easyui-linkbutton" >下移</a>
+				</div>
+				<div class="hori">
+					<select id="combo_props" name="state" style="width:80px;">
+						
+					</select>
+				</div>
+				<div class="hori">
+					<select class="easyui-combobox" name="state" style="width:80px;">
+						<option>none</option>
+						<option>sin</option>
+						<option>cos</option>
+						<option>custom</option>
+					</select>
+				</div>
+				<div class="hori">
+					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
+				</div>
+			</div>
+			<div class="group" style="text-align:center">
+				<div class="hori" style="width:758px;">
+					<table id="table_props" style="width:100%;"
+						data-options="singleSelect:true,collapsible:false,remoteSort:false,multiSort:false">
+						<thead>
+							<tr>
+								<th data-options="field:'name',width:100,sortable:false" >屬性</th>
+								<th data-options="field:'type',width:100,sortable:false" >動態類型</th>
+								<th data-options="field:'value1',width:100,sortable:false" >參數1</th>
+								<th data-options="field:'value2',width:100,sortable:false" >參數2</th>
+								<th data-options="field:'value3',width:100,sortable:false" >參數3</th>
+								<th data-options="field:'value4',width:100,sortable:false" >參數4</th>
+								<th data-options="field:'value5',width:100,sortable:false" >參數5</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+		-->
+	</div>
+</body>
+</html>

@@ -409,6 +409,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
+		return;
 		var foreachObj;
 		var foreachObj1 = null;
 		foreachObj1 = function(obj,pid) {
@@ -433,6 +434,7 @@ view_DynamicView.__super__ = model_Model;
 view_DynamicView.prototype = $extend(model_Model.prototype,{
 	init: function() {
 		model_Model.prototype.init.call(this);
+		return;
 		this.table_props = this.config.table_props;
 		this.table_props.datagrid();
 	}
@@ -478,6 +480,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
+		return;
 		this.root = this.config.root;
 		this.root.find(".easyui-numberspinner-code").numberspinner({ onChange : function(newv,oldv) {
 			var newValue = parseFloat(newv);
@@ -540,24 +543,20 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 		return this.tree_particle.tree("getRoots");
 	}
 	,getRootNode: function() {
-		return this.tree_particle.tree("getRoot");
+		return { };
 	}
 	,setNodeNameById: function(id,name) {
-		haxe_Log.trace(id,{ fileName : "TreeView.hx", lineNumber : 36, className : "view.TreeView", methodName : "setNodeNameById", customParams : [name]});
+		haxe_Log.trace(id,{ fileName : "TreeView.hx", lineNumber : 38, className : "view.TreeView", methodName : "setNodeNameById", customParams : [name]});
 		this.tree_particle.tree("update",{ target : this.findNode(id).target, text : name});
 	}
 	,findNode: function(nodeId) {
-		var _g = this.tree_particle.tree("find",nodeId);
-		var node = _g;
-		if(_g == null) return this.getRootNode(); else switch(_g) {
-		default:
-			return node;
-		}
+		return { };
 	}
 	,removeNode: function(nodeId) {
 		this.tree_particle.tree("remove",this.findNode(nodeId).target);
 	}
 	,focusNode: function(node) {
+		return;
 		this.tree_particle.tree("select",node.target);
 		this.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : node});
 	}
@@ -572,6 +571,7 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
+		return;
 		this.tree_particle = this.config.tree_particle;
 		this.tree_particle.tree({ onClick : function(node) {
 			_g.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : node});

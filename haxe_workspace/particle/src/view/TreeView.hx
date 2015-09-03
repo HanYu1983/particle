@@ -24,12 +24,14 @@ class TreeView extends Model
 	}
 	
 	public function getRoots() {
+		
 		return tree_particle.tree('getRoots' );
 	}
 	
 	public function getRootNode():Dynamic 
 	{
-		return tree_particle.tree( 'getRoot' );
+		return { };
+		//return tree_particle.tree( 'getRoot' );
 	}
 	
 	public function setNodeNameById( id:Int, name:String ) {
@@ -42,10 +44,12 @@ class TreeView extends Model
 	
 	public function findNode(nodeId:Int):Dynamic 
 	{
+		return { };
+		/*
 		return switch( tree_particle.tree('find', nodeId) ) {
 			case null: getRootNode();
 			case node: node;
-		}
+		}*/
 	}
 	
 	public function removeNode( nodeId:Dynamic ):Void {
@@ -53,6 +57,7 @@ class TreeView extends Model
 	}
 	
 	public function focusNode( node:Dynamic ) {
+		return ;
 		tree_particle.tree( 'select', node.target);
 		notify( ON_TREE_NODE_CLICK, {node:node} );
 	}
@@ -76,6 +81,8 @@ class TreeView extends Model
 	override function init() 
 	{
 		super.init();
+		
+		return;
 		
 		tree_particle = config.tree_particle;
 		tree_particle.tree( {

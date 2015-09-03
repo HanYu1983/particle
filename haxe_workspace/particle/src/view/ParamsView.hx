@@ -66,6 +66,8 @@ class ParamsView extends Model
 	{
 		super.init();
 		
+		return;
+		
 		root = config.root;
 		root.find( '.easyui-numberspinner-code' ).numberspinner( {
 			onChange:function(newv, oldv ) {
