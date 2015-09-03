@@ -24,8 +24,8 @@
     
     ; 發送model事件
     (go-loop []
-      (let [data (<! onModel)]
-        (.onNext js/common.onModel data)
+      (let [[err data request] (<! onModel)]
+        (.onNext js/common.onModel (array err data request))
         (recur)))
         
     ; update event
@@ -44,7 +44,8 @@
         {
           :timer 0
           :part {:ps '()}
-          :centerPos [100 0]
+          :centerPos [0 0]
+          :onModel onModel
         } 
       ]
       (let [[v ch] (alts! [onView onTick])]

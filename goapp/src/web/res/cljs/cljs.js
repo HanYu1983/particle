@@ -30,7 +30,7 @@ goog.addDependency("../test/stock2.js", ['test.stock2'], ['cljs.core', 'ai.ann']
 goog.addDependency("../test/stock5.js", ['test.stock5'], ['cljs.core', 'cljs.core.async', 'clojure.string']);
 goog.addDependency("../test/stock.js", ['test.stock'], ['cljs.core', 'cljs.core.async', 'ai.ann']);
 goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
-goog.addDependency("../app/particle/impl.js", ['app.particle.impl'], ['cljs.core', 'tool.particle', 'app.particle.abstract$']);
+goog.addDependency("../app/particle/impl.js", ['app.particle.impl'], ['cljs.core', 'cljs.core.async', 'tool.particle', 'app.particle.abstract$']);
 goog.addDependency("../test/stock6.js", ['test.stock6'], ['stock.formula', 'cljs.core', 'cljs.core.async', 'stock.tool', 'stock.drawer']);
 goog.addDependency("../app/stock/main.js", ['app.stock.main'], ['app.stock.abstract$', 'cljs.core', 'cljs.core.async', 'app.dbfile', 'app.stock.impl']);
 goog.addDependency("../test/stock4.js", ['test.stock4'], ['cljs.core', 'cljs.core.async', 'clojure.string']);

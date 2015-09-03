@@ -1,5 +1,12 @@
 <html>
 	<body>
+		<form name=info>
+			<input type=number value=100 name="x">
+			<input type=number value=100 name="y">
+		</form>
+		<button onclick='api.changeCenterPos(parseInt(document.info.x.value), parseInt(document.info.y.value))'>change center</button>
+		<button onclick='api.info(function(){ console.log(arguments) })'>info</button>
+		<br>
 		<canvas id='webgl' width=800 height=600></canvas>
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script src='res/js/lib/async.js'></script>

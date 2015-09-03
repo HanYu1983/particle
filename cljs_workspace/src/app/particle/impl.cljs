@@ -1,5 +1,8 @@
 (ns app.particle.impl
+  (:require-macros
+    [cljs.core.async.macros :as am])
   (:require
+    [cljs.core.async :as a]
     [tool.particle :as part]
     [app.particle.abstract :as abstract]))
     
@@ -30,6 +33,10 @@
       (-> ctx
         (update-in [:part :ps] conj newpart)))))
 
-(defmethod abstract/onViewCommand "edit-center" [_ data ctx]
+(defmethod abstract/onViewCommand "edit-centerPos" [_ data ctx]
   (assoc-in ctx [:centerPos] (js->clj data)))
 
+(defmethod abstract/onViewCommand "info" [_ data {onModel :onModel :as ctx}]
+  (am/go
+    (a/>! onModel [nil (js-obj "count" (count (get-in ctx [:part :ps]))) data]))
+  ctx)
