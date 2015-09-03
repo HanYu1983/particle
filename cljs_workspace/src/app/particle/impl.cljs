@@ -30,3 +30,6 @@
       (-> ctx
         (update-in [:part :ps] conj newpart)))))
 
+(defmethod abstract/onViewCommand "edit-center" [_ data ctx]
+  (assoc-in ctx [:centerPos] (js->clj data)))
+

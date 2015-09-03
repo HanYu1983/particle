@@ -11,6 +11,7 @@
 (defn draw2D [canvas]
   (let [canvas-dom (aget canvas 0)
         canvas-ctx (.getContext canvas-dom "2d")]
+        
     (fn [{{ps :ps} :part :as ctx}]
       (doto canvas-ctx
         (aset "fillStyle" "white")
@@ -39,44 +40,43 @@
         mesh (mesh/plain gl)
         sprite-shader (shader/spriteProgramObject gl)
         [cw ch] [(.-width canvas-dom) (.-height canvas-dom)]]
-    (fn [{timer :timer {ps :ps} :part :as ctx}]
+        
+    (fn [{[cx cy] :centerPos timer :timer {ps :ps} :part :as ctx}]
       (.viewport gl 0 0 cw ch)
       (.clearColor gl 0 0 0 1)
       (.clear gl (.-COLOR_BUFFER_BIT gl))
     
       (.enable gl (.-BLEND gl))
-      (.blendFunc gl (.-ONE gl) (.-ONE gl))
+      (.blendFunc gl (.-SRC_ALPHA gl) (.-ONE gl))
     
-      (when-some [faceImg (get-in ctx [:image :face])]
-        (let [tex (cacheTex gl faceImg)]
-          (shader/use gl sprite-shader
-            (fn [pobj] 
-              (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color :as p} ps]
-                (let [proj 
-                      (doto (js/THREE.Matrix4.) 
-                            (.makeOrthographic 0 cw ch 0 1 -1))
-                    
-                      tras 
-                      (doto (js/THREE.Matrix4.)
-                            (.makeTranslation x y 0)
-                            (.multiply (-> (js/THREE.Matrix4.) (.makeRotationZ rot)))
-                            (.multiply (-> (js/THREE.Matrix4.) (.makeScale xs ys 1))))
-                    
-                      texTx 
-                      (doto (js/THREE.Matrix3.))
-                    
-                      colorTx 
-                      (doto (js/THREE.Matrix4.) 
-                            (.makeTranslation r g b))]
-                  (mesh/bind gl mesh :vertex (get-in pobj [:attrs :a_position]))
-                  (mesh/bind gl mesh :texture (get-in pobj [:attrs :a_texCoord]))
-                  (shader/uniform gl pobj
-                    [:u_projection "m4fv" (.-elements proj)]
-                    [:u_transform "m4fv" (.-elements tras)]
-                    [:u_tex "s2d" [tex 0]]
-                    [:u_texTransform "m3fv" (.-elements texTx)]
-                    [:u_colorTransform "m4fv" (.-elements colorTx)])
-                  (mesh/draw gl mesh nil)))))))
+      (shader/use gl sprite-shader
+        (fn [pobj] 
+          (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color :as p} ps]
+            (let [proj 
+                  (doto (js/THREE.Matrix4.) 
+                        (.makeOrthographic 0 cw ch 0 1 -1))
+                
+                  tras 
+                  (doto (js/THREE.Matrix4.)
+                        (.makeTranslation (+ cx x) (+ cy y) 0)
+                        (.multiply (-> (js/THREE.Matrix4.) (.makeRotationZ rot)))
+                        (.multiply (-> (js/THREE.Matrix4.) (.makeScale xs ys 1))))
+                
+                  texTx 
+                  (doto (js/THREE.Matrix3.))
+                
+                  colorTx 
+                  (doto (js/THREE.Matrix4.) 
+                        (.makeTranslation r g b))]
+              (mesh/bind gl mesh :vertex (get-in pobj [:attrs :a_position]))
+              (mesh/bind gl mesh :texture (get-in pobj [:attrs :a_texCoord]))
+              (shader/uniform gl pobj
+                [:u_projection "m4fv" (.-elements proj)]
+                [:u_transform "m4fv" (.-elements tras)]
+                ;[:u_tex "s2d" [tex 0]]
+                [:u_texTransform "m3fv" (.-elements texTx)]
+                [:u_colorTransform "m4fv" (.-elements colorTx)])
+              (mesh/draw gl mesh nil)))))
               
       (.disable gl (.-BLEND gl))
       ctx)))
