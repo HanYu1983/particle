@@ -105,7 +105,6 @@ class Main
 											slideMessage( '錯誤', err );
 											#else
 											Browser.alert( '程式崩潰，請重新整理' );
-											Browser.window.location.reload();
 											#end
 									}
 								});

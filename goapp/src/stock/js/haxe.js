@@ -137,7 +137,6 @@ var Main = function() {
 							break;
 						default:
 							js_Browser.alert("程式崩潰，請重新整理");
-							window.location.reload();
 						}
 					});
 					break;
@@ -205,7 +204,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 160, className : "Main", methodName : "new", customParams : [params3]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 159, className : "Main", methodName : "new", customParams : [params3]});
 		_g.saver.startAuto();
 		switch(type2) {
 		case "on_init":
