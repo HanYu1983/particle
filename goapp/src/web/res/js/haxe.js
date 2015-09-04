@@ -1,45 +1,12 @@
 (function (console) { "use strict";
-var $estr = function() { return js_Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EReg = function(r,opt) {
-	opt = opt.split("u").join("");
-	this.r = new RegExp(r,opt);
-};
-EReg.__name__ = ["EReg"];
-EReg.prototype = {
-	r: null
-	,match: function(s) {
-		if(this.r.global) this.r.lastIndex = 0;
-		this.r.m = this.r.exec(s);
-		this.r.s = s;
-		return this.r.m != null;
-	}
-	,matched: function(n) {
-		if(this.r.m != null && n >= 0 && n < this.r.m.length) return this.r.m[n]; else throw new js__$Boot_HaxeError("EReg::matched");
-	}
-	,__class__: EReg
-};
 var HxOverrides = function() { };
-HxOverrides.__name__ = ["HxOverrides"];
-HxOverrides.cca = function(s,index) {
-	var x = s.charCodeAt(index);
-	if(x != x) return undefined;
-	return x;
-};
-HxOverrides.substr = function(s,pos,len) {
-	if(pos != null && pos != 0 && len != null && len < 0) return "";
-	if(len == null) len = s.length;
-	if(pos < 0) {
-		pos = s.length + pos;
-		if(pos < 0) pos = 0;
-	} else if(len < 0) len = s.length + len - pos;
-	return s.substr(pos,len);
-};
+HxOverrides.__name__ = true;
 HxOverrides.indexOf = function(a,obj,i) {
 	var len = a.length;
 	if(i < 0) {
@@ -66,7 +33,7 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
-Lambda.__name__ = ["Lambda"];
+Lambda.__name__ = true;
 Lambda.map = function(it,f) {
 	var l = new List();
 	var $it0 = $iterator(it)();
@@ -75,6 +42,14 @@ Lambda.map = function(it,f) {
 		l.add(f(x));
 	}
 	return l;
+};
+Lambda.foreach = function(it,f) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		if(!f(x)) return false;
+	}
+	return true;
 };
 Lambda.find = function(it,f) {
 	var $it0 = $iterator(it)();
@@ -87,444 +62,145 @@ Lambda.find = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
-List.__name__ = ["List"];
+List.__name__ = true;
 List.prototype = {
-	h: null
-	,q: null
-	,length: null
-	,add: function(item) {
+	add: function(item) {
 		var x = [item];
 		if(this.h == null) this.h = x; else this.q[1] = x;
 		this.q = x;
 		this.length++;
 	}
-	,__class__: List
 };
-Math.__name__ = ["Math"];
-var Reflect = function() { };
-Reflect.__name__ = ["Reflect"];
-Reflect.field = function(o,field) {
-	try {
-		return o[field];
-	} catch( e ) {
-		haxe_CallStack.lastException = e;
-		if (e instanceof js__$Boot_HaxeError) e = e.val;
-		return null;
+var Main = function() {
+	this.model = new model_PanelModel();
+	this.dynamicView = new view_DynamicView();
+	this.paramsView = new view_ParamsView();
+	this.treeController = new view_TreeController();
+	this.canvas_container = Main.j("#canvas_container");
+	this.webgl = Main.j("#webgl");
+	this.onResize(null);
+	Main.j(window).resize($bind(this,this.onResize));
+	this.webgl.mousemove($bind(this,this.onMousemove));
+	Reflect.setField(window,"haxeStart",$bind(this,this.haxeStart));
+};
+Main.__name__ = true;
+Main.createNewEmit = function() {
+	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 0};
+};
+Main.showLoading = function() {
+	Main.j.messager.progress({ title : "Please waiting", msg : "Loading data..."});
+};
+Main.closeLoading = function() {
+	Main.j.messager.progress("close");
+};
+Main.showMessage = function(msg) {
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
+};
+Main.getId = function() {
+	return Main.id++;
+};
+Main.updateParticle = function(particleData) {
+	common.onView.onNext(["edit-particle",particleData]);
+};
+Main.addMouseWheelEvent = function(jdom,func) {
+	leo.utils.addMouseWheelEvent(jdom,func);
+};
+Main.removeMouseWheelEvent = function(jdom) {
+	leo.utils.removeMouseWheelEvent(jdom);
+};
+Main.main = function() {
+	new Main();
+};
+Main.prototype = {
+	createNewParticle: function(id) {
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
+	}
+	,haxeStart: function() {
+		var _g = this;
+		this.treeController.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
+		this.treeController.addHandler(function(type,params) {
+			switch(type) {
+			case "ON_BTN_REMOVE_TREE_NODE_CLICK":
+				var selectItem = _g.treeController.getSelectItem();
+				_g.model.removeParticle(selectItem.id);
+				break;
+			case "ON_BTN_ADD_TREE_NODE_CLICK":
+				var newId = Main.getId();
+				var parentItem = _g.treeController.getSelectItem();
+				_g.model.addParticle(newId,parentItem.id,_g.createNewParticle(newId));
+				break;
+			case "ON_TREE_NODE_CLICK":
+				var item = params.item;
+				_g.paramsView.setValues(_g.model.findParticleById(item.id),item.hasItems);
+				break;
+			}
+		});
+		this.paramsView.addHandler(function(type1,params1) {
+			haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "haxeStart", customParams : [params1]});
+			switch(type1) {
+			case "ON_PROP_CHANGE":
+				_g.model.setParticleProps(params1.id,params1.proptype,params1.value);
+				break;
+			case "ON_TXT_NAME_CHANGE":
+				_g.model.setParticleName(params1.id,params1.name);
+				break;
+			}
+		});
+		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
+		this.dynamicView.set_config({ table_props : Main.j("#table_props")});
+		this.model.addHandler(function(type2,params2) {
+			haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 98, className : "Main", methodName : "haxeStart", customParams : [params2]});
+			switch(type2) {
+			case "ON_ADD_PARTICLE":
+				var _g1 = _g.treeController.getItemById(params2.parentId);
+				var parentItem1 = _g1;
+				if(_g1 == null) _g.treeController.addToWithLabel(params2.id,params2.particle.name); else switch(_g1) {
+				default:
+					_g.treeController.addToWithLabel(params2.id,params2.particle.name,parentItem1);
+				}
+				break;
+			case "ON_REMOVE_PARTICLE":
+				_g.treeController.remove(_g.treeController.getItemById(params2.id).element);
+				break;
+			case "ON_NAME_CHANGE":
+				_g.treeController.setItemName(params2.id,params2.name);
+				break;
+			}
+		});
+		var initObj = this.createNewParticle(Main.getId());
+		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
+		this.model.set_config(initObj);
+		this.treeController.selectItem(this.treeController.getItemById("0").element);
+	}
+	,onResize: function(e) {
+		this.webgl.attr("width",this.canvas_container.width());
+		this.webgl.attr("height",this.canvas_container.height());
+	}
+	,onMousemove: function(e) {
+		var px = e.offsetX;
+		var py = e.offsetY;
+		this.model.setParticleProps(0,"pos_x",px);
+		this.model.setParticleProps(0,"pos_y",py);
 	}
 };
+Math.__name__ = true;
+var Reflect = function() { };
+Reflect.__name__ = true;
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
-Reflect.callMethod = function(o,func,args) {
-	return func.apply(o,args);
-};
-Reflect.isFunction = function(f) {
-	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
-};
 var Std = function() { };
-Std.__name__ = ["Std"];
+Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
-Std.parseInt = function(x) {
-	var v = parseInt(x,10);
-	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
-	if(isNaN(v)) return null;
-	return v;
-};
-var StringBuf = function() {
-	this.b = "";
-};
-StringBuf.__name__ = ["StringBuf"];
-StringBuf.prototype = {
-	b: null
-	,__class__: StringBuf
-};
-var StringTools = function() { };
-StringTools.__name__ = ["StringTools"];
-StringTools.htmlEscape = function(s,quotes) {
-	s = s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-	if(quotes) return s.split("\"").join("&quot;").split("'").join("&#039;"); else return s;
-};
-StringTools.startsWith = function(s,start) {
-	return s.length >= start.length && HxOverrides.substr(s,0,start.length) == start;
-};
-StringTools.isSpace = function(s,pos) {
-	var c = HxOverrides.cca(s,pos);
-	return c > 8 && c < 14 || c == 32;
-};
-StringTools.ltrim = function(s) {
-	var l = s.length;
-	var r = 0;
-	while(r < l && StringTools.isSpace(s,r)) r++;
-	if(r > 0) return HxOverrides.substr(s,r,l - r); else return s;
-};
-StringTools.rtrim = function(s) {
-	var l = s.length;
-	var r = 0;
-	while(r < l && StringTools.isSpace(s,l - r - 1)) r++;
-	if(r > 0) return HxOverrides.substr(s,0,l - r); else return s;
-};
-StringTools.trim = function(s) {
-	return StringTools.ltrim(StringTools.rtrim(s));
-};
-var Type = function() { };
-Type.__name__ = ["Type"];
-Type.getClassName = function(c) {
-	var a = c.__name__;
-	if(a == null) return null;
-	return a.join(".");
-};
-Type.getInstanceFields = function(c) {
-	var a = [];
-	for(var i in c.prototype) a.push(i);
-	HxOverrides.remove(a,"__class__");
-	HxOverrides.remove(a,"__properties__");
-	return a;
-};
-var haxe_StackItem = { __ename__ : true, __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
-haxe_StackItem.CFunction = ["CFunction",0];
-haxe_StackItem.CFunction.toString = $estr;
-haxe_StackItem.CFunction.__enum__ = haxe_StackItem;
-haxe_StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = haxe_StackItem; $x.toString = $estr; return $x; };
-haxe_StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe_StackItem; $x.toString = $estr; return $x; };
-haxe_StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe_StackItem; $x.toString = $estr; return $x; };
-haxe_StackItem.LocalFunction = function(v) { var $x = ["LocalFunction",4,v]; $x.__enum__ = haxe_StackItem; $x.toString = $estr; return $x; };
-var haxe_CallStack = function() { };
-haxe_CallStack.__name__ = ["haxe","CallStack"];
-haxe_CallStack.getStack = function(e) {
-	if(e == null) return [];
-	var oldValue = Error.prepareStackTrace;
-	Error.prepareStackTrace = function(error,callsites) {
-		var stack = [];
-		var _g = 0;
-		while(_g < callsites.length) {
-			var site = callsites[_g];
-			++_g;
-			if(haxe_CallStack.wrapCallSite != null) site = haxe_CallStack.wrapCallSite(site);
-			var method = null;
-			var fullName = site.getFunctionName();
-			if(fullName != null) {
-				var idx = fullName.lastIndexOf(".");
-				if(idx >= 0) {
-					var className = HxOverrides.substr(fullName,0,idx);
-					var methodName = HxOverrides.substr(fullName,idx + 1,null);
-					method = haxe_StackItem.Method(className,methodName);
-				}
-			}
-			stack.push(haxe_StackItem.FilePos(method,site.getFileName(),site.getLineNumber()));
-		}
-		return stack;
-	};
-	var a = haxe_CallStack.makeStack(e.stack);
-	Error.prepareStackTrace = oldValue;
-	return a;
-};
-haxe_CallStack.exceptionStack = function() {
-	return haxe_CallStack.getStack(haxe_CallStack.lastException);
-};
-haxe_CallStack.toString = function(stack) {
-	var b = new StringBuf();
-	var _g = 0;
-	while(_g < stack.length) {
-		var s = stack[_g];
-		++_g;
-		b.b += "\nCalled from ";
-		haxe_CallStack.itemToString(b,s);
-	}
-	return b.b;
-};
-haxe_CallStack.itemToString = function(b,s) {
-	switch(s[1]) {
-	case 0:
-		b.b += "a C function";
-		break;
-	case 1:
-		var m = s[2];
-		b.b += "module ";
-		if(m == null) b.b += "null"; else b.b += "" + m;
-		break;
-	case 2:
-		var line = s[4];
-		var file = s[3];
-		var s1 = s[2];
-		if(s1 != null) {
-			haxe_CallStack.itemToString(b,s1);
-			b.b += " (";
-		}
-		if(file == null) b.b += "null"; else b.b += "" + file;
-		b.b += " line ";
-		if(line == null) b.b += "null"; else b.b += "" + line;
-		if(s1 != null) b.b += ")";
-		break;
-	case 3:
-		var meth = s[3];
-		var cname = s[2];
-		if(cname == null) b.b += "null"; else b.b += "" + cname;
-		b.b += ".";
-		if(meth == null) b.b += "null"; else b.b += "" + meth;
-		break;
-	case 4:
-		var n = s[2];
-		b.b += "local function #";
-		if(n == null) b.b += "null"; else b.b += "" + n;
-		break;
-	}
-};
-haxe_CallStack.makeStack = function(s) {
-	if(s == null) return []; else if(typeof(s) == "string") {
-		var stack = s.split("\n");
-		if(stack[0] == "Error") stack.shift();
-		var m = [];
-		var rie10 = new EReg("^   at ([A-Za-z0-9_. ]+) \\(([^)]+):([0-9]+):([0-9]+)\\)$","");
-		var _g = 0;
-		while(_g < stack.length) {
-			var line = stack[_g];
-			++_g;
-			if(rie10.match(line)) {
-				var path = rie10.matched(1).split(".");
-				var meth = path.pop();
-				var file = rie10.matched(2);
-				var line1 = Std.parseInt(rie10.matched(3));
-				m.push(haxe_StackItem.FilePos(meth == "Anonymous function"?haxe_StackItem.LocalFunction():meth == "Global code"?null:haxe_StackItem.Method(path.join("."),meth),file,line1));
-			} else m.push(haxe_StackItem.Module(StringTools.trim(line)));
-		}
-		return m;
-	} else return s;
-};
 var haxe_Log = function() { };
-haxe_Log.__name__ = ["haxe","Log"];
+haxe_Log.__name__ = true;
 haxe_Log.trace = function(v,infos) {
 	js_Boot.__trace(v,infos);
 };
-var haxe_unit_TestCase = function() {
-};
-haxe_unit_TestCase.__name__ = ["haxe","unit","TestCase"];
-haxe_unit_TestCase.prototype = {
-	currentTest: null
-	,setup: function() {
-	}
-	,tearDown: function() {
-	}
-	,print: function(v) {
-		haxe_unit_TestRunner.print(v);
-	}
-	,assertTrue: function(b,c) {
-		this.currentTest.done = true;
-		if(b != true) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected true but was false";
-			this.currentTest.posInfos = c;
-			throw new js__$Boot_HaxeError(this.currentTest);
-		}
-	}
-	,assertFalse: function(b,c) {
-		this.currentTest.done = true;
-		if(b == true) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected false but was true";
-			this.currentTest.posInfos = c;
-			throw new js__$Boot_HaxeError(this.currentTest);
-		}
-	}
-	,assertEquals: function(expected,actual,c) {
-		this.currentTest.done = true;
-		if(actual != expected) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected '" + Std.string(expected) + "' but was '" + Std.string(actual) + "'";
-			this.currentTest.posInfos = c;
-			throw new js__$Boot_HaxeError(this.currentTest);
-		}
-	}
-	,__class__: haxe_unit_TestCase
-};
-var haxe_unit_TestResult = function() {
-	this.m_tests = new List();
-	this.success = true;
-};
-haxe_unit_TestResult.__name__ = ["haxe","unit","TestResult"];
-haxe_unit_TestResult.prototype = {
-	m_tests: null
-	,success: null
-	,add: function(t) {
-		this.m_tests.add(t);
-		if(!t.success) this.success = false;
-	}
-	,toString: function() {
-		var buf_b = "";
-		var failures = 0;
-		var _g_head = this.m_tests.h;
-		var _g_val = null;
-		while(_g_head != null) {
-			var test;
-			test = (function($this) {
-				var $r;
-				_g_val = _g_head[0];
-				_g_head = _g_head[1];
-				$r = _g_val;
-				return $r;
-			}(this));
-			if(test.success == false) {
-				buf_b += "* ";
-				if(test.classname == null) buf_b += "null"; else buf_b += "" + test.classname;
-				buf_b += "::";
-				if(test.method == null) buf_b += "null"; else buf_b += "" + test.method;
-				buf_b += "()";
-				buf_b += "\n";
-				buf_b += "ERR: ";
-				if(test.posInfos != null) {
-					buf_b += Std.string(test.posInfos.fileName);
-					buf_b += ":";
-					buf_b += Std.string(test.posInfos.lineNumber);
-					buf_b += "(";
-					buf_b += Std.string(test.posInfos.className);
-					buf_b += ".";
-					buf_b += Std.string(test.posInfos.methodName);
-					buf_b += ") - ";
-				}
-				if(test.error == null) buf_b += "null"; else buf_b += "" + test.error;
-				buf_b += "\n";
-				if(test.backtrace != null) {
-					if(test.backtrace == null) buf_b += "null"; else buf_b += "" + test.backtrace;
-					buf_b += "\n";
-				}
-				buf_b += "\n";
-				failures++;
-			}
-		}
-		buf_b += "\n";
-		if(failures == 0) buf_b += "OK "; else buf_b += "FAILED ";
-		buf_b += Std.string(this.m_tests.length);
-		buf_b += " tests, ";
-		if(failures == null) buf_b += "null"; else buf_b += "" + failures;
-		buf_b += " failed, ";
-		buf_b += Std.string(this.m_tests.length - failures);
-		buf_b += " success";
-		buf_b += "\n";
-		return buf_b;
-	}
-	,__class__: haxe_unit_TestResult
-};
-var haxe_unit_TestRunner = function() {
-	this.result = new haxe_unit_TestResult();
-	this.cases = new List();
-};
-haxe_unit_TestRunner.__name__ = ["haxe","unit","TestRunner"];
-haxe_unit_TestRunner.print = function(v) {
-	var msg = js_Boot.__string_rec(v,"");
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) {
-		msg = StringTools.htmlEscape(msg).split("\n").join("<br/>");
-		d.innerHTML += msg + "<br/>";
-	} else if(typeof process != "undefined" && process.stdout != null && process.stdout.write != null) process.stdout.write(msg); else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
-haxe_unit_TestRunner.customTrace = function(v,p) {
-	haxe_unit_TestRunner.print(p.fileName + ":" + p.lineNumber + ": " + Std.string(v) + "\n");
-};
-haxe_unit_TestRunner.prototype = {
-	result: null
-	,cases: null
-	,add: function(c) {
-		this.cases.add(c);
-	}
-	,run: function() {
-		this.result = new haxe_unit_TestResult();
-		var _g_head = this.cases.h;
-		var _g_val = null;
-		while(_g_head != null) {
-			var c;
-			c = (function($this) {
-				var $r;
-				_g_val = _g_head[0];
-				_g_head = _g_head[1];
-				$r = _g_val;
-				return $r;
-			}(this));
-			this.runCase(c);
-		}
-		haxe_unit_TestRunner.print(this.result.toString());
-		return this.result.success;
-	}
-	,runCase: function(t) {
-		var old = haxe_Log.trace;
-		haxe_Log.trace = haxe_unit_TestRunner.customTrace;
-		var cl;
-		if(t == null) cl = null; else cl = js_Boot.getClass(t);
-		var fields = Type.getInstanceFields(cl);
-		haxe_unit_TestRunner.print("Class: " + Type.getClassName(cl) + " ");
-		var _g = 0;
-		while(_g < fields.length) {
-			var f = fields[_g];
-			++_g;
-			var fname = f;
-			var field = Reflect.field(t,f);
-			if(StringTools.startsWith(fname,"test") && Reflect.isFunction(field)) {
-				t.currentTest = new haxe_unit_TestStatus();
-				t.currentTest.classname = Type.getClassName(cl);
-				t.currentTest.method = fname;
-				t.setup();
-				try {
-					Reflect.callMethod(t,field,[]);
-					if(t.currentTest.done) {
-						t.currentTest.success = true;
-						haxe_unit_TestRunner.print(".");
-					} else {
-						t.currentTest.success = false;
-						t.currentTest.error = "(warning) no assert";
-						haxe_unit_TestRunner.print("W");
-					}
-				} catch( $e0 ) {
-					haxe_CallStack.lastException = $e0;
-					if ($e0 instanceof js__$Boot_HaxeError) $e0 = $e0.val;
-					if( js_Boot.__instanceof($e0,haxe_unit_TestStatus) ) {
-						var e = $e0;
-						haxe_unit_TestRunner.print("F");
-						t.currentTest.backtrace = haxe_CallStack.toString(haxe_CallStack.exceptionStack());
-					} else {
-					var e1 = $e0;
-					haxe_unit_TestRunner.print("E");
-					if(e1.message != null) t.currentTest.error = "exception thrown : " + Std.string(e1) + " [" + Std.string(e1.message) + "]"; else t.currentTest.error = "exception thrown : " + Std.string(e1);
-					t.currentTest.backtrace = haxe_CallStack.toString(haxe_CallStack.exceptionStack());
-					}
-				}
-				this.result.add(t.currentTest);
-				t.tearDown();
-			}
-		}
-		haxe_unit_TestRunner.print("\n");
-		haxe_Log.trace = old;
-	}
-	,__class__: haxe_unit_TestRunner
-};
-var haxe_unit_TestStatus = function() {
-	this.done = false;
-	this.success = false;
-};
-haxe_unit_TestStatus.__name__ = ["haxe","unit","TestStatus"];
-haxe_unit_TestStatus.prototype = {
-	done: null
-	,success: null
-	,error: null
-	,method: null
-	,classname: null
-	,posInfos: null
-	,backtrace: null
-	,__class__: haxe_unit_TestStatus
-};
-var js__$Boot_HaxeError = function(val) {
-	Error.call(this);
-	this.val = val;
-	this.message = String(val);
-	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
-};
-js__$Boot_HaxeError.__name__ = ["js","_Boot","HaxeError"];
-js__$Boot_HaxeError.__super__ = Error;
-js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
-	val: null
-	,__class__: js__$Boot_HaxeError
-});
 var js_Boot = function() { };
-js_Boot.__name__ = ["js","Boot"];
+js_Boot.__name__ = true;
 js_Boot.__unhtml = function(s) {
 	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
 };
@@ -543,15 +219,6 @@ js_Boot.__trace = function(v,i) {
 	}
 	var d;
 	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
-js_Boot.getClass = function(o) {
-	if((o instanceof Array) && o.__enum__ == null) return Array; else {
-		var cl = o.__class__;
-		if(cl != null) return cl;
-		var name = js_Boot.__nativeClassName(o);
-		if(name != null) return js_Boot.__resolveNativeClass(name);
-		return null;
-	}
 };
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
@@ -589,8 +256,6 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
-			haxe_CallStack.lastException = e;
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -622,69 +287,12 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
-js_Boot.__interfLoop = function(cc,cl) {
-	if(cc == null) return false;
-	if(cc == cl) return true;
-	var intf = cc.__interfaces__;
-	if(intf != null) {
-		var _g1 = 0;
-		var _g = intf.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var i1 = intf[i];
-			if(i1 == cl || js_Boot.__interfLoop(i1,cl)) return true;
-		}
-	}
-	return js_Boot.__interfLoop(cc.__super__,cl);
-};
-js_Boot.__instanceof = function(o,cl) {
-	if(cl == null) return false;
-	switch(cl) {
-	case Int:
-		return (o|0) === o;
-	case Float:
-		return typeof(o) == "number";
-	case Bool:
-		return typeof(o) == "boolean";
-	case String:
-		return typeof(o) == "string";
-	case Array:
-		return (o instanceof Array) && o.__enum__ == null;
-	case Dynamic:
-		return true;
-	default:
-		if(o != null) {
-			if(typeof(cl) == "function") {
-				if(o instanceof cl) return true;
-				if(js_Boot.__interfLoop(js_Boot.getClass(o),cl)) return true;
-			} else if(typeof(cl) == "object" && js_Boot.__isNativeObj(cl)) {
-				if(o instanceof cl) return true;
-			}
-		} else return false;
-		if(cl == Class && o.__name__ != null) return true;
-		if(cl == Enum && o.__ename__ != null) return true;
-		return o.__enum__ == cl;
-	}
-};
-js_Boot.__nativeClassName = function(o) {
-	var name = js_Boot.__toStr.call(o).slice(8,-1);
-	if(name == "Object" || name == "Function" || name == "Math" || name == "JSON") return null;
-	return name;
-};
-js_Boot.__isNativeObj = function(o) {
-	return js_Boot.__nativeClassName(o) != null;
-};
-js_Boot.__resolveNativeClass = function(name) {
-	return (Function("return typeof " + name + " != \"undefined\" ? " + name + " : null"))();
-};
 var model_Model = function() {
 	this._ary_handler = [];
 };
-model_Model.__name__ = ["model","Model"];
+model_Model.__name__ = true;
 model_Model.prototype = {
-	_ary_handler: null
-	,config: null
-	,addHandler: function(handler) {
+	addHandler: function(handler) {
 		this._ary_handler.push(handler);
 	}
 	,notify: function(type,params) {
@@ -699,76 +307,245 @@ model_Model.prototype = {
 	}
 	,init: function() {
 	}
-	,__class__: model_Model
 };
-var test_Main = function() {
+var model_PanelModel = function() {
+	this._ary_partiles = [];
+	model_Model.call(this);
 };
-test_Main.__name__ = ["test","Main"];
-test_Main.main = function() {
-	Reflect.setField(window,"haxeStart",test_Main.haxeStart);
-};
-test_Main.haxeStart = function() {
-	var tr = new haxe_unit_TestRunner();
-	tr.add(new test_TestTree());
-	tr.run();
-};
-test_Main.prototype = {
-	__class__: test_Main
-};
-var test_TestTree = function() {
-	this.j = $;
-	this.tree = new view_component_TreeView();
-	haxe_unit_TestCase.call(this);
-	this.tree.set_config({ tree : this.j("#tree_particle")});
-};
-test_TestTree.__name__ = ["test","TestTree"];
-test_TestTree.__super__ = haxe_unit_TestCase;
-test_TestTree.prototype = $extend(haxe_unit_TestCase.prototype,{
-	tree: null
-	,j: null
-	,testAddTree: function() {
-		var items = this.tree.getItems();
-		this.assertEquals(items.length,0,{ fileName : "TestTree.hx", lineNumber : 27, className : "test.TestTree", methodName : "testAddTree"});
-		this.tree.addToWithLabel("553","root");
-		items = this.tree.getItems();
-		this.assertEquals(items.length,1,{ fileName : "TestTree.hx", lineNumber : 32, className : "test.TestTree", methodName : "testAddTree"});
-		this.tree.addToWithLabel("123","vic",this.tree.getItemById("553").element);
-		this.tree.addToWithLabel("234","han",this.tree.getItemById("123").element);
-		this.tree.addToWithLabel("3455","za");
-		items = this.tree.getItems();
-		this.assertEquals(items.length,4,{ fileName : "TestTree.hx", lineNumber : 39, className : "test.TestTree", methodName : "testAddTree"});
-		this.tree.remove(this.tree.getItemById("234").element);
-		this.tree.remove(this.tree.getItemById("553").element);
-		this.assertEquals(items.length,1,{ fileName : "TestTree.hx", lineNumber : 43, className : "test.TestTree", methodName : "testAddTree"});
-		this.tree.addToWithLabel("1234","za11");
-		this.tree.addToWithLabel("2456","za22");
-		this.tree.addToWithLabel("577","za24");
-		items = this.tree.getItems();
-		this.assertEquals(items.length,4,{ fileName : "TestTree.hx", lineNumber : 50, className : "test.TestTree", methodName : "testAddTree"});
+model_PanelModel.__name__ = true;
+model_PanelModel.__super__ = model_Model;
+model_PanelModel.prototype = $extend(model_Model.prototype,{
+	addParticle: function(id,parentId,particle,extra) {
+		if(this.findParticleById(id)) return;
+		this._ary_partiles.push({ id : id, particle : particle});
+		this.notify(model_PanelModel.ON_ADD_PARTICLE,{ id : id, parentId : parentId, particle : particle});
 	}
-	,__class__: test_TestTree
+	,removeParticle: function(id,extra) {
+		if(!this.findParticleById(id)) return;
+		var x = this.findParticleById(id);
+		HxOverrides.remove(this._ary_partiles,x);
+		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
+	}
+	,setParticleName: function(id,name) {
+		if(!this.findParticleById(id)) return;
+		this.findParticleById(id).particle.name = name;
+		this.notify(model_PanelModel.ON_NAME_CHANGE,{ id : id, name : name});
+	}
+	,setParticleProps: function(id,type,value) {
+		if(!this.findParticleById(id)) return;
+		switch(type) {
+		case "size_x":
+			this.findParticleById(id).particle.size[0] = value;
+			break;
+		case "size_y":
+			this.findParticleById(id).particle.size[1] = value;
+			break;
+		case "pos_x":
+			this.findParticleById(id).particle.pos[0] = value;
+			break;
+		case "pos_y":
+			this.findParticleById(id).particle.pos[1] = value;
+			break;
+		case "pos_r":
+			this.findParticleById(id).particle.pos[2] = value;
+			break;
+		case "vel_x":
+			this.findParticleById(id).particle.vel[0] = value;
+			break;
+		case "vel_y":
+			this.findParticleById(id).particle.vel[1] = value;
+			break;
+		case "vel_r":
+			this.findParticleById(id).particle.vel[2] = value;
+			break;
+		case "count":case "duration":case "angle":case "range":case "force":
+			Reflect.setField(this.findParticleById(id).particle.emit,type,value);
+			break;
+		default:
+			Reflect.setField(this.findParticleById(id).particle,type,value);
+		}
+		this.notify(model_PanelModel.ON_PROPS_CAHNGE);
+	}
+	,findParticleById: function(id) {
+		return Lambda.find(this._ary_partiles,function(p) {
+			if(p.id == id) return true;
+			return false;
+		});
+	}
+	,getOutputData: function(node) {
+		var _g = this;
+		var retobj = { };
+		var _loopNode;
+		var _loopNode1 = null;
+		_loopNode1 = function(node1,outputData) {
+			var id = node1.id;
+			var particle = _g.findParticleById(id).particle;
+			outputData.id = particle.id;
+			outputData.name = particle.name;
+			outputData.lifetime = particle.lifetime;
+			outputData.vel = particle.vel;
+			outputData.pos = particle.pos;
+			outputData.mass = particle.mass;
+			outputData.color = particle.color;
+			outputData.size = particle.size;
+			if(node1.children && node1.children.length > 0) {
+				outputData.emit = { 'prototype' : []};
+				outputData.emit.count = particle.emit.count;
+				outputData.emit.duration = particle.emit.duration;
+				outputData.emit.angle = particle.emit.angle;
+				outputData.emit.range = particle.emit.range;
+				outputData.emit.force = particle.emit.force;
+				var _g2 = 0;
+				var _g1 = node1.children.length;
+				while(_g2 < _g1) {
+					var i = _g2++;
+					var obj = { };
+					outputData.emit.prototype.push(obj);
+					_loopNode1(node1.children[i],obj);
+				}
+			}
+		};
+		_loopNode = _loopNode1;
+		_loopNode(node,retobj);
+		return retobj;
+	}
+	,init: function() {
+		var _g = this;
+		model_Model.prototype.init.call(this);
+		var foreachObj;
+		var foreachObj1 = null;
+		foreachObj1 = function(obj,pid) {
+			_g.addParticle(obj.id,pid == null?999:pid,obj);
+			if(obj.emit != null && obj.emit.prototype != null) Lambda.foreach(obj.emit.prototype,function(_obj) {
+				foreachObj1(_obj,obj.id);
+				return true;
+			});
+		};
+		foreachObj = foreachObj1;
+		foreachObj(this.config);
+	}
+	,set_currentParticle: function(particle) {
+		return this.currentParticle = particle;
+	}
+});
+var view_DynamicView = function() {
+	model_Model.call(this);
+};
+view_DynamicView.__name__ = true;
+view_DynamicView.__super__ = model_Model;
+view_DynamicView.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		return;
+		this.table_props = this.config.table_props;
+		this.table_props.datagrid();
+	}
+});
+var view_ParamsView = function() {
+	this.j = $;
+	model_Model.call(this);
+};
+view_ParamsView.__name__ = true;
+view_ParamsView.__super__ = model_Model;
+view_ParamsView.prototype = $extend(model_Model.prototype,{
+	setValues: function(particleObj,isEmit) {
+		this.currentParticleObj = particleObj;
+		var particle = particleObj.particle;
+		this.txt_name.val(particle.name);
+		this.setPropValue("lifetime",particle.lifetime * 1000);
+		this.setPropValue("mass",particle.mass);
+		this.setPropValue("size_x",particle.size[0]);
+		this.setPropValue("size_y",particle.size[1]);
+		this.setPropValue("vel_x",particle.vel[0]);
+		this.setPropValue("vel_y",particle.vel[1]);
+		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
+		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
+	}
+	,init: function() {
+		var _g = this;
+		model_Model.prototype.init.call(this);
+		this.txt_name = this.config.txt_name;
+		this.txt_name.on("change",function() {
+			var value = _g.txt_name.val();
+			_g.notify(view_ParamsView.ON_TXT_NAME_CHANGE,{ id : _g.currentParticleObj.id, name : value});
+		});
+		this.root = this.config.root;
+	}
+	,setPropValue: function(type,value) {
+		this.getPropContainer(type).find("[jqx=\"jqxNumberInput\"]").jqxNumberInput("val",value);
+	}
+	,getPropContainer: function(type) {
+		haxe_Log.trace(this.root,{ fileName : "ParamsView.hx", lineNumber : 133, className : "view.ParamsView", methodName : "getPropContainer"});
+		return this.root.find("div[proptype=" + type + "]");
+	}
+	,onBodyWheel: function(e) {
+		if(this.currentPropSpr == null) return;
+		var oldvalue = this.currentPropSpr.numberspinner("getValue");
+		if(e.delta > 0) --oldvalue; else ++oldvalue;
+		this.currentPropSpr.numberspinner("setValue",oldvalue);
+	}
 });
 var view_component_ITreeView = function() { };
-view_component_ITreeView.__name__ = ["view","component","ITreeView"];
-view_component_ITreeView.prototype = {
-	getItems: null
-	,getItem: null
-	,getItemById: null
-	,addTo: null
-	,addToWithLabel: null
-	,remove: null
-	,selectItem: null
-	,__class__: view_component_ITreeView
+view_component_ITreeView.__name__ = true;
+var view_TreeController = function() {
+	this.tree = new view_component_TreeView();
+	model_Model.call(this);
 };
+view_TreeController.__name__ = true;
+view_TreeController.__interfaces__ = [view_component_ITreeView];
+view_TreeController.__super__ = model_Model;
+view_TreeController.prototype = $extend(model_Model.prototype,{
+	getItems: function() {
+		return this.tree.getItems();
+	}
+	,getItem: function(element) {
+		return this.tree.getItem(element);
+	}
+	,getItemById: function(id) {
+		return this.tree.getItemById(id);
+	}
+	,getSelectItem: function() {
+		return this.tree.getSelectItem();
+	}
+	,setItemName: function(id,label) {
+		this.tree.setItemName(id,label);
+	}
+	,addTo: function(element,parentElement) {
+		this.tree.addTo(element,parentElement);
+	}
+	,addToWithLabel: function(id,label,parentElement) {
+		this.tree.addToWithLabel(id,label,parentElement);
+	}
+	,remove: function(element) {
+		this.tree.remove(element);
+	}
+	,selectItem: function(element) {
+		this.tree.selectItem(element);
+	}
+	,init: function() {
+		var _g = this;
+		model_Model.prototype.init.call(this);
+		this.tree.set_config({ tree : this.config.tree_particle});
+		this.tree.addHandler(function(type,params) {
+			_g.notify(type,params);
+		});
+		this.btn_addTreeNode = this.config.btn_addTreeNode;
+		this.btn_removeTreeNode = this.config.btn_removeTreeNode;
+		this.btn_addTreeNode.click(function() {
+			_g.notify(view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK);
+		});
+		this.btn_removeTreeNode.click(function() {
+			_g.notify(view_TreeController.ON_BTN_REMOVE_TREE_NODE_CLICK);
+		});
+	}
+});
 var view_component_TreeView = function() {
 	model_Model.call(this);
 };
-view_component_TreeView.__name__ = ["view","component","TreeView"];
-view_component_TreeView.__interfaces__ = [view_component_ITreeView];
+view_component_TreeView.__name__ = true;
 view_component_TreeView.__super__ = model_Model;
 view_component_TreeView.prototype = $extend(model_Model.prototype,{
-	_tree: null
-	,getItems: function() {
+	getItems: function() {
 		return this._tree.jqxTree("getItems");
 	}
 	,getItem: function(element) {
@@ -778,6 +555,17 @@ view_component_TreeView.prototype = $extend(model_Model.prototype,{
 		return Lambda.find(this.getItems(),function(item) {
 			return item.id == id;
 		});
+	}
+	,getSelectItem: function() {
+		return this._selectItem;
+	}
+	,setItemName: function(id,label) {
+		var _g = this.getItemById(id);
+		var item = _g;
+		if(_g == null) return; else switch(_g) {
+		default:
+			this._tree.jqxTree("updateItem",item,{ label : label});
+		}
 	}
 	,addTo: function(element,parentElement) {
 		this._tree.jqxTree("addTo",element,parentElement);
@@ -801,10 +589,10 @@ view_component_TreeView.prototype = $extend(model_Model.prototype,{
 		this._tree = this.config.tree;
 		this._tree.on("select",function(event) {
 			var item = _g.getItem(event.args.element);
-			_g.notify(view_component_TreeView.ON_TREE_NODE_CLICK,{ id : item});
+			_g._selectItem = item;
+			_g.notify(view_component_TreeView.ON_TREE_NODE_CLICK,{ item : item});
 		});
 	}
-	,__class__: view_component_TreeView
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
@@ -812,21 +600,21 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
-String.prototype.__class__ = String;
-String.__name__ = ["String"];
-Array.__name__ = ["Array"];
-var Int = { __name__ : ["Int"]};
-var Dynamic = { __name__ : ["Dynamic"]};
-var Float = Number;
-Float.__name__ = ["Float"];
-var Bool = Boolean;
-Bool.__ename__ = ["Bool"];
-var Class = { __name__ : ["Class"]};
-var Enum = { };
-js_Boot.__toStr = {}.toString;
+String.__name__ = true;
+Array.__name__ = true;
+Main.j = $;
+Main.id = 0;
+model_PanelModel.ON_ADD_PARTICLE = "ON_ADD_PARTICLE";
+model_PanelModel.ON_REMOVE_PARTICLE = "ON_REMOVE_PARTICLE";
+model_PanelModel.ON_PROPS_CAHNGE = "ON_PROPS_CAHNGE";
+model_PanelModel.ON_NAME_CHANGE = "ON_NAME_CHANGE";
+view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
+view_ParamsView.ON_TXT_NAME_CHANGE = "ON_TXT_NAME_CHANGE";
+view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK = "ON_BTN_ADD_TREE_NODE_CLICK";
+view_TreeController.ON_BTN_REMOVE_TREE_NODE_CLICK = "ON_BTN_REMOVE_TREE_NODE_CLICK";
 view_component_TreeView.ON_TREE_NODE_CLICK = "ON_TREE_NODE_CLICK";
 view_component_TreeView.ON_TREE_DRAG = "ON_TREE_DRAG";
-test_Main.main();
+Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
 //# sourceMappingURL=haxe.js.map

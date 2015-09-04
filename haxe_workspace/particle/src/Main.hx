@@ -3,9 +3,10 @@ import haxe.Json;
 import js.Browser;
 import model.PanelModel;
 import view.component.ITreeView;
+import view.component.TreeView;
 import view.DynamicView;
 import view.ParamsView;
-import view.TreeView;
+import view.TreeController;
 
 /**
  * ...
@@ -18,7 +19,7 @@ class Main
 	var canvas_container:Dynamic;
 	var webgl:Dynamic;
 	
-	var treeView = new TreeView();
+	var treeController = new TreeController();
 	var paramsView = new ParamsView();
 	var dynamicView = new DynamicView();
 	var model = new PanelModel();
@@ -28,77 +29,11 @@ class Main
 		canvas_container = j( '#canvas_container' );
 		webgl = j( '#webgl' );
 		
-		treeView.config = {
-			btn_addTreeNode:j('#btn_addTreeNode' ),
-			btn_removeTreeNode:j('#btn_removeTreeNode' ),
-			tree_particle:j( '#tree_particle' )
-		}
-		
-		treeView.addHandler( function ( type:String, params:Dynamic ):Void {
-			trace( type, params );
-			switch( type ) {
-				case TreeView.ON_TREE_NODE_CLICK:
-					paramsView.setValues( model.findParticleById( params.node.id ), treeView.findNode( params.node.id ).children != null );
-				case TreeView.ON_BTN_ADD_TREE_NODE_CLICK:
-					var newId = getId();
-					model.addParticle( newId, params.selectNode.id, createNewParticle( newId ) );
-				case TreeView.ON_BTN_REMOVE_TREE_NODE_CLICK:
-					if ( treeView.getRootNode().id == params.selectNode.id ) {
-						showMessage( '不能刪除此發射器哦' );
-						return;
-					}
-					model.removeParticle( params.selectNode.id );
-				case TreeView.ON_TREE_DRAG:
-					treeView.focusNode( treeView.findNode( params.toId ) );
-			}
-		});
-		ITreeView;
-		paramsView.addHandler( function( type, params) {
-			trace( type, params );
-			switch( type ) {
-				case ParamsView.ON_PROP_CHANGE:
-					model.setParticleProps( params.id, params.proptype, params.value );
-				case ParamsView.ON_TXT_NAME_CHANGE:
-					model.setParticleName( params.id, params.name );
-			}
-		});
-		
-		paramsView.config = {
-			root:untyped __js__('mc_props_container'),
-			btn_confirmName:j('#btn_confirmName'),
-			txt_name:j('#txt_name')
-		}
-		
-		dynamicView.config = {
-			table_props:j( '#table_props' )
-		}
-		
-		model.addHandler( function ( type:String, params:Dynamic ):Void {
-			trace( type, params );
-			switch( type ){
-				case PanelModel.ON_ADD_PARTICLE:
-					treeView.appendNode( params.id, params.particle.name, params.parentId );
-				case PanelModel.ON_REMOVE_PARTICLE:
-					treeView.removeNode( params.id );
-				case PanelModel.ON_NAME_CHANGE:
-					treeView.setNodeNameById( params.id, params.name );
-			}
-			
-			updateParticle( model.getOutputData( treeView.findNode( 999 ) ) );
-		});
-		
-		var initObj:Dynamic = createNewParticle( getId() );
-		initObj.emit.prototype = [
-			createNewParticle( getId() )
-		];
-		
-		model.config = initObj;
-		
-		treeView.focusNode( treeView.findNode( 0 ) );
-		
 		onResize(null );
 		j( Browser.window ).resize( onResize );
 		webgl.mousemove( onMousemove );
+		
+		Reflect.setField( Browser.window, 'haxeStart', haxeStart );
 	}
 	
 	function createNewParticle( id:Dynamic ) {
@@ -113,6 +48,82 @@ class Main
 			vel:[0, 0, 0],
 			emit:createNewEmit()
 		}
+	}
+	
+	function haxeStart() {
+		
+		
+		treeController.config = {
+			btn_addTreeNode:j('#btn_addTreeNode' ),
+			btn_removeTreeNode:j('#btn_removeTreeNode' ),
+			tree_particle:j( '#tree_particle' )
+		}
+		
+		treeController.addHandler( function ( type:String, params:Dynamic ):Void {
+			switch( type ) {
+				case TreeController.ON_BTN_REMOVE_TREE_NODE_CLICK:
+					var selectItem = treeController.getSelectItem();
+					model.removeParticle( selectItem.id );
+				case TreeController.ON_BTN_ADD_TREE_NODE_CLICK:
+					var newId = getId();
+					var parentItem = treeController.getSelectItem();
+					model.addParticle( newId, parentItem.id, createNewParticle( newId ) );
+				case TreeView.ON_TREE_NODE_CLICK:
+					var item = params.item;
+					paramsView.setValues( model.findParticleById( item.id ), item.hasItems );
+			}
+		});
+		
+		paramsView.addHandler( function( type, params) {
+			trace( type, params );
+			switch( type ) {
+				case ParamsView.ON_PROP_CHANGE:
+					model.setParticleProps( params.id, params.proptype, params.value );
+				case ParamsView.ON_TXT_NAME_CHANGE:
+					model.setParticleName( params.id, params.name );
+			}
+		});
+		
+		paramsView.config = {
+			root:j('#mc_props_container'),
+			btn_confirmName:j('#btn_confirmName'),
+			txt_name:j('#txt_name')
+		}
+		
+		dynamicView.config = {
+			table_props:j( '#table_props' )
+		}
+		
+		model.addHandler( function ( type:String, params:Dynamic ):Void {
+			trace( type, params );
+			switch( type ){
+				case PanelModel.ON_ADD_PARTICLE:
+					switch( treeController.getItemById( params.parentId ) ) {
+						case null:
+							treeController.addToWithLabel( params.id, params.particle.name );
+						case parentItem:
+							treeController.addToWithLabel( params.id, params.particle.name, parentItem );
+					}
+				case PanelModel.ON_REMOVE_PARTICLE:
+					treeController.remove( treeController.getItemById( params.id ).element );
+				case PanelModel.ON_NAME_CHANGE:
+					treeController.setItemName( params.id, params.name );
+			}
+			
+			//updateParticle( model.getOutputData( treeController.findNode( 999 ) ) );
+		});
+		
+		var initObj:Dynamic = createNewParticle( getId() );
+		initObj.emit.prototype = [
+			createNewParticle( getId() )
+		];
+		
+		model.config = initObj;
+		
+		treeController.selectItem( treeController.getItemById( '0' ).element );
+		//treeController.focusNode( treeController.findNode( 0 ) );
+		
+		
 	}
 	
 	public static function createNewEmit() {

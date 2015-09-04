@@ -120,8 +120,6 @@ class PanelModel extends Model
 	{
 		super.init();
 		
-		return ;
-		
 		function foreachObj( obj:Dynamic, ?pid:Int ) {
 			addParticle( obj.id, pid == null ? 999 : pid, obj );
 			if ( obj.emit != null && obj.emit.prototype != null  ) {

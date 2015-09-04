@@ -6,12 +6,14 @@ import model.Model;
  * ...
  * @author vic
  */
-class TreeView extends Model implements ITreeView
+class TreeView extends Model
 {
 	var _tree:Dynamic;
 	
 	public static var ON_TREE_NODE_CLICK = 'ON_TREE_NODE_CLICK';
 	public static var ON_TREE_DRAG = 'ON_TREE_DRAG';
+	
+	var _selectItem:Dynamic;
 
 	public function new() 
 	{
@@ -33,6 +35,18 @@ class TreeView extends Model implements ITreeView
 		return Lambda.find( getItems(), function( item ) {
 			return item.id == id;
 		});
+	}
+	
+	public function getSelectItem():Dynamic {
+		return _selectItem;
+	}
+	
+	public function setItemName( id:String, label:String ):Void {
+		switch( getItemById( id ) ) {
+			case null:return;
+			case item:
+				_tree.jqxTree('updateItem', item, { label: label });
+		}
 	}
 	
 	public function addTo(element:Dynamic, parentElement:Dynamic):Void 
@@ -66,7 +80,9 @@ class TreeView extends Model implements ITreeView
 		_tree = config.tree;
 		_tree.on('select',function (event){
 			var item = getItem( event.args.element );
-			notify( ON_TREE_NODE_CLICK, { id:item } );
+			_selectItem = item;
+			notify( ON_TREE_NODE_CLICK, { item:item } );
 		});
 	}
+	
 }

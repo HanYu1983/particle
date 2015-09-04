@@ -25,12 +25,12 @@ class ParamsView extends Model
 	}
 	
 	public function setValues( particleObj:Dynamic, isEmit:Bool ) {
+		
 		currentParticleObj = particleObj;
 		var particle = particleObj.particle;
 		
-		txt_name.textbox( {
-			value:particle.name
-		});
+		txt_name.val( particle.name );
+		
 		
 		setPropValue( 'lifetime', particle.lifetime * 1000 );
 		setPropValue( 'mass', particle.mass );
@@ -40,7 +40,7 @@ class ParamsView extends Model
 		setPropValue( 'vel_y', particle.vel[1] );
 		setPropValue( 'vel_r', particle.vel[2] / Math.PI * 180 );
 		setPropValue( 'pos_r', particle.pos[2] / Math.PI * 180 );
-		
+		/*
 		if ( isEmit ) {
 			setPropValue( 'count', particle.emit.count );
 			setPropValue( 'duration', particle.emit.duration * 1000 );
@@ -60,15 +60,25 @@ class ParamsView extends Model
 			getPropContainer( 'range' ).hide();
 			getPropContainer( 'force' ).hide();
 		}
+		*/
 	}
 	
 	override function init() 
 	{
 		super.init();
 		
-		return;
+		txt_name = config.txt_name;
+		txt_name.on('change', function () { 
+			var value = txt_name.val(); 
+			notify( ON_TXT_NAME_CHANGE, {id:currentParticleObj.id, name:value} );
+		}); 
 		
 		root = config.root;
+		//root.find( '[jqx="jqxNumberInput"]' ).jqxNumberInput( 
+		
+		//$('#jqxNumberInput').jqxNumberInput('val', 561.23);
+		/*
+		
 		root.find( '.easyui-numberspinner-code' ).numberspinner( {
 			onChange:function(newv, oldv ) {
 				var newValue = Std.parseFloat( newv );
@@ -109,21 +119,18 @@ class ParamsView extends Model
 		
 		btn_confirmName = config.btn_confirmName;
 		
-		txt_name = config.txt_name;
-		txt_name.textbox( {
-			onChange:function( newv, oldv ) {
-				notify( ON_TXT_NAME_CHANGE, {id:currentParticleObj.id, name:newv} );
-			}
-		});
 		
 		Main.addMouseWheelEvent( j( 'body' ), onBodyWheel );
+		*/
 	}
 	
 	function setPropValue( type, value:Float ) {
-		getPropContainer( type ).find( '.easyui-numberspinner-code' ).numberspinner( 'setValue', value );
+		getPropContainer( type ).find( '[jqx="jqxNumberInput"]' ).jqxNumberInput( 'val', value );
+		//getPropContainer( type ).find( '.easyui-numberspinner-code' ).numberspinner( 'setValue', value );
 	}
 	
 	function getPropContainer( type ):Dynamic {
+		trace( root );
 		return root.find( 'div[proptype=' + type + ']' );
 	}
 	
