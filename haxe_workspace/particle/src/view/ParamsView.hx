@@ -40,7 +40,7 @@ class ParamsView extends Model
 		setPropValue( 'vel_y', particle.vel[1] );
 		setPropValue( 'vel_r', particle.vel[2] / Math.PI * 180 );
 		setPropValue( 'pos_r', particle.pos[2] / Math.PI * 180 );
-		/*
+		
 		if ( isEmit ) {
 			setPropValue( 'count', particle.emit.count );
 			setPropValue( 'duration', particle.emit.duration * 1000 );
@@ -60,7 +60,6 @@ class ParamsView extends Model
 			getPropContainer( 'range' ).hide();
 			getPropContainer( 'force' ).hide();
 		}
-		*/
 	}
 	
 	override function init() 
@@ -74,74 +73,28 @@ class ParamsView extends Model
 		}); 
 		
 		root = config.root;
-		//root.find( '[jqx="jqxNumberInput"]' ).jqxNumberInput( 
-		
-		//$('#jqxNumberInput').jqxNumberInput('val', 561.23);
-		/*
-		
-		root.find( '.easyui-numberspinner-code' ).numberspinner( {
-			onChange:function(newv, oldv ) {
-				var newValue = Std.parseFloat( newv );
-				var jdom = j( untyped __js__( 'this' ) );
-				var proptype = jdom.parent().parent().attr( 'proptype' );
-				
-				switch( proptype ) {
-					case 'duration', 'lifetime':
-						newValue /= 1000;
-					case 'angle', 'range', 'pos_r', 'vel_r':
-						newValue = newValue / 180 * Math.PI;
-				}
-				
-				notify( ON_PROP_CHANGE, { id:currentParticleObj.id, proptype:proptype, value:newValue } );
-				currentPropSpr = jdom;
-			},
-			onSpinUp:function() {
-				var jdom = j( untyped __js__( 'this' ) );
-				currentPropSpr = jdom;
-			},
-			onSpinDown:function() {
-				var jdom = j( untyped __js__( 'this' ) );
-				currentPropSpr = jdom;
+		root.find( '[jqx="jqxNumberInput"]' ).on('change', function ( event ) 
+		{
+			var jdom = j( untyped __js__( 'this' ) );
+			var proptype = jdom.parent().parent().attr( 'proptype' );
+			var newValue = Std.parseFloat( event.args.value );
+			switch( proptype ) {
+				case 'duration', 'lifetime':
+					newValue /= 1000;
+				case 'angle', 'range', 'pos_r', 'vel_r':
+					newValue = newValue / 180 * Math.PI;
 			}
-		});
-		
-		root.find( '.easyui-numberspinner-code' ).parent().focusin( function( e:Dynamic ) {
-			var jdom:Dynamic = j( e.currentTarget ).find( '.easyui-numberspinner-code' );
-			var proptype = jdom.parent().parent().attr( 'proptype' );
+			notify( ON_PROP_CHANGE, { id:currentParticleObj.id, proptype:proptype, value:newValue } );
 			currentPropSpr = jdom;
-		});
-		
-		root.find( '.easyui-numberspinner-code' ).parent().focusout( function( e:Dynamic ) {
-			var jdom:Dynamic = j( e.currentTarget ).find( '.easyui-numberspinner-code' );
-			var proptype = jdom.parent().parent().attr( 'proptype' );
-			currentPropSpr = null;
-		});
-		
-		btn_confirmName = config.btn_confirmName;
-		
-		
-		Main.addMouseWheelEvent( j( 'body' ), onBodyWheel );
-		*/
+		}); 
 	}
 	
 	function setPropValue( type, value:Float ) {
 		getPropContainer( type ).find( '[jqx="jqxNumberInput"]' ).jqxNumberInput( 'val', value );
-		//getPropContainer( type ).find( '.easyui-numberspinner-code' ).numberspinner( 'setValue', value );
 	}
 	
 	function getPropContainer( type ):Dynamic {
-		trace( root );
 		return root.find( 'div[proptype=' + type + ']' );
 	}
 	
-	function onBodyWheel( e ) {
-		if ( currentPropSpr == null ) return;
-		var oldvalue = currentPropSpr.numberspinner( 'getValue' );
-		if ( e.delta > 0 ) {
-			--oldvalue;
-		}else {
-			++oldvalue;
-		}
-		currentPropSpr.numberspinner( 'setValue', oldvalue );
-	}
 }

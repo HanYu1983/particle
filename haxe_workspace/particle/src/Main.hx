@@ -110,7 +110,7 @@ class Main
 					treeController.setItemName( params.id, params.name );
 			}
 			
-			//updateParticle( model.getOutputData( treeController.findNode( 999 ) ) );
+			updateParticle( model.getOutputData( treeController.getItems() ) );
 		});
 		
 		var initObj:Dynamic = createNewParticle( getId() );

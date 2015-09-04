@@ -166,6 +166,7 @@ Main.prototype = {
 				_g.treeController.setItemName(params2.id,params2.name);
 				break;
 			}
+			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
 		});
 		var initObj = this.createNewParticle(Main.getId());
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
@@ -186,8 +187,25 @@ Main.prototype = {
 Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
+Reflect.field = function(o,field) {
+	try {
+		return o[field];
+	} catch( e ) {
+		return null;
+	}
+};
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
+};
+Reflect.fields = function(o) {
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(f != "__id__" && f != "hx__closures__" && hasOwnProperty.call(o,f)) a.push(f);
+		}
+	}
+	return a;
 };
 var Std = function() { };
 Std.__name__ = true;
@@ -375,11 +393,53 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,getOutputData: function(node) {
 		var _g = this;
 		var retobj = { };
+		haxe_Log.trace(node.length,{ fileName : "PanelModel.hx", lineNumber : 88, className : "model.PanelModel", methodName : "getOutputData"});
+		var childMap = { };
+		Lambda.foreach(node,function(item) {
+			if(item.parentId != null) {
+				if(!Object.prototype.hasOwnProperty.call(childMap,item.parentId)) childMap[item.parentId] = [];
+				Reflect.field(childMap,item.parentId).push(item.id);
+			} else childMap[item.id] = [];
+			return true;
+		});
+		var treeMap = { };
+		var getAndSet = function(id) {
+			var _g1 = Reflect.field(treeMap,id);
+			var _obj = _g1;
+			if(_g1 == null) {
+				treeMap[id] = { id : id};
+				return Reflect.field(treeMap,id);
+			} else switch(_g1) {
+			default:
+				return _obj;
+			}
+		};
+		var _g2 = 0;
+		var _g11 = Reflect.fields(childMap);
+		while(_g2 < _g11.length) {
+			var f = _g11[_g2];
+			++_g2;
+			var obj = [getAndSet(f)];
+			var ary = Reflect.field(childMap,f);
+			if(ary.length == 0) continue;
+			if(obj[0].children == null) obj[0].children = [];
+			Lambda.foreach(ary,(function(obj) {
+				return function(str) {
+					var subobj = getAndSet(str);
+					subobj.parentId = obj[0].id;
+					obj[0].children.push(subobj);
+					return true;
+				};
+			})(obj));
+		}
+		haxe_Log.trace(treeMap,{ fileName : "PanelModel.hx", lineNumber : 128, className : "model.PanelModel", methodName : "getOutputData"});
+		var retobj1 = { };
 		var _loopNode;
 		var _loopNode1 = null;
 		_loopNode1 = function(node1,outputData) {
-			var id = node1.id;
-			var particle = _g.findParticleById(id).particle;
+			var id1 = node1.id;
+			haxe_Log.trace("cc",{ fileName : "PanelModel.hx", lineNumber : 134, className : "model.PanelModel", methodName : "getOutputData", customParams : [node1]});
+			var particle = _g.findParticleById(id1).particle;
 			outputData.id = particle.id;
 			outputData.name = particle.name;
 			outputData.lifetime = particle.lifetime;
@@ -395,19 +455,32 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 				outputData.emit.angle = particle.emit.angle;
 				outputData.emit.range = particle.emit.range;
 				outputData.emit.force = particle.emit.force;
-				var _g2 = 0;
-				var _g1 = node1.children.length;
-				while(_g2 < _g1) {
-					var i = _g2++;
-					var obj = { };
-					outputData.emit.prototype.push(obj);
-					_loopNode1(node1.children[i],obj);
+				var _g21 = 0;
+				var _g12 = node1.children.length;
+				while(_g21 < _g12) {
+					var i = _g21++;
+					var obj1 = { };
+					outputData.emit.prototype.push(obj1);
+					_loopNode1(node1.children[i],obj1);
 				}
 			}
 		};
 		_loopNode = _loopNode1;
-		_loopNode(node,retobj);
-		return retobj;
+		var renderList = [];
+		var _g3 = 0;
+		var _g13 = Reflect.fields(treeMap);
+		while(_g3 < _g13.length) {
+			var f1 = _g13[_g3];
+			++_g3;
+			if(Reflect.field(treeMap,f1).parentId == null) {
+				var render = { };
+				renderList.push(render);
+				_loopNode(Reflect.field(treeMap,f1),render);
+			}
+		}
+		haxe_Log.trace(renderList,{ fileName : "PanelModel.hx", lineNumber : 171, className : "model.PanelModel", methodName : "getOutputData"});
+		haxe_Log.trace(JSON.stringify(retobj1),{ fileName : "PanelModel.hx", lineNumber : 174, className : "model.PanelModel", methodName : "getOutputData"});
+		return retobj1;
 	}
 	,init: function() {
 		var _g = this;
@@ -460,6 +533,24 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.setPropValue("vel_y",particle.vel[1]);
 		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
 		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
+		if(isEmit) {
+			this.setPropValue("count",particle.emit.count);
+			this.setPropValue("duration",particle.emit.duration * 1000);
+			this.setPropValue("angle",particle.emit.angle / Math.PI * 180);
+			this.setPropValue("range",particle.emit.range / Math.PI * 180);
+			this.setPropValue("force",particle.emit.force);
+			this.getPropContainer("count").show();
+			this.getPropContainer("duration").show();
+			this.getPropContainer("angle").show();
+			this.getPropContainer("range").show();
+			this.getPropContainer("force").show();
+		} else {
+			this.getPropContainer("count").hide();
+			this.getPropContainer("duration").hide();
+			this.getPropContainer("angle").hide();
+			this.getPropContainer("range").hide();
+			this.getPropContainer("force").hide();
+		}
 	}
 	,init: function() {
 		var _g = this;
@@ -470,19 +561,27 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_ParamsView.ON_TXT_NAME_CHANGE,{ id : _g.currentParticleObj.id, name : value});
 		});
 		this.root = this.config.root;
+		this.root.find("[jqx=\"jqxNumberInput\"]").on("change",function(event) {
+			var jdom = _g.j(this);
+			var proptype = jdom.parent().parent().attr("proptype");
+			var newValue = parseFloat(event.args.value);
+			switch(proptype) {
+			case "duration":case "lifetime":
+				newValue /= 1000;
+				break;
+			case "angle":case "range":case "pos_r":case "vel_r":
+				newValue = newValue / 180 * Math.PI;
+				break;
+			}
+			_g.notify(view_ParamsView.ON_PROP_CHANGE,{ id : _g.currentParticleObj.id, proptype : proptype, value : newValue});
+			_g.currentPropSpr = jdom;
+		});
 	}
 	,setPropValue: function(type,value) {
 		this.getPropContainer(type).find("[jqx=\"jqxNumberInput\"]").jqxNumberInput("val",value);
 	}
 	,getPropContainer: function(type) {
-		haxe_Log.trace(this.root,{ fileName : "ParamsView.hx", lineNumber : 133, className : "view.ParamsView", methodName : "getPropContainer"});
 		return this.root.find("div[proptype=" + type + "]");
-	}
-	,onBodyWheel: function(e) {
-		if(this.currentPropSpr == null) return;
-		var oldvalue = this.currentPropSpr.numberspinner("getValue");
-		if(e.delta > 0) --oldvalue; else ++oldvalue;
-		this.currentPropSpr.numberspinner("setValue",oldvalue);
 	}
 });
 var view_component_ITreeView = function() { };

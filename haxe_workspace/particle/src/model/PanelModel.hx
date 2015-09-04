@@ -1,6 +1,7 @@
 package model;
 import haxe.Json;
-
+using Reflect;
+using Lambda;
 /**
  * ...
  * @author vic
@@ -83,6 +84,102 @@ class PanelModel extends Model
 	
 	public function getOutputData( node:Dynamic ) {
 		var retobj:Dynamic = { };
+		
+		trace( node.length );
+		var childMap:Dynamic = { };
+		
+		Lambda.foreach( node, function( item ) {
+			if ( item.parentId != null ) {
+				if ( !childMap.hasField( item.parentId ) ) {
+					childMap.setField( item.parentId, [] );
+				}
+				childMap.field( item.parentId ).push( item.id );
+			}else {
+				childMap.setField( item.id, [] );
+			}
+			return true;
+		});
+		
+		
+		var treeMap:Dynamic = { };
+		
+		function getAndSet( id ) {
+			return switch( treeMap.field( id )) {
+				case null: 
+					treeMap.setField( id, {id:id } );
+					treeMap.field( id );
+				case _obj:_obj;
+			}
+		}
+		
+		for ( f in childMap.fields() ) {
+			var obj = getAndSet( f );
+			var ary:Array<String> = childMap.field( f );
+			if ( ary.length == 0 ) continue;
+			if ( obj.children == null ) obj.children = [];
+			ary.foreach( function( str ) {
+				var subobj:Dynamic = getAndSet( str );
+				subobj.parentId = obj.id;
+				obj.children.push( subobj );
+				return true;
+			});
+		}
+		
+		trace( treeMap );
+		
+		var retobj:Dynamic = { };
+		function _loopNode( node:Dynamic, outputData:Dynamic ) {
+			
+			var id = node.id;
+			trace( 'cc', node );
+			var particle = findParticleById( id ).particle;
+			outputData.id = particle.id;
+			outputData.name = particle.name;
+			outputData.lifetime = particle.lifetime;
+			outputData.vel = particle.vel;
+			outputData.pos = particle.pos;
+			outputData.mass = particle.mass;
+			outputData.color = particle.color;
+			outputData.size = particle.size;
+			
+			if ( node.children && node.children.length > 0 ) {
+				outputData.emit = { 'prototype':[] }
+				outputData.emit.count = particle.emit.count;
+				outputData.emit.duration = particle.emit.duration;
+				outputData.emit.angle = particle.emit.angle;
+				outputData.emit.range = particle.emit.range;
+				outputData.emit.force = particle.emit.force;
+				
+				for ( i in 0...node.children.length ) {
+					var obj = { };
+					outputData.emit.prototype.push( obj );
+					_loopNode( node.children[i], obj );
+				}
+			}
+		}
+		
+		var renderList = [];
+		
+		for ( f in treeMap.fields() ) {
+			if ( treeMap.field( f ).parentId == null ) {
+				var render = { };
+				renderList.push( render );
+				_loopNode( treeMap.field( f ), render );
+			}
+		}
+		
+		trace( renderList );
+		
+		//trace( treeMap );
+		trace( Json.stringify( retobj ) );
+		/*
+		Lambda.foreach( node, function( treeItem ) {
+			trace( treeItem.id );
+			return true;
+		});
+		*/
+		/*
+		var retobj:Dynamic = { };
 		function _loopNode( node:Dynamic, outputData:Dynamic ) {
 			
 			
@@ -113,7 +210,7 @@ class PanelModel extends Model
 			}
 		}
 		_loopNode( node, retobj );
-		
+		*/
 		return retobj;
 	}
 	override function init() 
