@@ -42,9 +42,9 @@
 (defmethod length :grid [{line :line kline :kline}]
   (count (or line kline)))
   
-(defmethod draw-it :grid [{line :line kline :kline color :color hideY :hideY} base ctx]
+(defmethod draw-it :grid [{line :line kline :kline color :color hideY :hideY centerY :centerY} base ctx]
   (let [[w h max-v min-v offset-v offset-x pos-y] base
-        cnt 6
+        cnt 10
         cntx 5
         offset (-> (- max-v min-v) (/ cnt))]
     (aset ctx "strokeStyle" color)
@@ -54,7 +54,12 @@
     
     (when-not hideY
       (doseq [i (range cnt)]
-        (let [v (+ min-v (* i offset))]
+        (let [v (- (or centerY min-v) (* i offset))]
+          (.fillText ctx (str (.toFixed v 2)) (* w (/ 1 3)) (pos-y v))
+          (.fillText ctx (str (.toFixed v 2)) (* w (/ 2 3)) (pos-y v))
+          (.moveTo ctx 0 (pos-y v))
+          (.lineTo ctx w (pos-y v)))
+        (let [v (+ (or centerY min-v) (* i offset))]
           (.fillText ctx (str (.toFixed v 2)) (* w (/ 1 3)) (pos-y v))
           (.fillText ctx (str (.toFixed v 2)) (* w (/ 2 3)) (pos-y v))
           (.moveTo ctx 0 (pos-y v))

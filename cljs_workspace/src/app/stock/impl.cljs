@@ -115,8 +115,8 @@
               [
                 {:type :line :line dif :color c1}
                 {:type :line :line (reverse (stf/sma-seq o (reverse dif))) :color c2}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line dif :color "gray" :hideY true}
+                {:type :grid :line dif :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
             
             "yu-clock"
@@ -125,10 +125,8 @@
                   vs (stf/sma-seq m (stf/yu-clock n (reverse kline)))]
               [
                 {:type :line :line (reverse vs) :color c1}
-                {:type :line :line (repeat (count kline) 1) :color "lightgray"}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :line :line (repeat (count kline) -1) :color "lightgray"}
-                {:type :grid :line vs :color "gray" :hideY true}
+                {:type :grid :line (reverse vs) :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             "yu-sd"
@@ -167,8 +165,8 @@
               [
                 {:type :line :line dif :color c1}
                 {:type :line :line (reverse (stf/sma-seq o (reverse dif))) :color c2}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line dif :color "gray" :hideY true}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
+                {:type :grid :line dif :centerY 0 :color "gray"}
               ])
               
             "kd"
@@ -181,8 +179,8 @@
               [
                 {:type :line :line k :color c1}
                 {:type :line :line d :color c2}
-                {:type :line :line (repeat (count kline) 0.5) :color "lightgray"}
-                {:type :grid :line rsv :color "gray"}
+                {:type :line :line (repeat (count kline) 0.5) :color "white"}
+                {:type :grid :line rsv :center 0.5 :color "gray"}
               ])
               
             "yu-kd"
@@ -205,8 +203,8 @@
               [
                 {:type :line :line vs :color c1}
                 {:type :line :line (reverse (stf/sma-seq o (reverse vs))) :color c2}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line vs :color "gray"}
+                {:type :grid :line vs :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             "cv"
@@ -225,8 +223,8 @@
                   (stf/volatility-seq m rema)]
               [
                 {:type :line :line vs :color c1}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line vs :color "gray"}
+                {:type :grid :line vs :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
             
             "eom"
@@ -236,8 +234,8 @@
               [
                 {:type :line :line vs :color c1}
                 {:type :line :line (reverse (stf/sma-seq m (reverse vs))) :color c2}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :grid :line vs :color "gray" :hideY true}
+                {:type :grid :line vs :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             "sar"
@@ -254,7 +252,8 @@
               [
                 {:type :line :line line :color c1}
                 {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
-                {:type :line :line (repeat (count kline) 1) :color "lightgray"}
+                {:type :grid :line line :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
             
             "rsi"
@@ -264,7 +263,8 @@
               [
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line (reverse (stf/sma-seq m line)) :color c2}
-                {:type :line :line (repeat (count kline) 0.5) :color "lightgray"}
+                {:type :grid :line (reverse line) :centerY 0.5 :color "gray"}
+                {:type :line :line (repeat (count kline) 0.5) :color "white"}
               ])
               
             "atr"
@@ -277,7 +277,7 @@
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line (reverse line2) :color c2}
                 {:type :grid :line (reverse line) :color "gray"}
-                {:type :line :line (repeat (count kline) avg) :color "lightgray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             "dmi"
@@ -301,7 +301,8 @@
                 {:type :line :line (reverse adip) :color "red"}
                 {:type :line :line (reverse adid) :color "green"}
                 {:type :line :line (reverse (stf/sma-seq m dx)) :color c1}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line (reverse (stf/sma-seq m dx)) :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             "AccDist"
@@ -310,8 +311,8 @@
               [
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line (reverse (stf/sma-seq n line)) :color c2}
-                {:type :grid :line line :color "gray"}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line line :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             "cci"
@@ -319,21 +320,17 @@
                   line (stf/cci-seq n (reverse kline))]
               [
                 {:type :line :line (reverse line) :color c1}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :line :line (repeat (count kline) 100) :color "white"}
-                {:type :line :line (repeat (count kline) -100) :color "white"}
+                {:type :grid :line line :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
             
             "dpo"
             (let [n (get subd "n")
-                  m (get subd "m")
                   line (stf/dpo-seq n kline)]
               [
                 {:type :line :line line :color c1}
-                {:type :grid :line line :color "gray"}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
-                {:type :line :line (repeat (count kline) m) :color "lightgray"}
-                {:type :line :line (repeat (count kline) (- m)) :color "lightgray"}
+                {:type :grid :line line :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             "trix"
@@ -343,7 +340,8 @@
               [
                 {:type :line :line line :color c1}
                 {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
-                {:type :line :line (repeat (count kline) 0) :color "lightgray"}
+                {:type :grid :line line :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             "uos"
@@ -358,9 +356,8 @@
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line ma :color c2}
                 {:type :line :line ma2 :color c3}
-                {:type :line :line (repeat (count kline) 50) :color "lightgray"}
-                {:type :line :line (repeat (count kline) 30) :color "white"}
-                {:type :line :line (repeat (count kline) 70) :color "white"}
+                {:type :grid :line line :centerY 50 :color "gray"}
+                {:type :line :line (repeat (count kline) 50) :color "white"}
               ])
               
             "nkline"
@@ -381,7 +378,8 @@
               [
                 {:type :line :line line :color c1}
                 {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
-                {:type :grid :line line :color "gray"}
+                {:type :grid :line line :centerY 0 :color "gray"}
+                {:type :line :line (repeat (count kline) 0) :color "white"}
               ])
               
             {:type nil})))
@@ -413,6 +411,7 @@
                 "volume"
                 [
                   {:type :line :line (stl/volume kline) :color "red"}
+                  {:type :grid :line (stl/volume kline) :color "gray" :hideY true}
                 ]
               
                 "clock"
