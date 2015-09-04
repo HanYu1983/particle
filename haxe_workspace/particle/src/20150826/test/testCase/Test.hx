@@ -4,6 +4,7 @@ import component.Particle;
 import component.ParticleManager;
 import haxe.unit.TestCase;
 import haxe.unit.TestRunner;
+import test.Main;
 
 /**
  * ...

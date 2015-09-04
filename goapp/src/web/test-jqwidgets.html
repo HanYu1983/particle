@@ -75,6 +75,7 @@
 									</div>
 								</div>
 								<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "200px", "width": "100%"}'>
+									<!--
 									<ul>
 										<li item-expanded='true' id="t1">
 											<img style='float: left; margin-right: 5px;' src='../../images/contactsIcon.png' /><span
@@ -98,6 +99,7 @@
 											</ul>
 										</li>
 									</ul>
+										-->
 								</div>
 							</div>
 							
@@ -180,6 +182,7 @@
 <script src='res/js/common.js'></script>
 <script src='res/cljs/goog/base.js'></script>
 <script src='res/cljs/cljs.js'></script>
+<script src="res/js/haxe.js"></script>
 <script type="text/javascript">
 
 	$(document).ready( parseJqx );
@@ -230,9 +233,11 @@
 			initJqx( jdom, theme );
 			mc_props_container.append( jdom );
 		}
+		
+		window.haxeStart();
 	}
 </script>
-<script src="res/js/haxe.js"></script>
+
 <script>
 goog.require("app.particle.main");
 </script>

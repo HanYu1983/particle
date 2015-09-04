@@ -2,6 +2,7 @@ package;
 import haxe.Json;
 import js.Browser;
 import model.PanelModel;
+import view.component.ITreeView;
 import view.DynamicView;
 import view.ParamsView;
 import view.TreeView;
@@ -51,7 +52,7 @@ class Main
 					treeView.focusNode( treeView.findNode( params.toId ) );
 			}
 		});
-		
+		ITreeView;
 		paramsView.addHandler( function( type, params) {
 			trace( type, params );
 			switch( type ) {
