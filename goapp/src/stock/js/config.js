@@ -12,7 +12,7 @@ app.config.about = [
 	'<a href="https://www.facebook.com/pages/上善若水/1653920964852269" target="_blank">https://www.facebook.com/pages/上善若水/1653920964852269</a>'
 ].join("<br>")
 app.config.index = [
-						['yu-test', 'N棒K線' , false, 5, 0, 0, 0 ],
+						['nkline', 'N棒K線' , false, 5, 0, 0, 0 ],
 	
 						['group', '均線'],
 						['ma','sma', false, 5, 10, 20, 40, '//wiki.mbalib.com/wiki/Sma' ],
@@ -45,7 +45,8 @@ app.config.index = [
 						['yu-clock', '背離線' , false, 20, 20, 0, 0 ],
 						['yu-macd', '均多差離' , false, 5, 12, 9, 0 ],
 						['yu-car', '方向盤' , false, 1, .025, .7, 0 ],
-						['yu-kd', '隨機線圖' , false, 9, 0, 0, 0 ]
+						['yu-kd', '隨機線圖' , false, 9, 0, 0, 0 ],
+						['yu-money', '獲利線' , false, 20, 9, 0, 0 ]
 					];
 app.config.hoverInfo = {
 	default:'',

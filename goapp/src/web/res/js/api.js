@@ -46,7 +46,24 @@ var api = api || {};
 					vel:[0,0,0]
 				}
 			]
-		}
+		},
+		formulaList: [
+			[
+				target: 
+					"x" | "y" | "rot" | "vx" | "vy" | "vr" | 
+					"scale-x" | "scale-y" | "r" | "g" | "b" | "a" |
+					"emit-angle" | "emit-range" | "emit-count" | "emit-force" | "emit-duration",
+	
+				type:
+					"linear"
+	
+				p1:int,
+				p2:int,
+				p3:int,
+				p4:int,
+				p5:int
+			]
+		]
 	}
 	*/
 	function editParticle( particle ){
