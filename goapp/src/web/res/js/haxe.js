@@ -99,8 +99,14 @@ Main.showMessage = function(msg) {
 Main.getId = function() {
 	return Main.id++;
 };
-Main.updateParticle = function(particleData) {
-	common.onView.onNext(["edit-particle",particleData]);
+Main.updateParticle = function(ary_render) {
+	Lambda.foreach(ary_render,function(render) {
+		api.editParticle(render);
+		return true;
+	});
+};
+Main.moveParticle = function(x,y) {
+	api.changeCenterPos(x,y);
 };
 Main.addMouseWheelEvent = function(jdom,func) {
 	leo.utils.addMouseWheelEvent(jdom,func);
@@ -113,7 +119,7 @@ Main.main = function() {
 };
 Main.prototype = {
 	createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : "#33ddff", size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
 	}
 	,haxeStart: function() {
 		var _g = this;
@@ -478,9 +484,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 				_loopNode(Reflect.field(treeMap,f1),render);
 			}
 		}
-		haxe_Log.trace(renderList,{ fileName : "PanelModel.hx", lineNumber : 171, className : "model.PanelModel", methodName : "getOutputData"});
-		haxe_Log.trace(JSON.stringify(retobj1),{ fileName : "PanelModel.hx", lineNumber : 174, className : "model.PanelModel", methodName : "getOutputData"});
-		return retobj1;
+		return renderList;
 	}
 	,init: function() {
 		var _g = this;

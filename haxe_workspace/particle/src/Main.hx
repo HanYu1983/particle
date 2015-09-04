@@ -42,7 +42,7 @@ class Main
 			name:'粒子_' + id,
 			lifetime:5,
 			mass:3,
-			color:'#33ddff',
+			color:[.3, .3, .3],
 			size:[10, 10],
 			pos:[0, 0, 0], 
 			vel:[0, 0, 0],
@@ -144,7 +144,7 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		
+		//moveParticle( px, py );
 		model.setParticleProps( 0, 'pos_x', px );
 		model.setParticleProps( 0, 'pos_y', py );
 	}
@@ -175,8 +175,15 @@ class Main
 		return id++;
 	}
 	
-	static function updateParticle( particleData:Dynamic ) {
-		untyped __js__( 'common.onView.onNext' )( ['edit-particle', particleData] );
+	static function updateParticle( ary_render:Array<Dynamic> ) {
+		Lambda.foreach( ary_render, function( render ) {
+			untyped __js__( 'api.editParticle' )( render );
+			return true;
+		});
+	}
+	
+	static function moveParticle(x, y) {
+		untyped __js__('api.changeCenterPos')(x, y );
 	}
 	
 	public static function addMouseWheelEvent( jdom, func ) {

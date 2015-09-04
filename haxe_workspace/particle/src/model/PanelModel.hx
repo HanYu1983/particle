@@ -168,50 +168,8 @@ class PanelModel extends Model
 			}
 		}
 		
-		trace( renderList );
+		return renderList;
 		
-		//trace( treeMap );
-		trace( Json.stringify( retobj ) );
-		/*
-		Lambda.foreach( node, function( treeItem ) {
-			trace( treeItem.id );
-			return true;
-		});
-		*/
-		/*
-		var retobj:Dynamic = { };
-		function _loopNode( node:Dynamic, outputData:Dynamic ) {
-			
-			
-			var id = node.id;
-			var particle = findParticleById( id ).particle;
-			outputData.id = particle.id;
-			outputData.name = particle.name;
-			outputData.lifetime = particle.lifetime;
-			outputData.vel = particle.vel;
-			outputData.pos = particle.pos;
-			outputData.mass = particle.mass;
-			outputData.color = particle.color;
-			outputData.size = particle.size;
-			
-			if ( node.children && node.children.length > 0 ) {
-				outputData.emit = { 'prototype':[] }
-				outputData.emit.count = particle.emit.count;
-				outputData.emit.duration = particle.emit.duration;
-				outputData.emit.angle = particle.emit.angle;
-				outputData.emit.range = particle.emit.range;
-				outputData.emit.force = particle.emit.force;
-				
-				for ( i in 0...node.children.length ) {
-					var obj = { };
-					outputData.emit.prototype.push( obj );
-					_loopNode( node.children[i], obj );
-				}
-			}
-		}
-		_loopNode( node, retobj );
-		*/
-		return retobj;
 	}
 	override function init() 
 	{
