@@ -62,7 +62,7 @@ app.config.hoverInfo = {
 	'mc_showKline':'是否顯示k線',
 	line:{
 		default:'點我學習!',
-		'yu-test':'N日的K線。請把K線的顯示設為off',
+		'nkline':'N日的K線。請把K線的顯示設為off',
 		'ma':'簡單平均線',
 		'ema':'指數平均線',
 		'bbi':'四條簡單平均線的平均',
