@@ -90,7 +90,6 @@ var Main = function() {
 	this.panelView = new view_PanelView();
 	this.panelModel = new model_PanelModel();
 	var _g = this;
-	js_Browser.alert("1");
 	this.saver.addHandler(function(type,params) {
 		switch(type) {
 		case "ON_SAVE_START":
@@ -112,11 +111,9 @@ var Main = function() {
 		}
 	});
 	this.aboutView.set_config({ mc_txtContainer : Main.j("#mc_txtContainer"), aboutConfig : app.config.about});
-	js_Browser.alert("2");
 	this.panelView.set_config({ doc : Main.j(document), body : Main.j(Main.j("body")), mc_accordionContainer : Main.j("#mc_accordionContainer"), tmpl_panel : Main.j("#tmpl_panel"), slt_stockId : Main.j("#slt_stockId"), swb_favor : Main.j("#swb_favor"), toggle_favor : Main.j("#toggle_favor"), combo_favor : Main.j("#combo_favor"), combo_prefer : Main.j("#combo_prefer"), btn_controller : Main.j("#btn_controller"), btn_addPanel : Main.j("#btn_addPanel"), btn_save : Main.j("#btn_save"), txt_count : Main.j("#txt_count"), txt_offset : Main.j("#txt_offset"), txt_note : Main.j("#txt_note"), table_stockPrice : Main.j("#table_stockPrice"), btn_login : Main.j("#btn_login"), btn_logout : Main.j("#btn_logout"), btn_about : Main.j("#btn_about"), btn_period : Main.j("#btn_period"), dia_about : Main.j("#dia_about")});
-	js_Browser.alert("3");
 	this.panelView.addHandler(function(type1,params1) {
-		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 82, className : "Main", methodName : "new", customParams : [type1]});
+		haxe_Log.trace("panelView",{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "new", customParams : [type1]});
 		switch(type1) {
 		case "on_btn_login_click":
 			Main.showLoading();
@@ -139,7 +136,7 @@ var Main = function() {
 							Main.slideMessage("提示","歡迎登入!");
 							break;
 						default:
-							Main.slideMessage("錯誤",err);
+							js_Browser.alert("程式崩潰，請重新整理");
 						}
 					});
 					break;
@@ -206,9 +203,8 @@ var Main = function() {
 			break;
 		}
 	});
-	js_Browser.alert("4");
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 167, className : "Main", methodName : "new", customParams : [params3]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 159, className : "Main", methodName : "new", customParams : [params3]});
 		_g.saver.startAuto();
 		switch(type2) {
 		case "on_init":
@@ -258,11 +254,12 @@ var Main = function() {
 			break;
 		}
 	});
-	js_Browser.alert("5");
-	js_Browser.alert("start");
-	this.saver.set_fbid("");
-	this.saver.set_fbtoken("");
-	this.panelModel.set_config(this.newUser());
+	Main.showLoading();
+	Main.fb_init(app.config.fbappid[app.config.fbappid.which],function() {
+		_g.saver.set_config("");
+		_g.panelModel.set_config(_g.newUser());
+		Main.closeLoading();
+	});
 };
 Main.__name__ = true;
 Main.getId = function() {
@@ -1278,5 +1275,3 @@ view_PanelView.ON_COMBO_FAVOR_CHANGE = "on_combo_favor_change";
 view_PanelView.ON_COMBO_PREFER_CHANGE = "ON_COMBO_PREFER_CHANGE";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=haxe.js.map

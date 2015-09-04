@@ -1,0 +1,240 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		
+		
+			
+		<script type="text/javascript" src="res/js/lib/jquery/jquery-1.11.1.min.js"></script>	
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxcore.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxbuttons.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxsplitter.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxdragdrop.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxinput.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxtree.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxnumberInput.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxexpander.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxscrollbar.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxpanel.js"></script>
+			
+		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
+		
+		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.base.css" type="text/css" />
+		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.metrodark.css" type="text/css" />
+		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="res/css/normalize.css">
+	</head>
+	<style>
+	body{
+		padding:0;
+		position:absolute;
+		width:100%;
+		height:100%;
+		
+	}
+	input{
+		font-family:Microsoft JhengHei;
+	}
+	
+	.hori{
+		display:inline-block;
+	}
+	
+	.group{
+		position:relative; 
+		width:100%;
+		min-width:200px;
+	}
+	</style>
+	<script id="tmpl_prop" type="jquery-x-tmpl">
+		<div proptype=${id} class="hori" style="margin-bottom:5px;">
+			<div class="hori" style="width:60px; text-align:right;">${name}</div>
+			<div class="hori">
+				<div id="spr_value" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+			</div>
+			<div class="hori">
+				<input jqx="jqxButton" type="button" value="察看" />
+			</div>
+		</div>
+	</script>
+</head>
+<body>
+	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{"size":"80%","collapsible":false}, {"collapsed":false}]}'>
+		<div>
+			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": "250px","min":"250px" }]}'>
+				<div>
+					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
+						<div>
+							<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+								<div class="group" style="text-align:center;">
+									<div class="hori">
+										<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
+									</div>
+									<div class="hori">
+										<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+									</div>
+								</div>
+								<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "200px", "width": "100%"}'>
+									<ul>
+										<li item-expanded='true' id="t1">
+											<img style='float: left; margin-right: 5px;' src='../../images/contactsIcon.png' /><span
+												item-title="true">News and Blogs</span>
+											<ul>
+												<li>
+													<img style='float: left; margin-right: 5px;' src='../../images/favorites.png' /><span
+														item-title="true">Favorites</span>
+													<ul>
+														<li>
+															<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+																item-title="true">ScienceDaily</span> </li>
+													</ul>
+												</li>
+												<li>
+													<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+														item-title="true">Geek.com</span> </li>
+												<li>
+													<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+														item-title="true">CNN.com</span> </li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+							
+							<!--
+							<div class="group" style="text-align:center;">
+								<div class="hori">
+									<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
+								</div>
+								<div class="hori">
+									<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+								</div>
+							</div>
+							<div id="tree_particle" jqx="jqxTree" data-options='{"allowDrag": true, "allowDrop": true, "height": "100%", "width": "100%"}'>
+								<ul>
+									<li item-expanded='true' id="t1">
+										<img style='float: left; margin-right: 5px;' src='../../images/contactsIcon.png' /><span
+											item-title="true">News and Blogs</span>
+										<ul>
+											<li>
+												<img style='float: left; margin-right: 5px;' src='../../images/favorites.png' /><span
+													item-title="true">Favorites</span>
+												<ul>
+													<li>
+														<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+															item-title="true">ScienceDaily</span> </li>
+												</ul>
+											</li>
+											<li>
+												<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+													item-title="true">Geek.com</span> </li>
+											<li>
+												<img style='float: left; margin-right: 5px;' src='../../images/folder.png' /><span
+													item-title="true">CNN.com</span> </li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							-->
+						</div>
+						<div>
+							<div class="group" style="text-align:center; margin-bottom:10px; ">
+								<div class="hori" style="width:100px; ">
+									<input id="txt_name" type="text" jqx="jqxInput" style="width:100%; " >
+								</div>
+								<div class="hori">
+									<input id="btn_confirmName" type="button" jqx="jqxButton" value="確定" >
+								</div>
+							</div>
+							<div id="mc_props_container" class="group" style="min-width:150px;" >
+								<!-- created by script -->
+							</div>
+							
+								<!--
+							<div jqx="jqxExpander" data-options='{"toggleMode":"none","width":"100%","height":"100%","showArrow":false}'>
+								<div>
+									初始屬性
+								</div>
+								<div>
+								</div>
+							</div>
+							-->
+						</div>
+					</div>
+					
+				</div>
+				<div>
+					<div id="canvas_container" style="width:100%; height:100%">
+						<canvas id='webgl' width=800 height=600></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div></div>
+	</div>
+</body>
+<script src='res/js/lib/async.js'></script>
+<script src='res/js/lib/rx.all.min.js'></script>
+<script src='res/js/lib/three.min.js'></script>
+<script src='res/js/lib/underscore-min.js'></script>
+<script src='res/js/common.js'></script>
+<script src='res/cljs/goog/base.js'></script>
+<script src='res/cljs/cljs.js'></script>
+<script type="text/javascript">
+
+	$(document).ready( parseJqx );
+	
+	function initJqx( root, theme ){
+		root.find('[jqx]').each( function( id, dom ){
+			var jdom = $( dom );
+			var jqxType = jdom.attr( 'jqx' );
+			var constr = jdom.attr( 'data-options' );
+			var constrobj;
+			if( constr == undefined ){
+				constrobj = {};
+			}else{
+				constrobj = JSON.parse( constr );
+			}
+			constrobj.theme = theme;
+			jdom[jqxType]( constrobj );
+		});
+	}
+	
+	function parseJqx(){
+		var theme = 'metrodark';
+		//var theme = 'arctic';
+		
+		initJqx( $('body'), theme );
+		
+		var ary_props = [ 	{id:'lifetime', name:'生命'}, 
+							{id:'mass', name:'質量'}, 
+						//	{id:'pos_x', name:'位置x'}, 
+						//	{id:'pos_y', name:'位置y'}, 
+							{id:'pos_r', name:'角度'}, 
+							{id:'vel_x', name:'速度x'}, 
+							{id:'vel_y', name:'速度y'}, 
+							{id:'vel_r', name:'旋轉速度'}, 
+							{id:'size_x', name:'粒子寬度'}, 
+							{id:'size_y', name:'粒子高度'}, 
+							{id:'count', name:'發射數目'}, 
+							{id:'duration', name:'週期毫秒'}, 
+							{id:'angle', name:'發射角度'}, 
+							{id:'range', name:'發射範圍'}, 
+							{id:'force', name:'發射力道'}];
+							
+		var tmpl_prop = $('#tmpl_prop' );
+		var mc_props_container = $('#mc_props_container');
+		
+		for( var i = 0; i < ary_props.length; ++i ){
+			var jdom = tmpl_prop.tmpl( ary_props[i] ) ;
+			initJqx( jdom, theme );
+			mc_props_container.append( jdom );
+		}
+	}
+</script>
+<script src="res/js/haxe.js"></script>
+<script>
+goog.require("app.particle.main");
+</script>
+
+</html>

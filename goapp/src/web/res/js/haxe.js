@@ -81,6 +81,7 @@ var Main = function() {
 	this.webgl = Main.j("#webgl");
 	this.treeView.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 	this.treeView.addHandler(function(type,params) {
+		haxe_Log.trace(type,{ fileName : "Main.hx", lineNumber : 37, className : "Main", methodName : "new", customParams : [params]});
 		switch(type) {
 		case "ON_TREE_NODE_CLICK":
 			_g.paramsView.setValues(_g.model.findParticleById(params.node.id),_g.treeView.findNode(params.node.id).children != null);
@@ -409,6 +410,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
+		return;
 		var foreachObj;
 		var foreachObj1 = null;
 		foreachObj1 = function(obj,pid) {
@@ -433,6 +435,7 @@ view_DynamicView.__super__ = model_Model;
 view_DynamicView.prototype = $extend(model_Model.prototype,{
 	init: function() {
 		model_Model.prototype.init.call(this);
+		return;
 		this.table_props = this.config.table_props;
 		this.table_props.datagrid();
 	}
@@ -478,6 +481,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
+		return;
 		this.root = this.config.root;
 		this.root.find(".easyui-numberspinner-code").numberspinner({ onChange : function(newv,oldv) {
 			var newValue = parseFloat(newv);
@@ -540,24 +544,20 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 		return this.tree_particle.tree("getRoots");
 	}
 	,getRootNode: function() {
-		return this.tree_particle.tree("getRoot");
+		return { };
 	}
 	,setNodeNameById: function(id,name) {
-		haxe_Log.trace(id,{ fileName : "TreeView.hx", lineNumber : 36, className : "view.TreeView", methodName : "setNodeNameById", customParams : [name]});
+		haxe_Log.trace(id,{ fileName : "TreeView.hx", lineNumber : 38, className : "view.TreeView", methodName : "setNodeNameById", customParams : [name]});
 		this.tree_particle.tree("update",{ target : this.findNode(id).target, text : name});
 	}
 	,findNode: function(nodeId) {
-		var _g = this.tree_particle.tree("find",nodeId);
-		var node = _g;
-		if(_g == null) return this.getRootNode(); else switch(_g) {
-		default:
-			return node;
-		}
+		return { };
 	}
 	,removeNode: function(nodeId) {
 		this.tree_particle.tree("remove",this.findNode(nodeId).target);
 	}
 	,focusNode: function(node) {
+		return;
 		this.tree_particle.tree("select",node.target);
 		this.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : node});
 	}
@@ -572,12 +572,21 @@ view_TreeView.prototype = $extend(model_Model.prototype,{
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
+		haxe_Log.trace("GGGGG",{ fileName : "TreeView.hx", lineNumber : 85, className : "view.TreeView", methodName : "init"});
 		this.tree_particle = this.config.tree_particle;
-		this.tree_particle.tree({ onClick : function(node) {
-			_g.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : node});
-		}, onDrop : function(target,source,point) {
-			_g.notify(view_TreeView.ON_TREE_DRAG,{ moveId : source.id, toId : _g.getNodeByDom(target).id});
-		}});
+		this.tree_particle.on("select",function(event) {
+			var args = event.args;
+			var item = _g.tree_particle.jqxTree("getItem",args.element);
+			var label = item.label;
+			_g.notify(view_TreeView.ON_TREE_NODE_CLICK,{ node : item});
+		});
+		this.tree_particle.on("dragEnd",function(event1) {
+			var itemLabel = event1.args.label;
+			var itemValue = event1.args.value;
+			var moveItem = _g.tree_particle.jqxTree("getItem",Main.j(event1.args.originalEvent.element).parent()[0]);
+			var parentItem = _g.tree_particle.jqxTree("getItem",moveItem.parentElement);
+			_g.notify(view_TreeView.ON_TREE_DRAG,{ moveId : moveItem.id, toId : parentItem.id});
+		});
 		this.btn_addTreeNode = this.config.btn_addTreeNode;
 		this.btn_removeTreeNode = this.config.btn_removeTreeNode;
 		this.btn_addTreeNode.click(function() {

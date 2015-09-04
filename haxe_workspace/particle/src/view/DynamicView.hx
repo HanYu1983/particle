@@ -20,6 +20,8 @@ class DynamicView extends Model
 	{
 		super.init();
 		
+		return;
+		
 		table_props = config.table_props;
 		table_props.datagrid();
 	}
