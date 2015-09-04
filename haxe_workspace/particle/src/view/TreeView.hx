@@ -57,6 +57,7 @@ class TreeView extends Model
 	}
 	
 	public function focusNode( node:Dynamic ) {
+		return;
 		tree_particle.tree( 'select', node.target);
 		notify( ON_TREE_NODE_CLICK, {node:node} );
 	}
@@ -81,16 +82,25 @@ class TreeView extends Model
 	{
 		super.init();
 		
-		return;
+		trace("GGGGG");
 		
 		tree_particle = config.tree_particle;
-		tree_particle.tree( {
-			onClick:function( node ) {
-				notify( ON_TREE_NODE_CLICK, {node:node} );
-			},
-			onDrop:function( target, source, point ) {
-				notify( ON_TREE_DRAG, { moveId:source.id, toId:getNodeByDom( target ).id } );
-			}
+		tree_particle.on('select',function (event)
+		{
+			var args = event.args;
+			var item = tree_particle.jqxTree('getItem', args.element);
+			var label = item.label; 
+			
+			notify( ON_TREE_NODE_CLICK, { node:item } );
+		});
+		
+		tree_particle.on('dragEnd', function (event) {
+			var itemLabel = event.args.label;
+			var itemValue = event.args.value;
+			var moveItem = tree_particle.jqxTree('getItem', Main.j( event.args.originalEvent.element ).parent()[0] );
+			var parentItem = tree_particle.jqxTree('getItem', moveItem.parentElement );
+			
+			notify( ON_TREE_DRAG, { moveId:moveItem.id, toId:parentItem.id } );
 		});
 		
 		btn_addTreeNode = config.btn_addTreeNode;

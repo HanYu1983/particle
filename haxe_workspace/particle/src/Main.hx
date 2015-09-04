@@ -12,7 +12,7 @@ import view.TreeView;
  */
 class Main
 {
-	static var j:Dynamic = untyped __js__('$');
+	public static var j:Dynamic = untyped __js__('$');
 	
 	var canvas_container:Dynamic;
 	var webgl:Dynamic;
@@ -34,7 +34,7 @@ class Main
 		}
 		
 		treeView.addHandler( function ( type:String, params:Dynamic ):Void {
-			//trace( type, params );
+			trace( type, params );
 			switch( type ) {
 				case TreeView.ON_TREE_NODE_CLICK:
 					paramsView.setValues( model.findParticleById( params.node.id ), treeView.findNode( params.node.id ).children != null );
