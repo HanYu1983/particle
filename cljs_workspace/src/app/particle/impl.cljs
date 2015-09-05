@@ -34,7 +34,31 @@
         (update-in [:part :ps] conj newpart)))))
 
 (defmethod abstract/onViewCommand "edit-centerPos" [_ data ctx]
-  (assoc-in ctx [:centerPos] (js->clj data)))
+  (let [id (aget data 0)
+        x (aget data 1)
+        y (aget data 2)
+        target
+        (first
+          (filter
+            #(= (:id %) id)
+            (get-in ctx [:part :ps])))]
+    (if target
+      (-> ctx
+        (update-in
+          [:part :ps]
+          (partial
+            replace
+            {
+              target
+              (merge
+                target
+                {
+                  :pos [x y (get-in target [:pos 2])]
+                  :timer (:timer target)
+                  :emit-times (:emit-times target)
+                })
+            })))
+      ctx)))
 
 (defmethod abstract/onViewCommand "info" [_ data {onModel :onModel :as ctx}]
   (am/go
