@@ -25,6 +25,8 @@ class Main
 	var model = new PanelModel();
 	
 	var isMouseDown = false;
+	var targetPos = [0.0, 0.0];
+	var currentPos = [0.0, 0.0];
 	
 	public function new() 
 	{
@@ -132,6 +134,12 @@ class Main
 											updateParticle( model.getOutputData( treeController.getItems() ) );
 									}
 								});
+								
+								if ( Math.abs( targetPos[0] - currentPos[0] ) > 1 ) {
+									currentPos[0] += ( targetPos[0] - currentPos[0] ) * .2;
+									currentPos[1] += ( targetPos[1] - currentPos[1] ) * .2;
+									model.setParticleRootsPos( currentPos[0], currentPos[1] );
+								}
 						}
 					});
 				case PanelModel.ON_FORMULA_CHANGE:
@@ -214,7 +222,8 @@ class Main
 		var px = e.offsetX;
 		var py = e.offsetY;
 		if ( isMouseDown ) {
-			model.setParticleRootsPos( px, py );
+			targetPos[0] = px;
+			targetPos[1] = py;
 		}
 	}
 	

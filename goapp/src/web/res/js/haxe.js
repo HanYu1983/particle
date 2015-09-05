@@ -90,6 +90,8 @@ List.prototype = {
 	}
 };
 var Main = function() {
+	this.currentPos = [0.0,0.0];
+	this.targetPos = [0.0,0.0];
 	this.isMouseDown = false;
 	this.model = new model_PanelModel();
 	this.paramsView = new view_ParamsView();
@@ -214,6 +216,11 @@ Main.prototype = {
 								if(data.count == 0) Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
 							}
 						});
+						if(Math.abs(_g.targetPos[0] - _g.currentPos[0]) > 1) {
+							_g.currentPos[0] += (_g.targetPos[0] - _g.currentPos[0]) * .2;
+							_g.currentPos[1] += (_g.targetPos[1] - _g.currentPos[1]) * .2;
+							_g.model.setParticleRootsPos(_g.currentPos[0],_g.currentPos[1]);
+						}
 						break;
 					}
 				});
@@ -271,7 +278,10 @@ Main.prototype = {
 	,onMousemove: function(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		if(this.isMouseDown) this.model.setParticleRootsPos(px,py);
+		if(this.isMouseDown) {
+			this.targetPos[0] = px;
+			this.targetPos[1] = py;
+		}
 	}
 	,onmousedown: function(e) {
 		this.isMouseDown = true;
