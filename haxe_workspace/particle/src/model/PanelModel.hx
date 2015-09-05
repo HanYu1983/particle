@@ -15,6 +15,7 @@ class PanelModel extends Model
 	public static var ON_INIT = 'ON_INIT';
 	public static var ON_ADD_FORMULA = 'ON_ADD_FORMULA';
 	public static var ON_REMOVE_FORMULA = 'ON_REMOVE_FORMULA';
+	public static var ON_FORMULA_CHANGE = 'ON_FORMULA_CHANGE';
 	
 	public var currentParticle(default, set):Dynamic;
 	
@@ -31,8 +32,6 @@ class PanelModel extends Model
 	{
 		if ( findParticleById( id )) return;
 		_ary_particles.push( { id:id, particle:particle } );
-		
-		//setParticleIsEmit( parentId );
 		
 		notify( ON_ADD_PARTICLE, { id:id, parentId:parentId, particle:particle } );
 	}
@@ -73,6 +72,24 @@ class PanelModel extends Model
 			if ( formula[7] == formulaId ) return true;
 			return false;
 		});
+	}
+	
+	public function setFormulaById( particleId:Int, formulaId:String, values:Array<Float> ) {
+		if ( !findParticleById( particleId )) return;
+		var particle = findParticleById( particleId ).particle;
+		var formula = getFormulaById( particleId, formulaId );
+		switch( formula ) {
+			case null:
+			case f:
+				f[0] = values[0];
+				f[1] = values[1];
+				f[2] = values[2];
+				f[3] = values[3];
+				f[4] = values[4];
+				f[5] = values[5];
+				f[6] = values[6];
+				notify( ON_FORMULA_CHANGE, { formulaId:formulaId, values:f } );
+		}
 	}
 	
 	public function setParticleName( id:Int, name:String ) {

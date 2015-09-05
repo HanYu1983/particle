@@ -27,6 +27,14 @@ class GridView extends Model
 		});
 	}
 	
+	public function selectFirstRow() {
+		grid.jqxGrid('selectrow', 0);
+	}
+	
+	public function selectLastRow() {
+		grid.jqxGrid('selectrow', getRows().length - 1 );
+	}
+	
 	public function addRow( id:String, row:Dynamic ) {
 		grid.jqxGrid('addrow', id, row);
 	}

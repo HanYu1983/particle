@@ -65,6 +65,8 @@ class Main
 			btn_removeDynamic:j('#btn_removeDynamic'),
 			btn_moveUp:j('#btn_moveUp'),
 			btn_moveDown:j('#btn_moveDown'),
+			combo_props:j('#combo_props'),
+			combo_dtype:j('#combo_dtype'),
 			spr_value1:j('#spr_value1'),
 			spr_value2:j('#spr_value2'),
 			spr_value3:j('#spr_value3'),
@@ -73,15 +75,19 @@ class Main
 		}
 		
 		gridController.addHandler( function( type, params ) {
+			trace( type );
 			switch( type ) {
+				case GridController.ON_FORMULA_CHANGE:
+					if ( gridController.currentRow == null ) return;
+					model.setFormulaById( gridController.currentParticleId, gridController.currentRow.uid, params.values );
 				case GridController.ON_ROW_SELECT:
-					gridController.setSelectProp( params.row.ptype );
-					gridController.setSelectMethod( params.row.method );
 					gridController.setTxtValue1( params.row.value1 );
 					gridController.setTxtValue2( params.row.value2 );
 					gridController.setTxtValue3( params.row.value3 );
 					gridController.setTxtValue4( params.row.value4 );
 					gridController.setTxtValue5( params.row.value5 );
+					gridController.setSelectProp( params.row.ptype );
+					gridController.setSelectMethod( params.row.method );
 				case GridController.ON_ADD_CLICK:
 					model.addFormula( params.id, createFormula( getId(), 'x', 'linear', 0, 0, 0, 0, 0 ));
 				case GridController.ON_REMOVE_CLICK:
@@ -90,7 +96,7 @@ class Main
 		});
 		
 		paramsView.addHandler( function( type, params) {
-			//trace( type, params );
+			trace( type );
 			switch( type ) {
 				case ParamsView.ON_PROP_CHANGE:
 					model.setParticleProps( params.id, params.proptype, params.value );
@@ -106,10 +112,12 @@ class Main
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
-			//trace( type, params );
+			trace( type );
 			switch( type ) {
+				case PanelModel.ON_FORMULA_CHANGE:
+					gridController.updateRow( params.formulaId, params.values );
 				case PanelModel.ON_ADD_FORMULA:
-					gridController.addRow( getId() + '', params.formula );
+					gridController.addRow( params.formula[7], params.formula );
 				case PanelModel.ON_REMOVE_FORMULA:
 					gridController.removeRowById( params.formulaId );
 				case PanelModel.ON_ADD_PARTICLE:

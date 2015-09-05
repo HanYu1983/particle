@@ -156,17 +156,22 @@ Main.prototype = {
 				break;
 			}
 		});
-		this.gridController.set_config({ table_props : Main.j("#table_props"), btn_addDynamic : Main.j("#btn_addDynamic"), btn_removeDynamic : Main.j("#btn_removeDynamic"), btn_moveUp : Main.j("#btn_moveUp"), btn_moveDown : Main.j("#btn_moveDown"), spr_value1 : Main.j("#spr_value1"), spr_value2 : Main.j("#spr_value2"), spr_value3 : Main.j("#spr_value3"), spr_value4 : Main.j("#spr_value4"), spr_value5 : Main.j("#spr_value5")});
+		this.gridController.set_config({ table_props : Main.j("#table_props"), btn_addDynamic : Main.j("#btn_addDynamic"), btn_removeDynamic : Main.j("#btn_removeDynamic"), btn_moveUp : Main.j("#btn_moveUp"), btn_moveDown : Main.j("#btn_moveDown"), combo_props : Main.j("#combo_props"), combo_dtype : Main.j("#combo_dtype"), spr_value1 : Main.j("#spr_value1"), spr_value2 : Main.j("#spr_value2"), spr_value3 : Main.j("#spr_value3"), spr_value4 : Main.j("#spr_value4"), spr_value5 : Main.j("#spr_value5")});
 		this.gridController.addHandler(function(type1,params1) {
+			console.log(type1);
 			switch(type1) {
+			case "ON_FORMULA_CHANGE":
+				if(_g.gridController.currentRow == null) return;
+				_g.model.setFormulaById(_g.gridController.currentParticleId,_g.gridController.currentRow.uid,params1.values);
+				break;
 			case "ON_ROW_SELECT":
-				_g.gridController.setSelectProp(params1.row.ptype);
-				_g.gridController.setSelectMethod(params1.row.method);
 				_g.gridController.setTxtValue1(params1.row.value1);
 				_g.gridController.setTxtValue2(params1.row.value2);
 				_g.gridController.setTxtValue3(params1.row.value3);
 				_g.gridController.setTxtValue4(params1.row.value4);
 				_g.gridController.setTxtValue5(params1.row.value5);
+				_g.gridController.setSelectProp(params1.row.ptype);
+				_g.gridController.setSelectMethod(params1.row.method);
 				break;
 			case "ON_ADD_CLICK":
 				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"x","linear",0,0,0,0,0));
@@ -177,6 +182,7 @@ Main.prototype = {
 			}
 		});
 		this.paramsView.addHandler(function(type2,params2) {
+			console.log(type2);
 			switch(type2) {
 			case "ON_PROP_CHANGE":
 				_g.model.setParticleProps(params2.id,params2.proptype,params2.value);
@@ -188,9 +194,13 @@ Main.prototype = {
 		});
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
 		this.model.addHandler(function(type3,params3) {
+			console.log(type3);
 			switch(type3) {
+			case "ON_FORMULA_CHANGE":
+				_g.gridController.updateRow(params3.formulaId,params3.values);
+				break;
 			case "ON_ADD_FORMULA":
-				_g.gridController.addRow(Main.getId() + "",params3.formula);
+				_g.gridController.addRow(params3.formula[7],params3.formula);
 				break;
 			case "ON_REMOVE_FORMULA":
 				_g.gridController.removeRowById(params3.formulaId);
@@ -408,6 +418,24 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			return false;
 		});
 	}
+	,setFormulaById: function(particleId,formulaId,values) {
+		if(!this.findParticleById(particleId)) return;
+		var particle = this.findParticleById(particleId).particle;
+		var formula = this.getFormulaById(particleId,formulaId);
+		var f = formula;
+		if(formula == null) {
+		} else switch(formula.length) {
+		default:
+			f[0] = values[0];
+			f[1] = values[1];
+			f[2] = values[2];
+			f[3] = values[3];
+			f[4] = values[4];
+			f[5] = values[5];
+			f[6] = values[6];
+			this.notify(model_PanelModel.ON_FORMULA_CHANGE,{ formulaId : formulaId, values : f});
+		}
+	}
 	,setParticleName: function(id,name) {
 		if(!this.findParticleById(id)) return;
 		this.findParticleById(id).particle.name = name;
@@ -581,18 +609,25 @@ view_GridController.__name__ = true;
 view_GridController.__super__ = model_Model;
 view_GridController.prototype = $extend(model_Model.prototype,{
 	setSelectProp: function(val) {
+		this.combo_props.jqxComboBox("selectItem",this.findItem(this.combo_props,val));
 	}
 	,setSelectMethod: function(val) {
+		this.combo_dtype.jqxComboBox("selectItem",this.findItem(this.combo_dtype,val));
 	}
 	,setTxtValue1: function(val) {
+		this.spr_value1.jqxNumberInput("val",val);
 	}
 	,setTxtValue2: function(val) {
+		this.spr_value2.jqxNumberInput("val",val);
 	}
 	,setTxtValue3: function(val) {
+		this.spr_value3.jqxNumberInput("val",val);
 	}
 	,setTxtValue4: function(val) {
+		this.spr_value4.jqxNumberInput("val",val);
 	}
 	,setTxtValue5: function(val) {
+		this.spr_value5.jqxNumberInput("val",val);
 	}
 	,initRow: function(id,formulaList) {
 		var _g = this;
@@ -605,12 +640,15 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 			Reflect.setField(curr,Std.string(obj[7]) + "",_g.formulaToRow(obj));
 			return curr;
 		},{ }));
+		this.grid.selectLastRow();
 	}
 	,addRow: function(id,formula) {
 		this.grid.addRow(id,this.formulaToRow(formula));
+		this.grid.selectLastRow();
 	}
 	,removeRowById: function(rid) {
 		this.grid.removeRowById(rid);
+		this.grid.selectLastRow();
 	}
 	,getRowById: function(rid) {
 		return this.grid.getRowById(rid);
@@ -618,15 +656,15 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 	,getRows: function() {
 		return this.grid.getRows();
 	}
-	,updateRow: function(rid,data) {
-		this.grid.updateRow(rid,data);
+	,updateRow: function(rid,formula) {
+		this.grid.updateRow(rid,this.formulaToRow(formula));
 	}
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
 		this.grid.set_config({ grid : this.config.table_props});
-		this.grid.config.grid.on("rowselect",function(event) {
-			var args = event.args;
+		this.grid.config.grid.on("rowselect",function(event1) {
+			var args = event1.args;
 			var rowBoundIndex = args.rowindex;
 			var rowData = args.row;
 			_g.currentRow = rowData;
@@ -634,11 +672,19 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 		});
 		this.btn_addDynamic = this.config.btn_addDynamic;
 		this.btn_addDynamic.click(function() {
-			_g.notify(view_GridController.ON_ADD_CLICK,{ id : _g.currentParticleId});
+			_g.notify(view_GridController.ON_ADD_CLICK,{ id : _g.currentParticleId, values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
 		});
 		this.btn_removeDynamic = this.config.btn_removeDynamic;
 		this.btn_removeDynamic.click(function() {
 			_g.notify(view_GridController.ON_REMOVE_CLICK,{ id : _g.currentParticleId});
+		});
+		this.combo_props = this.config.combo_props;
+		this.combo_props.on("change",function(event2) {
+			_g.notify(view_GridController.ON_FORMULA_CHANGE,{ values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
+		});
+		this.combo_dtype = this.config.combo_dtype;
+		this.combo_dtype.on("change",function(event3) {
+			_g.notify(view_GridController.ON_FORMULA_CHANGE,{ values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
 		});
 		this.btn_moveDown = this.config.btn_moveDown;
 		this.btn_moveUp = this.config.btn_moveUp;
@@ -647,9 +693,29 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 		this.spr_value3 = this.config.spr_value3;
 		this.spr_value4 = this.config.spr_value4;
 		this.spr_value5 = this.config.spr_value5;
+		var onSprChange = function(event) {
+			_g.notify(view_GridController.ON_FORMULA_CHANGE,{ values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
+		};
+		this.spr_value1.on("change",onSprChange);
+		this.spr_value2.on("change",onSprChange);
+		this.spr_value3.on("change",onSprChange);
+		this.spr_value4.on("change",onSprChange);
+		this.spr_value5.on("change",onSprChange);
 	}
 	,formulaToRow: function(formula) {
 		return { ptype : formula[0], method : formula[1], value1 : formula[2], value2 : formula[3], value3 : formula[4], value4 : formula[5], value5 : formula[6]};
+	}
+	,findItem: function(combo,value) {
+		var items = combo.jqxComboBox("getItems");
+		return Lambda.find(items,function(obj) {
+			return Main.j(obj.element).find("[ptype]").attr("ptype") == value;
+		});
+	}
+	,getTypeFromItem: function(item) {
+		return Main.j(item.element).find("[ptype]").attr("ptype");
+	}
+	,getSelectItem: function(combo) {
+		return combo.jqxComboBox("getSelectedItem");
 	}
 });
 var view_ParamsView = function() {
@@ -783,6 +849,12 @@ view_component_GridView.prototype = $extend(model_Model.prototype,{
 		var dataAdapter = new $.jqx.dataAdapter({ localdata : rows, datatype : "local"});
 		this.grid.jqxGrid({ source : dataAdapter});
 	}
+	,selectFirstRow: function() {
+		this.grid.jqxGrid("selectrow",0);
+	}
+	,selectLastRow: function() {
+		this.grid.jqxGrid("selectrow",this.getRows().length - 1);
+	}
 	,addRow: function(id,row) {
 		this.grid.jqxGrid("addrow",id,row);
 	}
@@ -875,9 +947,11 @@ model_PanelModel.ON_NAME_CHANGE = "ON_NAME_CHANGE";
 model_PanelModel.ON_INIT = "ON_INIT";
 model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
 model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
+model_PanelModel.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
 view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
 view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
 view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";
+view_GridController.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
 view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
 view_ParamsView.ON_TXT_NAME_CHANGE = "ON_TXT_NAME_CHANGE";
 view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK = "ON_BTN_ADD_TREE_NODE_CLICK";
