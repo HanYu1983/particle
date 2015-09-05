@@ -29,6 +29,7 @@ var api = api || {};
 		size:[10, 10],
 		pos:[300, 300, 0], 
 		vel:[0, 0, 0],
+		tex: "texture id"
 		emit: { 
 			count:1,
 			duration:.5,
@@ -106,9 +107,17 @@ var api = api || {};
 		common.onModelEvent.subscribe( listener )
 	}
 	
+	/**
+	新增材質
+	*/
+	function addTexture( id, img ){
+		common.onView.onNext(['add texture', [id, img]])
+	}
+	
 	pkg.editParticle = editParticle
 	pkg.changeCenterPos = changeCenterPos
 	pkg.info = info
 	pkg.addEventListener = addEventListener
+	pkg.addTexture = addTexture
 	
 }) (api)

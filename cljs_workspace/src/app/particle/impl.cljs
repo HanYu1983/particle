@@ -3,6 +3,7 @@
     [cljs.core.async.macros :as am])
   (:require
     [cljs.core.async :as a]
+    [gl.texture :as gltex]
     [tool.particle :as part]
     [app.particle.abstract :as abstract]))
     
@@ -64,3 +65,13 @@
   (am/go
     (a/>! onModel [nil (js-obj "count" (count (get-in ctx [:part :ps]))) data]))
   ctx)
+
+(def cacheTex (memoize gltex/texture))
+
+(defmethod abstract/onViewCommand "add texture" [_ data {gl :gl :as ctx}]
+  (let [id (aget data 0)
+        img (aget data 1)
+        texObj (cacheTex gl img)]
+        ; 不unbind的話會自動bind到shader中的第一個材質通道
+    (.bindTexture gl (.-TEXTURE_2D gl) nil)
+    (assoc-in ctx [:textures id] texObj)))
