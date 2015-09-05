@@ -51,6 +51,24 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
+Lambda.fold = function(it,f,first) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		first = f(x,first);
+	}
+	return first;
+};
+Lambda.indexOf = function(it,v) {
+	var i = 0;
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var v2 = $it0.next();
+		if(v == v2) return i;
+		i++;
+	}
+	return -1;
+};
 Lambda.find = function(it,f) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -73,7 +91,6 @@ List.prototype = {
 };
 var Main = function() {
 	this.model = new model_PanelModel();
-	this.dynamicView = new view_DynamicView();
 	this.paramsView = new view_ParamsView();
 	this.gridController = new view_GridController();
 	this.treeController = new view_TreeController();
@@ -100,7 +117,6 @@ Main.getId = function() {
 	return Main.id++;
 };
 Main.updateParticle = function(ary_render) {
-	console.log(JSON.stringify(ary_render[0]));
 	Lambda.foreach(ary_render,function(render) {
 		api.editParticle(render);
 		return true;
@@ -119,21 +135,7 @@ Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit(), formulaList : [this.createFormula("scale-x","linear",0,100,0,0,0),this.createFormula("x","linear",0,100,0,0,0)]};
-	}
-	,createFormula: function(ptype,method,v1,v2,v3,v4,v5) {
-		var ary = [];
-		ary.push(ptype);
-		ary.push(method);
-		ary.push(v1);
-		ary.push(v2);
-		ary.push(v3);
-		ary.push(v4);
-		ary.push(v5);
-		return ary;
-	}
-	,haxeStart: function() {
+	haxeStart: function() {
 		var _g = this;
 		this.treeController.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 		this.treeController.addHandler(function(type,params) {
@@ -150,47 +152,79 @@ Main.prototype = {
 			case "ON_TREE_NODE_CLICK":
 				var item = params.item;
 				_g.paramsView.setValues(_g.model.findParticleById(item.id),item.hasItems);
+				_g.gridController.initRow(item.id,_g.model.findParticleById(item.id).particle.formulaList);
 				break;
 			}
 		});
-		this.gridController.set_config({ table_props : Main.j("#table_props")});
-		this.paramsView.addHandler(function(type1,params1) {
+		this.gridController.set_config({ table_props : Main.j("#table_props"), btn_addDynamic : Main.j("#btn_addDynamic"), btn_removeDynamic : Main.j("#btn_removeDynamic"), btn_moveUp : Main.j("#btn_moveUp"), btn_moveDown : Main.j("#btn_moveDown"), spr_value1 : Main.j("#spr_value1"), spr_value2 : Main.j("#spr_value2"), spr_value3 : Main.j("#spr_value3"), spr_value4 : Main.j("#spr_value4"), spr_value5 : Main.j("#spr_value5")});
+		this.gridController.addHandler(function(type1,params1) {
 			switch(type1) {
+			case "ON_ROW_SELECT":
+				break;
+			case "ON_ADD_CLICK":
+				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"x","linear",0,0,0,0,0));
+				break;
+			case "ON_REMOVE_CLICK":
+				_g.model.removeFormula(_g.gridController.currentParticleId,_g.gridController.currentRow.uid);
+				break;
+			}
+		});
+		this.paramsView.addHandler(function(type2,params2) {
+			switch(type2) {
 			case "ON_PROP_CHANGE":
-				_g.model.setParticleProps(params1.id,params1.proptype,params1.value);
+				_g.model.setParticleProps(params2.id,params2.proptype,params2.value);
 				break;
 			case "ON_TXT_NAME_CHANGE":
-				_g.model.setParticleName(params1.id,params1.name);
+				_g.model.setParticleName(params2.id,params2.name);
 				break;
 			}
 		});
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
-		this.dynamicView.set_config({ table_props : Main.j("#table_props")});
-		this.model.addHandler(function(type2,params2) {
-			switch(type2) {
-			case "ON_INIT":
+		this.model.addHandler(function(type3,params3) {
+			switch(type3) {
+			case "ON_ADD_FORMULA":
+				_g.gridController.addRow(Main.getId() + "",params3.formula);
+				break;
+			case "ON_REMOVE_FORMULA":
+				_g.gridController.removeRowById(params3.formulaId);
 				break;
 			case "ON_ADD_PARTICLE":
-				var _g1 = _g.treeController.getItemById(params2.parentId);
+				var _g1 = _g.treeController.getItemById(params3.parentId);
 				var parentItem1 = _g1;
-				if(_g1 == null) _g.treeController.addToWithLabel(params2.id,params2.particle.name); else switch(_g1) {
+				if(_g1 == null) _g.treeController.addToWithLabel(params3.id,params3.particle.name); else switch(_g1) {
 				default:
-					_g.treeController.addToWithLabel(params2.id,params2.particle.name,parentItem1);
+					_g.treeController.addToWithLabel(params3.id,params3.particle.name,parentItem1);
 				}
 				break;
 			case "ON_REMOVE_PARTICLE":
-				_g.treeController.remove(_g.treeController.getItemById(params2.id).element);
+				_g.treeController.remove(_g.treeController.getItemById(params3.id).element);
 				break;
 			case "ON_NAME_CHANGE":
-				_g.treeController.setItemName(params2.id,params2.name);
+				_g.treeController.setItemName(params3.id,params3.name);
 				break;
 			}
 			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
 		});
 		var initObj = this.createNewParticle(Main.getId());
+		initObj.formulaList = [this.createFormula(Main.getId(),"scale-x","linear",0,100,0,0,0),this.createFormula(Main.getId(),"x","linear",0,100,0,0,0)];
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
 		this.model.set_config(initObj);
 		this.treeController.selectItem(this.treeController.getItemById("0").element);
+	}
+	,createNewParticle: function(id) {
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
+	}
+	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
+		var ary = [];
+		ary.push(ptype);
+		ary.push(method);
+		ary.push(v1);
+		ary.push(v2);
+		ary.push(v3);
+		ary.push(v4);
+		ary.push(v5);
+		ary.push(id);
+		return ary;
 	}
 	,onResize: function(e) {
 		this.webgl.attr("width",this.canvas_container.width());
@@ -338,6 +372,34 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var x = this.findParticleById(id);
 		HxOverrides.remove(this._ary_particles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
+	}
+	,addFormula: function(particleId,formula) {
+		if(!this.findParticleById(particleId)) return;
+		var particle = this.findParticleById(particleId).particle;
+		if(particle.formulaList == null) particle.formulaList = [];
+		particle.formulaList.push(formula);
+		this.notify(model_PanelModel.ON_ADD_FORMULA,{ formula : formula});
+	}
+	,removeFormula: function(particleId,formulaId) {
+		if(!this.findParticleById(particleId)) return;
+		var particle = this.findParticleById(particleId).particle;
+		var formula = this.getFormulaById(particleId,formulaId);
+		var f = formula;
+		if(formula == null) {
+		} else switch(formula.length) {
+		default:
+			particle.formulaList.splice(Lambda.indexOf(particle.formulaList,f),1);
+			this.notify(model_PanelModel.ON_REMOVE_FORMULA,{ formulaId : f[7]});
+		}
+	}
+	,getFormulaById: function(particleId,formulaId) {
+		if(!this.findParticleById(particleId)) return null;
+		var particle = this.findParticleById(particleId).particle;
+		if(particle.formulaList == null) return null;
+		return Lambda.find(particle.formulaList,function(formula) {
+			if(formula[7] == formulaId) return true;
+			return false;
+		});
 	}
 	,setParticleName: function(id,name) {
 		if(!this.findParticleById(id)) return;
@@ -504,19 +566,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		return this.currentParticle = particle;
 	}
 });
-var view_DynamicView = function() {
-	model_Model.call(this);
-};
-view_DynamicView.__name__ = true;
-view_DynamicView.__super__ = model_Model;
-view_DynamicView.prototype = $extend(model_Model.prototype,{
-	init: function() {
-		model_Model.prototype.init.call(this);
-		return;
-		this.table_props = this.config.table_props;
-		this.table_props.datagrid();
-	}
-});
 var view_GridController = function() {
 	this.grid = new view_component_GridView();
 	model_Model.call(this);
@@ -524,11 +573,20 @@ var view_GridController = function() {
 view_GridController.__name__ = true;
 view_GridController.__super__ = model_Model;
 view_GridController.prototype = $extend(model_Model.prototype,{
-	initRow: function(rows) {
-		this.grid.initRow(rows);
+	initRow: function(id,formulaList) {
+		var _g = this;
+		this.currentParticleId = id;
+		if(formulaList == null) {
+			this.grid.initRow({ });
+			return;
+		}
+		this.grid.initRow(Lambda.fold(formulaList,function(obj,curr) {
+			Reflect.setField(curr,Std.string(obj[7]) + "",_g.formulaToRow(obj));
+			return curr;
+		},{ }));
 	}
-	,addRow: function(id,row) {
-		this.grid.addRow(id,row);
+	,addRow: function(id,formula) {
+		this.grid.addRow(id,this.formulaToRow(formula));
 	}
 	,removeRowById: function(rid) {
 		this.grid.removeRowById(rid);
@@ -543,8 +601,34 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 		this.grid.updateRow(rid,data);
 	}
 	,init: function() {
+		var _g = this;
 		model_Model.prototype.init.call(this);
 		this.grid.set_config({ grid : this.config.table_props});
+		this.grid.config.grid.on("rowselect",function(event) {
+			var args = event.args;
+			var rowBoundIndex = args.rowindex;
+			var rowData = args.row;
+			_g.currentRow = rowData;
+			_g.notify(view_GridController.ON_ROW_SELECT,{ row : rowData});
+		});
+		this.btn_addDynamic = this.config.btn_addDynamic;
+		this.btn_addDynamic.click(function() {
+			_g.notify(view_GridController.ON_ADD_CLICK,{ id : _g.currentParticleId});
+		});
+		this.btn_removeDynamic = this.config.btn_removeDynamic;
+		this.btn_removeDynamic.click(function() {
+			_g.notify(view_GridController.ON_REMOVE_CLICK,{ id : _g.currentParticleId});
+		});
+		this.btn_moveDown = this.config.btn_moveDown;
+		this.btn_moveUp = this.config.btn_moveUp;
+		this.spr_value1 = this.config.spr_value1;
+		this.spr_value2 = this.config.spr_value2;
+		this.spr_value3 = this.config.spr_value3;
+		this.spr_value4 = this.config.spr_value4;
+		this.spr_value5 = this.config.spr_value5;
+	}
+	,formulaToRow: function(formula) {
+		return { ptype : formula[0], method : formula[1], value1 : formula[2], value2 : formula[3], value3 : formula[4], value4 : formula[5], value5 : formula[6]};
 	}
 });
 var view_ParamsView = function() {
@@ -768,6 +852,11 @@ model_PanelModel.ON_REMOVE_PARTICLE = "ON_REMOVE_PARTICLE";
 model_PanelModel.ON_PROPS_CAHNGE = "ON_PROPS_CAHNGE";
 model_PanelModel.ON_NAME_CHANGE = "ON_NAME_CHANGE";
 model_PanelModel.ON_INIT = "ON_INIT";
+model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
+model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
+view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
+view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
+view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";
 view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
 view_ParamsView.ON_TXT_NAME_CHANGE = "ON_TXT_NAME_CHANGE";
 view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK = "ON_BTN_ADD_TREE_NODE_CLICK";

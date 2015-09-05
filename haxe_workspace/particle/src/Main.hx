@@ -4,7 +4,6 @@ import haxe.Timer;
 import js.Browser;
 import model.PanelModel;
 import view.component.TreeView;
-import view.DynamicView;
 import view.GridController;
 import view.ParamsView;
 import view.TreeController;
@@ -23,7 +22,6 @@ class Main
 	var treeController = new TreeController();
 	var gridController = new GridController();
 	var paramsView = new ParamsView();
-	var dynamicView = new DynamicView();
 	var model = new PanelModel();
 	
 	public function new() 
@@ -35,34 +33,6 @@ class Main
 		webgl.mousemove( onMousemove );
 		
 		Reflect.setField( Browser.window, 'haxeStart', haxeStart );
-	}
-	
-	function createNewParticle( id:Dynamic ) {
-		return {
-			id:id, 
-			name:'粒子_' + id,
-			lifetime:5,
-			mass:3,
-			color:[.3, .3, .3],
-			size:[10, 10],
-			pos:[0, 0, 0], 
-			vel:[0, 0, 0],
-			emit:createNewEmit(),
-			formulaList: [ 	createFormula( 'scale-x', 'linear', 0, 100, 0, 0, 0 ),
-							createFormula( 'x', 'linear', 0, 100, 0, 0, 0 )]
-		}
-	}
-	
-	function createFormula( ptype:String, method:String, v1:Float, v2:Float, v3:Float, v4:Float, v5:Float ) {
-		var ary = new Array<Dynamic>();
-		ary.push( ptype );
-		ary.push( method );
-		ary.push( v1 );
-		ary.push( v2 );
-		ary.push( v3 );
-		ary.push( v4 );
-		ary.push( v5 );
-		return ary;
 	}
 	
 	function haxeStart() {
@@ -85,12 +55,32 @@ class Main
 				case TreeView.ON_TREE_NODE_CLICK:
 					var item = params.item;
 					paramsView.setValues( model.findParticleById( item.id ), item.hasItems );
+					gridController.initRow( item.id, model.findParticleById( item.id ).particle.formulaList );
 			}
 		});
 		
 		gridController.config = {
-			table_props:j('#table_props' )
+			table_props:j('#table_props' ),
+			btn_addDynamic:j('#btn_addDynamic'),
+			btn_removeDynamic:j('#btn_removeDynamic'),
+			btn_moveUp:j('#btn_moveUp'),
+			btn_moveDown:j('#btn_moveDown'),
+			spr_value1:j('#spr_value1'),
+			spr_value2:j('#spr_value2'),
+			spr_value3:j('#spr_value3'),
+			spr_value4:j('#spr_value4'),
+			spr_value5:j('#spr_value5')
 		}
+		
+		gridController.addHandler( function( type, params ) {
+			switch( type ) {
+				case GridController.ON_ROW_SELECT:
+				case GridController.ON_ADD_CLICK:
+					model.addFormula( params.id, createFormula( getId(), 'x', 'linear', 0, 0, 0, 0, 0 ));
+				case GridController.ON_REMOVE_CLICK:
+					model.removeFormula( gridController.currentParticleId, gridController.currentRow.uid );
+			}
+		});
 		
 		paramsView.addHandler( function( type, params) {
 			//trace( type, params );
@@ -108,15 +98,13 @@ class Main
 			txt_name:j('#txt_name')
 		}
 		
-		dynamicView.config = {
-			table_props:j( '#table_props' )
-		}
-		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
 			//trace( type, params );
 			switch( type ) {
-				case PanelModel.ON_INIT:
-					
+				case PanelModel.ON_ADD_FORMULA:
+					gridController.addRow( getId() + '', params.formula );
+				case PanelModel.ON_REMOVE_FORMULA:
+					gridController.removeRowById( params.formulaId );
 				case PanelModel.ON_ADD_PARTICLE:
 					switch( treeController.getItemById( params.parentId ) ) {
 						case null:
@@ -134,6 +122,8 @@ class Main
 		});
 		
 		var initObj:Dynamic = createNewParticle( getId() );
+		initObj.formulaList = [ createFormula( getId(), 'scale-x', 'linear', 0, 100, 0, 0, 0 ),
+								createFormula( getId(), 'x', 'linear', 0, 100, 0, 0, 0 )];
 		initObj.emit.prototype = [
 			createNewParticle( getId() )
 		];
@@ -151,6 +141,33 @@ class Main
 			range:0,
 			force:0
 		}
+	}
+	
+	function createNewParticle( id:Dynamic ) {
+		return {
+			id:id, 
+			name:'粒子_' + id,
+			lifetime:5,
+			mass:3,
+			color:[.3, .3, .3],
+			size:[10, 10],
+			pos:[0, 0, 0], 
+			vel:[0, 0, 0],
+			emit:createNewEmit()
+		}
+	}
+	
+	function createFormula( id, ptype:String, method:String, v1:Float, v2:Float, v3:Float, v4:Float, v5:Float ) {
+		var ary = new Array<Dynamic>();
+		ary.push( ptype );
+		ary.push( method );
+		ary.push( v1 );
+		ary.push( v2 );
+		ary.push( v3 );
+		ary.push( v4 );
+		ary.push( v5 );
+		ary.push( id );
+		return ary;
 	}
 	
 	function onResize( e ) {
@@ -191,7 +208,6 @@ class Main
 	}
 	
 	static function updateParticle( ary_render:Array<Dynamic> ) {
-		trace( Json.stringify( ary_render[0] ));
 		Lambda.foreach( ary_render, function( render ) {
 			untyped __js__( 'api.editParticle' )( render );
 			return true;

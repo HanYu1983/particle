@@ -13,6 +13,8 @@ class PanelModel extends Model
 	public static var ON_PROPS_CAHNGE = 'ON_PROPS_CAHNGE';
 	public static var ON_NAME_CHANGE = 'ON_NAME_CHANGE';
 	public static var ON_INIT = 'ON_INIT';
+	public static var ON_ADD_FORMULA = 'ON_ADD_FORMULA';
+	public static var ON_REMOVE_FORMULA = 'ON_REMOVE_FORMULA';
 	
 	public var currentParticle(default, set):Dynamic;
 	
@@ -40,6 +42,37 @@ class PanelModel extends Model
 		if ( !findParticleById( id )) return;
 		_ary_particles.remove( findParticleById( id ));
 		notify( ON_REMOVE_PARTICLE, { id:id } );
+	}
+	
+	public function addFormula( particleId:Int, formula:Array<Dynamic> ) {
+		if ( !findParticleById( particleId )) return;
+		var particle = findParticleById( particleId ).particle;
+		if ( particle.formulaList == null )
+			particle.formulaList = [];
+		particle.formulaList.push( formula );
+		notify( ON_ADD_FORMULA, { formula:formula } );
+	}
+	
+	public function removeFormula( particleId:Int, formulaId:String ) {
+		if ( !findParticleById( particleId )) return;
+		var particle = findParticleById( particleId ).particle;
+		var formula = getFormulaById( particleId, formulaId );
+		switch( formula ) {
+			case null:
+			case f:
+				particle.formulaList.splice( Lambda.indexOf( particle.formulaList, f ), 1 );
+				notify( ON_REMOVE_FORMULA, { formulaId:f[7] } );
+		}
+	}
+	
+	public function getFormulaById( particleId:Int, formulaId:String ):Array<Dynamic> {
+		if ( !findParticleById( particleId )) return null;
+		var particle = findParticleById( particleId ).particle;
+		if ( particle.formulaList == null ) return null;
+		return Lambda.find( particle.formulaList, function( formula:Array<Dynamic> ) {
+			if ( formula[7] == formulaId ) return true;
+			return false;
+		});
 	}
 	
 	public function setParticleName( id:Int, name:String ) {

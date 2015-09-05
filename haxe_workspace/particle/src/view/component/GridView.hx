@@ -9,7 +9,6 @@ import model.Model;
 class GridView extends Model
 {
 	var grid:Dynamic;
-	
 
 	public function new() 
 	{
