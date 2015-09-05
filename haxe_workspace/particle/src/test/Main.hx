@@ -15,6 +15,7 @@ class Main
 	static function haxeStart() {
 		var tr = new TestRunner();
 		tr.add( new TestTree() );
+		tr.add( new TestGrid() );
 		tr.run();
 	}
 

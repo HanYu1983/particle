@@ -1,5 +1,6 @@
 package;
 import haxe.Json;
+import haxe.Timer;
 import js.Browser;
 import model.PanelModel;
 import view.component.ITreeView;
@@ -51,7 +52,6 @@ class Main
 	}
 	
 	function haxeStart() {
-		
 		
 		treeController.config = {
 			btn_addTreeNode:j('#btn_addTreeNode' ),
@@ -121,9 +121,6 @@ class Main
 		model.config = initObj;
 		
 		treeController.selectItem( treeController.getItemById( '0' ).element );
-		//treeController.focusNode( treeController.findNode( 0 ) );
-		
-		
 	}
 	
 	public static function createNewEmit() {
