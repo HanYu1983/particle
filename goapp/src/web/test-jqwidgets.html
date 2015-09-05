@@ -58,7 +58,7 @@
 	</script>
 </head>
 <body>
-	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{"size":"72%","collapsible":false}, {"collapsed":true}]}'>
+	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{"size":"72%","collapsible":false}, {"collapsed":false}]}'>
 		<div>
 			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": "310px","min":"250px" }]}'>
 				<div>
@@ -187,9 +187,9 @@
 		var ary_props = [ 	{id:'lifetime', name:'生命', min:0, max:100000}, 
 							{id:'mass', name:'質量', min:0, max:100000}, 
 							{id:'pos_r', name:'角度', min:-360, max:360}, 
-							{id:'vel_x', name:'速度x', min:0, max:100000}, 
-							{id:'vel_y', name:'速度y', min:0, max:100000}, 
-							{id:'vel_r', name:'旋轉速度', min:0, max:100000}, 
+							{id:'vel_x', name:'速度x', min:-100000, max:100000}, 
+							{id:'vel_y', name:'速度y', min:-100000, max:100000}, 
+							{id:'vel_r', name:'旋轉速度', min:-100000, max:100000}, 
 							{id:'size_x', name:'粒子寬度', min:0, max:100000}, 
 							{id:'size_y', name:'粒子高度', min:0, max:100000}, 
 							{id:'count', name:'發射數目', min:1, max:3}, 
@@ -239,10 +239,10 @@
 		
 		combo_dtype = $('#combo_dtype' );
 		ary_props = [ 	{id:'const', name:'常數'}, 
-						{id:'constAdd', name:'相對常數'}, 
+						{id:'constAdd', name:'常數累加'}, 
 						{id:'linear', name:'線性'}, 
-						{id:'linearAdd', name:'相對線性'}, 
-						{id:'randStartAdd', name:'隨機'}, 
+						{id:'linearAdd', name:'線性累加'}, 
+						{id:'randStartAdd', name:'隨機開始'}, 
 						{id:'custom', name:'自訂'} ]
 		
 		comboSource = [];
