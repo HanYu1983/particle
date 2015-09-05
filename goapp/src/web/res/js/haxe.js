@@ -75,6 +75,7 @@ var Main = function() {
 	this.model = new model_PanelModel();
 	this.dynamicView = new view_DynamicView();
 	this.paramsView = new view_ParamsView();
+	this.gridController = new view_GridController();
 	this.treeController = new view_TreeController();
 	this.canvas_container = Main.j("#canvas_container");
 	this.webgl = Main.j("#webgl");
@@ -152,6 +153,7 @@ Main.prototype = {
 				break;
 			}
 		});
+		this.gridController.set_config({ table_props : Main.j("#table_props")});
 		this.paramsView.addHandler(function(type1,params1) {
 			switch(type1) {
 			case "ON_PROP_CHANGE":
@@ -166,6 +168,8 @@ Main.prototype = {
 		this.dynamicView.set_config({ table_props : Main.j("#table_props")});
 		this.model.addHandler(function(type2,params2) {
 			switch(type2) {
+			case "ON_INIT":
+				break;
 			case "ON_ADD_PARTICLE":
 				var _g1 = _g.treeController.getItemById(params2.parentId);
 				var parentItem1 = _g1;
@@ -494,6 +498,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		};
 		foreachObj = foreachObj1;
 		foreachObj(this.config);
+		this.notify(model_PanelModel.ON_INIT);
 	}
 	,set_currentParticle: function(particle) {
 		return this.currentParticle = particle;
@@ -510,6 +515,36 @@ view_DynamicView.prototype = $extend(model_Model.prototype,{
 		return;
 		this.table_props = this.config.table_props;
 		this.table_props.datagrid();
+	}
+});
+var view_GridController = function() {
+	this.grid = new view_component_GridView();
+	model_Model.call(this);
+};
+view_GridController.__name__ = true;
+view_GridController.__super__ = model_Model;
+view_GridController.prototype = $extend(model_Model.prototype,{
+	initRow: function(rows) {
+		this.grid.initRow(rows);
+	}
+	,addRow: function(id,row) {
+		this.grid.addRow(id,row);
+	}
+	,removeRowById: function(rid) {
+		this.grid.removeRowById(rid);
+	}
+	,getRowById: function(rid) {
+		return this.grid.getRowById(rid);
+	}
+	,getRows: function() {
+		return this.grid.getRows();
+	}
+	,updateRow: function(rid,data) {
+		this.grid.updateRow(rid,data);
+	}
+	,init: function() {
+		model_Model.prototype.init.call(this);
+		this.grid.set_config({ grid : this.config.table_props});
 	}
 });
 var view_ParamsView = function() {
@@ -633,6 +668,36 @@ view_TreeController.prototype = $extend(model_Model.prototype,{
 		});
 	}
 });
+var view_component_GridView = function() {
+	model_Model.call(this);
+};
+view_component_GridView.__name__ = true;
+view_component_GridView.__super__ = model_Model;
+view_component_GridView.prototype = $extend(model_Model.prototype,{
+	initRow: function(rows) {
+		var dataAdapter = new $.jqx.dataAdapter({ localdata : rows, datatype : "local"});
+		this.grid.jqxGrid({ source : dataAdapter});
+	}
+	,addRow: function(id,row) {
+		this.grid.jqxGrid("addrow",id,row);
+	}
+	,removeRowById: function(rid) {
+		this.grid.jqxGrid("deleterow",rid);
+	}
+	,getRowById: function(rid) {
+		return this.grid.jqxGrid("getrowdatabyid",rid);
+	}
+	,getRows: function() {
+		return this.grid.jqxGrid("getrows");
+	}
+	,updateRow: function(rid,data) {
+		this.grid.jqxGrid("updaterow",rid,data);
+	}
+	,init: function() {
+		model_Model.prototype.init.call(this);
+		this.grid = this.config.grid;
+	}
+});
 var view_component_TreeView = function() {
 	model_Model.call(this);
 };
@@ -702,6 +767,7 @@ model_PanelModel.ON_ADD_PARTICLE = "ON_ADD_PARTICLE";
 model_PanelModel.ON_REMOVE_PARTICLE = "ON_REMOVE_PARTICLE";
 model_PanelModel.ON_PROPS_CAHNGE = "ON_PROPS_CAHNGE";
 model_PanelModel.ON_NAME_CHANGE = "ON_NAME_CHANGE";
+model_PanelModel.ON_INIT = "ON_INIT";
 view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
 view_ParamsView.ON_TXT_NAME_CHANGE = "ON_TXT_NAME_CHANGE";
 view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK = "ON_BTN_ADD_TREE_NODE_CLICK";

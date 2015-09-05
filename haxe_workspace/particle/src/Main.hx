@@ -5,6 +5,7 @@ import js.Browser;
 import model.PanelModel;
 import view.component.TreeView;
 import view.DynamicView;
+import view.GridController;
 import view.ParamsView;
 import view.TreeController;
 
@@ -20,6 +21,7 @@ class Main
 	var webgl:Dynamic;
 	
 	var treeController = new TreeController();
+	var gridController = new GridController();
 	var paramsView = new ParamsView();
 	var dynamicView = new DynamicView();
 	var model = new PanelModel();
@@ -86,6 +88,10 @@ class Main
 			}
 		});
 		
+		gridController.config = {
+			table_props:j('#table_props' )
+		}
+		
 		paramsView.addHandler( function( type, params) {
 			//trace( type, params );
 			switch( type ) {
@@ -108,7 +114,9 @@ class Main
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
 			//trace( type, params );
-			switch( type ){
+			switch( type ) {
+				case PanelModel.ON_INIT:
+					
 				case PanelModel.ON_ADD_PARTICLE:
 					switch( treeController.getItemById( params.parentId ) ) {
 						case null:

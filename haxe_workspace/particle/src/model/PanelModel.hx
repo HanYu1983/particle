@@ -12,6 +12,7 @@ class PanelModel extends Model
 	public static var ON_REMOVE_PARTICLE = 'ON_REMOVE_PARTICLE';
 	public static var ON_PROPS_CAHNGE = 'ON_PROPS_CAHNGE';
 	public static var ON_NAME_CHANGE = 'ON_NAME_CHANGE';
+	public static var ON_INIT = 'ON_INIT';
 	
 	public var currentParticle(default, set):Dynamic;
 	
@@ -195,6 +196,8 @@ class PanelModel extends Model
 		}
 		
 		foreachObj( config );
+		
+		notify( ON_INIT );
 	}
 	
 	
