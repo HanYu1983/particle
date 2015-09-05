@@ -149,6 +149,7 @@ class PanelModel extends Model
 			outputData.mass = particle.mass;
 			outputData.color = particle.color;
 			outputData.size = particle.size;
+			outputData.formulaList = particle.formulaList;
 			
 			if ( node.children && node.children.length > 0 ) {
 				outputData.emit = { 'prototype':[] }

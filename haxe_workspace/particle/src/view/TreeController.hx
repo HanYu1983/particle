@@ -1,14 +1,13 @@
 package view;
 
 import model.Model;
-import view.component.ITreeView;
 import view.component.TreeView;
 
 /**
  * ...
  * @author vic
  */
-class TreeController extends Model implements ITreeView
+class TreeController extends Model
 {
 	public static var ON_BTN_ADD_TREE_NODE_CLICK = 'ON_BTN_ADD_TREE_NODE_CLICK';
 	public static var ON_BTN_REMOVE_TREE_NODE_CLICK = 'ON_BTN_REMOVE_TREE_NODE_CLICK';

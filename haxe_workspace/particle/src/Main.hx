@@ -3,7 +3,6 @@ import haxe.Json;
 import haxe.Timer;
 import js.Browser;
 import model.PanelModel;
-import view.component.ITreeView;
 import view.component.TreeView;
 import view.DynamicView;
 import view.ParamsView;
@@ -31,7 +30,6 @@ class Main
 		webgl = j( '#webgl' );
 		
 		onResize(null );
-		j( Browser.window ).resize( onResize );
 		webgl.mousemove( onMousemove );
 		
 		Reflect.setField( Browser.window, 'haxeStart', haxeStart );
@@ -47,8 +45,22 @@ class Main
 			size:[10, 10],
 			pos:[0, 0, 0], 
 			vel:[0, 0, 0],
-			emit:createNewEmit()
+			emit:createNewEmit(),
+			formulaList: [ 	createFormula( 'scale-x', 'linear', 0, 100, 0, 0, 0 ),
+							createFormula( 'x', 'linear', 0, 100, 0, 0, 0 )]
 		}
+	}
+	
+	function createFormula( ptype:String, method:String, v1:Float, v2:Float, v3:Float, v4:Float, v5:Float ) {
+		var ary = new Array<Dynamic>();
+		ary.push( ptype );
+		ary.push( method );
+		ary.push( v1 );
+		ary.push( v2 );
+		ary.push( v3 );
+		ary.push( v4 );
+		ary.push( v5 );
+		return ary;
 	}
 	
 	function haxeStart() {
@@ -75,7 +87,7 @@ class Main
 		});
 		
 		paramsView.addHandler( function( type, params) {
-			trace( type, params );
+			//trace( type, params );
 			switch( type ) {
 				case ParamsView.ON_PROP_CHANGE:
 					model.setParticleProps( params.id, params.proptype, params.value );
@@ -95,7 +107,7 @@ class Main
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
-			trace( type, params );
+			//trace( type, params );
 			switch( type ){
 				case PanelModel.ON_ADD_PARTICLE:
 					switch( treeController.getItemById( params.parentId ) ) {
@@ -141,7 +153,6 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		//model.setParticleRootsPos( px, py );
 		moveParticle( 0, px, py );
 	}
 	
@@ -172,6 +183,7 @@ class Main
 	}
 	
 	static function updateParticle( ary_render:Array<Dynamic> ) {
+		trace( Json.stringify( ary_render[0] ));
 		Lambda.foreach( ary_render, function( render ) {
 			untyped __js__( 'api.editParticle' )( render );
 			return true;

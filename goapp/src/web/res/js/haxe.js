@@ -79,7 +79,6 @@ var Main = function() {
 	this.canvas_container = Main.j("#canvas_container");
 	this.webgl = Main.j("#webgl");
 	this.onResize(null);
-	Main.j(window).resize($bind(this,this.onResize));
 	this.webgl.mousemove($bind(this,this.onMousemove));
 	Reflect.setField(window,"haxeStart",$bind(this,this.haxeStart));
 };
@@ -100,6 +99,7 @@ Main.getId = function() {
 	return Main.id++;
 };
 Main.updateParticle = function(ary_render) {
+	console.log(JSON.stringify(ary_render[0]));
 	Lambda.foreach(ary_render,function(render) {
 		api.editParticle(render);
 		return true;
@@ -119,7 +119,18 @@ Main.main = function() {
 };
 Main.prototype = {
 	createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit(), formulaList : [this.createFormula("scale-x","linear",0,100,0,0,0),this.createFormula("x","linear",0,100,0,0,0)]};
+	}
+	,createFormula: function(ptype,method,v1,v2,v3,v4,v5) {
+		var ary = [];
+		ary.push(ptype);
+		ary.push(method);
+		ary.push(v1);
+		ary.push(v2);
+		ary.push(v3);
+		ary.push(v4);
+		ary.push(v5);
+		return ary;
 	}
 	,haxeStart: function() {
 		var _g = this;
@@ -142,7 +153,6 @@ Main.prototype = {
 			}
 		});
 		this.paramsView.addHandler(function(type1,params1) {
-			haxe_Log.trace(type1,{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "haxeStart", customParams : [params1]});
 			switch(type1) {
 			case "ON_PROP_CHANGE":
 				_g.model.setParticleProps(params1.id,params1.proptype,params1.value);
@@ -155,7 +165,6 @@ Main.prototype = {
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
 		this.dynamicView.set_config({ table_props : Main.j("#table_props")});
 		this.model.addHandler(function(type2,params2) {
-			haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 98, className : "Main", methodName : "haxeStart", customParams : [params2]});
 			switch(type2) {
 			case "ON_ADD_PARTICLE":
 				var _g1 = _g.treeController.getItemById(params2.parentId);
@@ -217,32 +226,8 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -462,6 +447,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			outputData.mass = particle.mass;
 			outputData.color = particle.color;
 			outputData.size = particle.size;
+			outputData.formulaList = particle.formulaList;
 			if(node1.children && node1.children.length > 0) {
 				outputData.emit = { 'prototype' : []};
 				outputData.emit.count = particle.emit.count;
@@ -596,14 +582,11 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		return this.root.find("div[proptype=" + type + "]");
 	}
 });
-var view_component_ITreeView = function() { };
-view_component_ITreeView.__name__ = true;
 var view_TreeController = function() {
 	this.tree = new view_component_TreeView();
 	model_Model.call(this);
 };
 view_TreeController.__name__ = true;
-view_TreeController.__interfaces__ = [view_component_ITreeView];
 view_TreeController.__super__ = model_Model;
 view_TreeController.prototype = $extend(model_Model.prototype,{
 	getItems: function() {

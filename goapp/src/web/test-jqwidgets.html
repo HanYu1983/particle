@@ -212,21 +212,29 @@
 		}
 		
 		var combo_props = $('#combo_props' );
-		ary_props = [ 	{id:'lifetime', name:'生命'}, 
-						{id:'mass', name:'質量'}, 
-						{id:'pos_x', name:'位置x'}, 
-						{id:'pos_y', name:'位置y'}, 
-						{id:'pos_r', name:'角度'}, 
-						{id:'vel_x', name:'速度x'}, 
-						{id:'vel_y', name:'速度y'}, 
-						{id:'vel_r', name:'旋轉速度'}, 
-						{id:'size_x', name:'粒子寬度'}, 
-						{id:'size_y', name:'粒子高度'}, 
-						{id:'count', name:'發射數目'}, 
-						{id:'duration', name:'週期毫秒'}, 
-						{id:'angle', name:'發射角度'}, 
-						{id:'range', name:'發射範圍'}, 
-						{id:'force', name:'發射力道'}];
+		"x" | "y" | "rot" | "vx" | "vy" | "vr" | 
+					"scale-x" | "scale-y" | "r" | "g" | "b" | "a" |
+					"emit-angle" | "emit-range" | "emit-count" | "emit-force" | "emit-duration",
+	
+				type:
+					"const" | "constAdd" | "linear" | "linearAdd" | "randStartAdd"
+					
+		ary_props = [ 	{id:'x', name:'位置x'}, 
+						{id:'y', name:'位置y'}, 
+						{id:'rot', name:'角度'}, 
+						{id:'vx', name:'速度x'}, 
+						{id:'vy', name:'速度y'}, 
+						{id:'vr', name:'旋轉速度'}, 
+						{id:'scale-x', name:'粒子寬度'}, 
+						{id:'scale-y', name:'粒子高度'}, 
+						{id:'r', name:'紅'}, 
+						{id:'g', name:'綠'}, 
+						{id:'b', name:'藍'}, 
+						{id:'emit-count', name:'發射數目'}, 
+						{id:'emit-duration', name:'週期毫秒'}, 
+						{id:'emit-angle', name:'發射角度'}, 
+						{id:'emit-range', name:'發射範圍'}, 
+						{id:'emit-force', name:'發射力道'}];
 						
 		var comboSource = [];
 		for( var i = 0; i < ary_props.length; ++i ){
