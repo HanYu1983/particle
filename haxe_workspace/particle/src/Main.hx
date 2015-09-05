@@ -81,6 +81,7 @@ class Main
 					if ( gridController.currentRow == null ) return;
 					model.setFormulaById( gridController.currentParticleId, gridController.currentRow.uid, params.values );
 				case GridController.ON_ROW_SELECT:
+					if ( gridController.currentRow == null ) return;
 					gridController.setTxtValue1( params.row.value1 );
 					gridController.setTxtValue2( params.row.value2 );
 					gridController.setTxtValue3( params.row.value3 );
@@ -91,6 +92,7 @@ class Main
 				case GridController.ON_ADD_CLICK:
 					model.addFormula( params.id, createFormula( getId(), 'x', 'linear', 0, 0, 0, 0, 0 ));
 				case GridController.ON_REMOVE_CLICK:
+					if ( gridController.currentRow == null ) return;
 					model.removeFormula( gridController.currentParticleId, gridController.currentRow.uid );
 			}
 		});
@@ -114,6 +116,8 @@ class Main
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
 			trace( type );
 			switch( type ) {
+				case PanelModel.ON_INIT:
+					
 				case PanelModel.ON_FORMULA_CHANGE:
 					gridController.updateRow( params.formulaId, params.values );
 				case PanelModel.ON_ADD_FORMULA:
@@ -137,8 +141,8 @@ class Main
 		});
 		
 		var initObj:Dynamic = createNewParticle( getId() );
-		initObj.formulaList = [ createFormula( getId(), 'scale-x', 'linear', 0, 100, 0, 0, 0 ),
-								createFormula( getId(), 'x', 'linear', 0, 100, 0, 0, 0 )];
+		//initObj.formulaList = [ createFormula( getId(), 'scale-x', 'linear', 0, 100, 0, 0, 0 ),
+		//						createFormula( getId(), 'x', 'linear', 0, 100, 0, 0, 0 )];
 		initObj.emit.prototype = [
 			createNewParticle( getId() )
 		];
@@ -166,7 +170,7 @@ class Main
 			mass:3,
 			color:[.3, .3, .3],
 			size:[10, 10],
-			pos:[0, 0, 0], 
+			pos:[400, 400, 0], 
 			vel:[0, 0, 0],
 			emit:createNewEmit()
 		}
@@ -193,7 +197,7 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		moveParticle( 0, px, py );
+		//moveParticle( 0, px, py );
 	}
 	
 	static var id = 0;

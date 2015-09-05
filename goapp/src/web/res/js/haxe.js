@@ -165,6 +165,7 @@ Main.prototype = {
 				_g.model.setFormulaById(_g.gridController.currentParticleId,_g.gridController.currentRow.uid,params1.values);
 				break;
 			case "ON_ROW_SELECT":
+				if(_g.gridController.currentRow == null) return;
 				_g.gridController.setTxtValue1(params1.row.value1);
 				_g.gridController.setTxtValue2(params1.row.value2);
 				_g.gridController.setTxtValue3(params1.row.value3);
@@ -177,6 +178,7 @@ Main.prototype = {
 				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"x","linear",0,0,0,0,0));
 				break;
 			case "ON_REMOVE_CLICK":
+				if(_g.gridController.currentRow == null) return;
 				_g.model.removeFormula(_g.gridController.currentParticleId,_g.gridController.currentRow.uid);
 				break;
 			}
@@ -196,6 +198,8 @@ Main.prototype = {
 		this.model.addHandler(function(type3,params3) {
 			console.log(type3);
 			switch(type3) {
+			case "ON_INIT":
+				break;
 			case "ON_FORMULA_CHANGE":
 				_g.gridController.updateRow(params3.formulaId,params3.values);
 				break;
@@ -223,13 +227,12 @@ Main.prototype = {
 			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
 		});
 		var initObj = this.createNewParticle(Main.getId());
-		initObj.formulaList = [this.createFormula(Main.getId(),"scale-x","linear",0,100,0,0,0),this.createFormula(Main.getId(),"x","linear",0,100,0,0,0)];
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
 		this.model.set_config(initObj);
 		this.treeController.selectItem(this.treeController.getItemById("0").element);
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [0,0,0], vel : [0,0,0], emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [400,400,0], vel : [0,0,0], emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];
@@ -250,7 +253,6 @@ Main.prototype = {
 	,onMousemove: function(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		Main.moveParticle(0,px,py);
 	}
 };
 Math.__name__ = true;
