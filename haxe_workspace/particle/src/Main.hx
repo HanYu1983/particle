@@ -97,7 +97,7 @@ class Main
 					gridController.setSelectProp( params.row.ptype );
 					gridController.setSelectMethod( params.row.method );
 				case GridController.ON_ADD_CLICK:
-					model.addFormula( params.id, createFormula( getId(), 'x', 'linear', 0, 0, 0, 0, 0 ));
+					model.addFormula( params.id, createFormula( getId(), 'x', 'randStartAdd', 0, 0, 0, 0, 0 ));
 				case GridController.ON_REMOVE_CLICK:
 					if ( gridController.currentRow == null ) return;
 					model.removeFormula( gridController.currentParticleId, gridController.currentRow.uid );
