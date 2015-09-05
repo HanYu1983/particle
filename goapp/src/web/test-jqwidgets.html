@@ -17,6 +17,9 @@
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxpanel.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxComboBox.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxlistbox.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxgrid.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxdata.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxgrid.selection.js"></script>
 			
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
@@ -140,21 +143,10 @@
 					</div>
 				</div>
 				<div class="group" style="text-align:center">
-					<div class="hori" style="width:758px;">
-						<table id="table_props" style="width:100%;"
-							data-options="singleSelect:true,collapsible:false,remoteSort:false,multiSort:false">
-							<thead>
-								<tr>
-									<th data-options="field:'name',width:100,sortable:false" >屬性</th>
-									<th data-options="field:'type',width:100,sortable:false" >動態類型</th>
-									<th data-options="field:'value1',width:100,sortable:false" >參數1</th>
-									<th data-options="field:'value2',width:100,sortable:false" >參數2</th>
-									<th data-options="field:'value3',width:100,sortable:false" >參數3</th>
-									<th data-options="field:'value4',width:100,sortable:false" >參數4</th>
-									<th data-options="field:'value5',width:100,sortable:false" >參數5</th>
-								</tr>
-							</thead>
-						</table>
+					<div class="hori" style="width:700px;">
+						<div id="table_props" jqx="jqxGrid">
+							<!-- created by script -->
+						</div>
 					</div>
 				</div>
 			</div>
@@ -252,6 +244,141 @@
 			comboSource.push( '<div ptype="' + ary_props[i].id + '">' + ary_props[i].name + '</div>' );
 		}
 		combo_dtype.jqxComboBox( { source: comboSource, width:80, selectedIndex:0 } );
+		
+		
+		//create gried
+		
+		var data = {};
+            var firstNames =
+            [
+                "Andrew", "Nancy", "Shelley", "Regina", "Yoshi", "Antoni", "Mayumi", "Ian", "Peter", "Lars", "Petra", "Martin", "Sven", "Elio", "Beate", "Cheryl", "Michael", "Guylene"
+            ];
+            var lastNames =
+            [
+                "Fuller", "Davolio", "Burke", "Murphy", "Nagase", "Saavedra", "Ohno", "Devling", "Wilson", "Peterson", "Winkler", "Bein", "Petersen", "Rossi", "Vileid", "Saylor", "Bjorn", "Nodier"
+            ];
+            var productNames =
+            [
+                "Black Tea", "Green Tea", "Caffe Espresso", "Doubleshot Espresso", "Caffe Latte", "White Chocolate Mocha", "Cramel Latte", "Caffe Americano", "Cappuccino", "Espresso Truffle", "Espresso con Panna", "Peppermint Mocha Twist"
+            ];
+            var priceValues =
+            [
+                "2.25", "1.5", "3.0", "3.3", "4.5", "3.6", "3.8", "2.5", "5.0", "1.75", "3.25", "4.0"
+            ];
+            var generaterow = function (i) {
+                var row = {};
+                var productindex = Math.floor(Math.random() * productNames.length);
+                var price = parseFloat(priceValues[productindex]);
+                var quantity = 1 + Math.round(Math.random() * 10);
+                row["firstname"] = firstNames[Math.floor(Math.random() * firstNames.length)];
+                row["lastname"] = lastNames[Math.floor(Math.random() * lastNames.length)];
+                row["productname"] = productNames[productindex];
+                row["price"] = price;
+                row["quantity"] = quantity;
+                row["total"] = price * quantity;
+                return row;
+            }
+            for (var i = 0; i < 10; i++) {
+                var row = generaterow(i);
+                data[i] = row;
+            }
+            var source =
+            {
+                localdata: data,
+                datatype: "local",
+                datafields:
+                [
+                    { name: 'firstname', type: 'string' },
+                    { name: 'lastname', type: 'string' },
+                    { name: 'productname', type: 'string' },
+                    { name: 'quantity', type: 'number' },
+                    { name: 'price', type: 'number' },
+                    { name: 'total', type: 'number' }
+                ],
+                addrow: function (rowid, rowdata, position, commit) {
+                    // synchronize with the server - send insert command
+                    // call commit with parameter true if the synchronization with the server is successful 
+                    //and with parameter false if the synchronization failed.
+                    // you can pass additional argument to the commit callback which represents the new ID if it is generated from a DB.
+                    commit(true);
+                },
+                deleterow: function (rowid, commit) {
+                    // synchronize with the server - send delete command
+                    // call commit with parameter true if the synchronization with the server is successful 
+                    //and with parameter false if the synchronization failed.
+                    commit(true);
+                },
+                updaterow: function (rowid, newdata, commit) {
+                    // synchronize with the server - send update command
+                    // call commit with parameter true if the synchronization with the server is successful 
+                    // and with parameter false if the synchronization failed.
+                    commit(true);
+                }
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            // initialize jqxGrid
+            $("#table_props").jqxGrid(
+            {
+                width: '100%',
+                source: dataAdapter,
+                showtoolbar: false,
+                rendertoolbar: function (toolbar) {
+                    var me = this;
+                    var container = $("<div style='margin: 5px;'></div>");
+                    toolbar.append(container);
+                    container.append('<input id="addrowbutton" type="button" value="Add New Row" />');
+                    container.append('<input style="margin-left: 5px;" id="addmultiplerowsbutton" type="button" value="Add Multiple New Rows" />');
+                    container.append('<input style="margin-left: 5px;" id="deleterowbutton" type="button" value="Delete Selected Row" />');
+                    container.append('<input style="margin-left: 5px;" id="updaterowbutton" type="button" value="Update Selected Row" />');
+                    $("#addrowbutton").jqxButton();
+                    $("#addmultiplerowsbutton").jqxButton();
+                    $("#deleterowbutton").jqxButton();
+                    $("#updaterowbutton").jqxButton();
+                    // update row.
+                    $("#updaterowbutton").on('click', function () {
+                        var datarow = generaterow();
+                        var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                        var rowscount = $("#jqxgrid").jqxGrid('getdatainformation').rowscount;
+                        if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                            var id = $("#jqxgrid").jqxGrid('getrowid', selectedrowindex);
+                            var commit = $("#jqxgrid").jqxGrid('updaterow', id, datarow);
+                            $("#jqxgrid").jqxGrid('ensurerowvisible', selectedrowindex);
+                        }
+                    });
+                    // create new row.
+                    $("#addrowbutton").on('click', function () {
+                        var datarow = generaterow();
+                        var commit = $("#jqxgrid").jqxGrid('addrow', null, datarow);
+                    });
+                    // create new rows.
+                    $("#addmultiplerowsbutton").on('click', function () {
+                        $("#jqxgrid").jqxGrid('beginupdate');
+                        for (var i = 0; i < 10; i++) {
+                            var datarow = generaterow();
+                            var commit = $("#jqxgrid").jqxGrid('addrow', null, datarow);
+                        }
+                        $("#jqxgrid").jqxGrid('endupdate');
+                    });
+                    // delete row.
+                    $("#deleterowbutton").on('click', function () {
+                        var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                        var rowscount = $("#jqxgrid").jqxGrid('getdatainformation').rowscount;
+                        if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                            var id = $("#jqxgrid").jqxGrid('getrowid', selectedrowindex);
+                            var commit = $("#jqxgrid").jqxGrid('deleterow', id);
+                        }
+                    });
+                },
+                columns: [
+                  { text: '屬性', datafield: 'firstname', width: 100 },
+                  { text: '方法', datafield: 'lastname', width: 100 },
+                  { text: '參數一', datafield: 'productname', width: 100 },
+                  { text: '參數二', datafield: 'quantity', width: 100 },
+                  { text: '參數三', datafield: 'price', width: 100},
+                  { text: '參數四', datafield: 'total', width:100 },
+                  { text: '參數五', datafield: 'totalw', width:100 }
+                ]
+            });    
 		
 		window.haxeStart();
 	}
