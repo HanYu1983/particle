@@ -229,6 +229,7 @@ class Main
 	
 	function onmousedown( e ) {
 		isMouseDown = true;
+		
 	}
 	
 	function onmouseup( e ) {
