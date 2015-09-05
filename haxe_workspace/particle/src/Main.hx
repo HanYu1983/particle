@@ -144,7 +144,8 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		model.setParticleRootsPos( px, py );
+		//model.setParticleRootsPos( px, py );
+		moveParticle( 0, px, py );
 	}
 	
 	static var id = 0;
@@ -180,8 +181,8 @@ class Main
 		});
 	}
 	
-	static function moveParticle(x, y) {
-		untyped __js__('api.changeCenterPos')(x, y );
+	static function moveParticle(id, x, y) {
+		untyped __js__('api.changeCenterPos')(id, x, y );
 	}
 	
 	public static function addMouseWheelEvent( jdom, func ) {

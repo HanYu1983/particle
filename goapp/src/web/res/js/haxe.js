@@ -105,8 +105,8 @@ Main.updateParticle = function(ary_render) {
 		return true;
 	});
 };
-Main.moveParticle = function(x,y) {
-	api.changeCenterPos(x,y);
+Main.moveParticle = function(id,x,y) {
+	api.changeCenterPos(id,x,y);
 };
 Main.addMouseWheelEvent = function(jdom,func) {
 	leo.utils.addMouseWheelEvent(jdom,func);
@@ -186,7 +186,7 @@ Main.prototype = {
 	,onMousemove: function(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		this.model.setParticleRootsPos(px,py);
+		Main.moveParticle(0,px,py);
 	}
 };
 Math.__name__ = true;
