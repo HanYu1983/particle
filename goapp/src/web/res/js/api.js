@@ -73,8 +73,8 @@ var api = api || {};
 	/**
 	改變畫布原點位置
 	*/
-	function changeCenterPos( x, y ){
-		common.onView.onNext(['edit-centerPos', [x, y]])
+	function changeCenterPos( id, x, y ){
+		common.onView.onNext(['edit-centerPos', [id, x, y]])
 	}
 	
 	/**
