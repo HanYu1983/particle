@@ -55,7 +55,7 @@ var api = api || {};
 					"emit-angle" | "emit-range" | "emit-count" | "emit-force" | "emit-duration",
 	
 				type:
-					"linear"
+					"const" | "constAdd" | "linear" | "linearAdd" | "randStartAdd"
 	
 				p1:int,
 				p2:int,

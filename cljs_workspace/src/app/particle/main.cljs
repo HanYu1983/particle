@@ -76,7 +76,7 @@
             (js-obj
               "duration" 0.05
               "angle" 0
-              "force" 200
+              "force" 10
               "range" 0
               "prototype"
               (array
@@ -84,7 +84,13 @@
                   "position" (array 0 0 0)
                   "color" (array 1 0 1 1)
                   "size" (array 10 20)
-                  "vel" (array 0 0 3.14))))
+                  "vel" (array 0 0 0)
+                  "formulaList"
+                  (array
+                    (array "vr" "randStartAdd" 6.28 0 0 0 0)
+                    (array "x" "randStartAdd" 200 0 0 0 0)
+                    (array "y" "randStartAdd" 200 0 0 0 0)
+                  ))))
             "color" (array 0 0 1 1)
             "size" (array 30 10)
             "pos" (array 10 10 0) 

@@ -104,11 +104,32 @@
     (when-let [t (jsobj->target target)]
       (when-let [f
                 (condp = type
+                  "const"
+                  (fn [life v]
+                    p1)
+                            
+                  "constAdd"
+                  (fn [life v]
+                    (+ v p1))
+                    
                   "linear"
                   (fn [life v]
                     (let [offset (- p2 p1)
                           adj (+ p1 (* offset life))]
                       (+ 0 adj)))
+                      
+                  "linearAdd"
+                  (fn [life v]
+                    (let [offset (- p2 p1)
+                          adj (+ p1 (* offset life))]
+                      (+ v adj)))
+                      
+                  "randStartAdd"
+                  (fn [life v]
+                    (let [adj (- (* p1 (rand)) (/ p1 2))]
+                      (if (zero? life)
+                        (+ v adj)
+                        v)))
                   nil)]
         [t f]))))
 
