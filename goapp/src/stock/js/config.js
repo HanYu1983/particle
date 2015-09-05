@@ -46,7 +46,7 @@ app.config.index = [
 						['group', '余氏'],
 						['yu-clock', '背離線' , false, 20, 20, 0, 0 ],
 						['yu-macd', '均多差離' , false, 5, 12, 9, 0 ],
-						['yu-car', '方向盤' , false, 1, .025, .7, 0 ],
+						['yu-car', '方向盤' , false, 1, .007, .7, 0 ],
 						['yu-kd', '隨機線圖' , false, 9, 0, 0, 0 ],
 						['yu-money', '獲利線' , false, 20, 9, 0, 0 ]
 					];
