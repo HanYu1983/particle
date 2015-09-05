@@ -58,93 +58,85 @@
 	</script>
 </head>
 <body>
-	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{"size":"72%","collapsible":false}, {"collapsed":false}]}'>
+	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": 750,"min":750 }]}'>
 		<div>
-			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": "310px","min":"250px" }]}'>
+			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
 				<div>
-					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
-						<div>
-							<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
-								<div class="group" style="text-align:center;">
-									<div class="hori">
-										<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
-									</div>
-									<div class="hori">
-										<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
-									</div>
-								</div>
-								<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "180px", "width": "100%"}'>
-									<!-- created by script -->
-								</div>
+					<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+						<div class="group" style="text-align:center;">
+							<div class="hori">
+								<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
+							</div>
+							<div class="hori">
+								<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
 							</div>
 						</div>
-						<div>
-							<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
-								<div class="group" style="text-align:center; margin-bottom:10px; ">
-									<div class="hori" style="width:100px; ">
-										<input id="txt_name" type="text" jqx="jqxInput" style="width:100%; " >
-									</div>
-									<div class="hori">
-										<input id="btn_confirmName" type="button" jqx="jqxButton" value="確定" >
-									</div>
-								</div>
-								<div id="mc_props_container" class="group" style="min-width:150px;" >
-									<!-- created by script -->
-								</div>
-							</div>
-						</div>
-					</div>
-					
-				</div>
-				<div>
-					<div id="canvas_container" style="width:100%; height:100%">
-						<canvas id='webgl' width=800 height=600></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div>
-			<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
-				<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
-					<div class="hori">
-						<input id="btn_addDynamic" jqx="jqxButton" type="button" value="新增" />
-						<input id="btn_removeDynamic" jqx="jqxButton" type="button" value="刪除" />
-						<input id="btn_moveUp" jqx="jqxButton" type="button" value="上移" />
-						<input id="btn_moveDown" jqx="jqxButton" type="button" value="下移" />
-					</div>
-					<div class="hori">
-						<div id="combo_props" style="position:relative; top:10px;" jqx="jqxComboBox">
-							<!-- created by script below -->
-						</div>
-					</div>
-					<div class="hori">
-						<div id="combo_dtype" style="position:relative; top:10px;" jqx="jqxComboBox">
-							<!-- created by script below -->
-						</div>
-					</div>
-					<div class="hori">
-						<div id="spr_value1" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
-					</div>
-					<div class="hori">
-						<div id="spr_value2" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
-					</div>
-					<div class="hori">
-						<div id="spr_value3" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
-					</div>
-					<div class="hori">
-						<div id="spr_value4" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
-					</div>
-					<div class="hori">
-						<div id="spr_value5" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
-					</div>
-				</div>
-				<div class="group" style="text-align:center">
-					<div class="hori" style="width:700px;">
-						<div id="table_props" jqx="jqxGrid">
+						<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "180px", "width": "100%"}'>
 							<!-- created by script -->
 						</div>
 					</div>
 				</div>
+				<div>
+					<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+						<div class="group" style="text-align:center; margin-bottom:10px; margin-top:10px; ">
+							<div class="hori" style="width:100px; ">
+								<input id="txt_name" type="text" jqx="jqxInput" style="width:100%; " >
+							</div>
+							<div class="hori">
+								<input id="btn_confirmName" type="button" jqx="jqxButton" value="確定" >
+							</div>
+						</div>
+						<div id="mc_props_container" class="group" style="min-width:150px; margin-bottom:50px;" >
+							<!-- created by script -->
+						</div>
+						<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
+							<div class="hori">
+								<input id="btn_addDynamic" jqx="jqxButton" type="button" value="新增" />
+								<input id="btn_removeDynamic" jqx="jqxButton" type="button" value="刪除" />
+								<input id="btn_moveUp" jqx="jqxButton" type="button" value="上移" />
+								<input id="btn_moveDown" jqx="jqxButton" type="button" value="下移" />
+							</div>
+							<div class="hori">
+								<div id="combo_props" style="position:relative; top:10px;" jqx="jqxComboBox">
+									<!-- created by script below -->
+								</div>
+							</div>
+							<div class="hori">
+								<div id="combo_dtype" style="position:relative; top:10px;" jqx="jqxComboBox">
+									<!-- created by script below -->
+								</div>
+							</div>
+							<div class="hori">
+								<div id="spr_value1" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+							</div>
+							<div class="hori">
+								<div id="spr_value2" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+							</div>
+							<div class="hori">
+								<div id="spr_value3" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+							</div>
+							<div class="hori">
+								<div id="spr_value4" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+							</div>
+							<div class="hori">
+								<div id="spr_value5" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+							</div>
+						</div>
+						<div class="group" style="text-align:center">
+							<div class="hori" style="width:700px;">
+								<div id="table_props" jqx="jqxGrid">
+									<!-- created by script -->
+								</div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		<div>
+			<div id="canvas_container" style="width:100%; height:100%">
+				<canvas id='webgl' width=800 height=600></canvas>
 			</div>
 		</div>
 	</div>
