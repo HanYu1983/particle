@@ -15,7 +15,7 @@
   (let [onView (chan)
         onModel (chan)
         onTick (chan)
-        mspf 33]
+        mspf (int (/ 1000 60))]
     
     ; 接收view的事件
     (.subscribe js/common.onView

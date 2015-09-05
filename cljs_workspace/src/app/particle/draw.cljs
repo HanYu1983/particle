@@ -39,10 +39,29 @@
         gl (glutil/getContext canvas-dom (js-obj))
         mesh (mesh/plain gl)
         sprite-shader (shader/spriteProgramObject gl)
-        [cw ch] [(.-width canvas-dom) (.-height canvas-dom)]]
+        [cw ch] [(.-width canvas-dom) (.-height canvas-dom)]
+        proj 
+        (doto (js/THREE.Matrix4.) 
+              (.makeOrthographic 0 cw ch 0 1 -1))
+        tras 
+        (js/THREE.Matrix4.)
         
+        rotMat
+        (js/THREE.Matrix4.)
+        
+        scaleMat
+        (js/THREE.Matrix4.)
+        
+        texTx 
+        (js/THREE.Matrix3.)
+                
+        colorTx 
+        (js/THREE.Matrix4.)]
+    
+    (.viewport gl 0 0 cw ch)
+    
     (fn [{[cx cy] :centerPos timer :timer {ps :ps} :part :as ctx}]
-      (.viewport gl 0 0 cw ch)
+      
       (.clearColor gl 0 0 0 1)
       (.clear gl (.-COLOR_BUFFER_BIT gl))
     
@@ -52,22 +71,21 @@
       (shader/use gl sprite-shader
         (fn [pobj] 
           (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color :as p} ps]
-            (let [proj 
-                  (doto (js/THREE.Matrix4.) 
-                        (.makeOrthographic 0 cw ch 0 1 -1))
-                
-                  tras 
-                  (doto (js/THREE.Matrix4.)
-                        (.makeTranslation (+ cx x) (+ cy y) 0)
-                        (.multiply (-> (js/THREE.Matrix4.) (.makeRotationZ rot)))
-                        (.multiply (-> (js/THREE.Matrix4.) (.makeScale xs ys 1))))
-                
-                  texTx 
-                  (doto (js/THREE.Matrix3.))
-                
-                  colorTx 
-                  (doto (js/THREE.Matrix4.) 
-                        (.makeTranslation r g b))]
+            (let []
+              (doto rotMat
+                    (.makeRotationZ rot))
+              
+              (doto scaleMat
+                    (.makeScale xs ys 1))
+              
+              (doto tras
+                    (.makeTranslation (+ cx x) (+ cy y) 0)
+                    (.multiply rotMat)
+                    (.multiply scaleMat))
+                    
+              (doto colorTx
+                    (.makeTranslation r g b))
+                    
               (mesh/bind gl mesh :vertex (get-in pobj [:attrs :a_position]))
               (mesh/bind gl mesh :texture (get-in pobj [:attrs :a_texCoord]))
               (shader/uniform gl pobj
