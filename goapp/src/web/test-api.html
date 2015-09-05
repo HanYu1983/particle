@@ -20,5 +20,14 @@
 		<script>
 			goog.require("app.particle.main");
 		</script>
+		<script>
+			setTimeout( function(){
+				
+				api.addEventListener( function( info ){
+					console.log( info[0], info[1] )
+				})
+				
+			}, 1000)
+		</script>
 	</body>
 </html>

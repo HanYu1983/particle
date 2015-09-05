@@ -93,8 +93,22 @@ var api = api || {};
 		common.onView.onNext(['info', param])
 	}
 	
+	
+	/**
+	監聽Model事件
+	listener: function( info ){
+		info:
+			["tick", elapsedTime: float] |
+			["other", null]
+	}
+	*/
+	function addEventListener( listener ){
+		common.onModelEvent.subscribe( listener )
+	}
+	
 	pkg.editParticle = editParticle
 	pkg.changeCenterPos = changeCenterPos
 	pkg.info = info
+	pkg.addEventListener = addEventListener
 	
 }) (api)

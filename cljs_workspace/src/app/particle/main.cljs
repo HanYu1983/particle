@@ -14,6 +14,7 @@
 (defn main []
   (let [onView (chan)
         onModel (chan)
+        onModelEvent (chan)
         onTick (chan)
         mspf (int (/ 1000 60))]
     
@@ -26,6 +27,11 @@
     (go-loop []
       (let [[err data request] (<! onModel)]
         (.onNext js/common.onModel (array err data request))
+        (recur)))
+        
+    (go-loop []
+      (let [[type data] (<! onModelEvent)]
+        (.onNext js/common.onModelEvent (array type data))
         (recur)))
         
     ; update event
@@ -53,9 +59,13 @@
         (recur
           (condp = ch
             onTick
-            (-> ctx
-              (update-in [:part] (partial part/update v))
-              (draw))
+            (do
+              (go
+                (>! onModelEvent ["tick" v]))
+              (-> ctx
+                (update-in [:part] (partial part/update v))
+                (draw)))
+            
             
             onView
             (let [event (aget v 0)
