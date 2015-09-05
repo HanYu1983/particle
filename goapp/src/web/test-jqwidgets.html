@@ -212,13 +212,6 @@
 		}
 		
 		var combo_props = $('#combo_props' );
-		"x" | "y" | "rot" | "vx" | "vy" | "vr" | 
-					"scale-x" | "scale-y" | "r" | "g" | "b" | "a" |
-					"emit-angle" | "emit-range" | "emit-count" | "emit-force" | "emit-duration",
-	
-				type:
-					"const" | "constAdd" | "linear" | "linearAdd" | "randStartAdd"
-					
 		ary_props = [ 	{id:'x', name:'位置x'}, 
 						{id:'y', name:'位置y'}, 
 						{id:'rot', name:'角度'}, 
@@ -243,9 +236,12 @@
 		combo_props.jqxComboBox( { source: comboSource, width:80, selectedIndex:0 } );
 		
 		combo_dtype = $('#combo_dtype' );
-		ary_props = [ 	{id:'lifetime', name:'線性'}, 
-						{id:'mass', name:'正弦'}, 
-						{id:'pos_x', name:'自訂'} ]
+		ary_props = [ 	{id:'const', name:'常數'}, 
+						{id:'constAdd', name:'相對常數'}, 
+						{id:'linear', name:'線性'}, 
+						{id:'linearAdd', name:'相對線性'}, 
+						{id:'randStartAdd', name:'隨機'}, 
+						{id:'custom', name:'自訂'} ]
 		
 		comboSource = [];
 		for( var i = 0; i < ary_props.length; ++i ){
