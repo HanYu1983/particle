@@ -30,7 +30,7 @@ goog.addDependency("../test/stock2.js", ['test.stock2'], ['cljs.core', 'ai.ann']
 goog.addDependency("../test/stock5.js", ['test.stock5'], ['cljs.core', 'cljs.core.async', 'clojure.string']);
 goog.addDependency("../test/stock.js", ['test.stock'], ['cljs.core', 'cljs.core.async', 'ai.ann']);
 goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
-goog.addDependency("../app/particle/impl.js", ['app.particle.impl'], ['cljs.core', 'cljs.core.async', 'tool.particle', 'app.particle.abstract$']);
+goog.addDependency("../app/particle/impl.js", ['app.particle.impl'], ['cljs.core', 'cljs.core.async', 'gl.texture', 'tool.particle', 'app.particle.abstract$']);
 goog.addDependency("../test/stock6.js", ['test.stock6'], ['stock.formula', 'cljs.core', 'cljs.core.async', 'stock.tool', 'stock.drawer']);
 goog.addDependency("../app/stock/main.js", ['app.stock.main'], ['app.stock.abstract$', 'cljs.core', 'cljs.core.async', 'app.dbfile', 'app.stock.impl']);
 goog.addDependency("../test/stock4.js", ['test.stock4'], ['cljs.core', 'cljs.core.async', 'clojure.string']);
@@ -43,4 +43,4 @@ goog.addDependency("../test/dialogList.js", ['test.dialogList'], ['cljs.core', '
 goog.addDependency("../app/main2.js", ['app.main2'], ['gl.shader', 'cljs.core', 'cljs.core.async', 'gl.texture', 'gl.mesh', 'tool.particle', 'gl.util']);
 goog.addDependency("../test/ann.js", ['test.ann'], ['cljs.core', 'cljs.core.async', 'ai.ann']);
 goog.addDependency("../test/ann_xor.js", ['test.ann_xor'], ['cljs.core', 'cljs.core.async', 'clojure.walk', 'ai.ann']);
-goog.addDependency("../app/particle/main.js", ['app.particle.main'], ['app.particle.draw', 'cljs.core', 'cljs.core.async', 'tool.particle', 'app.particle.impl', 'app.particle.abstract$']);
+goog.addDependency("../app/particle/main.js", ['app.particle.main'], ['app.particle.draw', 'cljs.core', 'cljs.core.async', 'tool.particle', 'app.particle.impl', 'gl.util', 'app.particle.abstract$']);

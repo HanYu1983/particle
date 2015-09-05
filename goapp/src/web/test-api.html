@@ -8,6 +8,8 @@
 		<button onclick='api.info(function(){ console.log(arguments) })'>info</button>
 		<br>
 		<canvas id='webgl' width=800 height=600></canvas>
+		<img id='img_face' src='images/m_gr.jpg'>
+		<img id='img_map' src='images/map-opacity.png'>
 		<script type="text/javascript" src="res/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script src='res/js/lib/async.js'></script>
 		<script src='res/js/lib/rx.all.min.js'></script>
@@ -19,6 +21,18 @@
 		<script src='res/cljs/cljs.js'></script>
 		<script>
 			goog.require("app.particle.main");
+		</script>
+		<script>
+			setTimeout( function(){
+				
+				api.addTexture( "img_face", $("#img_face")[0] )
+				api.addTexture( "img_map", $("#img_map")[0] )
+				
+				api.addEventListener( function( info ){
+					//console.log( info[0], info[1] )
+				})
+				
+			}, 1000)
 		</script>
 	</body>
 </html>

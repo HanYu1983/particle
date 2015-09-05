@@ -3,19 +3,21 @@
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
     [cljs.core.async :refer [>! <! alts! chan timeout]]
+    [gl.util :as glutil]
     [app.particle.abstract :as abstract]
     [app.particle.impl]
     [app.particle.draw :as d]
     [tool.particle :as part]))
 
-;(def draw (d/draw2D (js/$ "#webgl")))
-(def draw (d/draw3D (js/$ "#webgl")))
-
 (defn main []
   (let [onView (chan)
         onModel (chan)
+        onModelEvent (chan)
         onTick (chan)
-        mspf (int (/ 1000 60))]
+        mspf (int (/ 1000 60))
+        canvas (js/$ "#webgl")
+        gl (glutil/getContext (aget canvas 0) (js-obj))
+        draw (d/draw3D canvas gl)]
     
     ; 接收view的事件
     (.subscribe js/common.onView
@@ -26,6 +28,11 @@
     (go-loop []
       (let [[err data request] (<! onModel)]
         (.onNext js/common.onModel (array err data request))
+        (recur)))
+        
+    (go-loop []
+      (let [[type data] (<! onModelEvent)]
+        (.onNext js/common.onModelEvent (array type data))
         (recur)))
         
     ; update event
@@ -46,6 +53,7 @@
           :part {:ps '()}
           :centerPos [0 0]
           :onModel onModel
+          :gl gl
         } 
       ]
       (let [[v ch] (alts! [onView onTick])]
@@ -53,9 +61,13 @@
         (recur
           (condp = ch
             onTick
-            (-> ctx
-              (update-in [:part] (partial part/update v))
-              (draw))
+            (do
+              (go
+                (>! onModelEvent ["tick" v]))
+              (-> ctx
+                (update-in [:part] (partial part/update v))
+                (draw)))
+            
             
             onView
             (let [event (aget v 0)
@@ -85,6 +97,7 @@
                   "color" (array 1 0 1 1)
                   "size" (array 10 20)
                   "vel" (array 0 0 0)
+                  "tex" "img_map"
                   "formulaList"
                   (array
                     (array "vr" "randStartAdd" 6.28 0 0 0 0)
@@ -95,6 +108,7 @@
             "size" (array 30 10)
             "pos" (array 10 10 0) 
             "vel" (array 0 0 0)
+            "tex" "img_face"
             "formulaList"
             (array
               (array "vx" "linear" 300 -300 0 0 0)

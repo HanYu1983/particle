@@ -6,8 +6,6 @@
     [gl.shader :as shader]
     [tool.particle :as part]))
     
-(def cacheTex (memoize gltex/texture))
-    
 (defn draw2D [canvas]
   (let [canvas-dom (aget canvas 0)
         canvas-ctx (.getContext canvas-dom "2d")]
@@ -34,9 +32,8 @@
           (.restore)))
       ctx)))
     
-(defn draw3D [canvas]
+(defn draw3D [canvas gl]
   (let [canvas-dom (aget canvas 0)
-        gl (glutil/getContext canvas-dom (js-obj))
         mesh (mesh/plain gl)
         sprite-shader (shader/spriteProgramObject gl)
         [cw ch] [(.-width canvas-dom) (.-height canvas-dom)]
@@ -70,8 +67,8 @@
     
       (shader/use gl sprite-shader
         (fn [pobj] 
-          (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color :as p} ps]
-            (let []
+          (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color tex :tex :as p} ps]
+            (let [texObj (get-in ctx [:textures tex])]
               (doto rotMat
                     (.makeRotationZ rot))
               
@@ -88,12 +85,17 @@
                     
               (mesh/bind gl mesh :vertex (get-in pobj [:attrs :a_position]))
               (mesh/bind gl mesh :texture (get-in pobj [:attrs :a_texCoord]))
-              (shader/uniform gl pobj
-                [:u_projection "m4fv" (.-elements proj)]
-                [:u_transform "m4fv" (.-elements tras)]
-                ;[:u_tex "s2d" [tex 0]]
-                [:u_texTransform "m3fv" (.-elements texTx)]
-                [:u_colorTransform "m4fv" (.-elements colorTx)])
+              (apply
+                (partial shader/uniform gl pobj)
+                (cond->>
+                  (list
+                    [:u_projection "m4fv" (.-elements proj)]
+                    [:u_transform "m4fv" (.-elements tras)]
+                    [:u_texTransform "m3fv" (.-elements texTx)]
+                    [:u_colorTransform "m4fv" (.-elements colorTx)])
+                  texObj
+                  (cons [:u_tex "s2d" [texObj 0]])))
+                  
               (mesh/draw gl mesh nil)))))
               
       (.disable gl (.-BLEND gl))

@@ -10,6 +10,7 @@
   formulaList :formulaList
   size :size
   color :color
+  tex :tex
   }]
   {
     :id (or id (gensym "particle"))
@@ -31,6 +32,7 @@
     :color (or color [1 0 0 1])       ; 顏色
     :mass (or mass 1)                 ; 質量（還沒有作用）
     :size (or size [10 10])           ; 大小
+    :tex (or tex nil)                 ; 材質id
     
     ; 計算用
     :timer 0
