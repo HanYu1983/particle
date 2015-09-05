@@ -35,6 +35,34 @@ class GridController extends Model
 		
 	}
 	
+	public function setSelectProp( val:String ) {
+		
+	}
+	
+	public function setSelectMethod( val:String ) {
+		
+	}
+	
+	public function setTxtValue1( val:String ) {
+		
+	}
+	
+	public function setTxtValue2( val:String ) {
+		
+	}
+	
+	public function setTxtValue3( val:String ) {
+		
+	}
+	
+	public function setTxtValue4( val:String ) {
+		
+	}
+	
+	public function setTxtValue5( val:String ) {
+		
+	}
+	
 	public function initRow( id:Int, ?formulaList:Array<Array<Dynamic>> ) {
 		currentParticleId = id;
 		

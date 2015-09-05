@@ -160,6 +160,13 @@ Main.prototype = {
 		this.gridController.addHandler(function(type1,params1) {
 			switch(type1) {
 			case "ON_ROW_SELECT":
+				_g.gridController.setSelectProp(params1.row.ptype);
+				_g.gridController.setSelectMethod(params1.row.method);
+				_g.gridController.setTxtValue1(params1.row.value1);
+				_g.gridController.setTxtValue2(params1.row.value2);
+				_g.gridController.setTxtValue3(params1.row.value3);
+				_g.gridController.setTxtValue4(params1.row.value4);
+				_g.gridController.setTxtValue5(params1.row.value5);
 				break;
 			case "ON_ADD_CLICK":
 				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"x","linear",0,0,0,0,0));
@@ -573,7 +580,21 @@ var view_GridController = function() {
 view_GridController.__name__ = true;
 view_GridController.__super__ = model_Model;
 view_GridController.prototype = $extend(model_Model.prototype,{
-	initRow: function(id,formulaList) {
+	setSelectProp: function(val) {
+	}
+	,setSelectMethod: function(val) {
+	}
+	,setTxtValue1: function(val) {
+	}
+	,setTxtValue2: function(val) {
+	}
+	,setTxtValue3: function(val) {
+	}
+	,setTxtValue4: function(val) {
+	}
+	,setTxtValue5: function(val) {
+	}
+	,initRow: function(id,formulaList) {
 		var _g = this;
 		this.currentParticleId = id;
 		if(formulaList == null) {

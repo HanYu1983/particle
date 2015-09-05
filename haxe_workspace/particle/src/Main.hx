@@ -75,6 +75,13 @@ class Main
 		gridController.addHandler( function( type, params ) {
 			switch( type ) {
 				case GridController.ON_ROW_SELECT:
+					gridController.setSelectProp( params.row.ptype );
+					gridController.setSelectMethod( params.row.method );
+					gridController.setTxtValue1( params.row.value1 );
+					gridController.setTxtValue2( params.row.value2 );
+					gridController.setTxtValue3( params.row.value3 );
+					gridController.setTxtValue4( params.row.value4 );
+					gridController.setTxtValue5( params.row.value5 );
 				case GridController.ON_ADD_CLICK:
 					model.addFormula( params.id, createFormula( getId(), 'x', 'linear', 0, 0, 0, 0, 0 ));
 				case GridController.ON_REMOVE_CLICK:
