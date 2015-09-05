@@ -104,47 +104,58 @@
 			</div>
 		</div>
 		<div>
-			<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
-				<div class="hori">
-					<input id="btn_addDynamic" jqx="jqxButton" type="button" value="新增" />
-					<input id="btn_removeDynamic" jqx="jqxButton" type="button" value="刪除" />
-					<input id="btn_moveUp" jqx="jqxButton" type="button" value="上移" />
-					<input id="btn_moveDown" jqx="jqxButton" type="button" value="下移" />
-				</div>
-				<div class="hori">
-					<div id="combo_props" style="position:relative; top:10px;" jqx="jqxComboBox">
-						<!-- created by script below -->
+			<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+				<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
+					<div class="hori">
+						<input id="btn_addDynamic" jqx="jqxButton" type="button" value="新增" />
+						<input id="btn_removeDynamic" jqx="jqxButton" type="button" value="刪除" />
+						<input id="btn_moveUp" jqx="jqxButton" type="button" value="上移" />
+						<input id="btn_moveDown" jqx="jqxButton" type="button" value="下移" />
+					</div>
+					<div class="hori">
+						<div id="combo_props" style="position:relative; top:10px;" jqx="jqxComboBox">
+							<!-- created by script below -->
+						</div>
+					</div>
+					<div class="hori">
+						<div id="combo_dtype" style="position:relative; top:10px;" jqx="jqxComboBox">
+							<!-- created by script below -->
+						</div>
+					</div>
+					<div class="hori">
+						<div id="spr_value1" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+						
+					</div>
+					<div class="hori">
+						<div id="spr_value2" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+					</div>
+					<div class="hori">
+						<div id="spr_value3" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+					</div>
+					<div class="hori">
+						<div id="spr_value4" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+					</div>
+					<div class="hori">
+						<div id="spr_value5" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
 					</div>
 				</div>
-				<div class="hori">
-					<div id="combo_dtype" style="position:relative; top:10px;" jqx="jqxComboBox">
-						<!-- created by script below -->
+				<div class="group" style="text-align:center">
+					<div class="hori" style="width:758px;">
+						<table id="table_props" style="width:100%;"
+							data-options="singleSelect:true,collapsible:false,remoteSort:false,multiSort:false">
+							<thead>
+								<tr>
+									<th data-options="field:'name',width:100,sortable:false" >屬性</th>
+									<th data-options="field:'type',width:100,sortable:false" >動態類型</th>
+									<th data-options="field:'value1',width:100,sortable:false" >參數1</th>
+									<th data-options="field:'value2',width:100,sortable:false" >參數2</th>
+									<th data-options="field:'value3',width:100,sortable:false" >參數3</th>
+									<th data-options="field:'value4',width:100,sortable:false" >參數4</th>
+									<th data-options="field:'value5',width:100,sortable:false" >參數5</th>
+								</tr>
+							</thead>
+						</table>
 					</div>
-				</div>
-				<div class="hori">
-					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
-					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
-					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
-					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
-					<input class="easyui-numberspinner" value="0" style="width:80px;"/>
-				</div>
-			</div>
-			<div class="group" style="text-align:center">
-				<div class="hori" style="width:758px;">
-					<table id="table_props" style="width:100%;"
-						data-options="singleSelect:true,collapsible:false,remoteSort:false,multiSort:false">
-						<thead>
-							<tr>
-								<th data-options="field:'name',width:100,sortable:false" >屬性</th>
-								<th data-options="field:'type',width:100,sortable:false" >動態類型</th>
-								<th data-options="field:'value1',width:100,sortable:false" >參數1</th>
-								<th data-options="field:'value2',width:100,sortable:false" >參數2</th>
-								<th data-options="field:'value3',width:100,sortable:false" >參數3</th>
-								<th data-options="field:'value4',width:100,sortable:false" >參數4</th>
-								<th data-options="field:'value5',width:100,sortable:false" >參數5</th>
-							</tr>
-						</thead>
-					</table>
 				</div>
 			</div>
 		</div>
@@ -227,7 +238,7 @@
 						
 		var comboSource = [];
 		for( var i = 0; i < ary_props.length; ++i ){
-			comboSource.push( ary_props[i].name );
+			comboSource.push( '<div ptype="' + ary_props[i].id + '">' + ary_props[i].name + '</div>' );
 		}
 		combo_props.jqxComboBox( { source: comboSource, width:80, selectedIndex:0 } );
 		
@@ -238,7 +249,7 @@
 		
 		comboSource = [];
 		for( var i = 0; i < ary_props.length; ++i ){
-			comboSource.push( ary_props[i].name );
+			comboSource.push( '<div ptype="' + ary_props[i].id + '">' + ary_props[i].name + '</div>' );
 		}
 		combo_dtype.jqxComboBox( { source: comboSource, width:80, selectedIndex:0 } );
 		
