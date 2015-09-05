@@ -15,7 +15,8 @@ class PanelModel extends Model
 	
 	public var currentParticle(default, set):Dynamic;
 	
-	var _ary_partiles:Array<Dynamic> = new Array<Dynamic>();
+	var _ary_particles = new Array<Dynamic>();
+	var _ary_renderList = new Array<Dynamic>();
 
 	public function new() 
 	{
@@ -26,7 +27,7 @@ class PanelModel extends Model
 	public function addParticle(id:Int, parentId:Int, particle:Dynamic, ?extra:Dynamic):Void 
 	{
 		if ( findParticleById( id )) return;
-		_ary_partiles.push( { id:id, particle:particle } );
+		_ary_particles.push( { id:id, particle:particle } );
 		
 		//setParticleIsEmit( parentId );
 		
@@ -36,7 +37,7 @@ class PanelModel extends Model
 	public function removeParticle(id:Int, ?extra:Dynamic):Void 
 	{
 		if ( !findParticleById( id )) return;
-		_ary_partiles.remove( findParticleById( id ));
+		_ary_particles.remove( findParticleById( id ));
 		notify( ON_REMOVE_PARTICLE, { id:id } );
 	}
 	
@@ -45,6 +46,17 @@ class PanelModel extends Model
 		findParticleById( id ).particle.name = name;
 		
 		notify( ON_NAME_CHANGE, {id:id, name:name } );
+	}
+	
+	public function setParticleRootsPos( x, y ) {
+		if ( _ary_renderList.length > 0 ) {
+			_ary_renderList.foreach( function( render ) {
+				findParticleById( render.id ).particle.pos[0] = x;
+				findParticleById( render.id ).particle.pos[1] = y;
+				return true;
+			});
+			notify( ON_PROPS_CAHNGE );
+		}
 	}
 	
 	public function setParticleProps( id:Int, type:String, value:Dynamic ) {
@@ -76,7 +88,7 @@ class PanelModel extends Model
 	}
 	
 	public function findParticleById( id:Int ):Dynamic {
-		return Lambda.find( _ary_partiles, function( p:Dynamic ) {
+		return Lambda.find( _ary_particles, function( p:Dynamic ) {
 			if ( p.id == id ) return true;
 			return false;
 		});
@@ -85,7 +97,6 @@ class PanelModel extends Model
 	public function getOutputData( node:Dynamic ) {
 		var retobj:Dynamic = { };
 		
-		trace( node.length );
 		var childMap:Dynamic = { };
 		
 		Lambda.foreach( node, function( item ) {
@@ -125,13 +136,10 @@ class PanelModel extends Model
 			});
 		}
 		
-		trace( treeMap );
-		
 		var retobj:Dynamic = { };
 		function _loopNode( node:Dynamic, outputData:Dynamic ) {
 			
 			var id = node.id;
-			trace( 'cc', node );
 			var particle = findParticleById( id ).particle;
 			outputData.id = particle.id;
 			outputData.name = particle.name;
@@ -158,19 +166,19 @@ class PanelModel extends Model
 			}
 		}
 		
-		var renderList = [];
+		_ary_renderList = [];
 		
 		for ( f in treeMap.fields() ) {
 			if ( treeMap.field( f ).parentId == null ) {
 				var render = { };
-				renderList.push( render );
+				_ary_renderList.push( render );
 				_loopNode( treeMap.field( f ), render );
 			}
 		}
-		
-		return renderList;
+		return _ary_renderList;
 		
 	}
+	
 	override function init() 
 	{
 		super.init();

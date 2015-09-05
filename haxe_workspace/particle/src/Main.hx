@@ -144,9 +144,7 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		//moveParticle( px, py );
-		model.setParticleProps( 0, 'pos_x', px );
-		model.setParticleProps( 0, 'pos_y', py );
+		model.setParticleRootsPos( px, py );
 	}
 	
 	static var id = 0;

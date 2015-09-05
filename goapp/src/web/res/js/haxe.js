@@ -186,8 +186,7 @@ Main.prototype = {
 	,onMousemove: function(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		this.model.setParticleProps(0,"pos_x",px);
-		this.model.setParticleProps(0,"pos_y",py);
+		this.model.setParticleRootsPos(px,py);
 	}
 };
 Math.__name__ = true;
@@ -333,7 +332,8 @@ model_Model.prototype = {
 	}
 };
 var model_PanelModel = function() {
-	this._ary_partiles = [];
+	this._ary_renderList = [];
+	this._ary_particles = [];
 	model_Model.call(this);
 };
 model_PanelModel.__name__ = true;
@@ -341,19 +341,30 @@ model_PanelModel.__super__ = model_Model;
 model_PanelModel.prototype = $extend(model_Model.prototype,{
 	addParticle: function(id,parentId,particle,extra) {
 		if(this.findParticleById(id)) return;
-		this._ary_partiles.push({ id : id, particle : particle});
+		this._ary_particles.push({ id : id, particle : particle});
 		this.notify(model_PanelModel.ON_ADD_PARTICLE,{ id : id, parentId : parentId, particle : particle});
 	}
 	,removeParticle: function(id,extra) {
 		if(!this.findParticleById(id)) return;
 		var x = this.findParticleById(id);
-		HxOverrides.remove(this._ary_partiles,x);
+		HxOverrides.remove(this._ary_particles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
 	}
 	,setParticleName: function(id,name) {
 		if(!this.findParticleById(id)) return;
 		this.findParticleById(id).particle.name = name;
 		this.notify(model_PanelModel.ON_NAME_CHANGE,{ id : id, name : name});
+	}
+	,setParticleRootsPos: function(x,y) {
+		var _g = this;
+		if(this._ary_renderList.length > 0) {
+			Lambda.foreach(this._ary_renderList,function(render) {
+				_g.findParticleById(render.id).particle.pos[0] = x;
+				_g.findParticleById(render.id).particle.pos[1] = y;
+				return true;
+			});
+			this.notify(model_PanelModel.ON_PROPS_CAHNGE);
+		}
 	}
 	,setParticleProps: function(id,type,value) {
 		if(!this.findParticleById(id)) return;
@@ -391,7 +402,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_PROPS_CAHNGE);
 	}
 	,findParticleById: function(id) {
-		return Lambda.find(this._ary_partiles,function(p) {
+		return Lambda.find(this._ary_particles,function(p) {
 			if(p.id == id) return true;
 			return false;
 		});
@@ -399,7 +410,6 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,getOutputData: function(node) {
 		var _g = this;
 		var retobj = { };
-		haxe_Log.trace(node.length,{ fileName : "PanelModel.hx", lineNumber : 88, className : "model.PanelModel", methodName : "getOutputData"});
 		var childMap = { };
 		Lambda.foreach(node,function(item) {
 			if(item.parentId != null) {
@@ -438,13 +448,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 				};
 			})(obj));
 		}
-		haxe_Log.trace(treeMap,{ fileName : "PanelModel.hx", lineNumber : 128, className : "model.PanelModel", methodName : "getOutputData"});
 		var retobj1 = { };
 		var _loopNode;
 		var _loopNode1 = null;
 		_loopNode1 = function(node1,outputData) {
 			var id1 = node1.id;
-			haxe_Log.trace("cc",{ fileName : "PanelModel.hx", lineNumber : 134, className : "model.PanelModel", methodName : "getOutputData", customParams : [node1]});
 			var particle = _g.findParticleById(id1).particle;
 			outputData.id = particle.id;
 			outputData.name = particle.name;
@@ -472,7 +480,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			}
 		};
 		_loopNode = _loopNode1;
-		var renderList = [];
+		this._ary_renderList = [];
 		var _g3 = 0;
 		var _g13 = Reflect.fields(treeMap);
 		while(_g3 < _g13.length) {
@@ -480,11 +488,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			++_g3;
 			if(Reflect.field(treeMap,f1).parentId == null) {
 				var render = { };
-				renderList.push(render);
+				this._ary_renderList.push(render);
 				_loopNode(Reflect.field(treeMap,f1),render);
 			}
 		}
-		return renderList;
+		return this._ary_renderList;
 	}
 	,init: function() {
 		var _g = this;
