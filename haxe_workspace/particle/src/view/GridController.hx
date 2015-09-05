@@ -199,7 +199,7 @@ class GridController extends Model
 	function findItem( combo:Dynamic, value:String ) {
 		var items = combo.jqxComboBox('getItems');
 		return Lambda.find( items, function( obj ) {
-			return Main.j( obj.element ).find( '[ptype]' ).attr('ptype') == value;
+			return ( Main.j( obj.label ).attr( 'ptype' ) == value );
 		});
 	}
 	
@@ -209,5 +209,13 @@ class GridController extends Model
 	
 	function getSelectItem( combo:Dynamic ) {
 		return combo.jqxComboBox('getSelectedItem'); 
+	}
+	
+	function logItems( combo ) {
+		
+		Lambda.foreach( combo.jqxComboBox('getItems'), function( obj ) {
+			trace( Main.j( obj.label ).attr( 'ptype' ) );
+			return true;
+		});
 	}
 }

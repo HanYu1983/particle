@@ -24,18 +24,23 @@ class Main
 	var paramsView = new ParamsView();
 	var model = new PanelModel();
 	
+	var isMouseDown = false;
+	
 	public function new() 
 	{
 		canvas_container = j( '#canvas_container' );
 		webgl = j( '#webgl' );
 		
 		onResize(null );
+		webgl.mousedown( onmousedown );
+		webgl.mouseup( onmouseup );
 		webgl.mousemove( onMousemove );
 		
 		Reflect.setField( Browser.window, 'haxeStart', haxeStart );
 	}
 	
 	function haxeStart() {
+		
 		
 		treeController.config = {
 			btn_addTreeNode:j('#btn_addTreeNode' ),
@@ -75,7 +80,7 @@ class Main
 		}
 		
 		gridController.addHandler( function( type, params ) {
-			trace( type );
+		//	trace( type );
 			switch( type ) {
 				case GridController.ON_FORMULA_CHANGE:
 					if ( gridController.currentRow == null ) return;
@@ -98,7 +103,7 @@ class Main
 		});
 		
 		paramsView.addHandler( function( type, params) {
-			trace( type );
+		//	trace( type );
 			switch( type ) {
 				case ParamsView.ON_PROP_CHANGE:
 					model.setParticleProps( params.id, params.proptype, params.value );
@@ -114,10 +119,21 @@ class Main
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
-			trace( type );
+		//	trace( type );
 			switch( type ) {
 				case PanelModel.ON_INIT:
 					
+					addEventListener( function ( info ) {
+						switch( info[0] ) {
+							case 'tick':
+								getInfo( function( err, data ) {
+									if ( err == null ) {
+										if ( data.count == 0 )
+											updateParticle( model.getOutputData( treeController.getItems() ) );
+									}
+								});
+						}
+					});
 				case PanelModel.ON_FORMULA_CHANGE:
 					gridController.updateRow( params.formulaId, params.values );
 				case PanelModel.ON_ADD_FORMULA:
@@ -197,7 +213,17 @@ class Main
 	function onMousemove(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
-		//moveParticle( 0, px, py );
+		if ( isMouseDown ) {
+			model.setParticleRootsPos( px, py );
+		}
+	}
+	
+	function onmousedown( e ) {
+		isMouseDown = true;
+	}
+	
+	function onmouseup( e ) {
+		isMouseDown = false;
 	}
 	
 	static var id = 0;
@@ -235,6 +261,14 @@ class Main
 	
 	static function moveParticle(id, x, y) {
 		untyped __js__('api.changeCenterPos')(id, x, y );
+	}
+	
+	static function addEventListener( listener:Dynamic -> Void) {
+		untyped __js__('api.addEventListener')( listener );
+	}
+	
+	static function getInfo( cb:String -> Dynamic -> Void ) {
+		untyped __js__('api.info')( cb );
 	}
 	
 	public static function addMouseWheelEvent( jdom, func ) {

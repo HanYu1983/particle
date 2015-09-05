@@ -90,6 +90,7 @@ List.prototype = {
 	}
 };
 var Main = function() {
+	this.isMouseDown = false;
 	this.model = new model_PanelModel();
 	this.paramsView = new view_ParamsView();
 	this.gridController = new view_GridController();
@@ -97,6 +98,8 @@ var Main = function() {
 	this.canvas_container = Main.j("#canvas_container");
 	this.webgl = Main.j("#webgl");
 	this.onResize(null);
+	this.webgl.mousedown($bind(this,this.onmousedown));
+	this.webgl.mouseup($bind(this,this.onmouseup));
 	this.webgl.mousemove($bind(this,this.onMousemove));
 	Reflect.setField(window,"haxeStart",$bind(this,this.haxeStart));
 };
@@ -124,6 +127,12 @@ Main.updateParticle = function(ary_render) {
 };
 Main.moveParticle = function(id,x,y) {
 	api.changeCenterPos(id,x,y);
+};
+Main.addEventListener = function(listener) {
+	api.addEventListener(listener);
+};
+Main.getInfo = function(cb) {
+	api.info(cb);
 };
 Main.addMouseWheelEvent = function(jdom,func) {
 	leo.utils.addMouseWheelEvent(jdom,func);
@@ -158,7 +167,6 @@ Main.prototype = {
 		});
 		this.gridController.set_config({ table_props : Main.j("#table_props"), btn_addDynamic : Main.j("#btn_addDynamic"), btn_removeDynamic : Main.j("#btn_removeDynamic"), btn_moveUp : Main.j("#btn_moveUp"), btn_moveDown : Main.j("#btn_moveDown"), combo_props : Main.j("#combo_props"), combo_dtype : Main.j("#combo_dtype"), spr_value1 : Main.j("#spr_value1"), spr_value2 : Main.j("#spr_value2"), spr_value3 : Main.j("#spr_value3"), spr_value4 : Main.j("#spr_value4"), spr_value5 : Main.j("#spr_value5")});
 		this.gridController.addHandler(function(type1,params1) {
-			console.log(type1);
 			switch(type1) {
 			case "ON_FORMULA_CHANGE":
 				if(_g.gridController.currentRow == null) return;
@@ -184,7 +192,6 @@ Main.prototype = {
 			}
 		});
 		this.paramsView.addHandler(function(type2,params2) {
-			console.log(type2);
 			switch(type2) {
 			case "ON_PROP_CHANGE":
 				_g.model.setParticleProps(params2.id,params2.proptype,params2.value);
@@ -196,9 +203,20 @@ Main.prototype = {
 		});
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
 		this.model.addHandler(function(type3,params3) {
-			console.log(type3);
 			switch(type3) {
 			case "ON_INIT":
+				Main.addEventListener(function(info) {
+					var _g1 = info[0];
+					switch(_g1) {
+					case "tick":
+						Main.getInfo(function(err,data) {
+							if(err == null) {
+								if(data.count == 0) Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
+							}
+						});
+						break;
+					}
+				});
 				break;
 			case "ON_FORMULA_CHANGE":
 				_g.gridController.updateRow(params3.formulaId,params3.values);
@@ -210,9 +228,9 @@ Main.prototype = {
 				_g.gridController.removeRowById(params3.formulaId);
 				break;
 			case "ON_ADD_PARTICLE":
-				var _g1 = _g.treeController.getItemById(params3.parentId);
-				var parentItem1 = _g1;
-				if(_g1 == null) _g.treeController.addToWithLabel(params3.id,params3.particle.name); else switch(_g1) {
+				var _g11 = _g.treeController.getItemById(params3.parentId);
+				var parentItem1 = _g11;
+				if(_g11 == null) _g.treeController.addToWithLabel(params3.id,params3.particle.name); else switch(_g11) {
 				default:
 					_g.treeController.addToWithLabel(params3.id,params3.particle.name,parentItem1);
 				}
@@ -253,6 +271,13 @@ Main.prototype = {
 	,onMousemove: function(e) {
 		var px = e.offsetX;
 		var py = e.offsetY;
+		if(this.isMouseDown) this.model.setParticleRootsPos(px,py);
+	}
+	,onmousedown: function(e) {
+		this.isMouseDown = true;
+	}
+	,onmouseup: function(e) {
+		this.isMouseDown = false;
 	}
 };
 Math.__name__ = true;
@@ -710,7 +735,7 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 	,findItem: function(combo,value) {
 		var items = combo.jqxComboBox("getItems");
 		return Lambda.find(items,function(obj) {
-			return Main.j(obj.element).find("[ptype]").attr("ptype") == value;
+			return Main.j(obj.label).attr("ptype") == value;
 		});
 	}
 	,getTypeFromItem: function(item) {
@@ -718,6 +743,12 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 	}
 	,getSelectItem: function(combo) {
 		return combo.jqxComboBox("getSelectedItem");
+	}
+	,logItems: function(combo) {
+		Lambda.foreach(combo.jqxComboBox("getItems"),function(obj) {
+			console.log(Main.j(obj.label).attr("ptype"));
+			return true;
+		});
 	}
 });
 var view_ParamsView = function() {

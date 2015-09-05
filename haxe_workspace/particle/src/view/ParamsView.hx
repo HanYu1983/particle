@@ -31,7 +31,6 @@ class ParamsView extends Model
 		
 		txt_name.val( particle.name );
 		
-		
 		setPropValue( 'lifetime', particle.lifetime * 1000 );
 		setPropValue( 'mass', particle.mass );
 		setPropValue( 'size_x', particle.size[0] );

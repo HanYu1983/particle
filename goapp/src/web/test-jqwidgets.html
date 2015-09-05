@@ -1,9 +1,6 @@
 <html>
 	<head>
 		<meta charset="utf-8"/>
-		
-		
-			
 		<script type="text/javascript" src="res/js/lib/jquery/jquery-1.11.1.min.js"></script>	
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxcore.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxbuttons.js"></script>
@@ -35,7 +32,7 @@
 		position:absolute;
 		width:100%;
 		height:100%;
-		
+		overflow:hidden;
 	}
 	input{
 		font-family:Microsoft JhengHei;
@@ -55,13 +52,13 @@
 		<div proptype=${id} class="hori" style="margin-bottom:5px;">
 			<div class="hori" style="width:60px; text-align:right;">${name}</div>
 			<div class="hori">
-				<div id="spr_value" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+				<div id="spr_value" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options=${datastr}></div>
 			</div>
 		</div>
 	</script>
 </head>
 <body>
-	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{"size":"72%","collapsible":false}, {"collapsed":false}]}'>
+	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{"size":"72%","collapsible":false}, {"collapsed":true}]}'>
 		<div>
 			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": "310px","min":"250px" }]}'>
 				<div>
@@ -76,7 +73,7 @@
 										<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
 									</div>
 								</div>
-								<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "200px", "width": "100%"}'>
+								<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "180px", "width": "100%"}'>
 									<!-- created by script -->
 								</div>
 							</div>
@@ -187,25 +184,31 @@
 		
 		initJqx( $('body'), theme );
 		
-		var ary_props = [ 	{id:'lifetime', name:'生命'}, 
-							{id:'mass', name:'質量'}, 
-							{id:'pos_r', name:'角度'}, 
-							{id:'vel_x', name:'速度x'}, 
-							{id:'vel_y', name:'速度y'}, 
-							{id:'vel_r', name:'旋轉速度'}, 
-							{id:'size_x', name:'粒子寬度'}, 
-							{id:'size_y', name:'粒子高度'}, 
-							{id:'count', name:'發射數目'}, 
-							{id:'duration', name:'週期毫秒'}, 
-							{id:'angle', name:'發射角度'}, 
-							{id:'range', name:'發射範圍'}, 
-							{id:'force', name:'發射力道'}];
+		var ary_props = [ 	{id:'lifetime', name:'生命', min:0, max:100000}, 
+							{id:'mass', name:'質量', min:0, max:100000}, 
+							{id:'pos_r', name:'角度', min:-360, max:360}, 
+							{id:'vel_x', name:'速度x', min:0, max:100000}, 
+							{id:'vel_y', name:'速度y', min:0, max:100000}, 
+							{id:'vel_r', name:'旋轉速度', min:0, max:100000}, 
+							{id:'size_x', name:'粒子寬度', min:0, max:100000}, 
+							{id:'size_y', name:'粒子高度', min:0, max:100000}, 
+							{id:'count', name:'發射數目', min:1, max:3}, 
+							{id:'duration', name:'週期毫秒', min:20, max:100000}, 
+							{id:'angle', name:'發射角度', min:0, max:360}, 
+							{id:'range', name:'發射範圍', min:0, max:360}, 
+							{id:'force', name:'發射力道', min:0, max:100000}];
 							
 		var tmpl_prop = $('#tmpl_prop' );
 		var mc_props_container = $('#mc_props_container');
 		
 		for( var i = 0; i < ary_props.length; ++i ){
-			var jdom = tmpl_prop.tmpl( ary_props[i] ) ;
+			var tmplModel = ary_props[i];
+			tmplModel.datastr = JSON.stringify({	"width":"80px",
+									"inputMode":"simple",
+									"spinButtons":true, 
+									"min": tmplModel.min , 
+									"max": tmplModel.max });
+			var jdom = tmpl_prop.tmpl( tmplModel ) ;
 			initJqx( jdom, theme );
 			mc_props_container.append( jdom );
 		}
