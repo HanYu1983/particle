@@ -952,7 +952,7 @@ view_MenuController.prototype = $extend(model_Model.prototype,{
 		});
 	}
 	,setTextarea: function(str) {
-		this.win_import.find("textarea").html(str);
+		this.win_import.find("textarea").val(str);
 	}
 	,getTextarea: function() {
 		return this.win_import.find("textarea").val();
