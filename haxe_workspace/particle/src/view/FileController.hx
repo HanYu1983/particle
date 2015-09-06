@@ -11,6 +11,8 @@ import view.component.FileView;
 class FileController extends Model
 {
 	var fileview = new FileView();
+	var mc_textContainer:Dynamic;
+	var ary_images = new Array<Dynamic>();
 
 	public function new() 
 	{
@@ -26,6 +28,8 @@ class FileController extends Model
 			file:config.file_upload
 		}
 		
+		mc_textContainer = config.mc_textContainer;
+		
 		fileview.config.file.on( 'change', handleUpload );
 	}
 	
@@ -38,9 +42,32 @@ class FileController extends Model
 					Browser.document.body.appendChild( img );
 					var imgDom = Main.j( img );
 					imgDom.addClass( 'textImg' );
-					j('#mc_textContainer' ).prepend( imgDom );
+					
+					mc_textContainer.prepend( imgDom );
+					
+					var imgobj = {
+						id:Main.getId(),
+						dom:imgDom
+					}
+					
+					ary_images.push( imgobj );
+					Main.addTexture( imgobj.id, imgobj.dom );
+					
+					addListener();
 				});
 			});
 		}
+	}
+	
+	function addListener() {
+		Lambda.foreach( ary_images, function( imgobj ) {
+			trace( img );
+			img.dom.off( 'click' );
+			img.dom.click( function( e ) {
+				var dom = e.currentTarget;
+				trace( dom );
+			});
+			return true;
+		});
 	}
 }

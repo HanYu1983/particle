@@ -205,7 +205,7 @@ Main.prototype = {
 			}
 		});
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
-		this.fileController.set_config({ file_upload : Main.j("#file_upload")});
+		this.fileController.set_config({ file_upload : Main.j("#file_upload"), mc_textContainer : Main.j("#mc_textContainer")});
 		this.model.addHandler(function(type3,params3) {
 			switch(type3) {
 			case "ON_INIT":
@@ -647,6 +647,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 });
 var view_FileController = function() {
+	this.ary_images = [];
 	this.fileview = new view_component_FileView();
 	model_Model.call(this);
 };
@@ -656,9 +657,11 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 	init: function() {
 		model_Model.prototype.init.call(this);
 		this.fileview.set_config({ file : this.config.file_upload});
+		this.mc_textContainer = this.config.mc_textContainer;
 		this.fileview.config.file.on("change",$bind(this,this.handleUpload));
 	}
 	,handleUpload: function(elem) {
+		var _g = this;
 		var elem1 = this.fileview.config.file[0];
 		if(elem1.files && elem1.files[0]) loadImage.parseMetaData(elem1.files[0],function(data) {
 			var orientation;
@@ -667,8 +670,21 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 				window.document.body.appendChild(img);
 				var imgDom = Main.j(img);
 				imgDom.addClass("textImg");
-				j("#mc_textContainer").prepend(imgDom);
+				_g.ary_images.push(imgDom);
+				_g.mc_textContainer.prepend(imgDom);
+				_g.addListener();
 			});
+		});
+	}
+	,addListener: function() {
+		Lambda.foreach(this.ary_images,function(img) {
+			console.log(img);
+			img.off("click");
+			img.click(function(e) {
+				var dom = e.currentTarget;
+				console.log(dom);
+			});
+			return true;
 		});
 	}
 });

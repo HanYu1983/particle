@@ -123,7 +123,8 @@ class Main
 		}
 		
 		fileController.config = {
-			file_upload:j( '#file_upload' )
+			file_upload:j( '#file_upload' ),
+			mc_textContainer:j('#mc_textContainer' )
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
@@ -290,6 +291,10 @@ class Main
 	
 	static function getInfo( cb:String -> Dynamic -> Void ) {
 		untyped __js__('api.info')( cb );
+	}
+	
+	public static function addTexture( id:String, img:Dynamic ) {
+		untyped __js__('api.addTexture')( id, img );
 	}
 	
 	public static function addMouseWheelEvent( jdom, func ) {
