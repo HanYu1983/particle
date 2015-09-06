@@ -127,6 +127,13 @@ class Main
 			mc_textContainer:j('#mc_textContainer' )
 		}
 		
+		fileController.addHandler( function ( type:String, params:Dynamic ):Void {
+			switch( type ) {
+				case FileController.ON_TEXTURE_CLICK:
+					trace( params );
+			}
+		});
+		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
 		//	trace( type );
 			switch( type ) {

@@ -209,8 +209,15 @@ Main.prototype = {
 		});
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
 		this.fileController.set_config({ file_upload : Main.j("#file_upload"), mc_textContainer : Main.j("#mc_textContainer")});
-		this.model.addHandler(function(type3,params3) {
+		this.fileController.addHandler(function(type3,params3) {
 			switch(type3) {
+			case "ON_TEXTURE_CLICK":
+				console.log(params3);
+				break;
+			}
+		});
+		this.model.addHandler(function(type4,params4) {
+			switch(type4) {
 			case "ON_INIT":
 				Main.addEventListener(function(info) {
 					var _g1 = info[0];
@@ -234,27 +241,27 @@ Main.prototype = {
 				});
 				break;
 			case "ON_FORMULA_CHANGE":
-				_g.gridController.updateRow(params3.formulaId,params3.values);
+				_g.gridController.updateRow(params4.formulaId,params4.values);
 				break;
 			case "ON_ADD_FORMULA":
-				_g.gridController.addRow(params3.formula[7],params3.formula);
+				_g.gridController.addRow(params4.formula[7],params4.formula);
 				break;
 			case "ON_REMOVE_FORMULA":
-				_g.gridController.removeRowById(params3.formulaId);
+				_g.gridController.removeRowById(params4.formulaId);
 				break;
 			case "ON_ADD_PARTICLE":
-				var _g11 = _g.treeController.getItemById(params3.parentId);
+				var _g11 = _g.treeController.getItemById(params4.parentId);
 				var parentItem1 = _g11;
-				if(_g11 == null) _g.treeController.addToWithLabel(params3.id,params3.particle.name); else switch(_g11) {
+				if(_g11 == null) _g.treeController.addToWithLabel(params4.id,params4.particle.name); else switch(_g11) {
 				default:
-					_g.treeController.addToWithLabel(params3.id,params3.particle.name,parentItem1);
+					_g.treeController.addToWithLabel(params4.id,params4.particle.name,parentItem1);
 				}
 				break;
 			case "ON_REMOVE_PARTICLE":
-				_g.treeController.remove(_g.treeController.getItemById(params3.id).element);
+				_g.treeController.remove(_g.treeController.getItemById(params4.id).element);
 				break;
 			case "ON_NAME_CHANGE":
-				_g.treeController.setItemName(params3.id,params3.name);
+				_g.treeController.setItemName(params4.id,params4.name);
 				break;
 			}
 			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
@@ -672,22 +679,22 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 			loadImage(elem1.files[0],function(img) {
 				window.document.body.appendChild(img);
 				var imgDom = Main.j(img);
+				imgDom.attr("id",Main.getId());
 				imgDom.addClass("textImg");
 				_g.mc_textContainer.prepend(imgDom);
-				var imgobj = { id : Main.getId(), dom : imgDom};
-				_g.ary_images.push(imgobj);
-				Main.addTexture(imgobj.id,imgobj.dom);
+				_g.ary_images.push(imgDom);
+				Main.addTexture(imgDom.attr("id"),imgDom[0]);
 				_g.addListener();
 			});
 		});
 	}
 	,addListener: function() {
-		Lambda.foreach(this.ary_images,function(imgobj) {
-			console.log(imgobj);
-			imgobj.dom.off("click");
-			imgobj.dom.click(function(e) {
-				var dom = e.currentTarget;
-				console.log(dom);
+		var _g = this;
+		Lambda.foreach(this.ary_images,function(imgDom) {
+			imgDom.off("click");
+			imgDom.click(function(e) {
+				var jdom = Main.j(e.currentTarget);
+				_g.notify(view_FileController.ON_TEXTURE_CLICK,{ textureId : jdom.attr("id")});
 			});
 			return true;
 		});
@@ -1057,6 +1064,7 @@ model_PanelModel.ON_INIT = "ON_INIT";
 model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
 model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
 model_PanelModel.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
+view_FileController.ON_TEXTURE_CLICK = "ON_TEXTURE_CLICK";
 view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
 view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
 view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";
