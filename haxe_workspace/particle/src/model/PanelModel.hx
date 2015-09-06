@@ -16,7 +16,7 @@ class PanelModel extends Model
 	public static var ON_ADD_FORMULA = 'ON_ADD_FORMULA';
 	public static var ON_REMOVE_FORMULA = 'ON_REMOVE_FORMULA';
 	public static var ON_FORMULA_CHANGE = 'ON_FORMULA_CHANGE';
-	public static var ON_SET_TEXTURE = 'ON_SET_TEXTURE';
+	public static var ON_TEXTURE_CHANGE = 'ON_TEXTURE_CHANGE';
 	public static var ON_CURRENT_PARTICLE_CHANGE = 'ON_CURRENT_PARTICLE_CHANGE';
 	
 	public var currentParticle(default, set):Dynamic;
@@ -48,7 +48,7 @@ class PanelModel extends Model
 	public function setParticleTextureId( id:String, tid:String ) {
 		if ( !findParticleById( id )) return;
 		findParticleById( id ).particle.tex = tid;
-		notify( ON_SET_TEXTURE );
+		notify( ON_TEXTURE_CHANGE, { textureId:tid } );
 	}
 	
 	public function getRenderList() {

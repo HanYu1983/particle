@@ -61,7 +61,7 @@
 	}
 	
 	.outline{
-		outline:red solid 1px;
+		outline:red solid 2px;
 	}
 	
 	</style>
@@ -153,7 +153,12 @@
 						<div>
 							<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
 								<div class="group" style="text-align:center; margin-top:10px;">
-									<input id="file_upload" type="file" accept="image/gif, image/jpeg, image/png" jqx="jqxButton"/>
+									<div class="hori">
+										<input id="btn_removeTexture" jqx="jqxButton" type="button" value="取消當前貼圖" />
+									</div>
+									<div class="hori">
+										<input id="file_upload" type="file" accept="image/gif, image/jpeg, image/png" jqx="jqxButton"/>
+									</div>
 								</div>
 								<div id="mc_textContainer" class="group" style="margin-top:10px;">
 									<!-- created by script -->

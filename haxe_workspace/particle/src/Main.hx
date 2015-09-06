@@ -64,6 +64,7 @@ class Main
 				case TreeView.ON_TREE_NODE_CLICK:
 					var item = params.item;
 					model.currentParticle = model.findParticleById( item.id ).particle;
+					
 					paramsView.setValues( model.findParticleById( item.id ), item.hasItems );
 					gridController.initRow( item.id, model.findParticleById( item.id ).particle.formulaList );
 			}
@@ -125,13 +126,16 @@ class Main
 		
 		fileController.config = {
 			file_upload:j( '#file_upload' ),
-			mc_textContainer:j('#mc_textContainer' )
+			mc_textContainer:j('#mc_textContainer' ),
+			btn_removeTexture:j('#btn_removeTexture' )
 		}
 		
 		fileController.addHandler( function ( type:String, params:Dynamic ):Void {
 			switch( type ) {
 				case FileController.ON_TEXTURE_CLICK:
 					model.setParticleTextureId( model.currentParticle.id, params.textureId );
+				case FileController.ON_BTN_REMOVE_TEXTURE_CLICK:
+					model.setParticleTextureId( model.currentParticle.id, '' );
 			}
 		});
 		
@@ -162,6 +166,8 @@ class Main
 								}
 						}
 					});
+				case PanelModel.ON_TEXTURE_CHANGE:
+					fileController.focus( params.textureId );
 				case PanelModel.ON_FORMULA_CHANGE:
 					gridController.updateRow( params.formulaId, params.values );
 				case PanelModel.ON_ADD_FORMULA:

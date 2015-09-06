@@ -209,11 +209,14 @@ Main.prototype = {
 			}
 		});
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
-		this.fileController.set_config({ file_upload : Main.j("#file_upload"), mc_textContainer : Main.j("#mc_textContainer")});
+		this.fileController.set_config({ file_upload : Main.j("#file_upload"), mc_textContainer : Main.j("#mc_textContainer"), btn_removeTexture : Main.j("#btn_removeTexture")});
 		this.fileController.addHandler(function(type3,params3) {
 			switch(type3) {
 			case "ON_TEXTURE_CLICK":
 				_g.model.setParticleTextureId(_g.model.currentParticle.id,params3.textureId);
+				break;
+			case "ON_BTN_REMOVE_TEXTURE_CLICK":
+				_g.model.setParticleTextureId(_g.model.currentParticle.id,"");
 				break;
 			}
 		});
@@ -240,6 +243,9 @@ Main.prototype = {
 						break;
 					}
 				});
+				break;
+			case "ON_TEXTURE_CHANGE":
+				_g.fileController.focus(params4.textureId);
 				break;
 			case "ON_FORMULA_CHANGE":
 				_g.gridController.updateRow(params4.formulaId,params4.values);
@@ -449,7 +455,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,setParticleTextureId: function(id,tid) {
 		if(!this.findParticleById(id)) return;
 		this.findParticleById(id).particle.tex = tid;
-		this.notify(model_PanelModel.ON_SET_TEXTURE);
+		this.notify(model_PanelModel.ON_TEXTURE_CHANGE,{ textureId : tid});
 	}
 	,getRenderList: function() {
 		return this._ary_renderList;
@@ -677,6 +683,7 @@ view_FileController.__name__ = true;
 view_FileController.__super__ = model_Model;
 view_FileController.prototype = $extend(model_Model.prototype,{
 	focus: function(id) {
+		if(id == "") this.removeAllFocus();
 		if(this.getImage(id) == null) return;
 		this.removeAllFocus();
 		this.getImage(id).addClass("outline");
@@ -687,10 +694,15 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 		});
 	}
 	,init: function() {
+		var _g = this;
 		model_Model.prototype.init.call(this);
 		this.fileview.set_config({ file : this.config.file_upload});
-		this.mc_textContainer = this.config.mc_textContainer;
 		this.fileview.config.file.on("change",$bind(this,this.handleUpload));
+		this.mc_textContainer = this.config.mc_textContainer;
+		this.btn_removeTexture = this.config.btn_removeTexture;
+		this.btn_removeTexture.click(function() {
+			_g.notify(view_FileController.ON_BTN_REMOVE_TEXTURE_CLICK);
+		});
 	}
 	,removeAllFocus: function() {
 		Lambda.foreach(this.ary_images,function(imgDom) {
@@ -1093,9 +1105,10 @@ model_PanelModel.ON_INIT = "ON_INIT";
 model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
 model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
 model_PanelModel.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
-model_PanelModel.ON_SET_TEXTURE = "ON_SET_TEXTURE";
+model_PanelModel.ON_TEXTURE_CHANGE = "ON_TEXTURE_CHANGE";
 model_PanelModel.ON_CURRENT_PARTICLE_CHANGE = "ON_CURRENT_PARTICLE_CHANGE";
 view_FileController.ON_TEXTURE_CLICK = "ON_TEXTURE_CLICK";
+view_FileController.ON_BTN_REMOVE_TEXTURE_CLICK = "ON_BTN_REMOVE_TEXTURE_CLICK";
 view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
 view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
 view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";

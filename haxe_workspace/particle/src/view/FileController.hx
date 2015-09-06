@@ -11,12 +11,13 @@ import view.component.FileView;
 class FileController extends Model
 {
 	public static var ON_TEXTURE_CLICK = 'ON_TEXTURE_CLICK';
+	public static var ON_BTN_REMOVE_TEXTURE_CLICK = 'ON_BTN_REMOVE_TEXTURE_CLICK';
 	
 	var fileview = new FileView();
 	var mc_textContainer:Dynamic;
+	var btn_removeTexture:Dynamic;
 	var ary_images = new Array<Dynamic>();
 	
-
 	public function new() 
 	{
 		super();
@@ -24,6 +25,7 @@ class FileController extends Model
 	}
 	
 	public function focus( id:String ) {
+		if( id == '' ) removeAllFocus();
 		if ( getImage( id ) == null ) return;
 		removeAllFocus();
 		getImage( id ).addClass( 'outline' );
@@ -42,10 +44,14 @@ class FileController extends Model
 		fileview.config = {
 			file:config.file_upload
 		}
+		fileview.config.file.on( 'change', handleUpload );
 		
 		mc_textContainer = config.mc_textContainer;
 		
-		fileview.config.file.on( 'change', handleUpload );
+		btn_removeTexture = config.btn_removeTexture;
+		btn_removeTexture.click( function() {
+			notify( ON_BTN_REMOVE_TEXTURE_CLICK );
+		});
 	}
 	
 	function removeAllFocus() {
