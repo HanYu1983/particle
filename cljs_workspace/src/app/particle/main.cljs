@@ -116,7 +116,7 @@
               
             ctx))))
             
-    ;;(demo onView)
+    (demo onView)
             
     (comment "end let")))
   
