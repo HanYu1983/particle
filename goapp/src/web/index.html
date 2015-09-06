@@ -18,6 +18,7 @@
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxdata.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxfileupload.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxgrid.selection.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxMenu.js"></script>
 			
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
@@ -75,11 +76,23 @@
 	</script>
 </head>
 <body>
-	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "panels": [{ "size": 750,"min":750 }]}'>
+	<div id='jqxMenu' jqx="jqxMenu">
+		<ul>
+			<li>檔案
+				<ul>
+					<li><div id="btn_import">匯入</div></li>
+					<li><div id="btn_export">匯出</div></li>
+				</ul>
+			</li>
+			<li><div id="btn_about">關於</div></li>
+		</ul>
+	</div>
+	<div jqx="jqxSplitter" data-options='{"height": "97%", "width": "100%", "panels": [{ "size": 750,"min":750 }]}'>
 		<div>
 			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
 				<div>
 					<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+						
 						<div class="group" style="text-align:center;">
 							<div class="hori">
 								<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
