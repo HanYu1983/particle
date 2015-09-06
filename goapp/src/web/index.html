@@ -19,7 +19,9 @@
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxfileupload.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxgrid.selection.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxMenu.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxColorPicker.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxWindow.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxDropDownButton.js"></script>
 			
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
@@ -88,12 +90,11 @@
 			<li><div id="btn_about">關於</div></li>
 		</ul>
 	</div>
-	<div jqx="jqxSplitter" data-options='{"height": "97%", "width": "100%", "panels": [{ "size": 750,"min":750 }]}'>
+	<div jqx="jqxSplitter" data-options='{"height": "97%", "width": "100%", "panels": [{ "size": 770,"min":770 }]}'>
 		<div>
 			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
 				<div>
 					<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
-						
 						<div class="group" style="text-align:center;">
 							<div class="hori">
 								<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
@@ -119,13 +120,20 @@
 										<input id="btn_confirmName" type="button" jqx="jqxButton" value="確定" >
 									</div>
 								</div>
-								<div class="group">
-									<div id="mc_props_container" class="group" style="min-width:150px; margin-bottom:50px;" >
-										<!-- created by script -->
-									</div>
+								<div class="group" id="mc_props_container" style="min-width:150px; margin-bottom:30px;" >
+									<!-- created by script -->
 								</div>
-								<div class="group">
-									
+								<div class="group" style="text-align:center; margin-bottom:30px; ">
+									<div class="hori">
+										<div id="combo_blend" jqx="jqxComboBox" >
+											<!-- created by script -->
+										</div>
+									</div>
+									<div class="hori">
+										<div id="dropDownButton" jqx="jqxDropDownButton" data-options='{"width": 80}'>
+											<div id="color_color" jqx="jqxColorPicker" data-options='{ "color": "ffffff", "colorMode": "hue", "width": 220, "height": 220}'></div>
+										</div>
+									</div>
 								</div>
 								<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
 									<div class="hori">
@@ -313,7 +321,15 @@
 		}
 		combo_dtype.jqxComboBox( { source: comboSource, width:80, selectedIndex:0 } );
 		
-		
+		var combo_blend = $('#combo_blend' );
+		ary_props = [ 	{id:'nidl', name:'乎視透明'}, 
+						{id:'normal', name:'正常'}, 
+						{id:'add', name:'疊加'}]
+		comboSource = [];
+		for( var i = 0; i < ary_props.length; ++i ){
+			comboSource.push( '<div ptype="' + ary_props[i].id + '">' + ary_props[i].name + '</div>' );
+		}
+		combo_blend.jqxComboBox( { source: comboSource, width:80, selectedIndex:1 } );
 		//create gried
 		
 		$("#table_props").jqxGrid(
@@ -331,6 +347,26 @@
 			  { text: '參數五', datafield: 'value5', width:100 }
 			]
 		});    
+		
+		function getTextElementByColor(color) {
+			if (color == 'transparent' || color.hex == "") {
+				return $("<div style='text-shadow: none; position: relative; padding-bottom: 2px; margin-top: 2px;'>transparent</div>");
+			}
+			var element = $("<div style='text-shadow: none; position: relative; padding-bottom: 2px; margin-top: 2px;'>#" + color.hex + "</div>");
+			var nThreshold = 105;
+			var bgDelta = (color.r * 0.299) + (color.g * 0.587) + (color.b * 0.114);
+			var foreColor = (255 - bgDelta < nThreshold) ? 'Black' : 'White';
+			element.css('color', foreColor);
+			element.css('background', "#" + color.hex);
+			element.addClass('jqx-rc-all');
+			return element;
+		}
+		
+		$("#color_color").on('colorchange', function (event) {
+			$("#dropDownButton").jqxDropDownButton('setContent', getTextElementByColor(event.args.color));
+			$('#photoGallery').css('border-color', "#" + event.args.color.hex);
+		});
+		$("#dropDownButton").jqxDropDownButton('setContent', getTextElementByColor(new $.jqx.color({ hex: "ffaabb" })));
 		
 		window.haxeStart();
 	}
