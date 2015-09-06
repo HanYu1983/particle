@@ -16,6 +16,8 @@ class PanelModel extends Model
 	public static var ON_ADD_FORMULA = 'ON_ADD_FORMULA';
 	public static var ON_REMOVE_FORMULA = 'ON_REMOVE_FORMULA';
 	public static var ON_FORMULA_CHANGE = 'ON_FORMULA_CHANGE';
+	public static var ON_TEXTURE_CHANGE = 'ON_TEXTURE_CHANGE';
+	public static var ON_CURRENT_PARTICLE_CHANGE = 'ON_CURRENT_PARTICLE_CHANGE';
 	
 	public var currentParticle(default, set):Dynamic;
 	
@@ -28,7 +30,7 @@ class PanelModel extends Model
 		
 	}
 	
-	public function addParticle(id:Int, parentId:Int, particle:Dynamic, ?extra:Dynamic):Void 
+	public function addParticle(id:String, parentId:String, particle:Dynamic, ?extra:Dynamic):Void 
 	{
 		if ( findParticleById( id )) return;
 		_ary_particles.push( { id:id, particle:particle } );
@@ -36,18 +38,24 @@ class PanelModel extends Model
 		notify( ON_ADD_PARTICLE, { id:id, parentId:parentId, particle:particle } );
 	}
 	
-	public function removeParticle(id:Int, ?extra:Dynamic):Void 
+	public function removeParticle(id:String, ?extra:Dynamic):Void 
 	{
 		if ( !findParticleById( id )) return;
 		_ary_particles.remove( findParticleById( id ));
 		notify( ON_REMOVE_PARTICLE, { id:id } );
 	}
 	
+	public function setParticleTextureId( id:String, tid:String ) {
+		if ( !findParticleById( id )) return;
+		findParticleById( id ).particle.tex = tid;
+		notify( ON_TEXTURE_CHANGE, { textureId:tid } );
+	}
+	
 	public function getRenderList() {
 		return _ary_renderList;
 	}
 	
-	public function addFormula( particleId:Int, formula:Array<Dynamic> ) {
+	public function addFormula( particleId:String, formula:Array<Dynamic> ) {
 		if ( !findParticleById( particleId )) return;
 		var particle = findParticleById( particleId ).particle;
 		if ( particle.formulaList == null )
@@ -56,7 +64,7 @@ class PanelModel extends Model
 		notify( ON_ADD_FORMULA, { formula:formula } );
 	}
 	
-	public function removeFormula( particleId:Int, formulaId:String ) {
+	public function removeFormula( particleId:String, formulaId:String ) {
 		if ( !findParticleById( particleId )) return;
 		var particle = findParticleById( particleId ).particle;
 		var formula = getFormulaById( particleId, formulaId );
@@ -68,7 +76,7 @@ class PanelModel extends Model
 		}
 	}
 	
-	public function getFormulaById( particleId:Int, formulaId:String ):Array<Dynamic> {
+	public function getFormulaById( particleId:String, formulaId:String ):Array<Dynamic> {
 		if ( !findParticleById( particleId )) return null;
 		var particle = findParticleById( particleId ).particle;
 		if ( particle.formulaList == null ) return null;
@@ -78,7 +86,7 @@ class PanelModel extends Model
 		});
 	}
 	
-	public function setFormulaById( particleId:Int, formulaId:String, values:Array<Float> ) {
+	public function setFormulaById( particleId:String, formulaId:String, values:Array<Float> ) {
 		if ( !findParticleById( particleId )) return;
 		var particle = findParticleById( particleId ).particle;
 		var formula = getFormulaById( particleId, formulaId );
@@ -96,7 +104,7 @@ class PanelModel extends Model
 		}
 	}
 	
-	public function setParticleName( id:Int, name:String ) {
+	public function setParticleName( id:String, name:String ) {
 		if ( !findParticleById( id )) return;
 		findParticleById( id ).particle.name = name;
 		
@@ -114,7 +122,7 @@ class PanelModel extends Model
 		}
 	}
 	
-	public function setParticleProps( id:Int, type:String, value:Dynamic ) {
+	public function setParticleProps( id:String, type:String, value:Dynamic ) {
 		if ( !findParticleById( id )) return;
 		switch( type ) {
 			case 'size_x':
@@ -142,7 +150,7 @@ class PanelModel extends Model
 		notify( ON_PROPS_CAHNGE );
 	}
 	
-	public function findParticleById( id:Int ):Dynamic {
+	public function findParticleById( id:String ):Dynamic {
 		return Lambda.find( _ary_particles, function( p:Dynamic ) {
 			if ( p.id == id ) return true;
 			return false;
@@ -204,6 +212,7 @@ class PanelModel extends Model
 			outputData.mass = particle.mass;
 			outputData.color = particle.color;
 			outputData.size = particle.size;
+			outputData.tex = particle.tex;
 			outputData.formulaList = particle.formulaList;
 			
 			if ( node.children && node.children.length > 0 ) {
@@ -239,8 +248,8 @@ class PanelModel extends Model
 	{
 		super.init();
 		
-		function foreachObj( obj:Dynamic, ?pid:Int ) {
-			addParticle( obj.id, pid == null ? 999 : pid, obj );
+		function foreachObj( obj:Dynamic, ?pid:String ) {
+			addParticle( obj.id, pid == null ? '999' : pid, obj );
 			if ( obj.emit != null && obj.emit.prototype != null  ) {
 				Lambda.foreach( obj.emit.prototype, function( _obj:Dynamic ) {
 					foreachObj( _obj, obj.id );
@@ -258,27 +267,9 @@ class PanelModel extends Model
 	
 	function set_currentParticle( particle:Dynamic ):Dynamic 
 	{
-		return currentParticle = particle;
+		currentParticle = particle;
+		notify( ON_CURRENT_PARTICLE_CHANGE );
+		return currentParticle;
 	}
 	
 }
-
-/*
-{ 	id:'root', 
-	lifetime:5,
-	mass:3,
-	color:'#33ddff',
-	size:[10, 10],
-	pos:[0, 0, 0], vel:[0, 0, 0],
-	emit: { count:1,
-			duration:.5,
-			angle:0,
-			range:0,
-			force:0,
-			prototype:[ { 	id:'root_particle', 
-							lifetime:3,
-							mass:3,
-							color:'#33ddff',
-							size:[10, 10],
-							pos:[0, 0, 0], vel:[0, 0, 0] } ] }}
-													*/

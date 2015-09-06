@@ -6,6 +6,7 @@ import model.PanelModel;
 import view.component.TreeView;
 import view.FileController;
 import view.GridController;
+import view.MenuController;
 import view.ParamsView;
 import view.TreeController;
 
@@ -23,6 +24,7 @@ class Main
 	var treeController = new TreeController();
 	var gridController = new GridController();
 	var fileController = new FileController();
+	var menuController = new MenuController();
 	var paramsView = new ParamsView();
 	var model = new PanelModel();
 	
@@ -41,6 +43,15 @@ class Main
 		webgl.mousemove( onMousemove );
 		
 		Reflect.setField( Browser.window, 'haxeStart', haxeStart );
+		Reflect.setField( Browser.window, 'notifyFromHtml', notifyFromHtml );
+	}
+	
+	function notifyFromHtml( type:String, param:String ) {
+		var paramobj = Json.parse( param );
+		switch( type ) {
+			case 'onBtnImportClick':
+			case 'onBtnExportClick':
+		}
 	}
 	
 	function haxeStart() {
@@ -63,6 +74,8 @@ class Main
 					model.addParticle( newId, parentItem.id, createNewParticle( newId ) );
 				case TreeView.ON_TREE_NODE_CLICK:
 					var item = params.item;
+					model.currentParticle = model.findParticleById( item.id ).particle;
+					
 					paramsView.setValues( model.findParticleById( item.id ), item.hasItems );
 					gridController.initRow( item.id, model.findParticleById( item.id ).particle.formulaList );
 			}
@@ -123,7 +136,22 @@ class Main
 		}
 		
 		fileController.config = {
-			file_upload:j( '#file_upload' )
+			file_upload:j( '#file_upload' ),
+			mc_textContainer:j('#mc_textContainer' ),
+			btn_removeTexture:j('#btn_removeTexture' )
+		}
+		
+		fileController.addHandler( function ( type:String, params:Dynamic ):Void {
+			switch( type ) {
+				case FileController.ON_TEXTURE_CLICK:
+					model.setParticleTextureId( model.currentParticle.id, params.textureId );
+				case FileController.ON_BTN_REMOVE_TEXTURE_CLICK:
+					model.setParticleTextureId( model.currentParticle.id, '' );
+			}
+		});
+		
+		menuController.config = {
+			mc_menu:j('#mc_menu' )
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
@@ -153,6 +181,8 @@ class Main
 								}
 						}
 					});
+				case PanelModel.ON_TEXTURE_CHANGE:
+					fileController.focus( params.textureId );
 				case PanelModel.ON_FORMULA_CHANGE:
 					gridController.updateRow( params.formulaId, params.values );
 				case PanelModel.ON_ADD_FORMULA:
@@ -170,6 +200,8 @@ class Main
 					treeController.remove( treeController.getItemById( params.id ).element );
 				case PanelModel.ON_NAME_CHANGE:
 					treeController.setItemName( params.id, params.name );
+				case PanelModel.ON_CURRENT_PARTICLE_CHANGE:
+					fileController.focus( model.currentParticle.tex );
 			}
 			
 			updateParticle( model.getOutputData( treeController.getItems() ) );
@@ -184,7 +216,7 @@ class Main
 		
 		model.config = initObj;
 		
-		treeController.selectItem( treeController.getItemById( '0' ).element );
+		treeController.selectItem( treeController.getItems()[0].element );
 	}
 	
 	public static function createNewEmit() {
@@ -207,6 +239,7 @@ class Main
 			size:[10, 10],
 			pos:[400, 400, 0], 
 			vel:[0, 0, 0],
+			tex:'',
 			emit:createNewEmit()
 		}
 	}
@@ -269,8 +302,8 @@ class Main
 		});
 	}
 	
-	public static function getId() {
-		return id++;
+	public static function getId():String {
+		return untyped __js__('leo.utils.generateUUID' )();
 	}
 	
 	static function updateParticle( ary_render:Array<Dynamic> ) {
@@ -290,6 +323,10 @@ class Main
 	
 	static function getInfo( cb:String -> Dynamic -> Void ) {
 		untyped __js__('api.info')( cb );
+	}
+	
+	public static function addTexture( id:String, img:Dynamic ) {
+		untyped __js__('api.addTexture')( id, img );
 	}
 	
 	public static function addMouseWheelEvent( jdom, func ) {

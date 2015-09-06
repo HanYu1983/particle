@@ -95,6 +95,7 @@ var Main = function() {
 	this.isMouseDown = false;
 	this.model = new model_PanelModel();
 	this.paramsView = new view_ParamsView();
+	this.menuController = new view_MenuController();
 	this.fileController = new view_FileController();
 	this.gridController = new view_GridController();
 	this.treeController = new view_TreeController();
@@ -105,6 +106,7 @@ var Main = function() {
 	this.webgl.mouseup($bind(this,this.onmouseup));
 	this.webgl.mousemove($bind(this,this.onMousemove));
 	Reflect.setField(window,"haxeStart",$bind(this,this.haxeStart));
+	Reflect.setField(window,"notifyFromHtml",$bind(this,this.notifyFromHtml));
 };
 Main.__name__ = true;
 Main.createNewEmit = function() {
@@ -120,7 +122,7 @@ Main.showMessage = function(msg) {
 	Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
 };
 Main.getId = function() {
-	return Main.id++;
+	return leo.utils.generateUUID();
 };
 Main.updateParticle = function(ary_render) {
 	Lambda.foreach(ary_render,function(render) {
@@ -137,6 +139,9 @@ Main.addEventListener = function(listener) {
 Main.getInfo = function(cb) {
 	api.info(cb);
 };
+Main.addTexture = function(id,img) {
+	api.addTexture(id,img);
+};
 Main.addMouseWheelEvent = function(jdom,func) {
 	leo.utils.addMouseWheelEvent(jdom,func);
 };
@@ -147,7 +152,16 @@ Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	haxeStart: function() {
+	notifyFromHtml: function(type,param) {
+		var paramobj = JSON.parse(param);
+		switch(type) {
+		case "onBtnImportClick":
+			break;
+		case "onBtnExportClick":
+			break;
+		}
+	}
+	,haxeStart: function() {
 		var _g = this;
 		this.treeController.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 		this.treeController.addHandler(function(type,params) {
@@ -163,6 +177,7 @@ Main.prototype = {
 				break;
 			case "ON_TREE_NODE_CLICK":
 				var item = params.item;
+				_g.model.set_currentParticle(_g.model.findParticleById(item.id).particle);
 				_g.paramsView.setValues(_g.model.findParticleById(item.id),item.hasItems);
 				_g.gridController.initRow(item.id,_g.model.findParticleById(item.id).particle.formulaList);
 				break;
@@ -205,9 +220,20 @@ Main.prototype = {
 			}
 		});
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
-		this.fileController.set_config({ file_upload : Main.j("#file_upload")});
-		this.model.addHandler(function(type3,params3) {
+		this.fileController.set_config({ file_upload : Main.j("#file_upload"), mc_textContainer : Main.j("#mc_textContainer"), btn_removeTexture : Main.j("#btn_removeTexture")});
+		this.fileController.addHandler(function(type3,params3) {
 			switch(type3) {
+			case "ON_TEXTURE_CLICK":
+				_g.model.setParticleTextureId(_g.model.currentParticle.id,params3.textureId);
+				break;
+			case "ON_BTN_REMOVE_TEXTURE_CLICK":
+				_g.model.setParticleTextureId(_g.model.currentParticle.id,"");
+				break;
+			}
+		});
+		this.menuController.set_config({ mc_menu : Main.j("#mc_menu")});
+		this.model.addHandler(function(type4,params4) {
+			switch(type4) {
 			case "ON_INIT":
 				Main.addEventListener(function(info) {
 					var _g1 = info[0];
@@ -230,28 +256,34 @@ Main.prototype = {
 					}
 				});
 				break;
+			case "ON_TEXTURE_CHANGE":
+				_g.fileController.focus(params4.textureId);
+				break;
 			case "ON_FORMULA_CHANGE":
-				_g.gridController.updateRow(params3.formulaId,params3.values);
+				_g.gridController.updateRow(params4.formulaId,params4.values);
 				break;
 			case "ON_ADD_FORMULA":
-				_g.gridController.addRow(params3.formula[7],params3.formula);
+				_g.gridController.addRow(params4.formula[7],params4.formula);
 				break;
 			case "ON_REMOVE_FORMULA":
-				_g.gridController.removeRowById(params3.formulaId);
+				_g.gridController.removeRowById(params4.formulaId);
 				break;
 			case "ON_ADD_PARTICLE":
-				var _g11 = _g.treeController.getItemById(params3.parentId);
+				var _g11 = _g.treeController.getItemById(params4.parentId);
 				var parentItem1 = _g11;
-				if(_g11 == null) _g.treeController.addToWithLabel(params3.id,params3.particle.name); else switch(_g11) {
+				if(_g11 == null) _g.treeController.addToWithLabel(params4.id,params4.particle.name); else switch(_g11) {
 				default:
-					_g.treeController.addToWithLabel(params3.id,params3.particle.name,parentItem1);
+					_g.treeController.addToWithLabel(params4.id,params4.particle.name,parentItem1);
 				}
 				break;
 			case "ON_REMOVE_PARTICLE":
-				_g.treeController.remove(_g.treeController.getItemById(params3.id).element);
+				_g.treeController.remove(_g.treeController.getItemById(params4.id).element);
 				break;
 			case "ON_NAME_CHANGE":
-				_g.treeController.setItemName(params3.id,params3.name);
+				_g.treeController.setItemName(params4.id,params4.name);
+				break;
+			case "ON_CURRENT_PARTICLE_CHANGE":
+				_g.fileController.focus(_g.model.currentParticle.tex);
 				break;
 			}
 			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
@@ -259,10 +291,10 @@ Main.prototype = {
 		var initObj = this.createNewParticle(Main.getId());
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
 		this.model.set_config(initObj);
-		this.treeController.selectItem(this.treeController.getItemById("0").element);
+		this.treeController.selectItem(this.treeController.getItems()[0].element);
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [400,400,0], vel : [0,0,0], emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [400,400,0], vel : [0,0,0], tex : "", emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];
@@ -432,6 +464,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		HxOverrides.remove(this._ary_particles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
 	}
+	,setParticleTextureId: function(id,tid) {
+		if(!this.findParticleById(id)) return;
+		this.findParticleById(id).particle.tex = tid;
+		this.notify(model_PanelModel.ON_TEXTURE_CHANGE,{ textureId : tid});
+	}
 	,getRenderList: function() {
 		return this._ary_renderList;
 	}
@@ -593,6 +630,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			outputData.mass = particle.mass;
 			outputData.color = particle.color;
 			outputData.size = particle.size;
+			outputData.tex = particle.tex;
 			outputData.formulaList = particle.formulaList;
 			if(node1.children && node1.children.length > 0) {
 				outputData.emit = { 'prototype' : []};
@@ -632,7 +670,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var foreachObj;
 		var foreachObj1 = null;
 		foreachObj1 = function(obj,pid) {
-			_g.addParticle(obj.id,pid == null?999:pid,obj);
+			_g.addParticle(obj.id,pid == null?"999":pid,obj);
 			if(obj.emit != null && obj.emit.prototype != null) Lambda.foreach(obj.emit.prototype,function(_obj) {
 				foreachObj1(_obj,obj.id);
 				return true;
@@ -643,22 +681,49 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_INIT);
 	}
 	,set_currentParticle: function(particle) {
-		return this.currentParticle = particle;
+		this.currentParticle = particle;
+		this.notify(model_PanelModel.ON_CURRENT_PARTICLE_CHANGE);
+		return this.currentParticle;
 	}
 });
 var view_FileController = function() {
+	this.ary_images = [];
 	this.fileview = new view_component_FileView();
 	model_Model.call(this);
 };
 view_FileController.__name__ = true;
 view_FileController.__super__ = model_Model;
 view_FileController.prototype = $extend(model_Model.prototype,{
-	init: function() {
+	focus: function(id) {
+		if(id == "") this.removeAllFocus();
+		if(this.getImage(id) == null) return;
+		this.removeAllFocus();
+		this.getImage(id).addClass("outline");
+	}
+	,getImage: function(id) {
+		return Lambda.find(this.ary_images,function(imgdom) {
+			return imgdom.attr("id") == id;
+		});
+	}
+	,init: function() {
+		var _g = this;
 		model_Model.prototype.init.call(this);
 		this.fileview.set_config({ file : this.config.file_upload});
 		this.fileview.config.file.on("change",$bind(this,this.handleUpload));
+		this.mc_textContainer = this.config.mc_textContainer;
+		this.btn_removeTexture = this.config.btn_removeTexture;
+		this.btn_removeTexture.click(function() {
+			_g.notify(view_FileController.ON_BTN_REMOVE_TEXTURE_CLICK);
+		});
+	}
+	,removeAllFocus: function() {
+		Lambda.foreach(this.ary_images,function(imgDom) {
+			imgDom.removeClass("outline");
+			return true;
+		});
 	}
 	,handleUpload: function(elem) {
+		var _g = this;
 		var elem1 = this.fileview.config.file[0];
 		if(elem1.files && elem1.files[0]) loadImage.parseMetaData(elem1.files[0],function(data) {
 			var orientation;
@@ -666,9 +731,25 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 			loadImage(elem1.files[0],function(img) {
 				window.document.body.appendChild(img);
 				var imgDom = Main.j(img);
+				imgDom.attr("id",Main.getId());
 				imgDom.addClass("textImg");
-				j("#mc_textContainer").prepend(imgDom);
+				_g.mc_textContainer.prepend(imgDom);
+				_g.ary_images.push(imgDom);
+				Main.addTexture(imgDom.attr("id"),imgDom[0]);
+				_g.addListener();
 			});
+		});
+	}
+	,addListener: function() {
+		var _g = this;
+		Lambda.foreach(this.ary_images,function(imgDom) {
+			imgDom.off("click");
+			imgDom.click(function(e) {
+				var jdom = Main.j(e.currentTarget);
+				_g.focus(jdom.attr("id"));
+				_g.notify(view_FileController.ON_TEXTURE_CLICK,{ textureId : jdom.attr("id")});
+			});
+			return true;
 		});
 	}
 });
@@ -793,6 +874,17 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 			console.log(Main.j(obj.label).attr("ptype"));
 			return true;
 		});
+	}
+});
+var view_MenuController = function() {
+	model_Model.call(this);
+};
+view_MenuController.__name__ = true;
+view_MenuController.__super__ = model_Model;
+view_MenuController.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.mc_menu = this.config.mc_menu;
 	}
 });
 var view_ParamsView = function() {
@@ -1036,6 +1128,10 @@ model_PanelModel.ON_INIT = "ON_INIT";
 model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
 model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
 model_PanelModel.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
+model_PanelModel.ON_TEXTURE_CHANGE = "ON_TEXTURE_CHANGE";
+model_PanelModel.ON_CURRENT_PARTICLE_CHANGE = "ON_CURRENT_PARTICLE_CHANGE";
+view_FileController.ON_TEXTURE_CLICK = "ON_TEXTURE_CLICK";
+view_FileController.ON_BTN_REMOVE_TEXTURE_CLICK = "ON_BTN_REMOVE_TEXTURE_CLICK";
 view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
 view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
 view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";
