@@ -92,7 +92,7 @@
         ctx
         {
           :timer 0
-          :part {:ps '()}
+          :part {:ps '() :limit 200}
           :centerPos [0 0]
           :onModel onModel
           :gl gl
@@ -102,7 +102,7 @@
         (recur
           (condp = ch
             onTick
-            (do
+            (let []
               (go
                 (>! onModelEvent ["tick" v]))
               (-> ctx
@@ -116,7 +116,7 @@
               
             ctx))))
             
-    ;(demo onView)
+    ;;(demo onView)
             
     (comment "end let")))
   

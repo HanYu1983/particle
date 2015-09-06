@@ -265,5 +265,20 @@
                     (> (:lifetime %) 0)
                     (> (:timer %) (:lifetime %)))
                   ps)]
-            (assoc ctx :ps remove-self)))]
-    (-> ctx update-emit update-each update-remove)))
+            (assoc ctx :ps remove-self)))
+            
+        update-remove-limit
+        (fn [{ps :ps limit :limit :as ctx}]
+          (if (and (pos? limit) (> (count ps) limit))
+            (assoc ctx :ps
+              (->> ps
+                (sort-by 
+                  (fn [p] 
+                    (if (:emit p)
+                      0
+                      (if (zero? (:lifetime p)) 
+                        0
+                        (:timer p)))))
+                (drop-last (- (count ps) limit))))
+            ctx))]
+    (-> ctx update-emit update-each update-remove update-remove-limit)))
