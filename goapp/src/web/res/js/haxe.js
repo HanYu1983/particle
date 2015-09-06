@@ -239,9 +239,17 @@ Main.prototype = {
 				break;
 			}
 		});
-		this.menuController.set_config({ win_import : Main.j("#win_import")});
-		this.model.addHandler(function(type4,params4) {
+		this.menuController.set_config({ win_import : Main.j("#win_import"), btn_confirm : Main.j("#win_import #btn_confirm")});
+		this.menuController.addHandler(function(type4,params4) {
 			switch(type4) {
+			case "ON_IMPORT_CLICK":
+				_g.model.clearAll();
+				_g.model.set_config(JSON.parse(params4.config));
+				break;
+			}
+		});
+		this.model.addHandler(function(type5,params5) {
+			switch(type5) {
 			case "ON_INIT":
 				Main.addEventListener(function(info) {
 					var _g1 = info[0];
@@ -263,32 +271,33 @@ Main.prototype = {
 						break;
 					}
 				});
+				_g.treeController.selectItem(_g.treeController.getItems()[0].element);
 				break;
 			case "ON_TEXTURE_CHANGE":
-				_g.fileController.focus(params4.textureId);
+				_g.fileController.focus(params5.textureId);
 				break;
 			case "ON_FORMULA_CHANGE":
-				_g.gridController.updateRow(params4.formulaId,params4.values);
+				_g.gridController.updateRow(params5.formulaId,params5.values);
 				break;
 			case "ON_ADD_FORMULA":
-				_g.gridController.addRow(params4.formula[7],params4.formula);
+				_g.gridController.addRow(params5.formula[7],params5.formula);
 				break;
 			case "ON_REMOVE_FORMULA":
-				_g.gridController.removeRowById(params4.formulaId);
+				_g.gridController.removeRowById(params5.formulaId);
 				break;
 			case "ON_ADD_PARTICLE":
-				var _g11 = _g.treeController.getItemById(params4.parentId);
+				var _g11 = _g.treeController.getItemById(params5.parentId);
 				var parentItem1 = _g11;
-				if(_g11 == null) _g.treeController.addToWithLabel(params4.id,params4.particle.name); else switch(_g11) {
+				if(_g11 == null) _g.treeController.addToWithLabel(params5.id,params5.particle.name); else switch(_g11) {
 				default:
-					_g.treeController.addToWithLabel(params4.id,params4.particle.name,parentItem1);
+					_g.treeController.addToWithLabel(params5.id,params5.particle.name,parentItem1);
 				}
 				break;
 			case "ON_REMOVE_PARTICLE":
-				_g.treeController.remove(_g.treeController.getItemById(params4.id).element);
+				_g.treeController.remove(_g.treeController.getItemById(params5.id).element);
 				break;
 			case "ON_NAME_CHANGE":
-				_g.treeController.setItemName(params4.id,params4.name);
+				_g.treeController.setItemName(params5.id,params5.name);
 				break;
 			case "ON_CURRENT_PARTICLE_CHANGE":
 				_g.fileController.focus(_g.model.currentParticle.tex);
@@ -299,8 +308,7 @@ Main.prototype = {
 		var initObj = this.createNewParticle(Main.getId());
 		initObj.lifetime = 0;
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
-		this.model.set_config(initObj);
-		this.treeController.selectItem(this.treeController.getItems()[0].element);
+		this.model.set_config([initObj]);
 	}
 	,createNewParticle: function(id) {
 		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [1,1,1], size : [10,10], pos : [400,400,0], vel : [0,0,0], blending : "normal", tex : "", emit : Main.createNewEmit()};
@@ -477,6 +485,15 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		if(!this.findParticleById(id)) return;
 		this.findParticleById(id).particle.tex = tid;
 		this.notify(model_PanelModel.ON_TEXTURE_CHANGE,{ textureId : tid});
+	}
+	,clearAll: function() {
+		var _g = this;
+		Lambda.foreach(this._ary_particles,function(obj) {
+			_g.removeParticle(obj.particle.id);
+			return true;
+		});
+		this._ary_particles = [];
+		this._ary_renderList = [];
 	}
 	,getRenderList: function() {
 		return this._ary_renderList;
@@ -699,7 +716,10 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			});
 		};
 		foreachObj = foreachObj1;
-		foreachObj(this.config);
+		Lambda.foreach(this.config,function(single) {
+			foreachObj(single);
+			return true;
+		});
 		this.notify(model_PanelModel.ON_INIT);
 	}
 	,set_currentParticle: function(particle) {
@@ -906,18 +926,36 @@ view_MenuController.__super__ = model_Model;
 view_MenuController.prototype = $extend(model_Model.prototype,{
 	openImport: function(type,text) {
 		this.win_import.jqxWindow("open");
+		this.win_import.attr("type",type);
 		switch(type) {
+		case "import":
+			this.setTextarea("");
+			break;
 		case "export":
 			this.setTextarea(text);
 			break;
 		}
 	}
 	,init: function() {
+		var _g = this;
 		model_Model.prototype.init.call(this);
 		this.win_import = this.config.win_import;
+		this.btn_confirm = this.config.btn_confirm;
+		this.btn_confirm.click(function() {
+			_g.win_import.jqxWindow("close");
+			var _g1 = _g.win_import.attr("type");
+			switch(_g1) {
+			case "import":
+				_g.notify(view_MenuController.ON_IMPORT_CLICK,{ config : _g.getTextarea()});
+				break;
+			}
+		});
 	}
 	,setTextarea: function(str) {
 		this.win_import.find("textarea").html(str);
+	}
+	,getTextarea: function() {
+		return this.win_import.find("textarea").val();
 	}
 });
 var view_ParamsView = function() {
@@ -1195,6 +1233,7 @@ view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
 view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
 view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";
 view_GridController.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
+view_MenuController.ON_IMPORT_CLICK = "ON_IMPORT_CLICK";
 view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
 view_ParamsView.ON_BLEND_CHANGE = "ON_BLEND_CHANGE";
 view_ParamsView.ON_COLOR_CHANGE = "ON_COLOR_CHANGE";

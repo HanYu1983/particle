@@ -159,8 +159,17 @@ class Main
 		});
 		
 		menuController.config = {
-			win_import:j('#win_import' )
+			win_import:j('#win_import' ),
+			btn_confirm:j('#win_import #btn_confirm' )
 		}
+		
+		menuController.addHandler( function ( type:String, params:Dynamic ):Void {
+			switch( type ) {
+				case MenuController.ON_IMPORT_CLICK:
+					model.clearAll();
+					model.config = Json.parse( params.config );
+			}
+		});
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
 		//	trace( type );
@@ -172,8 +181,9 @@ class Main
 							case 'tick':
 								getInfo( function( err, data ) {
 									if ( err == null ) {
-										if ( data.count == 0 )
+										if ( data.count == 0 ){
 											updateParticle( model.getOutputData( treeController.getItems() ) );
+										}
 									}
 								});
 								
@@ -189,6 +199,8 @@ class Main
 								}
 						}
 					});
+					treeController.selectItem( treeController.getItems()[0].element );
+					
 				case PanelModel.ON_TEXTURE_CHANGE:
 					fileController.focus( params.textureId );
 				case PanelModel.ON_FORMULA_CHANGE:
@@ -210,6 +222,8 @@ class Main
 					treeController.setItemName( params.id, params.name );
 				case PanelModel.ON_CURRENT_PARTICLE_CHANGE:
 					fileController.focus( model.currentParticle.tex );
+					
+					
 			}
 			
 			updateParticle( model.getOutputData( treeController.getItems() ) );
@@ -221,9 +235,8 @@ class Main
 			createNewParticle( getId() )
 		];
 		
-		model.config = initObj;
+		model.config = [initObj];
 		
-		treeController.selectItem( treeController.getItems()[0].element );
 	}
 	
 	public static function createNewEmit() {

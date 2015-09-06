@@ -1,5 +1,6 @@
 package view;
 
+import haxe.Json;
 import model.Model;
 
 /**
@@ -8,7 +9,10 @@ import model.Model;
  */
 class MenuController extends Model
 {
+	public static var ON_IMPORT_CLICK = 'ON_IMPORT_CLICK';
+	
 	var win_import:Dynamic;
+	var btn_confirm:Dynamic;
 
 	public function new() 
 	{
@@ -18,8 +22,10 @@ class MenuController extends Model
 	
 	public function openImport( type, ?text ) {
 		win_import.jqxWindow( 'open' );
-		
+		win_import.attr( 'type', type );
 		switch( type ) {
+			case 'import':
+				setTextarea( '' );
 			case 'export':
 				setTextarea( text );
 		}
@@ -30,10 +36,21 @@ class MenuController extends Model
 		super.init();
 		
 		win_import = config.win_import;
-		
+		btn_confirm = config.btn_confirm;
+		btn_confirm.click( function() {
+			win_import.jqxWindow( 'close' );
+			switch( win_import.attr( 'type' ) ) {
+				case 'import':
+					notify( ON_IMPORT_CLICK, { config: getTextarea() } );
+			}
+		});
 	}
 	
 	function setTextarea( str ) {
 		win_import.find( 'textarea' ).html( str );
+	}
+	
+	function getTextarea() {
+		return win_import.find( 'textarea' ).val();
 	}
 }

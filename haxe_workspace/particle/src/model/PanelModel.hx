@@ -53,6 +53,16 @@ class PanelModel extends Model
 		notify( ON_TEXTURE_CHANGE, { textureId:tid } );
 	}
 	
+	public function clearAll() {
+		_ary_particles.foreach( function( obj ) {
+			removeParticle( obj.particle.id );
+			return true;
+		});
+		
+		_ary_particles = new Array<Dynamic>();
+		_ary_renderList = new Array<Dynamic>();
+	}
+	
 	public function getRenderList() {
 		return _ary_renderList;
 	}
@@ -275,7 +285,10 @@ class PanelModel extends Model
 			}
 		}
 		
-		foreachObj( config );
+		Lambda.foreach( config, function( single ) {
+			foreachObj( single );
+			return true;
+		});
 		
 		notify( ON_INIT );
 	}
