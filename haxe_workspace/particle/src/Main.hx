@@ -6,6 +6,7 @@ import model.PanelModel;
 import view.component.TreeView;
 import view.FileController;
 import view.GridController;
+import view.MenuController;
 import view.ParamsView;
 import view.TreeController;
 
@@ -23,6 +24,7 @@ class Main
 	var treeController = new TreeController();
 	var gridController = new GridController();
 	var fileController = new FileController();
+	var menuController = new MenuController();
 	var paramsView = new ParamsView();
 	var model = new PanelModel();
 	
@@ -41,6 +43,15 @@ class Main
 		webgl.mousemove( onMousemove );
 		
 		Reflect.setField( Browser.window, 'haxeStart', haxeStart );
+		Reflect.setField( Browser.window, 'notifyFromHtml', notifyFromHtml );
+	}
+	
+	function notifyFromHtml( type:String, param:String ) {
+		var paramobj = Json.parse( param );
+		switch( type ) {
+			case 'onBtnImportClick':
+			case 'onBtnExportClick':
+		}
 	}
 	
 	function haxeStart() {
@@ -138,6 +149,10 @@ class Main
 					model.setParticleTextureId( model.currentParticle.id, '' );
 			}
 		});
+		
+		menuController.config = {
+			mc_menu:j('#mc_menu' )
+		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
 		//	trace( type );

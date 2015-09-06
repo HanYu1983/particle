@@ -95,6 +95,7 @@ var Main = function() {
 	this.isMouseDown = false;
 	this.model = new model_PanelModel();
 	this.paramsView = new view_ParamsView();
+	this.menuController = new view_MenuController();
 	this.fileController = new view_FileController();
 	this.gridController = new view_GridController();
 	this.treeController = new view_TreeController();
@@ -105,6 +106,7 @@ var Main = function() {
 	this.webgl.mouseup($bind(this,this.onmouseup));
 	this.webgl.mousemove($bind(this,this.onMousemove));
 	Reflect.setField(window,"haxeStart",$bind(this,this.haxeStart));
+	Reflect.setField(window,"notifyFromHtml",$bind(this,this.notifyFromHtml));
 };
 Main.__name__ = true;
 Main.createNewEmit = function() {
@@ -150,7 +152,16 @@ Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	haxeStart: function() {
+	notifyFromHtml: function(type,param) {
+		var paramobj = JSON.parse(param);
+		switch(type) {
+		case "onBtnImportClick":
+			break;
+		case "onBtnExportClick":
+			break;
+		}
+	}
+	,haxeStart: function() {
 		var _g = this;
 		this.treeController.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 		this.treeController.addHandler(function(type,params) {
@@ -220,6 +231,7 @@ Main.prototype = {
 				break;
 			}
 		});
+		this.menuController.set_config({ mc_menu : Main.j("#mc_menu")});
 		this.model.addHandler(function(type4,params4) {
 			switch(type4) {
 			case "ON_INIT":
@@ -862,6 +874,17 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 			console.log(Main.j(obj.label).attr("ptype"));
 			return true;
 		});
+	}
+});
+var view_MenuController = function() {
+	model_Model.call(this);
+};
+view_MenuController.__name__ = true;
+view_MenuController.__super__ = model_Model;
+view_MenuController.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.mc_menu = this.config.mc_menu;
 	}
 });
 var view_ParamsView = function() {

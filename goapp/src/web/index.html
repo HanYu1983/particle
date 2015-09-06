@@ -19,6 +19,7 @@
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxfileupload.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxgrid.selection.js"></script>
 		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxMenu.js"></script>
+		<script type="text/javascript" src="res/js/lib/jqwidgets/jqxWindow.js"></script>
 			
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
@@ -76,12 +77,12 @@
 	</script>
 </head>
 <body>
-	<div id='jqxMenu' jqx="jqxMenu">
+	<div id='mc_menu' jqx="jqxMenu">
 		<ul>
 			<li>檔案
 				<ul>
-					<li><div id="btn_import">匯入</div></li>
-					<li><div id="btn_export">匯出</div></li>
+					<li><div onclick="window.notifyFromHtml('onBtnImportClick', '{}')" id="btn_import">匯入</div></li>
+					<li><div onclick="window.notifyFromHtml('onBtnExportClick', '{}')" id="btn_export">匯出</div></li>
 				</ul>
 			</li>
 			<li><div id="btn_about">關於</div></li>
@@ -191,6 +192,21 @@
 			</div>
 		</div>
 	</div>
+							
+	<div id="window0" jqx="jqxWindow" data-options='{"width":"600","height":"300"}'>
+		<div>
+			匯入 / 匯出
+		</div>
+		<div>
+			<textarea style="width:100%; height:90%; background-color:#222222; color:white">
+				
+				
+			</textarea>
+			<div class="group">
+				<input id="btn_confirm" jqx="jqxButton" type="button" value="確定" />
+			</div>
+		</div>
+    </div>
 </body>
 <script src='res/js/lib/async.js'></script>
 <script src='res/js/lib/rxjs/rx.all.min.js'></script>
