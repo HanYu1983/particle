@@ -43,6 +43,7 @@ class ParamsView extends Model
 		setPropValue( 'vel_y', particle.vel[1] );
 		setPropValue( 'vel_r', particle.vel[2] / Math.PI * 180 );
 		setPropValue( 'pos_r', particle.pos[2] / Math.PI * 180 );
+		setPropValue( 'alpha', particle.color[3] );
 		
 		var color = particle.color;
 		color_color.jqxColorPicker('setColor', { r: color[0] * 255, g: color[1] * 255, b: color[2] * 255 } );

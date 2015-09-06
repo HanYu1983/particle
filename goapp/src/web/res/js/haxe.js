@@ -188,6 +188,9 @@ Main.prototype = {
 		this.gridController.set_config({ table_props : Main.j("#table_props"), btn_addDynamic : Main.j("#btn_addDynamic"), btn_removeDynamic : Main.j("#btn_removeDynamic"), btn_moveUp : Main.j("#btn_moveUp"), btn_moveDown : Main.j("#btn_moveDown"), combo_props : Main.j("#combo_props"), combo_dtype : Main.j("#combo_dtype"), spr_value1 : Main.j("#spr_value1"), spr_value2 : Main.j("#spr_value2"), spr_value3 : Main.j("#spr_value3"), spr_value4 : Main.j("#spr_value4"), spr_value5 : Main.j("#spr_value5")});
 		this.gridController.addHandler(function(type1,params1) {
 			switch(type1) {
+			case "ON_BTN_MOVE_CLICK":
+				_g.model.moveFormula(_g.model.currentParticle.id,params1.fid,params1.updown);
+				break;
 			case "ON_FORMULA_CHANGE":
 				if(_g.gridController.currentRow == null) return;
 				_g.model.setFormulaById(_g.gridController.currentParticleId,_g.gridController.currentRow.uid,params1.values);
@@ -273,6 +276,10 @@ Main.prototype = {
 				});
 				_g.treeController.selectItem(_g.treeController.getItems()[0].element);
 				break;
+			case "ON_FORMULA_POS_CHANGE":
+				console.log(params5.formulaList);
+				_g.gridController.initRow(_g.model.currentParticle.id,_g.model.currentParticle.formulaList);
+				break;
 			case "ON_TEXTURE_CHANGE":
 				_g.fileController.focus(params5.textureId);
 				break;
@@ -311,7 +318,7 @@ Main.prototype = {
 		this.model.set_config([initObj]);
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [1,1,1], size : [10,10], pos : [400,400,0], vel : [0,0,0], blending : "normal", tex : "", emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [1,1,1,1], size : [10,10], pos : [400,400,0], vel : [0,0,0], blending : "normal", tex : "", emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];
@@ -517,6 +524,26 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		particle.formulaList.push(formula);
 		this.notify(model_PanelModel.ON_ADD_FORMULA,{ formula : formula});
 	}
+	,moveFormula: function(particleId,formulaId,updown) {
+		if(!this.findParticleById(particleId)) return;
+		var particle = this.findParticleById(particleId).particle;
+		var formula = this.getFormulaById(particleId,formulaId);
+		var indexof = particle.formulaList.indexOf(formula);
+		switch(updown) {
+		case 1:
+			if(indexof == particle.formulaList.length - 1) return;
+			particle.formulaList.splice(indexof,1);
+			Array.prototype.splice.call(particle.formulaList,indexof + 1,0,formula);
+			this.notify(model_PanelModel.ON_FORMULA_POS_CHANGE,{ formulaList : particle.formulaList});
+			break;
+		case -1:
+			if(indexof == 0) return;
+			particle.formulaList.splice(indexof,1);
+			Array.prototype.splice.call(particle.formulaList,indexof - 1,0,formula);
+			this.notify(model_PanelModel.ON_FORMULA_POS_CHANGE,{ formulaList : particle.formulaList});
+			break;
+		}
+	}
 	,removeFormula: function(particleId,formulaId) {
 		if(!this.findParticleById(particleId)) return;
 		var particle = this.findParticleById(particleId).particle;
@@ -575,6 +602,9 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,setParticleProps: function(id,type,value) {
 		if(!this.findParticleById(id)) return;
 		switch(type) {
+		case "alpha":
+			this.findParticleById(id).particle.color[3] = value;
+			break;
 		case "size_x":
 			this.findParticleById(id).particle.size[0] = value;
 			break;
@@ -881,7 +911,15 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_GridController.ON_FORMULA_CHANGE,{ values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
 		});
 		this.btn_moveDown = this.config.btn_moveDown;
+		this.btn_moveDown.click(function() {
+			if(_g.currentRow == null) return;
+			_g.notify(view_GridController.ON_BTN_MOVE_CLICK,{ fid : _g.currentRow.uid, updown : 1});
+		});
 		this.btn_moveUp = this.config.btn_moveUp;
+		this.btn_moveUp.click(function() {
+			if(_g.currentRow == null) return;
+			_g.notify(view_GridController.ON_BTN_MOVE_CLICK,{ fid : _g.currentRow.uid, updown : -1});
+		});
 		this.spr_value1 = this.config.spr_value1;
 		this.spr_value2 = this.config.spr_value2;
 		this.spr_value3 = this.config.spr_value3;
@@ -977,6 +1015,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.setPropValue("vel_y",particle.vel[1]);
 		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
 		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
+		this.setPropValue("alpha",particle.color[3]);
 		var color = particle.color;
 		this.color_color.jqxColorPicker("setColor",{ r : color[0] * 255, g : color[1] * 255, b : color[2] * 255});
 		this.combo_blend.jqxComboBox("selectItem",this.findItem(this.combo_blend,particle.blending));
@@ -1223,6 +1262,7 @@ model_PanelModel.ON_INIT = "ON_INIT";
 model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
 model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
 model_PanelModel.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
+model_PanelModel.ON_FORMULA_POS_CHANGE = "ON_FORMULA_POS_CHANGE";
 model_PanelModel.ON_TEXTURE_CHANGE = "ON_TEXTURE_CHANGE";
 model_PanelModel.ON_BLEND_CHANGE = "ON_BLEND_CHANGE";
 model_PanelModel.ON_COLOR_CHANGE = "ON_COLOR_CHANGE";
@@ -1233,6 +1273,7 @@ view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
 view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
 view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";
 view_GridController.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
+view_GridController.ON_BTN_MOVE_CLICK = "ON_BTN_MOVE_CLICK";
 view_MenuController.ON_IMPORT_CLICK = "ON_IMPORT_CLICK";
 view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
 view_ParamsView.ON_BLEND_CHANGE = "ON_BLEND_CHANGE";

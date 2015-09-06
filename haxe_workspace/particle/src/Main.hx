@@ -58,7 +58,6 @@ class Main
 	
 	function haxeStart() {
 		
-		
 		treeController.config = {
 			btn_addTreeNode:j('#btn_addTreeNode' ),
 			btn_removeTreeNode:j('#btn_removeTreeNode' ),
@@ -101,6 +100,8 @@ class Main
 		gridController.addHandler( function( type, params ) {
 		//	trace( type );
 			switch( type ) {
+				case GridController.ON_BTN_MOVE_CLICK:
+					model.moveFormula( model.currentParticle.id, params.fid, params.updown );
 				case GridController.ON_FORMULA_CHANGE:
 					if ( gridController.currentRow == null ) return;
 					model.setFormulaById( gridController.currentParticleId, gridController.currentRow.uid, params.values );
@@ -201,6 +202,9 @@ class Main
 					});
 					treeController.selectItem( treeController.getItems()[0].element );
 					
+				case PanelModel.ON_FORMULA_POS_CHANGE:
+					trace( params.formulaList );
+					gridController.initRow( model.currentParticle.id, model.currentParticle.formulaList );
 				case PanelModel.ON_TEXTURE_CHANGE:
 					fileController.focus( params.textureId );
 				case PanelModel.ON_FORMULA_CHANGE:
@@ -255,7 +259,7 @@ class Main
 			name:'粒子_' + id,
 			lifetime:5,
 			mass:3,
-			color:[1, 1, 1],
+			color:[1, 1, 1, 1],
 			size:[10, 10],
 			pos:[400, 400, 0], 
 			vel:[0, 0, 0],
