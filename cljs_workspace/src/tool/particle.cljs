@@ -43,6 +43,12 @@
   
 (defn jsobj->target [jsobj]
   (condp = jsobj
+    "life"
+    [:lifetime]
+    
+    "mass"
+    [:mass]
+    
     "x"
     [:pos 0]
     
