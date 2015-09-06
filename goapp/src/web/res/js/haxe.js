@@ -277,7 +277,6 @@ Main.prototype = {
 				_g.treeController.selectItem(_g.treeController.getItems()[0].element);
 				break;
 			case "ON_FORMULA_POS_CHANGE":
-				console.log(params5.formulaList);
 				_g.gridController.initRow(_g.model.currentParticle.id,_g.model.currentParticle.formulaList);
 				break;
 			case "ON_TEXTURE_CHANGE":
