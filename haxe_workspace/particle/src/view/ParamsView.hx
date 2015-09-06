@@ -9,6 +9,8 @@ import model.Model;
 class ParamsView extends Model
 {
 	public static var ON_PROP_CHANGE = 'ON_PROP_CHANGE';
+	public static var ON_BLEND_CHANGE = 'ON_BLEND_CHANGE';
+	public static var ON_COLOR_CHANGE = 'ON_COLOR_CHANGE';
 	public static var ON_TXT_NAME_CHANGE = 'ON_TXT_NAME_CHANGE';
 	
 	var j:Dynamic = untyped __js__( '$' );
@@ -16,6 +18,8 @@ class ParamsView extends Model
 	var currentPropSpr:Dynamic;
 	var currentParticleObj:Dynamic;
 	var btn_confirmName:Dynamic;
+	var color_color:Dynamic;
+	var combo_blend:Dynamic;
 	var txt_name:Dynamic;
 
 	public function new() 
@@ -39,6 +43,11 @@ class ParamsView extends Model
 		setPropValue( 'vel_y', particle.vel[1] );
 		setPropValue( 'vel_r', particle.vel[2] / Math.PI * 180 );
 		setPropValue( 'pos_r', particle.pos[2] / Math.PI * 180 );
+		
+		var color = particle.color;
+		color_color.jqxColorPicker('setColor', { r: color[0] * 255, g: color[1] * 255, b: color[2] * 255 } );
+		
+		combo_blend.jqxComboBox('selectItem', findItem( combo_blend, particle.blending ) );
 		
 		if ( isEmit ) {
 			setPropValue( 'count', particle.emit.count );
@@ -86,6 +95,32 @@ class ParamsView extends Model
 			notify( ON_PROP_CHANGE, { id:currentParticleObj.id, proptype:proptype, value:newValue } );
 			currentPropSpr = jdom;
 		}); 
+		
+		color_color = config.color_color;
+		color_color.on('colorchange', function (event) {
+			var color = event.args.color;
+			notify( ON_COLOR_CHANGE, { color: color } );
+		});
+		
+		combo_blend = config.combo_blend;
+		combo_blend.on('change', function (event) {
+			notify( ON_BLEND_CHANGE, { blend: getTypeFromItem( getSelectItem( combo_blend )) } );
+		});
+	}
+	
+	function getTypeFromItem( item:Dynamic ) {
+		return Main.j( item.element ).find( '[ptype]' ).attr('ptype');
+	}
+	
+	function getSelectItem( combo:Dynamic ) {
+		return combo.jqxComboBox('getSelectedItem'); 
+	}
+	
+	function findItem( combo:Dynamic, value:String ) {
+		var items = combo.jqxComboBox('getItems');
+		return Lambda.find( items, function( obj ) {
+			return ( Main.j( obj.label ).attr( 'ptype' ) == value );
+		});
 	}
 	
 	function setPropValue( type, value:Float ) {

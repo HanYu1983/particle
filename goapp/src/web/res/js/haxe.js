@@ -213,6 +213,12 @@ Main.prototype = {
 		});
 		this.paramsView.addHandler(function(type2,params2) {
 			switch(type2) {
+			case "ON_COLOR_CHANGE":
+				_g.model.setParticleColor(_g.model.currentParticle.id,params2.color);
+				break;
+			case "ON_BLEND_CHANGE":
+				_g.model.setParticleBlendMode(_g.model.currentParticle.id,params2.blend);
+				break;
 			case "ON_PROP_CHANGE":
 				_g.model.setParticleProps(params2.id,params2.proptype,params2.value);
 				break;
@@ -221,7 +227,7 @@ Main.prototype = {
 				break;
 			}
 		});
-		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
+		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name"), color_color : Main.j("#color_color"), combo_blend : Main.j("#combo_blend")});
 		this.fileController.set_config({ file_upload : Main.j("#file_upload"), mc_textContainer : Main.j("#mc_textContainer"), btn_removeTexture : Main.j("#btn_removeTexture")});
 		this.fileController.addHandler(function(type3,params3) {
 			switch(type3) {
@@ -297,7 +303,7 @@ Main.prototype = {
 		this.treeController.selectItem(this.treeController.getItems()[0].element);
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [1,1,1], size : [10,10], pos : [400,400,0], vel : [0,0,0], tex : "", emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [1,1,1], size : [10,10], pos : [400,400,0], vel : [0,0,0], blending : "normal", tex : "", emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];
@@ -475,6 +481,18 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	,getRenderList: function() {
 		return this._ary_renderList;
 	}
+	,setParticleBlendMode: function(id,blending) {
+		if(!this.findParticleById(id)) return;
+		this.findParticleById(id).particle.blending = blending;
+		this.notify(model_PanelModel.ON_BLEND_CHANGE,{ blending : blending});
+	}
+	,setParticleColor: function(id,color) {
+		if(!this.findParticleById(id)) return;
+		this.findParticleById(id).particle.color[0] = color.r / 255;
+		this.findParticleById(id).particle.color[1] = color.g / 255;
+		this.findParticleById(id).particle.color[2] = color.b / 255;
+		this.notify(model_PanelModel.ON_COLOR_CHANGE);
+	}
 	,addFormula: function(particleId,formula) {
 		if(!this.findParticleById(particleId)) return;
 		var particle = this.findParticleById(particleId).particle;
@@ -634,6 +652,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			outputData.color = particle.color;
 			outputData.size = particle.size;
 			outputData.tex = particle.tex;
+			outputData.blending = particle.blending;
 			outputData.formulaList = particle.formulaList;
 			if(node1.children && node1.children.length > 0) {
 				outputData.emit = { 'prototype' : []};
@@ -920,6 +939,9 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.setPropValue("vel_y",particle.vel[1]);
 		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
 		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
+		var color = particle.color;
+		this.color_color.jqxColorPicker("setColor",{ r : color[0] * 255, g : color[1] * 255, b : color[2] * 255});
+		this.combo_blend.jqxComboBox("selectItem",this.findItem(this.combo_blend,particle.blending));
 		if(isEmit) {
 			this.setPropValue("count",particle.emit.count);
 			this.setPropValue("duration",particle.emit.duration * 1000);
@@ -962,6 +984,27 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			}
 			_g.notify(view_ParamsView.ON_PROP_CHANGE,{ id : _g.currentParticleObj.id, proptype : proptype, value : newValue});
 			_g.currentPropSpr = jdom;
+		});
+		this.color_color = this.config.color_color;
+		this.color_color.on("colorchange",function(event1) {
+			var color = event1.args.color;
+			_g.notify(view_ParamsView.ON_COLOR_CHANGE,{ color : color});
+		});
+		this.combo_blend = this.config.combo_blend;
+		this.combo_blend.on("change",function(event2) {
+			_g.notify(view_ParamsView.ON_BLEND_CHANGE,{ blend : _g.getTypeFromItem(_g.getSelectItem(_g.combo_blend))});
+		});
+	}
+	,getTypeFromItem: function(item) {
+		return Main.j(item.element).find("[ptype]").attr("ptype");
+	}
+	,getSelectItem: function(combo) {
+		return combo.jqxComboBox("getSelectedItem");
+	}
+	,findItem: function(combo,value) {
+		var items = combo.jqxComboBox("getItems");
+		return Lambda.find(items,function(obj) {
+			return Main.j(obj.label).attr("ptype") == value;
 		});
 	}
 	,setPropValue: function(type,value) {
@@ -1143,6 +1186,8 @@ model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
 model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
 model_PanelModel.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
 model_PanelModel.ON_TEXTURE_CHANGE = "ON_TEXTURE_CHANGE";
+model_PanelModel.ON_BLEND_CHANGE = "ON_BLEND_CHANGE";
+model_PanelModel.ON_COLOR_CHANGE = "ON_COLOR_CHANGE";
 model_PanelModel.ON_CURRENT_PARTICLE_CHANGE = "ON_CURRENT_PARTICLE_CHANGE";
 view_FileController.ON_TEXTURE_CLICK = "ON_TEXTURE_CLICK";
 view_FileController.ON_BTN_REMOVE_TEXTURE_CLICK = "ON_BTN_REMOVE_TEXTURE_CLICK";
@@ -1151,6 +1196,8 @@ view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
 view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";
 view_GridController.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
 view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
+view_ParamsView.ON_BLEND_CHANGE = "ON_BLEND_CHANGE";
+view_ParamsView.ON_COLOR_CHANGE = "ON_COLOR_CHANGE";
 view_ParamsView.ON_TXT_NAME_CHANGE = "ON_TXT_NAME_CHANGE";
 view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK = "ON_BTN_ADD_TREE_NODE_CLICK";
 view_TreeController.ON_BTN_REMOVE_TREE_NODE_CLICK = "ON_BTN_REMOVE_TREE_NODE_CLICK";

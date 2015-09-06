@@ -124,6 +124,10 @@ class Main
 		paramsView.addHandler( function( type, params) {
 		//	trace( type );
 			switch( type ) {
+				case ParamsView.ON_COLOR_CHANGE:
+					model.setParticleColor( model.currentParticle.id, params.color );
+				case ParamsView.ON_BLEND_CHANGE:
+					model.setParticleBlendMode( model.currentParticle.id, params.blend );
 				case ParamsView.ON_PROP_CHANGE:
 					model.setParticleProps( params.id, params.proptype, params.value );
 				case ParamsView.ON_TXT_NAME_CHANGE:
@@ -134,7 +138,9 @@ class Main
 		paramsView.config = {
 			root:j('#mc_props_container'),
 			btn_confirmName:j('#btn_confirmName'),
-			txt_name:j('#txt_name')
+			txt_name:j('#txt_name'),
+			color_color:j('#color_color' ),
+			combo_blend:j('#combo_blend' )
 		}
 		
 		fileController.config = {
@@ -240,6 +246,7 @@ class Main
 			size:[10, 10],
 			pos:[400, 400, 0], 
 			vel:[0, 0, 0],
+			blending:'normal',
 			tex:'',
 			emit:createNewEmit()
 		}

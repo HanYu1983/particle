@@ -17,6 +17,8 @@ class PanelModel extends Model
 	public static var ON_REMOVE_FORMULA = 'ON_REMOVE_FORMULA';
 	public static var ON_FORMULA_CHANGE = 'ON_FORMULA_CHANGE';
 	public static var ON_TEXTURE_CHANGE = 'ON_TEXTURE_CHANGE';
+	public static var ON_BLEND_CHANGE = 'ON_BLEND_CHANGE';
+	public static var ON_COLOR_CHANGE = 'ON_COLOR_CHANGE';
 	public static var ON_CURRENT_PARTICLE_CHANGE = 'ON_CURRENT_PARTICLE_CHANGE';
 	
 	public var currentParticle(default, set):Dynamic;
@@ -53,6 +55,20 @@ class PanelModel extends Model
 	
 	public function getRenderList() {
 		return _ary_renderList;
+	}
+	
+	public function setParticleBlendMode( id:String, blending:String ) {	
+		if ( !findParticleById( id )) return;
+		findParticleById( id ).particle.blending = blending;
+		notify( ON_BLEND_CHANGE, { blending:blending } );
+	}
+	
+	public function setParticleColor( id:String, color:Dynamic ) {
+		if ( !findParticleById( id )) return;
+		findParticleById( id ).particle.color[0] = color.r / 255;
+		findParticleById( id ).particle.color[1] = color.g / 255;
+		findParticleById( id ).particle.color[2] = color.b / 255;
+		notify( ON_COLOR_CHANGE );
 	}
 	
 	public function addFormula( particleId:String, formula:Array<Dynamic> ) {
@@ -213,6 +229,7 @@ class PanelModel extends Model
 			outputData.color = particle.color;
 			outputData.size = particle.size;
 			outputData.tex = particle.tex;
+			outputData.blending = particle.blending;
 			outputData.formulaList = particle.formulaList;
 			
 			if ( node.children && node.children.length > 0 ) {
