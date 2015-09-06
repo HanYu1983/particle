@@ -156,8 +156,10 @@ Main.prototype = {
 		var paramobj = JSON.parse(param);
 		switch(type) {
 		case "onBtnImportClick":
+			this.menuController.openImport("import");
 			break;
 		case "onBtnExportClick":
+			this.menuController.openImport("export",JSON.stringify(this.model.getRenderList()));
 			break;
 		}
 	}
@@ -231,7 +233,7 @@ Main.prototype = {
 				break;
 			}
 		});
-		this.menuController.set_config({ mc_menu : Main.j("#mc_menu")});
+		this.menuController.set_config({ win_import : Main.j("#win_import")});
 		this.model.addHandler(function(type4,params4) {
 			switch(type4) {
 			case "ON_INIT":
@@ -289,12 +291,13 @@ Main.prototype = {
 			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
 		});
 		var initObj = this.createNewParticle(Main.getId());
+		initObj.lifetime = 0;
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
 		this.model.set_config(initObj);
 		this.treeController.selectItem(this.treeController.getItems()[0].element);
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [400,400,0], vel : [0,0,0], tex : "", emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [1,1,1], size : [10,10], pos : [400,400,0], vel : [0,0,0], tex : "", emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];
@@ -882,9 +885,20 @@ var view_MenuController = function() {
 view_MenuController.__name__ = true;
 view_MenuController.__super__ = model_Model;
 view_MenuController.prototype = $extend(model_Model.prototype,{
-	init: function() {
+	openImport: function(type,text) {
+		this.win_import.jqxWindow("open");
+		switch(type) {
+		case "export":
+			this.setTextarea(text);
+			break;
+		}
+	}
+	,init: function() {
 		model_Model.prototype.init.call(this);
-		this.mc_menu = this.config.mc_menu;
+		this.win_import = this.config.win_import;
+	}
+	,setTextarea: function(str) {
+		this.win_import.find("textarea").html(str);
 	}
 });
 var view_ParamsView = function() {

@@ -8,7 +8,7 @@ import model.Model;
  */
 class MenuController extends Model
 {
-	var mc_menu:Dynamic;
+	var win_import:Dynamic;
 
 	public function new() 
 	{
@@ -16,10 +16,24 @@ class MenuController extends Model
 		
 	}
 	
+	public function openImport( type, ?text ) {
+		win_import.jqxWindow( 'open' );
+		
+		switch( type ) {
+			case 'export':
+				setTextarea( text );
+		}
+	}
+	
 	override function init() 
 	{
 		super.init();
 		
-		mc_menu = config.mc_menu;
+		win_import = config.win_import;
+		
+	}
+	
+	function setTextarea( str ) {
+		win_import.find( 'textarea' ).html( str );
 	}
 }

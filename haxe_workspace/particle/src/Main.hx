@@ -50,7 +50,9 @@ class Main
 		var paramobj = Json.parse( param );
 		switch( type ) {
 			case 'onBtnImportClick':
+				menuController.openImport( 'import' );
 			case 'onBtnExportClick':
+				menuController.openImport( 'export', Json.stringify( model.getRenderList() ) );
 		}
 	}
 	
@@ -151,7 +153,7 @@ class Main
 		});
 		
 		menuController.config = {
-			mc_menu:j('#mc_menu' )
+			win_import:j('#win_import' )
 		}
 		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
@@ -208,8 +210,7 @@ class Main
 		});
 		
 		var initObj:Dynamic = createNewParticle( getId() );
-		//initObj.formulaList = [ createFormula( getId(), 'scale-x', 'linear', 0, 100, 0, 0, 0 ),
-		//						createFormula( getId(), 'x', 'linear', 0, 100, 0, 0, 0 )];
+		initObj.lifetime = 0;
 		initObj.emit.prototype = [
 			createNewParticle( getId() )
 		];
@@ -235,7 +236,7 @@ class Main
 			name:'粒子_' + id,
 			lifetime:5,
 			mass:3,
-			color:[.3, .3, .3],
+			color:[1, 1, 1],
 			size:[10, 10],
 			pos:[400, 400, 0], 
 			vel:[0, 0, 0],
