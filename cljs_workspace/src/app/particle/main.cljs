@@ -95,9 +95,9 @@
         (condp = act
           :changePos
           (-> p
-            (update-in [:pos 0] (first params))
-            (update-in [:pos 0] (second params))
-            (update-in [:pos 0] (get-in p [:pos 2])))
+            (assoc-in [:pos 0] (first params))
+            (assoc-in [:pos 1] (second params))
+            (assoc-in [:pos 2] (get-in p [:pos 2])))
           p)
         p))
           
@@ -107,7 +107,7 @@
         ctx
         {
           :timer 0
-          :part {:ps '()}
+          :part {:ps '() :limit 200}
           :centerPos [0 0]
           :onModel onModel
           :gl gl
@@ -135,7 +135,7 @@
               
             ctx))))
             
-    (demo onView)
+    ;;(demo onView)
             
     (comment "end let")))
   

@@ -81,3 +81,7 @@
         ; 不unbind的話會自動bind到shader中的第一個材質通道
     (.bindTexture gl (.-TEXTURE_2D gl) nil)
     (assoc-in ctx [:textures id] texObj)))
+    
+(defmethod abstract/onViewCommand "edit-limit" [_ data ctx]
+  (let [n data]
+    (assoc-in ctx [:part :limit] n)))

@@ -114,10 +114,18 @@ var api = api || {};
 		common.onView.onNext(['add texture', [id, img]])
 	}
 	
+	/**
+	改變粒子數量上限
+	*/
+	function changeLimit( limit ){
+		common.onView.onNext(['edit-limit', limit])
+	}
+	
 	pkg.editParticle = editParticle
 	pkg.changeCenterPos = changeCenterPos
 	pkg.info = info
 	pkg.addEventListener = addEventListener
 	pkg.addTexture = addTexture
+	pkg.changeLimit = changeLimit
 	
 }) (api)
