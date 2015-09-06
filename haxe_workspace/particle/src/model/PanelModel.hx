@@ -16,6 +16,8 @@ class PanelModel extends Model
 	public static var ON_ADD_FORMULA = 'ON_ADD_FORMULA';
 	public static var ON_REMOVE_FORMULA = 'ON_REMOVE_FORMULA';
 	public static var ON_FORMULA_CHANGE = 'ON_FORMULA_CHANGE';
+	public static var ON_SET_TEXTURE = 'ON_SET_TEXTURE';
+	public static var ON_CURRENT_PARTICLE_CHANGE = 'ON_CURRENT_PARTICLE_CHANGE';
 	
 	public var currentParticle(default, set):Dynamic;
 	
@@ -41,6 +43,12 @@ class PanelModel extends Model
 		if ( !findParticleById( id )) return;
 		_ary_particles.remove( findParticleById( id ));
 		notify( ON_REMOVE_PARTICLE, { id:id } );
+	}
+	
+	public function setParticleTextureId( id:String, tid:String ) {
+		if ( !findParticleById( id )) return;
+		findParticleById( id ).particle.tex = tid;
+		notify( ON_SET_TEXTURE );
 	}
 	
 	public function getRenderList() {
@@ -204,6 +212,7 @@ class PanelModel extends Model
 			outputData.mass = particle.mass;
 			outputData.color = particle.color;
 			outputData.size = particle.size;
+			outputData.tex = particle.tex;
 			outputData.formulaList = particle.formulaList;
 			
 			if ( node.children && node.children.length > 0 ) {
@@ -258,27 +267,9 @@ class PanelModel extends Model
 	
 	function set_currentParticle( particle:Dynamic ):Dynamic 
 	{
-		return currentParticle = particle;
+		currentParticle = particle;
+		notify( ON_CURRENT_PARTICLE_CHANGE );
+		return currentParticle;
 	}
 	
 }
-
-/*
-{ 	id:'root', 
-	lifetime:5,
-	mass:3,
-	color:'#33ddff',
-	size:[10, 10],
-	pos:[0, 0, 0], vel:[0, 0, 0],
-	emit: { count:1,
-			duration:.5,
-			angle:0,
-			range:0,
-			force:0,
-			prototype:[ { 	id:'root_particle', 
-							lifetime:3,
-							mass:3,
-							color:'#33ddff',
-							size:[10, 10],
-							pos:[0, 0, 0], vel:[0, 0, 0] } ] }}
-													*/

@@ -63,6 +63,7 @@ class Main
 					model.addParticle( newId, parentItem.id, createNewParticle( newId ) );
 				case TreeView.ON_TREE_NODE_CLICK:
 					var item = params.item;
+					model.currentParticle = model.findParticleById( item.id ).particle;
 					paramsView.setValues( model.findParticleById( item.id ), item.hasItems );
 					gridController.initRow( item.id, model.findParticleById( item.id ).particle.formulaList );
 			}
@@ -130,7 +131,7 @@ class Main
 		fileController.addHandler( function ( type:String, params:Dynamic ):Void {
 			switch( type ) {
 				case FileController.ON_TEXTURE_CLICK:
-					trace( params );
+					model.setParticleTextureId( model.currentParticle.id, params.textureId );
 			}
 		});
 		
@@ -178,6 +179,8 @@ class Main
 					treeController.remove( treeController.getItemById( params.id ).element );
 				case PanelModel.ON_NAME_CHANGE:
 					treeController.setItemName( params.id, params.name );
+				case PanelModel.ON_CURRENT_PARTICLE_CHANGE:
+					fileController.focus( model.currentParticle.tex );
 			}
 			
 			updateParticle( model.getOutputData( treeController.getItems() ) );
@@ -215,6 +218,7 @@ class Main
 			size:[10, 10],
 			pos:[400, 400, 0], 
 			vel:[0, 0, 0],
+			tex:'',
 			emit:createNewEmit()
 		}
 	}

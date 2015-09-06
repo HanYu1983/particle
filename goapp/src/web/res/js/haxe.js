@@ -166,6 +166,7 @@ Main.prototype = {
 				break;
 			case "ON_TREE_NODE_CLICK":
 				var item = params.item;
+				_g.model.set_currentParticle(_g.model.findParticleById(item.id).particle);
 				_g.paramsView.setValues(_g.model.findParticleById(item.id),item.hasItems);
 				_g.gridController.initRow(item.id,_g.model.findParticleById(item.id).particle.formulaList);
 				break;
@@ -212,7 +213,7 @@ Main.prototype = {
 		this.fileController.addHandler(function(type3,params3) {
 			switch(type3) {
 			case "ON_TEXTURE_CLICK":
-				console.log(params3);
+				_g.model.setParticleTextureId(_g.model.currentParticle.id,params3.textureId);
 				break;
 			}
 		});
@@ -263,6 +264,9 @@ Main.prototype = {
 			case "ON_NAME_CHANGE":
 				_g.treeController.setItemName(params4.id,params4.name);
 				break;
+			case "ON_CURRENT_PARTICLE_CHANGE":
+				_g.fileController.focus(_g.model.currentParticle.tex);
+				break;
 			}
 			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
 		});
@@ -272,7 +276,7 @@ Main.prototype = {
 		this.treeController.selectItem(this.treeController.getItems()[0].element);
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [400,400,0], vel : [0,0,0], emit : Main.createNewEmit()};
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [400,400,0], vel : [0,0,0], tex : "", emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];
@@ -442,6 +446,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		HxOverrides.remove(this._ary_particles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
 	}
+	,setParticleTextureId: function(id,tid) {
+		if(!this.findParticleById(id)) return;
+		this.findParticleById(id).particle.tex = tid;
+		this.notify(model_PanelModel.ON_SET_TEXTURE);
+	}
 	,getRenderList: function() {
 		return this._ary_renderList;
 	}
@@ -603,6 +612,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			outputData.mass = particle.mass;
 			outputData.color = particle.color;
 			outputData.size = particle.size;
+			outputData.tex = particle.tex;
 			outputData.formulaList = particle.formulaList;
 			if(node1.children && node1.children.length > 0) {
 				outputData.emit = { 'prototype' : []};
@@ -653,7 +663,9 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_INIT);
 	}
 	,set_currentParticle: function(particle) {
-		return this.currentParticle = particle;
+		this.currentParticle = particle;
+		this.notify(model_PanelModel.ON_CURRENT_PARTICLE_CHANGE);
+		return this.currentParticle;
 	}
 });
 var view_FileController = function() {
@@ -665,6 +677,7 @@ view_FileController.__name__ = true;
 view_FileController.__super__ = model_Model;
 view_FileController.prototype = $extend(model_Model.prototype,{
 	focus: function(id) {
+		if(this.getImage(id) == null) return;
 		this.removeAllFocus();
 		this.getImage(id).addClass("outline");
 	}
@@ -1080,6 +1093,8 @@ model_PanelModel.ON_INIT = "ON_INIT";
 model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
 model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
 model_PanelModel.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
+model_PanelModel.ON_SET_TEXTURE = "ON_SET_TEXTURE";
+model_PanelModel.ON_CURRENT_PARTICLE_CHANGE = "ON_CURRENT_PARTICLE_CHANGE";
 view_FileController.ON_TEXTURE_CLICK = "ON_TEXTURE_CLICK";
 view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
 view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";

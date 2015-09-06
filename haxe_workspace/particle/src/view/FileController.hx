@@ -24,6 +24,7 @@ class FileController extends Model
 	}
 	
 	public function focus( id:String ) {
+		if ( getImage( id ) == null ) return;
 		removeAllFocus();
 		getImage( id ).addClass( 'outline' );
 	}
