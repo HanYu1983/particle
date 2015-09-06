@@ -30,7 +30,7 @@ var api = api || {};
 		pos:[300, 300, 0], 
 		vel:[0, 0, 0],
 		tex: "texture id",
-		blending: nil | "add"
+		blending: nil | "normal" | "add"
 		emit: { 
 			count:1,
 			duration:.5,
