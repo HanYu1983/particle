@@ -86,6 +86,21 @@
         (>! onTick elapsed)
         (recur mspf curr-time)))
           
+          
+    (defn findAction [actions id]
+      (first (filter (fn [[pid _ _]] (= id pid)) actions)))
+    
+    (defn handleAction [actions p]
+      (if-let [[_ act params :as action] (findAction actions (:id p))]
+        (condp = act
+          :changePos
+          (-> p
+            (update-in [:pos 0] (first params))
+            (update-in [:pos 0] (second params))
+            (update-in [:pos 0] (get-in p [:pos 2])))
+          p)
+        p))
+          
     ; 主迴圈
     (go-loop 
       [
@@ -96,16 +111,20 @@
           :centerPos [0 0]
           :onModel onModel
           :gl gl
+          :actions '()
         } 
       ]
       (let [[v ch] (alts! [onView onTick])]
         (recur
           (condp = ch
             onTick
-            (do
+            (let [{actions :actions} ctx
+                  handleParticleAction (partial handleAction actions)]
               (go
                 (>! onModelEvent ["tick" v]))
               (-> ctx
+                (update-in [:part :ps] (partial map handleParticleAction))
+                (assoc-in [:actions] '())
                 (update-in [:part] (partial part/update v))
                 (draw)))
             
@@ -116,7 +135,7 @@
               
             ctx))))
             
-    ;(demo onView)
+    (demo onView)
             
     (comment "end let")))
   
