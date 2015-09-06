@@ -33,14 +33,8 @@
             })))
       (-> ctx
         (update-in [:part :ps] conj newpart)))))
-
-(defmethod abstract/onViewCommand "edit-centerPos" [_ data ctx]
-  (let [id (aget data 0)
-        x (aget data 1)
-        y (aget data 2)]
-    (update-in ctx [:actions] conj [id :changePos [x y]])))
       
-(defmethod abstract/onViewCommand "edit-centerPos2" [_ data ctx]
+(defmethod abstract/onViewCommand "edit-centerPos" [_ data ctx]
   (let [id (aget data 0)
         x (aget data 1)
         y (aget data 2)

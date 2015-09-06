@@ -269,8 +269,6 @@
             
         update-remove-limit
         (fn [{ps :ps limit :limit :as ctx}]
-          (when (and (pos? limit) (> (count ps) limit))
-            (.log js/console "sort"))
           (if (and (pos? limit) (> (count ps) limit))
             (assoc ctx :ps
               (->> ps
