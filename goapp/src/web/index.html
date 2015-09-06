@@ -21,6 +21,7 @@
 			
 		<script type="text/javascript" src="res/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="res/js/lib/leo.utils.js"></script>
+		<script type="text/javascript" src="res/js/lib/load-image.all.min.js"></script>
 		
 		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.base.css" type="text/css" />
 		<link rel="stylesheet" href="res/js/lib/jqwidgets/styles/jqx.metrodark.css" type="text/css" />
@@ -48,6 +49,14 @@
 		position:relative; 
 		width:100%;
 		min-width:250px;
+	}
+	
+	.textImg{
+		position:relative;
+		width:100px;
+		height:100px;
+		margin-right:5px;
+		display:inline-block;
 	}
 	</style>
 	<script id="tmpl_prop" type="jquery-x-tmpl">
@@ -138,9 +147,10 @@
 						<div>
 							<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
 								<div class="group" style="text-align:center; margin-top:10px;">
-									<input type="file" jqx="jqxButton"/>
+									<input id="file_upload" type="file" accept="image/gif, image/jpeg, image/png" jqx="jqxButton"/>
 								</div>
-								<div class="group" style="height:100px;">
+								<div id="mc_textContainer" class="group" style="height:100px;">
+									
 								</div>
 							</div>
 							

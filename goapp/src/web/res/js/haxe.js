@@ -1,45 +1,12 @@
 (function (console) { "use strict";
-var $estr = function() { return js_Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var EReg = function(r,opt) {
-	opt = opt.split("u").join("");
-	this.r = new RegExp(r,opt);
-};
-EReg.__name__ = ["EReg"];
-EReg.prototype = {
-	r: null
-	,match: function(s) {
-		if(this.r.global) this.r.lastIndex = 0;
-		this.r.m = this.r.exec(s);
-		this.r.s = s;
-		return this.r.m != null;
-	}
-	,matched: function(n) {
-		if(this.r.m != null && n >= 0 && n < this.r.m.length) return this.r.m[n]; else throw new js__$Boot_HaxeError("EReg::matched");
-	}
-	,__class__: EReg
-};
 var HxOverrides = function() { };
-HxOverrides.__name__ = ["HxOverrides"];
-HxOverrides.cca = function(s,index) {
-	var x = s.charCodeAt(index);
-	if(x != x) return undefined;
-	return x;
-};
-HxOverrides.substr = function(s,pos,len) {
-	if(pos != null && pos != 0 && len != null && len < 0) return "";
-	if(len == null) len = s.length;
-	if(pos < 0) {
-		pos = s.length + pos;
-		if(pos < 0) pos = 0;
-	} else if(len < 0) len = s.length + len - pos;
-	return s.substr(pos,len);
-};
+HxOverrides.__name__ = true;
 HxOverrides.indexOf = function(a,obj,i) {
 	var len = a.length;
 	if(i < 0) {
@@ -66,7 +33,7 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
-Lambda.__name__ = ["Lambda"];
+Lambda.__name__ = true;
 Lambda.map = function(it,f) {
 	var l = new List();
 	var $it0 = $iterator(it)();
@@ -75,6 +42,32 @@ Lambda.map = function(it,f) {
 		l.add(f(x));
 	}
 	return l;
+};
+Lambda.foreach = function(it,f) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		if(!f(x)) return false;
+	}
+	return true;
+};
+Lambda.fold = function(it,f,first) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		first = f(x,first);
+	}
+	return first;
+};
+Lambda.indexOf = function(it,v) {
+	var i = 0;
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var v2 = $it0.next();
+		if(v == v2) return i;
+		i++;
+	}
+	return -1;
 };
 Lambda.find = function(it,f) {
 	var $it0 = $iterator(it)();
@@ -87,472 +80,251 @@ Lambda.find = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
-List.__name__ = ["List"];
+List.__name__ = true;
 List.prototype = {
-	h: null
-	,q: null
-	,length: null
-	,add: function(item) {
+	add: function(item) {
 		var x = [item];
 		if(this.h == null) this.h = x; else this.q[1] = x;
 		this.q = x;
 		this.length++;
 	}
-	,__class__: List
 };
-Math.__name__ = ["Math"];
+var Main = function() {
+	this.currentPos = [0.0,0.0];
+	this.targetPos = [0.0,0.0];
+	this.isMouseDown = false;
+	this.model = new model_PanelModel();
+	this.paramsView = new view_ParamsView();
+	this.fileController = new view_FileController();
+	this.gridController = new view_GridController();
+	this.treeController = new view_TreeController();
+	this.canvas_container = Main.j("#canvas_container");
+	this.webgl = Main.j("#webgl");
+	this.onResize(null);
+	this.webgl.mousedown($bind(this,this.onmousedown));
+	this.webgl.mouseup($bind(this,this.onmouseup));
+	this.webgl.mousemove($bind(this,this.onMousemove));
+	Reflect.setField(window,"haxeStart",$bind(this,this.haxeStart));
+};
+Main.__name__ = true;
+Main.createNewEmit = function() {
+	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 0};
+};
+Main.showLoading = function() {
+	Main.j.messager.progress({ title : "Please waiting", msg : "Loading data..."});
+};
+Main.closeLoading = function() {
+	Main.j.messager.progress("close");
+};
+Main.showMessage = function(msg) {
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
+};
+Main.getId = function() {
+	return Main.id++;
+};
+Main.updateParticle = function(ary_render) {
+	Lambda.foreach(ary_render,function(render) {
+		api.editParticle(render);
+		return true;
+	});
+};
+Main.moveParticle = function(id,x,y) {
+	api.changeCenterPos(id,x,y);
+};
+Main.addEventListener = function(listener) {
+	api.addEventListener(listener);
+};
+Main.getInfo = function(cb) {
+	api.info(cb);
+};
+Main.addMouseWheelEvent = function(jdom,func) {
+	leo.utils.addMouseWheelEvent(jdom,func);
+};
+Main.removeMouseWheelEvent = function(jdom) {
+	leo.utils.removeMouseWheelEvent(jdom);
+};
+Main.main = function() {
+	new Main();
+};
+Main.prototype = {
+	haxeStart: function() {
+		var _g = this;
+		this.treeController.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
+		this.treeController.addHandler(function(type,params) {
+			switch(type) {
+			case "ON_BTN_REMOVE_TREE_NODE_CLICK":
+				var selectItem = _g.treeController.getSelectItem();
+				_g.model.removeParticle(selectItem.id);
+				break;
+			case "ON_BTN_ADD_TREE_NODE_CLICK":
+				var newId = Main.getId();
+				var parentItem = _g.treeController.getSelectItem();
+				_g.model.addParticle(newId,parentItem.id,_g.createNewParticle(newId));
+				break;
+			case "ON_TREE_NODE_CLICK":
+				var item = params.item;
+				_g.paramsView.setValues(_g.model.findParticleById(item.id),item.hasItems);
+				_g.gridController.initRow(item.id,_g.model.findParticleById(item.id).particle.formulaList);
+				break;
+			}
+		});
+		this.gridController.set_config({ table_props : Main.j("#table_props"), btn_addDynamic : Main.j("#btn_addDynamic"), btn_removeDynamic : Main.j("#btn_removeDynamic"), btn_moveUp : Main.j("#btn_moveUp"), btn_moveDown : Main.j("#btn_moveDown"), combo_props : Main.j("#combo_props"), combo_dtype : Main.j("#combo_dtype"), spr_value1 : Main.j("#spr_value1"), spr_value2 : Main.j("#spr_value2"), spr_value3 : Main.j("#spr_value3"), spr_value4 : Main.j("#spr_value4"), spr_value5 : Main.j("#spr_value5")});
+		this.gridController.addHandler(function(type1,params1) {
+			switch(type1) {
+			case "ON_FORMULA_CHANGE":
+				if(_g.gridController.currentRow == null) return;
+				_g.model.setFormulaById(_g.gridController.currentParticleId,_g.gridController.currentRow.uid,params1.values);
+				break;
+			case "ON_ROW_SELECT":
+				if(_g.gridController.currentRow == null) return;
+				_g.gridController.setTxtValue1(params1.row.value1);
+				_g.gridController.setTxtValue2(params1.row.value2);
+				_g.gridController.setTxtValue3(params1.row.value3);
+				_g.gridController.setTxtValue4(params1.row.value4);
+				_g.gridController.setTxtValue5(params1.row.value5);
+				_g.gridController.setSelectProp(params1.row.ptype);
+				_g.gridController.setSelectMethod(params1.row.method);
+				break;
+			case "ON_ADD_CLICK":
+				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"x","randStartAdd",0,0,0,0,0));
+				break;
+			case "ON_REMOVE_CLICK":
+				if(_g.gridController.currentRow == null) return;
+				_g.model.removeFormula(_g.gridController.currentParticleId,_g.gridController.currentRow.uid);
+				break;
+			}
+		});
+		this.paramsView.addHandler(function(type2,params2) {
+			switch(type2) {
+			case "ON_PROP_CHANGE":
+				_g.model.setParticleProps(params2.id,params2.proptype,params2.value);
+				break;
+			case "ON_TXT_NAME_CHANGE":
+				_g.model.setParticleName(params2.id,params2.name);
+				break;
+			}
+		});
+		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
+		this.fileController.set_config({ file_upload : Main.j("#file_upload")});
+		this.model.addHandler(function(type3,params3) {
+			switch(type3) {
+			case "ON_INIT":
+				Main.addEventListener(function(info) {
+					var _g1 = info[0];
+					switch(_g1) {
+					case "tick":
+						Main.getInfo(function(err,data) {
+							if(err == null) {
+								if(data.count == 0) Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
+							}
+						});
+						if(Math.abs(_g.targetPos[0] - _g.currentPos[0]) > 1) {
+							_g.currentPos[0] += (_g.targetPos[0] - _g.currentPos[0]) * .2;
+							_g.currentPos[1] += (_g.targetPos[1] - _g.currentPos[1]) * .2;
+							Lambda.foreach(_g.model.getRenderList(),function(render) {
+								Main.moveParticle(render.id,_g.currentPos[0],_g.currentPos[1]);
+								return true;
+							});
+						}
+						break;
+					}
+				});
+				break;
+			case "ON_FORMULA_CHANGE":
+				_g.gridController.updateRow(params3.formulaId,params3.values);
+				break;
+			case "ON_ADD_FORMULA":
+				_g.gridController.addRow(params3.formula[7],params3.formula);
+				break;
+			case "ON_REMOVE_FORMULA":
+				_g.gridController.removeRowById(params3.formulaId);
+				break;
+			case "ON_ADD_PARTICLE":
+				var _g11 = _g.treeController.getItemById(params3.parentId);
+				var parentItem1 = _g11;
+				if(_g11 == null) _g.treeController.addToWithLabel(params3.id,params3.particle.name); else switch(_g11) {
+				default:
+					_g.treeController.addToWithLabel(params3.id,params3.particle.name,parentItem1);
+				}
+				break;
+			case "ON_REMOVE_PARTICLE":
+				_g.treeController.remove(_g.treeController.getItemById(params3.id).element);
+				break;
+			case "ON_NAME_CHANGE":
+				_g.treeController.setItemName(params3.id,params3.name);
+				break;
+			}
+			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
+		});
+		var initObj = this.createNewParticle(Main.getId());
+		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
+		this.model.set_config(initObj);
+		this.treeController.selectItem(this.treeController.getItemById("0").element);
+	}
+	,createNewParticle: function(id) {
+		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [400,400,0], vel : [0,0,0], emit : Main.createNewEmit()};
+	}
+	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
+		var ary = [];
+		ary.push(ptype);
+		ary.push(method);
+		ary.push(v1);
+		ary.push(v2);
+		ary.push(v3);
+		ary.push(v4);
+		ary.push(v5);
+		ary.push(id);
+		return ary;
+	}
+	,onResize: function(e) {
+		this.webgl.attr("width",this.canvas_container.width());
+		this.webgl.attr("height",this.canvas_container.height());
+	}
+	,onMousemove: function(e) {
+		var px = e.offsetX;
+		var py = e.offsetY;
+		if(this.isMouseDown) {
+			this.targetPos[0] = px;
+			this.targetPos[1] = py;
+		}
+	}
+	,onmousedown: function(e) {
+		this.isMouseDown = true;
+	}
+	,onmouseup: function(e) {
+		this.isMouseDown = false;
+	}
+};
+Math.__name__ = true;
 var Reflect = function() { };
-Reflect.__name__ = ["Reflect"];
+Reflect.__name__ = true;
 Reflect.field = function(o,field) {
 	try {
 		return o[field];
 	} catch( e ) {
-		haxe_CallStack.lastException = e;
-		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
 };
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
-Reflect.callMethod = function(o,func,args) {
-	return func.apply(o,args);
-};
-Reflect.isFunction = function(f) {
-	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
+Reflect.fields = function(o) {
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(f != "__id__" && f != "hx__closures__" && hasOwnProperty.call(o,f)) a.push(f);
+		}
+	}
+	return a;
 };
 var Std = function() { };
-Std.__name__ = ["Std"];
+Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
-Std.parseInt = function(x) {
-	var v = parseInt(x,10);
-	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
-	if(isNaN(v)) return null;
-	return v;
-};
-var StringBuf = function() {
-	this.b = "";
-};
-StringBuf.__name__ = ["StringBuf"];
-StringBuf.prototype = {
-	b: null
-	,__class__: StringBuf
-};
-var StringTools = function() { };
-StringTools.__name__ = ["StringTools"];
-StringTools.htmlEscape = function(s,quotes) {
-	s = s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-	if(quotes) return s.split("\"").join("&quot;").split("'").join("&#039;"); else return s;
-};
-StringTools.startsWith = function(s,start) {
-	return s.length >= start.length && HxOverrides.substr(s,0,start.length) == start;
-};
-StringTools.isSpace = function(s,pos) {
-	var c = HxOverrides.cca(s,pos);
-	return c > 8 && c < 14 || c == 32;
-};
-StringTools.ltrim = function(s) {
-	var l = s.length;
-	var r = 0;
-	while(r < l && StringTools.isSpace(s,r)) r++;
-	if(r > 0) return HxOverrides.substr(s,r,l - r); else return s;
-};
-StringTools.rtrim = function(s) {
-	var l = s.length;
-	var r = 0;
-	while(r < l && StringTools.isSpace(s,l - r - 1)) r++;
-	if(r > 0) return HxOverrides.substr(s,0,l - r); else return s;
-};
-StringTools.trim = function(s) {
-	return StringTools.ltrim(StringTools.rtrim(s));
-};
-var Type = function() { };
-Type.__name__ = ["Type"];
-Type.getClassName = function(c) {
-	var a = c.__name__;
-	if(a == null) return null;
-	return a.join(".");
-};
-Type.getInstanceFields = function(c) {
-	var a = [];
-	for(var i in c.prototype) a.push(i);
-	HxOverrides.remove(a,"__class__");
-	HxOverrides.remove(a,"__properties__");
-	return a;
-};
-var haxe_StackItem = { __ename__ : true, __constructs__ : ["CFunction","Module","FilePos","Method","LocalFunction"] };
-haxe_StackItem.CFunction = ["CFunction",0];
-haxe_StackItem.CFunction.toString = $estr;
-haxe_StackItem.CFunction.__enum__ = haxe_StackItem;
-haxe_StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = haxe_StackItem; $x.toString = $estr; return $x; };
-haxe_StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe_StackItem; $x.toString = $estr; return $x; };
-haxe_StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe_StackItem; $x.toString = $estr; return $x; };
-haxe_StackItem.LocalFunction = function(v) { var $x = ["LocalFunction",4,v]; $x.__enum__ = haxe_StackItem; $x.toString = $estr; return $x; };
-var haxe_CallStack = function() { };
-haxe_CallStack.__name__ = ["haxe","CallStack"];
-haxe_CallStack.getStack = function(e) {
-	if(e == null) return [];
-	var oldValue = Error.prepareStackTrace;
-	Error.prepareStackTrace = function(error,callsites) {
-		var stack = [];
-		var _g = 0;
-		while(_g < callsites.length) {
-			var site = callsites[_g];
-			++_g;
-			if(haxe_CallStack.wrapCallSite != null) site = haxe_CallStack.wrapCallSite(site);
-			var method = null;
-			var fullName = site.getFunctionName();
-			if(fullName != null) {
-				var idx = fullName.lastIndexOf(".");
-				if(idx >= 0) {
-					var className = HxOverrides.substr(fullName,0,idx);
-					var methodName = HxOverrides.substr(fullName,idx + 1,null);
-					method = haxe_StackItem.Method(className,methodName);
-				}
-			}
-			stack.push(haxe_StackItem.FilePos(method,site.getFileName(),site.getLineNumber()));
-		}
-		return stack;
-	};
-	var a = haxe_CallStack.makeStack(e.stack);
-	Error.prepareStackTrace = oldValue;
-	return a;
-};
-haxe_CallStack.exceptionStack = function() {
-	return haxe_CallStack.getStack(haxe_CallStack.lastException);
-};
-haxe_CallStack.toString = function(stack) {
-	var b = new StringBuf();
-	var _g = 0;
-	while(_g < stack.length) {
-		var s = stack[_g];
-		++_g;
-		b.b += "\nCalled from ";
-		haxe_CallStack.itemToString(b,s);
-	}
-	return b.b;
-};
-haxe_CallStack.itemToString = function(b,s) {
-	switch(s[1]) {
-	case 0:
-		b.b += "a C function";
-		break;
-	case 1:
-		var m = s[2];
-		b.b += "module ";
-		if(m == null) b.b += "null"; else b.b += "" + m;
-		break;
-	case 2:
-		var line = s[4];
-		var file = s[3];
-		var s1 = s[2];
-		if(s1 != null) {
-			haxe_CallStack.itemToString(b,s1);
-			b.b += " (";
-		}
-		if(file == null) b.b += "null"; else b.b += "" + file;
-		b.b += " line ";
-		if(line == null) b.b += "null"; else b.b += "" + line;
-		if(s1 != null) b.b += ")";
-		break;
-	case 3:
-		var meth = s[3];
-		var cname = s[2];
-		if(cname == null) b.b += "null"; else b.b += "" + cname;
-		b.b += ".";
-		if(meth == null) b.b += "null"; else b.b += "" + meth;
-		break;
-	case 4:
-		var n = s[2];
-		b.b += "local function #";
-		if(n == null) b.b += "null"; else b.b += "" + n;
-		break;
-	}
-};
-haxe_CallStack.makeStack = function(s) {
-	if(s == null) return []; else if(typeof(s) == "string") {
-		var stack = s.split("\n");
-		if(stack[0] == "Error") stack.shift();
-		var m = [];
-		var rie10 = new EReg("^   at ([A-Za-z0-9_. ]+) \\(([^)]+):([0-9]+):([0-9]+)\\)$","");
-		var _g = 0;
-		while(_g < stack.length) {
-			var line = stack[_g];
-			++_g;
-			if(rie10.match(line)) {
-				var path = rie10.matched(1).split(".");
-				var meth = path.pop();
-				var file = rie10.matched(2);
-				var line1 = Std.parseInt(rie10.matched(3));
-				m.push(haxe_StackItem.FilePos(meth == "Anonymous function"?haxe_StackItem.LocalFunction():meth == "Global code"?null:haxe_StackItem.Method(path.join("."),meth),file,line1));
-			} else m.push(haxe_StackItem.Module(StringTools.trim(line)));
-		}
-		return m;
-	} else return s;
-};
-var haxe_Log = function() { };
-haxe_Log.__name__ = ["haxe","Log"];
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
-var haxe_unit_TestCase = function() {
-};
-haxe_unit_TestCase.__name__ = ["haxe","unit","TestCase"];
-haxe_unit_TestCase.prototype = {
-	currentTest: null
-	,setup: function() {
-	}
-	,tearDown: function() {
-	}
-	,print: function(v) {
-		haxe_unit_TestRunner.print(v);
-	}
-	,assertTrue: function(b,c) {
-		this.currentTest.done = true;
-		if(b != true) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected true but was false";
-			this.currentTest.posInfos = c;
-			throw new js__$Boot_HaxeError(this.currentTest);
-		}
-	}
-	,assertFalse: function(b,c) {
-		this.currentTest.done = true;
-		if(b == true) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected false but was true";
-			this.currentTest.posInfos = c;
-			throw new js__$Boot_HaxeError(this.currentTest);
-		}
-	}
-	,assertEquals: function(expected,actual,c) {
-		this.currentTest.done = true;
-		if(actual != expected) {
-			this.currentTest.success = false;
-			this.currentTest.error = "expected '" + Std.string(expected) + "' but was '" + Std.string(actual) + "'";
-			this.currentTest.posInfos = c;
-			throw new js__$Boot_HaxeError(this.currentTest);
-		}
-	}
-	,__class__: haxe_unit_TestCase
-};
-var haxe_unit_TestResult = function() {
-	this.m_tests = new List();
-	this.success = true;
-};
-haxe_unit_TestResult.__name__ = ["haxe","unit","TestResult"];
-haxe_unit_TestResult.prototype = {
-	m_tests: null
-	,success: null
-	,add: function(t) {
-		this.m_tests.add(t);
-		if(!t.success) this.success = false;
-	}
-	,toString: function() {
-		var buf_b = "";
-		var failures = 0;
-		var _g_head = this.m_tests.h;
-		var _g_val = null;
-		while(_g_head != null) {
-			var test;
-			test = (function($this) {
-				var $r;
-				_g_val = _g_head[0];
-				_g_head = _g_head[1];
-				$r = _g_val;
-				return $r;
-			}(this));
-			if(test.success == false) {
-				buf_b += "* ";
-				if(test.classname == null) buf_b += "null"; else buf_b += "" + test.classname;
-				buf_b += "::";
-				if(test.method == null) buf_b += "null"; else buf_b += "" + test.method;
-				buf_b += "()";
-				buf_b += "\n";
-				buf_b += "ERR: ";
-				if(test.posInfos != null) {
-					buf_b += Std.string(test.posInfos.fileName);
-					buf_b += ":";
-					buf_b += Std.string(test.posInfos.lineNumber);
-					buf_b += "(";
-					buf_b += Std.string(test.posInfos.className);
-					buf_b += ".";
-					buf_b += Std.string(test.posInfos.methodName);
-					buf_b += ") - ";
-				}
-				if(test.error == null) buf_b += "null"; else buf_b += "" + test.error;
-				buf_b += "\n";
-				if(test.backtrace != null) {
-					if(test.backtrace == null) buf_b += "null"; else buf_b += "" + test.backtrace;
-					buf_b += "\n";
-				}
-				buf_b += "\n";
-				failures++;
-			}
-		}
-		buf_b += "\n";
-		if(failures == 0) buf_b += "OK "; else buf_b += "FAILED ";
-		buf_b += Std.string(this.m_tests.length);
-		buf_b += " tests, ";
-		if(failures == null) buf_b += "null"; else buf_b += "" + failures;
-		buf_b += " failed, ";
-		buf_b += Std.string(this.m_tests.length - failures);
-		buf_b += " success";
-		buf_b += "\n";
-		return buf_b;
-	}
-	,__class__: haxe_unit_TestResult
-};
-var haxe_unit_TestRunner = function() {
-	this.result = new haxe_unit_TestResult();
-	this.cases = new List();
-};
-haxe_unit_TestRunner.__name__ = ["haxe","unit","TestRunner"];
-haxe_unit_TestRunner.print = function(v) {
-	var msg = js_Boot.__string_rec(v,"");
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) {
-		msg = StringTools.htmlEscape(msg).split("\n").join("<br/>");
-		d.innerHTML += msg + "<br/>";
-	} else if(typeof process != "undefined" && process.stdout != null && process.stdout.write != null) process.stdout.write(msg); else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
-haxe_unit_TestRunner.customTrace = function(v,p) {
-	haxe_unit_TestRunner.print(p.fileName + ":" + p.lineNumber + ": " + Std.string(v) + "\n");
-};
-haxe_unit_TestRunner.prototype = {
-	result: null
-	,cases: null
-	,add: function(c) {
-		this.cases.add(c);
-	}
-	,run: function() {
-		this.result = new haxe_unit_TestResult();
-		var _g_head = this.cases.h;
-		var _g_val = null;
-		while(_g_head != null) {
-			var c;
-			c = (function($this) {
-				var $r;
-				_g_val = _g_head[0];
-				_g_head = _g_head[1];
-				$r = _g_val;
-				return $r;
-			}(this));
-			this.runCase(c);
-		}
-		haxe_unit_TestRunner.print(this.result.toString());
-		return this.result.success;
-	}
-	,runCase: function(t) {
-		var old = haxe_Log.trace;
-		haxe_Log.trace = haxe_unit_TestRunner.customTrace;
-		var cl;
-		if(t == null) cl = null; else cl = js_Boot.getClass(t);
-		var fields = Type.getInstanceFields(cl);
-		haxe_unit_TestRunner.print("Class: " + Type.getClassName(cl) + " ");
-		var _g = 0;
-		while(_g < fields.length) {
-			var f = fields[_g];
-			++_g;
-			var fname = f;
-			var field = Reflect.field(t,f);
-			if(StringTools.startsWith(fname,"test") && Reflect.isFunction(field)) {
-				t.currentTest = new haxe_unit_TestStatus();
-				t.currentTest.classname = Type.getClassName(cl);
-				t.currentTest.method = fname;
-				t.setup();
-				try {
-					Reflect.callMethod(t,field,[]);
-					if(t.currentTest.done) {
-						t.currentTest.success = true;
-						haxe_unit_TestRunner.print(".");
-					} else {
-						t.currentTest.success = false;
-						t.currentTest.error = "(warning) no assert";
-						haxe_unit_TestRunner.print("W");
-					}
-				} catch( $e0 ) {
-					haxe_CallStack.lastException = $e0;
-					if ($e0 instanceof js__$Boot_HaxeError) $e0 = $e0.val;
-					if( js_Boot.__instanceof($e0,haxe_unit_TestStatus) ) {
-						var e = $e0;
-						haxe_unit_TestRunner.print("F");
-						t.currentTest.backtrace = haxe_CallStack.toString(haxe_CallStack.exceptionStack());
-					} else {
-					var e1 = $e0;
-					haxe_unit_TestRunner.print("E");
-					if(e1.message != null) t.currentTest.error = "exception thrown : " + Std.string(e1) + " [" + Std.string(e1.message) + "]"; else t.currentTest.error = "exception thrown : " + Std.string(e1);
-					t.currentTest.backtrace = haxe_CallStack.toString(haxe_CallStack.exceptionStack());
-					}
-				}
-				this.result.add(t.currentTest);
-				t.tearDown();
-			}
-		}
-		haxe_unit_TestRunner.print("\n");
-		haxe_Log.trace = old;
-	}
-	,__class__: haxe_unit_TestRunner
-};
-var haxe_unit_TestStatus = function() {
-	this.done = false;
-	this.success = false;
-};
-haxe_unit_TestStatus.__name__ = ["haxe","unit","TestStatus"];
-haxe_unit_TestStatus.prototype = {
-	done: null
-	,success: null
-	,error: null
-	,method: null
-	,classname: null
-	,posInfos: null
-	,backtrace: null
-	,__class__: haxe_unit_TestStatus
-};
-var js__$Boot_HaxeError = function(val) {
-	Error.call(this);
-	this.val = val;
-	this.message = String(val);
-	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
-};
-js__$Boot_HaxeError.__name__ = ["js","_Boot","HaxeError"];
-js__$Boot_HaxeError.__super__ = Error;
-js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
-	val: null
-	,__class__: js__$Boot_HaxeError
-});
 var js_Boot = function() { };
-js_Boot.__name__ = ["js","Boot"];
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
-js_Boot.getClass = function(o) {
-	if((o instanceof Array) && o.__enum__ == null) return Array; else {
-		var cl = o.__class__;
-		if(cl != null) return cl;
-		var name = js_Boot.__nativeClassName(o);
-		if(name != null) return js_Boot.__resolveNativeClass(name);
-		return null;
-	}
-};
+js_Boot.__name__ = true;
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -589,8 +361,6 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
-			haxe_CallStack.lastException = e;
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -622,69 +392,12 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
-js_Boot.__interfLoop = function(cc,cl) {
-	if(cc == null) return false;
-	if(cc == cl) return true;
-	var intf = cc.__interfaces__;
-	if(intf != null) {
-		var _g1 = 0;
-		var _g = intf.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var i1 = intf[i];
-			if(i1 == cl || js_Boot.__interfLoop(i1,cl)) return true;
-		}
-	}
-	return js_Boot.__interfLoop(cc.__super__,cl);
-};
-js_Boot.__instanceof = function(o,cl) {
-	if(cl == null) return false;
-	switch(cl) {
-	case Int:
-		return (o|0) === o;
-	case Float:
-		return typeof(o) == "number";
-	case Bool:
-		return typeof(o) == "boolean";
-	case String:
-		return typeof(o) == "string";
-	case Array:
-		return (o instanceof Array) && o.__enum__ == null;
-	case Dynamic:
-		return true;
-	default:
-		if(o != null) {
-			if(typeof(cl) == "function") {
-				if(o instanceof cl) return true;
-				if(js_Boot.__interfLoop(js_Boot.getClass(o),cl)) return true;
-			} else if(typeof(cl) == "object" && js_Boot.__isNativeObj(cl)) {
-				if(o instanceof cl) return true;
-			}
-		} else return false;
-		if(cl == Class && o.__name__ != null) return true;
-		if(cl == Enum && o.__ename__ != null) return true;
-		return o.__enum__ == cl;
-	}
-};
-js_Boot.__nativeClassName = function(o) {
-	var name = js_Boot.__toStr.call(o).slice(8,-1);
-	if(name == "Object" || name == "Function" || name == "Math" || name == "JSON") return null;
-	return name;
-};
-js_Boot.__isNativeObj = function(o) {
-	return js_Boot.__nativeClassName(o) != null;
-};
-js_Boot.__resolveNativeClass = function(name) {
-	return (Function("return typeof " + name + " != \"undefined\" ? " + name + " : null"))();
-};
 var model_Model = function() {
 	this._ary_handler = [];
 };
-model_Model.__name__ = ["model","Model"];
+model_Model.__name__ = true;
 model_Model.prototype = {
-	_ary_handler: null
-	,config: null
-	,addHandler: function(handler) {
+	addHandler: function(handler) {
 		this._ary_handler.push(handler);
 	}
 	,notify: function(type,params) {
@@ -699,135 +412,528 @@ model_Model.prototype = {
 	}
 	,init: function() {
 	}
-	,__class__: model_Model
 };
-var test_Main = function() {
+var model_PanelModel = function() {
+	this._ary_renderList = [];
+	this._ary_particles = [];
+	model_Model.call(this);
 };
-test_Main.__name__ = ["test","Main"];
-test_Main.main = function() {
-	Reflect.setField(window,"haxeStart",test_Main.haxeStart);
-};
-test_Main.haxeStart = function() {
-	var tr = new haxe_unit_TestRunner();
-	tr.add(new test_TestTree());
-	tr.add(new test_TestGrid());
-	tr.add(new test_TestFile());
-	tr.run();
-};
-test_Main.prototype = {
-	__class__: test_Main
-};
-var test_TestFile = function() {
-	this.j = $;
-	this.file = new view_component_FileView();
-	haxe_unit_TestCase.call(this);
-	this.file.set_config({ file : this.j("#file_upload")});
-};
-test_TestFile.__name__ = ["test","TestFile"];
-test_TestFile.__super__ = haxe_unit_TestCase;
-test_TestFile.prototype = $extend(haxe_unit_TestCase.prototype,{
-	file: null
-	,j: null
-	,testEvent: function() {
-		this.file.config.file.on("uploadStart",function(event) {
-			var fileName = event.args.file;
-		});
-		this.file.config.file.on("uploadEnd",function(event1) {
-			var args = event1.args;
-			var fileName1 = args.file;
-			var serverResponce = args.response;
-			haxe_Log.trace(args,{ fileName : "TestFile.hx", lineNumber : 37, className : "test.TestFile", methodName : "testEvent"});
+model_PanelModel.__name__ = true;
+model_PanelModel.__super__ = model_Model;
+model_PanelModel.prototype = $extend(model_Model.prototype,{
+	addParticle: function(id,parentId,particle,extra) {
+		if(this.findParticleById(id)) return;
+		this._ary_particles.push({ id : id, particle : particle});
+		this.notify(model_PanelModel.ON_ADD_PARTICLE,{ id : id, parentId : parentId, particle : particle});
+	}
+	,removeParticle: function(id,extra) {
+		if(!this.findParticleById(id)) return;
+		var x = this.findParticleById(id);
+		HxOverrides.remove(this._ary_particles,x);
+		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
+	}
+	,getRenderList: function() {
+		return this._ary_renderList;
+	}
+	,addFormula: function(particleId,formula) {
+		if(!this.findParticleById(particleId)) return;
+		var particle = this.findParticleById(particleId).particle;
+		if(particle.formulaList == null) particle.formulaList = [];
+		particle.formulaList.push(formula);
+		this.notify(model_PanelModel.ON_ADD_FORMULA,{ formula : formula});
+	}
+	,removeFormula: function(particleId,formulaId) {
+		if(!this.findParticleById(particleId)) return;
+		var particle = this.findParticleById(particleId).particle;
+		var formula = this.getFormulaById(particleId,formulaId);
+		var f = formula;
+		if(formula == null) {
+		} else switch(formula.length) {
+		default:
+			particle.formulaList.splice(Lambda.indexOf(particle.formulaList,f),1);
+			this.notify(model_PanelModel.ON_REMOVE_FORMULA,{ formulaId : f[7]});
+		}
+	}
+	,getFormulaById: function(particleId,formulaId) {
+		if(!this.findParticleById(particleId)) return null;
+		var particle = this.findParticleById(particleId).particle;
+		if(particle.formulaList == null) return null;
+		return Lambda.find(particle.formulaList,function(formula) {
+			if(formula[7] == formulaId) return true;
+			return false;
 		});
 	}
-	,__class__: test_TestFile
+	,setFormulaById: function(particleId,formulaId,values) {
+		if(!this.findParticleById(particleId)) return;
+		var particle = this.findParticleById(particleId).particle;
+		var formula = this.getFormulaById(particleId,formulaId);
+		var f = formula;
+		if(formula == null) {
+		} else switch(formula.length) {
+		default:
+			f[0] = values[0];
+			f[1] = values[1];
+			f[2] = values[2];
+			f[3] = values[3];
+			f[4] = values[4];
+			f[5] = values[5];
+			f[6] = values[6];
+			this.notify(model_PanelModel.ON_FORMULA_CHANGE,{ formulaId : formulaId, values : f});
+		}
+	}
+	,setParticleName: function(id,name) {
+		if(!this.findParticleById(id)) return;
+		this.findParticleById(id).particle.name = name;
+		this.notify(model_PanelModel.ON_NAME_CHANGE,{ id : id, name : name});
+	}
+	,setParticleRootsPos: function(x,y) {
+		var _g = this;
+		if(this._ary_renderList.length > 0) {
+			Lambda.foreach(this._ary_renderList,function(render) {
+				_g.findParticleById(render.id).particle.pos[0] = x;
+				_g.findParticleById(render.id).particle.pos[1] = y;
+				return true;
+			});
+			this.notify(model_PanelModel.ON_PROPS_CAHNGE);
+		}
+	}
+	,setParticleProps: function(id,type,value) {
+		if(!this.findParticleById(id)) return;
+		switch(type) {
+		case "size_x":
+			this.findParticleById(id).particle.size[0] = value;
+			break;
+		case "size_y":
+			this.findParticleById(id).particle.size[1] = value;
+			break;
+		case "pos_x":
+			this.findParticleById(id).particle.pos[0] = value;
+			break;
+		case "pos_y":
+			this.findParticleById(id).particle.pos[1] = value;
+			break;
+		case "pos_r":
+			this.findParticleById(id).particle.pos[2] = value;
+			break;
+		case "vel_x":
+			this.findParticleById(id).particle.vel[0] = value;
+			break;
+		case "vel_y":
+			this.findParticleById(id).particle.vel[1] = value;
+			break;
+		case "vel_r":
+			this.findParticleById(id).particle.vel[2] = value;
+			break;
+		case "count":case "duration":case "angle":case "range":case "force":
+			Reflect.setField(this.findParticleById(id).particle.emit,type,value);
+			break;
+		default:
+			Reflect.setField(this.findParticleById(id).particle,type,value);
+		}
+		this.notify(model_PanelModel.ON_PROPS_CAHNGE);
+	}
+	,findParticleById: function(id) {
+		return Lambda.find(this._ary_particles,function(p) {
+			if(p.id == id) return true;
+			return false;
+		});
+	}
+	,getOutputData: function(node) {
+		var _g = this;
+		var retobj = { };
+		var childMap = { };
+		Lambda.foreach(node,function(item) {
+			if(item.parentId != null) {
+				if(!Object.prototype.hasOwnProperty.call(childMap,item.parentId)) childMap[item.parentId] = [];
+				Reflect.field(childMap,item.parentId).push(item.id);
+			} else childMap[item.id] = [];
+			return true;
+		});
+		var treeMap = { };
+		var getAndSet = function(id) {
+			var _g1 = Reflect.field(treeMap,id);
+			var _obj = _g1;
+			if(_g1 == null) {
+				treeMap[id] = { id : id};
+				return Reflect.field(treeMap,id);
+			} else switch(_g1) {
+			default:
+				return _obj;
+			}
+		};
+		var _g2 = 0;
+		var _g11 = Reflect.fields(childMap);
+		while(_g2 < _g11.length) {
+			var f = _g11[_g2];
+			++_g2;
+			var obj = [getAndSet(f)];
+			var ary = Reflect.field(childMap,f);
+			if(ary.length == 0) continue;
+			if(obj[0].children == null) obj[0].children = [];
+			Lambda.foreach(ary,(function(obj) {
+				return function(str) {
+					var subobj = getAndSet(str);
+					subobj.parentId = obj[0].id;
+					obj[0].children.push(subobj);
+					return true;
+				};
+			})(obj));
+		}
+		var retobj1 = { };
+		var _loopNode;
+		var _loopNode1 = null;
+		_loopNode1 = function(node1,outputData) {
+			var id1 = node1.id;
+			var particle = _g.findParticleById(id1).particle;
+			outputData.id = particle.id;
+			outputData.name = particle.name;
+			outputData.lifetime = particle.lifetime;
+			outputData.vel = particle.vel;
+			outputData.pos = particle.pos;
+			outputData.mass = particle.mass;
+			outputData.color = particle.color;
+			outputData.size = particle.size;
+			outputData.formulaList = particle.formulaList;
+			if(node1.children && node1.children.length > 0) {
+				outputData.emit = { 'prototype' : []};
+				outputData.emit.count = particle.emit.count;
+				outputData.emit.duration = particle.emit.duration;
+				outputData.emit.angle = particle.emit.angle;
+				outputData.emit.range = particle.emit.range;
+				outputData.emit.force = particle.emit.force;
+				var _g21 = 0;
+				var _g12 = node1.children.length;
+				while(_g21 < _g12) {
+					var i = _g21++;
+					var obj1 = { };
+					outputData.emit.prototype.push(obj1);
+					_loopNode1(node1.children[i],obj1);
+				}
+			}
+		};
+		_loopNode = _loopNode1;
+		this._ary_renderList = [];
+		var _g3 = 0;
+		var _g13 = Reflect.fields(treeMap);
+		while(_g3 < _g13.length) {
+			var f1 = _g13[_g3];
+			++_g3;
+			if(Reflect.field(treeMap,f1).parentId == null) {
+				var render = { };
+				this._ary_renderList.push(render);
+				_loopNode(Reflect.field(treeMap,f1),render);
+			}
+		}
+		return this._ary_renderList;
+	}
+	,init: function() {
+		var _g = this;
+		model_Model.prototype.init.call(this);
+		var foreachObj;
+		var foreachObj1 = null;
+		foreachObj1 = function(obj,pid) {
+			_g.addParticle(obj.id,pid == null?999:pid,obj);
+			if(obj.emit != null && obj.emit.prototype != null) Lambda.foreach(obj.emit.prototype,function(_obj) {
+				foreachObj1(_obj,obj.id);
+				return true;
+			});
+		};
+		foreachObj = foreachObj1;
+		foreachObj(this.config);
+		this.notify(model_PanelModel.ON_INIT);
+	}
+	,set_currentParticle: function(particle) {
+		return this.currentParticle = particle;
+	}
 });
-var test_TestGrid = function() {
+var view_FileController = function() {
+	this.fileview = new view_component_FileView();
+	model_Model.call(this);
+};
+view_FileController.__name__ = true;
+view_FileController.__super__ = model_Model;
+view_FileController.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.fileview.set_config({ file : this.config.file_upload});
+		this.fileview.config.file.on("change",$bind(this,this.handleUpload));
+	}
+	,handleUpload: function(elem) {
+		var elem1 = this.fileview.config.file[0];
+		if(elem1.files && elem1.files[0]) loadImage.parseMetaData(elem1.files[0],function(data) {
+			var orientation;
+			if(data.exif) orientation = data.exif.get("Orientation"); else orientation = 1;
+			loadImage(elem1.files[0],function(img) {
+				window.document.body.appendChild(img);
+				var imgDom = Main.j(img);
+				imgDom.addClass("textImg");
+				j("#mc_textContainer").prepend(imgDom);
+			});
+		});
+	}
+});
+var view_GridController = function() {
 	this.grid = new view_component_GridView();
-	haxe_unit_TestCase.call(this);
-	this.grid.set_config({ grid : $("#table_props")});
+	model_Model.call(this);
 };
-test_TestGrid.__name__ = ["test","TestGrid"];
-test_TestGrid.__super__ = haxe_unit_TestCase;
-test_TestGrid.prototype = $extend(haxe_unit_TestCase.prototype,{
-	grid: null
-	,testInit: function() {
-		this.grid.initRow({ '0' : { ptype : "pos", method : "sin", value1 : 30, value2 : 40, value3 : 30, value4 : 24, value5 : 24}, '1' : { ptype : "vel", method : "sin", value1 : 30, value2 : 40, value3 : 30, value4 : 24, value5 : 24}, '2' : { ptype : "vel", method : "sin", value1 : 30, value2 : 40, value3 : 30, value4 : 24, value5 : 24}, '3' : { ptype : "vel", method : "sin", value1 : 30, value2 : 40, value3 : 30, value4 : 24, value5 : 24}});
-		this.assertEquals(this.grid.getRows().length,4,{ fileName : "TestGrid.hx", lineNumber : 31, className : "test.TestGrid", methodName : "testInit"});
+view_GridController.__name__ = true;
+view_GridController.__super__ = model_Model;
+view_GridController.prototype = $extend(model_Model.prototype,{
+	setSelectProp: function(val) {
+		this.combo_props.jqxComboBox("selectItem",this.findItem(this.combo_props,val));
 	}
-	,testAddRow: function() {
-		this.grid.addRow("4",{ ptype : "addRow", method : "sin", value1 : 30, value2 : 40, value3 : 30, value4 : 24, value5 : 24});
-		this.assertEquals(this.grid.getRows().length,5,{ fileName : "TestGrid.hx", lineNumber : 36, className : "test.TestGrid", methodName : "testAddRow"});
+	,setSelectMethod: function(val) {
+		this.combo_dtype.jqxComboBox("selectItem",this.findItem(this.combo_dtype,val));
 	}
-	,testDeleteRow: function() {
-		this.grid.removeRowById("1");
-		this.grid.removeRowById("4");
-		this.grid.removeRowById("3");
-		this.assertEquals(this.grid.getRows().length,2,{ fileName : "TestGrid.hx", lineNumber : 43, className : "test.TestGrid", methodName : "testDeleteRow"});
+	,setTxtValue1: function(val) {
+		this.spr_value1.jqxNumberInput("val",val);
 	}
-	,testUpdateRow: function() {
-		var row = this.grid.getRowById("2");
-		row.ptype = "lifetime";
-		row.value2 = "1003";
-		this.grid.updateRow("2",row);
-		this.assertEquals(this.grid.getRowById("2").ptype,"lifetime",{ fileName : "TestGrid.hx", lineNumber : 52, className : "test.TestGrid", methodName : "testUpdateRow"});
-		this.assertEquals(this.grid.getRowById("2").value2,"1003",{ fileName : "TestGrid.hx", lineNumber : 53, className : "test.TestGrid", methodName : "testUpdateRow"});
+	,setTxtValue2: function(val) {
+		this.spr_value2.jqxNumberInput("val",val);
 	}
-	,__class__: test_TestGrid
+	,setTxtValue3: function(val) {
+		this.spr_value3.jqxNumberInput("val",val);
+	}
+	,setTxtValue4: function(val) {
+		this.spr_value4.jqxNumberInput("val",val);
+	}
+	,setTxtValue5: function(val) {
+		this.spr_value5.jqxNumberInput("val",val);
+	}
+	,initRow: function(id,formulaList) {
+		var _g = this;
+		this.currentParticleId = id;
+		if(formulaList == null) {
+			this.grid.initRow({ });
+			return;
+		}
+		this.grid.initRow(Lambda.fold(formulaList,function(obj,curr) {
+			Reflect.setField(curr,Std.string(obj[7]) + "",_g.formulaToRow(obj));
+			return curr;
+		},{ }));
+		this.grid.selectLastRow();
+	}
+	,addRow: function(id,formula) {
+		this.grid.addRow(id,this.formulaToRow(formula));
+		this.grid.selectLastRow();
+	}
+	,removeRowById: function(rid) {
+		this.grid.removeRowById(rid);
+		this.grid.selectLastRow();
+	}
+	,getRowById: function(rid) {
+		return this.grid.getRowById(rid);
+	}
+	,getRows: function() {
+		return this.grid.getRows();
+	}
+	,updateRow: function(rid,formula) {
+		this.grid.updateRow(rid,this.formulaToRow(formula));
+	}
+	,init: function() {
+		var _g = this;
+		model_Model.prototype.init.call(this);
+		this.grid.set_config({ grid : this.config.table_props});
+		this.grid.config.grid.on("rowselect",function(event1) {
+			var args = event1.args;
+			var rowBoundIndex = args.rowindex;
+			var rowData = args.row;
+			_g.currentRow = rowData;
+			_g.notify(view_GridController.ON_ROW_SELECT,{ row : rowData});
+		});
+		this.btn_addDynamic = this.config.btn_addDynamic;
+		this.btn_addDynamic.click(function() {
+			_g.notify(view_GridController.ON_ADD_CLICK,{ id : _g.currentParticleId, values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
+		});
+		this.btn_removeDynamic = this.config.btn_removeDynamic;
+		this.btn_removeDynamic.click(function() {
+			_g.notify(view_GridController.ON_REMOVE_CLICK,{ id : _g.currentParticleId});
+		});
+		this.combo_props = this.config.combo_props;
+		this.combo_props.on("change",function(event2) {
+			_g.notify(view_GridController.ON_FORMULA_CHANGE,{ values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
+		});
+		this.combo_dtype = this.config.combo_dtype;
+		this.combo_dtype.on("change",function(event3) {
+			_g.notify(view_GridController.ON_FORMULA_CHANGE,{ values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
+		});
+		this.btn_moveDown = this.config.btn_moveDown;
+		this.btn_moveUp = this.config.btn_moveUp;
+		this.spr_value1 = this.config.spr_value1;
+		this.spr_value2 = this.config.spr_value2;
+		this.spr_value3 = this.config.spr_value3;
+		this.spr_value4 = this.config.spr_value4;
+		this.spr_value5 = this.config.spr_value5;
+		var onSprChange = function(event) {
+			_g.notify(view_GridController.ON_FORMULA_CHANGE,{ values : [_g.getTypeFromItem(_g.getSelectItem(_g.combo_props)),_g.getTypeFromItem(_g.getSelectItem(_g.combo_dtype)),_g.spr_value1.val(),_g.spr_value2.val(),_g.spr_value3.val(),_g.spr_value4.val(),_g.spr_value5.val()]});
+		};
+		this.spr_value1.on("change",onSprChange);
+		this.spr_value2.on("change",onSprChange);
+		this.spr_value3.on("change",onSprChange);
+		this.spr_value4.on("change",onSprChange);
+		this.spr_value5.on("change",onSprChange);
+	}
+	,formulaToRow: function(formula) {
+		return { ptype : formula[0], method : formula[1], value1 : formula[2], value2 : formula[3], value3 : formula[4], value4 : formula[5], value5 : formula[6]};
+	}
+	,findItem: function(combo,value) {
+		var items = combo.jqxComboBox("getItems");
+		return Lambda.find(items,function(obj) {
+			return Main.j(obj.label).attr("ptype") == value;
+		});
+	}
+	,getTypeFromItem: function(item) {
+		return Main.j(item.element).find("[ptype]").attr("ptype");
+	}
+	,getSelectItem: function(combo) {
+		return combo.jqxComboBox("getSelectedItem");
+	}
+	,logItems: function(combo) {
+		Lambda.foreach(combo.jqxComboBox("getItems"),function(obj) {
+			console.log(Main.j(obj.label).attr("ptype"));
+			return true;
+		});
+	}
 });
-var test_TestTree = function() {
+var view_ParamsView = function() {
 	this.j = $;
-	this.tree = new view_component_TreeView();
-	haxe_unit_TestCase.call(this);
-	this.tree.set_config({ tree : this.j("#tree_particle")});
+	model_Model.call(this);
 };
-test_TestTree.__name__ = ["test","TestTree"];
-test_TestTree.__super__ = haxe_unit_TestCase;
-test_TestTree.prototype = $extend(haxe_unit_TestCase.prototype,{
-	tree: null
-	,j: null
-	,testAddTree: function() {
-		var items = this.tree.getItems();
-		this.assertEquals(items.length,0,{ fileName : "TestTree.hx", lineNumber : 27, className : "test.TestTree", methodName : "testAddTree"});
-		this.tree.addToWithLabel("553","root");
-		items = this.tree.getItems();
-		this.assertEquals(items.length,1,{ fileName : "TestTree.hx", lineNumber : 32, className : "test.TestTree", methodName : "testAddTree"});
-		this.tree.addToWithLabel("123","vic",this.tree.getItemById("553").element);
-		this.tree.addToWithLabel("234","han",this.tree.getItemById("123").element);
-		this.tree.addToWithLabel("3455","za");
-		items = this.tree.getItems();
-		this.assertEquals(items.length,4,{ fileName : "TestTree.hx", lineNumber : 39, className : "test.TestTree", methodName : "testAddTree"});
-		this.tree.remove(this.tree.getItemById("234").element);
-		this.tree.remove(this.tree.getItemById("553").element);
-		this.assertEquals(items.length,1,{ fileName : "TestTree.hx", lineNumber : 43, className : "test.TestTree", methodName : "testAddTree"});
-		this.tree.addToWithLabel("1234","za11");
-		this.tree.addToWithLabel("2456","za22");
-		this.tree.addToWithLabel("577","za24");
-		items = this.tree.getItems();
-		this.assertEquals(items.length,4,{ fileName : "TestTree.hx", lineNumber : 50, className : "test.TestTree", methodName : "testAddTree"});
+view_ParamsView.__name__ = true;
+view_ParamsView.__super__ = model_Model;
+view_ParamsView.prototype = $extend(model_Model.prototype,{
+	setValues: function(particleObj,isEmit) {
+		this.currentParticleObj = particleObj;
+		var particle = particleObj.particle;
+		this.txt_name.val(particle.name);
+		this.setPropValue("lifetime",particle.lifetime * 1000);
+		this.setPropValue("mass",particle.mass);
+		this.setPropValue("size_x",particle.size[0]);
+		this.setPropValue("size_y",particle.size[1]);
+		this.setPropValue("vel_x",particle.vel[0]);
+		this.setPropValue("vel_y",particle.vel[1]);
+		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
+		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
+		if(isEmit) {
+			this.setPropValue("count",particle.emit.count);
+			this.setPropValue("duration",particle.emit.duration * 1000);
+			this.setPropValue("angle",particle.emit.angle / Math.PI * 180);
+			this.setPropValue("range",particle.emit.range / Math.PI * 180);
+			this.setPropValue("force",particle.emit.force);
+			this.getPropContainer("count").show();
+			this.getPropContainer("duration").show();
+			this.getPropContainer("angle").show();
+			this.getPropContainer("range").show();
+			this.getPropContainer("force").show();
+		} else {
+			this.getPropContainer("count").hide();
+			this.getPropContainer("duration").hide();
+			this.getPropContainer("angle").hide();
+			this.getPropContainer("range").hide();
+			this.getPropContainer("force").hide();
+		}
 	}
-	,__class__: test_TestTree
+	,init: function() {
+		var _g = this;
+		model_Model.prototype.init.call(this);
+		this.txt_name = this.config.txt_name;
+		this.txt_name.on("change",function() {
+			var value = _g.txt_name.val();
+			_g.notify(view_ParamsView.ON_TXT_NAME_CHANGE,{ id : _g.currentParticleObj.id, name : value});
+		});
+		this.root = this.config.root;
+		this.root.find("[jqx=\"jqxNumberInput\"]").on("change",function(event) {
+			var jdom = _g.j(this);
+			var proptype = jdom.parent().parent().attr("proptype");
+			var newValue = parseFloat(event.args.value);
+			switch(proptype) {
+			case "duration":case "lifetime":
+				newValue /= 1000;
+				break;
+			case "angle":case "range":case "pos_r":case "vel_r":
+				newValue = newValue / 180 * Math.PI;
+				break;
+			}
+			_g.notify(view_ParamsView.ON_PROP_CHANGE,{ id : _g.currentParticleObj.id, proptype : proptype, value : newValue});
+			_g.currentPropSpr = jdom;
+		});
+	}
+	,setPropValue: function(type,value) {
+		this.getPropContainer(type).find("[jqx=\"jqxNumberInput\"]").jqxNumberInput("val",value);
+	}
+	,getPropContainer: function(type) {
+		return this.root.find("div[proptype=" + type + "]");
+	}
+});
+var view_TreeController = function() {
+	this.tree = new view_component_TreeView();
+	model_Model.call(this);
+};
+view_TreeController.__name__ = true;
+view_TreeController.__super__ = model_Model;
+view_TreeController.prototype = $extend(model_Model.prototype,{
+	getItems: function() {
+		return this.tree.getItems();
+	}
+	,getItem: function(element) {
+		return this.tree.getItem(element);
+	}
+	,getItemById: function(id) {
+		return this.tree.getItemById(id);
+	}
+	,getSelectItem: function() {
+		return this.tree.getSelectItem();
+	}
+	,setItemName: function(id,label) {
+		this.tree.setItemName(id,label);
+	}
+	,addTo: function(element,parentElement) {
+		this.tree.addTo(element,parentElement);
+	}
+	,addToWithLabel: function(id,label,parentElement) {
+		this.tree.addToWithLabel(id,label,parentElement);
+	}
+	,remove: function(element) {
+		this.tree.remove(element);
+	}
+	,selectItem: function(element) {
+		this.tree.selectItem(element);
+	}
+	,init: function() {
+		var _g = this;
+		model_Model.prototype.init.call(this);
+		this.tree.set_config({ tree : this.config.tree_particle});
+		this.tree.addHandler(function(type,params) {
+			_g.notify(type,params);
+		});
+		this.btn_addTreeNode = this.config.btn_addTreeNode;
+		this.btn_removeTreeNode = this.config.btn_removeTreeNode;
+		this.btn_addTreeNode.click(function() {
+			_g.notify(view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK);
+		});
+		this.btn_removeTreeNode.click(function() {
+			_g.notify(view_TreeController.ON_BTN_REMOVE_TREE_NODE_CLICK);
+		});
+	}
 });
 var view_component_FileView = function() {
 	model_Model.call(this);
 };
-view_component_FileView.__name__ = ["view","component","FileView"];
+view_component_FileView.__name__ = true;
 view_component_FileView.__super__ = model_Model;
 view_component_FileView.prototype = $extend(model_Model.prototype,{
-	file_upload: null
-	,init: function() {
+	init: function() {
 		model_Model.prototype.init.call(this);
 		this.file_upload = this.config.file_upload;
 	}
-	,__class__: view_component_FileView
 });
 var view_component_GridView = function() {
 	model_Model.call(this);
 };
-view_component_GridView.__name__ = ["view","component","GridView"];
+view_component_GridView.__name__ = true;
 view_component_GridView.__super__ = model_Model;
 view_component_GridView.prototype = $extend(model_Model.prototype,{
-	grid: null
-	,initRow: function(rows) {
+	initRow: function(rows) {
 		var dataAdapter = new $.jqx.dataAdapter({ localdata : rows, datatype : "local"});
 		this.grid.jqxGrid({ source : dataAdapter});
 	}
@@ -856,17 +962,14 @@ view_component_GridView.prototype = $extend(model_Model.prototype,{
 		model_Model.prototype.init.call(this);
 		this.grid = this.config.grid;
 	}
-	,__class__: view_component_GridView
 });
 var view_component_TreeView = function() {
 	model_Model.call(this);
 };
-view_component_TreeView.__name__ = ["view","component","TreeView"];
+view_component_TreeView.__name__ = true;
 view_component_TreeView.__super__ = model_Model;
 view_component_TreeView.prototype = $extend(model_Model.prototype,{
-	_tree: null
-	,_selectItem: null
-	,getItems: function() {
+	getItems: function() {
 		return this._tree.jqxTree("getItems");
 	}
 	,getItem: function(element) {
@@ -914,7 +1017,6 @@ view_component_TreeView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_component_TreeView.ON_TREE_NODE_CLICK,{ item : item});
 		});
 	}
-	,__class__: view_component_TreeView
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
@@ -922,21 +1024,29 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
-String.prototype.__class__ = String;
-String.__name__ = ["String"];
-Array.__name__ = ["Array"];
-var Int = { __name__ : ["Int"]};
-var Dynamic = { __name__ : ["Dynamic"]};
-var Float = Number;
-Float.__name__ = ["Float"];
-var Bool = Boolean;
-Bool.__ename__ = ["Bool"];
-var Class = { __name__ : ["Class"]};
-var Enum = { };
-js_Boot.__toStr = {}.toString;
+String.__name__ = true;
+Array.__name__ = true;
+Main.j = $;
+Main.id = 0;
+model_PanelModel.ON_ADD_PARTICLE = "ON_ADD_PARTICLE";
+model_PanelModel.ON_REMOVE_PARTICLE = "ON_REMOVE_PARTICLE";
+model_PanelModel.ON_PROPS_CAHNGE = "ON_PROPS_CAHNGE";
+model_PanelModel.ON_NAME_CHANGE = "ON_NAME_CHANGE";
+model_PanelModel.ON_INIT = "ON_INIT";
+model_PanelModel.ON_ADD_FORMULA = "ON_ADD_FORMULA";
+model_PanelModel.ON_REMOVE_FORMULA = "ON_REMOVE_FORMULA";
+model_PanelModel.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
+view_GridController.ON_ROW_SELECT = "ON_ROW_SELECT";
+view_GridController.ON_ADD_CLICK = "ON_ADD_CLICK";
+view_GridController.ON_REMOVE_CLICK = "ON_REMOVE_CLICK";
+view_GridController.ON_FORMULA_CHANGE = "ON_FORMULA_CHANGE";
+view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
+view_ParamsView.ON_TXT_NAME_CHANGE = "ON_TXT_NAME_CHANGE";
+view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK = "ON_BTN_ADD_TREE_NODE_CLICK";
+view_TreeController.ON_BTN_REMOVE_TREE_NODE_CLICK = "ON_BTN_REMOVE_TREE_NODE_CLICK";
 view_component_TreeView.ON_TREE_NODE_CLICK = "ON_TREE_NODE_CLICK";
 view_component_TreeView.ON_TREE_DRAG = "ON_TREE_DRAG";
-test_Main.main();
+Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
 //# sourceMappingURL=haxe.js.map

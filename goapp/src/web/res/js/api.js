@@ -16,7 +16,7 @@ var api = api || {};
 	})
 
 	common.onView.subscribe(function(data){
-		console.log( data )
+		//console.log( data )
 	})
 	
 	/**

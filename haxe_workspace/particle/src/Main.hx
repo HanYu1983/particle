@@ -4,6 +4,7 @@ import haxe.Timer;
 import js.Browser;
 import model.PanelModel;
 import view.component.TreeView;
+import view.FileController;
 import view.GridController;
 import view.ParamsView;
 import view.TreeController;
@@ -21,6 +22,7 @@ class Main
 	
 	var treeController = new TreeController();
 	var gridController = new GridController();
+	var fileController = new FileController();
 	var paramsView = new ParamsView();
 	var model = new PanelModel();
 	
@@ -120,6 +122,10 @@ class Main
 			txt_name:j('#txt_name')
 		}
 		
+		fileController.config = {
+			file_upload:j( '#file_upload' )
+		}
+		
 		model.addHandler( function ( type:String, params:Dynamic ):Void {
 		//	trace( type );
 			switch( type ) {
@@ -138,7 +144,12 @@ class Main
 								if ( Math.abs( targetPos[0] - currentPos[0] ) > 1 ) {
 									currentPos[0] += ( targetPos[0] - currentPos[0] ) * .2;
 									currentPos[1] += ( targetPos[1] - currentPos[1] ) * .2;
-									model.setParticleRootsPos( currentPos[0], currentPos[1] );
+									
+									Lambda.foreach( model.getRenderList(), function( render ) {
+										moveParticle( render.id, currentPos[0], currentPos[1] );
+										return true;
+									});
+									
 								}
 						}
 					});

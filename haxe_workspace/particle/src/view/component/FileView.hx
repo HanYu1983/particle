@@ -23,4 +23,6 @@ class FileView extends Model
 		
 		file_upload = config.file_upload;
 	}
+	
+	
 }
