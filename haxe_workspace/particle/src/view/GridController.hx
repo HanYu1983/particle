@@ -16,7 +16,7 @@ class GridController extends Model
 	public static var ON_REMOVE_CLICK = 'ON_REMOVE_CLICK';
 	public static var ON_FORMULA_CHANGE = 'ON_FORMULA_CHANGE';
 	
-	public var currentParticleId:Int;
+	public var currentParticleId:String;
 	public var currentRow:Dynamic;
 	
 	var grid = new GridView();
@@ -66,7 +66,7 @@ class GridController extends Model
 		spr_value5.jqxNumberInput( 'val', val );
 	}
 	
-	public function initRow( id:Int, ?formulaList:Array<Array<Dynamic>> ) {
+	public function initRow( id:String, ?formulaList:Array<Array<Dynamic>> ) {
 		currentParticleId = id;
 		
 		if ( formulaList == null ) {

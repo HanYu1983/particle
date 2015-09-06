@@ -61,9 +61,9 @@ class FileController extends Model
 	
 	function addListener() {
 		Lambda.foreach( ary_images, function( imgobj ) {
-			trace( img );
-			img.dom.off( 'click' );
-			img.dom.click( function( e ) {
+			trace( imgobj );
+			imgobj.dom.off( 'click' );
+			imgobj.dom.click( function( e ) {
 				var dom = e.currentTarget;
 				trace( dom );
 			});

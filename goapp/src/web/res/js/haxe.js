@@ -120,7 +120,7 @@ Main.showMessage = function(msg) {
 	Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
 };
 Main.getId = function() {
-	return Main.id++;
+	return leo.utils.generateUUID();
 };
 Main.updateParticle = function(ary_render) {
 	Lambda.foreach(ary_render,function(render) {
@@ -136,6 +136,9 @@ Main.addEventListener = function(listener) {
 };
 Main.getInfo = function(cb) {
 	api.info(cb);
+};
+Main.addTexture = function(id,img) {
+	api.addTexture(id,img);
 };
 Main.addMouseWheelEvent = function(jdom,func) {
 	leo.utils.addMouseWheelEvent(jdom,func);
@@ -259,7 +262,7 @@ Main.prototype = {
 		var initObj = this.createNewParticle(Main.getId());
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
 		this.model.set_config(initObj);
-		this.treeController.selectItem(this.treeController.getItemById("0").element);
+		this.treeController.selectItem(this.treeController.getItems()[0].element);
 	}
 	,createNewParticle: function(id) {
 		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [.3,.3,.3], size : [10,10], pos : [400,400,0], vel : [0,0,0], emit : Main.createNewEmit()};
@@ -632,7 +635,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var foreachObj;
 		var foreachObj1 = null;
 		foreachObj1 = function(obj,pid) {
-			_g.addParticle(obj.id,pid == null?999:pid,obj);
+			_g.addParticle(obj.id,pid == null?"999":pid,obj);
 			if(obj.emit != null && obj.emit.prototype != null) Lambda.foreach(obj.emit.prototype,function(_obj) {
 				foreachObj1(_obj,obj.id);
 				return true;
@@ -670,17 +673,19 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 				window.document.body.appendChild(img);
 				var imgDom = Main.j(img);
 				imgDom.addClass("textImg");
-				_g.ary_images.push(imgDom);
 				_g.mc_textContainer.prepend(imgDom);
+				var imgobj = { id : Main.getId(), dom : imgDom};
+				_g.ary_images.push(imgobj);
+				Main.addTexture(imgobj.id,imgobj.dom);
 				_g.addListener();
 			});
 		});
 	}
 	,addListener: function() {
-		Lambda.foreach(this.ary_images,function(img) {
-			console.log(img);
-			img.off("click");
-			img.click(function(e) {
+		Lambda.foreach(this.ary_images,function(imgobj) {
+			console.log(imgobj);
+			imgobj.dom.off("click");
+			imgobj.dom.click(function(e) {
 				var dom = e.currentTarget;
 				console.log(dom);
 			});

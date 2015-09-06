@@ -28,7 +28,7 @@ class PanelModel extends Model
 		
 	}
 	
-	public function addParticle(id:Int, parentId:Int, particle:Dynamic, ?extra:Dynamic):Void 
+	public function addParticle(id:String, parentId:String, particle:Dynamic, ?extra:Dynamic):Void 
 	{
 		if ( findParticleById( id )) return;
 		_ary_particles.push( { id:id, particle:particle } );
@@ -36,7 +36,7 @@ class PanelModel extends Model
 		notify( ON_ADD_PARTICLE, { id:id, parentId:parentId, particle:particle } );
 	}
 	
-	public function removeParticle(id:Int, ?extra:Dynamic):Void 
+	public function removeParticle(id:String, ?extra:Dynamic):Void 
 	{
 		if ( !findParticleById( id )) return;
 		_ary_particles.remove( findParticleById( id ));
@@ -47,7 +47,7 @@ class PanelModel extends Model
 		return _ary_renderList;
 	}
 	
-	public function addFormula( particleId:Int, formula:Array<Dynamic> ) {
+	public function addFormula( particleId:String, formula:Array<Dynamic> ) {
 		if ( !findParticleById( particleId )) return;
 		var particle = findParticleById( particleId ).particle;
 		if ( particle.formulaList == null )
@@ -56,7 +56,7 @@ class PanelModel extends Model
 		notify( ON_ADD_FORMULA, { formula:formula } );
 	}
 	
-	public function removeFormula( particleId:Int, formulaId:String ) {
+	public function removeFormula( particleId:String, formulaId:String ) {
 		if ( !findParticleById( particleId )) return;
 		var particle = findParticleById( particleId ).particle;
 		var formula = getFormulaById( particleId, formulaId );
@@ -68,7 +68,7 @@ class PanelModel extends Model
 		}
 	}
 	
-	public function getFormulaById( particleId:Int, formulaId:String ):Array<Dynamic> {
+	public function getFormulaById( particleId:String, formulaId:String ):Array<Dynamic> {
 		if ( !findParticleById( particleId )) return null;
 		var particle = findParticleById( particleId ).particle;
 		if ( particle.formulaList == null ) return null;
@@ -78,7 +78,7 @@ class PanelModel extends Model
 		});
 	}
 	
-	public function setFormulaById( particleId:Int, formulaId:String, values:Array<Float> ) {
+	public function setFormulaById( particleId:String, formulaId:String, values:Array<Float> ) {
 		if ( !findParticleById( particleId )) return;
 		var particle = findParticleById( particleId ).particle;
 		var formula = getFormulaById( particleId, formulaId );
@@ -96,7 +96,7 @@ class PanelModel extends Model
 		}
 	}
 	
-	public function setParticleName( id:Int, name:String ) {
+	public function setParticleName( id:String, name:String ) {
 		if ( !findParticleById( id )) return;
 		findParticleById( id ).particle.name = name;
 		
@@ -114,7 +114,7 @@ class PanelModel extends Model
 		}
 	}
 	
-	public function setParticleProps( id:Int, type:String, value:Dynamic ) {
+	public function setParticleProps( id:String, type:String, value:Dynamic ) {
 		if ( !findParticleById( id )) return;
 		switch( type ) {
 			case 'size_x':
@@ -142,7 +142,7 @@ class PanelModel extends Model
 		notify( ON_PROPS_CAHNGE );
 	}
 	
-	public function findParticleById( id:Int ):Dynamic {
+	public function findParticleById( id:String ):Dynamic {
 		return Lambda.find( _ary_particles, function( p:Dynamic ) {
 			if ( p.id == id ) return true;
 			return false;
@@ -239,8 +239,8 @@ class PanelModel extends Model
 	{
 		super.init();
 		
-		function foreachObj( obj:Dynamic, ?pid:Int ) {
-			addParticle( obj.id, pid == null ? 999 : pid, obj );
+		function foreachObj( obj:Dynamic, ?pid:String ) {
+			addParticle( obj.id, pid == null ? '999' : pid, obj );
 			if ( obj.emit != null && obj.emit.prototype != null  ) {
 				Lambda.foreach( obj.emit.prototype, function( _obj:Dynamic ) {
 					foreachObj( _obj, obj.id );

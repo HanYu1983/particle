@@ -185,7 +185,7 @@ class Main
 		
 		model.config = initObj;
 		
-		treeController.selectItem( treeController.getItemById( '0' ).element );
+		treeController.selectItem( treeController.getItems()[0].element );
 	}
 	
 	public static function createNewEmit() {
@@ -270,8 +270,8 @@ class Main
 		});
 	}
 	
-	public static function getId() {
-		return id++;
+	public static function getId():String {
+		return untyped __js__('leo.utils.generateUUID' )();
 	}
 	
 	static function updateParticle( ary_render:Array<Dynamic> ) {
