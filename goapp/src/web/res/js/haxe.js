@@ -664,11 +664,26 @@ var view_FileController = function() {
 view_FileController.__name__ = true;
 view_FileController.__super__ = model_Model;
 view_FileController.prototype = $extend(model_Model.prototype,{
-	init: function() {
+	focus: function(id) {
+		this.removeAllFocus();
+		this.getImage(id).addClass("outline");
+	}
+	,getImage: function(id) {
+		return Lambda.find(this.ary_images,function(imgdom) {
+			return imgdom.attr("id") == id;
+		});
+	}
+	,init: function() {
 		model_Model.prototype.init.call(this);
 		this.fileview.set_config({ file : this.config.file_upload});
 		this.mc_textContainer = this.config.mc_textContainer;
 		this.fileview.config.file.on("change",$bind(this,this.handleUpload));
+	}
+	,removeAllFocus: function() {
+		Lambda.foreach(this.ary_images,function(imgDom) {
+			imgDom.removeClass("outline");
+			return true;
+		});
 	}
 	,handleUpload: function(elem) {
 		var _g = this;
@@ -694,6 +709,7 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 			imgDom.off("click");
 			imgDom.click(function(e) {
 				var jdom = Main.j(e.currentTarget);
+				_g.focus(jdom.attr("id"));
 				_g.notify(view_FileController.ON_TEXTURE_CLICK,{ textureId : jdom.attr("id")});
 			});
 			return true;

@@ -23,6 +23,17 @@ class FileController extends Model
 		
 	}
 	
+	public function focus( id:String ) {
+		removeAllFocus();
+		getImage( id ).addClass( 'outline' );
+	}
+	
+	public function getImage( id:String ):Dynamic {
+		return Lambda.find( ary_images, function( imgdom ) {
+			return imgdom.attr( 'id' ) == id;
+		});
+	}
+	
 	override function init() 
 	{
 		super.init();
@@ -34,6 +45,13 @@ class FileController extends Model
 		mc_textContainer = config.mc_textContainer;
 		
 		fileview.config.file.on( 'change', handleUpload );
+	}
+	
+	function removeAllFocus() {
+		Lambda.foreach( ary_images, function( imgDom ) {
+			imgDom.removeClass( 'outline' );
+			return true;
+		});
 	}
 	
 	function handleUpload( elem ) {
@@ -59,10 +77,13 @@ class FileController extends Model
 	}
 	
 	function addListener() {
+		
 		Lambda.foreach( ary_images, function( imgDom ) {
 			imgDom.off( 'click' );
 			imgDom.click( function( e ) {
 				var jdom = Main.j( e.currentTarget );
+				focus( jdom.attr( 'id' ));
+				
 				notify( ON_TEXTURE_CLICK, {textureId: jdom.attr( 'id' ) } );
 			});
 			return true;
