@@ -127,7 +127,10 @@
   
       "void main(void){"
       " vec4 color = texture2D( u_tex, v_texCoord );"
-      " color = u_colorTransform* color;"
+      " vec4 colorAdj = u_colorTransform* vec4(0.0,0.0,0.0,1.0);"
+      " color.r *= colorAdj.r;"
+      " color.g *= colorAdj.g;"
+      " color.b *= colorAdj.b;"
       " gl_FragColor = color;"
       "}")))
       
