@@ -96,6 +96,11 @@
               
               (when blending
                 (condp = blending
+                  "normal"
+                  (do
+                    (.enable gl (.-BLEND gl))
+                    (.blendFunc gl (.-SRC_ALPHA gl) (.-ONE_MINUS_SRC_ALPHA gl)))
+                    
                   "add"
                   (do
                     (.enable gl (.-BLEND gl))
