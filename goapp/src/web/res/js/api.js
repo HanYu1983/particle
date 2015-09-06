@@ -29,7 +29,8 @@ var api = api || {};
 		size:[10, 10],
 		pos:[300, 300, 0], 
 		vel:[0, 0, 0],
-		tex: "texture id"
+		tex: "texture id",
+		blending: nil | "add"
 		emit: { 
 			count:1,
 			duration:.5,
