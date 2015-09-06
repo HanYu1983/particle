@@ -62,15 +62,12 @@
       (.clearColor gl 0 0 0 1)
       (.clear gl (.-COLOR_BUFFER_BIT gl))
     
-      (.enable gl (.-BLEND gl))
-      (.blendFunc gl (.-ONE gl) (.-ONE gl))
-    
       (shader/use gl sprite-shader
         (fn [pobj] 
           (mesh/bind gl mesh :vertex (get-in pobj [:attrs :a_position]))
           (mesh/bind gl mesh :texture (get-in pobj [:attrs :a_texCoord]))
           
-          (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color tex :tex :as p} ps]
+          (doseq [{[x y rot] :pos [xs ys] :size [r g b a] :color tex :tex blending :blending :as p} ps]
             (let [texObj (get-in ctx [:textures tex])]
               (doto rotMat
                     (.makeRotationZ rot))
@@ -85,7 +82,7 @@
                     
               (doto colorTx
                     (.makeTranslation r g b))
-                    
+                          
               (apply
                 (partial shader/uniform gl pobj)
                 (cond->>
@@ -96,8 +93,16 @@
                     [:u_colorTransform "m4fv" (.-elements colorTx)])
                   texObj
                   (cons [:u_tex "s2d" [texObj 0]])))
-                  
+              
+              (when blending
+                (condp = blending
+                  "add"
+                  (do
+                    (.enable gl (.-BLEND gl))
+                    (.blendFunc gl (.-ONE gl) (.-ONE gl)))
+                  (.disable gl (.-BLEND gl))))
+                      
               (mesh/draw gl mesh nil)))))
               
-      (.disable gl (.-BLEND gl))
+      
       ctx)))

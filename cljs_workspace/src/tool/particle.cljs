@@ -11,6 +11,7 @@
   size :size
   color :color
   tex :tex
+  blending :blending
   }]
   {
     :id (or id (gensym "particle"))
@@ -33,6 +34,7 @@
     :mass (or mass 1)                 ; 質量（還沒有作用）
     :size (or size [10 10])           ; 大小
     :tex (or tex nil)                 ; 材質id
+    :blending (or blending nil)
     
     ; 計算用
     :timer 0
