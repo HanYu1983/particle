@@ -16,6 +16,7 @@ class Main
 		var tr = new TestRunner();
 		tr.add( new TestTree() );
 		tr.add( new TestGrid() );
+		tr.add( new TestFile() );
 		tr.run();
 	}
 

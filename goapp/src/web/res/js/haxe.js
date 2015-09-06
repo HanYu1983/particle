@@ -95,6 +95,7 @@ var Main = function() {
 	this.isMouseDown = false;
 	this.model = new model_PanelModel();
 	this.paramsView = new view_ParamsView();
+	this.fileController = new view_FileController();
 	this.gridController = new view_GridController();
 	this.treeController = new view_TreeController();
 	this.canvas_container = Main.j("#canvas_container");
@@ -185,7 +186,7 @@ Main.prototype = {
 				_g.gridController.setSelectMethod(params1.row.method);
 				break;
 			case "ON_ADD_CLICK":
-				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"x","linear",0,0,0,0,0));
+				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"x","randStartAdd",0,0,0,0,0));
 				break;
 			case "ON_REMOVE_CLICK":
 				if(_g.gridController.currentRow == null) return;
@@ -204,6 +205,7 @@ Main.prototype = {
 			}
 		});
 		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name")});
+		this.fileController.set_config({ file_upload : Main.j("#file_upload")});
 		this.model.addHandler(function(type3,params3) {
 			switch(type3) {
 			case "ON_INIT":
@@ -219,7 +221,10 @@ Main.prototype = {
 						if(Math.abs(_g.targetPos[0] - _g.currentPos[0]) > 1) {
 							_g.currentPos[0] += (_g.targetPos[0] - _g.currentPos[0]) * .2;
 							_g.currentPos[1] += (_g.targetPos[1] - _g.currentPos[1]) * .2;
-							_g.model.setParticleRootsPos(_g.currentPos[0],_g.currentPos[1]);
+							Lambda.foreach(_g.model.getRenderList(),function(render) {
+								Main.moveParticle(render.id,_g.currentPos[0],_g.currentPos[1]);
+								return true;
+							});
 						}
 						break;
 					}
@@ -426,6 +431,9 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		var x = this.findParticleById(id);
 		HxOverrides.remove(this._ary_particles,x);
 		this.notify(model_PanelModel.ON_REMOVE_PARTICLE,{ id : id});
+	}
+	,getRenderList: function() {
+		return this._ary_renderList;
 	}
 	,addFormula: function(particleId,formula) {
 		if(!this.findParticleById(particleId)) return;
@@ -636,6 +644,32 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 	}
 	,set_currentParticle: function(particle) {
 		return this.currentParticle = particle;
+	}
+});
+var view_FileController = function() {
+	this.fileview = new view_component_FileView();
+	model_Model.call(this);
+};
+view_FileController.__name__ = true;
+view_FileController.__super__ = model_Model;
+view_FileController.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.fileview.set_config({ file : this.config.file_upload});
+		this.fileview.config.file.on("change",$bind(this,this.handleUpload));
+	}
+	,handleUpload: function(elem) {
+		var elem1 = this.fileview.config.file[0];
+		if(elem1.files && elem1.files[0]) loadImage.parseMetaData(elem1.files[0],function(data) {
+			var orientation;
+			if(data.exif) orientation = data.exif.get("Orientation"); else orientation = 1;
+			loadImage(elem1.files[0],function(img) {
+				window.document.body.appendChild(img);
+				var imgDom = Main.j(img);
+				imgDom.addClass("textImg");
+				j("#mc_textContainer").prepend(imgDom);
+			});
+		});
 	}
 });
 var view_GridController = function() {
@@ -880,6 +914,17 @@ view_TreeController.prototype = $extend(model_Model.prototype,{
 		this.btn_removeTreeNode.click(function() {
 			_g.notify(view_TreeController.ON_BTN_REMOVE_TREE_NODE_CLICK);
 		});
+	}
+});
+var view_component_FileView = function() {
+	model_Model.call(this);
+};
+view_component_FileView.__name__ = true;
+view_component_FileView.__super__ = model_Model;
+view_component_FileView.prototype = $extend(model_Model.prototype,{
+	init: function() {
+		model_Model.prototype.init.call(this);
+		this.file_upload = this.config.file_upload;
 	}
 });
 var view_component_GridView = function() {

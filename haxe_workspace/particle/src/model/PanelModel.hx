@@ -43,6 +43,10 @@ class PanelModel extends Model
 		notify( ON_REMOVE_PARTICLE, { id:id } );
 	}
 	
+	public function getRenderList() {
+		return _ary_renderList;
+	}
+	
 	public function addFormula( particleId:Int, formula:Array<Dynamic> ) {
 		if ( !findParticleById( particleId )) return;
 		var particle = findParticleById( particleId ).particle;
