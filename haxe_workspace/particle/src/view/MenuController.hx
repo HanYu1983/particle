@@ -47,7 +47,7 @@ class MenuController extends Model
 	}
 	
 	function setTextarea( str ) {
-		win_import.find( 'textarea' ).html( str );
+		win_import.find( 'textarea' ).val( str );
 	}
 	
 	function getTextarea() {

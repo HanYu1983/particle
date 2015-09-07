@@ -15,6 +15,7 @@ class GridController extends Model
 	public static var ON_ADD_CLICK = 'ON_ADD_CLICK';
 	public static var ON_REMOVE_CLICK = 'ON_REMOVE_CLICK';
 	public static var ON_FORMULA_CHANGE = 'ON_FORMULA_CHANGE';
+	public static var ON_BTN_MOVE_CLICK = 'ON_BTN_MOVE_CLICK';
 	
 	public var currentParticleId:String;
 	public var currentRow:Dynamic;
@@ -160,7 +161,17 @@ class GridController extends Model
 		});
 		
 		btn_moveDown = config.btn_moveDown;
+		btn_moveDown.click( function() {
+			if ( currentRow == null ) return;
+			notify( ON_BTN_MOVE_CLICK, { fid:currentRow.uid, updown:1 } );
+		});
+		
 		btn_moveUp = config.btn_moveUp;
+		btn_moveUp.click( function() {
+			if ( currentRow == null ) return;
+			notify( ON_BTN_MOVE_CLICK, { fid:currentRow.uid, updown:-1 } );
+		});
+		
 		spr_value1 = config.spr_value1;
 		spr_value2 = config.spr_value2;
 		spr_value3 = config.spr_value3;

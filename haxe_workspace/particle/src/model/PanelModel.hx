@@ -1,7 +1,7 @@
 package model;
 import haxe.Json;
-using Reflect;
 using Lambda;
+using Reflect;
 /**
  * ...
  * @author vic
@@ -16,6 +16,7 @@ class PanelModel extends Model
 	public static var ON_ADD_FORMULA = 'ON_ADD_FORMULA';
 	public static var ON_REMOVE_FORMULA = 'ON_REMOVE_FORMULA';
 	public static var ON_FORMULA_CHANGE = 'ON_FORMULA_CHANGE';
+	public static var ON_FORMULA_POS_CHANGE = 'ON_FORMULA_POS_CHANGE';
 	public static var ON_TEXTURE_CHANGE = 'ON_TEXTURE_CHANGE';
 	public static var ON_BLEND_CHANGE = 'ON_BLEND_CHANGE';
 	public static var ON_COLOR_CHANGE = 'ON_COLOR_CHANGE';
@@ -82,12 +83,35 @@ class PanelModel extends Model
 	}
 	
 	public function addFormula( particleId:String, formula:Array<Dynamic> ) {
+		
 		if ( !findParticleById( particleId )) return;
 		var particle = findParticleById( particleId ).particle;
-		if ( particle.formulaList == null )
-			particle.formulaList = [];
+		if ( particle.formulaList == null ){
+			particle.formulaList = new Array<Array<Dynamic>>();
+		}
 		particle.formulaList.push( formula );
 		notify( ON_ADD_FORMULA, { formula:formula } );
+	}
+	
+	public function moveFormula( particleId:String, formulaId:String, updown:Int ) {
+		
+		if ( !findParticleById( particleId )) return;
+		var particle = findParticleById( particleId ).particle;
+		var formula = getFormulaById( particleId, formulaId );
+		var indexof = particle.formulaList.indexOf( formula );
+		switch( updown ) {
+			case 1:
+				if ( indexof == particle.formulaList.length - 1 ) return;
+				particle.formulaList.splice( indexof, 1 );
+				untyped __js__( 'Array.prototype.splice.call' )( particle.formulaList, indexof + 1, 0, formula );
+				notify( ON_FORMULA_POS_CHANGE, { formulaList: particle.formulaList } );
+			case -1:
+				if ( indexof == 0 ) return;
+				particle.formulaList.splice( indexof, 1 );
+				untyped __js__( 'Array.prototype.splice.call' )( particle.formulaList, indexof - 1, 0, formula );
+				notify( ON_FORMULA_POS_CHANGE, { formulaList: particle.formulaList } );
+		}
+		
 	}
 	
 	public function removeFormula( particleId:String, formulaId:String ) {
@@ -151,6 +175,8 @@ class PanelModel extends Model
 	public function setParticleProps( id:String, type:String, value:Dynamic ) {
 		if ( !findParticleById( id )) return;
 		switch( type ) {
+			case 'alpha':
+				findParticleById( id ).particle.color[3] = value;
 			case 'size_x':
 				findParticleById( id ).particle.size[0] = value;
 			case 'size_y':
