@@ -24,4 +24,14 @@
         :pretty-print true
       }
     }
+    {
+      :id "cocoon"
+      :source-paths ["src"]
+      :compiler {
+        :output-to "../goapp/src/cocoon/cljs/cljs.js"
+        :output-dir "../goapp/src/cocoon/cljs"
+        :optimizations :none
+        :pretty-print true
+      }
+    }
     ]})

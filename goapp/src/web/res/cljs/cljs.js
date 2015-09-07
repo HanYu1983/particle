@@ -33,6 +33,7 @@ goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
 goog.addDependency("../app/particle/impl.js", ['app.particle.impl'], ['cljs.core', 'cljs.core.async', 'gl.texture', 'tool.particle', 'app.particle.abstract$']);
 goog.addDependency("../test/stock6.js", ['test.stock6'], ['stock.formula', 'cljs.core', 'cljs.core.async', 'stock.tool', 'stock.drawer']);
 goog.addDependency("../app/stock/main.js", ['app.stock.main'], ['app.stock.abstract$', 'cljs.core', 'cljs.core.async', 'app.dbfile', 'app.stock.impl']);
+goog.addDependency("../app/cocoon/main.js", ['app.cocoon.main'], ['cljs.core']);
 goog.addDependency("../test/stock4.js", ['test.stock4'], ['cljs.core', 'cljs.core.async', 'clojure.string']);
 goog.addDependency("../app/react.js", ['app.react'], ['cljs.core', 'cljs.core.async']);
 goog.addDependency("../test/dialog.js", ['test.dialog'], ['cljs.core', 'cljs.core.async', 'tool.dialog']);

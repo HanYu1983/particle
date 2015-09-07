@@ -8,5 +8,7 @@ handlers:
   static_dir: web
 - url: /stock
   static_dir: stock
+- url: /cocoon
+  static_dir: cocoon
 - url: /.*
   script: _go_app
