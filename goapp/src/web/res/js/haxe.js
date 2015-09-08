@@ -112,6 +112,46 @@ Main.__name__ = true;
 Main.createNewEmit = function() {
 	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 0};
 };
+Main.engToChinese = function(eng) {
+	switch(eng) {
+	case "x":
+		return "位置x";
+	case "y":
+		return "位置y";
+	case "angle":
+		return "角度";
+	case "vx":
+		return "速度x";
+	case "vy":
+		return "速度y";
+	case "vr":
+		return "旋轉速度";
+	case "scale-x":
+		return "粒子寬度";
+	case "scale-y":
+		return "粒子高度";
+	case "r":
+		return "紅";
+	case "g":
+		return "綠";
+	case "b":
+		return "藍";
+	case "a":
+		return "alpha";
+	case "emit-count":
+		return "發射數目";
+	case "emit-duration":
+		return "週期毫秒";
+	case "emit-angle":
+		return "發射角度";
+	case "emit-range":
+		return "發射範圍";
+	case "emit-force":
+		return "發射力道";
+	default:
+		return "";
+	}
+};
 Main.showLoading = function() {
 	Main.j.messager.progress({ title : "Please waiting", msg : "Loading data..."});
 };

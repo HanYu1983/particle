@@ -272,6 +272,29 @@ class Main
 		}
 	}
 	
+	public static function engToChinese( eng ) {
+		return switch( eng ) {
+			case 'x': 				'位置x';
+			case 'y':				'位置y';
+			case 'angle':			'角度';
+			case 'vx':				'速度x';
+			case 'vy':				'速度y';
+			case 'vr':				'旋轉速度';
+			case 'scale-x':			'粒子寬度';
+			case 'scale-y':			'粒子高度';
+			case 'r':				'紅';
+			case 'g':				'綠';
+			case 'b':				'藍';
+			case 'a':				'alpha';
+			case 'emit-count':		'發射數目';
+			case 'emit-duration':	'週期毫秒';
+			case 'emit-angle':		'發射角度';
+			case 'emit-range':		'發射範圍';
+			case 'emit-force':		'發射力道';
+			case _:'';
+		}
+	}
+	
 	function createNewParticle( id:Dynamic ) {
 		return {
 			id:id, 

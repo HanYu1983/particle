@@ -199,8 +199,8 @@ class GridController extends Model
 		spr_value4.on('change', onSprChange ); 
 		spr_value5.on('change', onSprChange ); 
 	}
-	
-	function formulaToRow( formula ) {
+						
+	function formulaToRow( formula:Dynamic ) {
 		return { 
 			ptype: formula[0],
 			method: formula[1],
