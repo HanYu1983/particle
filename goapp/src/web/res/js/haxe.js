@@ -255,7 +255,7 @@ Main.prototype = {
 				_g.gridController.setSelectMethod(params1.row.method);
 				break;
 			case "ON_ADD_CLICK":
-				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"x","randStartAdd",0,0,0,0,0));
+				_g.model.addFormula(params1.id,_g.createFormula(Main.getId(),"life","randStartAdd",0,0,0,0,0));
 				break;
 			case "ON_REMOVE_CLICK":
 				if(_g.gridController.currentRow == null) return;
