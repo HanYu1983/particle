@@ -126,8 +126,8 @@
 										<div class="group" style="text-align:center; margin-top:10px;">
 											<div class="hori">
 												<div>背景顏色</div>
-												<div id="" jqx="jqxDropDownButton" data-options='{"width": 80}'>
-													<div id="" jqx="jqxColorPicker" data-options='{ "color": "ffffff", "colorMode": "hue", "width": 220, "height": 220}'></div>
+												<div id="ddb_background" jqx="jqxDropDownButton" data-options='{"width": 80}'>
+													<div id="color_background" jqx="jqxColorPicker" data-options='{ "color": "ffffff", "colorMode": "hue", "width": 220, "height": 220}'></div>
 												</div>
 											</div>
 										</div>
@@ -157,7 +157,7 @@
 												</div>
 											</div>
 											<div class="hori">
-												<div id="dropDownButton" jqx="jqxDropDownButton" data-options='{"width": 80}'>
+												<div id="ddb_color" jqx="jqxDropDownButton" data-options='{"width": 80}'>
 													<div id="color_color" jqx="jqxColorPicker" data-options='{ "color": "ffffff", "colorMode": "hue", "width": 220, "height": 220}'></div>
 												</div>
 											</div>
@@ -402,11 +402,15 @@
 			return element;
 		}
 		
-		$("#color_color").on('colorchange', function (event) {
-			$("#dropDownButton").jqxDropDownButton('setContent', getTextElementByColor(event.args.color));
-			$('#photoGallery').css('border-color', "#" + event.args.color.hex);
-		});
-		$("#dropDownButton").jqxDropDownButton('setContent', getTextElementByColor(new $.jqx.color({ hex: "ffaabb" })));
+		function createColorPicker( color, dropdown ){
+			color.on('colorchange', function (event) {
+				dropdown.jqxDropDownButton('setContent', getTextElementByColor(event.args.color));
+			});
+			dropdown.jqxDropDownButton('setContent', getTextElementByColor(new $.jqx.color({ hex: "ffaabb" })));
+		}
+		
+		createColorPicker( $("#color_color"), $("#ddb_color") );
+		createColorPicker( $("#color_background"), $("#ddb_background") );
 		
 		window.haxeStart();
 	}
