@@ -88,7 +88,7 @@
   (programObject
     gl
     [:a_position :a_texCoord]
-    [:u_projection :u_transform :u_texTransform :u_tex :u_colorTransform]
+    [:u_projection :u_transform :u_texTransform :u_tex :u_colorTransform :u_alpha]
     (str
       "attribute vec4"
       " a_position;"
@@ -117,13 +117,11 @@
       "precision highp float;\n"
       "#endif\n"
   
-      "uniform sampler2D"
-      " u_tex;"
-      "uniform mat4"
-      " u_colorTransform;"
+      "uniform sampler2D u_tex;"
+      "uniform mat4 u_colorTransform;"
+      "uniform float u_alpha;"
       
-      "varying vec2"
-      " v_texCoord;"
+      "varying vec2 v_texCoord;"
   
       "void main(void){"
       " vec4 color = texture2D( u_tex, v_texCoord );"
@@ -131,6 +129,7 @@
       " color.r *= colorAdj.r;"
       " color.g *= colorAdj.g;"
       " color.b *= colorAdj.b;"
+      " color.a = u_alpha;"
       " gl_FragColor = color;"
       "}")))
       

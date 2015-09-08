@@ -82,7 +82,8 @@
                     
               (doto colorTx
                     (.makeTranslation r g b))
-                          
+                    
+              ; 套用shader
               (apply
                 (partial shader/uniform gl pobj)
                 (cond->>
@@ -90,10 +91,16 @@
                     [:u_projection "m4fv" (.-elements proj)]
                     [:u_transform "m4fv" (.-elements tras)]
                     [:u_texTransform "m3fv" (.-elements texTx)]
-                    [:u_colorTransform "m4fv" (.-elements colorTx)])
+                    [:u_colorTransform "m4fv" (.-elements colorTx)]
+                    [:u_alpha "1f" a])
                   texObj
                   (cons [:u_tex "s2d" [texObj 0]])))
               
+              ; 沒有指定材質的話就解除綁定
+              (when-not texObj
+                (.bindTexture gl (.-TEXTURE_2D gl) nil))
+                    
+              ; 指定融合模式
               (when blending
                 (condp = blending
                   "normal"
