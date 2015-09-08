@@ -35,14 +35,6 @@ class Main
 	
 	public function new() 
 	{
-		canvas_container = j( '#canvas_container' );
-		webgl = j( '#webgl' );
-		
-		onResize(null );
-		webgl.mousedown( onmousedown );
-		webgl.mouseup( onmouseup );
-		webgl.mousemove( onMousemove );
-		
 		Reflect.setField( Browser.window, 'haxeStart', haxeStart );
 		Reflect.setField( Browser.window, 'notifyFromHtml', notifyFromHtml );
 	}
@@ -60,6 +52,15 @@ class Main
 	}
 	
 	function haxeStart() {
+		canvas_container = j( '#canvas_container' );
+		webgl = j( '#webgl' );
+		
+		onResize(null );
+		webgl.mousedown( onmousedown );
+		webgl.mouseup( onmouseup );
+		webgl.mousemove( onMousemove );
+		
+		
 		
 		treeController.config = {
 			btn_addTreeNode:j('#btn_addTreeNode' ),

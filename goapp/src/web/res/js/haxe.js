@@ -99,12 +99,6 @@ var Main = function() {
 	this.fileController = new view_FileController();
 	this.gridController = new view_GridController();
 	this.treeController = new view_TreeController();
-	this.canvas_container = Main.j("#canvas_container");
-	this.webgl = Main.j("#webgl");
-	this.onResize(null);
-	this.webgl.mousedown($bind(this,this.onmousedown));
-	this.webgl.mouseup($bind(this,this.onmouseup));
-	this.webgl.mousemove($bind(this,this.onMousemove));
 	Reflect.setField(window,"haxeStart",$bind(this,this.haxeStart));
 	Reflect.setField(window,"notifyFromHtml",$bind(this,this.notifyFromHtml));
 };
@@ -214,6 +208,12 @@ Main.prototype = {
 	}
 	,haxeStart: function() {
 		var _g = this;
+		this.canvas_container = Main.j("#canvas_container");
+		this.webgl = Main.j("#webgl");
+		this.onResize(null);
+		this.webgl.mousedown($bind(this,this.onmousedown));
+		this.webgl.mouseup($bind(this,this.onmouseup));
+		this.webgl.mousemove($bind(this,this.onMousemove));
 		this.treeController.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 		this.treeController.addHandler(function(type,params) {
 			switch(type) {
