@@ -240,8 +240,10 @@ class Main
 		getInfo( function( err, data ) {
 			if ( err == null ) {
 				var bgColor = data.bgColor;
+				//trace( bgColor[0] == 0 );
 				paramsView.setBackgroundColor( bgColor[0], bgColor[1], bgColor[2] );
-				trace( data );
+			//	var r = data.bgColor[0];
+			//	paramsView.setBackgroundColor( data.bgColor[0], .3, .1 );
 			}
 		});
 		

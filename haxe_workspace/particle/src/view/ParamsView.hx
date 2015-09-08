@@ -74,6 +74,7 @@ class ParamsView extends Model
 	}
 	
 	public function setBackgroundColor( r:Float, g:Float, b:Float) {
+		trace( r, g, b );
 		color_background.jqxColorPicker('setColor', { r: r * 255, g: g * 255, b: b * 255 } );
 	}
 	

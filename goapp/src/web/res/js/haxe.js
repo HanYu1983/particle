@@ -318,7 +318,6 @@ Main.prototype = {
 			if(err1 == null) {
 				var bgColor = data1.bgColor;
 				_g.paramsView.setBackgroundColor(bgColor[0],bgColor[1],bgColor[2]);
-				console.log(data1);
 			}
 		});
 		var initObj = this.createNewParticle(Main.getId());
@@ -393,8 +392,32 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -968,7 +991,7 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 	}
 	,logItems: function(combo) {
 		Lambda.foreach(combo.jqxComboBox("getItems"),function(obj) {
-			console.log(Main.j(obj.label).attr("ptype"));
+			haxe_Log.trace(Main.j(obj.label).attr("ptype"),{ fileName : "GridController.hx", lineNumber : 233, className : "view.GridController", methodName : "logItems"});
 			return true;
 		});
 	}
@@ -1060,6 +1083,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		}
 	}
 	,setBackgroundColor: function(r,g,b) {
+		haxe_Log.trace(r,{ fileName : "ParamsView.hx", lineNumber : 77, className : "view.ParamsView", methodName : "setBackgroundColor", customParams : [g,b]});
 		this.color_background.jqxColorPicker("setColor",{ r : r * 255, g : g * 255, b : b * 255});
 	}
 	,init: function() {
