@@ -42,7 +42,7 @@ class ParamsView extends Model
 		
 		txt_name.val( particle.name );
 		
-		setPropValue( 'lifetime', particle.lifetime * 1000 );
+		setPropValue( 'lifetime', particle.lifetime );
 		setPropValue( 'mass', particle.mass );
 		setPropValue( 'size_x', particle.size[0] );
 		setPropValue( 'size_y', particle.size[1] );
@@ -59,7 +59,7 @@ class ParamsView extends Model
 		
 		if ( isEmit ) {
 			setPropValue( 'count', particle.emit.count );
-			setPropValue( 'duration', particle.emit.duration * 1000 );
+			setPropValue( 'duration', particle.emit.duration );
 			setPropValue( 'angle', particle.emit.angle / Math.PI * 180 );
 			setPropValue( 'range', particle.emit.range / Math.PI * 180 );
 			setPropValue( 'force', particle.emit.force );
@@ -105,8 +105,8 @@ class ParamsView extends Model
 			var proptype = jdom.parent().parent().attr( 'proptype' );
 			var newValue = Std.parseFloat( event.args.value );
 			switch( proptype ) {
-				case 'duration', 'lifetime':
-					newValue /= 1000;
+			//	case 'duration', 'lifetime':
+			//		newValue /= 1000;
 				case 'angle', 'range', 'pos_r', 'vel_r':
 					newValue = newValue / 180 * Math.PI;
 			}

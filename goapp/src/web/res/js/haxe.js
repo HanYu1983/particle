@@ -1086,7 +1086,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.currentParticleObj = particleObj;
 		var particle = particleObj.particle;
 		this.txt_name.val(particle.name);
-		this.setPropValue("lifetime",particle.lifetime * 1000);
+		this.setPropValue("lifetime",particle.lifetime);
 		this.setPropValue("mass",particle.mass);
 		this.setPropValue("size_x",particle.size[0]);
 		this.setPropValue("size_y",particle.size[1]);
@@ -1100,7 +1100,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.combo_blend.jqxComboBox("selectItem",this.findItem(this.combo_blend,particle.blending));
 		if(isEmit) {
 			this.setPropValue("count",particle.emit.count);
-			this.setPropValue("duration",particle.emit.duration * 1000);
+			this.setPropValue("duration",particle.emit.duration);
 			this.setPropValue("angle",particle.emit.angle / Math.PI * 180);
 			this.setPropValue("range",particle.emit.range / Math.PI * 180);
 			this.setPropValue("force",particle.emit.force);
@@ -1138,9 +1138,6 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			var proptype = jdom.parent().parent().attr("proptype");
 			var newValue = parseFloat(event.args.value);
 			switch(proptype) {
-			case "duration":case "lifetime":
-				newValue /= 1000;
-				break;
 			case "angle":case "range":case "pos_r":case "vel_r":
 				newValue = newValue / 180 * Math.PI;
 				break;
