@@ -326,12 +326,7 @@ class Main
 	}
 	
 	function onResize( e ) {
-		/*
 		webgl.attr( 'width', canvas_container.width() );
-		webgl.attr( 'height', canvas_container.height() );
-		*/
-		
-		webgl.attr( 'width', 400 );
 		webgl.attr( 'height', canvas_container.height() );
 	}
 	
