@@ -92,7 +92,11 @@
         ctx
         {
           :timer 0
-          :part {:ps '() :limit 200}
+          :part {
+            :ps '() 
+            :limit 200
+            :bgColor [0.1 0.1 0.1]
+          }
           :centerPos [0 0]
           :onModel onModel
           :gl gl

@@ -63,7 +63,14 @@
 
 (defmethod abstract/onViewCommand "info" [_ data {onModel :onModel :as ctx}]
   (am/go
-    (a/>! onModel [nil (js-obj "count" (count (get-in ctx [:part :ps]))) data]))
+    (a/>! onModel 
+      [
+        nil 
+        (js-obj 
+          "count" (count (get-in ctx [:part :ps]))
+          "bgColor" (clj->js (get-in ctx [:part :bgColor])))
+        data
+      ]))
   ctx)
 
 (def cacheTex (memoize gltex/texture))
@@ -79,3 +86,9 @@
 (defmethod abstract/onViewCommand "edit-limit" [_ data ctx]
   (let [n data]
     (assoc-in ctx [:part :limit] n)))
+    
+(defmethod abstract/onViewCommand "edit-bgColor" [_ data ctx]
+  (let [r (aget data 0)
+        g (aget data 1)
+        b (aget data 2)]
+    (assoc-in ctx [:part :bgColor] [r g b])))
