@@ -68,7 +68,7 @@
         nil 
         (js-obj 
           "count" (count (get-in ctx [:part :ps]))
-          "bgColor" (clj->js (get-in ctx [:part :bgColor])))
+          "bgColor" (clj->js (get-in ctx [:bgColor])))
         data
       ]))
   ctx)
@@ -91,4 +91,4 @@
   (let [r (aget data 0)
         g (aget data 1)
         b (aget data 2)]
-    (assoc-in ctx [:part :bgColor] [r g b])))
+    (assoc-in ctx [:bgColor] [r g b])))
