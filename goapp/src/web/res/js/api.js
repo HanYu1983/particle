@@ -83,7 +83,8 @@ var api = api || {};
 	取得資訊
 	cb: function( err, data ){
 		data: {
-			count: Int //粒子數量
+			count: Int //粒子數量,
+			bgColor: [r: float, g:float, b:float]
 		}
 	}
 	*/
@@ -122,11 +123,19 @@ var api = api || {};
 		common.onView.onNext(['edit-limit', limit])
 	}
 	
+	/**
+	改變背景顏色
+	*/
+	function changeBgColor( r, g, b ){
+		common.onView.onNext(['edit-bgColor', [r, g, b]])
+	}
+	
 	pkg.editParticle = editParticle
 	pkg.changeCenterPos = changeCenterPos
 	pkg.info = info
 	pkg.addEventListener = addEventListener
 	pkg.addTexture = addTexture
 	pkg.changeLimit = changeLimit
+	pkg.changeBgColor = changeBgColor
 	
 }) (api)

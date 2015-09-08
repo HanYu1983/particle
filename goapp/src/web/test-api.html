@@ -3,9 +3,13 @@
 		<form name=info>
 			<input type=number value=100 name="x">
 			<input type=number value=100 name="y">
+			<input type=number value=0.2 name="r">
+			<input type=number value=1 name="g">
+			<input type=number value=0.5 name="b">
 		</form>
+		<button onclick='api.changeBgColor(parseFloat(document.info.r.value), parseFloat(document.info.g.value), parseFloat(document.info.b.value))'>bgcolor</button>
 		<button onclick='api.changeCenterPos("x1", parseInt(document.info.x.value), parseInt(document.info.y.value))'>change center</button>
-		<button onclick='api.info(function(){ console.log(arguments) })'>info</button>
+		<button onclick='api.info(function(err, info){ console.log(info) })'>info</button>
 		<br>
 		<canvas id='webgl' width=800 height=600></canvas>
 		<img id='img_face' src='res/images/fire2_128_128.jpg'>
