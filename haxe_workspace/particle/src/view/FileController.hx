@@ -1,6 +1,7 @@
 package view;
 
 import js.Browser;
+import js.html.Image;
 import model.Model;
 import view.component.FileView;
 
@@ -37,6 +38,20 @@ class FileController extends Model
 		});
 	}
 	
+	public function addNewImage( img ) {
+		Browser.document.body.appendChild( img );
+		var imgDom:Dynamic = Main.j( img );
+		imgDom.attr( 'id', Main.getId() );
+		imgDom.addClass( 'textImg' );
+		
+		mc_textContainer.prepend( imgDom );
+		
+		ary_images.push( imgDom );
+		Main.addTexture( imgDom.attr( 'id' ), imgDom[0] );
+		
+		addListener();
+	}
+	
 	override function init() 
 	{
 		super.init();
@@ -52,6 +67,7 @@ class FileController extends Model
 		btn_removeTexture.click( function() {
 			notify( ON_BTN_REMOVE_TEXTURE_CLICK );
 		});
+		
 	}
 	
 	function removeAllFocus() {
@@ -67,17 +83,8 @@ class FileController extends Model
 			untyped __js__( 'loadImage.parseMetaData' )( elem.files[0], function (data) {
 				var orientation = data.exif ? data.exif.get('Orientation') : 1;// 1 is keep orientation
 				untyped __js__( 'loadImage' )( elem.files[0], function (img) {
-					Browser.document.body.appendChild( img );
-					var imgDom:Dynamic = Main.j( img );
-					imgDom.attr( 'id', Main.getId() );
-					imgDom.addClass( 'textImg' );
+					addNewImage( img );
 					
-					mc_textContainer.prepend( imgDom );
-					
-					ary_images.push( imgDom );
-					Main.addTexture( imgDom.attr( 'id' ), imgDom[0] );
-					
-					addListener();
 				});
 			});
 		}

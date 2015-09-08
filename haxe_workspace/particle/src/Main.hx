@@ -2,6 +2,7 @@ package;
 import haxe.Json;
 import haxe.Timer;
 import js.Browser;
+import js.html.Image;
 import model.PanelModel;
 import view.component.TreeView;
 import view.FileController;
@@ -243,6 +244,11 @@ class Main
 		
 		model.config = [initObj];
 		
+		var img = new Image();
+		img.src = 'res/images/white.jpg';
+		img.onload = function() {
+			fileController.addNewImage( img );
+		}
 	}
 	
 	public static function createNewEmit() {

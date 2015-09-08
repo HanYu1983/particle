@@ -318,6 +318,11 @@ Main.prototype = {
 		initObj.lifetime = 0;
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
 		this.model.set_config([initObj]);
+		var img = new Image();
+		img.src = "res/images/white.jpg";
+		img.onload = function() {
+			_g.fileController.addNewImage(img);
+		};
 	}
 	,createNewParticle: function(id) {
 		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [1,1,1,1], size : [10,10], pos : [400,400,0], vel : [0,0,0], blending : "normal", tex : "", emit : Main.createNewEmit()};
@@ -779,6 +784,16 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 			return imgdom.attr("id") == id;
 		});
 	}
+	,addNewImage: function(img) {
+		window.document.body.appendChild(img);
+		var imgDom = Main.j(img);
+		imgDom.attr("id",Main.getId());
+		imgDom.addClass("textImg");
+		this.mc_textContainer.prepend(imgDom);
+		this.ary_images.push(imgDom);
+		Main.addTexture(imgDom.attr("id"),imgDom[0]);
+		this.addListener();
+	}
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
@@ -803,14 +818,7 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 			var orientation;
 			if(data.exif) orientation = data.exif.get("Orientation"); else orientation = 1;
 			loadImage(elem1.files[0],function(img) {
-				window.document.body.appendChild(img);
-				var imgDom = Main.j(img);
-				imgDom.attr("id",Main.getId());
-				imgDom.addClass("textImg");
-				_g.mc_textContainer.prepend(imgDom);
-				_g.ary_images.push(imgDom);
-				Main.addTexture(imgDom.attr("id"),imgDom[0]);
-				_g.addListener();
+				_g.addNewImage(img);
 			});
 		});
 	}
