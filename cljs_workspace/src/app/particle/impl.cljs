@@ -92,3 +92,6 @@
         g (aget data 1)
         b (aget data 2)]
     (assoc-in ctx [:bgColor] [r g b])))
+    
+(defmethod abstract/onViewCommand "clear particle" [_ data ctx]
+  (assoc-in ctx [:part :ps] '()))

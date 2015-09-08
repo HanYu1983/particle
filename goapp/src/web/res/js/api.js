@@ -130,6 +130,13 @@ var api = api || {};
 		common.onView.onNext(['edit-bgColor', [r, g, b]])
 	}
 	
+	/**
+	清除所有粒子
+	*/
+	function clearParticle(){
+		common.onView.onNext(['clear particle', null])
+	}
+	
 	pkg.editParticle = editParticle
 	pkg.changeCenterPos = changeCenterPos
 	pkg.info = info
@@ -137,5 +144,6 @@ var api = api || {};
 	pkg.addTexture = addTexture
 	pkg.changeLimit = changeLimit
 	pkg.changeBgColor = changeBgColor
+	pgk.clearParticle = clearParticle
 	
 }) (api)
