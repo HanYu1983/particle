@@ -178,6 +178,7 @@ class Main
 				case MenuController.ON_IMPORT_CLICK:
 					model.clearAll();
 					model.config = Json.parse( params.config );
+					clearParticle();
 			}
 		});
 		
@@ -371,6 +372,10 @@ class Main
 	
 	public static function getId():String {
 		return untyped __js__('leo.utils.generateUUID' )();
+	}
+	
+	static function clearParticle() {
+		untyped __js__('api.clearParticle')();
 	}
 	
 	static function changeBgColor( r, g, b ) {

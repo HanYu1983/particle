@@ -164,6 +164,9 @@ Main.showMessage = function(msg) {
 Main.getId = function() {
 	return leo.utils.generateUUID();
 };
+Main.clearParticle = function() {
+	api.clearParticle();
+};
 Main.changeBgColor = function(r,g,b) {
 	api.changeBgColor(r,g,b);
 };
@@ -298,6 +301,7 @@ Main.prototype = {
 			case "ON_IMPORT_CLICK":
 				_g.model.clearAll();
 				_g.model.set_config(JSON.parse(params4.config));
+				Main.clearParticle();
 				break;
 			}
 		});

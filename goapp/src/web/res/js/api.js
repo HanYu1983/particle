@@ -144,6 +144,6 @@ var api = api || {};
 	pkg.addTexture = addTexture
 	pkg.changeLimit = changeLimit
 	pkg.changeBgColor = changeBgColor
-	pgk.clearParticle = clearParticle
+	pkg.clearParticle = clearParticle
 	
 }) (api)
