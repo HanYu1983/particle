@@ -140,6 +140,28 @@
                       (if (zero? life)
                         (+ v adj)
                         v)))
+                        
+                  "custom"
+                  (fn [life v]
+                    (cond
+                      (= life 0)
+                      p1
+                      
+                      (< life 0.25)
+                      (+ p1 (* (- p2 p1) (/ life 0.25)))
+                      
+                      (< life 0.5)
+                      (+ p2 (* (- p3 p2) (/ (- life 0.25) 0.25)))
+                      
+                      (< life 0.75)
+                      (+ p3 (* (- p4 p3) (/ (- life 0.5) 0.25)))
+                      
+                      (< life 1)
+                      (+ p4 (* (- p5 p4) (/ (- life 0.75) 0.25)))
+                      
+                      :else 
+                      p5))
+                    
                   nil)]
         [t f]))))
 
