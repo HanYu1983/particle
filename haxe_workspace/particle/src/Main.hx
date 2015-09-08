@@ -299,12 +299,12 @@ class Main
 	function createNewParticle( id:Dynamic ) {
 		return {
 			id:id, 
-			name:'粒子_' + id,
+			name:'粒子',
 			lifetime:5,
 			mass:3,
 			color:[1, 1, 1, 1],
 			size:[10, 10],
-			pos:[400, 400, 0], 
+			pos:[0, 0, 0], 
 			vel:[0, 0, 0],
 			blending:'normal',
 			tex:'',

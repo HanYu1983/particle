@@ -384,7 +384,7 @@ Main.prototype = {
 		};
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子_" + Std.string(id), lifetime : 5, mass : 3, color : [1,1,1,1], size : [10,10], pos : [400,400,0], vel : [0,0,0], blending : "normal", tex : "", emit : Main.createNewEmit()};
+		return { id : id, name : "粒子", lifetime : 5, mass : 3, color : [1,1,1,1], size : [10,10], pos : [0,0,0], vel : [0,0,0], blending : "normal", tex : "", emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];
