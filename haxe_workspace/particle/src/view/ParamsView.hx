@@ -11,6 +11,7 @@ class ParamsView extends Model
 	public static var ON_PROP_CHANGE = 'ON_PROP_CHANGE';
 	public static var ON_BLEND_CHANGE = 'ON_BLEND_CHANGE';
 	public static var ON_COLOR_CHANGE = 'ON_COLOR_CHANGE';
+	public static var ON_BACK_COLOR_CHANGE = 'ON_BACK_COLOR_CHANGE';
 	public static var ON_TXT_NAME_CHANGE = 'ON_TXT_NAME_CHANGE';
 	
 	var j:Dynamic = untyped __js__( '$' );
@@ -28,6 +29,10 @@ class ParamsView extends Model
 	{
 		super();
 		
+	}
+	
+	public function setCount( count ) {
+		txt_count.html( count );
 	}
 	
 	public function setValues( particleObj:Dynamic, isEmit:Bool ) {
@@ -74,8 +79,13 @@ class ParamsView extends Model
 	}
 	
 	public function setBackgroundColor( r:Float, g:Float, b:Float) {
-		trace( r, g, b );
-		color_background.jqxColorPicker('setColor', { r: r * 255, g: g * 255, b: b * 255 } );
+		var rgbint:Int = ( Math.floor( r * 255 ) << 16 ) | ( Math.floor( g * 255 ) << 8 ) | Math.floor( b * 255 );
+		var rbgstr = untyped __js__( 'Number.prototype.toString.call' )( rgbint, 16 );
+		while ( rbgstr.length < 6 ) {
+			rbgstr = '0' + rbgstr;
+		}
+		rbgstr = '#' + rbgstr;
+		color_background.jqxColorPicker('setColor', rbgstr );
 	}
 	
 	override function init() 
@@ -116,6 +126,10 @@ class ParamsView extends Model
 		});
 		
 		color_background = config.color_background;
+		color_background.on('colorchange', function (event) {
+			var color = event.args.color;
+			notify( ON_BACK_COLOR_CHANGE, { color: color } );
+		});
 		
 		txt_count = config.txt_count;
 	}

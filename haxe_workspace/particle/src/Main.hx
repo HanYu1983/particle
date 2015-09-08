@@ -128,6 +128,9 @@ class Main
 		paramsView.addHandler( function( type, params) {
 		//	trace( type );
 			switch( type ) {
+				case ParamsView.ON_BACK_COLOR_CHANGE:
+					var color = params.color;
+					changeBgColor( color.r / 255, color.g / 255, color.b / 255 );
 				case ParamsView.ON_COLOR_CHANGE:
 					model.setParticleColor( model.currentParticle.id, params.color );
 				case ParamsView.ON_BLEND_CHANGE:
@@ -190,6 +193,8 @@ class Main
 										if ( data.count == 0 ){
 											updateParticle( model.getOutputData( treeController.getItems() ) );
 										}
+										
+										paramsView.setCount( data.count );
 									}
 								});
 								
@@ -240,10 +245,7 @@ class Main
 		getInfo( function( err, data ) {
 			if ( err == null ) {
 				var bgColor = data.bgColor;
-				//trace( bgColor[0] == 0 );
 				paramsView.setBackgroundColor( bgColor[0], bgColor[1], bgColor[2] );
-			//	var r = data.bgColor[0];
-			//	paramsView.setBackgroundColor( data.bgColor[0], .3, .1 );
 			}
 		});
 		
@@ -349,6 +351,10 @@ class Main
 	
 	public static function getId():String {
 		return untyped __js__('leo.utils.generateUUID' )();
+	}
+	
+	static function changeBgColor( r, g, b ) {
+		untyped __js__('api.changeBgColor')( r, g, b );
 	}
 	
 	static function updateParticle( ary_render:Array<Dynamic> ) {

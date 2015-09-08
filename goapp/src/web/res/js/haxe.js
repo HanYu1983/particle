@@ -124,6 +124,9 @@ Main.showMessage = function(msg) {
 Main.getId = function() {
 	return leo.utils.generateUUID();
 };
+Main.changeBgColor = function(r,g,b) {
+	api.changeBgColor(r,g,b);
+};
 Main.updateParticle = function(ary_render) {
 	Lambda.foreach(ary_render,function(render) {
 		api.editParticle(render);
@@ -219,6 +222,10 @@ Main.prototype = {
 		});
 		this.paramsView.addHandler(function(type2,params2) {
 			switch(type2) {
+			case "ON_BACK_COLOR_CHANGE":
+				var color = params2.color;
+				Main.changeBgColor(color.r / 255,color.g / 255,color.b / 255);
+				break;
 			case "ON_COLOR_CHANGE":
 				_g.model.setParticleColor(_g.model.currentParticle.id,params2.color);
 				break;
@@ -264,6 +271,7 @@ Main.prototype = {
 						Main.getInfo(function(err,data) {
 							if(err == null) {
 								if(data.count == 0) Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
+								_g.paramsView.setCount(data.count);
 							}
 						});
 						if(Math.abs(_g.targetPos[0] - _g.currentPos[0]) > 1) {
@@ -392,32 +400,8 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -991,7 +975,7 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 	}
 	,logItems: function(combo) {
 		Lambda.foreach(combo.jqxComboBox("getItems"),function(obj) {
-			haxe_Log.trace(Main.j(obj.label).attr("ptype"),{ fileName : "GridController.hx", lineNumber : 233, className : "view.GridController", methodName : "logItems"});
+			console.log(Main.j(obj.label).attr("ptype"));
 			return true;
 		});
 	}
@@ -1047,7 +1031,10 @@ var view_ParamsView = function() {
 view_ParamsView.__name__ = true;
 view_ParamsView.__super__ = model_Model;
 view_ParamsView.prototype = $extend(model_Model.prototype,{
-	setValues: function(particleObj,isEmit) {
+	setCount: function(count) {
+		this.txt_count.html(count);
+	}
+	,setValues: function(particleObj,isEmit) {
 		this.currentParticleObj = particleObj;
 		var particle = particleObj.particle;
 		this.txt_name.val(particle.name);
@@ -1083,8 +1070,11 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		}
 	}
 	,setBackgroundColor: function(r,g,b) {
-		haxe_Log.trace(r,{ fileName : "ParamsView.hx", lineNumber : 77, className : "view.ParamsView", methodName : "setBackgroundColor", customParams : [g,b]});
-		this.color_background.jqxColorPicker("setColor",{ r : r * 255, g : g * 255, b : b * 255});
+		var rgbint = Math.floor(r * 255) << 16 | Math.floor(g * 255) << 8 | Math.floor(b * 255);
+		var rbgstr = Number.prototype.toString.call(rgbint,16);
+		while(rbgstr.length < 6) rbgstr = "0" + Std.string(rbgstr);
+		rbgstr = "#" + Std.string(rbgstr);
+		this.color_background.jqxColorPicker("setColor",rbgstr);
 	}
 	,init: function() {
 		var _g = this;
@@ -1120,6 +1110,10 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_ParamsView.ON_BLEND_CHANGE,{ blend : _g.getTypeFromItem(_g.getSelectItem(_g.combo_blend))});
 		});
 		this.color_background = this.config.color_background;
+		this.color_background.on("colorchange",function(event3) {
+			var color1 = event3.args.color;
+			_g.notify(view_ParamsView.ON_BACK_COLOR_CHANGE,{ color : color1});
+		});
 		this.txt_count = this.config.txt_count;
 	}
 	,getTypeFromItem: function(item) {
@@ -1331,6 +1325,7 @@ view_MenuController.ON_IMPORT_CLICK = "ON_IMPORT_CLICK";
 view_ParamsView.ON_PROP_CHANGE = "ON_PROP_CHANGE";
 view_ParamsView.ON_BLEND_CHANGE = "ON_BLEND_CHANGE";
 view_ParamsView.ON_COLOR_CHANGE = "ON_COLOR_CHANGE";
+view_ParamsView.ON_BACK_COLOR_CHANGE = "ON_BACK_COLOR_CHANGE";
 view_ParamsView.ON_TXT_NAME_CHANGE = "ON_TXT_NAME_CHANGE";
 view_TreeController.ON_BTN_ADD_TREE_NODE_CLICK = "ON_BTN_ADD_TREE_NODE_CLICK";
 view_TreeController.ON_BTN_REMOVE_TREE_NODE_CLICK = "ON_BTN_REMOVE_TREE_NODE_CLICK";
