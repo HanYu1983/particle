@@ -104,12 +104,12 @@ class PanelModel extends Model
 				if ( indexof == particle.formulaList.length - 1 ) return;
 				particle.formulaList.splice( indexof, 1 );
 				untyped __js__( 'Array.prototype.splice.call' )( particle.formulaList, indexof + 1, 0, formula );
-				notify( ON_FORMULA_POS_CHANGE, { formulaList: particle.formulaList } );
+				notify( ON_FORMULA_POS_CHANGE, { formulaList: particle.formulaList, id: indexof + 1 } );
 			case -1:
 				if ( indexof == 0 ) return;
 				particle.formulaList.splice( indexof, 1 );
 				untyped __js__( 'Array.prototype.splice.call' )( particle.formulaList, indexof - 1, 0, formula );
-				notify( ON_FORMULA_POS_CHANGE, { formulaList: particle.formulaList } );
+				notify( ON_FORMULA_POS_CHANGE, { formulaList: particle.formulaList, id: indexof - 1 } );
 		}
 		
 	}

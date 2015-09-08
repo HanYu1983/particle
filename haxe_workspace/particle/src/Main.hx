@@ -203,7 +203,7 @@ class Main
 					treeController.selectItem( treeController.getItems()[0].element );
 					
 				case PanelModel.ON_FORMULA_POS_CHANGE:
-					gridController.initRow( model.currentParticle.id, model.currentParticle.formulaList );
+					gridController.initRow( model.currentParticle.id, model.currentParticle.formulaList, params.id );
 				case PanelModel.ON_TEXTURE_CHANGE:
 					fileController.focus( params.textureId );
 				case PanelModel.ON_FORMULA_CHANGE:

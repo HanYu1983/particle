@@ -67,7 +67,7 @@ class GridController extends Model
 		spr_value5.jqxNumberInput( 'val', val );
 	}
 	
-	public function initRow( id:String, ?formulaList:Array<Array<Dynamic>> ) {
+	public function initRow( id:String, ?formulaList:Array<Array<Dynamic>>, ?selectId:String ) {
 		currentParticleId = id;
 		
 		if ( formulaList == null ) {
@@ -80,7 +80,12 @@ class GridController extends Model
 			return curr;
 		}, { } ) );
 		
-		grid.selectLastRow();
+		if ( selectId != null ) {
+			grid.selectRow( selectId );
+		}else {
+			grid.selectLastRow();
+		}
+		
 	}
 	
 	public function addRow( id:String, formula:Dynamic ) {

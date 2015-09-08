@@ -277,7 +277,7 @@ Main.prototype = {
 				_g.treeController.selectItem(_g.treeController.getItems()[0].element);
 				break;
 			case "ON_FORMULA_POS_CHANGE":
-				_g.gridController.initRow(_g.model.currentParticle.id,_g.model.currentParticle.formulaList);
+				_g.gridController.initRow(_g.model.currentParticle.id,_g.model.currentParticle.formulaList,params5.id);
 				break;
 			case "ON_TEXTURE_CHANGE":
 				_g.fileController.focus(params5.textureId);
@@ -533,13 +533,13 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			if(indexof == particle.formulaList.length - 1) return;
 			particle.formulaList.splice(indexof,1);
 			Array.prototype.splice.call(particle.formulaList,indexof + 1,0,formula);
-			this.notify(model_PanelModel.ON_FORMULA_POS_CHANGE,{ formulaList : particle.formulaList});
+			this.notify(model_PanelModel.ON_FORMULA_POS_CHANGE,{ formulaList : particle.formulaList, id : indexof + 1});
 			break;
 		case -1:
 			if(indexof == 0) return;
 			particle.formulaList.splice(indexof,1);
 			Array.prototype.splice.call(particle.formulaList,indexof - 1,0,formula);
-			this.notify(model_PanelModel.ON_FORMULA_POS_CHANGE,{ formulaList : particle.formulaList});
+			this.notify(model_PanelModel.ON_FORMULA_POS_CHANGE,{ formulaList : particle.formulaList, id : indexof - 1});
 			break;
 		}
 	}
@@ -852,7 +852,7 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 	,setTxtValue5: function(val) {
 		this.spr_value5.jqxNumberInput("val",val);
 	}
-	,initRow: function(id,formulaList) {
+	,initRow: function(id,formulaList,selectId) {
 		var _g = this;
 		this.currentParticleId = id;
 		if(formulaList == null) {
@@ -863,7 +863,7 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 			Reflect.setField(curr,Std.string(obj[7]) + "",_g.formulaToRow(obj));
 			return curr;
 		},{ }));
-		this.grid.selectLastRow();
+		if(selectId != null) this.grid.selectRow(selectId); else this.grid.selectLastRow();
 	}
 	,addRow: function(id,formula) {
 		this.grid.addRow(id,this.formulaToRow(formula));
@@ -1167,6 +1167,9 @@ view_component_GridView.prototype = $extend(model_Model.prototype,{
 	}
 	,selectLastRow: function() {
 		this.grid.jqxGrid("selectrow",this.getRows().length - 1);
+	}
+	,selectRow: function(id) {
+		this.grid.jqxGrid("selectrow",id);
 	}
 	,addRow: function(id,row) {
 		this.grid.jqxGrid("addrow",id,row);
