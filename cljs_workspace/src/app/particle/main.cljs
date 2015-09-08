@@ -55,7 +55,7 @@
         onModel (chan)
         onModelEvent (chan)
         onTick (chan)
-        mspf (int (/ 1000 30))
+        mspf (int (/ 1000 60))
         canvas (js/$ "#webgl")
         gl (glutil/getContext (aget canvas 0) (js-obj))
         draw (d/draw3D canvas gl)]
