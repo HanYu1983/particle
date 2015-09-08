@@ -57,7 +57,7 @@
     
     (.viewport gl 0 0 cw ch)
     
-    (fn [{[cx cy] :centerPos timer :timer {ps :ps [br bg bb] :bgColor} :part :as ctx}]
+    (fn [{[cx cy] :centerPos [br bg bb] :bgColor {ps :ps} :part :as ctx}]
       
       (.clearColor gl (or br 0) (or bg 0) (or bb 0) 1)
       (.clear gl (.-COLOR_BUFFER_BIT gl))
