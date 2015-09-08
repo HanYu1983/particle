@@ -99,17 +99,33 @@
 				<div>
 					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
 						<div>
-							<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
-								<div class="group" style="text-align:center;">
-									<div class="hori">
-										<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
-									</div>
-									<div class="hori">
-										<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+							<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "showSplitBar":true, "panels": [{ "size": "50%"}]}'>
+								<div>
+									<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+										<div class="group" style="text-align:center;">
+											<div class="hori">
+												<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
+											</div>
+											<div class="hori">
+												<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+											</div>
+										</div>
+										<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "180px", "width": "100%"}'>
+											<!-- created by script -->
+										</div>
 									</div>
 								</div>
-								<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "180px", "width": "100%"}'>
-									<!-- created by script -->
+								<div>
+									<div jqx="jqxExpander" data-options='{"toggleMode":"none","showArrow":false,"height": "100%", "width": "100%"}'>
+										<div>資訊</div>
+										<div>
+											<div class="group">
+												<div class="hori">
+												asdfsadf
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
