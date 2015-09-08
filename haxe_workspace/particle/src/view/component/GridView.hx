@@ -35,6 +35,10 @@ class GridView extends Model
 		grid.jqxGrid('selectrow', getRows().length - 1 );
 	}
 	
+	public function selectRow( id ) {
+		grid.jqxGrid('selectrow', id );
+	}
+	
 	public function addRow( id:String, row:Dynamic ) {
 		grid.jqxGrid('addrow', id, row);
 	}

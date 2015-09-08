@@ -90,7 +90,7 @@
 							<li><div onclick="window.notifyFromHtml('onBtnExportClick', '{}')" id="btn_export">匯出</div></li>
 						</ul>
 					</li>
-					<li><div id="btn_about">關於</div></li>
+					<li><div onclick="window.notifyFromHtml('onBtnAboutClick', '{}')" id="btn_about">關於</div></li>
 				</ul>
 			</div>
 		</div>
@@ -99,17 +99,39 @@
 				<div>
 					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "200px" }]}'>
 						<div>
-							<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
-								<div class="group" style="text-align:center;">
-									<div class="hori">
-										<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
-									</div>
-									<div class="hori">
-										<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+							<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "showSplitBar":true, "resizable":false, "panels": [{ "size": "50%", "collapsible":false }, { "collapsible":false }]}'>
+								<div>
+									<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+										<div class="group" style="text-align:center;">
+											<div class="hori">
+												<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
+											</div>
+											<div class="hori">
+												<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+											</div>
+										</div>
+										<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "180px", "width": "100%"}'>
+											<!-- created by script -->
+										</div>
 									</div>
 								</div>
-								<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "180px", "width": "100%"}'>
-									<!-- created by script -->
+								<div>
+									<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+										<div class="group" style="text-align:center; margin-top:10px; ">
+											<div class="hori">
+												<div>粒子數目(最大200):</div>
+												<div id="txt_count" style="color:yellow">0</div>
+											</div>
+										</div>
+										<div class="group" style="text-align:center; margin-top:10px;">
+											<div class="hori">
+												<div>背景顏色</div>
+												<div id="ddb_background" jqx="jqxDropDownButton" data-options='{"width": 80}'>
+													<div id="color_background" jqx="jqxColorPicker" data-options='{ "color": "ffffff", "colorMode": "hue", "width": 220, "height": 220}'></div>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -135,7 +157,7 @@
 												</div>
 											</div>
 											<div class="hori">
-												<div id="dropDownButton" jqx="jqxDropDownButton" data-options='{"width": 80}'>
+												<div id="ddb_color" jqx="jqxDropDownButton" data-options='{"width": 80}'>
 													<div id="color_color" jqx="jqxColorPicker" data-options='{ "color": "ffffff", "colorMode": "hue", "width": 220, "height": 220}'></div>
 												</div>
 											</div>
@@ -210,7 +232,6 @@
 					</div>
 				</div>
 			</div>
-									
 			<div id="win_import" jqx="jqxWindow" data-options='{"autoOpen":false, "resizable": false,"width":"600","height":"300"}'>
 				<div>
 					匯入 / 匯出
@@ -219,6 +240,16 @@
 					<textarea style="width:100%; height:87%; background-color:#222222; color:white"></textarea>
 					<div class="group" style="text-align:center; margin-top:5px;">
 						<input id="btn_confirm" jqx="jqxButton" type="button" value="確定" />
+					</div>
+				</div>
+			</div>
+			<div id="win_about" jqx="jqxWindow" data-options='{"autoOpen":false, "resizable": false, "width": 400}'>
+				<div>
+					幽夢幻境(內部測試版)
+				</div>
+				<div>
+					<div class="hori" style="position:relative; width:100%; text-align:center;">
+						版本1.0<br>上善若水APP<br><img src="res/images/logo.jpg" width="100" height="100"><br><a style="color:gray" href="https://www.facebook.com/pages/上善若水/1653920964852269" target="_blank">https://www.facebook.com/pages/上善若水/1653920964852269</a>
 					</div>
 				</div>
 			</div>
@@ -371,11 +402,15 @@
 			return element;
 		}
 		
-		$("#color_color").on('colorchange', function (event) {
-			$("#dropDownButton").jqxDropDownButton('setContent', getTextElementByColor(event.args.color));
-			$('#photoGallery').css('border-color', "#" + event.args.color.hex);
-		});
-		$("#dropDownButton").jqxDropDownButton('setContent', getTextElementByColor(new $.jqx.color({ hex: "ffaabb" })));
+		function createColorPicker( color, dropdown ){
+			color.on('colorchange', function (event) {
+				dropdown.jqxDropDownButton('setContent', getTextElementByColor(event.args.color));
+			});
+			dropdown.jqxDropDownButton('setContent', getTextElementByColor(new $.jqx.color({ hex: "ffaabb" })));
+		}
+		
+		createColorPicker( $("#color_color"), $("#ddb_color") );
+		createColorPicker( $("#color_background"), $("#ddb_background") );
 		
 		window.haxeStart();
 	}

@@ -2,6 +2,7 @@ package;
 import haxe.Json;
 import haxe.Timer;
 import js.Browser;
+import js.html.Image;
 import model.PanelModel;
 import view.component.TreeView;
 import view.FileController;
@@ -53,6 +54,8 @@ class Main
 				menuController.openImport( 'import' );
 			case 'onBtnExportClick':
 				menuController.openImport( 'export', Json.stringify( model.getRenderList() ) );
+			case 'onBtnAboutClick':
+				menuController.openAbout();
 		}
 	}
 	
@@ -125,6 +128,9 @@ class Main
 		paramsView.addHandler( function( type, params) {
 		//	trace( type );
 			switch( type ) {
+				case ParamsView.ON_BACK_COLOR_CHANGE:
+					var color = params.color;
+					changeBgColor( color.r / 255, color.g / 255, color.b / 255 );
 				case ParamsView.ON_COLOR_CHANGE:
 					model.setParticleColor( model.currentParticle.id, params.color );
 				case ParamsView.ON_BLEND_CHANGE:
@@ -141,6 +147,8 @@ class Main
 			btn_confirmName:j('#btn_confirmName'),
 			txt_name:j('#txt_name'),
 			color_color:j('#color_color' ),
+			color_background:j('#color_background' ),
+			txt_count:j('#txt_count' ),
 			combo_blend:j('#combo_blend' )
 		}
 		
@@ -161,6 +169,7 @@ class Main
 		
 		menuController.config = {
 			win_import:j('#win_import' ),
+			win_about:j('#win_about' ),
 			btn_confirm:j('#win_import #btn_confirm' )
 		}
 		
@@ -176,7 +185,6 @@ class Main
 		//	trace( type );
 			switch( type ) {
 				case PanelModel.ON_INIT:
-					
 					addEventListener( function ( info ) {
 						switch( info[0] ) {
 							case 'tick':
@@ -185,6 +193,8 @@ class Main
 										if ( data.count == 0 ){
 											updateParticle( model.getOutputData( treeController.getItems() ) );
 										}
+										
+										paramsView.setCount( data.count );
 									}
 								});
 								
@@ -203,7 +213,7 @@ class Main
 					treeController.selectItem( treeController.getItems()[0].element );
 					
 				case PanelModel.ON_FORMULA_POS_CHANGE:
-					gridController.initRow( model.currentParticle.id, model.currentParticle.formulaList );
+					gridController.initRow( model.currentParticle.id, model.currentParticle.formulaList, params.id );
 				case PanelModel.ON_TEXTURE_CHANGE:
 					fileController.focus( params.textureId );
 				case PanelModel.ON_FORMULA_CHANGE:
@@ -232,6 +242,14 @@ class Main
 			updateParticle( model.getOutputData( treeController.getItems() ) );
 		});
 		
+		getInfo( function( err, data ) {
+			if ( err == null ) {
+				var bgColor = data.bgColor;
+				paramsView.setBackgroundColor( bgColor[0], bgColor[1], bgColor[2] );
+			}
+		});
+		
+		
 		var initObj:Dynamic = createNewParticle( getId() );
 		initObj.lifetime = 0;
 		initObj.emit.prototype = [
@@ -240,6 +258,11 @@ class Main
 		
 		model.config = [initObj];
 		
+		var img = new Image();
+		img.src = 'res/images/white.jpg';
+		img.onload = function() {
+			fileController.addNewImage( img );
+		}
 	}
 	
 	public static function createNewEmit() {
@@ -328,6 +351,10 @@ class Main
 	
 	public static function getId():String {
 		return untyped __js__('leo.utils.generateUUID' )();
+	}
+	
+	static function changeBgColor( r, g, b ) {
+		untyped __js__('api.changeBgColor')( r, g, b );
 	}
 	
 	static function updateParticle( ary_render:Array<Dynamic> ) {
