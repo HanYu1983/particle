@@ -129,7 +129,7 @@
       " color.r *= colorAdj.r;"
       " color.g *= colorAdj.g;"
       " color.b *= colorAdj.b;"
-      " color.a = u_alpha;"
+      " color.a *= u_alpha;"
       " gl_FragColor = color;"
       "}")))
       
