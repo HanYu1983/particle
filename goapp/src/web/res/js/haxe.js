@@ -233,7 +233,7 @@ Main.prototype = {
 				break;
 			}
 		});
-		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name"), color_color : Main.j("#color_color"), combo_blend : Main.j("#combo_blend")});
+		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name"), color_color : Main.j("#color_color"), color_background : Main.j("#color_background"), txt_count : Main.j("#txt_count"), combo_blend : Main.j("#combo_blend")});
 		this.fileController.set_config({ file_upload : Main.j("#file_upload"), mc_textContainer : Main.j("#mc_textContainer"), btn_removeTexture : Main.j("#btn_removeTexture")});
 		this.fileController.addHandler(function(type3,params3) {
 			switch(type3) {
@@ -313,6 +313,13 @@ Main.prototype = {
 				break;
 			}
 			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
+		});
+		Main.getInfo(function(err1,data1) {
+			if(err1 == null) {
+				var bgColor = data1.bgColor;
+				_g.paramsView.setBackgroundColor(bgColor[0],bgColor[1],bgColor[2]);
+				console.log(data1);
+			}
 		});
 		var initObj = this.createNewParticle(Main.getId());
 		initObj.lifetime = 0;
@@ -1052,6 +1059,9 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			this.getPropContainer("force").hide();
 		}
 	}
+	,setBackgroundColor: function(r,g,b) {
+		this.color_background.jqxColorPicker("setColor",{ r : r * 255, g : g * 255, b : b * 255});
+	}
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
@@ -1085,6 +1095,8 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.combo_blend.on("change",function(event2) {
 			_g.notify(view_ParamsView.ON_BLEND_CHANGE,{ blend : _g.getTypeFromItem(_g.getSelectItem(_g.combo_blend))});
 		});
+		this.color_background = this.config.color_background;
+		this.txt_count = this.config.txt_count;
 	}
 	,getTypeFromItem: function(item) {
 		return Main.j(item.element).find("[ptype]").attr("ptype");

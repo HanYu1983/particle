@@ -19,6 +19,8 @@ class ParamsView extends Model
 	var currentParticleObj:Dynamic;
 	var btn_confirmName:Dynamic;
 	var color_color:Dynamic;
+	var color_background:Dynamic;
+	var txt_count:Dynamic;
 	var combo_blend:Dynamic;
 	var txt_name:Dynamic;
 
@@ -71,6 +73,10 @@ class ParamsView extends Model
 		}
 	}
 	
+	public function setBackgroundColor( r:Float, g:Float, b:Float) {
+		color_background.jqxColorPicker('setColor', { r: r * 255, g: g * 255, b: b * 255 } );
+	}
+	
 	override function init() 
 	{
 		super.init();
@@ -107,6 +113,10 @@ class ParamsView extends Model
 		combo_blend.on('change', function (event) {
 			notify( ON_BLEND_CHANGE, { blend: getTypeFromItem( getSelectItem( combo_blend )) } );
 		});
+		
+		color_background = config.color_background;
+		
+		txt_count = config.txt_count;
 	}
 	
 	function getTypeFromItem( item:Dynamic ) {

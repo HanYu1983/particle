@@ -144,6 +144,8 @@ class Main
 			btn_confirmName:j('#btn_confirmName'),
 			txt_name:j('#txt_name'),
 			color_color:j('#color_color' ),
+			color_background:j('#color_background' ),
+			txt_count:j('#txt_count' ),
 			combo_blend:j('#combo_blend' )
 		}
 		
@@ -180,7 +182,6 @@ class Main
 		//	trace( type );
 			switch( type ) {
 				case PanelModel.ON_INIT:
-					
 					addEventListener( function ( info ) {
 						switch( info[0] ) {
 							case 'tick':
@@ -235,6 +236,15 @@ class Main
 			
 			updateParticle( model.getOutputData( treeController.getItems() ) );
 		});
+		
+		getInfo( function( err, data ) {
+			if ( err == null ) {
+				var bgColor = data.bgColor;
+				paramsView.setBackgroundColor( bgColor[0], bgColor[1], bgColor[2] );
+				trace( data );
+			}
+		});
+		
 		
 		var initObj:Dynamic = createNewParticle( getId() );
 		initObj.lifetime = 0;
