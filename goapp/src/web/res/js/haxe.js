@@ -161,6 +161,9 @@ Main.prototype = {
 		case "onBtnExportClick":
 			this.menuController.openImport("export",JSON.stringify(this.model.getRenderList()));
 			break;
+		case "onBtnAboutClick":
+			this.menuController.openAbout();
+			break;
 		}
 	}
 	,haxeStart: function() {
@@ -242,7 +245,7 @@ Main.prototype = {
 				break;
 			}
 		});
-		this.menuController.set_config({ win_import : Main.j("#win_import"), btn_confirm : Main.j("#win_import #btn_confirm")});
+		this.menuController.set_config({ win_import : Main.j("#win_import"), win_about : Main.j("#win_about"), btn_confirm : Main.j("#win_import #btn_confirm")});
 		this.menuController.addHandler(function(type4,params4) {
 			switch(type4) {
 			case "ON_IMPORT_CLICK":
@@ -973,6 +976,9 @@ view_MenuController.prototype = $extend(model_Model.prototype,{
 			break;
 		}
 	}
+	,openAbout: function() {
+		this.win_about.jqxWindow("open");
+	}
 	,init: function() {
 		var _g = this;
 		model_Model.prototype.init.call(this);
@@ -987,6 +993,7 @@ view_MenuController.prototype = $extend(model_Model.prototype,{
 				break;
 			}
 		});
+		this.win_about = this.config.win_about;
 	}
 	,setTextarea: function(str) {
 		this.win_import.find("textarea").val(str);

@@ -53,6 +53,8 @@ class Main
 				menuController.openImport( 'import' );
 			case 'onBtnExportClick':
 				menuController.openImport( 'export', Json.stringify( model.getRenderList() ) );
+			case 'onBtnAboutClick':
+				menuController.openAbout();
 		}
 	}
 	
@@ -161,6 +163,7 @@ class Main
 		
 		menuController.config = {
 			win_import:j('#win_import' ),
+			win_about:j('#win_about' ),
 			btn_confirm:j('#win_import #btn_confirm' )
 		}
 		

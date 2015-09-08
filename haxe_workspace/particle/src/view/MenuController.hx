@@ -12,6 +12,7 @@ class MenuController extends Model
 	public static var ON_IMPORT_CLICK = 'ON_IMPORT_CLICK';
 	
 	var win_import:Dynamic;
+	var win_about:Dynamic;
 	var btn_confirm:Dynamic;
 
 	public function new() 
@@ -31,6 +32,10 @@ class MenuController extends Model
 		}
 	}
 	
+	public function openAbout() {
+		win_about.jqxWindow( 'open' );
+	}
+	
 	override function init() 
 	{
 		super.init();
@@ -44,6 +49,9 @@ class MenuController extends Model
 					notify( ON_IMPORT_CLICK, { config: getTextarea() } );
 			}
 		});
+		
+		win_about = config.win_about;
+		
 	}
 	
 	function setTextarea( str ) {
