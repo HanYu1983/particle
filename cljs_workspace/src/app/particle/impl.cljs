@@ -68,7 +68,7 @@
         nil 
         (js-obj 
           "count" (count (get-in ctx [:part :ps]))
-          "bgColor" (clj->js (get-in ctx [:bgColor])))
+          "bgColor" (apply array (get-in ctx [:bgColor])))
         data
       ]))
   ctx)
