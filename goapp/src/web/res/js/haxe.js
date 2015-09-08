@@ -309,6 +309,7 @@ Main.prototype = {
 				default:
 					_g.treeController.addToWithLabel(params5.id,params5.particle.name,parentItem1);
 				}
+				params5.particle.tex = _g.fileController.getImageIdByPos(0);
 				break;
 			case "ON_REMOVE_PARTICLE":
 				_g.treeController.remove(_g.treeController.getItemById(params5.id).element);
@@ -331,11 +332,11 @@ Main.prototype = {
 		var initObj = this.createNewParticle(Main.getId());
 		initObj.lifetime = 0;
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
-		this.model.set_config([initObj]);
 		var img = new Image();
 		img.src = "res/images/white.jpg";
 		img.onload = function() {
 			_g.fileController.addNewImage(img);
+			_g.model.set_config([initObj]);
 		};
 	}
 	,createNewParticle: function(id) {
@@ -797,6 +798,9 @@ view_FileController.prototype = $extend(model_Model.prototype,{
 		return Lambda.find(this.ary_images,function(imgdom) {
 			return imgdom.attr("id") == id;
 		});
+	}
+	,getImageIdByPos: function(pos) {
+		return this.ary_images[0].attr("id");
 	}
 	,addNewImage: function(img) {
 		window.document.body.appendChild(img);

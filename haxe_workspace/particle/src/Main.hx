@@ -229,14 +229,13 @@ class Main
 						case parentItem:
 							treeController.addToWithLabel( params.id, params.particle.name, parentItem );
 					}
+					params.particle.tex = fileController.getImageIdByPos( 0 );
 				case PanelModel.ON_REMOVE_PARTICLE:
 					treeController.remove( treeController.getItemById( params.id ).element );
 				case PanelModel.ON_NAME_CHANGE:
 					treeController.setItemName( params.id, params.name );
 				case PanelModel.ON_CURRENT_PARTICLE_CHANGE:
 					fileController.focus( model.currentParticle.tex );
-					
-					
 			}
 			
 			updateParticle( model.getOutputData( treeController.getItems() ) );
@@ -249,19 +248,17 @@ class Main
 			}
 		});
 		
-		
 		var initObj:Dynamic = createNewParticle( getId() );
 		initObj.lifetime = 0;
 		initObj.emit.prototype = [
 			createNewParticle( getId() )
 		];
 		
-		model.config = [initObj];
-		
 		var img = new Image();
 		img.src = 'res/images/white.jpg';
 		img.onload = function() {
 			fileController.addNewImage( img );
+			model.config = [initObj];
 		}
 	}
 	

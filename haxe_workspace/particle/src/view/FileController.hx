@@ -38,6 +38,10 @@ class FileController extends Model
 		});
 	}
 	
+	public function getImageIdByPos( pos:Int ) {
+		return ary_images[0].attr( 'id' );
+	}
+	
 	public function addNewImage( img ) {
 		Browser.document.body.appendChild( img );
 		var imgDom:Dynamic = Main.j( img );
