@@ -399,7 +399,7 @@ Main.prototype = {
 		return ary;
 	}
 	,onResize: function(e) {
-		this.webgl.attr("width",this.canvas_container.width());
+		this.webgl.attr("width",400);
 		this.webgl.attr("height",this.canvas_container.height());
 	}
 	,onMousemove: function(e) {
