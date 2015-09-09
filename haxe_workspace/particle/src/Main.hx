@@ -63,6 +63,8 @@ class Main
 		webgl.mouseup( onmouseup );
 		webgl.mousemove( onMousemove );
 		
+		initCljs( webgl[0] );
+		
 		treeController.config = {
 			btn_addTreeNode:j('#btn_addTreeNode' ),
 			btn_removeTreeNode:j('#btn_removeTreeNode' ),
@@ -217,7 +219,7 @@ class Main
 								var sum = Lambda.fold( ary_elapsedTime, function( t, curr ) {
 									return curr + t;
 								}, 0 );
-								paramsView.setFps( Math.floor( 1 / ( sum / ary_elapsedTime.length )));
+								paramsView.setFps( Math.ceil( 1 / ( sum / ary_elapsedTime.length )));
 						}
 					});
 					treeController.selectItem( treeController.getItems()[0].element );
@@ -400,6 +402,10 @@ class Main
 	
 	public static function getId():String {
 		return untyped __js__('leo.utils.generateUUID' )();
+	}
+	
+	static function initCljs( canvas ) {
+		untyped __js__('api.init')( canvas );
 	}
 	
 	static function clearParticle() {

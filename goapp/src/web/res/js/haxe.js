@@ -159,6 +159,9 @@ Main.showMessage = function(msg) {
 Main.getId = function() {
 	return leo.utils.generateUUID();
 };
+Main.initCljs = function(canvas) {
+	api.init(canvas);
+};
 Main.clearParticle = function() {
 	api.clearParticle();
 };
@@ -215,6 +218,7 @@ Main.prototype = {
 		this.webgl.mousedown($bind(this,this.onmousedown));
 		this.webgl.mouseup($bind(this,this.onmouseup));
 		this.webgl.mousemove($bind(this,this.onMousemove));
+		Main.initCljs(this.webgl[0]);
 		this.treeController.set_config({ btn_addTreeNode : Main.j("#btn_addTreeNode"), btn_removeTreeNode : Main.j("#btn_removeTreeNode"), tree_particle : Main.j("#tree_particle")});
 		this.treeController.addHandler(function(type,params) {
 			switch(type) {
@@ -330,7 +334,7 @@ Main.prototype = {
 						var sum = Lambda.fold(_g.ary_elapsedTime,function(t,curr) {
 							return curr + t;
 						},0);
-						_g.paramsView.setFps(Math.floor(1 / (sum / _g.ary_elapsedTime.length)));
+						_g.paramsView.setFps(Math.ceil(1 / (sum / _g.ary_elapsedTime.length)));
 						break;
 					}
 				});
