@@ -248,6 +248,7 @@ class Main
 					params.particle.tex = fileController.getImageIdByPos( 0 );
 				case PanelModel.ON_REMOVE_PARTICLE:
 					treeController.remove( treeController.getItemById( params.id ).element );
+					clearParticle();
 				case PanelModel.ON_NAME_CHANGE:
 					treeController.setItemName( params.id, params.name );
 				case PanelModel.ON_CURRENT_PARTICLE_CHANGE:

@@ -368,6 +368,7 @@ Main.prototype = {
 				break;
 			case "ON_REMOVE_PARTICLE":
 				_g.treeController.remove(_g.treeController.getItemById(params5.id).element);
+				Main.clearParticle();
 				break;
 			case "ON_NAME_CHANGE":
 				_g.treeController.setItemName(params5.id,params5.name);
