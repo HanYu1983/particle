@@ -339,6 +339,8 @@ Main.prototype = {
 					}
 				});
 				_g.treeController.selectItem(_g.treeController.getItems()[0].element);
+				_g.targetPos[0] = _g.webgl.width() / 2;
+				_g.targetPos[1] = _g.webgl.height() / 2;
 				break;
 			case "ON_FORMULA_POS_CHANGE":
 				_g.gridController.initRow(_g.model.currentParticle.id,_g.model.currentParticle.formulaList,params5.id);
@@ -380,6 +382,8 @@ Main.prototype = {
 		initObj.lifetime = 0;
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
 		initObj.emit.prototype[0].formulaList = [this.createFormula(Main.getId(),"scale-x","linear",20,0,0,0,0),this.createFormula(Main.getId(),"scale-y","linear",20,0,0,0,0)];
+		initObj.pos[0] = this.webgl.width() / 2;
+		initObj.pos[1] = this.webgl.height() / 2;
 		this.loadImage("res/images/glow.jpg",function(img) {
 			_g.fileController.addNewImage(img);
 			_g.loadImage("res/images/leadB_32_32.png",function(img1) {
@@ -397,7 +401,7 @@ Main.prototype = {
 		};
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子", lifetime : 2, mass : 1, color : [1,1,1,1], size : [40,40], pos : [200,200,0], vel : [0,0,0], blending : "add", tex : "", emit : Main.createNewEmit()};
+		return { id : id, name : "粒子", lifetime : 2, mass : 1, color : [1,1,1,1], size : [40,40], pos : [0,0,0], vel : [0,0,0], blending : "add", tex : "", emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];

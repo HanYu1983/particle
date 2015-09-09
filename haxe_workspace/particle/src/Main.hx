@@ -191,6 +191,7 @@ class Main
 		//	trace( type );
 			switch( type ) {
 				case PanelModel.ON_INIT:
+					
 					addEventListener( function ( info ) {
 						switch( info[0] ) {
 							case 'tick':
@@ -223,6 +224,9 @@ class Main
 						}
 					});
 					treeController.selectItem( treeController.getItems()[0].element );
+					
+					targetPos[0] = webgl.width() / 2;
+					targetPos[1] = webgl.height() / 2;
 					
 				case PanelModel.ON_FORMULA_POS_CHANGE:
 					gridController.initRow( model.currentParticle.id, model.currentParticle.formulaList, params.id );
@@ -273,6 +277,9 @@ class Main
 			createFormula( getId(), 'scale-y', 'linear', 20, 0, 0, 0, 0 ),
 		];
 		
+		initObj.pos[0] = webgl.width() / 2;
+		initObj.pos[1] = webgl.height() / 2;
+		
 		loadImage( 'res/images/glow.jpg', function( img ) {
 			fileController.addNewImage( img );
 			loadImage( 'res/images/leadB_32_32.png', function( img ) {
@@ -299,7 +306,7 @@ class Main
 			mass:1,
 			color:[1, 1, 1, 1],
 			size:[40, 40],
-			pos:[200, 200, 0], 
+			pos:[0, 0, 0], 
 			vel:[0, 0, 0],
 			blending:'add',
 			tex:'',
