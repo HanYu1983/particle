@@ -5,6 +5,26 @@
     [cljs.core.async :refer [>! <! close! chan]]
     [clojure.string :as str]))
 
+(defn content [url]
+  (let [ret (chan)]
+    (.ajax js/$ (js-obj
+      "url" "/proxy"
+      "dataType" "text"
+      "data"
+      (js-obj
+        "url" url)
+      "success"
+      (fn [data]
+        (go
+          (>! ret [nil data])
+          (close! ret)))
+      "error"
+      (fn [xhr _ err]
+        (go
+          (>! ret [err])
+          (close! ret)))))
+    ret))
+    
 (defn goog-finance-info-url [id]
   (str 
     "https://www.google.com/finance/info?infotype=infoquoteall"
@@ -84,7 +104,7 @@
           (first pass2)
           (rest pass2))
           
-        ; 2014/12/27的量有問題所以過慮掉
+        ; 2014/12/27的量有問題所以過濾掉
         pass4
         (filter
           (fn [[d o h l c v]]
@@ -110,26 +130,6 @@
     "&startdate=" startdate
     "&start=" start
     "&num=" num))
-
-(defn content [url]
-  (let [ret (chan)]
-    (.ajax js/$ (js-obj
-      "url" "/proxy"
-      "dataType" "text"
-      "data"
-      (js-obj
-        "url" url)
-      "success"
-      (fn [data]
-        (go
-          (>! ret [nil data])
-          (close! ret)))
-      "error"
-      (fn [xhr _ err]
-        (go
-          (>! ret [err])
-          (close! ret)))))
-    ret))
 
 ;<tr>
 ;<td class="lm">Jun 25, 2015
