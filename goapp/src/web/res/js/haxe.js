@@ -224,7 +224,7 @@ Main.prototype = {
 			case "ON_BTN_ADD_TREE_NODE_CLICK":
 				var newId = Main.getId();
 				var parentItem = _g.treeController.getSelectItem();
-				_g.model.addParticle(newId,parentItem.id,_g.createNewParticle(newId));
+				_g.model.addParticle(newId,null,_g.createNewParticle(newId));
 				break;
 			case "ON_TREE_NODE_CLICK":
 				var item = params.item;

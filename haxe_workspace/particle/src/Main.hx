@@ -79,7 +79,8 @@ class Main
 				case TreeController.ON_BTN_ADD_TREE_NODE_CLICK:
 					var newId = getId();
 					var parentItem = treeController.getSelectItem();
-					model.addParticle( newId, parentItem.id, createNewParticle( newId ) );
+					model.addParticle( newId, null, createNewParticle( newId ) );
+					//model.addParticle( newId, parentItem.id, createNewParticle( newId ) );
 				case TreeView.ON_TREE_NODE_CLICK:
 					var item = params.item;
 					model.currentParticle = model.findParticleById( item.id ).particle;
