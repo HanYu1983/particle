@@ -2,6 +2,7 @@
   (:require-macros
     [cljs.core.async.macros :as am])
   (:require
+    [stock.tool :as stl]
     [app.dbfile :as db]
     [cljs.core.async :as a]
     [app.stock.abstract :as abstract]

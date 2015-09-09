@@ -5,6 +5,28 @@
     [cljs.core.async :refer [>! <! close! chan]]
     [clojure.string :as str]))
 
+(defn goog-finance-info-url [id]
+  (str 
+    "https://www.google.com/finance/info?infotype=infoquoteall"
+    "&q=" id))
+    
+(defn parse-info [content]
+  (let [json (aget (.parse js/JSON content) 0)
+        date 
+        (.toString (js/Date. (.-lt_dts json)))
+        volume (.-vo json)]
+    [date (.-op json) (.-hi json) (.-lo json) (.-l_fix json) 0]))
+    
+(defn todayPrice [id]
+  (go
+    (let [url (goog-finance-info-url id)
+          [err content] (<! (content url))
+          content (str/replace content #"//" "")]
+          (.log js/console content)
+      (if err
+        [err]
+        [nil (parse-info content)]))))
+
 (defn goog-finance-getprices-url [id ran]
   (str
     "https://www.google.com/finance/getprices?q=" id
