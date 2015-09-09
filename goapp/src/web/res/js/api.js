@@ -137,6 +137,13 @@ var api = api || {};
 		common.onView.onNext(['clear particle', null])
 	}
 	
+	/**
+	初使化，這必須在一開始呼叫
+	*/
+	function init( canvas ){
+		common.onView.onNext(['init', canvas])
+	}
+	
 	pkg.editParticle = editParticle
 	pkg.changeCenterPos = changeCenterPos
 	pkg.info = info
@@ -145,5 +152,6 @@ var api = api || {};
 	pkg.changeLimit = changeLimit
 	pkg.changeBgColor = changeBgColor
 	pkg.clearParticle = clearParticle
+	pkg.init = init
 	
 }) (api)

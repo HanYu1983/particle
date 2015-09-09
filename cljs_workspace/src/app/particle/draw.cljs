@@ -33,7 +33,7 @@
       ctx)))
     
 (defn draw3D [canvas gl]
-  (let [canvas-dom (aget canvas 0)
+  (let [canvas-dom canvas
         mesh (mesh/plain gl)
         sprite-shader (shader/spriteProgramObject gl)
         [cw ch] [(.-width canvas-dom) (.-height canvas-dom)]

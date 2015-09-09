@@ -1,5 +1,6 @@
 <html>
 	<body>
+		若沒看到粒子，先按change color<br>
 		<form name=info>
 			<input type=number value=100 name="x">
 			<input type=number value=100 name="y">
@@ -27,6 +28,8 @@
 		</script>
 		<script>
 			setTimeout( function(){
+				
+				api.init( $('#webgl')[0] )
 				
 				api.addTexture( "img_face", $("#img_face")[0] )
 				//api.addTexture( "img_map", $("#img_map")[0] )
