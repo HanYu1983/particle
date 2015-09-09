@@ -32,6 +32,7 @@ class Main
 	var isMouseDown = false;
 	var targetPos = [0.0, 0.0];
 	var currentPos = [0.0, 0.0];
+	var ary_elapsedTime = new Array<Float>();
 	
 	public function new() 
 	{
@@ -150,6 +151,7 @@ class Main
 			color_color:j('#color_color' ),
 			color_background:j('#color_background' ),
 			txt_count:j('#txt_count' ),
+			txt_fps:j('#txt_fps' ),
 			combo_blend:j('#combo_blend' )
 		}
 		
@@ -206,6 +208,16 @@ class Main
 									
 									model.setParticleRootsPos( currentPos[0], currentPos[1] );
 								}
+								var elapsedTime = Std.parseFloat( info[1] );
+								if ( ary_elapsedTime.length > 20 ) {
+									ary_elapsedTime.shift();
+								}
+								ary_elapsedTime.push( elapsedTime );
+								
+								var sum = Lambda.fold( ary_elapsedTime, function( t, curr ) {
+									return curr + t;
+								}, 0 );
+								paramsView.setFps( Math.floor( 1 / ( sum / ary_elapsedTime.length )));
 						}
 					});
 					treeController.selectItem( treeController.getItems()[0].element );
@@ -239,12 +251,15 @@ class Main
 			updateParticle( model.getOutputData( treeController.getItems() ) );
 		});
 		
+		//以後可能可以存下來
+		/*
 		getInfo( function( err, data ) {
 			if ( err == null ) {
 				var bgColor = data.bgColor;
 				paramsView.setBackgroundColor( bgColor[0], bgColor[1], bgColor[2] );
 			}
 		});
+		*/
 		
 		var initObj:Dynamic = createNewParticle( getId() );
 		initObj.lifetime = 0;
@@ -255,18 +270,12 @@ class Main
 			createFormula( getId(), 'scale-x', 'linear', 20, 0, 0, 0, 0 ),
 			createFormula( getId(), 'scale-y', 'linear', 20, 0, 0, 0, 0 ),
 		];
-		/*
-		var img = new Image();
-		img.src = 'res/images/glow.jpg';
-		img.onload = function() {
-			fileController.addNewImage( img );
-			model.config = [initObj];
-		}
-		*/
+		
 		loadImage( 'res/images/glow.jpg', function( img ) {
 			fileController.addNewImage( img );
 			loadImage( 'res/images/leadB_32_32.png', function( img ) {
 				fileController.addNewImage( img );
+				paramsView.setBackgroundColor( 0, 0, 0 );
 				model.config = [initObj];
 			});
 		});

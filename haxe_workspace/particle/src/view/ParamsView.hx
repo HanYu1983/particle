@@ -22,6 +22,7 @@ class ParamsView extends Model
 	var color_color:Dynamic;
 	var color_background:Dynamic;
 	var txt_count:Dynamic;
+	var txt_fps:Dynamic;
 	var combo_blend:Dynamic;
 	var txt_name:Dynamic;
 
@@ -33,6 +34,10 @@ class ParamsView extends Model
 	
 	public function setCount( count ) {
 		txt_count.html( count );
+	}
+	
+	public function setFps( fps ) {
+		txt_fps.html( fps );
 	}
 	
 	public function setValues( particleObj:Dynamic, isEmit:Bool ) {
@@ -132,6 +137,7 @@ class ParamsView extends Model
 		});
 		
 		txt_count = config.txt_count;
+		txt_fps = config.txt_fps;
 	}
 	
 	function getTypeFromItem( item:Dynamic ) {

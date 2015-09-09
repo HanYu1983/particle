@@ -90,6 +90,7 @@ List.prototype = {
 	}
 };
 var Main = function() {
+	this.ary_elapsedTime = [];
 	this.currentPos = [0.0,0.0];
 	this.targetPos = [0.0,0.0];
 	this.isMouseDown = false;
@@ -283,7 +284,7 @@ Main.prototype = {
 				break;
 			}
 		});
-		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name"), color_color : Main.j("#color_color"), color_background : Main.j("#color_background"), txt_count : Main.j("#txt_count"), combo_blend : Main.j("#combo_blend")});
+		this.paramsView.set_config({ root : Main.j("#mc_props_container"), btn_confirmName : Main.j("#btn_confirmName"), txt_name : Main.j("#txt_name"), color_color : Main.j("#color_color"), color_background : Main.j("#color_background"), txt_count : Main.j("#txt_count"), txt_fps : Main.j("#txt_fps"), combo_blend : Main.j("#combo_blend")});
 		this.fileController.set_config({ file_upload : Main.j("#file_upload"), mc_textContainer : Main.j("#mc_textContainer"), btn_removeTexture : Main.j("#btn_removeTexture")});
 		this.fileController.addHandler(function(type3,params3) {
 			switch(type3) {
@@ -323,6 +324,13 @@ Main.prototype = {
 							_g.currentPos[1] += (_g.targetPos[1] - _g.currentPos[1]) * .2;
 							_g.model.setParticleRootsPos(_g.currentPos[0],_g.currentPos[1]);
 						}
+						var elapsedTime = parseFloat(info[1]);
+						if(_g.ary_elapsedTime.length > 20) _g.ary_elapsedTime.shift();
+						_g.ary_elapsedTime.push(elapsedTime);
+						var sum = Lambda.fold(_g.ary_elapsedTime,function(t,curr) {
+							return curr + t;
+						},0);
+						_g.paramsView.setFps(Math.floor(1 / (sum / _g.ary_elapsedTime.length)));
 						break;
 					}
 				});
@@ -364,12 +372,6 @@ Main.prototype = {
 			}
 			Main.updateParticle(_g.model.getOutputData(_g.treeController.getItems()));
 		});
-		Main.getInfo(function(err1,data1) {
-			if(err1 == null) {
-				var bgColor = data1.bgColor;
-				_g.paramsView.setBackgroundColor(bgColor[0],bgColor[1],bgColor[2]);
-			}
-		});
 		var initObj = this.createNewParticle(Main.getId());
 		initObj.lifetime = 0;
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
@@ -378,6 +380,7 @@ Main.prototype = {
 			_g.fileController.addNewImage(img);
 			_g.loadImage("res/images/leadB_32_32.png",function(img1) {
 				_g.fileController.addNewImage(img1);
+				_g.paramsView.setBackgroundColor(0,0,0);
 				_g.model.set_config([initObj]);
 			});
 		});
@@ -1078,6 +1081,9 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 	setCount: function(count) {
 		this.txt_count.html(count);
 	}
+	,setFps: function(fps) {
+		this.txt_fps.html(fps);
+	}
 	,setValues: function(particleObj,isEmit) {
 		this.currentParticleObj = particleObj;
 		var particle = particleObj.particle;
@@ -1156,6 +1162,7 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			_g.notify(view_ParamsView.ON_BACK_COLOR_CHANGE,{ color : color1});
 		});
 		this.txt_count = this.config.txt_count;
+		this.txt_fps = this.config.txt_fps;
 	}
 	,getTypeFromItem: function(item) {
 		return Main.j(item.element).find("[ptype]").attr("ptype");
