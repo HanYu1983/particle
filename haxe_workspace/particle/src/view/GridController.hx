@@ -227,11 +227,4 @@ class GridController extends Model
 		return combo.jqxComboBox('getSelectedItem'); 
 	}
 	
-	function logItems( combo ) {
-		
-		Lambda.foreach( combo.jqxComboBox('getItems'), function( obj ) {
-			trace( Main.j( obj.label ).attr( 'ptype' ) );
-			return true;
-		});
-	}
 }

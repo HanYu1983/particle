@@ -62,9 +62,6 @@ class Main
 		webgl.mouseup( onmouseup );
 		webgl.mousemove( onMousemove );
 		
-		//untyped __js__( 'goog.require("app.particle.main")' );
-		
-		
 		treeController.config = {
 			btn_addTreeNode:j('#btn_addTreeNode' ),
 			btn_removeTreeNode:j('#btn_removeTreeNode' ),
@@ -80,7 +77,6 @@ class Main
 					var newId = getId();
 					var parentItem = treeController.getSelectItem();
 					model.addParticle( newId, null, createNewParticle( newId ) );
-					//model.addParticle( newId, parentItem.id, createNewParticle( newId ) );
 				case TreeView.ON_TREE_NODE_CLICK:
 					var item = params.item;
 					model.currentParticle = model.findParticleById( item.id ).particle;
@@ -208,11 +204,7 @@ class Main
 									currentPos[0] += ( targetPos[0] - currentPos[0] ) * .2;
 									currentPos[1] += ( targetPos[1] - currentPos[1] ) * .2;
 									
-									Lambda.foreach( model.getRenderList(), function( render ) {
-										moveParticle( render.id, currentPos[0], currentPos[1] );
-										return true;
-									});
-									
+									model.setParticleRootsPos( currentPos[0], currentPos[1] );
 								}
 						}
 					});

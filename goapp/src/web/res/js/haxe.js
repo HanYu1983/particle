@@ -321,10 +321,7 @@ Main.prototype = {
 						if(Math.abs(_g.targetPos[0] - _g.currentPos[0]) > 1) {
 							_g.currentPos[0] += (_g.targetPos[0] - _g.currentPos[0]) * .2;
 							_g.currentPos[1] += (_g.targetPos[1] - _g.currentPos[1]) * .2;
-							Lambda.foreach(_g.model.getRenderList(),function(render) {
-								Main.moveParticle(render.id,_g.currentPos[0],_g.currentPos[1]);
-								return true;
-							});
+							_g.model.setParticleRootsPos(_g.currentPos[0],_g.currentPos[1]);
 						}
 						break;
 					}
@@ -1016,12 +1013,6 @@ view_GridController.prototype = $extend(model_Model.prototype,{
 	}
 	,getSelectItem: function(combo) {
 		return combo.jqxComboBox("getSelectedItem");
-	}
-	,logItems: function(combo) {
-		Lambda.foreach(combo.jqxComboBox("getItems"),function(obj) {
-			console.log(Main.j(obj.label).attr("ptype"));
-			return true;
-		});
 	}
 });
 var view_MenuController = function() {
