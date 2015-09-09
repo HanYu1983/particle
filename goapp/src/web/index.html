@@ -95,7 +95,13 @@
 			</div>
 		</div>
 		<div>
-			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "resizable":false, "panels": [{ "size": 770,"min":770, "collapsible":false }, {"collapsible":false}]}'>
+			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "resizable":false, "panels": [{ "size": "50%","min":"50%", "collapsible":false }, {"collapsible":false}]}'>
+				<div>
+					
+					<div id="canvas_container" style="position:relative; width:100%; height:100%">
+						<canvas id='webgl' width=800 height=600></canvas>
+					</div>
+				</div>
 				<div>
 					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "150px" }]}'>
 						<div>
@@ -231,11 +237,6 @@
 						</div>
 					</div>
 					
-				</div>
-				<div>
-					<div id="canvas_container" style="position:relative; width:100%; height:100%">
-						<canvas id='webgl' width=800 height=600></canvas>
-					</div>
 				</div>
 			</div>
 			<div id="win_import" jqx="jqxWindow" data-options='{"autoOpen":false, "resizable": false,"width":"600","height":"300"}'>
