@@ -560,11 +560,7 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 		this.notify(model_PanelModel.ON_TEXTURE_CHANGE,{ textureId : tid});
 	}
 	,clearAll: function() {
-		var _g = this;
-		Lambda.foreach(this._ary_particles,function(obj) {
-			_g.removeParticle(obj.particle.id);
-			return true;
-		});
+		while(this._ary_particles.length > 0) this.removeParticle(this._ary_particles[this._ary_particles.length - 1].id);
 		this._ary_particles = [];
 		this._ary_renderList = [];
 	}

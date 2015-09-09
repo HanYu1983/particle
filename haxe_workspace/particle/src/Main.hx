@@ -52,6 +52,8 @@ class Main
 	}
 	
 	function haxeStart() {
+		
+		
 		canvas_container = j( '#canvas_container' );
 		webgl = j( '#webgl' );
 		
@@ -60,6 +62,7 @@ class Main
 		webgl.mouseup( onmouseup );
 		webgl.mousemove( onMousemove );
 		
+		//untyped __js__( 'goog.require("app.particle.main")' );
 		
 		
 		treeController.config = {

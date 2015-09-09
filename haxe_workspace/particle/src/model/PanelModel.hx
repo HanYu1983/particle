@@ -55,11 +55,9 @@ class PanelModel extends Model
 	}
 	
 	public function clearAll() {
-		_ary_particles.foreach( function( obj ) {
-			removeParticle( obj.particle.id );
-			return true;
-		});
-		
+		while ( _ary_particles.length > 0 ) {
+			removeParticle( _ary_particles[ _ary_particles.length - 1 ].id );
+		}
 		_ary_particles = new Array<Dynamic>();
 		_ary_renderList = new Array<Dynamic>();
 	}
