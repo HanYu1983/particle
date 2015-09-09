@@ -31,7 +31,7 @@
                 "color" (array 1 0 1 1)
                 "size" (array 10 20)
                 "vel" (array 0 0 0)
-                "tex" "img_map"
+                "tex" "img_face"
                 "formulaList"
                 (array
                   (array "vr" "randStartAdd" 6.28 0 0 0 0)
@@ -39,7 +39,7 @@
                   (array "y" "randStartAdd" 200 0 0 0 0)
                 ))))
           "color" (array 0 0 1 1)
-          "size" (array 30 10)
+          "size" (array 100 100)
           "pos" (array 10 10 0) 
           "vel" (array 0 0 0)
           "tex" "img_face"
@@ -55,10 +55,8 @@
         onModel (chan)
         onModelEvent (chan)
         onTick (chan)
-        mspf (int (/ 1000 30))
-        canvas (js/$ "#webgl")
-        gl (glutil/getContext (aget canvas 0) (js-obj))
-        draw (d/draw3D canvas gl)]
+        fps 30
+        mspf (int (/ 1000 fps))]
     
     ; 接收view的事件
     (.subscribe js/common.onView
@@ -95,17 +93,16 @@
             :ps '() 
             :limit 200
           }
-          :bgColor [0.0 0.5 0.35]
+          :bgColor [0 0 0]
           :centerPos [0 0]
           :onModel onModel
-          :gl gl
         } 
       ]
       (let [[v ch] (alts! [onView onTick])]
         (recur
           (condp = ch
             onTick
-            (let []
+            (let [draw (or (:draw ctx) identity)]
               (go
                 (>! onModelEvent ["tick" v]))
               (-> ctx

@@ -3,9 +3,19 @@
     [cljs.core.async.macros :as am])
   (:require
     [cljs.core.async :as a]
+    [gl.util :as glutil]
     [gl.texture :as gltex]
     [tool.particle :as part]
+    [app.particle.draw :as d]
     [app.particle.abstract :as abstract]))
+    
+(defmethod abstract/onViewCommand "init" [_ data ctx]
+  (let [canvas data
+        gl (glutil/getContext canvas (js-obj))
+        draw (d/draw3D canvas gl)]
+    (-> ctx
+      (assoc :gl gl)
+      (assoc :draw draw))))
     
 (defmethod abstract/onViewCommand "edit-particle" [_ data ctx]
   (let [partInfo data
