@@ -229,7 +229,10 @@ Main.prototype = {
 			case "ON_BTN_ADD_TREE_NODE_CLICK":
 				var newId = Main.getId();
 				var parentItem = _g.treeController.getSelectItem();
-				_g.model.addParticle(newId,null,_g.createNewParticle(newId));
+				var newParticle = _g.createNewParticle(newId);
+				newParticle.pos[0] = _g.targetPos[0];
+				newParticle.pos[1] = _g.targetPos[1];
+				_g.model.addParticle(newId,null,newParticle);
 				break;
 			case "ON_TREE_NODE_CLICK":
 				var item = params.item;

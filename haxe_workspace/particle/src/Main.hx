@@ -79,7 +79,12 @@ class Main
 				case TreeController.ON_BTN_ADD_TREE_NODE_CLICK:
 					var newId = getId();
 					var parentItem = treeController.getSelectItem();
-					model.addParticle( newId, null, createNewParticle( newId ) );
+					
+					var newParticle:Dynamic = createNewParticle( newId );
+					newParticle.pos[0] = targetPos[0];
+					newParticle.pos[1] = targetPos[1];
+					
+					model.addParticle( newId, null, newParticle );
 				case TreeView.ON_TREE_NODE_CLICK:
 					var item = params.item;
 					model.currentParticle = model.findParticleById( item.id ).particle;
