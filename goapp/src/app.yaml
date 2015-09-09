@@ -4,8 +4,8 @@ runtime: go
 api_version: go1
 
 handlers:
-- url: /web
-  static_dir: web
+- url: /particle
+  static_dir: particle
 - url: /stock
   static_dir: stock
 - url: /cocoon
