@@ -104,7 +104,7 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.createNewEmit = function() {
-	return { count : 1, duration : 0.5, angle : 0, range : 0, force : 0};
+	return { count : 1, duration : 0.05, angle : 0, range : 6.28, force : 100};
 };
 Main.engToChinese = function(eng) {
 	switch(eng) {
@@ -373,15 +373,24 @@ Main.prototype = {
 		var initObj = this.createNewParticle(Main.getId());
 		initObj.lifetime = 0;
 		initObj.emit.prototype = [this.createNewParticle(Main.getId())];
-		var img = new Image();
-		img.src = "res/images/white.jpg";
-		img.onload = function() {
+		initObj.emit.prototype[0].formulaList = [this.createFormula(Main.getId(),"scale-x","linear",20,0,0,0,0),this.createFormula(Main.getId(),"scale-y","linear",20,0,0,0,0)];
+		this.loadImage("res/images/glow.jpg",function(img) {
 			_g.fileController.addNewImage(img);
-			_g.model.set_config([initObj]);
+			_g.loadImage("res/images/leadB_32_32.png",function(img1) {
+				_g.fileController.addNewImage(img1);
+				_g.model.set_config([initObj]);
+			});
+		});
+	}
+	,loadImage: function(src,cb) {
+		var img = new Image();
+		img.src = src;
+		img.onload = function() {
+			cb(img);
 		};
 	}
 	,createNewParticle: function(id) {
-		return { id : id, name : "粒子", lifetime : 5, mass : 3, color : [1,1,1,1], size : [10,10], pos : [0,0,0], vel : [0,0,0], blending : "normal", tex : "", emit : Main.createNewEmit()};
+		return { id : id, name : "粒子", lifetime : 2, mass : 1, color : [1,1,1,1], size : [40,40], pos : [200,200,0], vel : [0,0,0], blending : "add", tex : "", emit : Main.createNewEmit()};
 	}
 	,createFormula: function(id,ptype,method,v1,v2,v3,v4,v5) {
 		var ary = [];

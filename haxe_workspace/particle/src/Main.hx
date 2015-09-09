@@ -251,22 +251,58 @@ class Main
 		initObj.emit.prototype = [
 			createNewParticle( getId() )
 		];
-		
+		initObj.emit.prototype[0].formulaList = [ 
+			createFormula( getId(), 'scale-x', 'linear', 20, 0, 0, 0, 0 ),
+			createFormula( getId(), 'scale-y', 'linear', 20, 0, 0, 0, 0 ),
+		];
+		/*
 		var img = new Image();
-		img.src = 'res/images/white.jpg';
+		img.src = 'res/images/glow.jpg';
 		img.onload = function() {
 			fileController.addNewImage( img );
 			model.config = [initObj];
+		}
+		*/
+		loadImage( 'res/images/glow.jpg', function( img ) {
+			fileController.addNewImage( img );
+			loadImage( 'res/images/leadB_32_32.png', function( img ) {
+				fileController.addNewImage( img );
+				model.config = [initObj];
+			});
+		});
+	}
+	
+	function loadImage( src, cb ) {
+		var img = new Image();
+		img.src = src;
+		img.onload = function() {
+			cb( img );
+		};
+	}
+	
+	function createNewParticle( id:Dynamic ) {
+		return {
+			id:id, 
+			name:'粒子',
+			lifetime:2,
+			mass:1,
+			color:[1, 1, 1, 1],
+			size:[40, 40],
+			pos:[200, 200, 0], 
+			vel:[0, 0, 0],
+			blending:'add',
+			tex:'',
+			emit:createNewEmit()
 		}
 	}
 	
 	public static function createNewEmit() {
 		return { 
 			count:1,
-			duration:0.5,
+			duration:0.05,
 			angle:0,
-			range:0,
-			force:0
+			range:6.28,
+			force:100
 		}
 	}
 	
@@ -293,21 +329,7 @@ class Main
 		}
 	}
 	
-	function createNewParticle( id:Dynamic ) {
-		return {
-			id:id, 
-			name:'粒子',
-			lifetime:5,
-			mass:3,
-			color:[1, 1, 1, 1],
-			size:[10, 10],
-			pos:[0, 0, 0], 
-			vel:[0, 0, 0],
-			blending:'normal',
-			tex:'',
-			emit:createNewEmit()
-		}
-	}
+	
 	
 	function createFormula( id, ptype:String, method:String, v1:Float, v2:Float, v3:Float, v4:Float, v5:Float ) {
 		var ary = new Array<Dynamic>();
