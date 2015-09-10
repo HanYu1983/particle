@@ -4,14 +4,15 @@ myapp.facebook = myapp.facebook || {};
 	
 	function init( appId, callback ){
 		window.fbAsyncInit = function() {
+			myapp.facebook.FB = FB;
 			FB.init({
-				appId      : appId,
-				xfbml      : true,
-				version    : 'v2.4'
+			  appId      : appId,
+			  xfbml      : true,
+			  version    : 'v2.2'
 			});
 			if(callback !=undefined)	callback();
 		};
-
+		
 		(function(d, s, id){
 			var js, fjs = d.getElementsByTagName(s)[0];
 			if (d.getElementById(id)) {return;}
@@ -20,16 +21,38 @@ myapp.facebook = myapp.facebook || {};
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 	}
-	function login( callback ){
-		FB.login( callback );
+	function login( callback, error ){
+		FB.login( function( res ){
+			if (res.authResponse) {
+				callback( res.authResponse );
+			}else{
+				if( error != undefined )	error( res );
+			}
+		});
+		/*
+		var _status="";
+		FB.getLoginStatus( function( res ){
+			_status=res.status;
+			_authResponse =res.authResponse; 
+			if(_status!="connected"){  
+				FB.login( function( res ){
+					if (res.authResponse) {
+						callback( res.authResponse );
+					}else{
+						if( error != undefined )	error( res );
+					}
+				});
+			}else{
+				console.log(res);			
+				callback(_authResponse );
+			}	
+		});	
+		*/
 	}
-	
-	function logout( callback ){
-		FB.logout( callback );
-	}
-	
 	function getLoginStatus( callback ){
-		FB.getLoginStatus( callback );
+		FB.getLoginStatus( function( res ){
+			callback( res.status, res.authResponse, res );
+		});
 	}
 	function postMessageToMyboard( e, options ){
 			FB.ui({
@@ -83,7 +106,6 @@ myapp.facebook = myapp.facebook || {};
 	
 	myapp.facebook.init = init;
 	myapp.facebook.login = login;
-	myapp.facebook.logout = logout;
 	myapp.facebook.getLoginStatus = getLoginStatus;
 	myapp.facebook.postMessageToMyboard = postMessageToMyboard;
 	myapp.facebook.getData = getData;
