@@ -18,8 +18,8 @@
       :id "particle"
       :source-paths ["src"]
       :compiler {
-        :output-to "../goapp/src/web/res/cljs/cljs.js"
-        :output-dir "../goapp/src/web/res/cljs"
+        :output-to "../goapp/src/particle/res/cljs/cljs.js"
+        :output-dir "../goapp/src/particle/res/cljs"
         :optimizations :none
         :pretty-print true
       }

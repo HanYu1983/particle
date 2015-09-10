@@ -5,6 +5,65 @@
     [cljs.core.async :refer [>! <! close! chan]]
     [clojure.string :as str]))
 
+(defn content [url]
+  (let [ret (chan)]
+    (.ajax js/$ (js-obj
+      "url" "/proxy"
+      "dataType" "text"
+      "data"
+      (js-obj
+        "url" url)
+      "success"
+      (fn [data]
+        (go
+          (>! ret [nil data])
+          (close! ret)))
+      "error"
+      (fn [xhr _ err]
+        (go
+          (>! ret [err])
+          (close! ret)))))
+    ret))
+    
+(defn goog-finance-info-url [id]
+  (str 
+    "https://www.google.com/finance/info?infotype=infoquoteall"
+    "&q=" id))
+    
+(defn parse-info [content]
+  (try
+    (let [json (aget (.parse js/JSON content) 0)
+          date 
+          (.toString (js/Date. (.-lt_dts json)))
+          volume 
+          (->
+            (.-vo json)
+            (str/replace #"M" "")
+            (js/parseFloat)
+            (* 1000000))]
+      [date (.-op json) (.-hi json) (.-lo json) (.-l_fix json) volume])
+    (catch js/Object e 
+      nil)))
+  
+(defn todayPrice [id]
+  (go
+    (let [url (goog-finance-info-url id)
+          [err content] (<! (content url))
+          content (str/replace content #"//" "")]
+      (if err
+        [err]
+        [nil (parse-info content)]))))
+        
+(defn combineToday 
+  "結合今天，如果今天已經抓到，就不結合"
+  [todayLine li]
+  (if todayLine
+    (let [[maybe-today _ _ _ _ _] (first li)]
+      (if-not (.equals (.today js/Date) (.clearTime (js/Date. maybe-today)))
+        (cons todayLine li)
+        li))
+    li))
+
 (defn goog-finance-getprices-url [id ran]
   (str
     "https://www.google.com/finance/getprices?q=" id
@@ -62,7 +121,7 @@
           (first pass2)
           (rest pass2))
           
-        ; 2014/12/27的量有問題所以過慮掉
+        ; 2014/12/27的量有問題所以過濾掉
         pass4
         (filter
           (fn [[d o h l c v]]
@@ -81,6 +140,19 @@
               [(.toString date) o h l c v]))
           pass4)]
     pass5))
+    
+(defn get-goog-stock-prices [id range]
+  (go
+    (let [[err infos] (<! (content (goog-finance-getprices-url id range)))
+          [err2 todayLine] (<! (todayPrice id))
+          infos
+          (->>
+            infos
+            parse-getprices
+            (format-getprices 86400)
+            reverse
+            (combineToday todayLine))]
+      [(or err err2) infos])))
 
 (defn goog-finance-historical-url [id startdate start num]
   (str
@@ -88,26 +160,6 @@
     "&startdate=" startdate
     "&start=" start
     "&num=" num))
-
-(defn content [url]
-  (let [ret (chan)]
-    (.ajax js/$ (js-obj
-      "url" "/proxy"
-      "dataType" "text"
-      "data"
-      (js-obj
-        "url" url)
-      "success"
-      (fn [data]
-        (go
-          (>! ret [nil data])
-          (close! ret)))
-      "error"
-      (fn [xhr _ err]
-        (go
-          (>! ret [err])
-          (close! ret)))))
-    ret))
 
 ;<tr>
 ;<td class="lm">Jun 25, 2015
