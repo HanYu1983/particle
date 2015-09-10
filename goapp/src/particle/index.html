@@ -320,9 +320,12 @@
 		
 		for( var i = 0; i < ary_props.length; ++i ){
 			var tmplModel = ary_props[i];
-			tmplModel.datastr = JSON.stringify({	"width":"80px",
+			tmplModel.datastr = JSON.stringify({	
+									"width":"80px",
 									"inputMode":"simple",
 									"spinButtons":true, 
+									"spinMode":"simple",
+									"spinButtonsStep":0.1,
 									"min": tmplModel.min , 
 									"max": tmplModel.max });
 			var jdom = tmpl_prop.tmpl( tmplModel ) ;

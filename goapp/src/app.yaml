@@ -6,6 +6,8 @@ api_version: go1
 handlers:
 - url: /particle
   static_dir: particle
+- url: /common
+  static_dir: common
 - url: /stock
   static_dir: stock
 - url: /cocoon
