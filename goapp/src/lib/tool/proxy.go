@@ -26,6 +26,6 @@ func Proxy(w http.ResponseWriter, r *http.Request){
   body, err := ReadAll( res )
   Assert( IfError( err ) )
 
-  w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d, public", 60* 60* 12))
+  w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d, public", 60* 60* 6))
   fmt.Fprint(w, string(body[:]))
 }

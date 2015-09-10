@@ -31,21 +31,38 @@
     "&q=" id))
     
 (defn parse-info [content]
-  (let [json (aget (.parse js/JSON content) 0)
-        date 
-        (.toString (js/Date. (.-lt_dts json)))
-        volume (.-vo json)]
-    [date (.-op json) (.-hi json) (.-lo json) (.-l_fix json) 0]))
-    
+  (try
+    (let [json (aget (.parse js/JSON content) 0)
+          date 
+          (.toString (js/Date. (.-lt_dts json)))
+          volume 
+          (->
+            (.-vo json)
+            (str/replace #"M" "")
+            (js/parseFloat)
+            (* 1000000))]
+      [date (.-op json) (.-hi json) (.-lo json) (.-l_fix json) volume])
+    (catch js/Object e 
+      nil)))
+  
 (defn todayPrice [id]
   (go
     (let [url (goog-finance-info-url id)
           [err content] (<! (content url))
           content (str/replace content #"//" "")]
-          (.log js/console content)
       (if err
         [err]
         [nil (parse-info content)]))))
+        
+(defn combineToday 
+  "結合今天，如果今天已經抓到，就不結合"
+  [todayLine li]
+  (if todayLine
+    (let [[maybe-today _ _ _ _ _] (first li)]
+      (if-not (.equals (.today js/Date) (.clearTime (js/Date. maybe-today)))
+        (cons todayLine li)
+        li))
+    li))
 
 (defn goog-finance-getprices-url [id ran]
   (str
@@ -123,6 +140,19 @@
               [(.toString date) o h l c v]))
           pass4)]
     pass5))
+    
+(defn get-goog-stock-prices [id range]
+  (go
+    (let [[err infos] (<! (content (goog-finance-getprices-url id range)))
+          [err2 todayLine] (<! (todayPrice id))
+          infos
+          (->>
+            infos
+            parse-getprices
+            (format-getprices 86400)
+            reverse
+            (combineToday todayLine))]
+      [(or err err2) infos])))
 
 (defn goog-finance-historical-url [id startdate start num]
   (str
