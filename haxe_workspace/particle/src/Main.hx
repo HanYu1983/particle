@@ -286,9 +286,9 @@ class Main
 		initObj.pos[0] = webgl.width() / 2;
 		initObj.pos[1] = webgl.height() / 2;
 		
-		loadImage( 'res/images/glow.jpg', function( img ) {
+		loadImage( 'images/glow.jpg', function( img ) {
 			fileController.addNewImage( img );
-			loadImage( 'res/images/leadB_32_32.png', function( img ) {
+			loadImage( 'images/leadB_32_32.png', function( img ) {
 				fileController.addNewImage( img );
 				paramsView.setBackgroundColor( 0, 0, 0 );
 				model.config = [initObj];

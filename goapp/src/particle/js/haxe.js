@@ -388,9 +388,9 @@ Main.prototype = {
 		initObj.emit.prototype[0].formulaList = [this.createFormula(Main.getId(),"scale-x","linear",20,0,0,0,0),this.createFormula(Main.getId(),"scale-y","linear",20,0,0,0,0)];
 		initObj.pos[0] = this.webgl.width() / 2;
 		initObj.pos[1] = this.webgl.height() / 2;
-		this.loadImage("res/images/glow.jpg",function(img) {
+		this.loadImage("images/glow.jpg",function(img) {
 			_g.fileController.addNewImage(img);
-			_g.loadImage("res/images/leadB_32_32.png",function(img1) {
+			_g.loadImage("images/leadB_32_32.png",function(img1) {
 				_g.fileController.addNewImage(img1);
 				_g.paramsView.setBackgroundColor(0,0,0);
 				_g.model.set_config([initObj]);
