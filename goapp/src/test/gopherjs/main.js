@@ -14884,7 +14884,7 @@ $packages["particle"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, $init, js, particle, Item, People, arrayType, funcType, mapType, part, main;
+	var $pkg = {}, $init, js, particle, Item, People, arrayType, ptrType, funcType, mapType, part, main;
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	particle = $packages["particle"];
 	Item = $pkg.Item = $newType(0, $kindStruct, "main.Item", "Item", "main", function(id_) {
@@ -14906,15 +14906,16 @@ $packages["main"] = (function() {
 		this.item = item_;
 	});
 	arrayType = $arrayType($Int, 2);
-	funcType = $funcType([], [], false);
+	ptrType = $ptrType(js.Object);
+	funcType = $funcType([ptrType], [], false);
 	mapType = $mapType($String, $emptyInterface);
-	part = function() {
-		var $ptr;
-		console.log("part!!");
+	part = function(info) {
+		var $ptr, info;
+		console.log(info.name);
 	};
 	main = function() {
-		var $ptr, _key, _map, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _key = $f._key; _map = $f._map; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var $ptr, _key, _map, p, p2, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $ptr = $f.$ptr; _key = $f._key; _map = $f._map; p = $f.p; p2 = $f.p2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		p = $clone(new People.ptr(), People);
 		p.name = "han";
 		$global.channel.go($externalize(p, People));
@@ -14922,7 +14923,12 @@ $packages["main"] = (function() {
 		$global.app = $externalize((_map = new $Map(), _key = "particle", _map[$String.keyFor(_key)] = { k: _key, v: new funcType(part) }, _map), mapType);
 		console.log(p);
 		$r = particle.Main(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: main }; } $f.$ptr = $ptr; $f._key = _key; $f._map = _map; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+		p2 = $clone(p, People);
+		p2.name = "vic";
+		console.log(p);
+		console.log(p2);
+		console.log($equal(p, p2, People));
+		/* */ $s = -1; case -1: } return; } if ($f === undefined) { $f = { $blk: main }; } $f.$ptr = $ptr; $f._key = _key; $f._map = _map; $f.p = p; $f.p2 = p2; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Item.init([{prop: "id", name: "id", pkg: "main", typ: $Int32, tag: ""}]);
 	People.init([{prop: "name", name: "name", pkg: "main", typ: $String, tag: ""}, {prop: "item", name: "item", pkg: "main", typ: Item, tag: ""}]);

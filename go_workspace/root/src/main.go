@@ -14,11 +14,11 @@ type People struct {
   item Item
 }
 
-func part(){
-  println("part!!")
+func part ( info *js.Object ){
+  println( info.Get("name") )
 }
 
-func main(){
+func main (){
   var p People
   p.name = "han"
   
@@ -31,4 +31,11 @@ func main(){
   
   println(p)
   particle.Main()
+  
+  
+  p2 := p
+  p2.name = "vic"
+  println(p)
+  println(p2)
+  println(p == p2)
 }
