@@ -11,3 +11,7 @@ pom.xml.asc
 .lein-failures
 .nrepl-port
 github.com/
+go_workspace/root/bin
+go_workspace/root/pkg
+go_workspace/root/src/golang.org
+go_workspace/root/src/gopkg.in
