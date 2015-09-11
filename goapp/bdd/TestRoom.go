@@ -88,6 +88,7 @@ func Room (It bdd.ItFn) {
   It( "message", func( ctx appengine.Context ){
     
     room1 := gameCtx.Room("room1")
+    room2 := gameCtx.Room("room2")
     han := gameCtx.User("han")
     
     gameCtx.LeaveMessage( game.Message{Content: "hello", FromUser: han.Key, ToRoom: room1.Key } )
@@ -103,6 +104,11 @@ func Room (It bdd.ItFn) {
     msgs = gameCtx.MessagesInRoom( room1 )
     if len( msgs ) != 2 {
       panic( "msg's count should be 2" )
+    }
+    
+    msgs = gameCtx.MessagesInRoom( room2 )
+    if len( msgs ) != 0 {
+      panic( "msg's count should be 0" )
     }
   })
   
