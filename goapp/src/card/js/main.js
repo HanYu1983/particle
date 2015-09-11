@@ -334,14 +334,14 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.getViewComponent().off("click");
 	}
 	,listNotificationInterests: function() {
-		return [model_Model.on_card_flip_change,model_Model.on_card_move,model_Model.on_state_change,mediator_Layer.on_select_cards,mediator_Layer.on_press_m];
+		return [model_Model.on_card_flip_change,model_Model.on_state_change,mediator_Layer.on_select_cards,mediator_Layer.on_press_m];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_press_m":
-			this._isMoving = this._focus;
+			this.setMovingState(this._focus == true);
 			break;
 		case "on_select_cards":
 			this.focusCard(false);
@@ -353,7 +353,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		case "on_state_change":
 			if(this._isMoving) {
 				this.moveCard(notification.getBody().x,notification.getBody().y);
-				this._isMoving = false;
+				this.setMovingState(false);
 			}
 			break;
 		case "on_card_flip_change":
@@ -369,6 +369,10 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 	,moveCard: function(x,y) {
 		this.getViewComponent().css("left",x);
 		this.getViewComponent().css("top",y);
+	}
+	,setMovingState: function(state) {
+		this._isMoving = state;
+		if(this._isMoving) this.setState("moving..."); else this.setState("");
 	}
 	,focusCard: function(focus) {
 		if(focus != null) this._focus = focus; else this._focus = !this._focus;
@@ -386,6 +390,9 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 	}
 	,setView: function() {
 		if(this._back) this.getViewComponent().find(".card").addClass("card_back"); else this.getViewComponent().find(".card").removeClass("card_back");
+	}
+	,setState: function(state) {
+		this.getViewComponent().find("#txt_state").html(state);
 	}
 });
 var mediator_Layer = function(mediatorName,viewComponent) {
