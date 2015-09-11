@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="..\..\goapp\src\card\js\main" />
+    <movie path="..\..\goapp\src\card\js\main.js" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
@@ -16,6 +16,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
+    <class path="C:\HaxeToolkit\haxe\lib\download\puremvc-haxe-standard-framework-master\src" />
   </classpaths>
   <!-- Build options -->
   <build>
