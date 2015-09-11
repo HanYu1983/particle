@@ -14,6 +14,9 @@ class Layer extends Mediator
 	public static var on_select_cards = 'on_select_cards';
 	public static var on_press_f = 'on_press_f';
 	public static var on_press_m = 'on_press_m';
+	public static var on_press_s = 'on_press_s';
+	public static var on_press_l = 'on_press_l';
+	public static var on_press_a = 'on_press_a';
 	public static var on_press_enter = 'on_press_enter';
 	public static var on_body_mousemove = 'on_body_mousemove';
 	
@@ -53,9 +56,7 @@ class Layer extends Mediator
 			case Model.on_card_enter:
 				_container_cards.append( notification.getBody() );
 			case Card.card_down:
-				
 				_currentMoveCardId = notification.getBody().id;
-				trace( 'start', _currentMoveCardId );
 		}
 	}
 	
@@ -70,6 +71,15 @@ class Layer extends Mediator
 	function onBodyKeyUp( e ) {
 		trace( e.which ) ;
 		switch( e.which ) {
+		//a
+			case 65:
+				sendNotification( on_press_a );
+		//l
+			case 76:
+				sendNotification( on_press_l );
+		//s
+			case 83:
+				sendNotification( on_press_s );
 		//m	
 			case 77:
 				sendNotification( on_press_m );

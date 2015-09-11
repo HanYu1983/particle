@@ -15,7 +15,6 @@ class Card extends Mediator
 	public static var card_down = 'card_down';
 	public static var card_enter = 'card_enter';
 	
-	var _isMoving = false;
 	var _focus = false;
 	var _back = false;
 
@@ -52,8 +51,8 @@ class Card extends Mediator
 	{
 		
 		switch( notification.getName() ) {
-			case Layer.on_press_m:
-				setMovingState( _focus == true );
+			//case Layer.on_press_m:
+			//	setMovingState( _focus == true );
 			case Layer.on_select_cards:
 				focusCard( false );
 				Lambda.foreach( Lambda.array( notification.getBody().ary_select ), function( dom ) {
@@ -61,10 +60,26 @@ class Card extends Mediator
 					return true;
 				});
 			case Model.on_state_change:
-				if ( _isMoving ) {
-					moveCard( notification.getBody().x, notification.getBody().y );
-					setMovingState( false );
+				switch( notification.getType() ) {
+					/*
+					case 'move':
+						if ( _isMoving ) {
+							moveCard( notification.getBody().x, notification.getBody().y );
+							setMovingState( false );
+						}
+						*/
+					case 'list':
+						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						listStack( notification.getBody().mouse, notification.getBody().pos, 2, 2 );
+					case 'list_separate':
+						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						listStackSeprate( notification.getBody().mouse, notification.getBody().pos, 60, 0 );
+					case 'list_shuffle':
+						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						sendNotification( card_enter, getViewComponent() );
+						listStack( notification.getBody().mouse, notification.getBody().pos, 2, 2 );
 				}
+				
 			case Model.on_card_flip_change:
 				if ( notification.getType() == 'all' ) {
 					if ( _focus ) {
@@ -77,11 +92,26 @@ class Card extends Mediator
 		}
 	}
 	
-	function moveCard( x, y ) {
-		getViewComponent().css( 'left', x );
-		getViewComponent().css( 'top', y );
+	function listStack( initpos, pos, x, y ) {
+		moveCard( initpos[0] + pos * x, initpos[1] + pos * y );
 	}
 	
+	function listStackSeprate( initpos, pos, x, y ) {
+		moveCard( initpos[0] + ( pos % 10 * 100 ), initpos[1] + Math.floor( pos / 10 ) * 100);
+	}
+	
+	function checkSelf( id ) {
+		return ( getMediatorName() == id );
+	}
+	
+	function moveCard( x, y ) {
+		
+		getViewComponent().animate( {
+			left:x,
+			top:y
+		});
+	}
+	/*
 	function setMovingState( state ) {
 		_isMoving = state;
 		if ( _isMoving ) {
@@ -90,7 +120,7 @@ class Card extends Mediator
 			setState( '' );
 		}
 	}
-	
+	*/
 	function focusCard( ?focus ) {
 		if ( focus != null ) {
 			_focus = focus;
@@ -107,6 +137,8 @@ class Card extends Mediator
 	
 	function onCardClick( e ) {
 		focusCard();
+		
+		sendNotification( card_click, {id:getMediatorName(), focus:_focus } );
 	}
 	
 	function onCardMouseDown( e ) {

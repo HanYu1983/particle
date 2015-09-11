@@ -25,6 +25,19 @@ class Main
 		
 		createCard( getId() );
 		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
+		createCard( getId() );
 	}
 	
 	function createCard( id ) {

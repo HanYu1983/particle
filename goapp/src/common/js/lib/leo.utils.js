@@ -238,15 +238,17 @@ leo.utils = leo.utils || {};
 								'top': parent.css('top')
 							});
 						}
+						
+						/*
 				  $("body").append("<div id='big-ghost' class='big-ghost' x='" + Number(minX - 20) + "' y='" + Number(minY - 10) + "'></div>");
-
+					
 					$("#big-ghost").css({
 						'width': maxX + 40 - minX,
 						'height': maxY + 20 - minY,
 						'top': minY - 10,
 						'left': minX - 20
 					});
-				  
+				  */
 				  
 				}
 			});
