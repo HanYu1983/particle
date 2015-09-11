@@ -35,7 +35,7 @@ func Room (It bdd.ItFn) {
   It( "user in room", func( ctx appengine.Context ){
     han := gameCtx.User("han")
     room := gameCtx.Room("room1")
-    han.Room = room
+    han.Room = room.Key
     gameCtx.EditUser( han )
     
     users := gameCtx.UsersInRoom( room )
@@ -52,8 +52,8 @@ func Room (It bdd.ItFn) {
     han := gameCtx.User("han")
     vic := gameCtx.User("vic")
     room := gameCtx.Room("room1")
-    han.Room = room
-    vic.Room = room
+    han.Room = room.Key
+    vic.Room = room.Key
     
     gameCtx.EditUser( han )
     gameCtx.EditUser( vic )
@@ -63,7 +63,7 @@ func Room (It bdd.ItFn) {
       panic( "user's count in room1 should be 2" )
     }
     
-    han.Room = game.EmptyRoom
+    han.Room = ""
     gameCtx.EditUser( han )
     
     users = gameCtx.UsersInRoom( room )
@@ -75,7 +75,7 @@ func Room (It bdd.ItFn) {
       panic( "user in room should be vic")
     }
     
-    vic.Room = game.EmptyRoom
+    vic.Room = ""
     gameCtx.EditUser( vic )
     
     users = gameCtx.UsersInRoom( room )

@@ -157,3 +157,14 @@ func AuthFB ( ctx appengine.Context, fbid string, token string )(bool, error){
   }
   return true, nil
 }
+
+func AssertFBIDIsInvalid ( ctx appengine.Context, fbid, accessToken string ) func()(bool, string){
+  return func()(bool, string){
+    _, err := AuthFB( ctx, fbid, accessToken )
+    if err != nil {
+      return true, err.Error()
+    } else {
+      return false, ""
+    }
+  }
+}

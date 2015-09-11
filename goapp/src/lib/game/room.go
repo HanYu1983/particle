@@ -20,11 +20,13 @@ func (a ByTime) Less(i, j int) bool { return a[i].Time.Before( a[j].Time ) }
 
 type Room struct{
   Key string
+  Name string
 }
 
 type User struct{
   Key string
-  Room Room
+  Name string
+  Room string
 }
 
 type Context struct{
@@ -45,7 +47,8 @@ func (ctx *Context) Room (key string) Room {
       return room
     }
   }
-  room := Room{key}
+  room := EmptyRoom
+  room.Key = key
   ctx.Rooms = append( ctx.Rooms, room )
   return room
 }
@@ -53,7 +56,7 @@ func (ctx *Context) Room (key string) Room {
 func (ctx *Context) UsersInRoom (targetRoom Room) []User {
   var users []User
   for _, user := range ctx.Users {
-    if user.Room == targetRoom {
+    if user.Room == targetRoom.Key {
       users = append( users, user )
     }
   }
@@ -86,6 +89,14 @@ func (ctx *Context) EditUser (target User) {
   for i, user := range ctx.Users {
     if user.Key == target.Key {
       ctx.Users[i] = target
+    }
+  }
+}
+
+func (ctx *Context) EditRoom (target Room) {
+  for i, room := range ctx.Rooms {
+    if room.Key == target.Key {
+      ctx.Rooms[i] = target
     }
   }
 }

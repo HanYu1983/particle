@@ -7,6 +7,7 @@ import (
   "lib/db/file"
   "appengine"
   auth "github.com/abbot/go-http-auth"
+  "lib/game"
 )
 
 func Secret(user, realm string) string {
@@ -27,6 +28,10 @@ func init(){
   http.HandleFunc("/write", dbfile.WriteFile)
   http.HandleFunc("/simple/save", Save)
   http.HandleFunc("/simple/load", Load)
+  http.HandleFunc("/card/user/", game.CreateUser)
+  http.HandleFunc("/card/room/", game.CreateRoom)
+  http.HandleFunc("/card/enterRoom/", game.EnterRoom)
+  http.HandleFunc("/card/message/", game.LeaveMessage)
 }
 
 func handler(w http.ResponseWriter, r *http.Request){
