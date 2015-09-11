@@ -43,8 +43,7 @@ class Card extends Mediator
 	{
 		return [ 	Model.on_card_flip_change,
 					Model.on_state_change,
-					Layer.on_select_cards,
-					Layer.on_press_m ];
+					Layer.on_select_cards ];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
@@ -70,6 +69,7 @@ class Card extends Mediator
 						*/
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						sendNotification( card_enter, getViewComponent() );
 						listStack( notification.getBody().mouse, notification.getBody().pos, 2, 2 );
 					case 'list_separate':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
@@ -93,7 +93,7 @@ class Card extends Mediator
 	}
 	
 	function listStack( initpos, pos, x, y ) {
-		moveCard( initpos[0] + pos * x, initpos[1] + pos * y );
+		moveCard( initpos[0] + pos * x, initpos[1] - pos * y );
 	}
 	
 	function listStackSeprate( initpos, pos, x, y ) {

@@ -43,7 +43,32 @@ class Model extends Mediator
 	{
 		switch( notification.getName() ) {
 			case Layer.on_select_cards:
-				ary_select = Lambda.array( Lambda.map( Lambda.array( notification.getBody().ary_select ), function( dom ) {
+				var ori = notification.getBody().ary_select;
+				ori.sort( function( a, b ) {
+					var ax = Std.parseInt( StringTools.replace( Main.j( a ).css( 'left' ), 'px', '' ));
+					var ay = Std.parseInt( StringTools.replace( Main.j( a ).css( 'top' ), 'px', '' ));
+					var bx = Std.parseInt( StringTools.replace( Main.j( b ).css( 'left' ), 'px', '' ));
+					var by = Std.parseInt( StringTools.replace( Main.j( b ).css( 'top' ), 'px', '' ));
+					
+					if ( bx < ax ) {
+						return 1;
+					}
+					return -1;
+				});
+				
+				ori.sort( function( a, b ) {
+					var ax = Std.parseInt( StringTools.replace( Main.j( a ).css( 'left' ), 'px', '' ));
+					var ay = Std.parseInt( StringTools.replace( Main.j( a ).css( 'top' ), 'px', '' ));
+					var bx = Std.parseInt( StringTools.replace( Main.j( b ).css( 'left' ), 'px', '' ));
+					var by = Std.parseInt( StringTools.replace( Main.j( b ).css( 'top' ), 'px', '' ));
+					
+					if ( by < ay ) {
+						return 1;
+					}
+					return -1;
+				});
+				
+				ary_select = Lambda.array( Lambda.map( ori, function( dom ) {
 					return { id:Main.j( dom ).attr( 'id' ) };
 				}));
 			case Layer.on_press_enter:
@@ -65,15 +90,9 @@ class Model extends Mediator
 			case Layer.on_press_f:
 				sendNotification( on_card_flip_change, null, 'all' );
 			case Layer.on_press_l:
-				Lambda.foreach( ary_select, function( select ) {
-					sendNotification( on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list' );
-					return true;
-				});
+				Main.listCard( ary_select, pos_mouse );
 			case Layer.on_press_a:
-				Lambda.foreach( ary_select, function( select ) {
-					sendNotification( on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list_separate' );
-					return true;
-				});
+				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_s:
 				ary_select.sort( function ( a, b ) {
 					return Math.random() > .5 ? 1 : -1;

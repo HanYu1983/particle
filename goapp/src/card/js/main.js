@@ -5,7 +5,46 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var Animate = function() { };
+Animate.addCards = function(cards) {
+	return function() {
+		var d = Main.j.Deferred();
+		Lambda.foreach(cards,function(card) {
+			Main.createCard(card.id);
+			return true;
+		});
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
+Animate.list = function(ary_select,pos_mouse) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.listCard(ary_select,pos_mouse);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
+Animate.listSeparate = function(ary_select,pos_mouse) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.listSeparate(ary_select,pos_mouse);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
 var HxOverrides = function() { };
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) return undefined;
+	return x;
+};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -97,35 +136,49 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
-	this.tmpl_card = Main.j("#tmpl_card");
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
-	this.createCard(Main.getId());
+	var cards;
+	var _g = [];
+	var _g1 = 0;
+	while(_g1 < 30) {
+		var i = _g1++;
+		_g.push({ id : Main.getId()});
+	}
+	cards = _g;
+	(Animate.addCards(cards))().pipe(Animate.list(cards.slice(0,15),[200,200])).pipe(Animate.listSeparate(cards.slice(0,7),[300,300]));
+};
+Main.createCard = function(id) {
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(id,Main.tmpl_card.tmpl({ id : id})));
+};
+Main.listCard = function(ary_select,pos_mouse) {
+	Lambda.foreach(ary_select,function(select) {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select)},"list");
+		return true;
+	});
+};
+Main.listSeparate = function(ary_select,pos_mouse) {
+	Lambda.foreach(ary_select,function(select) {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select)},"list_separate");
+		return true;
+	});
 };
 Main.main = function() {
 	new Main();
 };
 Main.getId = function() {
-	return leo.utils.generateUUID();
+	return Main.id++ + "";
 };
-Main.prototype = {
-	createCard: function(id) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(id,this.tmpl_card.tmpl({ id : id})));
-	}
+var Std = function() { };
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
+	if(isNaN(v)) return null;
+	return v;
+};
+var StringTools = function() { };
+StringTools.replace = function(s,sub,by) {
+	return s.split(sub).join(by);
 };
 var Type = function() { };
 Type.createInstance = function(cl,args) {
@@ -155,6 +208,29 @@ Type.createInstance = function(cl,args) {
 	return null;
 };
 var haxe_IMap = function() { };
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe_Timer.delay = function(f,time_ms) {
+	var t = new haxe_Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+};
+haxe_Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -259,7 +335,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.getViewComponent().off("click");
 	}
 	,listNotificationInterests: function() {
-		return [model_Model.on_card_flip_change,model_Model.on_state_change,mediator_Layer.on_select_cards,mediator_Layer.on_press_m];
+		return [model_Model.on_card_flip_change,model_Model.on_state_change,mediator_Layer.on_select_cards];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -277,6 +353,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			switch(_g11) {
 			case "list":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
+				this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
 				this.listStack(notification.getBody().mouse,notification.getBody().pos,2,2);
 				break;
 			case "list_separate":
@@ -301,7 +378,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		}
 	}
 	,listStack: function(initpos,pos,x,y) {
-		this.moveCard(initpos[0] + pos * x,initpos[1] + pos * y);
+		this.moveCard(initpos[0] + pos * x,initpos[1] - pos * y);
 	}
 	,listStackSeprate: function(initpos,pos,x,y) {
 		this.moveCard(initpos[0] + pos % 10 * 100,initpos[1] + Math.floor(pos / 10) * 100);
@@ -412,7 +489,24 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_select_cards":
-			this.ary_select = Lambda.array(Lambda.map(Lambda.array(notification.getBody().ary_select),function(dom) {
+			var ori = notification.getBody().ary_select;
+			ori.sort(function(a,b) {
+				var ax = Std.parseInt(StringTools.replace(Main.j(a).css("left"),"px",""));
+				var ay = Std.parseInt(StringTools.replace(Main.j(a).css("top"),"px",""));
+				var bx = Std.parseInt(StringTools.replace(Main.j(b).css("left"),"px",""));
+				var by = Std.parseInt(StringTools.replace(Main.j(b).css("top"),"px",""));
+				if(bx < ax) return 1;
+				return -1;
+			});
+			ori.sort(function(a1,b1) {
+				var ax1 = Std.parseInt(StringTools.replace(Main.j(a1).css("left"),"px",""));
+				var ay1 = Std.parseInt(StringTools.replace(Main.j(a1).css("top"),"px",""));
+				var bx1 = Std.parseInt(StringTools.replace(Main.j(b1).css("left"),"px",""));
+				var by1 = Std.parseInt(StringTools.replace(Main.j(b1).css("top"),"px",""));
+				if(by1 < ay1) return 1;
+				return -1;
+			});
+			this.ary_select = Lambda.array(Lambda.map(ori,function(dom) {
 				return { id : Main.j(dom).attr("id")};
 			}));
 			break;
@@ -436,23 +530,17 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.sendNotification(model_Model.on_card_flip_change,null,"all");
 			break;
 		case "on_press_l":
-			Lambda.foreach(this.ary_select,function(select) {
-				_g1.sendNotification(model_Model.on_state_change,{ select : select, mouse : _g1.pos_mouse, pos : Lambda.indexOf(_g1.ary_select,select)},"list");
-				return true;
-			});
+			Main.listCard(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_a":
-			Lambda.foreach(this.ary_select,function(select1) {
-				_g1.sendNotification(model_Model.on_state_change,{ select : select1, mouse : _g1.pos_mouse, pos : Lambda.indexOf(_g1.ary_select,select1)},"list_separate");
-				return true;
-			});
+			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_s":
-			this.ary_select.sort(function(a,b) {
+			this.ary_select.sort(function(a2,b2) {
 				if(Math.random() > .5) return 1; else return -1;
 			});
-			Lambda.foreach(this.ary_select,function(select2) {
-				_g1.sendNotification(model_Model.on_state_change,{ select : select2, mouse : _g1.pos_mouse, pos : Lambda.indexOf(_g1.ary_select,select2)},"list_shuffle");
+			Lambda.foreach(this.ary_select,function(select) {
+				_g1.sendNotification(model_Model.on_state_change,{ select : select, mouse : _g1.pos_mouse, pos : Lambda.indexOf(_g1.ary_select,select)},"list_shuffle");
 				return true;
 			});
 			break;
@@ -754,6 +842,8 @@ var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 var __map_reserved = {}
 Main.j = $;
+Main.tmpl_card = Main.j("#tmpl_card");
+Main.id = 0;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";
 mediator_Card.card_down = "card_down";

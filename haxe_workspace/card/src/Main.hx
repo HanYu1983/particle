@@ -1,5 +1,6 @@
 package;
 
+import haxe.Timer;
 import js.Browser;
 import mediator.Card;
 import js.Lib;
@@ -15,33 +16,34 @@ class Main
 {
 	public static var j:Dynamic = untyped __js__('$');
 	
-	var tmpl_card:Dynamic;
+	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
 	function new() {
-		tmpl_card = j( '#tmpl_card' );
 		
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body),container_cards:j( '#container_cards' ) } ));
+		 
+		var cards = [for ( i in 0...30 ) { id:getId() } ];
 		
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
-		createCard( getId() );
+		Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
 	}
 	
-	function createCard( id ) {
+	public static function createCard( id ) {
 		Facade.getInstance().registerMediator( new Card( id, tmpl_card.tmpl( { id:id } ) ));
+	}
+	
+	public static function listCard( ary_select, pos_mouse ) {
+		Lambda.foreach( ary_select, function( select ) {
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list' );
+			return true;
+		});
+	}
+	
+	public static function listSeparate( ary_select, pos_mouse ) {
+		Lambda.foreach( ary_select, function( select ) {
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list_separate' );
+			return true;
+		});
 	}
 	
 	static function main() 
@@ -49,7 +51,18 @@ class Main
 		new Main();
 	}
 	
+	static var id = 0;
 	static function getId() {	
-		return untyped __js__('leo.utils.generateUUID')();
+		return id++ + '';
+		//return untyped __js__('leo.utils.generateUUID')();
 	}
 }
+/*
+ * 
+owner[ id:string ]: 設定owner是誰
+持有者[ id:string or '' ]: 
+	當持有者id等於owner的時候，蓋著時也能看見。
+	只要持有者id等於''的話，每個人都可以設為自己。
+	只要持有者id不等於''的話，只那個那個id的人可以設置持有者(只能設為空白或自己)
+open or close:
+*/
