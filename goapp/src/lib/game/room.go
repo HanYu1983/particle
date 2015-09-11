@@ -1,4 +1,22 @@
-package hello
+package game
+
+import (
+  "time"
+  "sort"
+)
+
+type Message struct {
+  Time time.Time
+  FromUser string
+  ToUser string
+  ToRoom string
+  Content string
+}
+
+type ByTime []Message
+func (a ByTime) Len() int           { return len(a) }
+func (a ByTime) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByTime) Less(i, j int) bool { return a[i].Time.Before( a[j].Time ) }
 
 type Room struct{
   Key string
@@ -12,10 +30,14 @@ type User struct{
 type Context struct{
   Rooms []Room
   Users []User
+  Messages []Message
 }
 
-var EmptyUser User
-var EmptyRoom Room
+var (
+  EmptyUser User
+  EmptyRoom Room
+  EmptyMessage Message
+)
 
 func (ctx *Context) Room (key string) Room {
   for _, room := range ctx.Rooms {
@@ -38,7 +60,7 @@ func (ctx *Context) UsersInRoom (targetRoom Room) []User {
   return users
 }
 
-func (ctx *Context) DeleteRoomIfNoUsers () {
+func (ctx *Context) DeleteRoomIfNoUser () {
   var rooms []Room
   for _, room := range ctx.Rooms {
     if len( ctx.UsersInRoom( room ) ) != 0 {
@@ -54,7 +76,8 @@ func (ctx *Context) User (key string) User {
       return user
     }
   }
-  user := User{key, EmptyRoom}
+  user := EmptyUser
+  user.Key = key
   ctx.Users = append( ctx.Users, user )
   return user
 }
@@ -62,7 +85,23 @@ func (ctx *Context) User (key string) User {
 func (ctx *Context) EditUser (target User) {
   for i, user := range ctx.Users {
     if user.Key == target.Key {
-      ctx.Users[i] = user
+      ctx.Users[i] = target
     }
   }
+}
+
+func (ctx *Context) LeaveMessage (msg Message){
+  msg.Time = time.Now()
+  ctx.Messages = append( ctx.Messages, msg )
+}
+
+func (ctx *Context) MessagesInRoom (room Room) []Message{
+  var msgs []Message
+  for _, msg := range ctx.Messages {
+    if msg.ToRoom == room.Key {
+      msgs = append( msgs, msg )
+    }
+  }
+  sort.Sort( ByTime(msgs) )
+  return msgs
 }
