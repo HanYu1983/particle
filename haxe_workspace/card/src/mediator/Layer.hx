@@ -11,7 +11,11 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 class Layer extends Mediator
 {
 	public static var on_layout_mouse_up = 'on_layout_mouse_up';
+	public static var on_select_cards = 'on_select_cards';
 	public static var on_press_f = 'on_press_f';
+	public static var on_press_m = 'on_press_m';
+	public static var on_press_enter = 'on_press_enter';
+	public static var on_body_mousemove = 'on_body_mousemove';
 	
 	var _body:Dynamic;
 	var _container_cards:Dynamic;
@@ -29,22 +33,13 @@ class Layer extends Mediator
 	{
 		super.onRegister();
 		
-		_body.mousemove( function( e ) {
-			if ( _currentMoveCardId == '' ) return;
-			trace( 'move' );
-		});
-		_body.mouseup( function( e ) {
-			
-			trace( 'end', _currentMoveCardId );
-			if ( _currentMoveCardId == '' ) return;
-			
-			var tx = e.offsetX;
-			var ty = e.offsetY;
-			
-			//sendNotification( on_layout_mouse_up, { id: _currentMoveCardId, x:tx, y:ty } );
-			_currentMoveCardId = '';
-		});
 		_body.keyup( onBodyKeyUp );
+		_body.mousemove( onBodyMouseMove );
+		_body.mouseup( onBodyMouseUp );
+		
+		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ){
+			sendNotification( on_select_cards, { ary_select:ary } );
+		});
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -64,14 +59,26 @@ class Layer extends Mediator
 		}
 	}
 	
+	function onBodyMouseMove( e ) {
+		sendNotification( on_body_mousemove, {x:e.pageX, y:e.pageY } );
+	}
+	
+	function onBodyMouseUp( e ) {
+		trace( e.pageX );
+	}
+	
 	function onBodyKeyUp( e ) {
 		trace( e.which ) ;
 		switch( e.which ) {
 		//m	
 			case 77:
+				sendNotification( on_press_m );
 		//f
 			case 70:
 				sendNotification( on_press_f );
+		//enter
+			case 13:
+				sendNotification( on_press_enter );
 		}
 	}
 }

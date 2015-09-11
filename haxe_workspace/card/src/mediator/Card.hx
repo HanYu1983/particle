@@ -15,6 +15,7 @@ class Card extends Mediator
 	public static var card_down = 'card_down';
 	public static var card_enter = 'card_enter';
 	
+	var _isMoving = false;
 	var _focus = false;
 	var _back = false;
 
@@ -41,13 +42,30 @@ class Card extends Mediator
 	
 	override public function listNotificationInterests():Array<String> 
 	{
-		return [ Model.on_card_flip_change, Model.on_card_move ];
+		return [ 	Model.on_card_flip_change, 
+					Model.on_card_move, 
+					Model.on_state_change,
+					Layer.on_select_cards,
+					Layer.on_press_m ];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		
 		switch( notification.getName() ) {
+			case Layer.on_press_m:
+				_isMoving = _focus;
+			case Layer.on_select_cards:
+				focusCard( false );
+				Lambda.foreach( Lambda.array( notification.getBody().ary_select ), function( dom ) {
+					if ( Main.j( dom ).attr( 'id' ) == getMediatorName() ) focusCard();
+					return true;
+				});
+			case Model.on_state_change:
+				if ( _isMoving ) {
+					moveCard( notification.getBody().x, notification.getBody().y );
+					_isMoving = false;
+				}
 			case Model.on_card_flip_change:
 				if ( notification.getType() == 'all' ) {
 					if ( _focus ) {
@@ -57,11 +75,10 @@ class Card extends Mediator
 					if ( notification.getBody().id != getMediatorName() ) return;
 					flip( notification.getBody().flip );
 				}
-				
+				/*
 			case Model.on_card_move:
 				if ( notification.getBody().id != getMediatorName() ) return;
-				moveCard( notification.getBody().x, notification.getBody().y );
-				trace( notification );
+				moveCard( notification.getBody().x, notification.getBody().y );*/
 		}
 	}
 	
@@ -70,8 +87,13 @@ class Card extends Mediator
 		getViewComponent().css( 'top', y );
 	}
 	
-	function focusCard() {
-		_focus = !_focus;
+	function focusCard( ?focus ) {
+		if ( focus != null ) {
+			_focus = focus;
+		}else {
+			_focus = !_focus;
+		}
+		
 		if ( _focus ) {
 			getViewComponent().addClass( 'card_focus' );
 		}else {

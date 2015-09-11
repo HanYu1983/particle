@@ -25,11 +25,6 @@ class Main
 		
 		createCard( getId() );
 		createCard( getId() );
-		
-		Facade.getInstance().sendNotification( 'card_flip', {id:'123'} );
-		Facade.getInstance().sendNotification( 'card_flip', {id:'123'} );
-		Facade.getInstance().sendNotification( 'card_flip', {id:'123', flip:true} );
-		
 	}
 	
 	function createCard( id ) {
