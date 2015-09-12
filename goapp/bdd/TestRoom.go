@@ -110,6 +110,70 @@ func Room (It bdd.ItFn) {
     if len( msgs ) != 0 {
       panic( "msg's count should be 0" )
     }
+    
+    gameCtx.Messages = []game.Message{}
+  })
+  
+  It( "message 2", func( ctx appengine.Context ){
+    
+    han := gameCtx.User("han")
+    vic := gameCtx.User("vic")
+    var msgs []game.Message
+    
+    msgs = gameCtx.MessagesToUser( vic )
+    if len( msgs ) != 0 {
+      panic( "msg's count should be 0" )
+    }
+    
+    gameCtx.LeaveMessage( game.Message{FromUser: han.Key, ToUser: vic.Key, Content: "han" } )
+    
+    msgs = gameCtx.MessagesToUser( vic )
+    if len( msgs ) != 1 {
+      panic( "msg's count to vic should be 1" )
+    }
+    
+    gameCtx.LeaveMessage( game.Message{FromUser: vic.Key, ToUser: han.Key, Content: "vic" } )
+    
+    msgs = gameCtx.MessagesToUser( vic )
+    if len( msgs ) != 1 {
+      panic( "msg's count to vic should be 1" )
+    }
+    
+    msgs = gameCtx.MessagesToUser( han )
+    if len( msgs ) != 1 {
+      panic( "msg's count to han should be 1" )
+    }
+    
+    gameCtx.LeaveMessage( game.Message{FromUser: vic.Key, ToUser: han.Key, Content: "vic" } )
+    
+    if len( gameCtx.Messages ) != 3 {
+      panic( "msg's count to han should be 3" )
+    }
+    
+    msgs = gameCtx.MessagesToUser( han )
+    if len( msgs ) != 2 {
+      panic( "msg's count to han should be 2" )
+    }
+    
+    lastestMessage := msgs[len(msgs)-1]
+    // handle the message
+    _ = lastestMessage
+    
+    gameCtx.DeleteMessage( msgs )
+    if len( gameCtx.Messages ) != 1 {
+      panic( "msg's count to han should be 1" )
+    }
+    
+    msgs = gameCtx.MessagesToUser( vic )
+    lastestMessage = msgs[len(msgs)-1]
+    // handle the message
+    _ = lastestMessage
+    
+    gameCtx.DeleteMessage( msgs )
+    if len( gameCtx.Messages ) != 0 {
+      panic( "msg's count to han should be 0" )
+    }
+    
   })
   
   It( "delete room", func( ctx appengine.Context ){

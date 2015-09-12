@@ -2,7 +2,6 @@ package game
 
 import (
   "time"
-  "sort"
 )
 
 type Message struct {
@@ -113,6 +112,32 @@ func (ctx *Context) MessagesInRoom (room Room) []Message{
       msgs = append( msgs, msg )
     }
   }
-  sort.Sort( ByTime(msgs) )
   return msgs
+}
+
+func (ctx *Context) MessagesToUser (user User) []Message{
+  var msgs []Message
+  for _, msg := range ctx.Messages {
+    if msg.ToUser == user.Key {
+      msgs = append( msgs, msg )
+    }
+  }
+  return msgs
+}
+
+func (ctx *Context) DeleteMessage (dmsgs []Message){
+  var msgs []Message
+  for _, msg := range ctx.Messages {
+    var shouldDelete bool
+    for _, dmsg := range dmsgs {
+      if msg == dmsg {
+        shouldDelete = true
+        break
+      }
+    }
+    if shouldDelete == false {
+      msgs = append( msgs, msg )
+    }
+  }
+  ctx.Messages = msgs
 }
