@@ -1,0 +1,7 @@
+{
+  "name": "genCard",
+  "dependencies": {
+    "canvas": "1.2.7"
+  },
+  "main": "./main.js"
+}
