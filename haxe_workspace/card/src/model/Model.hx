@@ -15,8 +15,9 @@ class Model extends Mediator
 	public static var on_card_enter = 'on_card_enter';
 	public static var on_card_move = 'on_card_move';
 	public static var on_state_change = 'on_state_change';
+	public static var on_select_cards = 'on_model_select_cards';
 	
-	var ary_select:Array<Dynamic> = null;
+	var ary_select:Array<Dynamic>;
 	var pos_mouse = [0, 0];
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -34,6 +35,8 @@ class Model extends Mediator
 				Layer.on_press_l,
 				Layer.on_press_a,
 				Layer.on_press_r,
+				Layer.on_press_c,
+				Layer.on_press_v,
 				Layer.on_press_enter,
 				Layer.on_body_mousemove,
 				Layer.on_select_cards
@@ -69,9 +72,12 @@ class Model extends Mediator
 					return -1;
 				});
 				
-				ary_select = Lambda.array( Lambda.map( ori, function( dom ) {
-					return { id:Main.j( dom ).attr( 'id' ) };
-				}));
+				ary_select = Lambda.fold( ori, function( dom, curr:Array<Dynamic> ) {
+					curr.push( Main.getCardsById( Main.j( dom ).attr( 'id' ) ) );
+					return curr;
+				}, [] );
+				
+				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_press_enter:
 				sendNotification( on_state_change, {x:pos_mouse[0], y:pos_mouse[1] }, 'move' );
 			case Layer.on_body_mousemove:
@@ -81,12 +87,26 @@ class Model extends Mediator
 				sendNotification( on_card_enter, notification.getBody() );
 			case Card.card_click:
 				if ( notification.getBody().focus ) {
-					ary_select = [ {id:notification.getBody().id } ];
+					ary_select = [ Main.getCardsById( notification.getBody().id ) ];
 				}else {
 					ary_select = [];
 				}
+				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
+			case Layer.on_press_c:
+				Lambda.foreach( ary_select, function( card ) {
+					switch( card.owner ) {
+						case '':
+							card.owner = Main.playerId;
+						case owner:
+							card.owner = '';
+					}
+					sendNotification( on_state_change, { select:card, showOnwer:Main.playerId == card.owner }, 'owner_change' );
+					return true;
+				});
+			case Layer.on_press_v:
+				
 			case Layer.on_press_r:
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );

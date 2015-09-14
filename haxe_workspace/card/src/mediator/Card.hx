@@ -40,25 +40,18 @@ class Card extends Mediator
 	
 	override public function listNotificationInterests():Array<String> 
 	{
-		return [ 	Model.on_card_flip_change,
+		return [ 	
+					Model.on_card_flip_change,
 					Model.on_state_change,
-					Layer.on_select_cards,
-					Card.card_click
-					];
+					Model.on_select_cards
+				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		
 		switch( notification.getName() ) {
-			case Card.card_click:
-				var cid = notification.getBody().id;
-				switch( cid ) {
-					case name if ( name == getMediatorName() ):
-					case _:
-						focusCard( false );
-				}
-			case Layer.on_select_cards:
+			case Model.on_select_cards:
 				focusCard( false );
 				Lambda.foreach( Lambda.array( notification.getBody().ary_select ), function( dom ) {
 					if ( Main.j( dom ).attr( 'id' ) == getMediatorName() ) focusCard();
@@ -66,6 +59,11 @@ class Card extends Mediator
 				});
 			case Model.on_state_change:
 				switch( notification.getType() ) {
+					case 'owner_change':
+						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						
+						trace( notification.getBody().select );
+						showOnwer( notification.getBody().showOnwer );
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -91,6 +89,14 @@ class Card extends Mediator
 		}
 	}
 	
+	function showOnwer( show ) {
+		if ( show ) {
+			getViewComponent().find( '#img_owner' ).show();
+		}else {
+			getViewComponent().find( '#img_owner' ).hide();
+		}
+	}
+	
 	function listStack( initpos, pos, x, y, count ) {
 		moveCard( initpos[0] + pos * x, initpos[1] - pos * y );
 	}
@@ -98,7 +104,7 @@ class Card extends Mediator
 	function listStackSeprate( initpos, pos, x, y, count ) {
 		moveCard( initpos[0] + ( pos % 10 * x ), initpos[1] + Math.floor( pos / 10 ) * y);
 	}
-	f
+	
 	function checkSelf( id ) {
 		return ( getMediatorName() == id );
 	}

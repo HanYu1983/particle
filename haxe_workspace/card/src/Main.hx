@@ -16,6 +16,8 @@ import org.puremvc.haxe.patterns.facade.Facade;
 class Main 
 {
 	public static var j:Dynamic = untyped __js__('$');
+	public static var playerId = getId();
+	public static var ary_cards = [];
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
@@ -24,14 +26,15 @@ class Main
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body),container_cards:j( '#container_cards' ) } ));
 		 
-		var cards = [for ( i in 0...30 ) { id:getId() } ];
+		var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:'', relate:'' } ];
+		ary_cards = ary_cards.concat( cards );
 		
 		//Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
 		Animate.addCards( cards )();
 	}
 	
-	public static function createCard( id ) {
-		Facade.getInstance().registerMediator( new Card( id, tmpl_card.tmpl( { id:id } ) ));
+	public static function createCard( model:Dynamic ) {
+		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
 	}
 	
 	public static function listCard( ary_select:Dynamic, pos_mouse ) {
@@ -48,16 +51,21 @@ class Main
 		});
 	}
 	
+	public static function getCardsById( id:String ) {
+		return Lambda.find( Main.ary_cards, function( card:Dynamic ) {
+			return ( id == card.id );
+		});
+	}
+	
 	static function main() 
 	{
 		new Main();
 	}
 	
-	static var id = 0;
 	static function getId() {	
-		return id++ + '';
-		//return untyped __js__('leo.utils.generateUUID')();
+		return untyped __js__('leo.utils.generateUUID')();
 	}
+	
 }
 /*
  * 

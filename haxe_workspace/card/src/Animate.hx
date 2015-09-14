@@ -11,7 +11,7 @@ class Animate
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
 			Lambda.foreach( cards, function( card ) {
-				Main.createCard( card.id );
+				Main.createCard( card );
 				return true;
 			});
 			Timer.delay( function() {
