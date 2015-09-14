@@ -17,6 +17,7 @@ class Layer extends Mediator
 	public static var on_press_s = 'on_press_s';
 	public static var on_press_l = 'on_press_l';
 	public static var on_press_a = 'on_press_a';
+	public static var on_press_r = 'on_press_r';
 	public static var on_press_enter = 'on_press_enter';
 	public static var on_body_mousemove = 'on_body_mousemove';
 	
@@ -71,6 +72,9 @@ class Layer extends Mediator
 	function onBodyKeyUp( e ) {
 		trace( e.which ) ;
 		switch( e.which ) {
+		//r
+			case 82:
+				sendNotification( on_press_r );
 		//a
 			case 65:
 				sendNotification( on_press_a );

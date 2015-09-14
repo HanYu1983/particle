@@ -25,7 +25,8 @@ class Main
 		 
 		var cards = [for ( i in 0...30 ) { id:getId() } ];
 		
-		Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
+		//Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
+		Animate.addCards( cards )();
 	}
 	
 	public static function createCard( id ) {

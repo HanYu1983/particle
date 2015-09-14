@@ -10,7 +10,6 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
  */
 class Card extends Mediator
 {
-	/* event */
 	public static var card_click = 'card_click';
 	public static var card_down = 'card_down';
 	public static var card_enter = 'card_enter';
@@ -43,15 +42,22 @@ class Card extends Mediator
 	{
 		return [ 	Model.on_card_flip_change,
 					Model.on_state_change,
-					Layer.on_select_cards ];
+					Layer.on_select_cards,
+					Card.card_click
+					];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		
 		switch( notification.getName() ) {
-			//case Layer.on_press_m:
-			//	setMovingState( _focus == true );
+			case Card.card_click:
+				var cid = notification.getBody().id;
+				switch( cid ) {
+					case name if ( name == getMediatorName() ):
+					case _:
+						focusCard( false );
+				}
 			case Layer.on_select_cards:
 				focusCard( false );
 				Lambda.foreach( Lambda.array( notification.getBody().ary_select ), function( dom ) {
@@ -60,13 +66,6 @@ class Card extends Mediator
 				});
 			case Model.on_state_change:
 				switch( notification.getType() ) {
-					/*
-					case 'move':
-						if ( _isMoving ) {
-							moveCard( notification.getBody().x, notification.getBody().y );
-							setMovingState( false );
-						}
-						*/
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -111,16 +110,7 @@ class Card extends Mediator
 			top:y
 		});
 	}
-	/*
-	function setMovingState( state ) {
-		_isMoving = state;
-		if ( _isMoving ) {
-			setState( 'moving...' );
-		}else {
-			setState( '' );
-		}
-	}
-	*/
+	
 	function focusCard( ?focus ) {
 		if ( focus != null ) {
 			_focus = focus;
@@ -138,7 +128,8 @@ class Card extends Mediator
 	function onCardClick( e ) {
 		focusCard();
 		
-		sendNotification( card_click, {id:getMediatorName(), focus:_focus } );
+		sendNotification( card_click, { id:getMediatorName(), focus:_focus } );
+		sendNotification( card_enter, getViewComponent() );
 	}
 	
 	function onCardMouseDown( e ) {
@@ -156,9 +147,9 @@ class Card extends Mediator
 	
 	function setView() {
 		if ( _back ) {
-			getViewComponent().find('.card').addClass( 'card_back' );
+			getViewComponent().find( '.card_back' ).show();
 		}else {
-			getViewComponent().find('.card').removeClass( 'card_back' );
+			getViewComponent().find( '.card_back' ).hide();
 		}
 	}
 	

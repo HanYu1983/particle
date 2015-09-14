@@ -33,6 +33,7 @@ class Model extends Mediator
 				Layer.on_press_s,
 				Layer.on_press_l,
 				Layer.on_press_a,
+				Layer.on_press_r,
 				Layer.on_press_enter,
 				Layer.on_body_mousemove,
 				Layer.on_select_cards
@@ -79,7 +80,6 @@ class Model extends Mediator
 			case Card.card_enter:
 				sendNotification( on_card_enter, notification.getBody() );
 			case Card.card_click:
-				
 				if ( notification.getBody().focus ) {
 					ary_select = [ {id:notification.getBody().id } ];
 				}else {
@@ -87,6 +87,9 @@ class Model extends Mediator
 				}
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
+			case Layer.on_press_r:
+				ary_select.reverse();
+				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_f:
 				sendNotification( on_card_flip_change, null, 'all' );
 			case Layer.on_press_l:

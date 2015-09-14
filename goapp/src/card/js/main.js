@@ -146,7 +146,7 @@ var Main = function() {
 		_g.push({ id : Main.getId()});
 	}
 	cards = _g;
-	(Animate.addCards(cards))().pipe(Animate.list(cards.slice(0,15),[200,200])).pipe(Animate.listSeparate(cards.slice(0,7),[300,300]));
+	(Animate.addCards(cards))();
 };
 Main.createCard = function(id) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(id,Main.tmpl_card.tmpl({ id : id})));
@@ -335,12 +335,18 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.getViewComponent().off("click");
 	}
 	,listNotificationInterests: function() {
-		return [model_Model.on_card_flip_change,model_Model.on_state_change,mediator_Layer.on_select_cards];
+		return [model_Model.on_card_flip_change,model_Model.on_state_change,mediator_Layer.on_select_cards,mediator_Card.card_click];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "card_click":
+			var cid = notification.getBody().id;
+			var name = cid;
+			if(name == this.getMediatorName()) {
+			} else this.focusCard(false);
+			break;
 		case "on_select_cards":
 			this.focusCard(false);
 			Lambda.foreach(Lambda.array(notification.getBody().ary_select),function(dom) {
@@ -396,6 +402,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 	,onCardClick: function(e) {
 		this.focusCard();
 		this.sendNotification(mediator_Card.card_click,{ id : this.getMediatorName(), focus : this._focus});
+		this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
 	}
 	,onCardMouseDown: function(e) {
 		this.sendNotification(mediator_Card.card_down,{ id : this.getMediatorName()});
@@ -405,7 +412,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.setView();
 	}
 	,setView: function() {
-		if(this._back) this.getViewComponent().find(".card").addClass("card_back"); else this.getViewComponent().find(".card").removeClass("card_back");
+		if(this._back) this.getViewComponent().find(".card_back").show(); else this.getViewComponent().find(".card_back").hide();
 	}
 	,setState: function(state) {
 		this.getViewComponent().find("#txt_state").html(state);
@@ -453,6 +460,9 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		console.log(e.which);
 		var _g = e.which;
 		switch(_g) {
+		case 82:
+			this.sendNotification(mediator_Layer.on_press_r);
+			break;
 		case 65:
 			this.sendNotification(mediator_Layer.on_press_a);
 			break;
@@ -482,7 +492,7 @@ var model_Model = function(mediatorName,viewComponent) {
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press_f,mediator_Layer.on_press_s,mediator_Layer.on_press_l,mediator_Layer.on_press_a,mediator_Layer.on_press_enter,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
+		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press_f,mediator_Layer.on_press_s,mediator_Layer.on_press_l,mediator_Layer.on_press_a,mediator_Layer.on_press_r,mediator_Layer.on_press_enter,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -525,6 +535,10 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "on_layout_mouse_up":
 			this.sendNotification(model_Model.on_card_move,notification.getBody());
+			break;
+		case "on_press_r":
+			this.ary_select.reverse();
+			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_f":
 			this.sendNotification(model_Model.on_card_flip_change,null,"all");
@@ -855,6 +869,7 @@ mediator_Layer.on_press_m = "on_press_m";
 mediator_Layer.on_press_s = "on_press_s";
 mediator_Layer.on_press_l = "on_press_l";
 mediator_Layer.on_press_a = "on_press_a";
+mediator_Layer.on_press_r = "on_press_r";
 mediator_Layer.on_press_enter = "on_press_enter";
 mediator_Layer.on_body_mousemove = "on_body_mousemove";
 model_Model.on_card_flip_change = "on_card_flip_change";
