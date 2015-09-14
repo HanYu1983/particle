@@ -118,6 +118,7 @@ var Main = function() {
 		case "on_btn_login_click":
 			Main.showLoading();
 			Main.fb_login(function(e) {
+				haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 84, className : "Main", methodName : "new"});
 				var authResponse = e.authResponse;
 				var _g1 = e.status;
 				switch(_g1) {
@@ -126,7 +127,9 @@ var Main = function() {
 					_g.saver.set_fbtoken(token);
 					_g.saver.set_fbid(authResponse.userID);
 					_g.panelView.setLogin(true);
+					haxe_Log.trace("a",{ fileName : "Main.hx", lineNumber : 94, className : "Main", methodName : "new"});
 					Main.load(_g.saver.fbid,_g.saver.fbtoken,function(err,params2) {
+						haxe_Log.trace("b",{ fileName : "Main.hx", lineNumber : 97, className : "Main", methodName : "new", customParams : [err,params2]});
 						Main.closeLoading();
 						if(err == null) {
 							if(params2 != null) _g.panelModel.set_config(params2);
@@ -204,7 +207,7 @@ var Main = function() {
 		}
 	});
 	this.panelModel.addHandler(function(type2,params3) {
-		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 159, className : "Main", methodName : "new", customParams : [params3]});
+		haxe_Log.trace(type2,{ fileName : "Main.hx", lineNumber : 163, className : "Main", methodName : "new", customParams : [params3]});
 		_g.saver.startAuto();
 		switch(type2) {
 		case "on_init":
