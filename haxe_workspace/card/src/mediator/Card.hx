@@ -166,19 +166,19 @@ class Card extends Mediator
 	function setView() {
 		if ( _see ) {
 			getViewComponent().find( '.card_back' ).hide();
-			if ( _back ) {
-				getViewComponent().find( '#img_back' ).show();
-			}else {
-				getViewComponent().find( '#img_back' ).hide();
-			}
+			
 		}else{
 			if ( _back ) {
 				getViewComponent().find( '.card_back' ).show();
-				getViewComponent().find( '#img_back' ).show();
 			}else {
 				getViewComponent().find( '.card_back' ).hide();
-				getViewComponent().find( '#img_back' ).hide();
 			}
+		}
+		
+		if ( _back ) {
+			getViewComponent().find( '#img_back' ).show();
+		}else {
+			getViewComponent().find( '#img_back' ).hide();
 		}
 	}
 	

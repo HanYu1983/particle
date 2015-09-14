@@ -438,16 +438,8 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.setView();
 	}
 	,setView: function() {
-		if(this._see) {
-			this.getViewComponent().find(".card_back").hide();
-			if(this._back) this.getViewComponent().find("#img_back").show(); else this.getViewComponent().find("#img_back").hide();
-		} else if(this._back) {
-			this.getViewComponent().find(".card_back").show();
-			this.getViewComponent().find("#img_back").show();
-		} else {
-			this.getViewComponent().find(".card_back").hide();
-			this.getViewComponent().find("#img_back").hide();
-		}
+		if(this._see) this.getViewComponent().find(".card_back").hide(); else if(this._back) this.getViewComponent().find(".card_back").show(); else this.getViewComponent().find(".card_back").hide();
+		if(this._back) this.getViewComponent().find("#img_back").show(); else this.getViewComponent().find("#img_back").hide();
 	}
 	,seeCard: function(see) {
 		this._see = see;
