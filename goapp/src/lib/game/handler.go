@@ -9,6 +9,8 @@ import (
   "time"
 )
 
+var _ = time.Millisecond
+
 type Result struct {
   Info interface{}
   Error interface{}
@@ -23,7 +25,7 @@ func Output(w http.ResponseWriter, info, err interface{}){
   fmt.Fprintf(w, "%s", string( jsonstr ))
 }
 
-var gameCtx = Context{}
+var gameCtx = &Context{}
 
 func CreateUser(w http.ResponseWriter, r *http.Request){
   w.Header().Set("Content-Type", "application/json; charset=utf8")
@@ -155,7 +157,7 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
 
 func Clear (w http.ResponseWriter, r *http.Request){
   w.Header().Set("Content-Type", "application/json; charset=utf8")
-  gameCtx = Context{}
+  gameCtx = &Context{}
   Output( w, nil, nil )
 }
 
@@ -180,21 +182,32 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
   fbid := r.Form["FBID"][0]
   user := gameCtx.User(fbid)
   
-  maxtime := 10
-  var times int
-  for times < maxtime {
-    msgs := gameCtx.MessagesToUser( user )
-    if len( msgs ) > 0 {
-      lastestMessage := msgs[len(msgs)-1]
-      gameCtx.DeleteMessage( msgs )
-      Output( w, lastestMessage, nil )
-      break
-    }
-    time.Sleep(500 * time.Millisecond)
-    times += 1
-  }
+  msgChan := make(chan interface{}, 1)
+  errChan := make(chan bool)
   
-  if times == maxtime {
+  go func ( ch chan interface{} ){
+    maxtime := 1
+    var times int
+    for times < maxtime {
+      msgs := gameCtx.MessagesToUser( user )
+      if len( msgs ) > 0 {
+        lastestMessage := msgs[len(msgs)-1]
+        ch <- lastestMessage
+        gameCtx.DeleteMessage( msgs )
+        break
+      }
+      //time.Sleep(500 * time.Millisecond)
+      times += 1
+    }
+    if times == maxtime {
+      errChan <- true
+    }
+  } ( msgChan )
+  
+  select {
+  case <-errChan:
     Output( w, nil, "times out")
+  case ret := <-msgChan:
+    Output( w, ret, nil )
   }
 }
