@@ -98,7 +98,7 @@ class Card extends Mediator
 	function listStackSeprate( initpos, pos, x, y, count ) {
 		moveCard( initpos[0] + ( pos % 10 * x ), initpos[1] + Math.floor( pos / 10 ) * y);
 	}
-	
+	f
 	function checkSelf( id ) {
 		return ( getMediatorName() == id );
 	}

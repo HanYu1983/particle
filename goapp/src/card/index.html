@@ -55,6 +55,10 @@ body{
 	border:2px blue solid;
 }
 
+.card_icons{
+	width:20px;
+	height:20px;
+}
 </style>
 <script id="tmpl_card" type="jquery-x-tmpl">
 	<div id=${id} class="card_root elements">
@@ -62,6 +66,10 @@ body{
 			${id}
 		</div>
 		<div class="card_back"></div>
+		<div>
+			<img id="img_relate" class="card_icons" src="../common/images/icons/pointer.png"/>
+			<img id="img_owner" class="card_icons" src="../common/images/icons/Person.png"/>
+		</div>
 	</div>
 </script>
 <body>

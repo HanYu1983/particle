@@ -61,8 +61,8 @@ class Main
 }
 /*
  * 
-owner[ id:string ]: 設定owner是誰
-持有者[ id:string or '' ]: 
+owner[ id:string ]: 設定owner是誰(一開始就會自動設定。icon: 人頭)
+持有者[ id:string or '' ]: (icon: 手)
 	當持有者id等於owner的時候，蓋著時也能看見。
 	只要持有者id等於''的話，每個人都可以設為自己。
 	只要持有者id不等於''的話，只那個那個id的人可以設置持有者(只能設為空白或自己)
