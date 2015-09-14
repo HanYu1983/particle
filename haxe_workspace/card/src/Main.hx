@@ -1,5 +1,6 @@
 package;
 
+import haxe.Json;
 import haxe.Timer;
 import js.Browser;
 import js.html.NotifyPaintEvent;
@@ -24,57 +25,116 @@ class Main
 	
 	function new() {
 		
+		trace( 'playerId', playerId );
+		
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
-		
-		 
 		createUser( {
 			FBID:playerId,
 			Name:playerId
 		}, handleResponse( function( ret ) {
-			trace( ret );
 			appStart();
-			
+			callForOthers( function() {
+				trace( otherPlayerId );
+				installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
+				createSelfStack();
+			});
 		}));
 		
-		callForOthers();
 	}
 	
-	function callForOthers() {
+	function createSelfStack() {
+		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
+		addCardAndPrepare( stack );
+		Timer.delay( function() {
+			messageAll( 0, {cmd:'addCards', content:stack } );
+		}, 1000 );
+		
+	}
+	
+	function messageAll( i, content ) {
+		if ( otherPlayerId[i] == null ) return;
+		message( {
+			FBID:playerId,
+			TargetUser:otherPlayerId[i],
+			Content: Json.stringify( content )
+		}, handleResponse( function( ret ) {
+			messageAll( ++i, content );
+		}));
+		/*
+		Lambda.foreach( otherPlayerId, function( str ) {
+			trace( "M" );
+			message( {
+				FBID:playerId,
+				TargetUser:str,
+				Content:content
+			}, handleResponse( function( ret ) {
+				trace("CD");
+				trace( ret );
+			}));
+			return true;
+		});
+		*/
+	}
+	
+	function onBackCallback( ret:Dynamic ) {
+		var content = Json.parse( ret.Info.Content );
+		trace( content.cmd );
+		switch( content.cmd ) {
+			case 'addCards':
+				addCardAndPrepare( content.content );
+		}
+	}
+	
+	function callForOthers( cb ) {
 		users( handleResponse( function( ret ) {
-			trace( ret );
-			if ( ret.Info.length >= 2 ) {
+			if ( ret.Info != null && ret.Info.length >= 2 ) {
 				Lambda.fold( ret.Info, function(item, curr ) {
 					if ( item.Key != playerId ) {
-						curr.push( item );
+						curr.push( item.Key );
 					}
 					return curr;
 				}, otherPlayerId);
+				cb();
 			}else {
-				Timer.delay( callForOthers, 1000 );
+				Timer.delay( function() {
+					callForOthers( cb );
+				}, 1000);
 			}
 		}));
 	}
 	
+	function addCardAndPrepare( cards:Array<Dynamic> ) {
+		ary_cards = ary_cards.concat( cards );
+		Animate.addCards( cards )();
+		
+		Lambda.foreach( cards, function( card ) {
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: card.owner == card.relate }, 'relate_change' );
+			return true;
+		});
+	}
+	
 	function appStart() {
 		//fake player
-		var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
-		ary_cards = ary_cards.concat( cards );
+		//var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
+		//ary_cards = ary_cards.concat( cards );
 		
 		//fake enemy
-		cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:getId(), relate:'' } ];
-		ary_cards = ary_cards.concat( cards );
+		//cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:getId(), relate:'' } ];
+		//ary_cards = ary_cards.concat( cards );
 		
 		
 		//Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
-		Animate.addCards( ary_cards )();
-		
+		//Animate.addCards( ary_cards )();
+		/*
 		Lambda.foreach( ary_cards, function( card ) {
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: card.owner == card.relate }, 'relate_change' );
 			return true;
 		});
+		*/
 	}
 	
 	public static function createCard( model:Dynamic ) {
@@ -149,7 +209,7 @@ class Main
 		}
 	}
 	*/
-	public static function message( data, cb ) {
+	public static function message( data:Dynamic, cb ) {
 		untyped __js__('api.message' )( data, cb );
 	}
 	
@@ -172,6 +232,7 @@ class Main
 	
 	static function handleResponse( cb ) {
 		return function ( err, ret ) {
+			trace( 'handleResponse', err );
 			if ( err != null ) {
 				Browser.alert( err );
 			}else {
