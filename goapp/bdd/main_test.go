@@ -19,9 +19,11 @@ func TestSuit(t *testing.T){
   
   It := bdd.GenIt( c, t )
   
-  FB( It )
-  DBFileSystem( It )
+  _ = It
   
+  //FB( It )
+  DBFileSystem( It )
+  Room( It )
 }
 
 

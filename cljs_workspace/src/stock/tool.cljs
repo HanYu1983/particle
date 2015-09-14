@@ -58,8 +58,12 @@
   "結合今天，如果今天已經抓到，就不結合"
   [todayLine li]
   (if todayLine
-    (let [[maybe-today _ _ _ _ _] (first li)]
-      (if-not (.equals (.today js/Date) (.clearTime (js/Date. maybe-today)))
+    (let [[maybe-today _ _ _ _ _] (first li)
+          [today-date _ _ _ _ _] todayLine]
+      (if-not 
+        (.equals 
+          (.clearTime (js/Date. today-date)) 
+          (.clearTime (js/Date. maybe-today)))
         (cons todayLine li)
         li))
     li))

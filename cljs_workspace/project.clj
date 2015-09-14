@@ -6,32 +6,12 @@
   :cljsbuild {
     :builds [
     {
-      :id "stock"
+      :id "common"
       :source-paths ["src"]
       :compiler {
-        :output-to "../goapp/src/stock/js/cljs/cljs.js"
-        :output-dir "../goapp/src/stock/js/cljs"
+        :output-to "../goapp/src/common/cljs/cljs.js"
+        :output-dir "../goapp/src/common/cljs"
         :optimizations :none
         :pretty-print true}
-    }
-    {
-      :id "particle"
-      :source-paths ["src"]
-      :compiler {
-        :output-to "../goapp/src/particle/res/cljs/cljs.js"
-        :output-dir "../goapp/src/particle/res/cljs"
-        :optimizations :none
-        :pretty-print true
-      }
-    }
-    {
-      :id "cocoon"
-      :source-paths ["src"]
-      :compiler {
-        :output-to "../goapp/src/cocoon/cljs/cljs.js"
-        :output-dir "../goapp/src/cocoon/cljs"
-        :optimizations :none
-        :pretty-print true
-      }
     }
     ]})
