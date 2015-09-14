@@ -69,14 +69,14 @@ class Card extends Mediator
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
-						listStack( notification.getBody().mouse, notification.getBody().pos, 2, 2 );
+						listStack( notification.getBody().mouse, notification.getBody().pos, 2, 2, notification.getBody().count );
 					case 'list_separate':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
-						listStackSeprate( notification.getBody().mouse, notification.getBody().pos, 60, 0 );
+						listStackSeprate( notification.getBody().mouse, notification.getBody().pos, 100, 100, notification.getBody().count );
 					case 'list_shuffle':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
-						listStack( notification.getBody().mouse, notification.getBody().pos, 2, 2 );
+						listStack( notification.getBody().mouse, notification.getBody().pos, 2, 2, notification.getBody().count );
 				}
 				
 			case Model.on_card_flip_change:
@@ -91,12 +91,12 @@ class Card extends Mediator
 		}
 	}
 	
-	function listStack( initpos, pos, x, y ) {
+	function listStack( initpos, pos, x, y, count ) {
 		moveCard( initpos[0] + pos * x, initpos[1] - pos * y );
 	}
 	
-	function listStackSeprate( initpos, pos, x, y ) {
-		moveCard( initpos[0] + ( pos % 10 * 100 ), initpos[1] + Math.floor( pos / 10 ) * 100);
+	function listStackSeprate( initpos, pos, x, y, count ) {
+		moveCard( initpos[0] + ( pos % 10 * x ), initpos[1] + Math.floor( pos / 10 ) * y);
 	}
 	
 	function checkSelf( id ) {

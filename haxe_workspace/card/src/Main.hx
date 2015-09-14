@@ -2,6 +2,7 @@ package;
 
 import haxe.Timer;
 import js.Browser;
+import js.html.NotifyPaintEvent;
 import mediator.Card;
 import js.Lib;
 import mediator.Layer;
@@ -33,16 +34,16 @@ class Main
 		Facade.getInstance().registerMediator( new Card( id, tmpl_card.tmpl( { id:id } ) ));
 	}
 	
-	public static function listCard( ary_select, pos_mouse ) {
+	public static function listCard( ary_select:Dynamic, pos_mouse ) {
 		Lambda.foreach( ary_select, function( select ) {
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list' );
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select ), count:ary_select.length  }, 'list' );
 			return true;
 		});
 	}
 	
-	public static function listSeparate( ary_select, pos_mouse ) {
+	public static function listSeparate( ary_select:Dynamic, pos_mouse ) {
 		Lambda.foreach( ary_select, function( select ) {
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list_separate' );
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select ), count:ary_select.length  }, 'list_separate' );
 			return true;
 		});
 	}

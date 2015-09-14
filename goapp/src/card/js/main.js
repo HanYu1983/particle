@@ -153,13 +153,13 @@ Main.createCard = function(id) {
 };
 Main.listCard = function(ary_select,pos_mouse) {
 	Lambda.foreach(ary_select,function(select) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select)},"list");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select), count : ary_select.length},"list");
 		return true;
 	});
 };
 Main.listSeparate = function(ary_select,pos_mouse) {
 	Lambda.foreach(ary_select,function(select) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select)},"list_separate");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select), count : ary_select.length},"list_separate");
 		return true;
 	});
 };
@@ -360,16 +360,16 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			case "list":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-				this.listStack(notification.getBody().mouse,notification.getBody().pos,2,2);
+				this.listStack(notification.getBody().mouse,notification.getBody().pos,2,2,notification.getBody().count);
 				break;
 			case "list_separate":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
-				this.listStackSeprate(notification.getBody().mouse,notification.getBody().pos,60,0);
+				this.listStackSeprate(notification.getBody().mouse,notification.getBody().pos,100,100,notification.getBody().count);
 				break;
 			case "list_shuffle":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-				this.listStack(notification.getBody().mouse,notification.getBody().pos,2,2);
+				this.listStack(notification.getBody().mouse,notification.getBody().pos,2,2,notification.getBody().count);
 				break;
 			}
 			break;
@@ -383,11 +383,11 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			break;
 		}
 	}
-	,listStack: function(initpos,pos,x,y) {
+	,listStack: function(initpos,pos,x,y,count) {
 		this.moveCard(initpos[0] + pos * x,initpos[1] - pos * y);
 	}
-	,listStackSeprate: function(initpos,pos,x,y) {
-		this.moveCard(initpos[0] + pos % 10 * 100,initpos[1] + Math.floor(pos / 10) * 100);
+	,listStackSeprate: function(initpos,pos,x,y,count) {
+		this.moveCard(initpos[0] + pos % 10 * x,initpos[1] + Math.floor(pos / 10) * y);
 	}
 	,checkSelf: function(id) {
 		return this.getMediatorName() == id;
