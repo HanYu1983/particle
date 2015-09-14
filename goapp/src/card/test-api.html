@@ -32,16 +32,22 @@
 		<script src='js/api.js'></script>
 		<script>
 		api.createUser({FBID:"han", Name:"222"}, function(err, ret){
-			console.log(ret.Info.Key)
-			api.createUser({FBID:"vic", Name:"33"}, function(err, ret){
-				console.log(ret.Info.Key)
-				
-			})
+			//console.log(ret.Info.Key)
+			
 		})
 		
-		api.users( function(err, ret){
-			console.log(ret)
+		api.createUser({FBID:"vic", Name:"33"}, function(err, ret){
+			//console.log(ret.Info.Key)
+			
 		})
+		
+		setTimeout( function(){
+			api.users( function(err, ret){
+				console.log(JSON.stringify(ret))
+			})
+			setTimeout( arguments.callee, 1000)
+		}, 1000)
+		
 		
 		/*
 		
