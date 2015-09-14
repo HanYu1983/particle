@@ -156,7 +156,6 @@ var Main = function() {
 	}
 	cards = _g;
 	Main.ary_cards = Main.ary_cards.concat(cards);
-	haxe_Log.trace(Main.ary_cards.length,{ fileName : "Main.hx", lineNumber : 32, className : "Main", methodName : "new"});
 	var _g11 = [];
 	var _g2 = 0;
 	while(_g2 < 30) {
@@ -165,7 +164,6 @@ var Main = function() {
 	}
 	cards = _g11;
 	Main.ary_cards = Main.ary_cards.concat(cards);
-	haxe_Log.trace(Main.ary_cards.length,{ fileName : "Main.hx", lineNumber : 37, className : "Main", methodName : "new"});
 	(Animate.addCards(Main.ary_cards))();
 	Lambda.foreach(Main.ary_cards,function(card) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : card.owner == card.relate},"owner_change");

@@ -26,15 +26,14 @@ class Main
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body),container_cards:j( '#container_cards' ) } ));
 		 
+		//fake player
 		var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
 		ary_cards = ary_cards.concat( cards );
 		
-		trace( ary_cards.length );
-		
+		//fake enemy
 		cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:getId(), relate:'' } ];
 		ary_cards = ary_cards.concat( cards );
 		
-		trace( ary_cards.length );
 		
 		//Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
 		Animate.addCards( ary_cards )();
