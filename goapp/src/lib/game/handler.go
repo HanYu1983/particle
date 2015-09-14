@@ -26,17 +26,18 @@ func Output(w http.ResponseWriter, info, err interface{}){
   fmt.Fprintf(w, "%s", string( jsonstr ))
 }
 
-
 var gameCtx Context
 var mutex sync.Mutex
-var _ = mutex
+
+func InitContext (){
+
+}
 
 func CreateUser(w http.ResponseWriter, r *http.Request){
-  mutex.Lock()
-  defer mutex.Unlock()
   
   ctx := appengine.NewContext( r )
   var _ = ctx
+  
   w.Header().Set("Content-Type", "application/json; charset=utf8")
   
   defer tool.Recover( func(err error){
@@ -47,8 +48,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
     Output( w, gameCtx.Users, nil )
     return
   }
-  
-  ctx.Infof("before")
   
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
@@ -62,8 +61,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
   user := gameCtx.User(fbid)
   user.Name = name
   gameCtx.EditUser( user )
-  
-  ctx.Infof("after")
   
   Output( w, user, nil )
 }
@@ -167,7 +164,7 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
 
 func Clear (w http.ResponseWriter, r *http.Request){
   w.Header().Set("Content-Type", "application/json; charset=utf8")
-  gameCtx = Context{}
+  //gameCtx = Context{}
   Output( w, nil, nil )
 }
 

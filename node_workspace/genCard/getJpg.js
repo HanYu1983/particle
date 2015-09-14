@@ -53,13 +53,13 @@ function downloadPackage( id, cnt ){
 	}
 }
 
-for( var i=30; i<66; ++i ){
+for( var i=66; i<67; ++i ){
 	function closure( pkg ){
 		return function(){
 			downloadPackage(pkg, 200)
 		}
 	}
-	setTimeout( closure(i+1), (i-30)* 1000* 300)
+	setTimeout( closure(i+1), (i-66)* 1000* 300)
 }
 
 
