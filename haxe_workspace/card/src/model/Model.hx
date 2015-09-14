@@ -146,7 +146,6 @@ class Model extends Mediator
 					
 					return true;
 				});
-				//sendNotification( on_card_flip_change, {}, 'all' );
 			case Layer.on_press_l:
 				Main.listCard( ary_select, pos_mouse );
 			case Layer.on_press_a:
