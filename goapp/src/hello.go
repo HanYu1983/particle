@@ -34,7 +34,8 @@ func init(){
   http.HandleFunc("/card/room/", game.CreateRoom)
   http.HandleFunc("/card/enterRoom/", game.EnterRoom)
   http.HandleFunc("/card/message/", game.LeaveMessage)
-  
+  http.HandleFunc("/card/clear", game.Clear)
+  http.HandleFunc("/card/longPollingTargetMessage", game.LongPollingTargetMessage)
   
 }
 
