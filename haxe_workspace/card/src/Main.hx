@@ -26,7 +26,7 @@ class Main
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body),container_cards:j( '#container_cards' ) } ));
 		 
-		var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:'', relate:'' } ];
+		var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
 		ary_cards = ary_cards.concat( cards );
 		
 		//Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
@@ -69,7 +69,7 @@ class Main
 }
 /*
  * 
-owner[ id:string ]: 設定owner是誰(一開始就會自動設定。icon: 人頭)
+owner[ id:string ]: 設定owner是誰, 只有自己可以設定owner(一開始就會自動設定。icon: 人頭)
 持有者[ id:string or '' ]: (icon: 手)
 	當持有者id等於owner的時候，蓋著時也能看見。
 	只要持有者id等於''的話，每個人都可以設為自己。

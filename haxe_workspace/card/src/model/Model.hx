@@ -98,15 +98,30 @@ class Model extends Mediator
 				Lambda.foreach( ary_select, function( card ) {
 					switch( card.owner ) {
 						case '':
+							//如果owner 是空白，就可以修改為自己
 							card.owner = Main.playerId;
 						case owner:
-							card.owner = '';
+							//如果owner 不是自己，就不能更改
+							if ( owner == Main.playerId )
+								card.owner = '';
 					}
-					sendNotification( on_state_change, { select:card, showOnwer:Main.playerId == card.owner }, 'owner_change' );
+					sendNotification( on_state_change, { select:card, showOwner:Main.playerId == card.owner }, 'owner_change' );
 					return true;
 				});
 			case Layer.on_press_v:
-				
+				Lambda.foreach( ary_select, function( card ) {
+					switch( card.relate ) {
+						case '':
+							//如果relate 是空白，就可以修改為自己
+							card.relate = Main.playerId;
+						case relate:
+							//如果relate 不是自己，就不能更改
+							if ( relate == Main.playerId )
+								card.relate = '';
+					}
+					sendNotification( on_state_change, { select:card, showRelate:Main.playerId == card.relate }, 'relate_change' );
+					return true;
+				});
 			case Layer.on_press_r:
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );

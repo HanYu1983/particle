@@ -61,9 +61,10 @@ class Card extends Mediator
 				switch( notification.getType() ) {
 					case 'owner_change':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
-						
-						trace( notification.getBody().select );
-						showOnwer( notification.getBody().showOnwer );
+						showOnwer( notification.getBody().showOwner );
+					case 'relate_change':
+						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						showRelate( notification.getBody().showRelate );
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -94,6 +95,14 @@ class Card extends Mediator
 			getViewComponent().find( '#img_owner' ).show();
 		}else {
 			getViewComponent().find( '#img_owner' ).hide();
+		}
+	}
+	
+	function showRelate( show ) {
+		if ( show ) {
+			getViewComponent().find( '#img_relate' ).show();
+		}else {
+			getViewComponent().find( '#img_relate' ).hide();
 		}
 	}
 	
