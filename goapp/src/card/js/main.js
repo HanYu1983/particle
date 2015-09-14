@@ -152,6 +152,11 @@ var Main = function() {
 	cards = _g;
 	Main.ary_cards = Main.ary_cards.concat(cards);
 	(Animate.addCards(cards))();
+	Lambda.foreach(Main.ary_cards,function(card) {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : card.owner == card.relate},"owner_change");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, seeCard : card.owner == card.relate},"relate_change");
+		return true;
+	});
 };
 Main.createCard = function(model) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
@@ -329,7 +334,8 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 	}
 });
 var mediator_Card = function(mediatorName,viewComponent) {
-	this._back = false;
+	this._see = false;
+	this._back = true;
 	this._focus = false;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
@@ -364,10 +370,12 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			case "owner_change":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this.showOnwer(notification.getBody().showOwner);
+				this.seeCard(notification.getBody().seeCard);
 				break;
 			case "relate_change":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this.showRelate(notification.getBody().showRelate);
+				this.seeCard(notification.getBody().seeCard);
 				break;
 			case "list":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
@@ -430,7 +438,20 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.setView();
 	}
 	,setView: function() {
-		if(this._back) this.getViewComponent().find(".card_back").show(); else this.getViewComponent().find(".card_back").hide();
+		if(this._see) {
+			this.getViewComponent().find(".card_back").hide();
+			if(this._back) this.getViewComponent().find("#img_back").show(); else this.getViewComponent().find("#img_back").hide();
+		} else if(this._back) {
+			this.getViewComponent().find(".card_back").show();
+			this.getViewComponent().find("#img_back").show();
+		} else {
+			this.getViewComponent().find(".card_back").hide();
+			this.getViewComponent().find("#img_back").hide();
+		}
+	}
+	,seeCard: function(see) {
+		this._see = see;
+		this.setView();
 	}
 	,setState: function(state) {
 		this.getViewComponent().find("#txt_state").html(state);
@@ -573,22 +594,42 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				default:
 					if(owner == Main.playerId) card.owner = "";
 				}
-				_g1.sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner},"owner_change");
+				var seeCard;
+				var _g12 = card.owner;
+				var owner1 = _g12;
+				switch(_g12) {
+				case "":
+					seeCard = false;
+					break;
+				default:
+					seeCard = owner1 == card.relate;
+				}
+				_g1.sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : seeCard},"owner_change");
 				return true;
 			});
 			break;
 		case "on_press_v":
 			Lambda.foreach(this.ary_select,function(card1) {
-				var _g12 = card1.relate;
-				var relate = _g12;
-				switch(_g12) {
+				var _g13 = card1.relate;
+				var relate = _g13;
+				switch(_g13) {
 				case "":
 					card1.relate = Main.playerId;
 					break;
 				default:
 					if(relate == Main.playerId) card1.relate = "";
 				}
-				_g1.sendNotification(model_Model.on_state_change,{ select : card1, showRelate : Main.playerId == card1.relate},"relate_change");
+				var seeCard1;
+				var _g14 = card1.owner;
+				var owner2 = _g14;
+				switch(_g14) {
+				case "":
+					seeCard1 = false;
+					break;
+				default:
+					seeCard1 = owner2 == card1.relate;
+				}
+				_g1.sendNotification(model_Model.on_state_change,{ select : card1, showRelate : Main.playerId == card1.relate, seeCard : seeCard1},"relate_change");
 				return true;
 			});
 			break;

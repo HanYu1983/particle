@@ -105,7 +105,13 @@ class Model extends Mediator
 							if ( owner == Main.playerId )
 								card.owner = '';
 					}
-					sendNotification( on_state_change, { select:card, showOwner:Main.playerId == card.owner }, 'owner_change' );
+					
+					var seeCard = switch( card.owner ) {
+						case '':false;
+						case owner: owner == card.relate;
+					}
+					
+					sendNotification( on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: seeCard }, 'owner_change' );
 					return true;
 				});
 			case Layer.on_press_v:
@@ -119,7 +125,13 @@ class Model extends Mediator
 							if ( relate == Main.playerId )
 								card.relate = '';
 					}
-					sendNotification( on_state_change, { select:card, showRelate:Main.playerId == card.relate }, 'relate_change' );
+					
+					var seeCard = switch( card.owner ) {
+						case '':false;
+						case owner: owner == card.relate;
+					}
+					
+					sendNotification( on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: seeCard }, 'relate_change' );
 					return true;
 				});
 			case Layer.on_press_r:

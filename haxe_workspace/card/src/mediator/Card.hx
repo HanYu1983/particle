@@ -15,7 +15,8 @@ class Card extends Mediator
 	public static var card_enter = 'card_enter';
 	
 	var _focus = false;
-	var _back = false;
+	var _back = true;
+	var _see = false;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -62,9 +63,11 @@ class Card extends Mediator
 					case 'owner_change':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						showOnwer( notification.getBody().showOwner );
+						seeCard( notification.getBody().seeCard );
 					case 'relate_change':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						showRelate( notification.getBody().showRelate );
+						seeCard( notification.getBody().seeCard );
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -161,11 +164,27 @@ class Card extends Mediator
 	}
 	
 	function setView() {
-		if ( _back ) {
-			getViewComponent().find( '.card_back' ).show();
-		}else {
+		if ( _see ) {
 			getViewComponent().find( '.card_back' ).hide();
+			if ( _back ) {
+				getViewComponent().find( '#img_back' ).show();
+			}else {
+				getViewComponent().find( '#img_back' ).hide();
+			}
+		}else{
+			if ( _back ) {
+				getViewComponent().find( '.card_back' ).show();
+				getViewComponent().find( '#img_back' ).show();
+			}else {
+				getViewComponent().find( '.card_back' ).hide();
+				getViewComponent().find( '#img_back' ).hide();
+			}
 		}
+	}
+	
+	function seeCard( see ) {
+		_see = see;
+		setView();
 	}
 	
 	function setState( state ) {

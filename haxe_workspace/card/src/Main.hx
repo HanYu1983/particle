@@ -31,6 +31,12 @@ class Main
 		
 		//Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
 		Animate.addCards( cards )();
+		
+		Lambda.foreach( ary_cards, function( card ) {
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: card.owner == card.relate }, 'relate_change' );
+			return true;
+		});
 	}
 	
 	public static function createCard( model:Dynamic ) {
