@@ -32,9 +32,11 @@ var mutex sync.Mutex
 var _ = mutex
 
 func CreateUser(w http.ResponseWriter, r *http.Request){
+  mutex.Lock()
+  defer mutex.Unlock()
+  
   ctx := appengine.NewContext( r )
   var _ = ctx
-  
   w.Header().Set("Content-Type", "application/json; charset=utf8")
   
   defer tool.Recover( func(err error){
@@ -45,6 +47,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
     Output( w, gameCtx.Users, nil )
     return
   }
+  
+  ctx.Infof("before")
   
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
@@ -58,6 +62,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
   user := gameCtx.User(fbid)
   user.Name = name
   gameCtx.EditUser( user )
+  
+  ctx.Infof("after")
   
   Output( w, user, nil )
 }
@@ -197,8 +203,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
     for times < maxtime {
       msgs := gameCtx.MessagesToUser( user )
       if len( msgs ) > 0 {
-        lastestMessage := msgs[len(msgs)-1]
-        ch <- lastestMessage
+        ch <- msgs
         gameCtx.DeleteMessage( msgs )
         break
       }
