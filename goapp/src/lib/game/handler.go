@@ -74,14 +74,14 @@ func CreateRoom (w http.ResponseWriter, r *http.Request){
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
   
-  tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "ID" ) ) 
   
-  fbid := form["FBID"][0]
+  id := form["ID"][0]
   
   tool.Assert( tool.ParameterIsNotExist( form, "Name" ) )
   
   name := form["Name"][0]
-  room := gameCtx.Room(fbid)
+  room := gameCtx.Room(id)
   room.Name = name
   gameCtx.EditRoom( room )
   
@@ -144,7 +144,7 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
   tool.Assert( tool.ParameterIsNotExist( form, "Content" ) ) 
   
   fbid := form["FBID"][0]
-  targetUser := form["Target"][0]
+  targetUser := form["TargetUser"][0]
   content := form["Content"][0]
   
   msg := Message{FromUser: fbid, ToUser: targetUser, Content: content }
@@ -159,6 +159,11 @@ func Clear (w http.ResponseWriter, r *http.Request){
   Output( w, nil, nil )
 }
 
+func State (w http.ResponseWriter, r *http.Request){
+  w.Header().Set("Content-Type", "application/json; charset=utf8")
+  Output( w, gameCtx, nil )
+}
+
 func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
   w.Header().Set("Content-Type", "application/json; charset=utf8")
   
@@ -166,14 +171,18 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
     Output( w, nil, err.Error() )
   })
   
+  ctx := appengine.NewContext( r )
+  var _ = ctx
+  
   r.ParseForm()
   tool.Assert( tool.ParameterIsNotExist( r.Form, "FBID" ) ) 
   
   fbid := r.Form["FBID"][0]
   user := gameCtx.User(fbid)
   
+  maxtime := 10
   var times int
-  for times < 10 {
+  for times < maxtime {
     msgs := gameCtx.MessagesToUser( user )
     if len( msgs ) > 0 {
       lastestMessage := msgs[len(msgs)-1]
@@ -185,5 +194,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
     times += 1
   }
   
-  Output( w, nil, "times out")
+  if times == maxtime {
+    Output( w, nil, "times out")
+  }
 }

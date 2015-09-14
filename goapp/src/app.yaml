@@ -12,7 +12,7 @@ handlers:
   static_dir: common
 - url: /stock
   static_dir: stock
-- url: /cocoon
-  static_dir: cocoon
+- url: /card
+  static_dir: card
 - url: /.*
   script: _go_app
