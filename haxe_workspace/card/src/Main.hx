@@ -17,6 +17,7 @@ class Main
 {
 	public static var j:Dynamic = untyped __js__('$');
 	public static var playerId = getId();
+	public static var otherPlayerId = [];
 	public static var ary_cards = [];
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
@@ -26,6 +27,28 @@ class Main
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body),container_cards:j( '#container_cards' ) } ));
 		 
+		createUser( {
+			FBID:playerId,
+			Name:playerId
+		}, handleResponse( function( ret ) {
+			trace( ret );
+			appStart();
+			
+			
+			
+		}));
+		
+		users( function(err, ret) {
+				trace( err, ret );
+			});
+		/*
+		users( handleResponse( function( ret ) {
+			trace( ret );
+		}));
+		*/
+	}
+	
+	function appStart() {
 		//fake player
 		var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
 		ary_cards = ary_cards.concat( cards );
@@ -67,6 +90,85 @@ class Main
 		return Lambda.find( Main.ary_cards, function( card:Dynamic ) {
 			return ( id == card.id );
 		});
+	}
+	
+	/**
+	data: {
+		ID: string,
+		Name: string
+	}
+	cb: function( err, ret ){
+		err:string,
+		ret: {
+			Info: {}
+			Error: string
+		}
+	}
+	*/
+	public static function createUser( data, cb ) {
+		untyped __js__( 'api.createUser' )( data, cb );
+	}
+	
+	/**
+	data: {
+		ID: string,
+		Name: string
+	}
+	cb: function( err, ret ){
+		err:string,
+		ret: {
+			Info: {}
+			Error: string
+		}
+	}
+	*/
+	public static function users( cb ) {
+		untyped __js__('api.users' )( cb );
+	}
+	
+	/**
+	data: {
+		FBID: string,
+		TargetUser: string,
+		Content: string
+	}
+	cb: function( err, ret ){
+		err:string,
+		ret: {
+			Info: [{}]
+			Error: string
+		}
+	}
+	*/
+	public static function message( data, cb ) {
+		untyped __js__('api.message' )( data, cb );
+	}
+	
+	
+	/**
+	data: {
+		FBID: string
+	}
+	cb: function( err, ret ){
+		err:string,
+		ret: {
+			Info: {}
+			Error: string
+		}
+	}
+	*/
+	public static function installPollMessageCallback( data, cb ) {
+		untyped __js__('api.installPollMessageCallback' )(data, cb );
+	}
+	
+	static function handleResponse( cb ) {
+		return function ( err, ret ) {
+			if ( err != null ) {
+				Browser.alert( err );
+			}else {
+				cb( ret );
+			}
+		}
 	}
 	
 	static function main() 

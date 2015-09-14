@@ -145,30 +145,15 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
+	var _g = this;
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
-	var cards;
-	var _g = [];
-	var _g1 = 0;
-	while(_g1 < 30) {
-		var i = _g1++;
-		_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : ""});
-	}
-	cards = _g;
-	Main.ary_cards = Main.ary_cards.concat(cards);
-	var _g11 = [];
-	var _g2 = 0;
-	while(_g2 < 30) {
-		var i1 = _g2++;
-		_g11.push({ id : Main.getId(), name : i1, owner : Main.getId(), relate : ""});
-	}
-	cards = _g11;
-	Main.ary_cards = Main.ary_cards.concat(cards);
-	(Animate.addCards(Main.ary_cards))();
-	Lambda.foreach(Main.ary_cards,function(card) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : card.owner == card.relate},"owner_change");
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, seeCard : card.owner == card.relate},"relate_change");
-		return true;
+	Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
+		haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 34, className : "Main", methodName : "new"});
+		_g.appStart();
+	}));
+	Main.users(function(err,ret1) {
+		haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 42, className : "Main", methodName : "new", customParams : [ret1]});
 	});
 };
 Main.__name__ = true;
@@ -192,11 +177,55 @@ Main.getCardsById = function(id) {
 		return id == card.id;
 	});
 };
+Main.createUser = function(data,cb) {
+	api.createUser(data,cb);
+};
+Main.users = function(cb) {
+	api.users(cb);
+};
+Main.message = function(data,cb) {
+	api.message(data,cb);
+};
+Main.installPollMessageCallback = function(data,cb) {
+	api.installPollMessageCallback(data,cb);
+};
+Main.handleResponse = function(cb) {
+	return function(err,ret) {
+		if(err != null) js_Browser.alert(err); else cb(ret);
+	};
+};
 Main.main = function() {
 	new Main();
 };
 Main.getId = function() {
 	return leo.utils.generateUUID();
+};
+Main.prototype = {
+	appStart: function() {
+		var cards;
+		var _g = [];
+		var _g1 = 0;
+		while(_g1 < 30) {
+			var i = _g1++;
+			_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : ""});
+		}
+		cards = _g;
+		Main.ary_cards = Main.ary_cards.concat(cards);
+		var _g11 = [];
+		var _g2 = 0;
+		while(_g2 < 30) {
+			var i1 = _g2++;
+			_g11.push({ id : Main.getId(), name : i1, owner : Main.getId(), relate : ""});
+		}
+		cards = _g11;
+		Main.ary_cards = Main.ary_cards.concat(cards);
+		(Animate.addCards(Main.ary_cards))();
+		Lambda.foreach(Main.ary_cards,function(card) {
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : card.owner == card.relate},"owner_change");
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, seeCard : card.owner == card.relate},"relate_change");
+			return true;
+		});
+	}
 };
 Math.__name__ = true;
 var Std = function() { };
@@ -410,6 +439,11 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
 };
 var org_puremvc_haxe_interfaces_INotifier = function() { };
 org_puremvc_haxe_interfaces_INotifier.__name__ = true;
@@ -1088,6 +1122,7 @@ Array.__name__ = true;
 var __map_reserved = {}
 Main.j = $;
 Main.playerId = Main.getId();
+Main.otherPlayerId = [];
 Main.ary_cards = [];
 Main.tmpl_card = Main.j("#tmpl_card");
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
