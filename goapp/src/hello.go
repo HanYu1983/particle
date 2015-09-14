@@ -30,13 +30,13 @@ func init(){
   http.HandleFunc("/write", dbfile.WriteFile)
   http.HandleFunc("/simple/save", Save)
   http.HandleFunc("/simple/load", Load)
-  http.HandleFunc("/card/user/", game.CreateUser)
-  http.HandleFunc("/card/room/", game.CreateRoom)
-  http.HandleFunc("/card/enterRoom/", game.EnterRoom)
-  http.HandleFunc("/card/message/", game.LeaveMessage)
-  http.HandleFunc("/card/clear", game.Clear)
-  http.HandleFunc("/card/longPollingTargetMessage", game.LongPollingTargetMessage)
-  
+  http.HandleFunc("/fn/card/user/", game.CreateUser)
+  http.HandleFunc("/fn/card/room/", game.CreateRoom)
+  http.HandleFunc("/fn/card/enterRoom/", game.EnterRoom)
+  http.HandleFunc("/fn/card/message/", game.LeaveMessage)
+  http.HandleFunc("/fn/card/clear", game.Clear)
+  http.HandleFunc("/fn/card/longPollingTargetMessage", game.LongPollingTargetMessage)
+  http.HandleFunc("/fn/card/state", game.State)
 }
 
 var _ = time.Sleep

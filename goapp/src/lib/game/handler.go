@@ -9,6 +9,8 @@ import (
   "time"
 )
 
+var _ = time.Millisecond
+
 type Result struct {
   Info interface{}
   Error interface{}
@@ -23,7 +25,7 @@ func Output(w http.ResponseWriter, info, err interface{}){
   fmt.Fprintf(w, "%s", string( jsonstr ))
 }
 
-var gameCtx = Context{}
+var gameCtx = &Context{}
 
 func CreateUser(w http.ResponseWriter, r *http.Request){
   w.Header().Set("Content-Type", "application/json; charset=utf8")
@@ -74,14 +76,14 @@ func CreateRoom (w http.ResponseWriter, r *http.Request){
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
   
-  tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "ID" ) ) 
   
-  fbid := form["FBID"][0]
+  id := form["ID"][0]
   
   tool.Assert( tool.ParameterIsNotExist( form, "Name" ) )
   
   name := form["Name"][0]
-  room := gameCtx.Room(fbid)
+  room := gameCtx.Room(id)
   room.Name = name
   gameCtx.EditRoom( room )
   
@@ -144,7 +146,7 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
   tool.Assert( tool.ParameterIsNotExist( form, "Content" ) ) 
   
   fbid := form["FBID"][0]
-  targetUser := form["Target"][0]
+  targetUser := form["TargetUser"][0]
   content := form["Content"][0]
   
   msg := Message{FromUser: fbid, ToUser: targetUser, Content: content }
@@ -155,8 +157,13 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
 
 func Clear (w http.ResponseWriter, r *http.Request){
   w.Header().Set("Content-Type", "application/json; charset=utf8")
-  gameCtx = Context{}
+  gameCtx = &Context{}
   Output( w, nil, nil )
+}
+
+func State (w http.ResponseWriter, r *http.Request){
+  w.Header().Set("Content-Type", "application/json; charset=utf8")
+  Output( w, gameCtx, nil )
 }
 
 func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
@@ -166,24 +173,41 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
     Output( w, nil, err.Error() )
   })
   
+  ctx := appengine.NewContext( r )
+  var _ = ctx
+  
   r.ParseForm()
   tool.Assert( tool.ParameterIsNotExist( r.Form, "FBID" ) ) 
   
   fbid := r.Form["FBID"][0]
   user := gameCtx.User(fbid)
   
-  var times int
-  for times < 10 {
-    msgs := gameCtx.MessagesToUser( user )
-    if len( msgs ) > 0 {
-      lastestMessage := msgs[len(msgs)-1]
-      gameCtx.DeleteMessage( msgs )
-      Output( w, lastestMessage, nil )
-      break
-    }
-    time.Sleep(500 * time.Millisecond)
-    times += 1
-  }
+  msgChan := make(chan interface{}, 1)
+  errChan := make(chan bool)
   
-  Output( w, nil, "times out")
+  go func ( ch chan interface{} ){
+    maxtime := 1
+    var times int
+    for times < maxtime {
+      msgs := gameCtx.MessagesToUser( user )
+      if len( msgs ) > 0 {
+        lastestMessage := msgs[len(msgs)-1]
+        ch <- lastestMessage
+        gameCtx.DeleteMessage( msgs )
+        break
+      }
+      //time.Sleep(500 * time.Millisecond)
+      times += 1
+    }
+    if times == maxtime {
+      errChan <- true
+    }
+  } ( msgChan )
+  
+  select {
+  case <-errChan:
+    Output( w, nil, "times out")
+  case ret := <-msgChan:
+    Output( w, ret, nil )
+  }
 }
