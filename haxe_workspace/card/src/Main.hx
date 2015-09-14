@@ -25,7 +25,9 @@ class Main
 	function new() {
 		
 		Facade.getInstance().registerMediator( new Model( 'model' ));
-		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body),container_cards:j( '#container_cards' ) } ));
+		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
+		
+		
 		 
 		createUser( {
 			FBID:playerId,
@@ -34,18 +36,25 @@ class Main
 			trace( ret );
 			appStart();
 			
-			
-			
 		}));
 		
-		users( function(err, ret) {
-				trace( err, ret );
-			});
-		/*
+		callForOthers();
+	}
+	
+	function callForOthers() {
 		users( handleResponse( function( ret ) {
 			trace( ret );
+			if ( ret.Info.length >= 2 ) {
+				Lambda.fold( ret.Info, function(item, curr ) {
+					if ( item.Key != playerId ) {
+						curr.push( item );
+					}
+					return curr;
+				}, otherPlayerId);
+			}else {
+				Timer.delay( callForOthers, 1000 );
+			}
 		}));
-		*/
 	}
 	
 	function appStart() {

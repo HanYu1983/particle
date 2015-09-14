@@ -149,12 +149,10 @@ var Main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-		haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 34, className : "Main", methodName : "new"});
+		haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 36, className : "Main", methodName : "new"});
 		_g.appStart();
 	}));
-	Main.users(function(err,ret1) {
-		haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 42, className : "Main", methodName : "new", customParams : [ret1]});
-	});
+	this.callForOthers();
 };
 Main.__name__ = true;
 Main.createCard = function(model) {
@@ -201,7 +199,17 @@ Main.getId = function() {
 	return leo.utils.generateUUID();
 };
 Main.prototype = {
-	appStart: function() {
+	callForOthers: function() {
+		var _g = this;
+		Main.users(Main.handleResponse(function(ret) {
+			haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 46, className : "Main", methodName : "callForOthers"});
+			if(ret.Info.length >= 2) Lambda.fold(ret.Info,function(item,curr) {
+				if(item.Key != Main.playerId) curr.push(item);
+				return curr;
+			},Main.otherPlayerId); else haxe_Timer.delay($bind(_g,_g.callForOthers),1000);
+		}));
+	}
+	,appStart: function() {
 		var cards;
 		var _g = [];
 		var _g1 = 0;
