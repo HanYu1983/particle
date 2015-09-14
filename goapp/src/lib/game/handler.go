@@ -7,6 +7,7 @@ import (
   "appengine"
   "encoding/json"
   "time"
+  "sync"
 )
 
 var _ = time.Millisecond
@@ -25,9 +26,15 @@ func Output(w http.ResponseWriter, info, err interface{}){
   fmt.Fprintf(w, "%s", string( jsonstr ))
 }
 
-var gameCtx = &Context{}
+
+var gameCtx Context
+var mutex sync.Mutex
+var _ = mutex
 
 func CreateUser(w http.ResponseWriter, r *http.Request){
+  ctx := appengine.NewContext( r )
+  var _ = ctx
+  
   w.Header().Set("Content-Type", "application/json; charset=utf8")
   
   defer tool.Recover( func(err error){
@@ -38,9 +45,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
     Output( w, gameCtx.Users, nil )
     return
   }
-  
-  ctx := appengine.NewContext( r )
-  var _ = ctx
   
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
@@ -157,11 +161,13 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
 
 func Clear (w http.ResponseWriter, r *http.Request){
   w.Header().Set("Content-Type", "application/json; charset=utf8")
-  gameCtx = &Context{}
+  gameCtx = Context{}
   Output( w, nil, nil )
 }
 
 func State (w http.ResponseWriter, r *http.Request){
+  ctx := appengine.NewContext( r )
+  var _ = ctx
   w.Header().Set("Content-Type", "application/json; charset=utf8")
   Output( w, gameCtx, nil )
 }
