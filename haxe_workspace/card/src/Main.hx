@@ -29,8 +29,15 @@ class Main
 		var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
 		ary_cards = ary_cards.concat( cards );
 		
+		trace( ary_cards.length );
+		
+		cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:getId(), relate:'' } ];
+		ary_cards = ary_cards.concat( cards );
+		
+		trace( ary_cards.length );
+		
 		//Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
-		Animate.addCards( cards )();
+		Animate.addCards( ary_cards )();
 		
 		Lambda.foreach( ary_cards, function( card ) {
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );

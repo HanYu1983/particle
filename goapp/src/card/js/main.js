@@ -6,6 +6,7 @@ function $extend(from, fields) {
 	return proto;
 }
 var Animate = function() { };
+Animate.__name__ = true;
 Animate.addCards = function(cards) {
 	return function() {
 		var d = Main.j.Deferred();
@@ -40,6 +41,7 @@ Animate.listSeparate = function(ary_select,pos_mouse) {
 	};
 };
 var HxOverrides = function() { };
+HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
 	if(x != x) return undefined;
@@ -53,6 +55,7 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
+Lambda.__name__ = true;
 Lambda.array = function(it) {
 	var a = [];
 	var $it0 = $iterator(it)();
@@ -99,6 +102,7 @@ Lambda.find = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
+List.__name__ = true;
 List.prototype = {
 	add: function(item) {
 		var x = [item];
@@ -129,6 +133,7 @@ var _$List_ListIterator = function(head) {
 	this.head = head;
 	this.val = null;
 };
+_$List_ListIterator.__name__ = true;
 _$List_ListIterator.prototype = {
 	hasNext: function() {
 		return this.head != null;
@@ -151,13 +156,24 @@ var Main = function() {
 	}
 	cards = _g;
 	Main.ary_cards = Main.ary_cards.concat(cards);
-	(Animate.addCards(cards))();
+	haxe_Log.trace(Main.ary_cards.length,{ fileName : "Main.hx", lineNumber : 32, className : "Main", methodName : "new"});
+	var _g11 = [];
+	var _g2 = 0;
+	while(_g2 < 30) {
+		var i1 = _g2++;
+		_g11.push({ id : Main.getId(), name : i1, owner : Main.getId(), relate : ""});
+	}
+	cards = _g11;
+	Main.ary_cards = Main.ary_cards.concat(cards);
+	haxe_Log.trace(Main.ary_cards.length,{ fileName : "Main.hx", lineNumber : 37, className : "Main", methodName : "new"});
+	(Animate.addCards(Main.ary_cards))();
 	Lambda.foreach(Main.ary_cards,function(card) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : card.owner == card.relate},"owner_change");
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, seeCard : card.owner == card.relate},"relate_change");
 		return true;
 	});
 };
+Main.__name__ = true;
 Main.createCard = function(model) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -184,7 +200,9 @@ Main.main = function() {
 Main.getId = function() {
 	return leo.utils.generateUUID();
 };
+Math.__name__ = true;
 var Std = function() { };
+Std.__name__ = true;
 Std.parseInt = function(x) {
 	var v = parseInt(x,10);
 	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
@@ -192,10 +210,12 @@ Std.parseInt = function(x) {
 	return v;
 };
 var StringTools = function() { };
+StringTools.__name__ = true;
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };
 var Type = function() { };
+Type.__name__ = true;
 Type.createInstance = function(cl,args) {
 	var _g = args.length;
 	switch(_g) {
@@ -223,12 +243,19 @@ Type.createInstance = function(cl,args) {
 	return null;
 };
 var haxe_IMap = function() { };
+haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
 		me.run();
 	},time_ms);
 };
+haxe_Timer.__name__ = true;
 haxe_Timer.delay = function(f,time_ms) {
 	var t = new haxe_Timer(time_ms);
 	t.run = function() {
@@ -249,6 +276,7 @@ haxe_Timer.prototype = {
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
+haxe_ds_StringMap.__name__ = true;
 haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
 haxe_ds_StringMap.prototype = {
 	set: function(key,value) {
@@ -292,13 +320,105 @@ var js__$Boot_HaxeError = function(val) {
 	this.message = String(val);
 	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
 };
+js__$Boot_HaxeError.__name__ = true;
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+};
 var org_puremvc_haxe_interfaces_INotifier = function() { };
+org_puremvc_haxe_interfaces_INotifier.__name__ = true;
 var org_puremvc_haxe_patterns_observer_Notifier = function() {
 	this.facade = org_puremvc_haxe_patterns_facade_Facade.getInstance();
 };
+org_puremvc_haxe_patterns_observer_Notifier.__name__ = true;
 org_puremvc_haxe_patterns_observer_Notifier.__interfaces__ = [org_puremvc_haxe_interfaces_INotifier];
 org_puremvc_haxe_patterns_observer_Notifier.prototype = {
 	sendNotification: function(notificationName,body,type) {
@@ -306,11 +426,13 @@ org_puremvc_haxe_patterns_observer_Notifier.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IMediator = function() { };
+org_puremvc_haxe_interfaces_IMediator.__name__ = true;
 var org_puremvc_haxe_patterns_mediator_Mediator = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_observer_Notifier.call(this);
 	if(mediatorName != null) this.mediatorName = mediatorName; else this.mediatorName = org_puremvc_haxe_patterns_mediator_Mediator.NAME;
 	if(viewComponent != null) this.viewComponent = viewComponent;
 };
+org_puremvc_haxe_patterns_mediator_Mediator.__name__ = true;
 org_puremvc_haxe_patterns_mediator_Mediator.__interfaces__ = [org_puremvc_haxe_interfaces_IMediator];
 org_puremvc_haxe_patterns_mediator_Mediator.__super__ = org_puremvc_haxe_patterns_observer_Notifier;
 org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe_patterns_observer_Notifier.prototype,{
@@ -339,6 +461,7 @@ var mediator_Card = function(mediatorName,viewComponent) {
 	this._focus = false;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
+mediator_Card.__name__ = true;
 mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
@@ -394,12 +517,10 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			}
 			break;
 		case "on_card_flip_change":
-			if(notification.getType() == "all") {
-				if(this._focus) this.flip();
-			} else {
-				if(notification.getBody().id != this.getMediatorName()) return;
-				this.flip(notification.getBody().flip);
-			}
+			haxe_Log.trace("ccc",{ fileName : "Card.hx", lineNumber : 85, className : "mediator.Card", methodName : "handleNotification", customParams : [notification.getBody().select.id]});
+			if(!this.checkSelf(notification.getBody().select.id)) return;
+			haxe_Log.trace("ccc",{ fileName : "Card.hx", lineNumber : 87, className : "mediator.Card", methodName : "handleNotification"});
+			this.flip(notification.getBody().flip);
 			break;
 		}
 	}
@@ -455,6 +576,7 @@ var mediator_Layer = function(mediatorName,viewComponent) {
 	this._container_cards = viewComponent.container_cards;
 	this._body = viewComponent.body;
 };
+mediator_Layer.__name__ = true;
 mediator_Layer.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
@@ -485,10 +607,10 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		this.sendNotification(mediator_Layer.on_body_mousemove,{ x : e.pageX, y : e.pageY});
 	}
 	,onBodyMouseUp: function(e) {
-		console.log(e.pageX);
+		haxe_Log.trace(e.pageX,{ fileName : "Layer.hx", lineNumber : 71, className : "mediator.Layer", methodName : "onBodyMouseUp"});
 	}
 	,onBodyKeyUp: function(e) {
-		console.log(e.which);
+		haxe_Log.trace(e.which,{ fileName : "Layer.hx", lineNumber : 75, className : "mediator.Layer", methodName : "onBodyKeyUp"});
 		var _g = e.which;
 		switch(_g) {
 		case 67:
@@ -525,6 +647,7 @@ var model_Model = function(mediatorName,viewComponent) {
 	this.pos_mouse = [0,0];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
+model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
@@ -602,6 +725,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "on_press_v":
 			Lambda.foreach(this.ary_select,function(card1) {
+				if(card1.owner != Main.playerId) return true;
 				var _g13 = card1.relate;
 				var relate = _g13;
 				switch(_g13) {
@@ -630,7 +754,11 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_f":
-			this.sendNotification(model_Model.on_card_flip_change,null,"all");
+			Lambda.foreach(this.ary_select,function(card2) {
+				if(card2.owner != Main.playerId) return true;
+				_g1.sendNotification(model_Model.on_card_flip_change,{ select : card2});
+				return true;
+			});
 			break;
 		case "on_press_l":
 			Main.listCard(this.ary_select,this.pos_mouse);
@@ -651,11 +779,13 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 	}
 });
 var org_puremvc_haxe_interfaces_IController = function() { };
+org_puremvc_haxe_interfaces_IController.__name__ = true;
 var org_puremvc_haxe_core_Controller = function() {
 	org_puremvc_haxe_core_Controller.instance = this;
 	this.commandMap = new haxe_ds_StringMap();
 	this.initializeController();
 };
+org_puremvc_haxe_core_Controller.__name__ = true;
 org_puremvc_haxe_core_Controller.__interfaces__ = [org_puremvc_haxe_interfaces_IController];
 org_puremvc_haxe_core_Controller.getInstance = function() {
 	if(org_puremvc_haxe_core_Controller.instance == null) org_puremvc_haxe_core_Controller.instance = new org_puremvc_haxe_core_Controller();
@@ -686,11 +816,13 @@ org_puremvc_haxe_core_Controller.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IModel = function() { };
+org_puremvc_haxe_interfaces_IModel.__name__ = true;
 var org_puremvc_haxe_core_Model = function() {
 	org_puremvc_haxe_core_Model.instance = this;
 	this.proxyMap = new haxe_ds_StringMap();
 	this.initializeModel();
 };
+org_puremvc_haxe_core_Model.__name__ = true;
 org_puremvc_haxe_core_Model.__interfaces__ = [org_puremvc_haxe_interfaces_IModel];
 org_puremvc_haxe_core_Model.getInstance = function() {
 	if(org_puremvc_haxe_core_Model.instance == null) org_puremvc_haxe_core_Model.instance = new org_puremvc_haxe_core_Model();
@@ -719,12 +851,14 @@ org_puremvc_haxe_core_Model.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IView = function() { };
+org_puremvc_haxe_interfaces_IView.__name__ = true;
 var org_puremvc_haxe_core_View = function() {
 	org_puremvc_haxe_core_View.instance = this;
 	this.mediatorMap = new haxe_ds_StringMap();
 	this.observerMap = new haxe_ds_StringMap();
 	this.initializeView();
 };
+org_puremvc_haxe_core_View.__name__ = true;
 org_puremvc_haxe_core_View.__interfaces__ = [org_puremvc_haxe_interfaces_IView];
 org_puremvc_haxe_core_View.getInstance = function() {
 	if(org_puremvc_haxe_core_View.instance == null) org_puremvc_haxe_core_View.instance = new org_puremvc_haxe_core_View();
@@ -811,14 +945,20 @@ org_puremvc_haxe_core_View.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_ICommand = function() { };
+org_puremvc_haxe_interfaces_ICommand.__name__ = true;
 var org_puremvc_haxe_interfaces_IFacade = function() { };
+org_puremvc_haxe_interfaces_IFacade.__name__ = true;
 var org_puremvc_haxe_interfaces_INotification = function() { };
+org_puremvc_haxe_interfaces_INotification.__name__ = true;
 var org_puremvc_haxe_interfaces_IObserver = function() { };
+org_puremvc_haxe_interfaces_IObserver.__name__ = true;
 var org_puremvc_haxe_interfaces_IProxy = function() { };
+org_puremvc_haxe_interfaces_IProxy.__name__ = true;
 var org_puremvc_haxe_patterns_facade_Facade = function() {
 	org_puremvc_haxe_patterns_facade_Facade.instance = this;
 	this.initializeFacade();
 };
+org_puremvc_haxe_patterns_facade_Facade.__name__ = true;
 org_puremvc_haxe_patterns_facade_Facade.__interfaces__ = [org_puremvc_haxe_interfaces_IFacade];
 org_puremvc_haxe_patterns_facade_Facade.getInstance = function() {
 	if(org_puremvc_haxe_patterns_facade_Facade.instance == null) org_puremvc_haxe_patterns_facade_Facade.instance = new org_puremvc_haxe_patterns_facade_Facade();
@@ -891,6 +1031,7 @@ var org_puremvc_haxe_patterns_observer_Notification = function(name,body,type) {
 	if(body != null) this.body = body;
 	if(type != null) this.type = type;
 };
+org_puremvc_haxe_patterns_observer_Notification.__name__ = true;
 org_puremvc_haxe_patterns_observer_Notification.__interfaces__ = [org_puremvc_haxe_interfaces_INotification];
 org_puremvc_haxe_patterns_observer_Notification.prototype = {
 	getName: function() {
@@ -919,6 +1060,7 @@ var org_puremvc_haxe_patterns_observer_Observer = function(notifyMethod,notifyCo
 	this.setNotifyMethod(notifyMethod);
 	this.setNotifyContext(notifyContext);
 };
+org_puremvc_haxe_patterns_observer_Observer.__name__ = true;
 org_puremvc_haxe_patterns_observer_Observer.__interfaces__ = [org_puremvc_haxe_interfaces_IObserver];
 org_puremvc_haxe_patterns_observer_Observer.prototype = {
 	setNotifyMethod: function(notifyMethod) {
@@ -943,6 +1085,8 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
+String.__name__ = true;
+Array.__name__ = true;
 var __map_reserved = {}
 Main.j = $;
 Main.playerId = Main.getId();

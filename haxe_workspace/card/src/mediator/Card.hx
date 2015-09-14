@@ -82,14 +82,10 @@ class Card extends Mediator
 				}
 				
 			case Model.on_card_flip_change:
-				if ( notification.getType() == 'all' ) {
-					if ( _focus ) {
-						flip();
-					}
-				}else {
-					if ( notification.getBody().id != getMediatorName() ) return;
-					flip( notification.getBody().flip );
-				}
+				trace( 'ccc',notification.getBody().select.id );
+				if ( !checkSelf( notification.getBody().select.id ) ) return;
+				trace( 'ccc' );
+				flip( notification.getBody().flip );
 		}
 	}
 	

@@ -116,6 +116,7 @@ class Model extends Mediator
 				});
 			case Layer.on_press_v:
 				Lambda.foreach( ary_select, function( card ) {
+					if ( card.owner != Main.playerId ) return true;
 					switch( card.relate ) {
 						case '':
 							//如果relate 是空白，就可以修改為自己
@@ -138,7 +139,14 @@ class Model extends Mediator
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_f:
-				sendNotification( on_card_flip_change, null, 'all' );
+				Lambda.foreach( ary_select, function( card ) {
+					//當owner是自己或者沒有所屬的時候，才能翻牌
+					if ( card.owner != Main.playerId ) return true;
+					sendNotification( on_card_flip_change, { select:card } );
+					
+					return true;
+				});
+				//sendNotification( on_card_flip_change, {}, 'all' );
 			case Layer.on_press_l:
 				Main.listCard( ary_select, pos_mouse );
 			case Layer.on_press_a:
