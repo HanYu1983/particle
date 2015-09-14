@@ -19,11 +19,19 @@ func LoadGameContext (ctx appengine.Context) (Context, error) {
   if err != nil {
     return Context{}, err
   }
+  if len( files ) == 0 {
+    return Context{}, errors.New("root dir isn't exist")
+  }
+  
   rootDir := files[0].Key
   
   files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
   if err != nil {
     return Context{}, err
+  }
+  
+  if len( files ) == 0 {
+    return Context{}, errors.New("card dir isn't exist")
   }
   
   cardDir := files[0].Key
@@ -51,11 +59,18 @@ func SaveGameContext (ctx appengine.Context, gameCtx Context) error {
   if err != nil {
     return err
   }
+  if len( files ) == 0 {
+    return errors.New("root dir isn't exist")
+  }
+  
   rootDir := files[0].Key
   
   files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
   if err != nil {
     return err
+  }
+  if len( files ) == 0 {
+    return errors.New("card dir isn't exist")
   }
   
   cardDir := files[0].Key
@@ -115,7 +130,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
   
   err = datastore.RunInTransaction(ctx, func(c appengine.Context) error {
     gameCtx, err := LoadGameContext( ctx )
-    tool.Assert( tool.IfError( err ) )
+    if err != nil {
+      return err
+    }
   
     name := form["Name"][0]
     user := gameCtx.User(fbid)
@@ -158,7 +175,9 @@ func CreateRoom (w http.ResponseWriter, r *http.Request){
   
   err = datastore.RunInTransaction(ctx, func(c appengine.Context) error {
     gameCtx, err := LoadGameContext( ctx )
-    tool.Assert( tool.IfError( err ) )
+    if err != nil {
+      return err
+    }
   
     name := form["Name"][0]
     room := gameCtx.Room(id)
@@ -201,7 +220,9 @@ func EnterRoom (w http.ResponseWriter, r *http.Request){
   
   err = datastore.RunInTransaction(ctx, func(c appengine.Context) error {
     gameCtx, err := LoadGameContext( ctx )
-    tool.Assert( tool.IfError( err ) )
+    if err != nil {
+      return err
+    }
   
     roomKey := form["Room"][0]
     user := gameCtx.User(fbid)
@@ -243,7 +264,9 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
   
   err = datastore.RunInTransaction(ctx, func(c appengine.Context) error {
     gameCtx, err := LoadGameContext( ctx )
-    tool.Assert( tool.IfError( err ) )
+    if err != nil {
+      return err
+    }
   
     fbid := form["FBID"][0]
     targetUser := form["TargetUser"][0]
@@ -267,7 +290,9 @@ func Clear (w http.ResponseWriter, r *http.Request){
   ctx := appengine.NewContext( r )
   err := datastore.RunInTransaction(ctx, func(c appengine.Context) error {
     gameCtx, err := LoadGameContext( ctx )
-    tool.Assert( tool.IfError( err ) )
+    if err != nil {
+      return err
+    }
     gameCtx = Context{}
     err = SaveGameContext( ctx, gameCtx )
     return err
@@ -311,14 +336,16 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
       close( errChan )
     }()
     
-    maxtime := 30
+    maxtime := 10
     var times int
     
     for times < maxtime {
       
       err := datastore.RunInTransaction(ctx, func(c appengine.Context) error {
         gameCtx, err := LoadGameContext( ctx )
-        tool.Assert( tool.IfError( err ) )
+        if err != nil {
+          return err
+        }
       
         user := gameCtx.User(fbid)
         msgs := gameCtx.MessagesToUser( user )
