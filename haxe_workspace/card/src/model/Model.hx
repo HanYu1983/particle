@@ -98,58 +98,14 @@ class Model extends Mediator
 			case Layer.on_press_c:
 				if ( Main.setOwner( ary_select ) ) 
 					Main.messageAll( { cmd:'setOwner', content:{ ary_select:ary_select } } );
-				/*
-				Lambda.foreach( ary_select, function( card ) {
-					switch( card.owner ) {
-						case '':
-							//如果owner 是空白，就可以修改為自己
-							card.owner = Main.playerId;
-						case owner:
-							//如果owner 不是自己，就不能更改
-							if ( owner == Main.playerId )
-								card.owner = '';
-					}
-					
-					var seeCard = switch( card.owner ) {
-						case '':false;
-						case owner: owner == card.relate;
-					}
-					
-					sendNotification( on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: seeCard }, 'owner_change' );
-					return true;
-				});
-				*/
 			case Layer.on_press_v:
-				
 				if ( Main.setRelate( ary_select ) )
 					Main.messageAll( { cmd:'setRelate', content:{ ary_select:ary_select } } );
-				
-				/*
-				Lambda.foreach( ary_select, function( card ) {
-					if ( card.owner != Main.playerId ) return true;
-					switch( card.relate ) {
-						case '':
-							//如果relate 是空白，就可以修改為自己
-							card.relate = Main.playerId;
-						case relate:
-							//如果relate 不是自己，就不能更改
-							if ( relate == Main.playerId )
-								card.relate = '';
-					}
-					
-					var seeCard = switch( card.owner ) {
-						case '':false;
-						case owner: owner == card.relate;
-					}
-					
-					sendNotification( on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: seeCard }, 'relate_change' );
-					return true;
-				});
-				*/
 			case Layer.on_press_r:
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_f:
+				
 				if ( Main.flip( ary_select ) ) {
 					Main.messageAll( { cmd:'flip', content:{ ary_select:ary_select } } );
 				}

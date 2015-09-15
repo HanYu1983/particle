@@ -46,7 +46,7 @@ class Main
 	}
 	
 	function createSelfStack() {
-		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
+		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', back:true } ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
 			messageAll( { cmd:'addCards', content:stack } );
@@ -76,6 +76,7 @@ class Main
 		Lambda.foreach( ret.Info, function( info ) {
 			lastPromise = callAction( Json.parse( info.Content ) );
 			trace( 'lastPromise', lastPromise );
+			trace( prev );
 			if ( prev != null ) {
 				prev.pipe( lastPromise );
 			}
@@ -124,8 +125,12 @@ class Main
 		trace( 'receive cmd', content );
 		
 		if ( content.content.ary_select != null ) {
-			content.content.ary_select = Lambda.fold( content.content.ary_select, function( card, curr ) {
-				curr.push( getCardsById( card.id ));
+			content.content.ary_select = Lambda.fold( content.content.ary_select, function( remoteCard, curr ) {
+				var localCard = getCardsById( remoteCard.id );
+				localCard.owner = remoteCard.owner;
+				localCard.relate = remoteCard.relate;
+				localCard.back = remoteCard.back;
+				curr.push( localCard );
 				return curr;
 			}, []);
 		}
@@ -144,6 +149,7 @@ class Main
 			case 'setRelate':
 				return Animate.setRelate( content.content.ary_select );
 			case _:
+				Browser.alert( 'asb' );
 				return null;
 		}
 	}
@@ -188,17 +194,18 @@ class Main
 	}
 	
 	public static function applyValue( ary_select:Array<Dynamic> ) {
-		Lambda.foreach( ary_select, function( remoteCard:Dynamic ) {
-			var localCard = getCardsById( remoteCard.id );
-			localCard.owner = remoteCard.owner;
-			localCard.relate = remoteCard.relate;
+		Lambda.foreach( ary_select, function( card:Dynamic ) {
 			
-			var seeCard = switch( localCard.owner ) {
+			var seeCard = switch( card.owner ) {
 				case '':false;
-				case owner: owner == localCard.relate;
+				case owner: ( owner == card.relate ) && ( owner == playerId );
 			}
 			
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:localCard, showRelate:Main.playerId == localCard.relate, showOwner:Main.playerId == localCard.owner, seeCard: seeCard }, 'ownerAndRelate_change' );
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, 
+																			showRelate:Main.playerId == card.relate, 
+																			showOwner:Main.playerId == card.owner, 
+																			seeCard: seeCard 
+																			}, 'ownerAndRelate_change' );
 			return true;
 		});
 		
@@ -266,11 +273,13 @@ class Main
 		var send = false;
 		Lambda.foreach( ary_select, function( card ) {
 			//當owner是自己或者沒有所屬的時候，才能翻牌
-			if ( card.owner != Main.playerId ) return true;
-			send = true;
-			Facade.getInstance().sendNotification( Model.on_card_flip_change, { select:card } );
+			if ( card.owner == Main.playerId || card.owner == '' ) {
+				send = true;
+				card.back = !card.back;
+			}
 			return true;
 		});
+		applyValue( ary_select );
 		return send;
 	}
 	

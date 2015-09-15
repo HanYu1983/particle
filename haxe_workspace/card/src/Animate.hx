@@ -53,7 +53,7 @@ class Animate
 	public static function flip( ary_select ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.flip( ary_select );
+			Main.applyValue( ary_select );
 			Timer.delay( function() {
 				d.resolve();
 			}, 200 );
