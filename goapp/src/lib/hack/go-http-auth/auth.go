@@ -13,6 +13,7 @@ type AuthenticatedRequest struct {
 	 before calling the request handler.
 	*/
 	Username string
+  // han修改，用來支援gae。似乎不能使用copy的型式
   OriginR *http.Request
 }
 

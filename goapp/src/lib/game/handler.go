@@ -41,9 +41,7 @@ func LoadGameContext (ctx appengine.Context) (Context, error) {
   }
   
   if len( files ) == 0 {
-    var gameCtx Context
-    err = SaveGameContext( ctx, gameCtx )
-    return gameCtx, err
+    return Context{}, errors.New("root/card/gameContext.json isn't exist")
   }
   
   var gameCtx Context

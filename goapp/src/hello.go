@@ -8,7 +8,6 @@ import (
   "appengine"
   auth "lib/hack/go-http-auth"
   "lib/game"
-  "time"
 )
 
 func Secret(user, realm string) string {
@@ -23,7 +22,6 @@ func init(){
   authenticator := auth.NewDigestAuthenticator("dbpublic", Secret)
   dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
   
-  http.HandleFunc("/longPolling/", longPolling)
   http.HandleFunc("/", handler)
   http.HandleFunc("/proxy", tool.Proxy)
   http.HandleFunc("/dbfile/", dbfileHandler)
@@ -38,14 +36,6 @@ func init(){
   http.HandleFunc("/fn/card/longPollingTargetMessage", game.LongPollingTargetMessage)
   http.HandleFunc("/fn/card/state", game.State)
   
-}
-
-var _ = time.Sleep
-
-func longPolling(w http.ResponseWriter, r *http.Request){
-  fmt.Fprint(w, "hi, we wait ")
-  time.Sleep(5 * time.Second)
-  fmt.Fprint(w, "oh, ok!")
 }
 
 func handler(w http.ResponseWriter, r *http.Request){
