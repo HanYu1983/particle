@@ -130,6 +130,10 @@ class Main
 				return Animate.listSeparate( content.content.ary_select, content.content.pos_mouse );
 			case 'flip':
 				return Animate.flip( content.content.ary_select );
+			case 'setOwner':
+				return Animate.setOwner( content.content.ary_select );
+			case 'setRelate':
+				return Animate.setRelate( content.content.ary_select );
 			case _:
 				return null;
 		}
@@ -186,6 +190,51 @@ class Main
 			return true;
 		});
 		*/
+	}
+	
+	public static function setOwner( ary_select ) {
+		Lambda.foreach( ary_select, function( card ) {
+			switch( card.owner ) {
+				case '':
+					//如果owner 是空白，就可以修改為自己
+					card.owner = Main.playerId;
+				case owner:
+					//如果owner 不是自己，就不能更改
+					if ( owner == Main.playerId )
+						card.owner = '';
+			}
+			
+			var seeCard = switch( card.owner ) {
+				case '':false;
+				case owner: owner == card.relate;
+			}
+			
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: seeCard }, 'owner_change' );
+			return true;
+		});
+	}
+	
+	public static function setRelate( ary_select ) {
+		Lambda.foreach( ary_select, function( card ) {
+			if ( card.owner != Main.playerId ) return true;
+			switch( card.relate ) {
+				case '':
+					//如果relate 是空白，就可以修改為自己
+					card.relate = Main.playerId;
+				case relate:
+					//如果relate 不是自己，就不能更改
+					if ( relate == Main.playerId )
+						card.relate = '';
+			}
+			
+			var seeCard = switch( card.owner ) {
+				case '':false;
+				case owner: owner == card.relate;
+			}
+			
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: seeCard }, 'relate_change' );
+			return true;
+		});
 	}
 	
 	public static function createCard( model:Dynamic ) {

@@ -27,6 +27,26 @@ Animate.addCardAndPrepare = function(cards) {
 		return d;
 	};
 };
+Animate.setOwner = function(ary_select) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.setOwner(ary_select);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},200);
+		return d;
+	};
+};
+Animate.setRelate = function(ary_select) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.setRelate(ary_select);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},200);
+		return d;
+	};
+};
 Animate.flip = function(ary_select) {
 	return function() {
 		var d = Main.j.Deferred();
@@ -185,6 +205,57 @@ Main.messageAll = function(content) {
 		return true;
 	});
 };
+Main.setOwner = function(ary_select) {
+	Lambda.foreach(ary_select,function(card) {
+		var _g = card.owner;
+		var owner = _g;
+		switch(_g) {
+		case "":
+			card.owner = Main.playerId;
+			break;
+		default:
+			if(owner == Main.playerId) card.owner = "";
+		}
+		var seeCard;
+		var _g1 = card.owner;
+		var owner1 = _g1;
+		switch(_g1) {
+		case "":
+			seeCard = false;
+			break;
+		default:
+			seeCard = owner1 == card.relate;
+		}
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : seeCard},"owner_change");
+		return true;
+	});
+};
+Main.setRelate = function(ary_select) {
+	Lambda.foreach(ary_select,function(card) {
+		if(card.owner != Main.playerId) return true;
+		var _g = card.relate;
+		var relate = _g;
+		switch(_g) {
+		case "":
+			card.relate = Main.playerId;
+			break;
+		default:
+			if(relate == Main.playerId) card.relate = "";
+		}
+		var seeCard;
+		var _g1 = card.owner;
+		var owner = _g1;
+		switch(_g1) {
+		case "":
+			seeCard = false;
+			break;
+		default:
+			seeCard = owner == card.relate;
+		}
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, seeCard : seeCard},"relate_change");
+		return true;
+	});
+};
 Main.createCard = function(model) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -226,7 +297,7 @@ Main.installPollMessageCallback = function(data,cb) {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 296, className : "Main", methodName : "handleResponse", customParams : [err]});
+		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 345, className : "Main", methodName : "handleResponse", customParams : [err]});
 		if(err != null) js_Browser.alert(err); else cb(ret);
 	};
 };
@@ -276,6 +347,10 @@ Main.prototype = {
 			return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
 		case "flip":
 			return Animate.flip(content.content.ary_select);
+		case "setOwner":
+			return Animate.setOwner(content.content.ary_select);
+		case "setRelate":
+			return Animate.setRelate(content.content.ary_select);
 		default:
 			return null;
 		}
@@ -803,55 +878,12 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.sendNotification(model_Model.on_card_move,notification.getBody());
 			break;
 		case "on_press_c":
-			Lambda.foreach(this.ary_select,function(card) {
-				var _g11 = card.owner;
-				var owner = _g11;
-				switch(_g11) {
-				case "":
-					card.owner = Main.playerId;
-					break;
-				default:
-					if(owner == Main.playerId) card.owner = "";
-				}
-				var seeCard;
-				var _g12 = card.owner;
-				var owner1 = _g12;
-				switch(_g12) {
-				case "":
-					seeCard = false;
-					break;
-				default:
-					seeCard = owner1 == card.relate;
-				}
-				_g1.sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : seeCard},"owner_change");
-				return true;
-			});
+			Main.messageAll({ cmd : "setOwner", content : { ary_select : this.ary_select}});
+			Main.setOwner(this.ary_select);
 			break;
 		case "on_press_v":
-			Lambda.foreach(this.ary_select,function(card1) {
-				if(card1.owner != Main.playerId) return true;
-				var _g13 = card1.relate;
-				var relate = _g13;
-				switch(_g13) {
-				case "":
-					card1.relate = Main.playerId;
-					break;
-				default:
-					if(relate == Main.playerId) card1.relate = "";
-				}
-				var seeCard1;
-				var _g14 = card1.owner;
-				var owner2 = _g14;
-				switch(_g14) {
-				case "":
-					seeCard1 = false;
-					break;
-				default:
-					seeCard1 = owner2 == card1.relate;
-				}
-				_g1.sendNotification(model_Model.on_state_change,{ select : card1, showRelate : Main.playerId == card1.relate, seeCard : seeCard1},"relate_change");
-				return true;
-			});
+			Main.messageAll({ cmd : "setRelate", content : { ary_select : this.ary_select}});
+			Main.setRelate(this.ary_select);
 			break;
 		case "on_press_r":
 			this.ary_select.reverse();

@@ -98,6 +98,9 @@ class Model extends Mediator
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
 			case Layer.on_press_c:
+				Main.messageAll( { cmd:'setOwner', content:{ ary_select:ary_select } } );
+				Main.setOwner( ary_select );
+				/*
 				Lambda.foreach( ary_select, function( card ) {
 					switch( card.owner ) {
 						case '':
@@ -117,7 +120,11 @@ class Model extends Mediator
 					sendNotification( on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: seeCard }, 'owner_change' );
 					return true;
 				});
+				*/
 			case Layer.on_press_v:
+				Main.messageAll( { cmd:'setRelate', content:{ ary_select:ary_select } } );
+				Main.setRelate( ary_select );
+				/*
 				Lambda.foreach( ary_select, function( card ) {
 					if ( card.owner != Main.playerId ) return true;
 					switch( card.relate ) {
@@ -138,6 +145,7 @@ class Model extends Mediator
 					sendNotification( on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: seeCard }, 'relate_change' );
 					return true;
 				});
+				*/
 			case Layer.on_press_r:
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );

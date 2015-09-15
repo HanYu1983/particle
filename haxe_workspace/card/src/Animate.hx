@@ -33,6 +33,28 @@ class Animate
 		}
 	}
 	
+	public static function setOwner( ary_select ) {
+		return function(){
+			var d:Dynamic = Main.j.Deferred();
+			Main.setOwner( ary_select );
+			Timer.delay( function() {
+				d.resolve();
+			}, 200 );
+			return d;
+		}
+	}
+	
+	public static function setRelate( ary_select ) {
+		return function(){
+			var d:Dynamic = Main.j.Deferred();
+			Main.setRelate( ary_select );
+			Timer.delay( function() {
+				d.resolve();
+			}, 200 );
+			return d;
+		}
+	}
+	
 	public static function flip( ary_select ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
