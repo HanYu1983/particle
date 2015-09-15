@@ -48,6 +48,7 @@ class Model extends Mediator
 		switch( notification.getName() ) {
 			case Layer.on_select_cards:
 				var ori = notification.getBody().ary_select;
+				
 				ori.sort( function( a, b ) {
 					var ax = Std.parseInt( StringTools.replace( Main.j( a ).css( 'left' ), 'px', '' ));
 					var ay = Std.parseInt( StringTools.replace( Main.j( a ).css( 'top' ), 'px', '' ));
@@ -76,6 +77,8 @@ class Model extends Mediator
 					curr.push( Main.getCardsById( Main.j( dom ).attr( 'id' ) ) );
 					return curr;
 				}, [] );
+				
+				trace( ary_select );
 				
 				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_press_enter:

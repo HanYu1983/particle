@@ -46,11 +46,12 @@ class Main
 	
 	function createSelfStack() {
 		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
-		addCardAndPrepare( stack );
-		Timer.delay( function() {
-			messageAll( 0, {cmd:'addCards', content:stack } );
-		}, 1000 );
 		
+		Animate.addCardAndPrepare( stack )().done( function() {
+			messageAll( 0, { cmd:'addCards', content:stack } );
+			
+			trace( ary_cards );
+		});
 	}
 	
 	function messageAll( i, content ) {
@@ -62,28 +63,68 @@ class Main
 		}, handleResponse( function( ret ) {
 			messageAll( ++i, content );
 		}));
+	}
+	
+	var lastPromise:Dynamic = null;
+	
+	function onBackCallback( ret:Dynamic ) {
+		var prev:Dynamic = lastPromise;
+		
+		Lambda.foreach( ret.Info, function( info ) {
+			lastPromise = callAction( Json.parse( info.Content ) );
+			if ( prev != null ) {
+				prev.pipe( lastPromise );
+			}
+			prev = lastPromise;
+			return true;
+		});
+		
+		if ( lastPromise != null ) {
+			lastPromise().done( function() {
+				lastPromise = null;
+			});
+		}
+		
 		/*
-		Lambda.foreach( otherPlayerId, function( str ) {
-			trace( "M" );
-			message( {
-				FBID:playerId,
-				TargetUser:str,
-				Content:content
-			}, handleResponse( function( ret ) {
-				trace("CD");
-				trace( ret );
-			}));
+		var curr, prev
+		if promise != null {
+			prev = promise
+		}
+		for i ~ count {
+			curr = genPromise( cmd )
+			promise = curr
+			if prev == null {
+				prev = curr
+			} else {
+				prev.pipe( curr )
+				prev = curr
+			}
+		}
+		
+		if curr != null {
+			curr.done() {
+				promise = null
+			}
+		}
+		*/
+		
+		/*
+		Lambda.foreach( ret.Info, function( info ) {
+			callAction( Json.parse( info.Content ));
 			return true;
 		});
 		*/
 	}
 	
-	function onBackCallback( ret:Dynamic ) {
-		var content = Json.parse( ret.Info.Content );
+	
+	
+	function callAction( content ) {
 		trace( content.cmd );
 		switch( content.cmd ) {
 			case 'addCards':
-				addCardAndPrepare( content.content );
+				return Animate.addCardAndPrepare( content.content );
+			case _:
+				return null;
 		}
 	}
 	
@@ -104,10 +145,13 @@ class Main
 			}
 		}));
 	}
-	
+	/*
 	function addCardAndPrepare( cards:Array<Dynamic> ) {
 		ary_cards = ary_cards.concat( cards );
-		Animate.addCards( cards )();
+		Lambda.foreach( ary_cards, function( card ) {
+			Main.createCard( card );
+			return true;
+		});
 		
 		Lambda.foreach( cards, function( card ) {
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
@@ -115,7 +159,7 @@ class Main
 			return true;
 		});
 	}
-	
+	*/
 	function appStart() {
 		//fake player
 		//var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];

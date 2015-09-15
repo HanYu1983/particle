@@ -1,5 +1,7 @@
 package;
 import haxe.Timer;
+import model.Model;
+import org.puremvc.haxe.patterns.facade.Facade;
 
 /**
  * ...
@@ -7,6 +9,30 @@ import haxe.Timer;
  */
 class Animate
 {
+	public static function addCardAndPrepare( cards:Array<Dynamic> ):Dynamic {
+		return function() {
+			var d:Dynamic = Main.j.Deferred();	
+			Main.ary_cards = Main.ary_cards.concat( cards );
+			Lambda.foreach( Main.ary_cards, function( card ) {
+				Main.createCard( card );
+				return true;
+			});
+			
+			trace( Main.ary_cards );
+			Lambda.foreach( cards, function( card ) {
+				Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
+				Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: card.owner == card.relate }, 'relate_change' );
+				return true;
+			});
+			
+			Timer.delay( function() {
+				d.resolve();
+			}, 1000 );
+			
+			return d;
+		}
+	}
+	
 	public static function addCards( cards ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();

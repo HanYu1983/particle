@@ -7,6 +7,26 @@ function $extend(from, fields) {
 }
 var Animate = function() { };
 Animate.__name__ = true;
+Animate.addCardAndPrepare = function(cards) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.ary_cards = Main.ary_cards.concat(cards);
+		Lambda.foreach(Main.ary_cards,function(card) {
+			Main.createCard(card);
+			return true;
+		});
+		haxe_Log.trace(Main.ary_cards,{ fileName : "Animate.hx", lineNumber : 21, className : "Animate", methodName : "addCardAndPrepare"});
+		Lambda.foreach(cards,function(card1) {
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card1, showOwner : Main.playerId == card1.owner, seeCard : card1.owner == card1.relate},"owner_change");
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card1, showRelate : Main.playerId == card1.relate, seeCard : card1.owner == card1.relate},"relate_change");
+			return true;
+		});
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
 Animate.addCards = function(cards) {
 	return function() {
 		var d = Main.j.Deferred();
@@ -145,6 +165,7 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
+	this.lastPromise = null;
 	var _g = this;
 	haxe_Log.trace("playerId",{ fileName : "Main.hx", lineNumber : 28, className : "Main", methodName : "new", customParams : [Main.playerId]});
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
@@ -193,7 +214,7 @@ Main.installPollMessageCallback = function(data,cb) {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 235, className : "Main", methodName : "handleResponse", customParams : [err]});
+		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 279, className : "Main", methodName : "handleResponse", customParams : [err]});
 		if(err != null) js_Browser.alert(err); else cb(ret);
 	};
 };
@@ -214,10 +235,10 @@ Main.prototype = {
 			_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : ""});
 		}
 		stack = _g;
-		this.addCardAndPrepare(stack);
-		haxe_Timer.delay(function() {
+		(Animate.addCardAndPrepare(stack))().done(function() {
 			_g1.messageAll(0,{ cmd : "addCards", content : stack});
-		},1000);
+			haxe_Log.trace(Main.ary_cards,{ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "createSelfStack"});
+		});
 	}
 	,messageAll: function(i,content) {
 		var _g = this;
@@ -227,13 +248,26 @@ Main.prototype = {
 		}));
 	}
 	,onBackCallback: function(ret) {
-		var content = JSON.parse(ret.Info.Content);
-		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 83, className : "Main", methodName : "onBackCallback"});
+		var _g = this;
+		var prev = this.lastPromise;
+		Lambda.foreach(ret.Info,function(info) {
+			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
+			if(prev != null) prev.pipe(_g.lastPromise);
+			prev = _g.lastPromise;
+			return true;
+		});
+		if(this.lastPromise != null) this.lastPromise().done(function() {
+			_g.lastPromise = null;
+		});
+	}
+	,callAction: function(content) {
+		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 122, className : "Main", methodName : "callAction"});
 		var _g = content.cmd;
 		switch(_g) {
 		case "addCards":
-			this.addCardAndPrepare(content.content);
-			break;
+			return Animate.addCardAndPrepare(content.content);
+		default:
+			return null;
 		}
 	}
 	,callForOthers: function(cb) {
@@ -249,15 +283,6 @@ Main.prototype = {
 				_g.callForOthers(cb);
 			},1000);
 		}));
-	}
-	,addCardAndPrepare: function(cards) {
-		Main.ary_cards = Main.ary_cards.concat(cards);
-		(Animate.addCards(cards))();
-		Lambda.foreach(cards,function(card) {
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : card.owner == card.relate},"owner_change");
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, seeCard : card.owner == card.relate},"relate_change");
-			return true;
-		});
 	}
 	,appStart: function() {
 	}
@@ -573,6 +598,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 				this.listStack(notification.getBody().mouse,notification.getBody().pos,2,2,notification.getBody().count);
 				break;
 			case "list_separate":
+				haxe_Log.trace(notification.getBody(),{ fileName : "Card.hx", lineNumber : 76, className : "mediator.Card", methodName : "handleNotification"});
 				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this.listStackSeprate(notification.getBody().mouse,notification.getBody().pos,100,100,notification.getBody().count);
 				break;
@@ -584,9 +610,9 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			}
 			break;
 		case "on_card_flip_change":
-			haxe_Log.trace("ccc",{ fileName : "Card.hx", lineNumber : 85, className : "mediator.Card", methodName : "handleNotification", customParams : [notification.getBody().select.id]});
+			haxe_Log.trace("ccc",{ fileName : "Card.hx", lineNumber : 86, className : "mediator.Card", methodName : "handleNotification", customParams : [notification.getBody().select.id]});
 			if(!this.checkSelf(notification.getBody().select.id)) return;
-			haxe_Log.trace("ccc",{ fileName : "Card.hx", lineNumber : 87, className : "mediator.Card", methodName : "handleNotification"});
+			haxe_Log.trace("ccc",{ fileName : "Card.hx", lineNumber : 88, className : "mediator.Card", methodName : "handleNotification"});
 			this.flip(notification.getBody().flip);
 			break;
 		}
@@ -746,6 +772,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				curr.push(Main.getCardsById(Main.j(dom).attr("id")));
 				return curr;
 			},[]);
+			haxe_Log.trace(this.ary_select,{ fileName : "Model.hx", lineNumber : 81, className : "model.Model", methodName : "handleNotification"});
 			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 			break;
 		case "on_press_enter":
