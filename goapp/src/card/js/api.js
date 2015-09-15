@@ -176,9 +176,7 @@ var api = api || {};
 			if( err == null ){
 				cb( null, ret )
 			}
-			setTimeout( function(){
-				fn( data, cb )
-			}, 1000 )
+			fn( data, cb )
 		})
 	}
 	

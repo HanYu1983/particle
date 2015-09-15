@@ -7,10 +7,86 @@ import (
   "appengine"
   "encoding/json"
   "time"
-  "sync"
+  "lib/db/file"
+  "appengine/datastore"
+  "errors"
 )
 
 var _ = time.Millisecond
+
+func LoadGameContext (ctx appengine.Context) (Context, error) {
+  files, _, err := dbfile.QueryKeys( ctx, 0, "root" )
+  if err != nil {
+    return Context{}, err
+  }
+  if len( files ) == 0 {
+    return Context{}, errors.New("root dir isn't exist")
+  }
+  
+  rootDir := files[0].Key
+  
+  files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
+  if err != nil {
+    return Context{}, err
+  }
+  
+  if len( files ) == 0 {
+    return Context{}, errors.New("card dir isn't exist")
+  }
+  
+  cardDir := files[0].Key
+  files, _, err = dbfile.QueryKeys( ctx, cardDir, "gameContext.json" )
+  if err != nil {
+    return Context{}, err
+  }
+  
+  if len( files ) == 0 {
+    var gameCtx Context
+    err = SaveGameContext( ctx, gameCtx )
+    return gameCtx, err
+  }
+  
+  var gameCtx Context
+  err = json.Unmarshal( files[0].Content, &gameCtx )
+  if err != nil {
+    return Context{}, err
+  }
+  return gameCtx, nil
+}
+
+func SaveGameContext (ctx appengine.Context, gameCtx Context) error {
+  files, _, err := dbfile.QueryKeys( ctx, 0, "root" )
+  if err != nil {
+    return err
+  }
+  if len( files ) == 0 {
+    return errors.New("root dir isn't exist")
+  }
+  
+  rootDir := files[0].Key
+  
+  files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
+  if err != nil {
+    return err
+  }
+  if len( files ) == 0 {
+    return errors.New("card dir isn't exist")
+  }
+  
+  cardDir := files[0].Key
+  
+  data, err := json.Marshal( gameCtx )
+  if err != nil {
+    return err
+  }
+  
+  _, err = dbfile.MakeFile( ctx, cardDir, "gameContext.json", []byte(data), true )
+  if err != nil {
+    return err
+  }
+  
+  return nil
+}
 
 type Result struct {
   Info interface{}
@@ -26,17 +102,11 @@ func Output(w http.ResponseWriter, info, err interface{}){
   fmt.Fprintf(w, "%s", string( jsonstr ))
 }
 
-
-var gameCtx Context
-var mutex sync.Mutex
-var _ = mutex
-
 func CreateUser(w http.ResponseWriter, r *http.Request){
-  mutex.Lock()
-  defer mutex.Unlock()
   
   ctx := appengine.NewContext( r )
   var _ = ctx
+  
   w.Header().Set("Content-Type", "application/json; charset=utf8")
   
   defer tool.Recover( func(err error){
@@ -44,11 +114,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
   })
   
   if r.Method == "GET" {
+    gameCtx, err := LoadGameContext( ctx )
+    tool.Assert( tool.IfError( err ) )
     Output( w, gameCtx.Users, nil )
     return
   }
-  
-  ctx.Infof("before")
   
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
@@ -58,14 +128,24 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
   fbid := form["FBID"][0]
   tool.Assert( tool.ParameterIsNotExist( form, "Name" ) )
   
-  name := form["Name"][0]
-  user := gameCtx.User(fbid)
-  user.Name = name
-  gameCtx.EditUser( user )
+  err = datastore.RunInTransaction(ctx, func(c appengine.Context) error {
+    gameCtx, err := LoadGameContext( ctx )
+    if err != nil {
+      return err
+    }
   
-  ctx.Infof("after")
+    name := form["Name"][0]
+    user := gameCtx.User(fbid)
+    user.Name = name
+    gameCtx.EditUser( user )
   
-  Output( w, user, nil )
+    err = SaveGameContext( ctx, gameCtx )
+    return err
+  }, nil)
+  
+  tool.Assert( tool.IfError( err ) )
+  
+  Output( w, nil, nil )
 }
 
 func CreateRoom (w http.ResponseWriter, r *http.Request){
@@ -75,13 +155,14 @@ func CreateRoom (w http.ResponseWriter, r *http.Request){
     Output( w, nil, err.Error() )
   })
   
+  ctx := appengine.NewContext( r )
+  
   if r.Method == "GET" {
+    gameCtx, err := LoadGameContext( ctx )
+    tool.Assert( tool.IfError( err ) )
     Output( w, gameCtx.Rooms, nil )
     return
   }
-  
-  ctx := appengine.NewContext( r )
-  var _ = ctx
   
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
@@ -92,12 +173,24 @@ func CreateRoom (w http.ResponseWriter, r *http.Request){
   
   tool.Assert( tool.ParameterIsNotExist( form, "Name" ) )
   
-  name := form["Name"][0]
-  room := gameCtx.Room(id)
-  room.Name = name
-  gameCtx.EditRoom( room )
+  err = datastore.RunInTransaction(ctx, func(c appengine.Context) error {
+    gameCtx, err := LoadGameContext( ctx )
+    if err != nil {
+      return err
+    }
   
-  Output( w, room, nil )
+    name := form["Name"][0]
+    room := gameCtx.Room(id)
+    room.Name = name
+    gameCtx.EditRoom( room )
+  
+    err = SaveGameContext( ctx, gameCtx )
+    return err
+  }, nil)
+  
+  tool.Assert( tool.IfError( err ) )
+  
+  Output( w, nil, nil )
 }
 
 func EnterRoom (w http.ResponseWriter, r *http.Request){
@@ -107,13 +200,14 @@ func EnterRoom (w http.ResponseWriter, r *http.Request){
     Output( w, nil, err.Error() )
   })
   
+  ctx := appengine.NewContext( r )
+  
   if r.Method == "GET" {
+    gameCtx, err := LoadGameContext( ctx )
+    tool.Assert( tool.IfError( err ) )
     Output( w, gameCtx.Rooms, nil )
     return
   }
-  
-  ctx := appengine.NewContext( r )
-  var _ = ctx
   
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
@@ -124,13 +218,25 @@ func EnterRoom (w http.ResponseWriter, r *http.Request){
   
   tool.Assert( tool.ParameterIsNotExist( form, "Room" ) )
   
-  roomKey := form["Room"][0]
-  user := gameCtx.User(fbid)
-  room := gameCtx.Room(roomKey)
-  user.Room = room.Key
-  gameCtx.EditUser( user )
+  err = datastore.RunInTransaction(ctx, func(c appengine.Context) error {
+    gameCtx, err := LoadGameContext( ctx )
+    if err != nil {
+      return err
+    }
   
-  Output( w, user, nil )
+    roomKey := form["Room"][0]
+    user := gameCtx.User(fbid)
+    room := gameCtx.Room(roomKey)
+    user.Room = room.Key
+    gameCtx.EditUser( user )
+  
+    err = SaveGameContext( ctx, gameCtx )
+    return err
+  }, nil)
+  
+  tool.Assert( tool.IfError( err ) )
+  
+  Output( w, nil, nil )
 }
 
 func LeaveMessage (w http.ResponseWriter, r *http.Request){
@@ -140,13 +246,14 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
     Output( w, nil, err.Error() )
   })
   
+  ctx := appengine.NewContext( r )
+  
   if r.Method == "GET" {
+    gameCtx, err := LoadGameContext( ctx )
+    tool.Assert( tool.IfError( err ) )
     Output( w, gameCtx.Messages, nil )
     return
   }
-  
-  ctx := appengine.NewContext( r )
-  var _ = ctx
   
   form, err := tool.ReadAjaxPost( r )
   tool.Assert( tool.IfError( err ) )
@@ -155,25 +262,51 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
   tool.Assert( tool.ParameterIsNotExist( form, "TargetUser" ) ) 
   tool.Assert( tool.ParameterIsNotExist( form, "Content" ) ) 
   
-  fbid := form["FBID"][0]
-  targetUser := form["TargetUser"][0]
-  content := form["Content"][0]
+  err = datastore.RunInTransaction(ctx, func(c appengine.Context) error {
+    gameCtx, err := LoadGameContext( ctx )
+    if err != nil {
+      return err
+    }
   
-  msg := Message{FromUser: fbid, ToUser: targetUser, Content: content }
-  gameCtx.LeaveMessage( msg )
+    fbid := form["FBID"][0]
+    targetUser := form["TargetUser"][0]
+    content := form["Content"][0]
   
-  Output( w, msg, nil )
+    msg := Message{FromUser: fbid, ToUser: targetUser, Content: content }
+    gameCtx.LeaveMessage( msg )
+  
+    err = SaveGameContext( ctx, gameCtx )
+    return err
+  }, nil)
+  
+  tool.Assert( tool.IfError( err ) )
+  
+  Output( w, nil, nil )
 }
 
 func Clear (w http.ResponseWriter, r *http.Request){
   w.Header().Set("Content-Type", "application/json; charset=utf8")
-  gameCtx = Context{}
+  
+  ctx := appengine.NewContext( r )
+  err := datastore.RunInTransaction(ctx, func(c appengine.Context) error {
+    gameCtx, err := LoadGameContext( ctx )
+    if err != nil {
+      return err
+    }
+    gameCtx = Context{}
+    err = SaveGameContext( ctx, gameCtx )
+    return err
+  }, nil)
+  
+  tool.Assert( tool.IfError( err ) )
+  
   Output( w, nil, nil )
 }
 
 func State (w http.ResponseWriter, r *http.Request){
   ctx := appengine.NewContext( r )
-  var _ = ctx
+  gameCtx, err := LoadGameContext( ctx )
+  tool.Assert( tool.IfError( err ) )
   w.Header().Set("Content-Type", "application/json; charset=utf8")
   Output( w, gameCtx, nil )
 }
@@ -192,32 +325,60 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
   tool.Assert( tool.ParameterIsNotExist( r.Form, "FBID" ) ) 
   
   fbid := r.Form["FBID"][0]
-  user := gameCtx.User(fbid)
   
-  msgChan := make(chan interface{}, 1)
-  errChan := make(chan bool)
+  msgChan := make(chan interface{})
+  errChan := make(chan error)
   
-  go func ( ch chan interface{} ){
-    maxtime := 1
+  go func (){
+    
+    defer func (){
+      close( msgChan )
+      close( errChan )
+    }()
+    
+    maxtime := 10
     var times int
+    
     for times < maxtime {
-      msgs := gameCtx.MessagesToUser( user )
-      if len( msgs ) > 0 {
-        ch <- msgs
-        gameCtx.DeleteMessage( msgs )
-        break
+      
+      err := datastore.RunInTransaction(ctx, func(c appengine.Context) error {
+        gameCtx, err := LoadGameContext( ctx )
+        if err != nil {
+          return err
+        }
+      
+        user := gameCtx.User(fbid)
+        msgs := gameCtx.MessagesToUser( user )
+        if len( msgs ) > 0 {
+          gameCtx.DeleteMessage( msgs )
+          err = SaveGameContext( ctx, gameCtx )
+          if err != nil {
+            errChan <- err
+          } else {
+            msgChan <- msgs
+          }
+        }
+        return err
+      }, nil)
+      
+      if err != nil {
+        errChan <- err
+        return
       }
-      //time.Sleep(500 * time.Millisecond)
+      
+      time.Sleep(500 * time.Millisecond)
       times += 1
     }
+    
     if times == maxtime {
-      errChan <- true
+      errChan <- errors.New("times out")
     }
-  } ( msgChan )
+    
+  } ()
   
   select {
-  case <-errChan:
-    Output( w, nil, "times out")
+  case err := <-errChan:
+    Output( w, nil, err.Error())
   case ret := <-msgChan:
     Output( w, ret, nil )
   }

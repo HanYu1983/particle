@@ -20,7 +20,7 @@ func Secret(user, realm string) string {
 }
 
 func init(){
-	authenticator := auth.NewDigestAuthenticator("dbpublic", Secret)
+  authenticator := auth.NewDigestAuthenticator("dbpublic", Secret)
   dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
   
   http.HandleFunc("/longPolling/", longPolling)
@@ -37,6 +37,7 @@ func init(){
   http.HandleFunc("/fn/card/clear", game.Clear)
   http.HandleFunc("/fn/card/longPollingTargetMessage", game.LongPollingTargetMessage)
   http.HandleFunc("/fn/card/state", game.State)
+  
 }
 
 var _ = time.Sleep

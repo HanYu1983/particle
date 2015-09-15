@@ -33,28 +33,20 @@
 		<script>
 		api.createUser({FBID:"han", Name:"222"}, function(err, ret){
 			//console.log(ret.Info.Key)
-			
 		})
 		
 		api.createUser({FBID:"vic", Name:"33"}, function(err, ret){
 			//console.log(ret.Info.Key)
-			
 		})
-		
-		setTimeout( function(){
-			api.users( function(err, ret){
-				console.log(JSON.stringify(ret))
-			})
-			setTimeout( arguments.callee, 1000)
-		}, 1000)
-		
-		
-		/*
 		
 		api.users( function(err, ret){
-			console.log(ret)
+			console.log(JSON.stringify(ret))
 		})
-		*/
+		
+		api.users( function(err, ret){
+			console.log(JSON.stringify(ret))
+		})
+	
 		</script>
 	</body>
 </html>
