@@ -180,6 +180,14 @@ var Main = function() {
 	}));
 };
 Main.__name__ = true;
+Main.messageAll = function(content) {
+	Lambda.foreach(Main.otherPlayerId,function(id) {
+		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
+			haxe_Log.trace("on_message_cb",{ fileName : "Main.hx", lineNumber : 65, className : "Main", methodName : "messageAll", customParams : [ret]});
+		}));
+		return true;
+	});
+};
 Main.createCard = function(model) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -214,7 +222,7 @@ Main.installPollMessageCallback = function(data,cb) {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 292, className : "Main", methodName : "handleResponse", customParams : [err]});
+		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 284, className : "Main", methodName : "handleResponse", customParams : [err]});
 		if(err != null) js_Browser.alert(err); else cb(ret);
 	};
 };
@@ -226,26 +234,17 @@ Main.getId = function() {
 };
 Main.prototype = {
 	createSelfStack: function() {
-		var _g1 = this;
 		var stack;
 		var _g = [];
-		var _g11 = 0;
-		while(_g11 < 30) {
-			var i = _g11++;
+		var _g1 = 0;
+		while(_g1 < 30) {
+			var i = _g1++;
 			_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : ""});
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
-			_g1.messageAll({ cmd : "addCards", content : stack});
+			Main.messageAll({ cmd : "addCards", content : stack});
 			haxe_Log.trace(Main.ary_cards,{ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "createSelfStack"});
-		});
-	}
-	,messageAll: function(content) {
-		Lambda.foreach(Main.otherPlayerId,function(id) {
-			Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
-				haxe_Log.trace("on_message_cb",{ fileName : "Main.hx", lineNumber : 65, className : "Main", methodName : "messageAll", customParams : [ret]});
-			}));
-			return true;
 		});
 	}
 	,onBackCallback: function(ret) {
@@ -262,11 +261,15 @@ Main.prototype = {
 		});
 	}
 	,callAction: function(content) {
-		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 135, className : "Main", methodName : "callAction"});
+		haxe_Log.trace("cmd",{ fileName : "Main.hx", lineNumber : 123, className : "Main", methodName : "callAction", customParams : [content.cmd]});
 		var _g = content.cmd;
 		switch(_g) {
 		case "addCards":
 			return Animate.addCardAndPrepare(content.content);
+		case "listCard":
+			return Animate.list(content.content.ary_select,content.content.pos_mouse);
+		case "listSeparate":
+			return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
 		default:
 			return null;
 		}
@@ -856,9 +859,11 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			});
 			break;
 		case "on_press_l":
+			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listCard(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_a":
+			Main.messageAll({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_s":

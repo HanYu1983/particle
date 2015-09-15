@@ -150,8 +150,10 @@ class Model extends Mediator
 					return true;
 				});
 			case Layer.on_press_l:
+				Main.messageAll( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 				Main.listCard( ary_select, pos_mouse );
 			case Layer.on_press_a:
+				Main.messageAll( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_s:
 				ary_select.sort( function ( a, b ) {

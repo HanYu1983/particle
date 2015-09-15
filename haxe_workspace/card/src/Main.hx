@@ -54,7 +54,7 @@ class Main
 		});
 	}
 	
-	function messageAll( content ) {
+	public static function messageAll( content:Dynamic ) {
 		
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
@@ -66,16 +66,6 @@ class Main
 			}));
 			return true;
 		});
-		/*
-		if ( otherPlayerId[i] == null ) return;
-		message( {
-			FBID:playerId,
-			TargetUser:otherPlayerId[i],
-			Content: Json.stringify( content )
-		}, handleResponse( function( ret ) {
-			messageAll( ++i, content );
-		}));
-		*/
 	}
 	
 	var lastPromise:Dynamic = null;
@@ -129,13 +119,15 @@ class Main
 		*/
 	}
 	
-	
-	
-	function callAction( content ) {
-		trace( content.cmd );
+	function callAction( content:Dynamic ) {
+		trace( 'cmd', content.cmd );
 		switch( content.cmd ) {
 			case 'addCards':
 				return Animate.addCardAndPrepare( content.content );
+			case 'listCard':
+				return Animate.list( content.content.ary_select, content.content.pos_mouse );
+			case 'listSeparate':
+				return Animate.listSeparate( content.content.ary_select, content.content.pos_mouse );
 			case _:
 				return null;
 		}
