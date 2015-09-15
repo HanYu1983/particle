@@ -214,7 +214,7 @@ Main.installPollMessageCallback = function(data,cb) {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 279, className : "Main", methodName : "handleResponse", customParams : [err]});
+		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 292, className : "Main", methodName : "handleResponse", customParams : [err]});
 		if(err != null) js_Browser.alert(err); else cb(ret);
 	};
 };
@@ -236,16 +236,17 @@ Main.prototype = {
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
-			_g1.messageAll(0,{ cmd : "addCards", content : stack});
+			_g1.messageAll({ cmd : "addCards", content : stack});
 			haxe_Log.trace(Main.ary_cards,{ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "createSelfStack"});
 		});
 	}
-	,messageAll: function(i,content) {
-		var _g = this;
-		if(Main.otherPlayerId[i] == null) return;
-		Main.message({ FBID : Main.playerId, TargetUser : Main.otherPlayerId[i], Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
-			_g.messageAll(++i,content);
-		}));
+	,messageAll: function(content) {
+		Lambda.foreach(Main.otherPlayerId,function(id) {
+			Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
+				haxe_Log.trace("on_message_cb",{ fileName : "Main.hx", lineNumber : 65, className : "Main", methodName : "messageAll", customParams : [ret]});
+			}));
+			return true;
+		});
 	}
 	,onBackCallback: function(ret) {
 		var _g = this;
@@ -261,7 +262,7 @@ Main.prototype = {
 		});
 	}
 	,callAction: function(content) {
-		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 122, className : "Main", methodName : "callAction"});
+		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 135, className : "Main", methodName : "callAction"});
 		var _g = content.cmd;
 		switch(_g) {
 		case "addCards":

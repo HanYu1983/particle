@@ -48,13 +48,25 @@ class Main
 		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
-			messageAll( 0, { cmd:'addCards', content:stack } );
+			messageAll( { cmd:'addCards', content:stack } );
 			
 			trace( ary_cards );
 		});
 	}
 	
-	function messageAll( i, content ) {
+	function messageAll( content ) {
+		
+		Lambda.foreach( otherPlayerId, function ( id ) {
+			message( {
+				FBID:playerId,
+				TargetUser: id,
+				Content: Json.stringify( content )
+			}, handleResponse( function( ret ) {
+				trace( 'on_message_cb', ret );
+			}));
+			return true;
+		});
+		/*
 		if ( otherPlayerId[i] == null ) return;
 		message( {
 			FBID:playerId,
@@ -63,6 +75,7 @@ class Main
 		}, handleResponse( function( ret ) {
 			messageAll( ++i, content );
 		}));
+		*/
 	}
 	
 	var lastPromise:Dynamic = null;
