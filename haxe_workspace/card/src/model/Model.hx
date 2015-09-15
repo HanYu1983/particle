@@ -78,8 +78,6 @@ class Model extends Mediator
 					return curr;
 				}, [] );
 				
-				trace( ary_select );
-				
 				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_press_enter:
 				sendNotification( on_state_change, {x:pos_mouse[0], y:pos_mouse[1] }, 'move' );
@@ -98,6 +96,9 @@ class Model extends Mediator
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
 			case Layer.on_press_c:
+				if ( Main.setOwner( ary_select ) ) 
+					Main.messageAll( { cmd:'setOwner', content:{ ary_select:ary_select } } );
+				/*
 				Lambda.foreach( ary_select, function( card ) {
 					switch( card.owner ) {
 						case '':
@@ -117,7 +118,13 @@ class Model extends Mediator
 					sendNotification( on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: seeCard }, 'owner_change' );
 					return true;
 				});
+				*/
 			case Layer.on_press_v:
+				
+				if ( Main.setRelate( ary_select ) )
+					Main.messageAll( { cmd:'setRelate', content:{ ary_select:ary_select } } );
+				
+				/*
 				Lambda.foreach( ary_select, function( card ) {
 					if ( card.owner != Main.playerId ) return true;
 					switch( card.relate ) {
@@ -138,20 +145,19 @@ class Model extends Mediator
 					sendNotification( on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: seeCard }, 'relate_change' );
 					return true;
 				});
+				*/
 			case Layer.on_press_r:
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_f:
-				Lambda.foreach( ary_select, function( card ) {
-					//當owner是自己或者沒有所屬的時候，才能翻牌
-					if ( card.owner != Main.playerId ) return true;
-					sendNotification( on_card_flip_change, { select:card } );
-					
-					return true;
-				});
+				if ( Main.flip( ary_select ) ) {
+					Main.messageAll( { cmd:'flip', content:{ ary_select:ary_select } } );
+				}
 			case Layer.on_press_l:
+				Main.messageAll( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 				Main.listCard( ary_select, pos_mouse );
 			case Layer.on_press_a:
+				Main.messageAll( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_s:
 				ary_select.sort( function ( a, b ) {

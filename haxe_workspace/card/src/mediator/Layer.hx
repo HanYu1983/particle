@@ -41,7 +41,6 @@ class Layer extends Mediator
 		
 		_body.keyup( onBodyKeyUp );
 		_body.mousemove( onBodyMouseMove );
-		_body.mouseup( onBodyMouseUp );
 		
 		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ){
 			sendNotification( on_select_cards, { ary_select:ary } );
@@ -67,12 +66,8 @@ class Layer extends Mediator
 		sendNotification( on_body_mousemove, {x:e.pageX, y:e.pageY } );
 	}
 	
-	function onBodyMouseUp( e ) {
-		trace( e.pageX );
-	}
-	
 	function onBodyKeyUp( e ) {
-		trace( e.which ) ;
+	//	trace( e.which ) ;
 		switch( e.which ) {
 		//c
 			case 67:
