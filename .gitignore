@@ -17,3 +17,4 @@ go_workspace/root/src/golang.org
 go_workspace/root/src/gopkg.in
 node_modules/
 output/
+cardPackage/
