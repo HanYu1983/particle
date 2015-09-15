@@ -31,51 +31,22 @@
 		<script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>
 		<script src='js/api.js'></script>
 		<script>
-		console.log("==========")
-		setTimeout( function(){
-			$.ajax({
-				url: '../fn/test',
-				data:{key:"K"},
-				success: function(){ console.log("x")},
-				error: function(){}
-			})
-		}, 0)
-		
-		setTimeout( function(){
-			$.ajax({
-				url: '../fn/test',
-				data:{key:"O"},
-				success: function(){ console.log("x2")},
-				error: function(){}
-			})
-		}, 10)
-		
-		
-		/*
 		api.createUser({FBID:"han", Name:"222"}, function(err, ret){
 			//console.log(ret.Info.Key)
-			
 		})
 		
 		api.createUser({FBID:"vic", Name:"33"}, function(err, ret){
 			//console.log(ret.Info.Key)
-			
 		})
-		
-		setTimeout( function(){
-			api.users( function(err, ret){
-				console.log(JSON.stringify(ret))
-			})
-			setTimeout( arguments.callee, 1000)
-		}, 1000)
-		*/
-		
-		/*
 		
 		api.users( function(err, ret){
-			console.log(ret)
+			console.log(JSON.stringify(ret))
 		})
-		*/
+		
+		api.users( function(err, ret){
+			console.log(JSON.stringify(ret))
+		})
+	
 		</script>
 	</body>
 </html>
