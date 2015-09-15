@@ -173,6 +173,7 @@ var api = api || {};
 	function installPollMessageCallback( data, cb ){
 		var fn = arguments.callee
 		pollMessage( data, function( err, ret ){
+			console.log( arguments )
 			if( err == null ){
 				cb( null, ret )
 			}
