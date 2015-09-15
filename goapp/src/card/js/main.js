@@ -335,6 +335,7 @@ Main.prototype = {
 		var _g = this;
 		var prev = this.lastPromise;
 		Lambda.foreach(ret.Info,function(info) {
+			haxe_Log.trace(info.Time,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "onBackCallback"});
 			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
 			if(prev != null) try {
 				prev().pipe(_g.lastPromise);
@@ -360,7 +361,7 @@ Main.prototype = {
 			curr.push(localCard);
 			return curr;
 		},[]);
-		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 138, className : "Main", methodName : "callAction"});
+		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 140, className : "Main", methodName : "callAction"});
 		var _g = content.cmd;
 		switch(_g) {
 		case "addCards":

@@ -74,6 +74,8 @@ class Main
 		var prev:Dynamic = lastPromise;
 		
 		Lambda.foreach( ret.Info, function( info ) {
+			trace( info.Time );
+			
 			lastPromise = callAction( Json.parse( info.Content ) );
 			if ( prev != null ) {
 				try{
