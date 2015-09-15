@@ -8,7 +8,92 @@ import (
   "appengine"
   auth "lib/hack/go-http-auth"
   "lib/game"
+  "appengine/datastore"
 )
+
+type Counter struct {
+    Count int
+}
+
+func TestTransaction(w http.ResponseWriter, r *http.Request) {
+    c := appengine.NewContext(r)
+
+    key := datastore.NewKey(c, "Counter", "mycounter", 0, nil)
+    var _ = key
+    count := new(Counter)
+    var _ = count
+    
+    //key2 := datastore.NewKey(c, dbfile.Kind, "", 5629499534213120, nil)
+    //var file dbfile.DBFile
+    
+    var option datastore.TransactionOptions
+    option.XG = true
+    
+    err := datastore.RunInTransaction(c, func(c appengine.Context) error {
+      /*
+      gameCtx, err := game.LoadGameContext( c )
+      c.Infof("====:%+v", gameCtx)
+      if err != nil {
+        return err
+      }
+      msg := game.Message{FromUser: "fbid", ToUser: "targetUser", Content: "content" }
+      gameCtx.LeaveMessage( msg )
+  
+      err = game.SaveGameContext( c, gameCtx )
+      c.Infof(">>>>:%+v", gameCtx)
+      return err
+      */
+      /*
+      files, _, err3 := dbfile.QueryKeys( c, 0, "root" )
+      if err3 != nil {
+        return err3
+      }
+      c.Infof("%v", files)
+      */
+      /*
+      if len( files ) == 0 {
+        return Context{}, errors.New("root dir isn't exist")
+      }
+  
+      rootDir := files[0].Key
+  
+      files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
+      if err != nil {
+        return Context{}, err
+      }
+      */
+      gameCtx, err4 := game.LoadGameContext( c )
+      c.Infof("====:%+v", gameCtx)
+      if err4 != nil {
+        return err4
+      }
+      /*
+        file, err2 := dbfile.GetFile( c, 6192449487634432 )
+        c.Infof("%v", string(file.Content))
+        if err2 != nil {
+          return err2
+        }*/
+        
+        err := datastore.Get(c, key, count)
+        c.Infof("====:%+v", count)
+        if err != nil && err != datastore.ErrNoSuchEntity {
+            return err
+        }
+        count.Count++
+        _, err = datastore.Put(c, key, count)
+        c.Infof(">>>>:%+v", count)
+        return err
+        
+    }, &option)
+    if err != nil {
+        c.Errorf("Transaction failed: %v", err)
+        TestTransaction(w, r)
+        //http.Error(w, "Internal Server Error", 500)
+        return
+    }
+
+    fmt.Fprintf(w, "Current count: %d", count.Count)
+}
 
 func Secret(user, realm string) string {
   if user == "hanvicadmin" {
@@ -22,6 +107,9 @@ func init(){
   authenticator := auth.NewDigestAuthenticator("dbpublic", Secret)
   dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
   
+  http.HandleFunc("/fn/test/TestTransaction", TestTransaction)
+  //http.HandleFunc("/fn/test/TestQueue", TestQueue)
+  //http.HandleFunc("/fn/worker", TestQueue)
   http.HandleFunc("/", handler)
   http.HandleFunc("/proxy", tool.Proxy)
   http.HandleFunc("/dbfile/", dbfileHandler)

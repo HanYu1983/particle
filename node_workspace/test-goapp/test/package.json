@@ -1,0 +1,6 @@
+{
+  "name":"basic-test",
+  "dependencies": {
+    "async":"*"
+  }
+}

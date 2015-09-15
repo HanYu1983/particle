@@ -19,7 +19,8 @@ type DBFile struct {
 }
 
 func QueryKeys (ctx appengine.Context, position int64, name string) ([]DBFile, []*datastore.Key, error){
-  q := db.NewQuery( Kind ).Filter("Position =", position).Filter("Name =", name)
+  akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil) 
+  q := db.NewQuery( Kind ).Ancestor(akey).Filter("Position =", position).Filter("Name =", name)
   
   var entities []DBFile
   keys, err := q.GetAll(ctx, &entities)
@@ -56,7 +57,8 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
     }
     
   } else {
-    key = db.NewKey( ctx, Kind, nil )
+    akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil) 
+    key = db.NewKey( ctx, Kind, akey )
     
   }
   
@@ -82,13 +84,15 @@ func MakeDir (ctx appengine.Context, position int64, name string) (int64, error)
     return keys[0].IntID(), errors.New("file exists!")
   }
   
-  key := db.NewKey( ctx, Kind, nil )
+  akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil) 
+  key := db.NewKey( ctx, Kind, akey )
   nkey, err := datastore.Put(ctx, key, &file)
   return nkey.IntID(), err
 }
 
 func FileList (ctx appengine.Context, position int64) ([]DBFile, error) {
-  q := db.NewQuery( Kind ).Filter("Position =", position)
+  akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil) 
+  q := db.NewQuery( Kind ).Ancestor(akey).Filter("Position =", position)
   
   var entities []DBFile
   keys, err := q.GetAll(ctx, &entities)
@@ -101,7 +105,8 @@ func FileList (ctx appengine.Context, position int64) ([]DBFile, error) {
 
 func GetFile (ctx appengine.Context, id int64) (DBFile, error) {
   var file DBFile
-  key := db.GetKey( ctx, Kind, id, nil )
+  akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil) 
+  key := db.GetKey( ctx, Kind, id, akey )
   err := datastore.Get(ctx, key, &file)
   return file, err
 }
@@ -111,6 +116,7 @@ func DeleteFile (ctx appengine.Context, id int64) error {
   if err != nil {
     return err
   }
+  akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil) 
   
   if file.IsDir {
     files, err := FileList( ctx, id )
@@ -125,14 +131,14 @@ func DeleteFile (ctx appengine.Context, id int64) error {
       }
     }
     
-    key := db.GetKey( ctx, Kind, id, nil )
+    key := db.GetKey( ctx, Kind, id, akey )
     err = datastore.Delete( ctx, key )
     if err != nil {
       return err
     }
     
   } else {
-    key := db.GetKey( ctx, Kind, id, nil )
+    key := db.GetKey( ctx, Kind, id, akey )
     err := datastore.Delete( ctx, key )
     if err != nil {
       return err
