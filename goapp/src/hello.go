@@ -6,7 +6,7 @@ import (
   "lib/tool"
   "lib/db/file"
   "appengine"
-  auth "github.com/abbot/go-http-auth"
+  auth "lib/abbot/go-http-auth"
   "lib/game"
   "time"
 )
