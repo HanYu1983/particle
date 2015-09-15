@@ -334,7 +334,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
       close( errChan )
     }()
     
-    maxtime := 10* 10
+    maxtime := 5
     var times int
     
     for times < maxtime {
@@ -364,7 +364,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
         return
       }
       
-      time.Sleep(100 * time.Millisecond)
+      time.Sleep(2 * time.Second)
       times += 1
     }
     
