@@ -193,6 +193,7 @@ func (a *DigestAuth) Wrap(wrapped AuthenticatedHandlerFunc) http.HandlerFunc {
 		if username, authinfo := a.CheckAuth(r); username == "" {
 			a.RequireAuth(w, r)
 		} else {
+      // han 修改
 			ar := &AuthenticatedRequest{Request: *r, Username: username, OriginR: r }
 			if authinfo != nil {
 				w.Header().Set("Authentication-Info", *authinfo)
@@ -210,6 +211,7 @@ func (a *DigestAuth) Wrap(wrapped AuthenticatedHandlerFunc) http.HandlerFunc {
 func (a *DigestAuth) JustCheck(wrapped http.HandlerFunc) http.HandlerFunc {
 	return a.Wrap(func(w http.ResponseWriter, ar *AuthenticatedRequest) {
 		ar.Header.Set("X-Authenticated-Username", ar.Username)
+    // han 修改
 		wrapped(w, ar.OriginR)
 	})
 }
