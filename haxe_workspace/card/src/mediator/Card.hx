@@ -62,8 +62,6 @@ class Card extends Mediator
 				switch( notification.getType() ) {
 					case 'ownerAndRelate_change':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
-						
-						trace( notification.getBody() );
 						_back = notification.getBody().select.back;
 						showOnwer( notification.getBody().showOwner );
 						showRelate( notification.getBody().showRelate );
@@ -108,7 +106,6 @@ class Card extends Mediator
 	}
 	
 	function showRelate( show ) {
-		trace( show );
 		if ( show ) {
 			getViewComponent().find( '#img_relate' ).show();
 		}else {
