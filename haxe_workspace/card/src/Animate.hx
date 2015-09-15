@@ -22,7 +22,7 @@ class Animate
 			
 			Timer.delay( function() {
 				d.resolve();
-			}, 1000 );
+			}, 0 );
 			
 			return d;
 		}

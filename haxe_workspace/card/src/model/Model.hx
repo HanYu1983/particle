@@ -17,7 +17,7 @@ class Model extends Mediator
 	public static var on_state_change = 'on_state_change';
 	public static var on_select_cards = 'on_model_select_cards';
 	
-	var ary_select:Array<Dynamic>;
+	var ary_select:Array<Dynamic> = [];
 	var pos_mouse = [0, 0];
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -105,7 +105,6 @@ class Model extends Mediator
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_f:
-				
 				if ( Main.flip( ary_select ) ) {
 					Main.messageAll( { cmd:'flip', content:{ ary_select:ary_select } } );
 				}

@@ -55,7 +55,7 @@ class Main
 	
 	public static function messageAll( content:Dynamic ) {
 		
-		trace( 'messageAll', content );
+		trace( 'messageAll', content.cmd );
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
 				FBID:playerId,
@@ -75,10 +75,12 @@ class Main
 		
 		Lambda.foreach( ret.Info, function( info ) {
 			lastPromise = callAction( Json.parse( info.Content ) );
-			trace( 'lastPromise', lastPromise );
-			trace( prev );
 			if ( prev != null ) {
-				prev.pipe( lastPromise );
+				try{
+					prev().pipe( lastPromise );
+				}catch ( err:String ) {
+					Browser.alert( err );
+				}
 			}
 			prev = lastPromise;
 			return true;
@@ -122,8 +124,6 @@ class Main
 	}
 	
 	function callAction( content:Dynamic ) {
-		trace( 'receive cmd', content );
-		
 		if ( content.content.ary_select != null ) {
 			content.content.ary_select = Lambda.fold( content.content.ary_select, function( remoteCard, curr ) {
 				var localCard = getCardsById( remoteCard.id );
@@ -134,6 +134,8 @@ class Main
 				return curr;
 			}, []);
 		}
+		
+		trace( content.cmd );
 		
 		switch( content.cmd ) {
 			case 'addCards':
