@@ -78,8 +78,6 @@ class Model extends Mediator
 					return curr;
 				}, [] );
 				
-				trace( ary_select );
-				
 				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_press_enter:
 				sendNotification( on_state_change, {x:pos_mouse[0], y:pos_mouse[1] }, 'move' );
@@ -98,8 +96,8 @@ class Model extends Mediator
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
 			case Layer.on_press_c:
-				Main.messageAll( { cmd:'setOwner', content:{ ary_select:ary_select } } );
-				Main.setOwner( ary_select );
+				if ( Main.setOwner( ary_select ) ) 
+					Main.messageAll( { cmd:'setOwner', content:{ ary_select:ary_select } } );
 				/*
 				Lambda.foreach( ary_select, function( card ) {
 					switch( card.owner ) {
@@ -122,8 +120,10 @@ class Model extends Mediator
 				});
 				*/
 			case Layer.on_press_v:
-				Main.messageAll( { cmd:'setRelate', content:{ ary_select:ary_select } } );
-				Main.setRelate( ary_select );
+				
+				if ( Main.setRelate( ary_select ) )
+					Main.messageAll( { cmd:'setRelate', content:{ ary_select:ary_select } } );
+				
 				/*
 				Lambda.foreach( ary_select, function( card ) {
 					if ( card.owner != Main.playerId ) return true;
@@ -150,8 +150,9 @@ class Model extends Mediator
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_f:
-				Main.messageAll( { cmd:'flip', content:{ ary_select:ary_select } } );
-				Main.flip( ary_select );
+				if ( Main.flip( ary_select ) ) {
+					Main.messageAll( { cmd:'flip', content:{ ary_select:ary_select } } );
+				}
 			case Layer.on_press_l:
 				Main.messageAll( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 				Main.listCard( ary_select, pos_mouse );

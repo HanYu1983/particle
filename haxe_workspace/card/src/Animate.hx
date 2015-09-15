@@ -18,7 +18,6 @@ class Animate
 				return true;
 			});
 			
-			trace( Main.ary_cards );
 			Lambda.foreach( cards, function( card ) {
 				Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
 				Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: card.owner == card.relate }, 'relate_change' );

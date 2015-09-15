@@ -49,20 +49,19 @@ class Main
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
 			messageAll( { cmd:'addCards', content:stack } );
-			
-			trace( ary_cards );
 		});
 	}
 	
 	public static function messageAll( content:Dynamic ) {
 		
+		trace( 'messageAll', content.cmd );
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
 				FBID:playerId,
 				TargetUser: id,
 				Content: Json.stringify( content )
 			}, handleResponse( function( ret ) {
-				trace( 'on_message_cb', ret );
+				
 			}));
 			return true;
 		});
@@ -120,7 +119,7 @@ class Main
 	}
 	
 	function callAction( content:Dynamic ) {
-		trace( 'cmd', content.cmd );
+		trace( 'receive cmd', content.cmd );
 		switch( content.cmd ) {
 			case 'addCards':
 				return Animate.addCardAndPrepare( content.content );
@@ -192,16 +191,20 @@ class Main
 		*/
 	}
 	
-	public static function setOwner( ary_select ) {
+	public static function setOwner( ary_select, ?owner ) {
+		var send = false;
 		Lambda.foreach( ary_select, function( card ) {
 			switch( card.owner ) {
 				case '':
 					//如果owner 是空白，就可以修改為自己
 					card.owner = Main.playerId;
+					send = true;
 				case owner:
 					//如果owner 不是自己，就不能更改
-					if ( owner == Main.playerId )
+					if ( owner == Main.playerId ) {
 						card.owner = '';
+						send = true;
+					}
 			}
 			
 			var seeCard = switch( card.owner ) {
@@ -212,19 +215,24 @@ class Main
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: seeCard }, 'owner_change' );
 			return true;
 		});
+		return send;
 	}
 	
 	public static function setRelate( ary_select ) {
+		var send = false;
 		Lambda.foreach( ary_select, function( card ) {
 			if ( card.owner != Main.playerId ) return true;
 			switch( card.relate ) {
 				case '':
 					//如果relate 是空白，就可以修改為自己
 					card.relate = Main.playerId;
+					send = true;
 				case relate:
 					//如果relate 不是自己，就不能更改
-					if ( relate == Main.playerId )
+					if ( relate == Main.playerId ) {
 						card.relate = '';
+						send = true;
+					}
 			}
 			
 			var seeCard = switch( card.owner ) {
@@ -235,6 +243,7 @@ class Main
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: seeCard }, 'relate_change' );
 			return true;
 		});
+		return send;
 	}
 	
 	public static function createCard( model:Dynamic ) {
@@ -249,13 +258,15 @@ class Main
 	}
 	
 	public static function flip( ary_select:Dynamic ) {
+		var send = false;
 		Lambda.foreach( ary_select, function( card ) {
 			//當owner是自己或者沒有所屬的時候，才能翻牌
 			if ( card.owner != Main.playerId ) return true;
+			send = true;
 			Facade.getInstance().sendNotification( Model.on_card_flip_change, { select:card } );
-			
 			return true;
 		});
+		return send;
 	}
 	
 	public static function listSeparate( ary_select:Dynamic, pos_mouse ) {
@@ -342,7 +353,6 @@ class Main
 	
 	static function handleResponse( cb ) {
 		return function ( err, ret ) {
-			trace( 'handleResponse', err );
 			if ( err != null ) {
 				Browser.alert( err );
 			}else {
