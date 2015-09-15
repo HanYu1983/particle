@@ -46,6 +46,10 @@
 		api.users( function(err, ret){
 			console.log(JSON.stringify(ret))
 		})
+		
+		api.installPollMessageCallback( {FBID: "vic"}, function(err, info){
+			console.log( JSON.stringify(info) )
+		})
 	
 		</script>
 	</body>
