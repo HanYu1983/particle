@@ -128,6 +128,8 @@ class Main
 				return Animate.list( content.content.ary_select, content.content.pos_mouse );
 			case 'listSeparate':
 				return Animate.listSeparate( content.content.ary_select, content.content.pos_mouse );
+			case 'flip':
+				return Animate.flip( content.content.ary_select );
 			case _:
 				return null;
 		}
@@ -193,6 +195,16 @@ class Main
 	public static function listCard( ary_select:Dynamic, pos_mouse ) {
 		Lambda.foreach( ary_select, function( select ) {
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select ), count:ary_select.length  }, 'list' );
+			return true;
+		});
+	}
+	
+	public static function flip( ary_select:Dynamic ) {
+		Lambda.foreach( ary_select, function( card ) {
+			//當owner是自己或者沒有所屬的時候，才能翻牌
+			if ( card.owner != Main.playerId ) return true;
+			Facade.getInstance().sendNotification( Model.on_card_flip_change, { select:card } );
+			
 			return true;
 		});
 	}

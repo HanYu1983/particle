@@ -142,13 +142,8 @@ class Model extends Mediator
 				ary_select.reverse();
 				Main.listSeparate( ary_select, pos_mouse );
 			case Layer.on_press_f:
-				Lambda.foreach( ary_select, function( card ) {
-					//當owner是自己或者沒有所屬的時候，才能翻牌
-					if ( card.owner != Main.playerId ) return true;
-					sendNotification( on_card_flip_change, { select:card } );
-					
-					return true;
-				});
+				Main.messageAll( { cmd:'flip', content:{ ary_select:ary_select } } );
+				Main.flip( ary_select );
 			case Layer.on_press_l:
 				Main.messageAll( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 				Main.listCard( ary_select, pos_mouse );

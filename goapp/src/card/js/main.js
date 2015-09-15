@@ -27,16 +27,13 @@ Animate.addCardAndPrepare = function(cards) {
 		return d;
 	};
 };
-Animate.addCards = function(cards) {
+Animate.flip = function(ary_select) {
 	return function() {
 		var d = Main.j.Deferred();
-		Lambda.foreach(cards,function(card) {
-			Main.createCard(card);
-			return true;
-		});
+		Main.flip(ary_select);
 		haxe_Timer.delay(function() {
 			d.resolve();
-		},1000);
+		},200);
 		return d;
 	};
 };
@@ -197,6 +194,13 @@ Main.listCard = function(ary_select,pos_mouse) {
 		return true;
 	});
 };
+Main.flip = function(ary_select) {
+	Lambda.foreach(ary_select,function(card) {
+		if(card.owner != Main.playerId) return true;
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_card_flip_change,{ select : card});
+		return true;
+	});
+};
 Main.listSeparate = function(ary_select,pos_mouse) {
 	Lambda.foreach(ary_select,function(select) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select), count : ary_select.length},"list_separate");
@@ -222,7 +226,7 @@ Main.installPollMessageCallback = function(data,cb) {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 284, className : "Main", methodName : "handleResponse", customParams : [err]});
+		haxe_Log.trace("handleResponse",{ fileName : "Main.hx", lineNumber : 296, className : "Main", methodName : "handleResponse", customParams : [err]});
 		if(err != null) js_Browser.alert(err); else cb(ret);
 	};
 };
@@ -270,6 +274,8 @@ Main.prototype = {
 			return Animate.list(content.content.ary_select,content.content.pos_mouse);
 		case "listSeparate":
 			return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
+		case "flip":
+			return Animate.flip(content.content.ary_select);
 		default:
 			return null;
 		}
@@ -852,11 +858,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_f":
-			Lambda.foreach(this.ary_select,function(card2) {
-				if(card2.owner != Main.playerId) return true;
-				_g1.sendNotification(model_Model.on_card_flip_change,{ select : card2});
-				return true;
-			});
+			Main.messageAll({ cmd : "flip", content : { ary_select : this.ary_select}});
+			Main.flip(this.ary_select);
 			break;
 		case "on_press_l":
 			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
