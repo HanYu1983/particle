@@ -60,6 +60,12 @@ class Card extends Mediator
 				});
 			case Model.on_state_change:
 				switch( notification.getType() ) {
+					case 'ownerAndRelate_change':
+						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						showOnwer( notification.getBody().showOwner );
+						showRelate( notification.getBody().showRelate );
+						seeCard( notification.getBody().seeCard );
+						/*
 					case 'owner_change':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						showOnwer( notification.getBody().showOwner );
@@ -68,6 +74,7 @@ class Card extends Mediator
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						showRelate( notification.getBody().showRelate );
 						seeCard( notification.getBody().seeCard );
+						*/
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -96,6 +103,7 @@ class Card extends Mediator
 	}
 	
 	function showRelate( show ) {
+		trace( show );
 		if ( show ) {
 			getViewComponent().find( '#img_relate' ).show();
 		}else {

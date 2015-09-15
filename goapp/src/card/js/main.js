@@ -15,11 +15,7 @@ Animate.addCardAndPrepare = function(cards) {
 			Main.createCard(card);
 			return true;
 		});
-		Lambda.foreach(cards,function(card1) {
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card1, showOwner : Main.playerId == card1.owner, seeCard : card1.owner == card1.relate},"owner_change");
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card1, showRelate : Main.playerId == card1.relate, seeCard : card1.owner == card1.relate},"relate_change");
-			return true;
-		});
+		Main.applyValue(cards);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},1000);
@@ -29,7 +25,7 @@ Animate.addCardAndPrepare = function(cards) {
 Animate.setOwner = function(ary_select) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.setOwner(ary_select);
+		Main.applyValue(ary_select);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},200);
@@ -39,7 +35,7 @@ Animate.setOwner = function(ary_select) {
 Animate.setRelate = function(ary_select) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.setRelate(ary_select);
+		Main.applyValue(ary_select);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},200);
@@ -192,16 +188,34 @@ var Main = function() {
 			haxe_Log.trace(Main.otherPlayerId,{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
 			Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
 			_g.createSelfStack();
-			Main.j("#txt_output").html(JSON.stringify(Main.ary_cards));
 		});
 	}));
 };
 Main.__name__ = true;
 Main.messageAll = function(content) {
-	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 60, className : "Main", methodName : "messageAll", customParams : [content]});
+	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 58, className : "Main", methodName : "messageAll", customParams : [content]});
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
 		}));
+		return true;
+	});
+};
+Main.applyValue = function(ary_select) {
+	Lambda.foreach(ary_select,function(remoteCard) {
+		var localCard = Main.getCardsById(remoteCard.id);
+		localCard.owner = remoteCard.owner;
+		localCard.relate = remoteCard.relate;
+		var seeCard;
+		var _g = localCard.owner;
+		var owner = _g;
+		switch(_g) {
+		case "":
+			seeCard = false;
+			break;
+		default:
+			seeCard = owner == localCard.relate;
+		}
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : localCard, showRelate : Main.playerId == localCard.relate, showOwner : Main.playerId == localCard.owner, seeCard : seeCard},"ownerAndRelate_change");
 		return true;
 	});
 };
@@ -218,22 +232,13 @@ Main.setOwner = function(ary_select) {
 		default:
 			if(owner == Main.playerId) {
 				card.owner = "";
+				card.relate = "";
 				send = true;
 			}
 		}
-		var seeCard;
-		var _g1 = card.owner;
-		var owner1 = _g1;
-		switch(_g1) {
-		case "":
-			seeCard = false;
-			break;
-		default:
-			seeCard = owner1 == card.relate;
-		}
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : seeCard},"owner_change");
 		return true;
 	});
+	Main.applyValue(ary_select);
 	return send;
 };
 Main.setRelate = function(ary_select) {
@@ -253,19 +258,9 @@ Main.setRelate = function(ary_select) {
 				send = true;
 			}
 		}
-		var seeCard;
-		var _g1 = card.owner;
-		var owner = _g1;
-		switch(_g1) {
-		case "":
-			seeCard = false;
-			break;
-		default:
-			seeCard = owner == card.relate;
-		}
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, seeCard : seeCard},"relate_change");
 		return true;
 	});
+	Main.applyValue(ary_select);
 	return send;
 };
 Main.createCard = function(model) {
@@ -319,7 +314,7 @@ Main.main = function() {
 	new Main();
 };
 Main.getId = function() {
-	return Main.id++ + "";
+	return leo.utils.generateUUID();
 };
 Main.prototype = {
 	createSelfStack: function() {
@@ -340,7 +335,7 @@ Main.prototype = {
 		var prev = this.lastPromise;
 		Lambda.foreach(ret.Info,function(info) {
 			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
-			haxe_Log.trace("lastPromise",{ fileName : "Main.hx", lineNumber : 80, className : "Main", methodName : "onBackCallback", customParams : [_g.lastPromise]});
+			haxe_Log.trace("lastPromise",{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "onBackCallback", customParams : [_g.lastPromise]});
 			if(prev != null) prev.pipe(_g.lastPromise);
 			prev = _g.lastPromise;
 			return true;
@@ -350,7 +345,7 @@ Main.prototype = {
 		});
 	}
 	,callAction: function(content) {
-		haxe_Log.trace("receive cmd",{ fileName : "Main.hx", lineNumber : 126, className : "Main", methodName : "callAction", customParams : [content]});
+		haxe_Log.trace("receive cmd",{ fileName : "Main.hx", lineNumber : 124, className : "Main", methodName : "callAction", customParams : [content]});
 		if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(card,curr) {
 			curr.push(Main.getCardsById(card.id));
 			return curr;
@@ -685,13 +680,9 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		case "on_state_change":
 			var _g11 = notification.getType();
 			switch(_g11) {
-			case "owner_change":
+			case "ownerAndRelate_change":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this.showOnwer(notification.getBody().showOwner);
-				this.seeCard(notification.getBody().seeCard);
-				break;
-			case "relate_change":
-				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this.showRelate(notification.getBody().showRelate);
 				this.seeCard(notification.getBody().seeCard);
 				break;
@@ -721,6 +712,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		if(show) this.getViewComponent().find("#img_owner").show(); else this.getViewComponent().find("#img_owner").hide();
 	}
 	,showRelate: function(show) {
+		haxe_Log.trace(show,{ fileName : "Card.hx", lineNumber : 106, className : "mediator.Card", methodName : "showRelate"});
 		if(show) this.getViewComponent().find("#img_relate").show(); else this.getViewComponent().find("#img_relate").hide();
 	}
 	,listStack: function(initpos,pos,x,y,count) {

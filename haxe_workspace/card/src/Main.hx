@@ -20,7 +20,7 @@ class Main
 	static var id = 0;
 	public static var playerId = getId();
 	public static var otherPlayerId = [];
-	public static var ary_cards = [];
+	public static var ary_cards:Array<Dynamic> = [];
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
@@ -40,8 +40,6 @@ class Main
 				trace( otherPlayerId );
 				installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 				createSelfStack();
-				
-				j( '#txt_output' ).html( Json.stringify( ary_cards ) );
 			});
 		}));
 		
@@ -167,21 +165,7 @@ class Main
 			}
 		}));
 	}
-	/*
-	function addCardAndPrepare( cards:Array<Dynamic> ) {
-		ary_cards = ary_cards.concat( cards );
-		Lambda.foreach( ary_cards, function( card ) {
-			Main.createCard( card );
-			return true;
-		});
-		
-		Lambda.foreach( cards, function( card ) {
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: card.owner == card.relate }, 'relate_change' );
-			return true;
-		});
-	}
-	*/
+	
 	function appStart() {
 		//fake player
 		//var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
@@ -203,9 +187,27 @@ class Main
 		*/
 	}
 	
-	public static function setOwner( ary_select ) {
+	public static function applyValue( ary_select:Array<Dynamic> ) {
+		Lambda.foreach( ary_select, function( remoteCard:Dynamic ) {
+			var localCard = getCardsById( remoteCard.id );
+			localCard.owner = remoteCard.owner;
+			localCard.relate = remoteCard.relate;
+			
+			var seeCard = switch( localCard.owner ) {
+				case '':false;
+				case owner: owner == localCard.relate;
+			}
+			
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:localCard, showRelate:Main.playerId == localCard.relate, showOwner:Main.playerId == localCard.owner, seeCard: seeCard }, 'ownerAndRelate_change' );
+			return true;
+		});
+		
+		
+	}
+	
+	public static function setOwner( ary_select:Array<Dynamic> ) {
 		var send = false;
-		Lambda.foreach( ary_select, function( card ) {
+		Lambda.foreach( ary_select, function( card:Dynamic ) {
 			switch( card.owner ) {
 				case '':
 					//如果owner 是空白，就可以修改為自己
@@ -215,22 +217,18 @@ class Main
 					//如果owner 不是自己，就不能更改
 					if ( owner == Main.playerId ) {
 						card.owner = '';
+						card.relate = '';
 						send = true;
 					}
 			}
-			
-			var seeCard = switch( card.owner ) {
-				case '':false;
-				case owner: owner == card.relate;
-			}
-			
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: seeCard }, 'owner_change' );
 			return true;
 		});
+		//統一和remote端用一樣的方法
+		applyValue( ary_select );
 		return send;
 	}
 	
-	public static function setRelate( ary_select ) {
+	public static function setRelate( ary_select:Array<Dynamic> ) {
 		var send = false;
 		Lambda.foreach( ary_select, function( card ) {
 			if ( card.owner != Main.playerId ) return true;
@@ -247,14 +245,9 @@ class Main
 					}
 			}
 			
-			var seeCard = switch( card.owner ) {
-				case '':false;
-				case owner: owner == card.relate;
-			}
-			
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: seeCard }, 'relate_change' );
 			return true;
 		});
+		applyValue( ary_select );
 		return send;
 	}
 	
@@ -380,8 +373,8 @@ class Main
 	
 	
 	static function getId() {	
-		return id++ + '';
-		//return untyped __js__('leo.utils.generateUUID')();
+		//return id++ + '';
+		return untyped __js__('leo.utils.generateUUID')();
 	}
 	
 }

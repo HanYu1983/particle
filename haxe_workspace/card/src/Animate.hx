@@ -18,11 +18,7 @@ class Animate
 				return true;
 			});
 			
-			Lambda.foreach( cards, function( card ) {
-				Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
-				Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: card.owner == card.relate }, 'relate_change' );
-				return true;
-			});
+			Main.applyValue( cards );
 			
 			Timer.delay( function() {
 				d.resolve();
@@ -35,7 +31,7 @@ class Animate
 	public static function setOwner( ary_select ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.setOwner( ary_select );
+			Main.applyValue( ary_select );
 			Timer.delay( function() {
 				d.resolve();
 			}, 200 );
@@ -46,7 +42,7 @@ class Animate
 	public static function setRelate( ary_select ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.setRelate( ary_select );
+			Main.applyValue( ary_select );
 			Timer.delay( function() {
 				d.resolve();
 			}, 200 );
