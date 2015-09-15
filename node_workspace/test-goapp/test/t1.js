@@ -138,8 +138,7 @@ describe('測試卡片方法呼叫', function() {
 		
 	})
 	
-
-	it('han必須有11個訊息', function( done ){
+	it('必須有11個訊息', function( done ){
 		callApi( '/fn/card/message/', null, function( err, data ){
 			assert.ifError( err )
 			var msgs = JSON.parse( data ).Info
@@ -148,6 +147,24 @@ describe('測試卡片方法呼叫', function() {
 		})
 	})
 
+	it('han必須可以取得11個訊息', function( done ){
+		callApi( '/fn/card/longPollingTargetMessage', {FBID: "han"}, function( err, data ){
+			assert.ifError( err )
+			var msgs = JSON.parse( data ).Info
+			assert.equal( 11, msgs.length )
+			done()
+		})
+	})
+	
+	it('取得han訊息後必須剩下0個訊息', function( done ){
+		callApi( '/fn/card/message/', null, function( err, data ){
+			assert.ifError( err )
+			var msgs = JSON.parse( data ).Info
+			assert.equal( null, msgs )
+			done()
+		})
+	})
+	
 
 });
 
