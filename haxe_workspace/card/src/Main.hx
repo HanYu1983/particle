@@ -17,6 +17,7 @@ import org.puremvc.haxe.patterns.facade.Facade;
 class Main 
 {
 	public static var j:Dynamic = untyped __js__('$');
+	static var id = 0;
 	public static var playerId = getId();
 	public static var otherPlayerId = [];
 	public static var ary_cards = [];
@@ -25,7 +26,7 @@ class Main
 	
 	function new() {
 		
-		trace( 'playerId', playerId );
+		j( '#txt_id' ).html( playerId );
 		
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
@@ -39,6 +40,8 @@ class Main
 				trace( otherPlayerId );
 				installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 				createSelfStack();
+				
+				j( '#txt_output' ).html( Json.stringify( ary_cards ) );
 			});
 		}));
 		
@@ -54,7 +57,7 @@ class Main
 	
 	public static function messageAll( content:Dynamic ) {
 		
-		trace( 'messageAll', content.cmd );
+		trace( 'messageAll', content );
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
 				FBID:playerId,
@@ -74,6 +77,7 @@ class Main
 		
 		Lambda.foreach( ret.Info, function( info ) {
 			lastPromise = callAction( Json.parse( info.Content ) );
+			trace( 'lastPromise', lastPromise );
 			if ( prev != null ) {
 				prev.pipe( lastPromise );
 			}
@@ -119,7 +123,15 @@ class Main
 	}
 	
 	function callAction( content:Dynamic ) {
-		trace( 'receive cmd', content.cmd );
+		trace( 'receive cmd', content );
+		
+		if ( content.content.ary_select != null ) {
+			content.content.ary_select = Lambda.fold( content.content.ary_select, function( card, curr ) {
+				curr.push( getCardsById( card.id ));
+				return curr;
+			}, []);
+		}
+		
 		switch( content.cmd ) {
 			case 'addCards':
 				return Animate.addCardAndPrepare( content.content );
@@ -191,7 +203,7 @@ class Main
 		*/
 	}
 	
-	public static function setOwner( ary_select, ?owner ) {
+	public static function setOwner( ary_select ) {
 		var send = false;
 		Lambda.foreach( ary_select, function( card ) {
 			switch( card.owner ) {
@@ -366,8 +378,10 @@ class Main
 		new Main();
 	}
 	
+	
 	static function getId() {	
-		return untyped __js__('leo.utils.generateUUID')();
+		return id++ + '';
+		//return untyped __js__('leo.utils.generateUUID')();
 	}
 	
 }

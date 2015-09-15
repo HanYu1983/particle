@@ -183,52 +183,53 @@ _$List_ListIterator.prototype = {
 var Main = function() {
 	this.lastPromise = null;
 	var _g = this;
-	haxe_Log.trace("playerId",{ fileName : "Main.hx", lineNumber : 28, className : "Main", methodName : "new", customParams : [Main.playerId]});
+	Main.j("#txt_id").html(Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
 		_g.appStart();
 		_g.callForOthers(function() {
-			haxe_Log.trace(Main.otherPlayerId,{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "new"});
+			haxe_Log.trace(Main.otherPlayerId,{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
 			Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
 			_g.createSelfStack();
+			Main.j("#txt_output").html(JSON.stringify(Main.ary_cards));
 		});
 	}));
 };
 Main.__name__ = true;
 Main.messageAll = function(content) {
-	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 57, className : "Main", methodName : "messageAll", customParams : [content.cmd]});
+	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 60, className : "Main", methodName : "messageAll", customParams : [content]});
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
 		}));
 		return true;
 	});
 };
-Main.setOwner = function(ary_select,owner) {
+Main.setOwner = function(ary_select) {
 	var send = false;
 	Lambda.foreach(ary_select,function(card) {
 		var _g = card.owner;
-		var owner1 = _g;
+		var owner = _g;
 		switch(_g) {
 		case "":
 			card.owner = Main.playerId;
 			send = true;
 			break;
 		default:
-			if(owner1 == Main.playerId) {
+			if(owner == Main.playerId) {
 				card.owner = "";
 				send = true;
 			}
 		}
 		var seeCard;
 		var _g1 = card.owner;
-		var owner2 = _g1;
+		var owner1 = _g1;
 		switch(_g1) {
 		case "":
 			seeCard = false;
 			break;
 		default:
-			seeCard = owner2 == card.relate;
+			seeCard = owner1 == card.relate;
 		}
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showOwner : Main.playerId == card.owner, seeCard : seeCard},"owner_change");
 		return true;
@@ -318,7 +319,7 @@ Main.main = function() {
 	new Main();
 };
 Main.getId = function() {
-	return leo.utils.generateUUID();
+	return Main.id++ + "";
 };
 Main.prototype = {
 	createSelfStack: function() {
@@ -339,6 +340,7 @@ Main.prototype = {
 		var prev = this.lastPromise;
 		Lambda.foreach(ret.Info,function(info) {
 			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
+			haxe_Log.trace("lastPromise",{ fileName : "Main.hx", lineNumber : 80, className : "Main", methodName : "onBackCallback", customParams : [_g.lastPromise]});
 			if(prev != null) prev.pipe(_g.lastPromise);
 			prev = _g.lastPromise;
 			return true;
@@ -348,7 +350,11 @@ Main.prototype = {
 		});
 	}
 	,callAction: function(content) {
-		haxe_Log.trace("receive cmd",{ fileName : "Main.hx", lineNumber : 122, className : "Main", methodName : "callAction", customParams : [content.cmd]});
+		haxe_Log.trace("receive cmd",{ fileName : "Main.hx", lineNumber : 126, className : "Main", methodName : "callAction", customParams : [content]});
+		if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(card,curr) {
+			curr.push(Main.getCardsById(card.id));
+			return curr;
+		},[]);
 		var _g = content.cmd;
 		switch(_g) {
 		case "addCards":
@@ -1224,6 +1230,7 @@ String.__name__ = true;
 Array.__name__ = true;
 var __map_reserved = {}
 Main.j = $;
+Main.id = 0;
 Main.playerId = Main.getId();
 Main.otherPlayerId = [];
 Main.ary_cards = [];
