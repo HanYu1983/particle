@@ -412,6 +412,7 @@ Main.prototype = {
 			}));
 			break;
 		case "onBtnMessageClick":
+			console.log("G");
 			Main.messageAll(Main.ary_cmds);
 			break;
 		case "onBtnPollingClick":

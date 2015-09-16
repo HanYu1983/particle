@@ -209,6 +209,7 @@ class Main
 					});
 				}));
 			case 'onBtnMessageClick':
+				trace("G");
 				messageAll( ary_cmds );
 			case 'onBtnPollingClick':
 				pollMessage( {
