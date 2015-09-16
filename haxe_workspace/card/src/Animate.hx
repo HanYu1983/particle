@@ -108,7 +108,8 @@ class Animate
 	public static function shuffle( ary_select, pos_mouse ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.shuffle( ary_select, pos_mouse );
+			Main.listCard( ary_select, pos_mouse );
+		//	Main.shuffle( ary_select, pos_mouse );
 			Timer.delay( function() {
 				d.resolve();
 			}, 1000 );

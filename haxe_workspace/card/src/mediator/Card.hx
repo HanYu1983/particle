@@ -75,6 +75,9 @@ class Card extends Mediator
 					case 'moveCards':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						moveCard( notification.getBody().select.pos[0], notification.getBody().select.pos[1] );
+						if ( notification.getBody().zsort )
+							sendNotification( card_enter, getViewComponent() );
+					/*
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -82,6 +85,7 @@ class Card extends Mediator
 					case 'list_separate':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						listStackSeprate( notification.getBody().mouse, notification.getBody().pos, 55, 80, notification.getBody().count );
+					*/
 					case 'list_shuffle':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );

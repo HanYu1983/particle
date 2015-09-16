@@ -114,17 +114,25 @@ class Model extends Mediator
 						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_A:
-						Main.moveCards( ary_select, pos_mouse );
-						Main.pushCmds( { cmd:'moveCards', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+						ary_select.sort( function ( a, b ) {
+							return Math.random() > .5 ? 1 : -1;
+						});
+						Main.listCard( ary_select, pos_mouse.slice( 0 ) );
+						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_S:
-						Main.shuffle( ary_select, pos_mouse.slice( 0 ) );
+						ary_select.sort( function ( a, b ) {
+							return Math.random() > .5 ? 1 : -1;
+						});
+						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_D:
 					case KeyboardEvent.DOM_VK_F:
-					case KeyboardEvent.DOM_VK_SPACE:
 						if ( Main.flip( ary_select ) ) {
 							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );
 						}
+					case KeyboardEvent.DOM_VK_SPACE:
+						Main.moveCards( ary_select, pos_mouse );
+						Main.pushCmds( { cmd:'moveCards', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 				}
 			case Layer.on_body_mousemove:
 				pos_mouse[0] = notification.getBody().x;
