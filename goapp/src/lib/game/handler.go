@@ -10,6 +10,8 @@ import (
   "lib/db/file"
   "appengine/datastore"
   "errors"
+  "strconv"
+  "sort"
 )
 
 var _ = time.Millisecond
@@ -27,6 +29,7 @@ func WithTransaction ( ctx appengine.Context, retry int, fn func(c appengine.Con
     if err == nil {
       break
     }
+    times += 1
   }
   return err
 }
@@ -276,10 +279,13 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
   tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
   tool.Assert( tool.ParameterIsNotExist( form, "TargetUser" ) ) 
   tool.Assert( tool.ParameterIsNotExist( form, "Content" ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "UnixTime" ) ) 
   
   fbid := form["FBID"][0]
   targetUser := form["TargetUser"][0]
   content := form["Content"][0]
+  unixTime, err := strconv.ParseInt(form["UnixTime"][0], 10, 64)
+  tool.Assert( tool.IfError( err ) )
   
   err = WithTransaction(ctx, 3, func(ctx appengine.Context) error {
     gameCtx, err := LoadGameContext( ctx )
@@ -290,7 +296,12 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
     if user == EmptyUser {
       return errors.New( fmt.Sprintf("user not found:%v", targetUser) )
     }
-    msg := Message{FromUser: fbid, ToUser: targetUser, Content: content }
+    msg := Message{
+      FromUser: fbid, 
+      ToUser: targetUser, 
+      Content: content,
+      Time: time.Unix( unixTime, 0 ), 
+    }
     gameCtx.LeaveMessage( msg )
     err = SaveGameContext( ctx, gameCtx )
     return err
@@ -377,6 +388,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
           if len( msgs ) > 0 {
             gameCtx.DeleteMessage( msgs )
             err = SaveGameContext( ctx, gameCtx )
+            sort.Sort( ByTime(msgs) )
             retCh <- msgs
             ok = true
           }

@@ -109,7 +109,6 @@ func (ctx *Context) EditRoom (target Room) {
 }
 
 func (ctx *Context) LeaveMessage (msg Message){
-  msg.Time = time.Now()
   ctx.Messages = append( ctx.Messages, msg )
 }
 
