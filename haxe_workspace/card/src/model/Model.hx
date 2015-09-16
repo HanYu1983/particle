@@ -89,37 +89,39 @@ class Model extends Mediator
 				switch( notification.getType() ) {
 					case KeyboardEvent.DOM_VK_C:
 						if ( Main.setOwner( ary_select ) ) 
-							Main.pushCmds( { cmd:'setOwner', content:{ ary_select:ary_select } } );
+							Main.pushCmds( { cmd:'setOwner', content:{ ary_select:ary_select.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_V:
 						if ( Main.setRelate( ary_select ) )
-							Main.pushCmds( { cmd:'setRelate', content:{ ary_select:ary_select } } );
+							Main.pushCmds( { cmd:'setRelate', content:{ ary_select:ary_select.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_Z:
 						Main.rotate( ary_select, -90 );
-						Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select, deg:-90 } } );
+						Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select.slice( 0 ), deg:-90 } } );
 					case KeyboardEvent.DOM_VK_X:
 						Main.rotate( ary_select, 90 );
-						Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select, deg:90 } } );
+						Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select.slice( 0 ), deg:90 } } );
 					case KeyboardEvent.DOM_VK_Q:
 						Main.listCard( ary_select, pos_mouse.slice( 0 ) );
-						Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+						Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_W:
 						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
-						Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+						Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_E:
 						ary_select.reverse();
 						Main.listCard( ary_select, pos_mouse.slice( 0 ) );
+						Main.pushCmds( { cmd:'listCardReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_R:
 						ary_select.reverse();
 						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
+						Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_A:
 					case KeyboardEvent.DOM_VK_S:
 						Main.shuffle( ary_select, pos_mouse.slice( 0 ) );
-						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_D:
 					case KeyboardEvent.DOM_VK_F:
 					case KeyboardEvent.DOM_VK_SPACE:
 						if ( Main.flip( ary_select ) ) {
-							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select } } );
+							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );
 						}
 				}
 			case Layer.on_body_mousemove:
@@ -133,7 +135,7 @@ class Model extends Mediator
 				}else {
 					ary_select = [];
 				}
-				sendNotification( on_select_cards, { ary_select:ary_select } );
+				sendNotification( on_select_cards, { ary_select:ary_select.slice( 0 ) } );
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
 		}

@@ -426,6 +426,10 @@ Main.prototype = {
 			return Animate.shuffle(content.content.ary_select,content.content.pos_mouse);
 		case "rotate":
 			return Animate.rotate(content.content.ary_select,content.content.deg);
+		case "listCardReverse":
+			return Animate.list(content.content.ary_select,content.content.pos_mouse);
+		case "listSeparateReverse":
+			return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
 		default:
 			js_Browser.alert("asb");
 			return null;
@@ -455,7 +459,11 @@ Main.prototype = {
 		switch(type) {
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				_g.createSelfStack();
+				_g.callForOthers(function() {
+					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
+					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
+					_g.createSelfStack();
+				});
 			}));
 			break;
 		}
@@ -985,47 +993,49 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			var _g1 = notification.getType();
 			switch(_g1) {
 			case 67:
-				if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select}});
+				if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select.slice(0)}});
 				break;
 			case 86:
-				if(Main.setRelate(this.ary_select)) Main.pushCmds({ cmd : "setRelate", content : { ary_select : this.ary_select}});
+				if(Main.setRelate(this.ary_select)) Main.pushCmds({ cmd : "setRelate", content : { ary_select : this.ary_select.slice(0)}});
 				break;
 			case 90:
 				Main.rotate(this.ary_select,-90);
-				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select, deg : -90}});
+				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select.slice(0), deg : -90}});
 				break;
 			case 88:
 				Main.rotate(this.ary_select,90);
-				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select, deg : 90}});
+				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select.slice(0), deg : 90}});
 				break;
 			case 81:
 				Main.listCard(this.ary_select,this.pos_mouse.slice(0));
-				Main.pushCmds({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
+				Main.pushCmds({ cmd : "listCard", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 87:
 				Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
-				Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
+				Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 69:
 				this.ary_select.reverse();
 				Main.listCard(this.ary_select,this.pos_mouse.slice(0));
+				Main.pushCmds({ cmd : "listCardReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 82:
 				this.ary_select.reverse();
 				Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
+				Main.pushCmds({ cmd : "listSeparateReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 65:
 				break;
 			case 83:
 				Main.shuffle(this.ary_select,this.pos_mouse.slice(0));
-				Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
+				Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 68:
 				break;
 			case 70:
 				break;
 			case 32:
-				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select}});
+				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select.slice(0)}});
 				break;
 			}
 			break;
@@ -1038,7 +1048,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "card_click":
 			if(notification.getBody().focus) this.ary_select = [Main.getCardsById(notification.getBody().id)]; else this.ary_select = [];
-			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
+			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select.slice(0)});
 			break;
 		case "on_layout_mouse_up":
 			this.sendNotification(model_Model.on_card_move,notification.getBody());
@@ -1421,5 +1431,3 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

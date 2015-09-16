@@ -177,6 +177,10 @@ class Main
 				return Animate.shuffle( content.content.ary_select, content.content.pos_mouse );
 			case 'rotate':
 				return Animate.rotate( content.content.ary_select, content.content.deg );
+			case 'listCardReverse':
+				return Animate.list( content.content.ary_select, content.content.pos_mouse );
+			case 'listSeparateReverse':
+				return Animate.listSeparate( content.content.ary_select, content.content.pos_mouse );
 			case _:
 				Browser.alert( 'asb' );
 				return null;
