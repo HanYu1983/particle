@@ -208,7 +208,7 @@ class Main
 			case 'onBtnPollingClick':
 				pollMessage( {
 					FBID:playerId
-				}, handleResponse( handleResponse( onBackCallback ) ));
+				}, handleResponse( onBackCallback ));
 		}
 	}
 	
@@ -379,7 +379,7 @@ class Main
 		}
 	}
 	*/
-	public static function pollMessage( data, cb ) {
+	public static function pollMessage( data:Dynamic, cb ) {
 		untyped __js__('api.pollMessage' )( data, cb );
 	}
 	/**

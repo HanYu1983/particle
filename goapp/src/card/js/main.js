@@ -187,7 +187,7 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.messageAll = function(content) {
-	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 47, className : "Main", methodName : "messageAll", customParams : [content.cmd]});
+	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 48, className : "Main", methodName : "messageAll", customParams : [content.cmd]});
 	Main.j("#txt_output2").html("send: " + Std.string(content.cmd));
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
@@ -296,6 +296,9 @@ Main.users = function(cb) {
 Main.message = function(data,cb) {
 	api.message(data,cb);
 };
+Main.pollMessage = function(data,cb) {
+	api.pollMessage(data,cb);
+};
 Main.installPollMessageCallback = function(data,cb) {
 	api.installPollMessageCallback(data,cb);
 };
@@ -328,7 +331,7 @@ Main.prototype = {
 		var _g = this;
 		var prev = this.lastPromise;
 		Lambda.foreach(ret.Info,function(info) {
-			haxe_Log.trace(info.Time,{ fileName : "Main.hx", lineNumber : 67, className : "Main", methodName : "onBackCallback"});
+			haxe_Log.trace(info.Time,{ fileName : "Main.hx", lineNumber : 68, className : "Main", methodName : "onBackCallback"});
 			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
 			if(prev != null) try {
 				prev().pipe(_g.lastPromise);
@@ -354,7 +357,7 @@ Main.prototype = {
 			curr.push(localCard);
 			return curr;
 		},[]);
-		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 130, className : "Main", methodName : "callAction"});
+		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "callAction"});
 		Main.j("#txt_output2").html("receive: ",content.cmd);
 		var _g = content.cmd;
 		switch(_g) {
@@ -400,10 +403,14 @@ Main.prototype = {
 				_g.appStart();
 				_g.callForOthers(function() {
 					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
-					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
 					_g.createSelfStack();
 				});
 			}));
+			break;
+		case "onBtnMessageClick":
+			break;
+		case "onBtnPollingClick":
+			Main.pollMessage({ FBID : Main.playerId},Main.handleResponse($bind(this,this.onBackCallback)));
 			break;
 		}
 	}
@@ -1375,6 +1382,7 @@ Main.id = 0;
 Main.playerId = Main.getId();
 Main.otherPlayerId = [];
 Main.ary_cards = [];
+Main.ary_cmds = [];
 Main.tmpl_card = Main.j("#tmpl_card");
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
