@@ -512,7 +512,10 @@ Main.prototype = {
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
 				Main.getCardPackage("gundamWar",Main.handleResponse(function(ret1) {
 					Main.cardPackage = ret1;
-					_g.createSelfStack();
+					_g.callForOthers(function() {
+						Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
+						_g.createSelfStack();
+					});
 				}));
 			}));
 			break;
@@ -1604,5 +1607,3 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map
