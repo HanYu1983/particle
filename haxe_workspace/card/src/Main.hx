@@ -26,7 +26,7 @@ class Main
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
-	static var sendTimer:Timer = null;
+	//static var sendTimer:Timer = null;
 	public static var cardPackage = null;
 	
 	#if debug
@@ -70,7 +70,7 @@ class Main
 		
 		ary_cmds.push( content );
 		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
-		
+		/*
 		if ( sendTimer == null ) {
 			
 			sendTimer = Timer.delay( function() {
@@ -78,6 +78,7 @@ class Main
 				sendTimer = null;
 			}, keepTime );
 		}
+		*/
 	}
 	
 	public static function messageAll( content:Array<Dynamic> ) {
@@ -207,6 +208,8 @@ class Main
 	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnSendClick':
+				messageAll( ary_cmds );
 			case 'onBtnPollingClick':
 				pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 			case 'onBtnCreateClick':

@@ -242,10 +242,6 @@ Main.__name__ = true;
 Main.pushCmds = function(content) {
 	Main.ary_cmds.push(content);
 	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
-	if(Main.sendTimer == null) Main.sendTimer = haxe_Timer.delay(function() {
-		Main.messageAll(Main.ary_cmds);
-		Main.sendTimer = null;
-	},Main.keepTime);
 };
 Main.messageAll = function(content) {
 	console.log("messageAll");
@@ -492,6 +488,9 @@ Main.prototype = {
 	,onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
+		case "onBtnSendClick":
+			Main.messageAll(Main.ary_cmds);
+			break;
 		case "onBtnPollingClick":
 			Main.pollMessage({ FBID : Main.playerId},Main.handleResponse($bind(this,this.onBackCallback)));
 			break;
