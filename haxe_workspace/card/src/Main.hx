@@ -21,6 +21,7 @@ class Main
 	public static var playerId = getId();
 	public static var otherPlayerId = [];
 	public static var ary_cards:Array<Dynamic> = [];
+	public static var ary_cmds:Array<Dynamic> = [];
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
@@ -199,11 +200,15 @@ class Main
 					appStart();
 					callForOthers( function() {
 						j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
-						installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
+						//installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 						createSelfStack();
 					});
 				}));
-				
+			case 'onBtnMessageClick':
+			case 'onBtnPollingClick':
+				pollMessage( {
+					FBID:playerId
+				}, handleResponse( handleResponse( onBackCallback ) ));
 		}
 	}
 	
@@ -362,7 +367,21 @@ class Main
 		untyped __js__('api.message' )( data, cb );
 	}
 	
-	
+	/**
+	data: {
+		FBID: string
+	}
+	cb: function( err, ret ){
+		err:string,
+		ret: {
+			Info: {}
+			Error: string
+		}
+	}
+	*/
+	public static function pollMessage( data, cb ) {
+		untyped __js__('api.pollMessage' )( data, cb );
+	}
 	/**
 	data: {
 		FBID: string
