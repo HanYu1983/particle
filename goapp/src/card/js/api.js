@@ -184,6 +184,19 @@ var api = api || {};
 		})
 	}
 	
+	function clear( cb ){
+		$.ajax({
+			url: '../fn/card/clear',
+			type: 'get',
+			success: function(ret){
+				cb( null, ret )
+			},
+			error: function(xhr, res, err){
+				cb( err, null )
+			}
+		})
+	}
+	
 	/**
 	name: "gundamWar"
 	cb: function( err, data ){
@@ -228,6 +241,7 @@ var api = api || {};
 	module.message = message
 	module.pollMessage = pollMessage
 	module.installPollMessageCallback = installPollMessageCallback
+	module.clear = clear
 	module.getCardPackage = getCardPackage
 	module.getCardImageUrl = getCardImageUrl
 	module.getCardImageUrlWithPackage = getCardImageUrlWithPackage
