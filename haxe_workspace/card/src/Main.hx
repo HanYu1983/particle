@@ -26,23 +26,12 @@ class Main
 	
 	function new() {
 		
-		j( '#txt_id' ).html( playerId );
+		j( '#txt_id' ).html( 'playerId: ' + playerId );
 		
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
-		createUser( {
-			FBID:playerId,
-			Name:playerId
-		}, handleResponse( function( ret ) {
-			appStart();
-			callForOthers( function() {
-				trace( otherPlayerId );
-				installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
-				createSelfStack();
-			});
-		}));
-		
+		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 	}
 	
 	function createSelfStack() {
@@ -56,6 +45,7 @@ class Main
 	public static function messageAll( content:Dynamic ) {
 		
 		trace( 'messageAll', content.cmd );
+		j( '#txt_output2' ).html( 'send: ' + content.cmd );
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
 				FBID:playerId,
@@ -138,6 +128,7 @@ class Main
 		}
 		
 		trace( content.cmd );
+		j( '#txt_output2' ).html( 'receive: ', content.cmd );
 		
 		switch( content.cmd ) {
 			case 'addCards':
@@ -160,6 +151,7 @@ class Main
 	
 	function callForOthers( cb ) {
 		users( handleResponse( function( ret ) {
+			j('#txt_output' ).html( 'users searching...' );
 			if ( ret.Info != null && ret.Info.length >= 2 ) {
 				Lambda.fold( ret.Info, function(item, curr ) {
 					if ( item.Key != playerId ) {
@@ -195,6 +187,24 @@ class Main
 			return true;
 		});
 		*/
+	}
+	
+	function onHtmlClick( type, ?params ) {
+		switch( type ) {
+			case 'onBtnCreateClick':
+				createUser( {
+					FBID:playerId,
+					Name:playerId
+				}, handleResponse( function( ret ) {
+					appStart();
+					callForOthers( function() {
+						j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
+						installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
+						createSelfStack();
+					});
+				}));
+				
+		}
 	}
 	
 	public static function applyValue( ary_select:Array<Dynamic> ) {

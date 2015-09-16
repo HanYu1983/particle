@@ -180,22 +180,15 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	this.lastPromise = null;
-	var _g = this;
-	Main.j("#txt_id").html(Main.playerId);
+	Main.j("#txt_id").html("playerId: " + Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
-	Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-		_g.appStart();
-		_g.callForOthers(function() {
-			haxe_Log.trace(Main.otherPlayerId,{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
-			Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
-			_g.createSelfStack();
-		});
-	}));
+	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
 Main.messageAll = function(content) {
-	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 58, className : "Main", methodName : "messageAll", customParams : [content.cmd]});
+	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 47, className : "Main", methodName : "messageAll", customParams : [content.cmd]});
+	Main.j("#txt_output2").html("send: " + Std.string(content.cmd));
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
 		}));
@@ -335,7 +328,7 @@ Main.prototype = {
 		var _g = this;
 		var prev = this.lastPromise;
 		Lambda.foreach(ret.Info,function(info) {
-			haxe_Log.trace(info.Time,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "onBackCallback"});
+			haxe_Log.trace(info.Time,{ fileName : "Main.hx", lineNumber : 67, className : "Main", methodName : "onBackCallback"});
 			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
 			if(prev != null) try {
 				prev().pipe(_g.lastPromise);
@@ -361,7 +354,8 @@ Main.prototype = {
 			curr.push(localCard);
 			return curr;
 		},[]);
-		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 140, className : "Main", methodName : "callAction"});
+		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 130, className : "Main", methodName : "callAction"});
+		Main.j("#txt_output2").html("receive: ",content.cmd);
 		var _g = content.cmd;
 		switch(_g) {
 		case "addCards":
@@ -384,6 +378,7 @@ Main.prototype = {
 	,callForOthers: function(cb) {
 		var _g = this;
 		Main.users(Main.handleResponse(function(ret) {
+			Main.j("#txt_output").html("users searching...");
 			if(ret.Info != null && ret.Info.length >= 2) {
 				Lambda.fold(ret.Info,function(item,curr) {
 					if(item.Key != Main.playerId) curr.push(item.Key);
@@ -397,11 +392,34 @@ Main.prototype = {
 	}
 	,appStart: function() {
 	}
+	,onHtmlClick: function(type,params) {
+		var _g = this;
+		switch(type) {
+		case "onBtnCreateClick":
+			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
+				_g.appStart();
+				_g.callForOthers(function() {
+					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
+					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
+					_g.createSelfStack();
+				});
+			}));
+			break;
+		}
+	}
 	,__class__: Main
 };
 Math.__name__ = true;
+var Reflect = function() { };
+Reflect.__name__ = true;
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
+};
 var Std = function() { };
 Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
 Std.parseInt = function(x) {
 	var v = parseInt(x,10);
 	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
@@ -744,6 +762,8 @@ mediator_Card.__name__ = true;
 mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
+		this.getViewComponent().css("top","100px");
+		this.getViewComponent().css("left","100px");
 		this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
 		this.getViewComponent().click($bind(this,this.onCardClick));
 		this.getViewComponent().mousedown($bind(this,this.onCardMouseDown));
