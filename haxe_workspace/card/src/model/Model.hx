@@ -19,6 +19,7 @@ class Model extends Mediator
 	
 	var ary_select:Array<Dynamic> = [];
 	var isSeperate = false;
+	var isBack = true;
 	var pos_mouse = [0, 0];
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -112,9 +113,7 @@ class Model extends Mediator
 						}));
 						sendNotification( on_select_cards, { ary_select:ary_select } );
 					case KeyboardEvent.DOM_VK_F:
-						if ( Main.flip( ary_select ) ) {
-							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );
-						}
+						doFlip();
 					case KeyboardEvent.DOM_VK_SPACE:
 				}
 			case Layer.on_body_mousemove:
@@ -150,6 +149,26 @@ class Model extends Mediator
 			select.pos[1] = pos_mouse[1] + Math.floor( cardIndex / 10 ) * 80;
 			return true;
 		});
+	}
+	
+	function doFlip() {
+		if ( ary_select.length > 1 ) {
+			isBack = !isBack;	
+			Lambda.foreach( ary_select, function( card ) {
+				//當owner是自己或者沒有所屬的時候，才能翻牌
+				if ( card.owner == Main.playerId || card.owner == '' ) {
+					card.back = isBack;
+				}
+				return true;
+			});
+		}else {
+			var card = ary_select[0];
+			if ( card.owner == Main.playerId || card.owner == '' ) {
+				card.back = !card.back;
+			}
+		}
+		Main.applyValue( ary_select );
+		Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );
 	}
 	
 	function doList() {

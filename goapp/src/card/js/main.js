@@ -1059,6 +1059,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 });
 var model_Model = function(mediatorName,viewComponent) {
 	this.pos_mouse = [0,0];
+	this.isBack = true;
 	this.isSeperate = false;
 	this.ary_select = [];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
@@ -1143,7 +1144,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 				break;
 			case 70:
-				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select.slice(0)}});
+				this.doFlip();
 				break;
 			case 32:
 				break;
@@ -1182,6 +1183,21 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			select.pos[1] = _g.pos_mouse[1] + Math.floor(cardIndex / 10) * 80;
 			return true;
 		});
+	}
+	,doFlip: function() {
+		var _g = this;
+		if(this.ary_select.length > 1) {
+			this.isBack = !this.isBack;
+			Lambda.foreach(this.ary_select,function(card) {
+				if(card.owner == Main.playerId || card.owner == "") card.back = _g.isBack;
+				return true;
+			});
+		} else {
+			var card1 = this.ary_select[0];
+			if(card1.owner == Main.playerId || card1.owner == "") card1.back = !card1.back;
+		}
+		Main.applyValue(this.ary_select);
+		Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select.slice(0)}});
 	}
 	,doList: function() {
 		this.listCard();
