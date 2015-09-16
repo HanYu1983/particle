@@ -43,21 +43,36 @@ class Main
 	}
 	
 	public static function messageAll( content:Dynamic ) {
+		j( '#txt_output2' ).html( 'messageAll: ' + content.cmd );
 		
-		trace( 'messageAll', content.cmd );
-		j( '#txt_output2' ).html( 'send: ' + content.cmd );
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
 				FBID:playerId,
 				TargetUser: id,
-				Content: Json.stringify( content )
+				Content: Json.stringify( content ),
+				UnixTime: Math.floor( Date.now().getTime() / 1000 )
 			}, handleResponse( function( ret ) {
 				
 			}));
 			return true;
 		});
 	}
-	
+	/*
+	public static function messageAll( content:Array<Dynamic> ) {
+		Lambda.foreach( otherPlayerId, function ( id ) {
+			message( {
+				FBID:playerId,
+				TargetUser: id,
+				Content: Json.stringify( content ),
+				UnixTime: Date.now().getTime()
+			}, handleResponse( function( ret ) {
+				
+			}));
+			return true;
+		});
+		ary_cmds = [];
+	}
+	*/
 	var lastPromise:Dynamic = null;
 	
 	function onBackCallback( ret:Dynamic ) {
@@ -116,19 +131,23 @@ class Main
 	}
 	
 	function callAction( content:Dynamic ) {
+		
+		trace( content.content );
 		if ( content.content.ary_select != null ) {
 			content.content.ary_select = Lambda.fold( content.content.ary_select, function( remoteCard, curr ) {
 				var localCard = getCardsById( remoteCard.id );
-				localCard.owner = remoteCard.owner;
-				localCard.relate = remoteCard.relate;
-				localCard.back = remoteCard.back;
-				curr.push( localCard );
+				if( localCard != null ){
+					localCard.owner = remoteCard.owner;
+					localCard.relate = remoteCard.relate;
+					localCard.back = remoteCard.back;
+					curr.push( localCard );
+				}
 				return curr;
 			}, []);
 		}
 		
 		trace( content.cmd );
-		j( '#txt_output2' ).html( 'receive: ', content.cmd );
+		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {
 			case 'addCards':
@@ -143,6 +162,8 @@ class Main
 				return Animate.setOwner( content.content.ary_select );
 			case 'setRelate':
 				return Animate.setRelate( content.content.ary_select );
+			case 'shuffle':
+				return Animate.shuffle( content.content.ary_select, content.content.pos_mouse );
 			case _:
 				Browser.alert( 'asb' );
 				return null;
@@ -203,7 +224,6 @@ class Main
 						createSelfStack();
 					});
 				}));
-				
 		}
 	}
 	
@@ -270,6 +290,16 @@ class Main
 		});
 		applyValue( ary_select );
 		return send;
+	}
+	
+	public static function shuffle( ary_select:Array<Dynamic>, pos_mouse ) {
+		ary_select.sort( function ( a, b ) {
+			return Math.random() > .5 ? 1 : -1;
+		});
+		Lambda.foreach( ary_select, function( select ) {
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list_shuffle' );
+			return true;
+		});
 	}
 	
 	public static function createCard( model:Dynamic ) {
@@ -362,7 +392,21 @@ class Main
 		untyped __js__('api.message' )( data, cb );
 	}
 	
-	
+	/**
+	data: {
+		FBID: string
+	}
+	cb: function( err, ret ){
+		err:string,
+		ret: {
+			Info: {}
+			Error: string
+		}
+	}
+	*/
+	public static function pollMessage( data:Dynamic, cb ) {
+		untyped __js__('api.pollMessage' )( data, cb );
+	}
 	/**
 	data: {
 		FBID: string

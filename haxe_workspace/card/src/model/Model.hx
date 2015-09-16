@@ -109,19 +109,14 @@ class Model extends Mediator
 					Main.messageAll( { cmd:'flip', content:{ ary_select:ary_select } } );
 				}
 			case Layer.on_press_l:
-				Main.messageAll( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 				Main.listCard( ary_select, pos_mouse );
+				Main.messageAll( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 			case Layer.on_press_a:
-				Main.messageAll( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 				Main.listSeparate( ary_select, pos_mouse );
+				Main.messageAll( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 			case Layer.on_press_s:
-				ary_select.sort( function ( a, b ) {
-					return Math.random() > .5 ? 1 : -1;
-				});
-				Lambda.foreach( ary_select, function( select ) {
-					sendNotification( on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list_shuffle' );
-					return true;
-				});
+				Main.shuffle( ary_select, pos_mouse );
+				Main.messageAll( { cmd:'shuffle', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
 		}
 	}
 }

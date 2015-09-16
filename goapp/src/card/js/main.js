@@ -72,6 +72,16 @@ Animate.listSeparate = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
+Animate.shuffle = function(ary_select,pos_mouse) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.shuffle(ary_select,pos_mouse);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
@@ -187,10 +197,9 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.messageAll = function(content) {
-	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 47, className : "Main", methodName : "messageAll", customParams : [content.cmd]});
-	Main.j("#txt_output2").html("send: " + Std.string(content.cmd));
+	Main.j("#txt_output2").html("messageAll: " + Std.string(content.cmd));
 	Lambda.foreach(Main.otherPlayerId,function(id) {
-		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
+		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : Math.floor(new Date().getTime() / 1000)},Main.handleResponse(function(ret) {
 		}));
 		return true;
 	});
@@ -255,6 +264,15 @@ Main.setRelate = function(ary_select) {
 	Main.applyValue(ary_select);
 	return send;
 };
+Main.shuffle = function(ary_select,pos_mouse) {
+	ary_select.sort(function(a,b) {
+		if(Math.random() > .5) return 1; else return -1;
+	});
+	Lambda.foreach(ary_select,function(select) {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select)},"list_shuffle");
+		return true;
+	});
+};
 Main.createCard = function(model) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -296,6 +314,9 @@ Main.users = function(cb) {
 Main.message = function(data,cb) {
 	api.message(data,cb);
 };
+Main.pollMessage = function(data,cb) {
+	api.pollMessage(data,cb);
+};
 Main.installPollMessageCallback = function(data,cb) {
 	api.installPollMessageCallback(data,cb);
 };
@@ -328,7 +349,7 @@ Main.prototype = {
 		var _g = this;
 		var prev = this.lastPromise;
 		Lambda.foreach(ret.Info,function(info) {
-			haxe_Log.trace(info.Time,{ fileName : "Main.hx", lineNumber : 67, className : "Main", methodName : "onBackCallback"});
+			console.log(info.Time);
 			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
 			if(prev != null) try {
 				prev().pipe(_g.lastPromise);
@@ -346,16 +367,19 @@ Main.prototype = {
 		});
 	}
 	,callAction: function(content) {
+		console.log(content.content);
 		if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
 			var localCard = Main.getCardsById(remoteCard.id);
-			localCard.owner = remoteCard.owner;
-			localCard.relate = remoteCard.relate;
-			localCard.back = remoteCard.back;
-			curr.push(localCard);
+			if(localCard != null) {
+				localCard.owner = remoteCard.owner;
+				localCard.relate = remoteCard.relate;
+				localCard.back = remoteCard.back;
+				curr.push(localCard);
+			}
 			return curr;
 		},[]);
-		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 130, className : "Main", methodName : "callAction"});
-		Main.j("#txt_output2").html("receive: ",content.cmd);
+		console.log(content.cmd);
+		Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
 		var _g = content.cmd;
 		switch(_g) {
 		case "addCards":
@@ -370,6 +394,8 @@ Main.prototype = {
 			return Animate.setOwner(content.content.ary_select);
 		case "setRelate":
 			return Animate.setRelate(content.content.ary_select);
+		case "shuffle":
+			return Animate.shuffle(content.content.ary_select,content.content.pos_mouse);
 		default:
 			js_Browser.alert("asb");
 			return null;
@@ -461,11 +487,6 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -546,25 +567,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -943,7 +945,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press_f,mediator_Layer.on_press_s,mediator_Layer.on_press_l,mediator_Layer.on_press_a,mediator_Layer.on_press_r,mediator_Layer.on_press_c,mediator_Layer.on_press_v,mediator_Layer.on_press_enter,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
 	}
 	,handleNotification: function(notification) {
-		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_select_cards":
@@ -1001,21 +1002,16 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			if(Main.flip(this.ary_select)) Main.messageAll({ cmd : "flip", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_l":
-			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listCard(this.ary_select,this.pos_mouse);
+			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			break;
 		case "on_press_a":
-			Main.messageAll({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listSeparate(this.ary_select,this.pos_mouse);
+			Main.messageAll({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			break;
 		case "on_press_s":
-			this.ary_select.sort(function(a2,b2) {
-				if(Math.random() > .5) return 1; else return -1;
-			});
-			Lambda.foreach(this.ary_select,function(select) {
-				_g1.sendNotification(model_Model.on_state_change,{ select : select, mouse : _g1.pos_mouse, pos : Lambda.indexOf(_g1.ary_select,select)},"list_shuffle");
-				return true;
-			});
+			Main.shuffle(this.ary_select,this.pos_mouse);
+			Main.messageAll({ cmd : "shuffle", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			break;
 		}
 	}
@@ -1361,6 +1357,8 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 String.prototype.__class__ = String;
 String.__name__ = true;
 Array.__name__ = true;
+Date.prototype.__class__ = Date;
+Date.__name__ = ["Date"];
 var Int = { __name__ : ["Int"]};
 var Dynamic = { __name__ : ["Dynamic"]};
 var Float = Number;
