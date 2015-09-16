@@ -208,6 +208,10 @@ class Main
 	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnClearClick':
+				clear( function() {
+					Browser.location.reload();
+				});
 			case 'onBtnSendClick':
 				messageAll( ary_cmds );
 			case 'onBtnPollingClick':
@@ -424,12 +428,25 @@ class Main
 		untyped __js__('api.installPollMessageCallback' )(data, cb );
 	}
 	
+	public static function clear( cb ) {
+		untyped __js__('api.clear' )( cb );
+	}
+	
 	public static function getCardPackage( name, cb ) {
 		untyped __js__('api.getCardPackage' )( name, cb );
 	}
 	
 	public static function getCardImageUrlWithPackage( name:Dynamic, key ):String {
 		return untyped __js__('api.getCardImageUrlWithPackage' )( name, key );
+	}
+	
+	public function slide( msg ){
+		j.messager.show({
+			title:'提示',
+			msg: msg,
+			timeout:5000,
+			showType:'slide'
+		});
 	}
 	
 	static function handleResponse( cb ) {

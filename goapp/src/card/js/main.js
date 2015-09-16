@@ -363,6 +363,9 @@ Main.pollMessage = function(data,cb) {
 Main.installPollMessageCallback = function(data,cb) {
 	api.installPollMessageCallback(data,cb);
 };
+Main.clear = function(cb) {
+	api.clear(cb);
+};
 Main.getCardPackage = function(name,cb) {
 	api.getCardPackage(name,cb);
 };
@@ -488,6 +491,11 @@ Main.prototype = {
 	,onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
+		case "onBtnClearClick":
+			Main.clear(function() {
+				window.location.reload();
+			});
+			break;
 		case "onBtnSendClick":
 			Main.messageAll(Main.ary_cmds);
 			break;
@@ -506,6 +514,9 @@ Main.prototype = {
 			}));
 			break;
 		}
+	}
+	,slide: function(msg) {
+		Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
 	}
 	,__class__: Main
 };
