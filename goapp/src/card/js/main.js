@@ -491,13 +491,15 @@ Main.prototype = {
 	,onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
+		case "onBtnPollingClick":
+			Main.pollMessage({ FBID : Main.playerId},Main.handleResponse($bind(this,this.onBackCallback)));
+			break;
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
 				Main.getCardPackage("gundamWar",Main.handleResponse(function(ret1) {
 					Main.cardPackage = ret1;
 					_g.callForOthers(function() {
 						Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
-						Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
 						_g.createSelfStack();
 					});
 				}));

@@ -196,6 +196,8 @@ class Main
 	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnPollingClick':
+				pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 			case 'onBtnCreateClick':
 				createUser( {
 					FBID:playerId,
@@ -210,7 +212,7 @@ class Main
 						#else
 						callForOthers( function() {
 							j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
-							installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
+							//installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 							createSelfStack();
 						//	keepSend();
 						});
