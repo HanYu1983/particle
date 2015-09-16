@@ -22,6 +22,8 @@ func init(){
   authenticator := auth.NewDigestAuthenticator("dbpublic", Secret)
   dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
   
+  game.InitContext( GameContextPosition )
+  
   http.HandleFunc("/", handler)
   http.HandleFunc("/proxy", tool.Proxy)
   http.HandleFunc("/dbfile/", dbfileHandler)

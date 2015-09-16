@@ -16,109 +16,6 @@ import (
 
 var _ = time.Millisecond
 
-func WithTransaction ( ctx appengine.Context, retry int, fn func(c appengine.Context)error ) error {
-  var err error
-  var times int
-  for times < retry {
-    err = datastore.RunInTransaction(ctx, fn, nil)
-    if err == datastore.ErrConcurrentTransaction {
-      // redo RunTransaction
-      
-    } else {
-      break
-    
-    }
-    times += 1
-  }
-  return err
-}
-
-func LoadGameContext (ctx appengine.Context) (Context, error) {
-  files, _, err := dbfile.QueryKeys( ctx, 0, "root" )
-  if err != nil {
-    return Context{}, err
-  }
-  if len( files ) == 0 {
-    return Context{}, errors.New("root dir isn't exist")
-  }
-  
-  rootDir := files[0].Key
-  
-  files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
-  if err != nil {
-    return Context{}, err
-  }
-  
-  if len( files ) == 0 {
-    return Context{}, errors.New("card dir isn't exist")
-  }
-  
-  cardDir := files[0].Key
-  files, _, err = dbfile.QueryKeys( ctx, cardDir, "gameContext.json" )
-  if err != nil {
-    return Context{}, err
-  }
-  
-  if len( files ) == 0 {
-    return Context{}, errors.New("root/card/gameContext.json isn't exist")
-  }
-  
-  var gameCtx Context
-  err = json.Unmarshal( files[0].Content, &gameCtx )
-  if err != nil {
-    return Context{}, err
-  }
-  return gameCtx, nil
-}
-
-func SaveGameContext (ctx appengine.Context, gameCtx Context) error {
-  files, _, err := dbfile.QueryKeys( ctx, 0, "root" )
-  if err != nil {
-    return err
-  }
-  if len( files ) == 0 {
-    return errors.New("root dir isn't exist")
-  }
-  
-  rootDir := files[0].Key
-  
-  files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
-  if err != nil {
-    return err
-  }
-  if len( files ) == 0 {
-    return errors.New("card dir isn't exist")
-  }
-  
-  cardDir := files[0].Key
-  
-  data, err := json.Marshal( gameCtx )
-  if err != nil {
-    return err
-  }
-  
-  _, err = dbfile.MakeFile( ctx, cardDir, "gameContext.json", []byte(data), true )
-  if err != nil {
-    return err
-  }
-  
-  return nil
-}
-
-type Result struct {
-  Info interface{}
-  Error interface{}
-}
-
-func Output(w http.ResponseWriter, info, err interface{}){
-  ret := Result{
-    Info: info,
-    Error: err,
-  }
-  jsonstr, _ := json.Marshal( ret )
-  fmt.Fprintf(w, "%s", string( jsonstr ))
-}
-
 func CreateUser(w http.ResponseWriter, r *http.Request){
   
   ctx := appengine.NewContext( r )
@@ -421,4 +318,148 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
   case ret := <- retCh:
     Output( w, ret, nil )
   }
+}
+
+
+func WithTransaction ( ctx appengine.Context, retry int, fn func(c appengine.Context)error ) error {
+  var err error
+  var times int
+  for times < retry {
+    err = datastore.RunInTransaction(ctx, fn, nil)
+    if err == datastore.ErrConcurrentTransaction {
+      // redo RunTransaction
+      
+    } else {
+      break
+    
+    }
+    times += 1
+  }
+  return err
+}
+
+var gameContextPosition int64
+
+func InitContext ( gameContextPosition_ int64 ){
+  gameContextPosition = gameContextPosition_
+}
+
+func LoadGameContext (ctx appengine.Context) (Context, error) {
+  
+  file, err := dbfile.GetFile( ctx, gameContextPosition )
+  if err != nil {
+    return Context{}, err
+  }
+  
+  var gameCtx Context
+  err = json.Unmarshal( file.Content, &gameCtx )
+  if err != nil {
+    return Context{}, err
+  }
+  return gameCtx, nil
+  
+  /*
+  files, _, err := dbfile.QueryKeys( ctx, 0, "root" )
+  
+  if err != nil {
+    return Context{}, err
+  }
+  if len( files ) == 0 {
+    return Context{}, errors.New("root dir isn't exist")
+  }
+  
+  rootDir := files[0].Key
+  
+  files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
+  if err != nil {
+    return Context{}, err
+  }
+  
+  if len( files ) == 0 {
+    return Context{}, errors.New("card dir isn't exist")
+  }
+  
+  cardDir := files[0].Key
+  files, _, err = dbfile.QueryKeys( ctx, cardDir, "gameContext.json" )
+  if err != nil {
+    return Context{}, err
+  }
+  
+  if len( files ) == 0 {
+    return Context{}, errors.New("root/card/gameContext.json isn't exist")
+  }
+  
+  var gameCtx Context
+  err = json.Unmarshal( files[0].Content, &gameCtx )
+  if err != nil {
+    return Context{}, err
+  }
+  return gameCtx, nil
+  */
+}
+
+func SaveGameContext (ctx appengine.Context, gameCtx Context) error {
+  data, err := json.Marshal( gameCtx )
+  if err != nil {
+    return err
+  }
+  
+  file, err := dbfile.GetFile( ctx, gameContextPosition )
+  if err != nil {
+    return err
+  }
+  
+  _, err = dbfile.MakeFile( ctx, file.Position, file.Name, []byte(data), true )
+  if err != nil {
+    return err
+  }
+  
+  return nil
+  /*
+  files, _, err := dbfile.QueryKeys( ctx, 0, "root" )
+  if err != nil {
+    return err
+  }
+  if len( files ) == 0 {
+    return errors.New("root dir isn't exist")
+  }
+  
+  rootDir := files[0].Key
+  
+  files, _, err = dbfile.QueryKeys( ctx, rootDir, "card" )
+  if err != nil {
+    return err
+  }
+  if len( files ) == 0 {
+    return errors.New("card dir isn't exist")
+  }
+  
+  cardDir := files[0].Key
+  
+  data, err := json.Marshal( gameCtx )
+  if err != nil {
+    return err
+  }
+  
+  _, err = dbfile.MakeFile( ctx, cardDir, "gameContext.json", []byte(data), true )
+  if err != nil {
+    return err
+  }
+  
+  return nil
+  */
+}
+
+type Result struct {
+  Info interface{}
+  Error interface{}
+}
+
+func Output(w http.ResponseWriter, info, err interface{}){
+  ret := Result{
+    Info: info,
+    Error: err,
+  }
+  jsonstr, _ := json.Marshal( ret )
+  fmt.Fprintf(w, "%s", string( jsonstr ))
 }
