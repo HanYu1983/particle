@@ -55,7 +55,7 @@ Animate.flip = function(ary_select) {
 Animate.rotate = function(ary_select,d) {
 	return function() {
 		var d1 = Main.j.Deferred();
-		Main.rotate(ary_select);
+		Main.applyValue(ary_select);
 		haxe_Timer.delay(function() {
 			d1.resolve();
 		},300);
@@ -96,6 +96,16 @@ Animate.shuffle = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
 		Main.listCard(ary_select,pos_mouse);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
+Animate.shuffleSeperate = function(ary_select,pos_mouse) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.listSeparate(ary_select,pos_mouse);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},1000);
@@ -453,6 +463,8 @@ Main.prototype = {
 			return Animate.setRelate(content.content.ary_select);
 		case "shuffle":
 			return Animate.shuffle(content.content.ary_select,content.content.pos_mouse);
+		case "shuffleSeparate":
+			return Animate.shuffleSeperate(content.content.ary_select,content.content.pos_mouse);
 		case "rotate":
 			return Animate.rotate(content.content.ary_select,content.content.deg);
 		case "listCardReverse":
@@ -490,7 +502,11 @@ Main.prototype = {
 		switch(type) {
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				_g.createSelfStack();
+				_g.callForOthers(function() {
+					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
+					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
+					_g.createSelfStack();
+				});
 			}));
 			break;
 		}
@@ -1059,13 +1075,12 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 					if(Math.random() > .5) return 1; else return -1;
 				});
 				Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
-				Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+				Main.pushCmds({ cmd : "shuffleSeparate", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 68:
 				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
 					return card.owner == Main.playerId;
 				}));
-				console.log(this.ary_select);
 				this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 				break;
 			case 70:
@@ -1469,5 +1484,3 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

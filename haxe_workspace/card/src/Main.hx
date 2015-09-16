@@ -175,6 +175,8 @@ class Main
 				return Animate.setRelate( content.content.ary_select );
 			case 'shuffle':
 				return Animate.shuffle( content.content.ary_select, content.content.pos_mouse );
+			case 'shuffleSeparate':
+				return Animate.shuffleSeperate( content.content.ary_select, content.content.pos_mouse );
 			case 'rotate':
 				return Animate.rotate( content.content.ary_select, content.content.deg );
 			case 'listCardReverse':

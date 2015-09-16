@@ -64,7 +64,7 @@ class Animate
 	public static function rotate( ary_select, d ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.rotate( ary_select );
+			Main.applyValue( ary_select );
 			Timer.delay( function() {
 				d.resolve();
 			}, 300 );
@@ -109,7 +109,6 @@ class Animate
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
 			Main.listCard( ary_select, pos_mouse );
-		//	Main.shuffle( ary_select, pos_mouse );
 			Timer.delay( function() {
 				d.resolve();
 			}, 1000 );
@@ -117,5 +116,14 @@ class Animate
 		}
 	}
 	
-	
+	public static function shuffleSeperate( ary_select, pos_mouse ) {
+		return function(){
+			var d:Dynamic = Main.j.Deferred();
+			Main.listSeparate( ary_select, pos_mouse );
+			Timer.delay( function() {
+				d.resolve();
+			}, 1000 );
+			return d;
+		}
+	}
 }
