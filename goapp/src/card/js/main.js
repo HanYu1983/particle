@@ -392,7 +392,7 @@ Main.prototype = {
 				cb();
 			} else haxe_Timer.delay(function() {
 				_g.callForOthers(cb);
-			},1000);
+			},10000);
 		}));
 	}
 	,appStart: function() {

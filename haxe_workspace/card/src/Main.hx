@@ -171,7 +171,7 @@ class Main
 			}else {
 				Timer.delay( function() {
 					callForOthers( cb );
-				}, 1000);
+				}, 1000 * 10 );
 			}
 		}));
 	}
