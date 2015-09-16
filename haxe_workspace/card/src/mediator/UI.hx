@@ -32,7 +32,6 @@ class UI extends Mediator
 			case Model.on_select_cards:
 				showCards( notification.getBody().ary_select );
 			case Model.on_state_change:
-				trace( notification.getBody().ary_select );
 				mc_detailContainer.empty();
 				Timer.delay( function(){
 					showCard( notification.getBody().select );

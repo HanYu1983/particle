@@ -243,7 +243,6 @@ Main.pushCmds = function(content) {
 	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
 };
 Main.messageAll = function(content) {
-	console.log("messageAll");
 	Main.j("#txt_output2").html("messageAll");
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : Math.floor(new Date().getTime() / 1000)},Main.handleResponse(function(ret) {
@@ -289,7 +288,6 @@ Main.callAction = function(content) {
 		}
 		return curr;
 	},[]);
-	console.log(content.cmd);
 	Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
 	var _g = content.cmd;
 	switch(_g) {
@@ -515,7 +513,7 @@ Main.prototype = {
 				Main.getCardPackage("gundamWar",Main.handleResponse(function(ret1) {
 					Main.cardPackage = ret1;
 					_g.callForOthers(function() {
-						Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
+						Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
 						_g.createSelfStack();
 					});
 				}));
@@ -1030,7 +1028,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.showCards(notification.getBody().ary_select);
 			break;
 		case "on_state_change":
-			console.log(notification.getBody().ary_select);
 			this.mc_detailContainer.empty();
 			haxe_Timer.delay(function() {
 				_g1.showCard(notification.getBody().select);

@@ -74,8 +74,6 @@ class Main
 	}
 	
 	public static function messageAll( content:Array<Dynamic> ) {
-		trace( 'messageAll' );
-		
 		j( '#txt_output2' ).html( 'messageAll' );
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
@@ -140,7 +138,6 @@ class Main
 			}, []);
 		}
 		
-		trace( content.cmd );
 		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {
@@ -230,7 +227,7 @@ class Main
 						createSelfStack();
 						#else
 						callForOthers( function() {
-							j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
+							j('#txt_output' ).html( Json.stringify( otherPlayerId ) );
 							//installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 							createSelfStack();
 						});
