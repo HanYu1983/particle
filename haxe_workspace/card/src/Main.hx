@@ -162,6 +162,8 @@ class Main
 				return Animate.setOwner( content.content.ary_select );
 			case 'setRelate':
 				return Animate.setRelate( content.content.ary_select );
+			case 'shuffle':
+				return Animate.shuffle( content.content.ary_select, content.content.pos_mouse );
 			case _:
 				Browser.alert( 'asb' );
 				return null;
@@ -288,6 +290,16 @@ class Main
 		});
 		applyValue( ary_select );
 		return send;
+	}
+	
+	public static function shuffle( ary_select:Array<Dynamic>, pos_mouse ) {
+		ary_select.sort( function ( a, b ) {
+			return Math.random() > .5 ? 1 : -1;
+		});
+		Lambda.foreach( ary_select, function( select ) {
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list_shuffle' );
+			return true;
+		});
 	}
 	
 	public static function createCard( model:Dynamic ) {

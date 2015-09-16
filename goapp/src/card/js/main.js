@@ -72,6 +72,16 @@ Animate.listSeparate = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
+Animate.shuffle = function(ary_select,pos_mouse) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.shuffle(ary_select,pos_mouse);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
@@ -254,6 +264,15 @@ Main.setRelate = function(ary_select) {
 	Main.applyValue(ary_select);
 	return send;
 };
+Main.shuffle = function(ary_select,pos_mouse) {
+	ary_select.sort(function(a,b) {
+		if(Math.random() > .5) return 1; else return -1;
+	});
+	Lambda.foreach(ary_select,function(select) {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select)},"list_shuffle");
+		return true;
+	});
+};
 Main.createCard = function(model) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -375,6 +394,8 @@ Main.prototype = {
 			return Animate.setOwner(content.content.ary_select);
 		case "setRelate":
 			return Animate.setRelate(content.content.ary_select);
+		case "shuffle":
+			return Animate.shuffle(content.content.ary_select,content.content.pos_mouse);
 		default:
 			js_Browser.alert("asb");
 			return null;
@@ -924,7 +945,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press_f,mediator_Layer.on_press_s,mediator_Layer.on_press_l,mediator_Layer.on_press_a,mediator_Layer.on_press_r,mediator_Layer.on_press_c,mediator_Layer.on_press_v,mediator_Layer.on_press_enter,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
 	}
 	,handleNotification: function(notification) {
-		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_select_cards":
@@ -982,21 +1002,16 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			if(Main.flip(this.ary_select)) Main.messageAll({ cmd : "flip", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_l":
-			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listCard(this.ary_select,this.pos_mouse);
+			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			break;
 		case "on_press_a":
-			Main.messageAll({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listSeparate(this.ary_select,this.pos_mouse);
+			Main.messageAll({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			break;
 		case "on_press_s":
-			this.ary_select.sort(function(a2,b2) {
-				if(Math.random() > .5) return 1; else return -1;
-			});
-			Lambda.foreach(this.ary_select,function(select) {
-				_g1.sendNotification(model_Model.on_state_change,{ select : select, mouse : _g1.pos_mouse, pos : Lambda.indexOf(_g1.ary_select,select)},"list_shuffle");
-				return true;
-			});
+			Main.shuffle(this.ary_select,this.pos_mouse);
+			Main.messageAll({ cmd : "shuffle", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			break;
 		}
 	}
