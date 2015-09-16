@@ -231,7 +231,6 @@ _$List_ListIterator.prototype = {
 	,__class__: _$List_ListIterator
 };
 var Main = function() {
-	this.lastPromise = null;
 	Main.j("#txt_id").html(Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
@@ -248,10 +247,86 @@ Main.messageAll = function(content) {
 	Main.j("#txt_output2").html("messageAll");
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : Math.floor(new Date().getTime() / 1000)},Main.handleResponse(function(ret) {
+			Main.slide("送出完成");
 		}));
 		return true;
 	});
 	Main.ary_cmds = [];
+};
+Main.onBackCallback = function(ret) {
+	Main.slide("接收完成");
+	var allCmds = Lambda.fold(ret.Info,function(info,curr) {
+		return curr.concat(JSON.parse(info.Content));
+	},[]);
+	var prev = Main.lastPromise;
+	Lambda.foreach(allCmds,function(cmd) {
+		Main.lastPromise = Main.callAction(cmd);
+		if(prev != null) try {
+			prev().pipe(Main.lastPromise);
+		} catch( err ) {
+			if (err instanceof js__$Boot_HaxeError) err = err.val;
+			if( js_Boot.__instanceof(err,String) ) {
+				js_Browser.alert(err);
+			} else throw(err);
+		}
+		prev = Main.lastPromise;
+		return true;
+	});
+	if(Main.lastPromise != null) Main.lastPromise().done(function() {
+		Main.lastPromise = null;
+	});
+};
+Main.callAction = function(content) {
+	if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
+		var localCard = Main.getCardsById(remoteCard.id);
+		if(localCard != null) {
+			localCard.owner = remoteCard.owner;
+			localCard.relate = remoteCard.relate;
+			localCard.back = remoteCard.back;
+			localCard.pos = remoteCard.pos;
+			localCard.deg = remoteCard.deg;
+			curr.push(localCard);
+		}
+		return curr;
+	},[]);
+	console.log(content.cmd);
+	Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
+	var _g = content.cmd;
+	switch(_g) {
+	case "addCards":
+		return Animate.addCardAndPrepare(content.content);
+	case "listCard":
+		return Animate.list(content.content.ary_select,content.content.pos_mouse);
+	case "listSeparate":
+		return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
+	case "flip":
+		return Animate.flip(content.content.ary_select);
+	case "setOwner":
+		return Animate.setOwner(content.content.ary_select);
+	case "setRelate":
+		return Animate.setRelate(content.content.ary_select);
+	case "shuffle":
+		return Animate.shuffle(content.content.ary_select,content.content.pos_mouse);
+	case "shuffleSeparate":
+		return Animate.shuffleSeperate(content.content.ary_select,content.content.pos_mouse);
+	case "rotate":
+		return Animate.rotate(content.content.ary_select,content.content.deg);
+	case "listCardReverse":
+		return Animate.list(content.content.ary_select,content.content.pos_mouse);
+	case "listSeparateReverse":
+		return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
+	case "moveCards":
+		return Animate.moveCards(content.content.ary_select,content.content.pos_mouse);
+	default:
+		js_Browser.alert("asb");
+		return null;
+	}
+};
+Main.sendAllMessage = function() {
+	Main.messageAll(Main.ary_cmds);
+};
+Main.pollAllMessage = function() {
+	Main.pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
 };
 Main.applyValue = function(ary_select) {
 	Lambda.foreach(ary_select,function(card) {
@@ -372,6 +447,9 @@ Main.getCardPackage = function(name,cb) {
 Main.getCardImageUrlWithPackage = function(name,key) {
 	return api.getCardImageUrlWithPackage(name,key);
 };
+Main.slide = function(msg) {
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
+};
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
 		if(err != null) js_Browser.alert(err); else cb(ret);
@@ -399,75 +477,6 @@ Main.prototype = {
 		(Animate.addCardAndPrepare(stack))().done(function() {
 			Main.pushCmds({ cmd : "addCards", content : stack});
 		});
-	}
-	,onBackCallback: function(ret) {
-		var _g = this;
-		var allCmds = Lambda.fold(ret.Info,function(info,curr) {
-			return curr.concat(JSON.parse(info.Content));
-		},[]);
-		var prev = this.lastPromise;
-		Lambda.foreach(allCmds,function(cmd) {
-			_g.lastPromise = _g.callAction(cmd);
-			if(prev != null) try {
-				prev().pipe(_g.lastPromise);
-			} catch( err ) {
-				if (err instanceof js__$Boot_HaxeError) err = err.val;
-				if( js_Boot.__instanceof(err,String) ) {
-					js_Browser.alert(err);
-				} else throw(err);
-			}
-			prev = _g.lastPromise;
-			return true;
-		});
-		if(this.lastPromise != null) this.lastPromise().done(function() {
-			_g.lastPromise = null;
-		});
-	}
-	,callAction: function(content) {
-		if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
-			var localCard = Main.getCardsById(remoteCard.id);
-			if(localCard != null) {
-				localCard.owner = remoteCard.owner;
-				localCard.relate = remoteCard.relate;
-				localCard.back = remoteCard.back;
-				localCard.pos = remoteCard.pos;
-				localCard.deg = remoteCard.deg;
-				curr.push(localCard);
-			}
-			return curr;
-		},[]);
-		console.log(content.cmd);
-		Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
-		var _g = content.cmd;
-		switch(_g) {
-		case "addCards":
-			return Animate.addCardAndPrepare(content.content);
-		case "listCard":
-			return Animate.list(content.content.ary_select,content.content.pos_mouse);
-		case "listSeparate":
-			return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
-		case "flip":
-			return Animate.flip(content.content.ary_select);
-		case "setOwner":
-			return Animate.setOwner(content.content.ary_select);
-		case "setRelate":
-			return Animate.setRelate(content.content.ary_select);
-		case "shuffle":
-			return Animate.shuffle(content.content.ary_select,content.content.pos_mouse);
-		case "shuffleSeparate":
-			return Animate.shuffleSeperate(content.content.ary_select,content.content.pos_mouse);
-		case "rotate":
-			return Animate.rotate(content.content.ary_select,content.content.deg);
-		case "listCardReverse":
-			return Animate.list(content.content.ary_select,content.content.pos_mouse);
-		case "listSeparateReverse":
-			return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
-		case "moveCards":
-			return Animate.moveCards(content.content.ary_select,content.content.pos_mouse);
-		default:
-			js_Browser.alert("asb");
-			return null;
-		}
 	}
 	,callForOthers: function(cb) {
 		var _g = this;
@@ -497,10 +506,10 @@ Main.prototype = {
 			});
 			break;
 		case "onBtnSendClick":
-			Main.messageAll(Main.ary_cmds);
+			Main.sendAllMessage();
 			break;
 		case "onBtnPollingClick":
-			Main.pollMessage({ FBID : Main.playerId},Main.handleResponse($bind(this,this.onBackCallback)));
+			Main.pollAllMessage();
 			break;
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
@@ -514,9 +523,6 @@ Main.prototype = {
 			}));
 			break;
 		}
-	}
-	,slide: function(msg) {
-		Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
 	}
 	,__class__: Main
 };
@@ -1096,6 +1102,12 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		case "on_press":
 			var _g1 = notification.getType();
 			switch(_g1) {
+			case 71:
+				Main.sendAllMessage();
+				break;
+			case 72:
+				Main.pollAllMessage();
+				break;
 			case 67:
 				if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select.slice(0)}});
 				break;

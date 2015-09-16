@@ -70,15 +70,7 @@ class Main
 		
 		ary_cmds.push( content );
 		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
-		/*
-		if ( sendTimer == null ) {
-			
-			sendTimer = Timer.delay( function() {
-				messageAll( ary_cmds );
-				sendTimer = null;
-			}, keepTime );
-		}
-		*/
+		
 	}
 	
 	public static function messageAll( content:Array<Dynamic> ) {
@@ -92,16 +84,18 @@ class Main
 				Content: Json.stringify( content ),
 				UnixTime: Math.floor( Date.now().getTime() / 1000 )
 			}, handleResponse( function( ret ) {
-				
+				slide( '送出完成' );
 			}));
 			return true;
 		});
 		ary_cmds = [];
 	}
 	
-	var lastPromise:Dynamic = null;
+	static var lastPromise:Dynamic = null;
 	
-	function onBackCallback( ret:Dynamic ) {
+	static function onBackCallback( ret:Dynamic ) {
+		
+		slide( '接收完成' );
 		
 		var allCmds:Array<Dynamic> = Lambda.fold( ret.Info, function( info, curr:Array<Dynamic> ) {
 			return curr.concat( Json.parse( info.Content ) );
@@ -130,7 +124,7 @@ class Main
 		}
 	}
 	
-	function callAction( content:Dynamic ) {
+	static function callAction( content:Dynamic ) {
 		if ( content.content.ary_select != null ) {
 			content.content.ary_select = Lambda.fold( content.content.ary_select, function( remoteCard, curr ) {
 				var localCard = getCardsById( remoteCard.id );
@@ -206,6 +200,14 @@ class Main
 		Timer.delay( keepSend, keepTime );
 	}
 	
+	public static function sendAllMessage() {
+		messageAll( ary_cmds );
+	}
+	
+	public static function pollAllMessage() {
+		pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
+	}
+	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
 			case 'onBtnClearClick':
@@ -213,9 +215,9 @@ class Main
 					Browser.location.reload();
 				});
 			case 'onBtnSendClick':
-				messageAll( ary_cmds );
+				sendAllMessage();
 			case 'onBtnPollingClick':
-				pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
+				pollAllMessage();
 			case 'onBtnCreateClick':
 				createUser( {
 					FBID:playerId,
@@ -440,7 +442,7 @@ class Main
 		return untyped __js__('api.getCardImageUrlWithPackage' )( name, key );
 	}
 	
-	public function slide( msg ){
+	public static function slide( msg ){
 		j.messager.show({
 			title:'提示',
 			msg: msg,

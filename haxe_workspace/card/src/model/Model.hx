@@ -74,6 +74,10 @@ class Model extends Mediator
 				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_press:
 				switch( notification.getType() ) {
+					case KeyboardEvent.DOM_VK_G:
+						Main.sendAllMessage();
+					case KeyboardEvent.DOM_VK_H:
+						Main.pollAllMessage();
 					case KeyboardEvent.DOM_VK_C:
 						if ( Main.setOwner( ary_select ) ) 
 							Main.pushCmds( { cmd:'setOwner', content:{ ary_select:ary_select.slice( 0 ) } } );
