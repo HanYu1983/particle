@@ -152,12 +152,15 @@ class Main
 					localCard.owner = remoteCard.owner;
 					localCard.relate = remoteCard.relate;
 					localCard.back = remoteCard.back;
+					localCard.pos = remoteCard.pos;
+					localCard.deg = remoteCard.deg;
 					curr.push( localCard );
 				}
 				return curr;
 			}, []);
 		}
 		
+		trace( content.cmd );
 		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {
@@ -341,12 +344,12 @@ class Main
 		applyValue( ary_select );
 		return send;
 	}
-	
+	/*
 	public static function listCard( ary_select:Dynamic, pos_mouse ) {
 		Lambda.foreach( ary_select, function( select ) {
-			var cardIndex = Lambda.indexOf( ary_select, select );
-			select.pos[0] = ( pos_mouse[0] + cardIndex * 2 );
-			select.pos[1] = ( pos_mouse[1] + cardIndex * 2 );
+			//var cardIndex = Lambda.indexOf( ary_select, select );
+			//select.pos[0] = ( pos_mouse[0] + cardIndex * 2 );
+			//select.pos[1] = ( pos_mouse[1] + cardIndex * 2 );
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, zsort:true }, 'moveCards' );
 			return true;
 		});
@@ -354,23 +357,17 @@ class Main
 	
 	public static function listSeparate( ary_select:Dynamic, pos_mouse ) {
 		Lambda.foreach( ary_select, function( select ) {
-			var cardIndex = Lambda.indexOf( ary_select, select );
-			select.pos[0] = pos_mouse[0] + ( cardIndex % 10 * 55 );
-			select.pos[1] = pos_mouse[1] + Math.floor( cardIndex / 10 ) * 80;
+			//var cardIndex = Lambda.indexOf( ary_select, select );
+			//select.pos[0] = pos_mouse[0] + ( cardIndex % 10 * 55 );
+			//select.pos[1] = pos_mouse[1] + Math.floor( cardIndex / 10 ) * 80;
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, zsort:false }, 'moveCards' );
 			return true;
 		});
 	}
-	
-	public static function moveCards( ary_select:Dynamic, pos_mouse ) {
-		var offset = [
-			pos_mouse[0] - ary_select[0].pos[0],
-			pos_mouse[1] - ary_select[0].pos[1]
-		];
+	*/
+	public static function moveCards( ary_select:Dynamic, pos_mouse, zsort ) {
 		Lambda.foreach( ary_select, function( select ) {
-			select.pos[0] += offset[0];
-			select.pos[1] += offset[1];
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, zsort:false }, 'moveCards' );
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, zsort:zsort }, 'moveCards' );
 			return true;
 		});
 	}

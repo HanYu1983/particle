@@ -100,30 +100,42 @@ class Model extends Mediator
 						Main.rotate( ary_select, 90 );
 						Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select.slice( 0 ), deg:90 } } );
 					case KeyboardEvent.DOM_VK_Q:
-						Main.listCard( ary_select, pos_mouse.slice( 0 ) );
+						listCard();
+						Main.moveCards( ary_select, pos_mouse, true );
+						//Main.listCard( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_W:
-						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
+						listSeperate();
+						Main.moveCards( ary_select, pos_mouse, false );
+						//Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_E:
 						ary_select.reverse();
-						Main.listCard( ary_select, pos_mouse.slice( 0 ) );
+						listCard();
+						Main.moveCards( ary_select, pos_mouse, true );
+						//Main.listCard( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listCardReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_R:
 						ary_select.reverse();
-						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
+						listSeperate();
+						Main.moveCards( ary_select, pos_mouse, false );
+						//Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_A:
 						ary_select.sort( function ( a, b ) {
 							return Math.random() > .5 ? 1 : -1;
 						});
-						Main.listCard( ary_select, pos_mouse.slice( 0 ) );
+						listCard();
+						Main.moveCards( ary_select, pos_mouse, true );
+						//Main.listCard( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_S:
 						ary_select.sort( function ( a, b ) {
 							return Math.random() > .5 ? 1 : -1;
 						});
-						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
+						listSeperate();
+						Main.moveCards( ary_select, pos_mouse, false );
+						//Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'shuffleSeparate', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_D:
 						ary_select = Lambda.array( Lambda.filter( Main.ary_cards, function( card:Dynamic ) {
@@ -135,7 +147,16 @@ class Model extends Mediator
 							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );
 						}
 					case KeyboardEvent.DOM_VK_SPACE:
-						Main.moveCards( ary_select, pos_mouse );
+						var offset = [
+							pos_mouse[0] - ary_select[0].pos[0],
+							pos_mouse[1] - ary_select[0].pos[1]
+						];
+						Lambda.foreach( ary_select, function( select ) {
+							select.pos[0] += offset[0];
+							select.pos[1] += offset[1];
+							return true;
+						});
+						Main.moveCards( ary_select, pos_mouse, false );
 						Main.pushCmds( { cmd:'moveCards', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 				}
 			case Layer.on_body_mousemove:
@@ -153,5 +174,23 @@ class Model extends Mediator
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
 		}
+	}
+	
+	function listCard() {
+		Lambda.foreach( ary_select, function( select ) {
+			var cardIndex = Lambda.indexOf( ary_select, select );
+			select.pos[0] = ( pos_mouse[0] + cardIndex * 2 );
+			select.pos[1] = ( pos_mouse[1] + cardIndex * 2 );
+			return true;
+		});
+	}
+	
+	function listSeperate(){
+		Lambda.foreach( ary_select, function( select ) {
+			var cardIndex = Lambda.indexOf( ary_select, select );
+			select.pos[0] = pos_mouse[0] + ( cardIndex % 10 * 55 );
+			select.pos[1] = pos_mouse[1] + Math.floor( cardIndex / 10 ) * 80;
+			return true;
+		});
 	}
 }

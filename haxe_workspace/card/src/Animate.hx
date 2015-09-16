@@ -75,7 +75,7 @@ class Animate
 	public static function list( ary_select, pos_mouse ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.listCard( ary_select, pos_mouse );
+			Main.moveCards( ary_select, pos_mouse, true );
 			Timer.delay( function() {
 				d.resolve();
 			}, 1000 );
@@ -86,7 +86,7 @@ class Animate
 	public static function listSeparate( ary_select, pos_mouse ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.listSeparate( ary_select, pos_mouse );
+			Main.moveCards( ary_select, pos_mouse, false );
 			Timer.delay( function() {
 				d.resolve();
 			}, 1000 );
@@ -97,7 +97,7 @@ class Animate
 	public static function moveCards( ary_select, pos_mouse ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.moveCards( ary_select, pos_mouse );
+			Main.moveCards( ary_select, pos_mouse, false );
 			Timer.delay( function() {
 				d.resolve();
 			}, 1000 );
@@ -108,7 +108,7 @@ class Animate
 	public static function shuffle( ary_select, pos_mouse ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.listCard( ary_select, pos_mouse );
+			Main.moveCards( ary_select, pos_mouse, true );
 			Timer.delay( function() {
 				d.resolve();
 			}, 1000 );
@@ -119,7 +119,7 @@ class Animate
 	public static function shuffleSeperate( ary_select, pos_mouse ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.listSeparate( ary_select, pos_mouse );
+			Main.moveCards( ary_select, pos_mouse, false );
 			Timer.delay( function() {
 				d.resolve();
 			}, 1000 );

@@ -65,7 +65,7 @@ Animate.rotate = function(ary_select,d) {
 Animate.list = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.listCard(ary_select,pos_mouse);
+		Main.moveCards(ary_select,pos_mouse,true);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},1000);
@@ -75,7 +75,7 @@ Animate.list = function(ary_select,pos_mouse) {
 Animate.listSeparate = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.listSeparate(ary_select,pos_mouse);
+		Main.moveCards(ary_select,pos_mouse,false);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},1000);
@@ -85,7 +85,7 @@ Animate.listSeparate = function(ary_select,pos_mouse) {
 Animate.moveCards = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.moveCards(ary_select,pos_mouse);
+		Main.moveCards(ary_select,pos_mouse,false);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},1000);
@@ -95,7 +95,7 @@ Animate.moveCards = function(ary_select,pos_mouse) {
 Animate.shuffle = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.listCard(ary_select,pos_mouse);
+		Main.moveCards(ary_select,pos_mouse,true);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},1000);
@@ -105,7 +105,7 @@ Animate.shuffle = function(ary_select,pos_mouse) {
 Animate.shuffleSeperate = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.listSeparate(ary_select,pos_mouse);
+		Main.moveCards(ary_select,pos_mouse,false);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},1000);
@@ -339,31 +339,9 @@ Main.flip = function(ary_select) {
 	Main.applyValue(ary_select);
 	return send;
 };
-Main.listCard = function(ary_select,pos_mouse) {
+Main.moveCards = function(ary_select,pos_mouse,zsort) {
 	Lambda.foreach(ary_select,function(select) {
-		var cardIndex = Lambda.indexOf(ary_select,select);
-		select.pos[0] = pos_mouse[0] + cardIndex * 2;
-		select.pos[1] = pos_mouse[1] + cardIndex * 2;
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, zsort : true},"moveCards");
-		return true;
-	});
-};
-Main.listSeparate = function(ary_select,pos_mouse) {
-	Lambda.foreach(ary_select,function(select) {
-		var cardIndex = Lambda.indexOf(ary_select,select);
-		select.pos[0] = pos_mouse[0] + cardIndex % 10 * 55;
-		select.pos[1] = pos_mouse[1] + Math.floor(cardIndex / 10) * 80;
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, zsort : false},"moveCards");
-		return true;
-	});
-};
-Main.moveCards = function(ary_select,pos_mouse) {
-	var offset_0 = pos_mouse[0] - ary_select[0].pos[0];
-	var offset_1 = pos_mouse[1] - ary_select[0].pos[1];
-	Lambda.foreach(ary_select,function(select) {
-		select.pos[0] += offset_0;
-		select.pos[1] += offset_1;
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, zsort : false},"moveCards");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, zsort : zsort},"moveCards");
 		return true;
 	});
 };
@@ -442,10 +420,13 @@ Main.prototype = {
 				localCard.owner = remoteCard.owner;
 				localCard.relate = remoteCard.relate;
 				localCard.back = remoteCard.back;
+				localCard.pos = remoteCard.pos;
+				localCard.deg = remoteCard.deg;
 				curr.push(localCard);
 			}
 			return curr;
 		},[]);
+		console.log(content.cmd);
 		Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
 		var _g = content.cmd;
 		switch(_g) {
@@ -1046,35 +1027,41 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select.slice(0), deg : 90}});
 				break;
 			case 81:
-				Main.listCard(this.ary_select,this.pos_mouse.slice(0));
+				this.listCard();
+				Main.moveCards(this.ary_select,this.pos_mouse,true);
 				Main.pushCmds({ cmd : "listCard", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 87:
-				Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
+				this.listSeperate();
+				Main.moveCards(this.ary_select,this.pos_mouse,false);
 				Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 69:
 				this.ary_select.reverse();
-				Main.listCard(this.ary_select,this.pos_mouse.slice(0));
+				this.listCard();
+				Main.moveCards(this.ary_select,this.pos_mouse,true);
 				Main.pushCmds({ cmd : "listCardReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 82:
 				this.ary_select.reverse();
-				Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
+				this.listSeperate();
+				Main.moveCards(this.ary_select,this.pos_mouse,false);
 				Main.pushCmds({ cmd : "listSeparateReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 65:
 				this.ary_select.sort(function(a2,b2) {
 					if(Math.random() > .5) return 1; else return -1;
 				});
-				Main.listCard(this.ary_select,this.pos_mouse.slice(0));
+				this.listCard();
+				Main.moveCards(this.ary_select,this.pos_mouse,true);
 				Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 83:
 				this.ary_select.sort(function(a3,b3) {
 					if(Math.random() > .5) return 1; else return -1;
 				});
-				Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
+				this.listSeperate();
+				Main.moveCards(this.ary_select,this.pos_mouse,false);
 				Main.pushCmds({ cmd : "shuffleSeparate", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 68:
@@ -1087,7 +1074,14 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select.slice(0)}});
 				break;
 			case 32:
-				Main.moveCards(this.ary_select,this.pos_mouse);
+				var offset_0 = this.pos_mouse[0] - this.ary_select[0].pos[0];
+				var offset_1 = this.pos_mouse[1] - this.ary_select[0].pos[1];
+				Lambda.foreach(this.ary_select,function(select) {
+					select.pos[0] += offset_0;
+					select.pos[1] += offset_1;
+					return true;
+				});
+				Main.moveCards(this.ary_select,this.pos_mouse,false);
 				Main.pushCmds({ cmd : "moveCards", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			}
@@ -1107,6 +1101,24 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.sendNotification(model_Model.on_card_move,notification.getBody());
 			break;
 		}
+	}
+	,listCard: function() {
+		var _g = this;
+		Lambda.foreach(this.ary_select,function(select) {
+			var cardIndex = Lambda.indexOf(_g.ary_select,select);
+			select.pos[0] = _g.pos_mouse[0] + cardIndex * 2;
+			select.pos[1] = _g.pos_mouse[1] + cardIndex * 2;
+			return true;
+		});
+	}
+	,listSeperate: function() {
+		var _g = this;
+		Lambda.foreach(this.ary_select,function(select) {
+			var cardIndex = Lambda.indexOf(_g.ary_select,select);
+			select.pos[0] = _g.pos_mouse[0] + cardIndex % 10 * 55;
+			select.pos[1] = _g.pos_mouse[1] + Math.floor(cardIndex / 10) * 80;
+			return true;
+		});
 	}
 	,__class__: model_Model
 });
