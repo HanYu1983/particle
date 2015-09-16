@@ -199,8 +199,17 @@ Main.__name__ = true;
 Main.pushCmds = function(content) {
 	Main.ary_cmds.push(content);
 	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
+	haxe_Log.trace("push",{ fileName : "Main.hx", lineNumber : 59, className : "Main", methodName : "pushCmds", customParams : [Main.sendTimer]});
+	if(Main.sendTimer == null) {
+		Main.sendTimer = haxe_Timer.delay(function() {
+			Main.messageAll(Main.ary_cmds);
+			Main.sendTimer = null;
+		},Main.keepTime);
+		haxe_Log.trace("delay",{ fileName : "Main.hx", lineNumber : 67, className : "Main", methodName : "pushCmds", customParams : [Main.sendTimer]});
+	}
 };
 Main.messageAll = function(content) {
+	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 72, className : "Main", methodName : "messageAll"});
 	Main.j("#txt_output2").html("messageAll");
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : Math.floor(new Date().getTime() / 1000)},Main.handleResponse(function(ret) {
@@ -434,7 +443,6 @@ Main.prototype = {
 					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
 					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
 					_g.createSelfStack();
-					_g.keepSend();
 				});
 			}));
 			break;
@@ -494,6 +502,11 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -574,6 +587,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -1381,7 +1413,7 @@ Main.otherPlayerId = [];
 Main.ary_cards = [];
 Main.ary_cmds = [];
 Main.tmpl_card = Main.j("#tmpl_card");
-Main.keepTime = 1000;
+Main.keepTime = 5000;
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";
@@ -1406,5 +1438,3 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

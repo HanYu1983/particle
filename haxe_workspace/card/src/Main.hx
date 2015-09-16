@@ -25,6 +25,8 @@ class Main
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
+	static var sendTimer:Timer = null;
+	
 	#if debug
 	static var keepTime = 1000;
 	#else
@@ -50,11 +52,25 @@ class Main
 	}
 	
 	public static function pushCmds( content:Dynamic ) {
+		
 		ary_cmds.push( content );
 		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
+		
+		trace( 'push', sendTimer );
+		if ( sendTimer == null ) {
+			
+			sendTimer = Timer.delay( function() {
+				messageAll( ary_cmds );
+				sendTimer = null;
+			}, keepTime );
+			
+			trace( 'delay', sendTimer );
+		}
 	}
 	
 	public static function messageAll( content:Array<Dynamic> ) {
+		trace( 'messageAll' );
+		
 		j( '#txt_output2' ).html( 'messageAll' );
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
@@ -205,7 +221,7 @@ class Main
 						j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
 						installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 						createSelfStack();
-						keepSend();
+					//	keepSend();
 					});
 				}));
 		}
