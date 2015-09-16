@@ -126,6 +126,10 @@ class Model extends Mediator
 						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_D:
+						ary_select = Lambda.array( Lambda.filter( Main.ary_cards, function( card:Dynamic ) {
+							return ( card.owner == Main.playerId );
+						}));
+						sendNotification( on_select_cards, { ary_select:ary_select } );
 					case KeyboardEvent.DOM_VK_F:
 						if ( Main.flip( ary_select ) ) {
 							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );

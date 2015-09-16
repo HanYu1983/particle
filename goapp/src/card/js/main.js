@@ -135,6 +135,15 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
+Lambda.filter = function(it,f) {
+	var l = new List();
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		if(f(x)) l.add(x);
+	}
+	return l;
+};
 Lambda.fold = function(it,f,first) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -189,6 +198,9 @@ List.prototype = {
 			l = l[1];
 		}
 		return false;
+	}
+	,iterator: function() {
+		return new _$List_ListIterator(this.h);
 	}
 	,__class__: List
 };
@@ -1050,6 +1062,11 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 68:
+				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
+					return card.owner == Main.playerId;
+				}));
+				console.log(this.ary_select);
+				this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 				break;
 			case 70:
 				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select.slice(0)}});
