@@ -28,7 +28,7 @@ class Main
 	#if debug
 	static var keepTime = 1000;
 	#else
-	static var keepTime = 1000 * 10;
+	static var keepTime = 1000 * 5;
 	#end
 	
 	function new() {
@@ -51,7 +51,6 @@ class Main
 	
 	public static function pushCmds( content:Dynamic ) {
 		ary_cmds.push( content );
-		trace( content );
 		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
 	}
 	
@@ -78,8 +77,6 @@ class Main
 		var allCmds:Array<Dynamic> = Lambda.fold( ret.Info, function( info, curr:Array<Dynamic> ) {
 			return curr.concat( Json.parse( info.Content ) );
 		}, []);
-		
-		trace( Json.stringify( allCmds ) );
 		
 		var prev:Dynamic = lastPromise;
 		
@@ -135,9 +132,6 @@ class Main
 	}
 	
 	function callAction( content:Dynamic ) {
-		trace( content );
-		trace( content.content );
-		
 		if ( content.content.ary_select != null ) {
 			content.content.ary_select = Lambda.fold( content.content.ary_select, function( remoteCard, curr ) {
 				var localCard = getCardsById( remoteCard.id );
@@ -151,7 +145,6 @@ class Main
 			}, []);
 		}
 		
-		trace( content.cmd );
 		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {

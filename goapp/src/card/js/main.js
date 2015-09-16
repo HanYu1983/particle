@@ -198,7 +198,6 @@ var Main = function() {
 Main.__name__ = true;
 Main.pushCmds = function(content) {
 	Main.ary_cmds.push(content);
-	console.log(content);
 	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
 };
 Main.messageAll = function(content) {
@@ -356,7 +355,6 @@ Main.prototype = {
 		var allCmds = Lambda.fold(ret.Info,function(info,curr) {
 			return curr.concat(JSON.parse(info.Content));
 		},[]);
-		console.log(JSON.stringify(allCmds));
 		var prev = this.lastPromise;
 		Lambda.foreach(allCmds,function(cmd) {
 			_g.lastPromise = _g.callAction(cmd);
@@ -376,8 +374,6 @@ Main.prototype = {
 		});
 	}
 	,callAction: function(content) {
-		console.log(content);
-		console.log(content.content);
 		if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
 			var localCard = Main.getCardsById(remoteCard.id);
 			if(localCard != null) {
@@ -388,7 +384,6 @@ Main.prototype = {
 			}
 			return curr;
 		},[]);
-		console.log(content.cmd);
 		Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
 		var _g = content.cmd;
 		switch(_g) {
