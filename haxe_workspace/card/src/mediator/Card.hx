@@ -72,6 +72,9 @@ class Card extends Mediator
 						showRelate( notification.getBody().showRelate );
 						seeCard( notification.getBody().seeCard );
 						setView();
+					case 'moveCards':
+						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						moveCard( notification.getBody().select.pos[0], notification.getBody().select.pos[1] );
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -126,6 +129,7 @@ class Card extends Mediator
 			left:x,
 			top:y
 		});
+		
 	}
 	
 	function focusCard( ?focus ) {

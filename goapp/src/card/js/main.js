@@ -58,7 +58,7 @@ Animate.rotate = function(ary_select,d) {
 		Main.rotate(ary_select);
 		haxe_Timer.delay(function() {
 			d1.resolve();
-		},200);
+		},300);
 		return d1;
 	};
 };
@@ -76,6 +76,16 @@ Animate.listSeparate = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
 		Main.listSeparate(ary_select,pos_mouse);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
+Animate.moveCards = function(ary_select,pos_mouse) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.moveCards(ary_select,pos_mouse);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},1000);
@@ -328,6 +338,16 @@ Main.listSeparate = function(ary_select,pos_mouse) {
 		return true;
 	});
 };
+Main.moveCards = function(ary_select,pos_mouse) {
+	var offset_0 = pos_mouse[0] - ary_select[0].pos[0];
+	var offset_1 = pos_mouse[1] - ary_select[0].pos[1];
+	Lambda.foreach(ary_select,function(select) {
+		select.pos[0] += offset_0;
+		select.pos[1] += offset_1;
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, mouse : pos_mouse, pos : Lambda.indexOf(ary_select,select), count : ary_select.length},"moveCards");
+		return true;
+	});
+};
 Main.getCardsById = function(id) {
 	return Lambda.find(Main.ary_cards,function(card) {
 		return id == card.id;
@@ -366,7 +386,7 @@ Main.prototype = {
 		var _g1 = 0;
 		while(_g1 < 30) {
 			var i = _g1++;
-			_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : "", deg : 0, back : true});
+			_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true});
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
@@ -430,6 +450,8 @@ Main.prototype = {
 			return Animate.list(content.content.ary_select,content.content.pos_mouse);
 		case "listSeparateReverse":
 			return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
+		case "moveCards":
+			return Animate.moveCards(content.content.ary_select,content.content.pos_mouse);
 		default:
 			js_Browser.alert("asb");
 			return null;
@@ -459,11 +481,7 @@ Main.prototype = {
 		switch(type) {
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				_g.callForOthers(function() {
-					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
-					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
-					_g.createSelfStack();
-				});
+				_g.createSelfStack();
 			}));
 			break;
 		}
@@ -836,6 +854,10 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 				this.seeCard(notification.getBody().seeCard);
 				this.setView();
 				break;
+			case "moveCards":
+				if(!this.checkSelf(notification.getBody().select.id)) return;
+				this.moveCard(notification.getBody().select.pos[0],notification.getBody().select.pos[1]);
+				break;
 			case "list":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
@@ -1025,6 +1047,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				Main.pushCmds({ cmd : "listSeparateReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 65:
+				Main.moveCards(this.ary_select,this.pos_mouse);
+				Main.pushCmds({ cmd : "moveCards", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 83:
 				Main.shuffle(this.ary_select,this.pos_mouse.slice(0));
@@ -1431,3 +1455,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

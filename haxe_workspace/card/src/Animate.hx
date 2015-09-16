@@ -67,7 +67,7 @@ class Animate
 			Main.rotate( ary_select );
 			Timer.delay( function() {
 				d.resolve();
-			}, 200 );
+			}, 300 );
 			return d;
 		}
 	}
@@ -87,6 +87,17 @@ class Animate
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
 			Main.listSeparate( ary_select, pos_mouse );
+			Timer.delay( function() {
+				d.resolve();
+			}, 1000 );
+			return d;
+		}
+	}
+	
+	public static function moveCards( ary_select, pos_mouse ) {
+		return function(){
+			var d:Dynamic = Main.j.Deferred();
+			Main.moveCards( ary_select, pos_mouse );
 			Timer.delay( function() {
 				d.resolve();
 			}, 1000 );

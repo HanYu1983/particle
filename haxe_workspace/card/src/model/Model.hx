@@ -114,6 +114,8 @@ class Model extends Mediator
 						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_A:
+						Main.moveCards( ary_select, pos_mouse );
+						Main.pushCmds( { cmd:'moveCards', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_S:
 						Main.shuffle( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );

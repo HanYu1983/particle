@@ -44,7 +44,7 @@ class Main
 	}
 	
 	function createSelfStack() {
-		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', deg:0, back:true } ];
+		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', deg:0, pos:[0, 0], back:true } ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
 			pushCmds( { cmd:'addCards', content:stack } );
@@ -181,6 +181,8 @@ class Main
 				return Animate.list( content.content.ary_select, content.content.pos_mouse );
 			case 'listSeparateReverse':
 				return Animate.listSeparate( content.content.ary_select, content.content.pos_mouse );
+			case 'moveCards':
+				return Animate.moveCards( content.content.ary_select, content.content.pos_mouse );
 			case _:
 				Browser.alert( 'asb' );
 				return null;
@@ -346,6 +348,19 @@ class Main
 	public static function listSeparate( ary_select:Dynamic, pos_mouse ) {
 		Lambda.foreach( ary_select, function( select ) {
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select ), count:ary_select.length  }, 'list_separate' );
+			return true;
+		});
+	}
+	
+	public static function moveCards( ary_select:Dynamic, pos_mouse ) {
+		var offset = [
+			pos_mouse[0] - ary_select[0].pos[0],
+			pos_mouse[1] - ary_select[0].pos[1]
+		];
+		Lambda.foreach( ary_select, function( select ) {
+			select.pos[0] += offset[0];
+			select.pos[1] += offset[1];
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select ), count:ary_select.length  }, 'moveCards' );
 			return true;
 		});
 	}
