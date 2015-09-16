@@ -173,11 +173,13 @@ var api = api || {};
 	function installPollMessageCallback( data, cb ){
 		var fn = arguments.callee
 		pollMessage( data, function( err, ret ){
-			console.log( arguments )
 			if( err == null ){
 				cb( null, ret )
 			}
-			fn( data, cb )
+			//fn( data, cb )
+			setTimeout( function(){
+				fn( data, cb )
+			}, 1000 * 5)
 		})
 	}
 	
