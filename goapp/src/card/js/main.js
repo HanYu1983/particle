@@ -232,7 +232,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	this.lastPromise = null;
-	Main.j("#txt_id").html("playerId: " + Main.playerId);
+	Main.j("#txt_id").html(Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
@@ -498,10 +498,7 @@ Main.prototype = {
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
 				Main.getCardPackage("gundamWar",Main.handleResponse(function(ret1) {
 					Main.cardPackage = ret1;
-					_g.callForOthers(function() {
-						Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
-						_g.createSelfStack();
-					});
+					_g.createSelfStack();
 				}));
 			}));
 			break;
@@ -1511,3 +1508,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

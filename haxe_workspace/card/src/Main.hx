@@ -35,7 +35,7 @@ class Main
 	#end
 	
 	function new() {
-		j( '#txt_id' ).html( 'playerId: ' + playerId );
+		j( '#txt_id' ).html( playerId );
 		
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
@@ -214,7 +214,6 @@ class Main
 							j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
 							//installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 							createSelfStack();
-						//	keepSend();
 						});
 						#end
 					}));
