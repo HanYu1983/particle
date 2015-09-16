@@ -86,7 +86,7 @@ class Card extends Mediator
 						listStack( notification.getBody().mouse, notification.getBody().pos, 2, 2, notification.getBody().count );
 					case 'list_separate':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
-						listStackSeprate( notification.getBody().mouse, notification.getBody().pos, 100, 100, notification.getBody().count );
+						listStackSeprate( notification.getBody().mouse, notification.getBody().pos, 55, 80, notification.getBody().count );
 					case 'list_shuffle':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );

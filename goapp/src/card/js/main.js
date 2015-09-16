@@ -845,7 +845,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 				break;
 			case "list_separate":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
-				this.listStackSeprate(notification.getBody().mouse,notification.getBody().pos,100,100,notification.getBody().count);
+				this.listStackSeprate(notification.getBody().mouse,notification.getBody().pos,55,80,notification.getBody().count);
 				break;
 			case "list_shuffle":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
