@@ -118,7 +118,7 @@ describe('測試卡片方法呼叫', function() {
 		})
 	})
 	
-	it('連傳10個訊息給han', function( done ){
+	it('連傳9個訊息給han', function( done ){
 		
 		function sendMessage( msg ){
 			return function( cb ){
@@ -138,8 +138,7 @@ describe('測試卡片方法呼叫', function() {
 			sendMessage('t6'),
 			sendMessage('t7'),
 			sendMessage('t8'),
-			sendMessage('t9'),
-			sendMessage('t10')
+			sendMessage('t9')
 		], function(err){
 			assert.ifError( err )
 			done()
@@ -147,22 +146,22 @@ describe('測試卡片方法呼叫', function() {
 		
 	})
 	
-	it('必須有11個訊息', function( done ){
+	it('必須有10個訊息', function( done ){
 		callApi( '/fn/card/message/', null, function( err, data ){
 			assert.ifError( err )
 			var json = JSON.parse( data )
 			assert.ifError( json.Error )
-			assert.equal( 11, json.Info.length )
+			assert.equal( 10, json.Info.length )
 			done()
 		})
 	})
 
-	it('han必須可以取得11個訊息', function( done ){
+	it('han必須可以取得10個訊息', function( done ){
 		callApi( '/fn/card/longPollingTargetMessage', {FBID: "han"}, function( err, data ){
 			assert.ifError( err )
 			var json = JSON.parse( data )
 			assert.ifError( json.Error )
-			assert.equal( 11, json.Info.length )
+			assert.equal( 10, json.Info.length )
 			done()
 		})
 	})

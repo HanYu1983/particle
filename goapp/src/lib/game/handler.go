@@ -18,14 +18,9 @@ var _ = time.Millisecond
 
 func WithTransaction ( ctx appengine.Context, retry int, fn func(c appengine.Context)error ) error {
   var err error
-  RunTransaction := func() error {
-    err = datastore.RunInTransaction(ctx, fn, nil)
-    return err
-  }
-  
   var times int
   for times < retry {
-    err = RunTransaction()
+    err = datastore.RunInTransaction(ctx, fn, nil)
     if err == datastore.ErrConcurrentTransaction {
       // redo RunTransaction
       
@@ -34,12 +29,6 @@ func WithTransaction ( ctx appengine.Context, retry int, fn func(c appengine.Con
     
     }
     times += 1
-    /*
-    if err == nil {
-      break
-    }
-    times += 1
-    */
   }
   return err
 }
@@ -376,7 +365,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
   go func (){
     defer close( retCh )
     defer close( errCh )
-    maxtime := 3  // use long polling tech if maxtime > 1
+    maxtime := 1  // use long polling tech if maxtime > 1
     var times int
     var ok bool
     

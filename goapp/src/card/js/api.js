@@ -177,12 +177,10 @@ var api = api || {};
 			if( err == null ){
 				cb( null, ret )
 			}
-			fn( data, cb )
-			/*
+			//fn( data, cb )
 			setTimeout( function(){
 				fn( data, cb )
-			}, 1000 * 5)
-			*/
+			}, 1000 * 10)
 		})
 	}
 	
