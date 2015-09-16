@@ -7,6 +7,7 @@ import js.html.NotifyPaintEvent;
 import mediator.Card;
 import js.Lib;
 import mediator.Layer;
+import mediator.UI;
 import model.Model;
 import org.puremvc.haxe.patterns.facade.Facade;
 
@@ -26,17 +27,18 @@ class Main
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
 	static var sendTimer:Timer = null;
+	public static var cardPackage = null;
 	
 	#if debug
 	static var keepTime = 1000;
 	#else
-	static var keepTime = 1000 * 5;
+	static var keepTime = 1000 * 1;
 	#end
 	
 	function new() {
+		j( '#txt_id' ).html( playerId );
 		
-		j( '#txt_id' ).html( 'playerId: ' + playerId );
-		
+		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
@@ -44,7 +46,20 @@ class Main
 	}
 	
 	function createSelfStack() {
-		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', back:true } ];
+		function tempGetCardId( i ) {
+			return ( i + 1000 ) + '.jpg';
+		}
+		
+		var stack = [for ( i in 0...30 ) { 	id:getId(), 
+											cardId:tempGetCardId(i + 1) , 
+											name:i, 
+											owner:playerId, 
+											relate:'', 
+											deg:0, 
+											pos:[0, 0], 
+											back:true,
+											showTo:''
+											} ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
 			pushCmds( { cmd:'addCards', content:stack } );
@@ -56,15 +71,12 @@ class Main
 		ary_cmds.push( content );
 		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
 		
-		trace( 'push', sendTimer );
 		if ( sendTimer == null ) {
 			
 			sendTimer = Timer.delay( function() {
 				messageAll( ary_cmds );
 				sendTimer = null;
 			}, keepTime );
-			
-			trace( 'delay', sendTimer );
 		}
 	}
 	
@@ -115,36 +127,6 @@ class Main
 				lastPromise = null;
 			});
 		}
-		
-		/*
-		var curr, prev
-		if promise != null {
-			prev = promise
-		}
-		for i ~ count {
-			curr = genPromise( cmd )
-			promise = curr
-			if prev == null {
-				prev = curr
-			} else {
-				prev.pipe( curr )
-				prev = curr
-			}
-		}
-		
-		if curr != null {
-			curr.done() {
-				promise = null
-			}
-		}
-		*/
-		
-		/*
-		Lambda.foreach( ret.Info, function( info ) {
-			callAction( Json.parse( info.Content ));
-			return true;
-		});
-		*/
 	}
 	
 	function callAction( content:Dynamic ) {
@@ -155,12 +137,15 @@ class Main
 					localCard.owner = remoteCard.owner;
 					localCard.relate = remoteCard.relate;
 					localCard.back = remoteCard.back;
+					localCard.pos = remoteCard.pos;
+					localCard.deg = remoteCard.deg;
 					curr.push( localCard );
 				}
 				return curr;
 			}, []);
 		}
 		
+		trace( content.cmd );
 		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {
@@ -178,6 +163,16 @@ class Main
 				return Animate.setRelate( content.content.ary_select );
 			case 'shuffle':
 				return Animate.shuffle( content.content.ary_select, content.content.pos_mouse );
+			case 'shuffleSeparate':
+				return Animate.shuffleSeperate( content.content.ary_select, content.content.pos_mouse );
+			case 'rotate':
+				return Animate.rotate( content.content.ary_select, content.content.deg );
+			case 'listCardReverse':
+				return Animate.list( content.content.ary_select, content.content.pos_mouse );
+			case 'listSeparateReverse':
+				return Animate.listSeparate( content.content.ary_select, content.content.pos_mouse );
+			case 'moveCards':
+				return Animate.moveCards( content.content.ary_select, content.content.pos_mouse );
 			case _:
 				Browser.alert( 'asb' );
 				return null;
@@ -212,38 +207,49 @@ class Main
 	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnPollingClick':
+				pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 			case 'onBtnCreateClick':
 				createUser( {
 					FBID:playerId,
 					Name:playerId
 				}, handleResponse( function( ret ) {
-					callForOthers( function() {
-						j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
-						installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
+					
+					getCardPackage( 'gundamWar', handleResponse( function( ret ) {
+						cardPackage = ret;
+						
+						#if debug 
 						createSelfStack();
-					//	keepSend();
-					});
+						#else
+						callForOthers( function() {
+							j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
+							//installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
+							createSelfStack();
+						});
+						#end
+					}));
+					
 				}));
 		}
 	}
 	
 	public static function applyValue( ary_select:Array<Dynamic> ) {
 		Lambda.foreach( ary_select, function( card:Dynamic ) {
-			
-			var seeCard = switch( card.owner ) {
-				case '':false;
-				case owner: ( owner == card.relate ) && ( owner == playerId );
-			}
-			
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, 
+			Facade.getInstance().sendNotification( Model.on_state_change, { 
+																			select:card, 
 																			showRelate:Main.playerId == card.relate, 
 																			showOwner:Main.playerId == card.owner, 
-																			seeCard: seeCard 
+																			seeCard: seeCard( card ) 
 																			}, 'ownerAndRelate_change' );
 			return true;
 		});
-		
-		
+	}
+	
+	public static function seeCard( card ) {
+		return switch( card.owner ) {
+			case '':false;
+			case owner: ( owner == card.relate ) && ( owner == playerId );
+		}
 	}
 	
 	public static function setOwner( ary_select:Array<Dynamic> ) {
@@ -292,25 +298,17 @@ class Main
 		return send;
 	}
 	
-	public static function shuffle( ary_select:Array<Dynamic>, pos_mouse ) {
-		ary_select.sort( function ( a, b ) {
-			return Math.random() > .5 ? 1 : -1;
-		});
-		Lambda.foreach( ary_select, function( select ) {
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list_shuffle' );
+	public static function rotate( ary_select:Array<Dynamic>, ?deg = 90 ) {
+		Lambda.foreach( ary_select, function( card ) {
+			card.deg += deg;
 			return true;
 		});
+		applyValue( ary_select );
 	}
 	
 	public static function createCard( model:Dynamic ) {
+		model.url = getCardImageUrlWithPackage( cardPackage, model.cardId );
 		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
-	}
-	
-	public static function listCard( ary_select:Dynamic, pos_mouse ) {
-		Lambda.foreach( ary_select, function( select ) {
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select ), count:ary_select.length  }, 'list' );
-			return true;
-		});
 	}
 	
 	public static function flip( ary_select:Dynamic ) {
@@ -327,9 +325,9 @@ class Main
 		return send;
 	}
 	
-	public static function listSeparate( ary_select:Dynamic, pos_mouse ) {
+	public static function moveCards( ary_select:Dynamic, pos_mouse, zsort ) {
 		Lambda.foreach( ary_select, function( select ) {
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select ), count:ary_select.length  }, 'list_separate' );
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, zsort:zsort }, 'moveCards' );
 			return true;
 		});
 	}
@@ -421,6 +419,14 @@ class Main
 	*/
 	public static function installPollMessageCallback( data, cb ) {
 		untyped __js__('api.installPollMessageCallback' )(data, cb );
+	}
+	
+	public static function getCardPackage( name, cb ) {
+		untyped __js__('api.getCardPackage' )( name, cb );
+	}
+	
+	public static function getCardImageUrlWithPackage( name:Dynamic, key ):String {
+		return untyped __js__('api.getCardImageUrlWithPackage' )( name, key );
 	}
 	
 	static function handleResponse( cb ) {

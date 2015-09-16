@@ -14,8 +14,10 @@ class Card extends Mediator
 	public static var card_down = 'card_down';
 	public static var card_enter = 'card_enter';
 	
+	var _card:Dynamic;
 	var _focus = false;
 	var _back = true;
+	var _deg = 0;
 	var _see = false;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -45,7 +47,6 @@ class Card extends Mediator
 	override public function listNotificationInterests():Array<String> 
 	{
 		return [ 	
-					Model.on_card_flip_change,
 					Model.on_state_change,
 					Model.on_select_cards
 				];
@@ -65,21 +66,19 @@ class Card extends Mediator
 				switch( notification.getType() ) {
 					case 'ownerAndRelate_change':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						_card = notification.getBody().select;
 						_back = notification.getBody().select.back;
+						rotateAnimation( notification.getBody().select.deg );
 						showOnwer( notification.getBody().showOwner );
 						showRelate( notification.getBody().showRelate );
 						seeCard( notification.getBody().seeCard );
 						setView();
-						/*
-					case 'owner_change':
+					case 'moveCards':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
-						showOnwer( notification.getBody().showOwner );
-						seeCard( notification.getBody().seeCard );
-					case 'relate_change':
-						if ( !checkSelf( notification.getBody().select.id ) ) return;
-						showRelate( notification.getBody().showRelate );
-						seeCard( notification.getBody().seeCard );
-						*/
+						moveCard( notification.getBody().select.pos[0], notification.getBody().select.pos[1] );
+						if ( notification.getBody().zsort )
+							sendNotification( card_enter, getViewComponent() );
+					/*
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -87,6 +86,7 @@ class Card extends Mediator
 					case 'list_separate':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						listStackSeprate( notification.getBody().mouse, notification.getBody().pos, 55, 80, notification.getBody().count );
+					*/
 					case 'list_shuffle':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -134,6 +134,7 @@ class Card extends Mediator
 			left:x,
 			top:y
 		});
+		
 	}
 	
 	function focusCard( ?focus ) {
@@ -161,6 +162,28 @@ class Card extends Mediator
 		sendNotification( card_down, { id:getMediatorName() } );
 	}
 	
+	function rotateAnimation( d:Int ) {
+		
+		Main.j({deg: _deg}).animate({deg: d}, {
+        duration: 300,
+			step: function(now) {
+				rotate( now );
+			}
+		});
+		
+		_deg = d;
+	}
+	
+	function rotate( d ) {
+		getViewComponent().css({
+			'-moz-transform':'rotate('+d+'deg)',
+			'-webkit-transform':'rotate('+d+'deg)',
+			'-o-transform':'rotate('+d+'deg)',
+			'-ms-transform':'rotate('+d+'deg)',
+			'transform':'rotate('+d+'deg)'
+		}); 
+	}
+	
 	function flip( ?value ) {
 		_back = value;
 		setView();
@@ -169,12 +192,14 @@ class Card extends Mediator
 	function setView() {
 		if ( _see ) {
 			getViewComponent().find( '.card_back' ).hide();
-			
+			_card.showTo = Main.playerId;
 		}else{
 			if ( _back ) {
 				getViewComponent().find( '.card_back' ).show();
+				_card.showTo = '';
 			}else {
 				getViewComponent().find( '.card_back' ).hide();
+				_card.showTo = Main.playerId;
 			}
 		}
 		
