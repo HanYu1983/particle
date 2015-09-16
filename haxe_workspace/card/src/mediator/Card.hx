@@ -16,6 +16,7 @@ class Card extends Mediator
 	
 	var _focus = false;
 	var _back = true;
+	var _deg = 0;
 	var _see = false;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -66,20 +67,11 @@ class Card extends Mediator
 					case 'ownerAndRelate_change':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						_back = notification.getBody().select.back;
+						rotateAnimation( notification.getBody().select.deg );
 						showOnwer( notification.getBody().showOwner );
 						showRelate( notification.getBody().showRelate );
 						seeCard( notification.getBody().seeCard );
 						setView();
-						/*
-					case 'owner_change':
-						if ( !checkSelf( notification.getBody().select.id ) ) return;
-						showOnwer( notification.getBody().showOwner );
-						seeCard( notification.getBody().seeCard );
-					case 'relate_change':
-						if ( !checkSelf( notification.getBody().select.id ) ) return;
-						showRelate( notification.getBody().showRelate );
-						seeCard( notification.getBody().seeCard );
-						*/
 					case 'list':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
 						sendNotification( card_enter, getViewComponent() );
@@ -159,6 +151,28 @@ class Card extends Mediator
 	
 	function onCardMouseDown( e ) {
 		sendNotification( card_down, { id:getMediatorName() } );
+	}
+	
+	function rotateAnimation( d:Int ) {
+		
+		Main.j({deg: _deg}).animate({deg: d}, {
+        duration: 300,
+			step: function(now) {
+				rotate( now );
+			}
+		});
+		
+		_deg = d;
+	}
+	
+	function rotate( d ) {
+		getViewComponent().css({
+			'-moz-transform':'rotate('+d+'deg)',
+			'-webkit-transform':'rotate('+d+'deg)',
+			'-o-transform':'rotate('+d+'deg)',
+			'-ms-transform':'rotate('+d+'deg)',
+			'transform':'rotate('+d+'deg)'
+		}); 
 	}
 	
 	function flip( ?value ) {

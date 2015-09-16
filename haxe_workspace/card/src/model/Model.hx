@@ -37,6 +37,8 @@ class Model extends Mediator
 				Layer.on_press_r,
 				Layer.on_press_c,
 				Layer.on_press_v,
+				Layer.on_press_z,
+				Layer.on_press_x,
 				Layer.on_press_enter,
 				Layer.on_body_mousemove,
 				Layer.on_select_cards
@@ -116,7 +118,13 @@ class Model extends Mediator
 				Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
 			case Layer.on_press_s:
 				Main.shuffle( ary_select, pos_mouse.slice( 0 ) );
-				Main.pushCmds( { cmd:'shuffle', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+				Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+			case Layer.on_press_z:
+				Main.rotate( ary_select, -90 );
+				Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select, deg:-90 } } );
+			case Layer.on_press_x:
+				Main.rotate( ary_select, 90 );
+				Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select, deg:90 } } );
 		}
 	}
 }

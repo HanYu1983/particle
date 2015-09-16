@@ -52,6 +52,16 @@ Animate.flip = function(ary_select) {
 		return d;
 	};
 };
+Animate.rotate = function(ary_select,d) {
+	return function() {
+		var d1 = Main.j.Deferred();
+		Main.rotate(ary_select);
+		haxe_Timer.delay(function() {
+			d1.resolve();
+		},200);
+		return d1;
+	};
+};
 Animate.list = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
@@ -199,17 +209,13 @@ Main.__name__ = true;
 Main.pushCmds = function(content) {
 	Main.ary_cmds.push(content);
 	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
-	haxe_Log.trace("push",{ fileName : "Main.hx", lineNumber : 59, className : "Main", methodName : "pushCmds", customParams : [Main.sendTimer]});
-	if(Main.sendTimer == null) {
-		Main.sendTimer = haxe_Timer.delay(function() {
-			Main.messageAll(Main.ary_cmds);
-			Main.sendTimer = null;
-		},Main.keepTime);
-		haxe_Log.trace("delay",{ fileName : "Main.hx", lineNumber : 67, className : "Main", methodName : "pushCmds", customParams : [Main.sendTimer]});
-	}
+	if(Main.sendTimer == null) Main.sendTimer = haxe_Timer.delay(function() {
+		Main.messageAll(Main.ary_cmds);
+		Main.sendTimer = null;
+	},Main.keepTime);
 };
 Main.messageAll = function(content) {
-	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 72, className : "Main", methodName : "messageAll"});
+	console.log("messageAll");
 	Main.j("#txt_output2").html("messageAll");
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : Math.floor(new Date().getTime() / 1000)},Main.handleResponse(function(ret) {
@@ -287,6 +293,14 @@ Main.shuffle = function(ary_select,pos_mouse) {
 		return true;
 	});
 };
+Main.rotate = function(ary_select,deg) {
+	if(deg == null) deg = 90;
+	Lambda.foreach(ary_select,function(card) {
+		card.deg += deg;
+		return true;
+	});
+	Main.applyValue(ary_select);
+};
 Main.createCard = function(model) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -352,7 +366,7 @@ Main.prototype = {
 		var _g1 = 0;
 		while(_g1 < 30) {
 			var i = _g1++;
-			_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : "", back : true});
+			_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : "", deg : 0, back : true});
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
@@ -410,6 +424,8 @@ Main.prototype = {
 			return Animate.setRelate(content.content.ary_select);
 		case "shuffle":
 			return Animate.shuffle(content.content.ary_select,content.content.pos_mouse);
+		case "rotate":
+			return Animate.rotate(content.content.ary_select,content.content.deg);
 		default:
 			js_Browser.alert("asb");
 			return null;
@@ -502,11 +518,6 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -587,25 +598,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -795,6 +787,7 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 });
 var mediator_Card = function(mediatorName,viewComponent) {
 	this._see = false;
+	this._deg = 0;
 	this._back = true;
 	this._focus = false;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
@@ -833,6 +826,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			case "ownerAndRelate_change":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
 				this._back = notification.getBody().select.back;
+				this.rotateAnimation(notification.getBody().select.deg);
 				this.showOnwer(notification.getBody().showOwner);
 				this.showRelate(notification.getBody().showRelate);
 				this.seeCard(notification.getBody().seeCard);
@@ -885,6 +879,16 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 	}
 	,onCardMouseDown: function(e) {
 		this.sendNotification(mediator_Card.card_down,{ id : this.getMediatorName()});
+	}
+	,rotateAnimation: function(d) {
+		var _g = this;
+		Main.j({ deg : this._deg}).animate({ deg : d},{ duration : 300, step : function(now) {
+			_g.rotate(now);
+		}});
+		this._deg = d;
+	}
+	,rotate: function(d) {
+		this.getViewComponent().css({ '-moz-transform' : "rotate(" + d + "deg)", '-webkit-transform' : "rotate(" + d + "deg)", '-o-transform' : "rotate(" + d + "deg)", '-ms-transform' : "rotate(" + d + "deg)", 'transform' : "rotate(" + d + "deg)"});
 	}
 	,flip: function(value) {
 		this._back = value;
@@ -939,8 +943,15 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		this.sendNotification(mediator_Layer.on_body_mousemove,{ x : e.pageX, y : e.pageY});
 	}
 	,onBodyKeyUp: function(e) {
+		console.log(e.which);
 		var _g = e.which;
 		switch(_g) {
+		case 88:
+			this.sendNotification(mediator_Layer.on_press_x);
+			break;
+		case 90:
+			this.sendNotification(mediator_Layer.on_press_z);
+			break;
 		case 67:
 			this.sendNotification(mediator_Layer.on_press_c);
 			break;
@@ -981,7 +992,7 @@ model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press_f,mediator_Layer.on_press_s,mediator_Layer.on_press_l,mediator_Layer.on_press_a,mediator_Layer.on_press_r,mediator_Layer.on_press_c,mediator_Layer.on_press_v,mediator_Layer.on_press_enter,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
+		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press_f,mediator_Layer.on_press_s,mediator_Layer.on_press_l,mediator_Layer.on_press_a,mediator_Layer.on_press_r,mediator_Layer.on_press_c,mediator_Layer.on_press_v,mediator_Layer.on_press_z,mediator_Layer.on_press_x,mediator_Layer.on_press_enter,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -1051,6 +1062,14 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		case "on_press_s":
 			Main.shuffle(this.ary_select,this.pos_mouse.slice(0));
 			Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
+			break;
+		case "on_press_z":
+			Main.rotate(this.ary_select,-90);
+			Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select, deg : -90}});
+			break;
+		case "on_press_x":
+			Main.rotate(this.ary_select,90);
+			Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select, deg : 90}});
 			break;
 		}
 	}
@@ -1413,7 +1432,7 @@ Main.otherPlayerId = [];
 Main.ary_cards = [];
 Main.ary_cmds = [];
 Main.tmpl_card = Main.j("#tmpl_card");
-Main.keepTime = 5000;
+Main.keepTime = 1000;
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";
@@ -1429,6 +1448,8 @@ mediator_Layer.on_press_a = "on_press_a";
 mediator_Layer.on_press_r = "on_press_r";
 mediator_Layer.on_press_c = "on_press_c";
 mediator_Layer.on_press_v = "on_press_v";
+mediator_Layer.on_press_x = "on_press_x";
+mediator_Layer.on_press_z = "on_press_z";
 mediator_Layer.on_press_enter = "on_press_enter";
 mediator_Layer.on_body_mousemove = "on_body_mousemove";
 model_Model.on_card_flip_change = "on_card_flip_change";

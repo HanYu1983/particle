@@ -30,7 +30,7 @@ class Main
 	#if debug
 	static var keepTime = 1000;
 	#else
-	static var keepTime = 1000 * 5;
+	static var keepTime = 1000 * 1;
 	#end
 	
 	function new() {
@@ -44,7 +44,7 @@ class Main
 	}
 	
 	function createSelfStack() {
-		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', back:true } ];
+		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', deg:0, back:true } ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
 			pushCmds( { cmd:'addCards', content:stack } );
@@ -56,15 +56,12 @@ class Main
 		ary_cmds.push( content );
 		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
 		
-		trace( 'push', sendTimer );
 		if ( sendTimer == null ) {
 			
 			sendTimer = Timer.delay( function() {
 				messageAll( ary_cmds );
 				sendTimer = null;
 			}, keepTime );
-			
-			trace( 'delay', sendTimer );
 		}
 	}
 	
@@ -178,6 +175,8 @@ class Main
 				return Animate.setRelate( content.content.ary_select );
 			case 'shuffle':
 				return Animate.shuffle( content.content.ary_select, content.content.pos_mouse );
+			case 'rotate':
+				return Animate.rotate( content.content.ary_select, content.content.deg );
 			case _:
 				Browser.alert( 'asb' );
 				return null;
@@ -217,12 +216,17 @@ class Main
 					FBID:playerId,
 					Name:playerId
 				}, handleResponse( function( ret ) {
+					
+					#if debug 
+					createSelfStack();
+					#else
 					callForOthers( function() {
 						j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
 						installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 						createSelfStack();
 					//	keepSend();
 					});
+					#end
 				}));
 		}
 	}
@@ -300,6 +304,14 @@ class Main
 			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, mouse:pos_mouse, pos:Lambda.indexOf( ary_select, select )  }, 'list_shuffle' );
 			return true;
 		});
+	}
+	
+	public static function rotate( ary_select:Array<Dynamic>, ?deg = 90 ) {
+		Lambda.foreach( ary_select, function( card ) {
+			card.deg += deg;
+			return true;
+		});
+		applyValue( ary_select );
 	}
 	
 	public static function createCard( model:Dynamic ) {

@@ -61,6 +61,17 @@ class Animate
 		}
 	}
 	
+	public static function rotate( ary_select, d ) {
+		return function(){
+			var d:Dynamic = Main.j.Deferred();
+			Main.rotate( ary_select );
+			Timer.delay( function() {
+				d.resolve();
+			}, 200 );
+			return d;
+		}
+	}
+	
 	public static function list( ary_select, pos_mouse ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
@@ -93,4 +104,6 @@ class Animate
 			return d;
 		}
 	}
+	
+	
 }

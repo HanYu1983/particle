@@ -1,5 +1,6 @@
 package mediator;
 
+import js.html.KeyboardEvent;
 import model.Model;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
@@ -20,6 +21,8 @@ class Layer extends Mediator
 	public static var on_press_r = 'on_press_r';
 	public static var on_press_c = 'on_press_c';
 	public static var on_press_v = 'on_press_v';
+	public static var on_press_x = 'on_press_x';
+	public static var on_press_z = 'on_press_z';
 	public static var on_press_enter = 'on_press_enter';
 	public static var on_body_mousemove = 'on_body_mousemove';
 	
@@ -67,8 +70,13 @@ class Layer extends Mediator
 	}
 	
 	function onBodyKeyUp( e ) {
-	//	trace( e.which ) ;
+		trace( e.which ) ;
+		
 		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_X:
+				sendNotification( on_press_x );
+			case KeyboardEvent.DOM_VK_Z:
+				sendNotification( on_press_z );
 		//c
 			case 67:
 				sendNotification( on_press_c );
