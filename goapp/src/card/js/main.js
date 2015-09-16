@@ -455,11 +455,7 @@ Main.prototype = {
 		switch(type) {
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				_g.callForOthers(function() {
-					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
-					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
-					_g.createSelfStack();
-				});
+				_g.createSelfStack();
 			}));
 			break;
 		}
@@ -1459,3 +1455,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map
