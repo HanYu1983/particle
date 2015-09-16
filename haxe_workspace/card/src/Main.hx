@@ -112,36 +112,6 @@ class Main
 				lastPromise = null;
 			});
 		}
-		
-		/*
-		var curr, prev
-		if promise != null {
-			prev = promise
-		}
-		for i ~ count {
-			curr = genPromise( cmd )
-			promise = curr
-			if prev == null {
-				prev = curr
-			} else {
-				prev.pipe( curr )
-				prev = curr
-			}
-		}
-		
-		if curr != null {
-			curr.done() {
-				promise = null
-			}
-		}
-		*/
-		
-		/*
-		Lambda.foreach( ret.Info, function( info ) {
-			callAction( Json.parse( info.Content ));
-			return true;
-		});
-		*/
 	}
 	
 	function callAction( content:Dynamic ) {
