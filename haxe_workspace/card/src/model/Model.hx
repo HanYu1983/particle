@@ -1,5 +1,6 @@
 package model;
 
+import js.html.KeyboardEvent;
 import mediator.Card;
 import mediator.Layer;
 import org.puremvc.haxe.interfaces.INotification;
@@ -30,6 +31,8 @@ class Model extends Mediator
 		return [Card.card_click, 
 				Card.card_enter, 
 				Layer.on_layout_mouse_up, 
+				Layer.on_press,
+				/*
 				Layer.on_press_f,
 				Layer.on_press_s,
 				Layer.on_press_l,
@@ -40,6 +43,7 @@ class Model extends Mediator
 				Layer.on_press_z,
 				Layer.on_press_x,
 				Layer.on_press_enter,
+				*/
 				Layer.on_body_mousemove,
 				Layer.on_select_cards
 				];
@@ -81,8 +85,44 @@ class Model extends Mediator
 				}, [] );
 				
 				sendNotification( on_select_cards, { ary_select:ary_select } );
-			case Layer.on_press_enter:
-				sendNotification( on_state_change, {x:pos_mouse[0], y:pos_mouse[1] }, 'move' );
+			case Layer.on_press:
+				switch( notification.getType() ) {
+					case KeyboardEvent.DOM_VK_C:
+						if ( Main.setOwner( ary_select ) ) 
+							Main.pushCmds( { cmd:'setOwner', content:{ ary_select:ary_select } } );
+					case KeyboardEvent.DOM_VK_V:
+						if ( Main.setRelate( ary_select ) )
+							Main.pushCmds( { cmd:'setRelate', content:{ ary_select:ary_select } } );
+					case KeyboardEvent.DOM_VK_Z:
+						Main.rotate( ary_select, -90 );
+						Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select, deg:-90 } } );
+					case KeyboardEvent.DOM_VK_X:
+						Main.rotate( ary_select, 90 );
+						Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select, deg:90 } } );
+					case KeyboardEvent.DOM_VK_Q:
+						Main.listCard( ary_select, pos_mouse.slice( 0 ) );
+						Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+					case KeyboardEvent.DOM_VK_W:
+						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
+						Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+					case KeyboardEvent.DOM_VK_E:
+					case KeyboardEvent.DOM_VK_R:
+						ary_select.reverse();
+						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
+					case KeyboardEvent.DOM_VK_A:
+					case KeyboardEvent.DOM_VK_S:
+						Main.shuffle( ary_select, pos_mouse.slice( 0 ) );
+						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+					case KeyboardEvent.DOM_VK_D:
+					case KeyboardEvent.DOM_VK_F:
+					case KeyboardEvent.DOM_VK_BACK_SPACE:
+						if ( Main.flip( ary_select ) ) {
+							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select } } );
+						}
+				}
+			
+			//case Layer.on_press_enter:
+			//	sendNotification( on_state_change, {x:pos_mouse[0], y:pos_mouse[1] }, 'move' );
 			case Layer.on_body_mousemove:
 				pos_mouse[0] = notification.getBody().x;
 				pos_mouse[1] = notification.getBody().y;
@@ -97,34 +137,26 @@ class Model extends Mediator
 				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
+				/*
 			case Layer.on_press_c:
-				if ( Main.setOwner( ary_select ) ) 
-					Main.pushCmds( { cmd:'setOwner', content:{ ary_select:ary_select } } );
+				
 			case Layer.on_press_v:
-				if ( Main.setRelate( ary_select ) )
-					Main.pushCmds( { cmd:'setRelate', content:{ ary_select:ary_select } } );
+				
 			case Layer.on_press_r:
-				ary_select.reverse();
-				Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
+				
 			case Layer.on_press_f:
-				if ( Main.flip( ary_select ) ) {
-					Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select } } );
-				}
+				
 			case Layer.on_press_l:
-				Main.listCard( ary_select, pos_mouse.slice( 0 ) );
-				Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+				
 			case Layer.on_press_a:
-				Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
-				Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+				
 			case Layer.on_press_s:
-				Main.shuffle( ary_select, pos_mouse.slice( 0 ) );
-				Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
+				
 			case Layer.on_press_z:
-				Main.rotate( ary_select, -90 );
-				Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select, deg:-90 } } );
+				
 			case Layer.on_press_x:
-				Main.rotate( ary_select, 90 );
-				Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select, deg:90 } } );
+				
+				*/
 		}
 	}
 }

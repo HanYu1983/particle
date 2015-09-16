@@ -939,43 +939,7 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		this.sendNotification(mediator_Layer.on_body_mousemove,{ x : e.pageX, y : e.pageY});
 	}
 	,onBodyKeyUp: function(e) {
-		console.log(e.which);
-		var _g = e.which;
-		switch(_g) {
-		case 88:
-			this.sendNotification(mediator_Layer.on_press_x);
-			break;
-		case 90:
-			this.sendNotification(mediator_Layer.on_press_z);
-			break;
-		case 67:
-			this.sendNotification(mediator_Layer.on_press_c);
-			break;
-		case 86:
-			this.sendNotification(mediator_Layer.on_press_v);
-			break;
-		case 82:
-			this.sendNotification(mediator_Layer.on_press_r);
-			break;
-		case 65:
-			this.sendNotification(mediator_Layer.on_press_a);
-			break;
-		case 76:
-			this.sendNotification(mediator_Layer.on_press_l);
-			break;
-		case 83:
-			this.sendNotification(mediator_Layer.on_press_s);
-			break;
-		case 77:
-			this.sendNotification(mediator_Layer.on_press_m);
-			break;
-		case 70:
-			this.sendNotification(mediator_Layer.on_press_f);
-			break;
-		case 13:
-			this.sendNotification(mediator_Layer.on_press_enter);
-			break;
-		}
+		this.sendNotification(mediator_Layer.on_press,null,e.which);
 	}
 	,__class__: mediator_Layer
 });
@@ -988,7 +952,7 @@ model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press_f,mediator_Layer.on_press_s,mediator_Layer.on_press_l,mediator_Layer.on_press_a,mediator_Layer.on_press_r,mediator_Layer.on_press_c,mediator_Layer.on_press_v,mediator_Layer.on_press_z,mediator_Layer.on_press_x,mediator_Layer.on_press_enter,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
+		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -1017,8 +981,51 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			},[]);
 			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 			break;
-		case "on_press_enter":
-			this.sendNotification(model_Model.on_state_change,{ x : this.pos_mouse[0], y : this.pos_mouse[1]},"move");
+		case "on_press":
+			var _g1 = notification.getType();
+			switch(_g1) {
+			case 67:
+				if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select}});
+				break;
+			case 86:
+				if(Main.setRelate(this.ary_select)) Main.pushCmds({ cmd : "setRelate", content : { ary_select : this.ary_select}});
+				break;
+			case 90:
+				Main.rotate(this.ary_select,-90);
+				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select, deg : -90}});
+				break;
+			case 88:
+				Main.rotate(this.ary_select,90);
+				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select, deg : 90}});
+				break;
+			case 81:
+				Main.listCard(this.ary_select,this.pos_mouse.slice(0));
+				Main.pushCmds({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
+				break;
+			case 87:
+				Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
+				Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
+				break;
+			case 69:
+				break;
+			case 82:
+				this.ary_select.reverse();
+				Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
+				break;
+			case 65:
+				break;
+			case 83:
+				Main.shuffle(this.ary_select,this.pos_mouse.slice(0));
+				Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
+				break;
+			case 68:
+				break;
+			case 70:
+				break;
+			case 8:
+				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select}});
+				break;
+			}
 			break;
 		case "on_body_mousemove":
 			this.pos_mouse[0] = notification.getBody().x;
@@ -1033,39 +1040,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "on_layout_mouse_up":
 			this.sendNotification(model_Model.on_card_move,notification.getBody());
-			break;
-		case "on_press_c":
-			if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select}});
-			break;
-		case "on_press_v":
-			if(Main.setRelate(this.ary_select)) Main.pushCmds({ cmd : "setRelate", content : { ary_select : this.ary_select}});
-			break;
-		case "on_press_r":
-			this.ary_select.reverse();
-			Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
-			break;
-		case "on_press_f":
-			if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select}});
-			break;
-		case "on_press_l":
-			Main.listCard(this.ary_select,this.pos_mouse.slice(0));
-			Main.pushCmds({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
-			break;
-		case "on_press_a":
-			Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
-			Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
-			break;
-		case "on_press_s":
-			Main.shuffle(this.ary_select,this.pos_mouse.slice(0));
-			Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
-			break;
-		case "on_press_z":
-			Main.rotate(this.ary_select,-90);
-			Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select, deg : -90}});
-			break;
-		case "on_press_x":
-			Main.rotate(this.ary_select,90);
-			Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select, deg : 90}});
 			break;
 		}
 	}
@@ -1436,17 +1410,7 @@ mediator_Card.card_down = "card_down";
 mediator_Card.card_enter = "card_enter";
 mediator_Layer.on_layout_mouse_up = "on_layout_mouse_up";
 mediator_Layer.on_select_cards = "on_select_cards";
-mediator_Layer.on_press_f = "on_press_f";
-mediator_Layer.on_press_m = "on_press_m";
-mediator_Layer.on_press_s = "on_press_s";
-mediator_Layer.on_press_l = "on_press_l";
-mediator_Layer.on_press_a = "on_press_a";
-mediator_Layer.on_press_r = "on_press_r";
-mediator_Layer.on_press_c = "on_press_c";
-mediator_Layer.on_press_v = "on_press_v";
-mediator_Layer.on_press_x = "on_press_x";
-mediator_Layer.on_press_z = "on_press_z";
-mediator_Layer.on_press_enter = "on_press_enter";
+mediator_Layer.on_press = "on_press";
 mediator_Layer.on_body_mousemove = "on_body_mousemove";
 model_Model.on_card_flip_change = "on_card_flip_change";
 model_Model.on_card_enter = "on_card_enter";

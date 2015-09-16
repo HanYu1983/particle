@@ -13,6 +13,7 @@ class Layer extends Mediator
 {
 	public static var on_layout_mouse_up = 'on_layout_mouse_up';
 	public static var on_select_cards = 'on_select_cards';
+	/*
 	public static var on_press_f = 'on_press_f';
 	public static var on_press_m = 'on_press_m';
 	public static var on_press_s = 'on_press_s';
@@ -24,6 +25,9 @@ class Layer extends Mediator
 	public static var on_press_x = 'on_press_x';
 	public static var on_press_z = 'on_press_z';
 	public static var on_press_enter = 'on_press_enter';
+	*/
+	public static var on_press = 'on_press';
+	
 	public static var on_body_mousemove = 'on_body_mousemove';
 	
 	var _body:Dynamic;
@@ -70,8 +74,8 @@ class Layer extends Mediator
 	}
 	
 	function onBodyKeyUp( e ) {
-		trace( e.which ) ;
-		
+		sendNotification( on_press, null, e.which );
+		/*
 		switch( e.which ) {
 			case KeyboardEvent.DOM_VK_X:
 				sendNotification( on_press_x );
@@ -105,5 +109,6 @@ class Layer extends Mediator
 			case 13:
 				sendNotification( on_press_enter );
 		}
+		*/
 	}
 }
