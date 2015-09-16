@@ -375,8 +375,10 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
     defer close( errCh )
     maxtime := 5
     var times int
+    var ok bool
     
-    for times < maxtime {  
+    for times < maxtime {
+      
       // 忽略回傳的任何錯誤，直到timeout或取得資料
       datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
         gameCtx, err := LoadGameContext( ctx )
@@ -390,10 +392,19 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
           gameCtx.DeleteMessage( msgs )
           err = SaveGameContext( ctx, gameCtx )
           retCh <- msgs
+          ok = true
         }
         return err
       }, nil)
-      time.Sleep( 2 * time.Second )
+      
+      if ok == true {
+        break
+        
+      } else {
+        
+        time.Sleep( 2 * time.Second )
+        times += 1
+      }
     }
     
     if times == maxtime {
