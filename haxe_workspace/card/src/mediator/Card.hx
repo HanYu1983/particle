@@ -14,6 +14,7 @@ class Card extends Mediator
 	public static var card_down = 'card_down';
 	public static var card_enter = 'card_enter';
 	
+	var _card:Dynamic;
 	var _focus = false;
 	var _back = true;
 	var _deg = 0;
@@ -46,7 +47,6 @@ class Card extends Mediator
 	override public function listNotificationInterests():Array<String> 
 	{
 		return [ 	
-					Model.on_card_flip_change,
 					Model.on_state_change,
 					Model.on_select_cards
 				];
@@ -66,6 +66,7 @@ class Card extends Mediator
 				switch( notification.getType() ) {
 					case 'ownerAndRelate_change':
 						if ( !checkSelf( notification.getBody().select.id ) ) return;
+						_card = notification.getBody().select;
 						_back = notification.getBody().select.back;
 						rotateAnimation( notification.getBody().select.deg );
 						showOnwer( notification.getBody().showOwner );
@@ -191,12 +192,14 @@ class Card extends Mediator
 	function setView() {
 		if ( _see ) {
 			getViewComponent().find( '.card_back' ).hide();
-			
+			_card.showTo = Main.playerId;
 		}else{
 			if ( _back ) {
 				getViewComponent().find( '.card_back' ).show();
+				_card.showTo = '';
 			}else {
 				getViewComponent().find( '.card_back' ).hide();
+				_card.showTo = Main.playerId;
 			}
 		}
 		

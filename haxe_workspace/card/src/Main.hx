@@ -7,6 +7,7 @@ import js.html.NotifyPaintEvent;
 import mediator.Card;
 import js.Lib;
 import mediator.Layer;
+import mediator.UI;
 import model.Model;
 import org.puremvc.haxe.patterns.facade.Facade;
 
@@ -26,7 +27,7 @@ class Main
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
 	static var sendTimer:Timer = null;
-	static var cardPackage = null;
+	public static var cardPackage = null;
 	
 	#if debug
 	static var keepTime = 1000;
@@ -37,6 +38,7 @@ class Main
 	function new() {
 		j( '#txt_id' ).html( playerId );
 		
+		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
@@ -48,7 +50,16 @@ class Main
 			return ( i + 1000 ) + '.jpg';
 		}
 		
-		var stack = [for ( i in 0...30 ) { id:getId(), cardId:tempGetCardId(i + 1) , name:i, owner:playerId, relate:'', deg:0, pos:[0, 0], back:true } ];
+		var stack = [for ( i in 0...30 ) { 	id:getId(), 
+											cardId:tempGetCardId(i + 1) , 
+											name:i, 
+											owner:playerId, 
+											relate:'', 
+											deg:0, 
+											pos:[0, 0], 
+											back:true,
+											showTo:''
+											} ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
 			pushCmds( { cmd:'addCards', content:stack } );
@@ -224,21 +235,21 @@ class Main
 	
 	public static function applyValue( ary_select:Array<Dynamic> ) {
 		Lambda.foreach( ary_select, function( card:Dynamic ) {
-			
-			var seeCard = switch( card.owner ) {
-				case '':false;
-				case owner: ( owner == card.relate ) && ( owner == playerId );
-			}
-			
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, 
+			Facade.getInstance().sendNotification( Model.on_state_change, { 
+																			select:card, 
 																			showRelate:Main.playerId == card.relate, 
 																			showOwner:Main.playerId == card.owner, 
-																			seeCard: seeCard 
+																			seeCard: seeCard( card ) 
 																			}, 'ownerAndRelate_change' );
 			return true;
 		});
-		
-		
+	}
+	
+	public static function seeCard( card ) {
+		return switch( card.owner ) {
+			case '':false;
+			case owner: ( owner == card.relate ) && ( owner == playerId );
+		}
 	}
 	
 	public static function setOwner( ary_select:Array<Dynamic> ) {

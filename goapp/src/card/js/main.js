@@ -233,6 +233,7 @@ _$List_ListIterator.prototype = {
 var Main = function() {
 	this.lastPromise = null;
 	Main.j("#txt_id").html(Main.playerId);
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
@@ -258,19 +259,19 @@ Main.messageAll = function(content) {
 };
 Main.applyValue = function(ary_select) {
 	Lambda.foreach(ary_select,function(card) {
-		var seeCard;
-		var _g = card.owner;
-		var owner = _g;
-		switch(_g) {
-		case "":
-			seeCard = false;
-			break;
-		default:
-			seeCard = owner == card.relate && owner == Main.playerId;
-		}
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : seeCard},"ownerAndRelate_change");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card)},"ownerAndRelate_change");
 		return true;
 	});
+};
+Main.seeCard = function(card) {
+	var _g = card.owner;
+	var owner = _g;
+	switch(_g) {
+	case "":
+		return false;
+	default:
+		return owner == card.relate && owner == Main.playerId;
+	}
 };
 Main.setOwner = function(ary_select) {
 	var send = false;
@@ -393,7 +394,7 @@ Main.prototype = {
 		var _g1 = 0;
 		while(_g1 < 30) {
 			var i1 = _g1++;
-			_g.push({ id : Main.getId(), cardId : tempGetCardId(i1 + 1), name : i1, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true});
+			_g.push({ id : Main.getId(), cardId : tempGetCardId(i1 + 1), name : i1, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""});
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
@@ -847,7 +848,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.getViewComponent().off("click");
 	}
 	,listNotificationInterests: function() {
-		return [model_Model.on_card_flip_change,model_Model.on_state_change,model_Model.on_select_cards];
+		return [model_Model.on_state_change,model_Model.on_select_cards];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -865,6 +866,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			switch(_g11) {
 			case "ownerAndRelate_change":
 				if(!this.checkSelf(notification.getBody().select.id)) return;
+				this._card = notification.getBody().select;
 				this._back = notification.getBody().select.back;
 				this.rotateAnimation(notification.getBody().select.deg);
 				this.showOnwer(notification.getBody().showOwner);
@@ -931,7 +933,16 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.setView();
 	}
 	,setView: function() {
-		if(this._see) this.getViewComponent().find(".card_back").hide(); else if(this._back) this.getViewComponent().find(".card_back").show(); else this.getViewComponent().find(".card_back").hide();
+		if(this._see) {
+			this.getViewComponent().find(".card_back").hide();
+			this._card.showTo = Main.playerId;
+		} else if(this._back) {
+			this.getViewComponent().find(".card_back").show();
+			this._card.showTo = "";
+		} else {
+			this.getViewComponent().find(".card_back").hide();
+			this._card.showTo = Main.playerId;
+		}
 		if(this._back) this.getViewComponent().find("#img_back").show(); else this.getViewComponent().find("#img_back").hide();
 	}
 	,seeCard: function(see) {
@@ -982,6 +993,54 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		this.sendNotification(mediator_Layer.on_press,null,e.which);
 	}
 	,__class__: mediator_Layer
+});
+var mediator_UI = function(mediatorName,viewComponent) {
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
+};
+mediator_UI.__name__ = true;
+mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [model_Model.on_select_cards,model_Model.on_state_change];
+	}
+	,handleNotification: function(notification) {
+		var _g1 = this;
+		var _g = notification.getName();
+		switch(_g) {
+		case "on_model_select_cards":
+			this.showCards(notification.getBody().ary_select);
+			break;
+		case "on_state_change":
+			console.log(notification.getBody().ary_select);
+			this.mc_detailContainer.empty();
+			haxe_Timer.delay(function() {
+				_g1.showCard(notification.getBody().select);
+			},10);
+			break;
+		}
+	}
+	,showCards: function(ary_select) {
+		var _g = this;
+		if(ary_select == null) return;
+		this.mc_detailContainer.empty();
+		Lambda.foreach(ary_select,function(card) {
+			_g.showCard(card);
+			return true;
+		});
+	}
+	,showCard: function(card) {
+		if(card.showTo == Main.playerId) {
+			var url = Main.getCardImageUrlWithPackage(Main.cardPackage,card.cardId);
+			var img = Main.j("<img></img>");
+			img.attr("src",url);
+			img.load(function() {
+				img.css("width","100%");
+			});
+			this.mc_detailContainer.append(img);
+		}
+	}
+	,__class__: mediator_UI
 });
 var model_Model = function(mediatorName,viewComponent) {
 	this.pos_mouse = [0,0];
@@ -1501,7 +1560,6 @@ mediator_Layer.on_layout_mouse_up = "on_layout_mouse_up";
 mediator_Layer.on_select_cards = "on_select_cards";
 mediator_Layer.on_press = "on_press";
 mediator_Layer.on_body_mousemove = "on_body_mousemove";
-model_Model.on_card_flip_change = "on_card_flip_change";
 model_Model.on_card_enter = "on_card_enter";
 model_Model.on_card_move = "on_card_move";
 model_Model.on_state_change = "on_state_change";

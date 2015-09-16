@@ -12,7 +12,6 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
  */
 class Model extends Mediator
 {
-	public static var on_card_flip_change = 'on_card_flip_change';
 	public static var on_card_enter = 'on_card_enter';
 	public static var on_card_move = 'on_card_move';
 	public static var on_state_change = 'on_state_change';
@@ -32,18 +31,6 @@ class Model extends Mediator
 				Card.card_enter, 
 				Layer.on_layout_mouse_up, 
 				Layer.on_press,
-				/*
-				Layer.on_press_f,
-				Layer.on_press_s,
-				Layer.on_press_l,
-				Layer.on_press_a,
-				Layer.on_press_r,
-				Layer.on_press_c,
-				Layer.on_press_v,
-				Layer.on_press_z,
-				Layer.on_press_x,
-				Layer.on_press_enter,
-				*/
 				Layer.on_body_mousemove,
 				Layer.on_select_cards
 				];
@@ -102,24 +89,20 @@ class Model extends Mediator
 					case KeyboardEvent.DOM_VK_Q:
 						listCard();
 						Main.moveCards( ary_select, pos_mouse, true );
-						//Main.listCard( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_W:
 						listSeperate();
 						Main.moveCards( ary_select, pos_mouse, false );
-						//Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_E:
 						ary_select.reverse();
 						listCard();
 						Main.moveCards( ary_select, pos_mouse, true );
-						//Main.listCard( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listCardReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_R:
 						ary_select.reverse();
 						listSeperate();
 						Main.moveCards( ary_select, pos_mouse, false );
-						//Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_A:
 						ary_select.sort( function ( a, b ) {
@@ -127,7 +110,6 @@ class Model extends Mediator
 						});
 						listCard();
 						Main.moveCards( ary_select, pos_mouse, true );
-						//Main.listCard( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_S:
 						ary_select.sort( function ( a, b ) {
@@ -135,7 +117,6 @@ class Model extends Mediator
 						});
 						listSeperate();
 						Main.moveCards( ary_select, pos_mouse, false );
-						//Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'shuffleSeparate', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_D:
 						ary_select = Lambda.array( Lambda.filter( Main.ary_cards, function( card:Dynamic ) {

@@ -88,9 +88,9 @@ body{
 	</div>
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
 	
-	<div class="easyui-accordion" data-options="multiple:true" style="position:absolute; right:0; top:0; width:25%;height:100%;">
-        <div title="操作" style="overflow:auto;padding:10px;">
-			<div class="group" style="text-align:center; margin-bottom:10px; ">
+	<div class="easyui-layout" style="position:absolute; right:0; top:0; width:25%;height:100%;">
+        <div data-options="region:'north',title:'操作',split:true" style="height:200px">
+			<div class="group" style="text-align:center; margin-bottom:10px; margin-top:10px; ">
 				<div>玩家:<span style="color:yellow;" id="txt_id"></span></div>
 				<div>對手:<span style="color:red;" id="txt_output"></span></div>
 				<div id="txt_output2" style="display:none;"></div>
@@ -99,16 +99,17 @@ body{
 				<div class="hori"><a href="#" onclick="onHtmlClick('onBtnCreateClick')" class="easyui-linkbutton" data-options="iconCls:'icon-add'">開始遊隨</a></div>
 				<div class="hori"><a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">清除所有玩家</a></div>
 			</div>
-            <div class="group" style="text-align:center; margin-top:20px;">
+			<div class="group" style="text-align:center; margin-top:20px;">
 				<div class="hori"><a href="#" onclick="onHtmlClick('onBtnPollingClick')" class="easyui-linkbutton" style="height:60px; " data-options="iconCls:'icon-add'">抓取對方動作</a></div>
 			</div>
-        </div>
-		<div title="卡牌詳細">
-			<div id="mc_detailContainer" style="position:relative; width:100%">
+		</div>
+		<div data-options="region:'center',title:'卡牌詳細'">
+            <div id="mc_detailContainer" style="position:relative; width:100%">
 				<!-- create by script -->
 			</div>
-		</div>
+        </div>
     </div>
+	
 	<script src='js/api.js'></script>
 	<script src="js/main.js"></script>
 	
