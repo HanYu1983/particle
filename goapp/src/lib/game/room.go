@@ -72,13 +72,21 @@ func (ctx *Context) DeleteRoomIfNoUser () {
   ctx.Rooms = rooms
 }
 
-func (ctx *Context) User (key string) User {
+func (ctx *Context) FindUser ( key string ) User {
   for _, user := range ctx.Users {
     if user.Key == key {
       return user
     }
   }
-  user := EmptyUser
+  return EmptyUser
+}
+
+func (ctx *Context) User (key string) User {
+  findUser := ctx.FindUser( key )
+  if findUser != EmptyUser {
+    return findUser
+  }
+  user := findUser
   user.Key = key
   ctx.Users = append( ctx.Users, user )
   return user
