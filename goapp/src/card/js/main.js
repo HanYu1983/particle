@@ -186,14 +186,18 @@ var Main = function() {
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
+Main.pushCmd = function(content) {
+	content.time = new Date().getTime();
+	Main.ary_cmds.push(content);
+	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.time) + "_" + Std.string(content.cmd));
+};
 Main.messageAll = function(content) {
-	haxe_Log.trace("messageAll",{ fileName : "Main.hx", lineNumber : 48, className : "Main", methodName : "messageAll", customParams : [content.cmd]});
-	Main.j("#txt_output2").html("send: " + Std.string(content.cmd));
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
 		}));
 		return true;
 	});
+	Main.ary_cmds = [];
 };
 Main.applyValue = function(ary_select) {
 	Lambda.foreach(ary_select,function(card) {
@@ -324,14 +328,14 @@ Main.prototype = {
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
-			Main.messageAll({ cmd : "addCards", content : stack});
+			Main.pushCmd({ cmd : "addCards", content : stack});
 		});
 	}
 	,onBackCallback: function(ret) {
 		var _g = this;
 		var prev = this.lastPromise;
 		Lambda.foreach(ret.Info,function(info) {
-			haxe_Log.trace(info.Time,{ fileName : "Main.hx", lineNumber : 68, className : "Main", methodName : "onBackCallback"});
+			console.log(info.Time);
 			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
 			if(prev != null) try {
 				prev().pipe(_g.lastPromise);
@@ -357,8 +361,8 @@ Main.prototype = {
 			curr.push(localCard);
 			return curr;
 		},[]);
-		haxe_Log.trace(content.cmd,{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "callAction"});
-		Main.j("#txt_output2").html("receive: ",content.cmd);
+		console.log(content.cmd);
+		Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
 		var _g = content.cmd;
 		switch(_g) {
 		case "addCards":
@@ -408,6 +412,7 @@ Main.prototype = {
 			}));
 			break;
 		case "onBtnMessageClick":
+			Main.messageAll(Main.ary_cmds);
 			break;
 		case "onBtnPollingClick":
 			Main.pollMessage({ FBID : Main.playerId},Main.handleResponse($bind(this,this.onBackCallback)));
@@ -468,11 +473,6 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -553,25 +553,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -995,24 +976,24 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.sendNotification(model_Model.on_card_move,notification.getBody());
 			break;
 		case "on_press_c":
-			if(Main.setOwner(this.ary_select)) Main.messageAll({ cmd : "setOwner", content : { ary_select : this.ary_select}});
+			if(Main.setOwner(this.ary_select)) Main.pushCmd({ cmd : "setOwner", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_v":
-			if(Main.setRelate(this.ary_select)) Main.messageAll({ cmd : "setRelate", content : { ary_select : this.ary_select}});
+			if(Main.setRelate(this.ary_select)) Main.pushCmd({ cmd : "setRelate", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_r":
 			this.ary_select.reverse();
 			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_f":
-			if(Main.flip(this.ary_select)) Main.messageAll({ cmd : "flip", content : { ary_select : this.ary_select}});
+			if(Main.flip(this.ary_select)) Main.pushCmd({ cmd : "flip", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_l":
-			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
+			Main.pushCmd({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listCard(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_a":
-			Main.messageAll({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
+			Main.pushCmd({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_s":
@@ -1368,6 +1349,8 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 String.prototype.__class__ = String;
 String.__name__ = true;
 Array.__name__ = true;
+Date.prototype.__class__ = Date;
+Date.__name__ = ["Date"];
 var Int = { __name__ : ["Int"]};
 var Dynamic = { __name__ : ["Dynamic"]};
 var Float = Number;

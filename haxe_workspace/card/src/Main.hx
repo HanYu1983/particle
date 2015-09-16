@@ -39,14 +39,17 @@ class Main
 		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', back:true } ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
-			messageAll( { cmd:'addCards', content:stack } );
+			pushCmd( { cmd:'addCards', content:stack } );
 		});
 	}
 	
-	public static function messageAll( content:Dynamic ) {
-		
-		trace( 'messageAll', content.cmd );
-		j( '#txt_output2' ).html( 'send: ' + content.cmd );
+	public static function pushCmd( content:Dynamic ) {
+		content.time = Date.now().getTime();
+		ary_cmds.push( content );
+		j( '#txt_output2' ).html( 'pushCmds: ' + content.time + '_' + content.cmd );
+	}
+	
+	public static function messageAll( content:Array<Dynamic> ) {
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
 				FBID:playerId,
@@ -57,6 +60,7 @@ class Main
 			}));
 			return true;
 		});
+		ary_cmds = [];
 	}
 	
 	var lastPromise:Dynamic = null;
@@ -129,7 +133,7 @@ class Main
 		}
 		
 		trace( content.cmd );
-		j( '#txt_output2' ).html( 'receive: ', content.cmd );
+		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {
 			case 'addCards':
@@ -205,6 +209,7 @@ class Main
 					});
 				}));
 			case 'onBtnMessageClick':
+				messageAll( ary_cmds );
 			case 'onBtnPollingClick':
 				pollMessage( {
 					FBID:playerId
