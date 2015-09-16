@@ -325,6 +325,7 @@ Main.rotate = function(ary_select,deg) {
 	Main.applyValue(ary_select);
 };
 Main.createCard = function(model) {
+	model.url = Main.getCardImageUrlWithPackage(Main.cardPackage,model.cardId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
 Main.flip = function(ary_select) {
@@ -365,6 +366,12 @@ Main.pollMessage = function(data,cb) {
 Main.installPollMessageCallback = function(data,cb) {
 	api.installPollMessageCallback(data,cb);
 };
+Main.getCardPackage = function(name,cb) {
+	api.getCardPackage(name,cb);
+};
+Main.getCardImageUrlWithPackage = function(name,key) {
+	return api.getCardImageUrlWithPackage(name,key);
+};
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
 		if(err != null) js_Browser.alert(err); else cb(ret);
@@ -378,12 +385,15 @@ Main.getId = function() {
 };
 Main.prototype = {
 	createSelfStack: function() {
+		var tempGetCardId = function(i) {
+			return i + 1000 + ".jpg";
+		};
 		var stack;
 		var _g = [];
 		var _g1 = 0;
 		while(_g1 < 30) {
-			var i = _g1++;
-			_g.push({ id : Main.getId(), name : i, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true});
+			var i1 = _g1++;
+			_g.push({ id : Main.getId(), cardId : tempGetCardId(i1 + 1), name : i1, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true});
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
@@ -483,11 +493,14 @@ Main.prototype = {
 		switch(type) {
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				_g.callForOthers(function() {
-					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
-					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
-					_g.createSelfStack();
-				});
+				Main.getCardPackage("gundamWar",Main.handleResponse(function(ret1) {
+					Main.cardPackage = ret1;
+					_g.callForOthers(function() {
+						Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
+						Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
+						_g.createSelfStack();
+					});
+				}));
 			}));
 			break;
 		}
