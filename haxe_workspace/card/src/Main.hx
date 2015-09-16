@@ -21,7 +21,6 @@ class Main
 	public static var playerId = getId();
 	public static var otherPlayerId = [];
 	public static var ary_cards:Array<Dynamic> = [];
-	public static var ary_cmds:Array<Dynamic> = [];
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
@@ -39,16 +38,26 @@ class Main
 		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', back:true } ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
-			pushCmd( { cmd:'addCards', content:stack } );
+			messageAll( { cmd:'addCards', content:stack } );
 		});
 	}
 	
-	public static function pushCmd( content:Dynamic ) {
-		content.time = Date.now().getTime();
-		ary_cmds.push( content );
-		j( '#txt_output2' ).html( 'pushCmds: ' + content.time + '_' + content.cmd );
+	public static function messageAll( content:Dynamic ) {
+		j( '#txt_output2' ).html( 'messageAll: ' + content.cmd );
+		
+		Lambda.foreach( otherPlayerId, function ( id ) {
+			message( {
+				FBID:playerId,
+				TargetUser: id,
+				Content: Json.stringify( content ),
+				UnixTime: Math.floor( Date.now().getTime() / 1000 )
+			}, handleResponse( function( ret ) {
+				
+			}));
+			return true;
+		});
 	}
-	
+	/*
 	public static function messageAll( content:Array<Dynamic> ) {
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
@@ -63,7 +72,7 @@ class Main
 		});
 		ary_cmds = [];
 	}
-	
+	*/
 	var lastPromise:Dynamic = null;
 	
 	function onBackCallback( ret:Dynamic ) {
@@ -122,13 +131,17 @@ class Main
 	}
 	
 	function callAction( content:Dynamic ) {
+		
+		trace( content.content );
 		if ( content.content.ary_select != null ) {
 			content.content.ary_select = Lambda.fold( content.content.ary_select, function( remoteCard, curr ) {
 				var localCard = getCardsById( remoteCard.id );
-				localCard.owner = remoteCard.owner;
-				localCard.relate = remoteCard.relate;
-				localCard.back = remoteCard.back;
-				curr.push( localCard );
+				if( localCard != null ){
+					localCard.owner = remoteCard.owner;
+					localCard.relate = remoteCard.relate;
+					localCard.back = remoteCard.back;
+					curr.push( localCard );
+				}
 				return curr;
 			}, []);
 		}
@@ -205,16 +218,10 @@ class Main
 					appStart();
 					callForOthers( function() {
 						j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
-						//installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
+						installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 						createSelfStack();
 					});
 				}));
-			case 'onBtnMessageClick':
-				messageAll( ary_cmds );
-			case 'onBtnPollingClick':
-				pollMessage( {
-					FBID:playerId
-				}, handleResponse( onBackCallback ));
 		}
 	}
 	

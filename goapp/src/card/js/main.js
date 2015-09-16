@@ -186,18 +186,13 @@ var Main = function() {
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
-Main.pushCmd = function(content) {
-	content.time = new Date().getTime();
-	Main.ary_cmds.push(content);
-	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.time) + "_" + Std.string(content.cmd));
-};
 Main.messageAll = function(content) {
+	Main.j("#txt_output2").html("messageAll: " + Std.string(content.cmd));
 	Lambda.foreach(Main.otherPlayerId,function(id) {
-		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : new Date().getTime()},Main.handleResponse(function(ret) {
+		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : Math.floor(new Date().getTime() / 1000)},Main.handleResponse(function(ret) {
 		}));
 		return true;
 	});
-	Main.ary_cmds = [];
 };
 Main.applyValue = function(ary_select) {
 	Lambda.foreach(ary_select,function(card) {
@@ -328,7 +323,7 @@ Main.prototype = {
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
-			Main.pushCmd({ cmd : "addCards", content : stack});
+			Main.messageAll({ cmd : "addCards", content : stack});
 		});
 	}
 	,onBackCallback: function(ret) {
@@ -353,12 +348,15 @@ Main.prototype = {
 		});
 	}
 	,callAction: function(content) {
+		console.log(content.content);
 		if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
 			var localCard = Main.getCardsById(remoteCard.id);
-			localCard.owner = remoteCard.owner;
-			localCard.relate = remoteCard.relate;
-			localCard.back = remoteCard.back;
-			curr.push(localCard);
+			if(localCard != null) {
+				localCard.owner = remoteCard.owner;
+				localCard.relate = remoteCard.relate;
+				localCard.back = remoteCard.back;
+				curr.push(localCard);
+			}
 			return curr;
 		},[]);
 		console.log(content.cmd);
@@ -407,15 +405,10 @@ Main.prototype = {
 				_g.appStart();
 				_g.callForOthers(function() {
 					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
+					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
 					_g.createSelfStack();
 				});
 			}));
-			break;
-		case "onBtnMessageClick":
-			Main.messageAll(Main.ary_cmds);
-			break;
-		case "onBtnPollingClick":
-			Main.pollMessage({ FBID : Main.playerId},Main.handleResponse($bind(this,this.onBackCallback)));
 			break;
 		}
 	}
@@ -976,24 +969,24 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.sendNotification(model_Model.on_card_move,notification.getBody());
 			break;
 		case "on_press_c":
-			if(Main.setOwner(this.ary_select)) Main.pushCmd({ cmd : "setOwner", content : { ary_select : this.ary_select}});
+			if(Main.setOwner(this.ary_select)) Main.messageAll({ cmd : "setOwner", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_v":
-			if(Main.setRelate(this.ary_select)) Main.pushCmd({ cmd : "setRelate", content : { ary_select : this.ary_select}});
+			if(Main.setRelate(this.ary_select)) Main.messageAll({ cmd : "setRelate", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_r":
 			this.ary_select.reverse();
 			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_f":
-			if(Main.flip(this.ary_select)) Main.pushCmd({ cmd : "flip", content : { ary_select : this.ary_select}});
+			if(Main.flip(this.ary_select)) Main.messageAll({ cmd : "flip", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_l":
-			Main.pushCmd({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
+			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listCard(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_a":
-			Main.pushCmd({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
+			Main.messageAll({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
 			Main.listSeparate(this.ary_select,this.pos_mouse);
 			break;
 		case "on_press_s":
@@ -1365,7 +1358,6 @@ Main.id = 0;
 Main.playerId = Main.getId();
 Main.otherPlayerId = [];
 Main.ary_cards = [];
-Main.ary_cmds = [];
 Main.tmpl_card = Main.j("#tmpl_card");
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
