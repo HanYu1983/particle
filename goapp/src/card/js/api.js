@@ -105,7 +105,8 @@ var api = api || {};
 	data: {
 		FBID: string,
 		TargetUser: string,
-		Content: string
+		Content: string,
+		UnixTime: int
 	}
 	cb: function( err, ret ){
 		err:string,
