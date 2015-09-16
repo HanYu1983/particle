@@ -26,10 +26,20 @@ func WithTransaction ( ctx appengine.Context, retry int, fn func(c appengine.Con
   var times int
   for times < retry {
     err = RunTransaction()
+    if err == datastore.ErrConcurrentTransaction {
+      // redo RunTransaction
+      
+    } else {
+      break
+    
+    }
+    times += 1
+    /*
     if err == nil {
       break
     }
     times += 1
+    */
   }
   return err
 }

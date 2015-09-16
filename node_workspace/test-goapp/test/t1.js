@@ -48,6 +48,8 @@ describe('測試卡片方法呼叫', function() {
 	it('清除', function( done ){
 		callApi( '/fn/card/clear', null, function(err, data){
 			assert.ifError( err )
+			var json = JSON.parse( data )
+			assert.ifError( json.Error )
 			done()
 		})
 	})
@@ -55,8 +57,9 @@ describe('測試卡片方法呼叫', function() {
 	it('清除後使用者數量為0' , function( done ){
 		callApi( '/fn/card/user/', null, function(err, data){
 			assert.ifError( err )
-			var users = JSON.parse( data ).Info
-			assert.equal(null, users)
+			var json = JSON.parse( data )
+			assert.ifError( json.Error )
+			assert.equal(null, json.Info)
 			done()
 		})
 	})
@@ -64,6 +67,8 @@ describe('測試卡片方法呼叫', function() {
 	it('han登入', function ( done ) {
 		callApi( '/fn/card/user/', {FBID:'han', Name:'han'}, function(err, data){
 			assert.ifError( err )
+			var json = JSON.parse( data )
+			assert.ifError( json.Error )
 			done()
 		})
 	})
@@ -95,8 +100,10 @@ describe('測試卡片方法呼叫', function() {
 	})
 	
 	it('傳訊息給han', function( done ){
-		callApi( '/fn/card/message/', {FBID:'han', TargetUser:'han', Content:"haha"}, function( err, data ){
+		callApi( '/fn/card/message/', {FBID:'han', TargetUser:'han', Content:"haha", UnixTime: 0}, function( err, data ){
 			assert.ifError( err )
+			var json = JSON.parse( data )
+			assert.ifError( json.Error )
 			done()
 		})
 	})
@@ -104,8 +111,9 @@ describe('測試卡片方法呼叫', function() {
 	it('han必須有1個訊息', function( done ){
 		callApi( '/fn/card/message/', null, function( err, data ){
 			assert.ifError( err )
-			var msgs = JSON.parse( data ).Info
-			assert.equal( 1, msgs.length )
+			var json = JSON.parse( data )
+			assert.ifError( json.Error )
+			assert.equal( 1, json.Info.length )
 			done()
 		})
 	})
@@ -114,8 +122,9 @@ describe('測試卡片方法呼叫', function() {
 		
 		function sendMessage( msg ){
 			return function( cb ){
-				callApi( '/fn/card/message/', {FBID:'han', TargetUser:'han', Content:msg}, function(err, ret){
-					cb( err, ret )
+				callApi( '/fn/card/message/', {FBID:'han', TargetUser:'han', Content:msg, UnixTime: 0}, function(err, ret){
+					var json = JSON.parse( ret )
+					cb( err || json.Error, ret )
 				} )
 			}
 		}
@@ -141,8 +150,9 @@ describe('測試卡片方法呼叫', function() {
 	it('必須有11個訊息', function( done ){
 		callApi( '/fn/card/message/', null, function( err, data ){
 			assert.ifError( err )
-			var msgs = JSON.parse( data ).Info
-			assert.equal( 11, msgs.length )
+			var json = JSON.parse( data )
+			assert.ifError( json.Error )
+			assert.equal( 11, json.Info.length )
 			done()
 		})
 	})
@@ -150,8 +160,9 @@ describe('測試卡片方法呼叫', function() {
 	it('han必須可以取得11個訊息', function( done ){
 		callApi( '/fn/card/longPollingTargetMessage', {FBID: "han"}, function( err, data ){
 			assert.ifError( err )
-			var msgs = JSON.parse( data ).Info
-			assert.equal( 11, msgs.length )
+			var json = JSON.parse( data )
+			assert.ifError( json.Error )
+			assert.equal( 11, json.Info.length )
 			done()
 		})
 	})
@@ -159,8 +170,9 @@ describe('測試卡片方法呼叫', function() {
 	it('取得han訊息後必須剩下0個訊息', function( done ){
 		callApi( '/fn/card/message/', null, function( err, data ){
 			assert.ifError( err )
-			var msgs = JSON.parse( data ).Info
-			assert.equal( null, msgs )
+			var json = JSON.parse( data )
+			assert.ifError( json.Error )
+			assert.equal( null, json.Info )
 			done()
 		})
 	})
