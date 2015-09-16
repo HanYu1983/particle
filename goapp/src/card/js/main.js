@@ -193,7 +193,7 @@ Main.pushCmd = function(content) {
 };
 Main.messageAll = function(content) {
 	Lambda.foreach(Main.otherPlayerId,function(id) {
-		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content)},Main.handleResponse(function(ret) {
+		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : new Date().getTime()},Main.handleResponse(function(ret) {
 		}));
 		return true;
 	});
@@ -412,7 +412,6 @@ Main.prototype = {
 			}));
 			break;
 		case "onBtnMessageClick":
-			console.log("G");
 			Main.messageAll(Main.ary_cmds);
 			break;
 		case "onBtnPollingClick":

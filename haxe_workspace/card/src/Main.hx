@@ -54,7 +54,8 @@ class Main
 			message( {
 				FBID:playerId,
 				TargetUser: id,
-				Content: Json.stringify( content )
+				Content: Json.stringify( content ),
+				UnixTime: Date.now().getTime()
 			}, handleResponse( function( ret ) {
 				
 			}));
@@ -209,7 +210,6 @@ class Main
 					});
 				}));
 			case 'onBtnMessageClick':
-				trace("G");
 				messageAll( ary_cmds );
 			case 'onBtnPollingClick':
 				pollMessage( {
