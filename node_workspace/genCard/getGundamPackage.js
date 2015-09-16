@@ -46,7 +46,7 @@ function downloadPackage( id, cnt ){
 		function closure( url, name ){
 			return function(){
 				console.log( url )
-				download(url, "output/"+name, function(){});
+				download(url, "gundamWar/"+name, function(){});
 			}
 		}
 		setTimeout( closure(url, name), i* 1000 )

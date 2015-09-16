@@ -184,6 +184,43 @@ var api = api || {};
 		})
 	}
 	
+	/**
+	name: "gundamWar"
+	cb: function( err, data ){
+		data: {
+			images: [
+				{key -> url}
+			]
+		}
+	}
+	*/
+	function getCardPackage( name, cb ){
+		$.ajax({
+			url: '../common/cardPackage/'+name+'.json',
+			type: 'get',
+			dataType: 'json',
+			success: function(ret){
+				cb( null, ret )
+			},
+			error: function(xhr, res, err){
+				cb( err, null )
+			}
+		})
+	}
+	
+	function getCardImageUrl( path ){
+		return '../common/cardPackage/' + path
+	}
+	
+	/**
+	pkg: getCardPackage() 回傳的object
+	key: image的key
+	*/
+	function getCardImageUrlWithPackage( pkg, key ){
+		var path = pkg.images[key]
+		return getCardImageUrl( path )
+	}
+	
 	module.createUser = createUser
 	module.users = users
 	module.createRoom = createRoom
@@ -191,5 +228,8 @@ var api = api || {};
 	module.message = message
 	module.pollMessage = pollMessage
 	module.installPollMessageCallback = installPollMessageCallback
+	module.getCardPackage = getCardPackage
+	module.getCardImageUrl = getCardImageUrl
+	module.getCardImageUrlWithPackage = getCardImageUrlWithPackage
 	
 }) (api)
