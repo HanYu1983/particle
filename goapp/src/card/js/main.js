@@ -1056,6 +1056,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 });
 var model_Model = function(mediatorName,viewComponent) {
 	this.pos_mouse = [0,0];
+	this.isSeperate = false;
 	this.ary_select = [];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
@@ -1126,10 +1127,11 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			case 82:
 				break;
 			case 65:
-				this.doList();
+				this.doMoveCards();
 				break;
 			case 83:
-				this.doListSeperate();
+				if(this.isSeperate) this.doList(); else this.doListSeperate();
+				this.isSeperate = !this.isSeperate;
 				break;
 			case 68:
 				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
@@ -1141,7 +1143,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select.slice(0)}});
 				break;
 			case 32:
-				this.doMoveCards();
 				break;
 			}
 			break;

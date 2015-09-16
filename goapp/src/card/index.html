@@ -49,7 +49,7 @@ body{
 	left:0;
 	width:100%;
 	height:100%;
-	background-color:gray;
+	background-color:#555555;
 }
 .card_focus{
 	border:2px blue solid;
@@ -73,6 +73,7 @@ body{
 	<div id=${id} class="card_root elements">
 		<div class="card">
 			<img style="position:relative; left:0; top:0; width:100%; height:100%;" src=${url}>
+			<div style="position:absolute; left:0; top:0; width:100%; height:100%; background-color:black; opacity:.4;"></div>
 		</div>
 		<div class="card_back"></div>
 		<div style="position:absolute; left:0; top:0; ">
@@ -84,7 +85,16 @@ body{
 </script>
 <body>
 	<div style="position:relative; left:0; top:0; width:960px; height:700px; background-color:white; opacity:.3;">
-		960 x 700
+		<div>Q-洗牌</div>
+		<div>W-反向</div>
+		<div>A-移動</div>
+		<div>S-展開/合起</div>
+		<div>D-選擇所有自己的牌</div>
+		<div>F-翻面</div>
+		<div>Z-左轉牌面</div>
+		<div>X-右轉牌面</div>
+		<div>C-設定所屬</div>
+		<div>V-設定持有者</div>
 	</div>
 	<div style="position:absolute; top:0; left:0;" id="grid">
 		<div class="ghost-select"><span></span></div>

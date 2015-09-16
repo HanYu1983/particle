@@ -18,6 +18,7 @@ class Model extends Mediator
 	public static var on_select_cards = 'on_model_select_cards';
 	
 	var ary_select:Array<Dynamic> = [];
+	var isSeperate = false;
 	var pos_mouse = [0, 0];
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -97,9 +98,14 @@ class Model extends Mediator
 					case KeyboardEvent.DOM_VK_E:
 					case KeyboardEvent.DOM_VK_R:
 					case KeyboardEvent.DOM_VK_A:
-						doList();
+						doMoveCards();
 					case KeyboardEvent.DOM_VK_S:
-						doListSeperate();
+						if ( isSeperate ) {
+							doList();
+						}else {
+							doListSeperate();	
+						}
+						isSeperate = !isSeperate;
 					case KeyboardEvent.DOM_VK_D:
 						ary_select = Lambda.array( Lambda.filter( Main.ary_cards, function( card:Dynamic ) {
 							return ( card.owner == Main.playerId );
@@ -110,7 +116,6 @@ class Model extends Mediator
 							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );
 						}
 					case KeyboardEvent.DOM_VK_SPACE:
-						doMoveCards();
 				}
 			case Layer.on_body_mousemove:
 				pos_mouse[0] = notification.getBody().x;
