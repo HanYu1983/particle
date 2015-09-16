@@ -318,7 +318,6 @@ Main.callAction = function(content) {
 	case "moveCards":
 		return Animate.moveCards(content.content.ary_select,content.content.pos_mouse);
 	default:
-		js_Browser.alert("asb");
 		return null;
 	}
 };
@@ -448,11 +447,11 @@ Main.getCardImageUrlWithPackage = function(name,key) {
 	return api.getCardImageUrlWithPackage(name,key);
 };
 Main.slide = function(msg) {
-	Main.j.messager.show({ title : "提示", msg : msg, timeout : 5000, showType : "slide"});
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : 1000, showType : "slide"});
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) js_Browser.alert(err); else cb(ret);
+		if(err != null) Main.slide(err); else cb(ret);
 	};
 };
 Main.main = function() {

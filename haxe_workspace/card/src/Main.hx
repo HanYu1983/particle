@@ -169,7 +169,6 @@ class Main
 			case 'moveCards':
 				return Animate.moveCards( content.content.ary_select, content.content.pos_mouse );
 			case _:
-				Browser.alert( 'asb' );
 				return null;
 		}
 	}
@@ -446,7 +445,7 @@ class Main
 		j.messager.show({
 			title:'提示',
 			msg: msg,
-			timeout:5000,
+			timeout:1000,
 			showType:'slide'
 		});
 	}
@@ -454,7 +453,7 @@ class Main
 	static function handleResponse( cb ) {
 		return function ( err, ret ) {
 			if ( err != null ) {
-				Browser.alert( err );
+				slide( err );
 			}else {
 				cb( ret );
 			}
