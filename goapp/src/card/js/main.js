@@ -1007,6 +1007,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 69:
+				this.ary_select.reverse();
+				Main.listCard(this.ary_select,this.pos_mouse.slice(0));
 				break;
 			case 82:
 				this.ary_select.reverse();
@@ -1022,7 +1024,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				break;
 			case 70:
 				break;
-			case 8:
+			case 32:
 				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select}});
 				break;
 			}

@@ -106,6 +106,8 @@ class Model extends Mediator
 						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 						Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_E:
+						ary_select.reverse();
+						Main.listCard( ary_select, pos_mouse.slice( 0 ) );
 					case KeyboardEvent.DOM_VK_R:
 						ary_select.reverse();
 						Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
@@ -115,14 +117,11 @@ class Model extends Mediator
 						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_D:
 					case KeyboardEvent.DOM_VK_F:
-					case KeyboardEvent.DOM_VK_BACK_SPACE:
+					case KeyboardEvent.DOM_VK_SPACE:
 						if ( Main.flip( ary_select ) ) {
 							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select } } );
 						}
 				}
-			
-			//case Layer.on_press_enter:
-			//	sendNotification( on_state_change, {x:pos_mouse[0], y:pos_mouse[1] }, 'move' );
 			case Layer.on_body_mousemove:
 				pos_mouse[0] = notification.getBody().x;
 				pos_mouse[1] = notification.getBody().y;
@@ -137,26 +136,6 @@ class Model extends Mediator
 				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
-				/*
-			case Layer.on_press_c:
-				
-			case Layer.on_press_v:
-				
-			case Layer.on_press_r:
-				
-			case Layer.on_press_f:
-				
-			case Layer.on_press_l:
-				
-			case Layer.on_press_a:
-				
-			case Layer.on_press_s:
-				
-			case Layer.on_press_z:
-				
-			case Layer.on_press_x:
-				
-				*/
 		}
 	}
 }
