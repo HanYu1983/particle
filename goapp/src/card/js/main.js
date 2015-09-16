@@ -512,10 +512,7 @@ Main.prototype = {
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
 				Main.getCardPackage("gundamWar",Main.handleResponse(function(ret1) {
 					Main.cardPackage = ret1;
-					_g.callForOthers(function() {
-						Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
-						_g.createSelfStack();
-					});
+					_g.createSelfStack();
 				}));
 			}));
 			break;
@@ -1119,42 +1116,20 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select.slice(0), deg : 90}});
 				break;
 			case 81:
-				this.listCard();
-				Main.moveCards(this.ary_select,this.pos_mouse,true);
-				Main.pushCmds({ cmd : "listCard", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+				this.doListShuffle();
 				break;
 			case 87:
-				this.listSeperate();
-				Main.moveCards(this.ary_select,this.pos_mouse,false);
-				Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+				this.doListReverse();
 				break;
 			case 69:
-				this.ary_select.reverse();
-				this.listCard();
-				Main.moveCards(this.ary_select,this.pos_mouse,true);
-				Main.pushCmds({ cmd : "listCardReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 82:
-				this.ary_select.reverse();
-				this.listSeperate();
-				Main.moveCards(this.ary_select,this.pos_mouse,false);
-				Main.pushCmds({ cmd : "listSeparateReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 				break;
 			case 65:
-				this.ary_select.sort(function(a2,b2) {
-					if(Math.random() > .5) return 1; else return -1;
-				});
-				this.listCard();
-				Main.moveCards(this.ary_select,this.pos_mouse,true);
-				Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+				this.doList();
 				break;
 			case 83:
-				this.ary_select.sort(function(a3,b3) {
-					if(Math.random() > .5) return 1; else return -1;
-				});
-				this.listSeperate();
-				Main.moveCards(this.ary_select,this.pos_mouse,false);
-				Main.pushCmds({ cmd : "shuffleSeparate", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+				this.doListSeperate();
 				break;
 			case 68:
 				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
@@ -1166,15 +1141,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select.slice(0)}});
 				break;
 			case 32:
-				var offset_0 = this.pos_mouse[0] - this.ary_select[0].pos[0];
-				var offset_1 = this.pos_mouse[1] - this.ary_select[0].pos[1];
-				Lambda.foreach(this.ary_select,function(select) {
-					select.pos[0] += offset_0;
-					select.pos[1] += offset_1;
-					return true;
-				});
-				Main.moveCards(this.ary_select,this.pos_mouse,false);
-				Main.pushCmds({ cmd : "moveCards", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+				this.doMoveCards();
 				break;
 			}
 			break;
@@ -1211,6 +1178,55 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			select.pos[1] = _g.pos_mouse[1] + Math.floor(cardIndex / 10) * 80;
 			return true;
 		});
+	}
+	,doList: function() {
+		this.listCard();
+		Main.moveCards(this.ary_select,this.pos_mouse,true);
+		Main.pushCmds({ cmd : "listCard", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+	}
+	,doListSeperate: function() {
+		this.listSeperate();
+		Main.moveCards(this.ary_select,this.pos_mouse,false);
+		Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+	}
+	,doListReverse: function() {
+		this.ary_select.reverse();
+		this.listCard();
+		Main.moveCards(this.ary_select,this.pos_mouse,true);
+		Main.pushCmds({ cmd : "listCardReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+	}
+	,doSeperateReverse: function() {
+		this.ary_select.reverse();
+		this.listSeperate();
+		Main.moveCards(this.ary_select,this.pos_mouse,false);
+		Main.pushCmds({ cmd : "listSeparateReverse", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+	}
+	,doListShuffle: function() {
+		this.ary_select.sort(function(a,b) {
+			if(Math.random() > .5) return 1; else return -1;
+		});
+		this.listCard();
+		Main.moveCards(this.ary_select,this.pos_mouse,true);
+		Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+	}
+	,doSeperateShuffle: function() {
+		this.ary_select.sort(function(a,b) {
+			if(Math.random() > .5) return 1; else return -1;
+		});
+		this.listSeperate();
+		Main.moveCards(this.ary_select,this.pos_mouse,false);
+		Main.pushCmds({ cmd : "shuffleSeparate", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
+	}
+	,doMoveCards: function() {
+		var offset_0 = this.pos_mouse[0] - this.ary_select[0].pos[0];
+		var offset_1 = this.pos_mouse[1] - this.ary_select[0].pos[1];
+		Lambda.foreach(this.ary_select,function(select) {
+			select.pos[0] += offset_0;
+			select.pos[1] += offset_1;
+			return true;
+		});
+		Main.moveCards(this.ary_select,this.pos_mouse,false);
+		Main.pushCmds({ cmd : "moveCards", content : { ary_select : this.ary_select.slice(0), pos_mouse : this.pos_mouse.slice(0)}});
 	}
 	,__class__: model_Model
 });
@@ -1587,3 +1603,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

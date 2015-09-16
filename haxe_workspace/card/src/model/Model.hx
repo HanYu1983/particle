@@ -91,37 +91,15 @@ class Model extends Mediator
 						Main.rotate( ary_select, 90 );
 						Main.pushCmds( { cmd:'rotate', content: { ary_select:ary_select.slice( 0 ), deg:90 } } );
 					case KeyboardEvent.DOM_VK_Q:
-						listCard();
-						Main.moveCards( ary_select, pos_mouse, true );
-						Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+						doListShuffle();
 					case KeyboardEvent.DOM_VK_W:
-						listSeperate();
-						Main.moveCards( ary_select, pos_mouse, false );
-						Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+						doListReverse();
 					case KeyboardEvent.DOM_VK_E:
-						ary_select.reverse();
-						listCard();
-						Main.moveCards( ary_select, pos_mouse, true );
-						Main.pushCmds( { cmd:'listCardReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_R:
-						ary_select.reverse();
-						listSeperate();
-						Main.moveCards( ary_select, pos_mouse, false );
-						Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 					case KeyboardEvent.DOM_VK_A:
-						ary_select.sort( function ( a, b ) {
-							return Math.random() > .5 ? 1 : -1;
-						});
-						listCard();
-						Main.moveCards( ary_select, pos_mouse, true );
-						Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+						doList();
 					case KeyboardEvent.DOM_VK_S:
-						ary_select.sort( function ( a, b ) {
-							return Math.random() > .5 ? 1 : -1;
-						});
-						listSeperate();
-						Main.moveCards( ary_select, pos_mouse, false );
-						Main.pushCmds( { cmd:'shuffleSeparate', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+						doListSeperate();
 					case KeyboardEvent.DOM_VK_D:
 						ary_select = Lambda.array( Lambda.filter( Main.ary_cards, function( card:Dynamic ) {
 							return ( card.owner == Main.playerId );
@@ -132,17 +110,7 @@ class Model extends Mediator
 							Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );
 						}
 					case KeyboardEvent.DOM_VK_SPACE:
-						var offset = [
-							pos_mouse[0] - ary_select[0].pos[0],
-							pos_mouse[1] - ary_select[0].pos[1]
-						];
-						Lambda.foreach( ary_select, function( select ) {
-							select.pos[0] += offset[0];
-							select.pos[1] += offset[1];
-							return true;
-						});
-						Main.moveCards( ary_select, pos_mouse, false );
-						Main.pushCmds( { cmd:'moveCards', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+						doMoveCards();
 				}
 			case Layer.on_body_mousemove:
 				pos_mouse[0] = notification.getBody().x;
@@ -177,5 +145,63 @@ class Model extends Mediator
 			select.pos[1] = pos_mouse[1] + Math.floor( cardIndex / 10 ) * 80;
 			return true;
 		});
+	}
+	
+	function doList() {
+		listCard();
+		Main.moveCards( ary_select, pos_mouse, true );
+		Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+	}
+	
+	function doListSeperate() {
+		listSeperate();
+		Main.moveCards( ary_select, pos_mouse, false );
+		Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+	}
+	
+	function doListReverse() {
+		ary_select.reverse();
+		listCard();
+		Main.moveCards( ary_select, pos_mouse, true );
+		Main.pushCmds( { cmd:'listCardReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+	}
+	
+	function doSeperateReverse() {
+		ary_select.reverse();
+		listSeperate();
+		Main.moveCards( ary_select, pos_mouse, false );
+		Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+	}
+	
+	function doListShuffle() {
+		ary_select.sort( function ( a, b ) {
+			return Math.random() > .5 ? 1 : -1;
+		});
+		listCard();
+		Main.moveCards( ary_select, pos_mouse, true );
+		Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+	}
+	
+	function doSeperateShuffle() {
+		ary_select.sort( function ( a, b ) {
+			return Math.random() > .5 ? 1 : -1;
+		});
+		listSeperate();
+		Main.moveCards( ary_select, pos_mouse, false );
+		Main.pushCmds( { cmd:'shuffleSeparate', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+	}
+	
+	function doMoveCards() {
+		var offset = [
+			pos_mouse[0] - ary_select[0].pos[0],
+			pos_mouse[1] - ary_select[0].pos[1]
+		];
+		Lambda.foreach( ary_select, function( select ) {
+			select.pos[0] += offset[0];
+			select.pos[1] += offset[1];
+			return true;
+		});
+		Main.moveCards( ary_select, pos_mouse, false );
+		Main.pushCmds( { cmd:'moveCards', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 }
