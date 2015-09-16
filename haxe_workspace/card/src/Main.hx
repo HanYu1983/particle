@@ -34,7 +34,6 @@ class Main
 	#end
 	
 	function new() {
-		
 		j( '#txt_id' ).html( 'playerId: ' + playerId );
 		
 		Facade.getInstance().registerMediator( new Model( 'model' ));
