@@ -196,13 +196,19 @@ var Main = function() {
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
+Main.pushCmds = function(content) {
+	Main.ary_cmds.push(content);
+	console.log(content);
+	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
+};
 Main.messageAll = function(content) {
-	Main.j("#txt_output2").html("messageAll: " + Std.string(content.cmd));
+	Main.j("#txt_output2").html("messageAll");
 	Lambda.foreach(Main.otherPlayerId,function(id) {
 		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : Math.floor(new Date().getTime() / 1000)},Main.handleResponse(function(ret) {
 		}));
 		return true;
 	});
+	Main.ary_cmds = [];
 };
 Main.applyValue = function(ary_select) {
 	Lambda.foreach(ary_select,function(card) {
@@ -342,15 +348,18 @@ Main.prototype = {
 		}
 		stack = _g;
 		(Animate.addCardAndPrepare(stack))().done(function() {
-			Main.messageAll({ cmd : "addCards", content : stack});
+			Main.pushCmds({ cmd : "addCards", content : stack});
 		});
 	}
 	,onBackCallback: function(ret) {
 		var _g = this;
+		var allCmds = Lambda.fold(ret.Info,function(info,curr) {
+			return curr.concat(JSON.parse(info.Content));
+		},[]);
+		console.log(JSON.stringify(allCmds));
 		var prev = this.lastPromise;
-		Lambda.foreach(ret.Info,function(info) {
-			console.log(info.Time);
-			_g.lastPromise = _g.callAction(JSON.parse(info.Content));
+		Lambda.foreach(allCmds,function(cmd) {
+			_g.lastPromise = _g.callAction(cmd);
 			if(prev != null) try {
 				prev().pipe(_g.lastPromise);
 			} catch( err ) {
@@ -367,6 +376,7 @@ Main.prototype = {
 		});
 	}
 	,callAction: function(content) {
+		console.log(content);
 		console.log(content.content);
 		if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
 			var localCard = Main.getCardsById(remoteCard.id);
@@ -413,21 +423,23 @@ Main.prototype = {
 				cb();
 			} else haxe_Timer.delay(function() {
 				_g.callForOthers(cb);
-			},10000);
+			},Main.keepTime);
 		}));
 	}
-	,appStart: function() {
+	,keepSend: function() {
+		if(Main.ary_cmds.length > 0) Main.messageAll(Main.ary_cmds);
+		haxe_Timer.delay($bind(this,this.keepSend),Main.keepTime);
 	}
 	,onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				_g.appStart();
 				_g.callForOthers(function() {
 					Main.j("#txt_output").html("others id: " + JSON.stringify(Main.otherPlayerId));
 					Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse($bind(_g,_g.onBackCallback)));
 					_g.createSelfStack();
+					_g.keepSend();
 				});
 			}));
 			break;
@@ -989,29 +1001,29 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.sendNotification(model_Model.on_card_move,notification.getBody());
 			break;
 		case "on_press_c":
-			if(Main.setOwner(this.ary_select)) Main.messageAll({ cmd : "setOwner", content : { ary_select : this.ary_select}});
+			if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_v":
-			if(Main.setRelate(this.ary_select)) Main.messageAll({ cmd : "setRelate", content : { ary_select : this.ary_select}});
+			if(Main.setRelate(this.ary_select)) Main.pushCmds({ cmd : "setRelate", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_r":
 			this.ary_select.reverse();
-			Main.listSeparate(this.ary_select,this.pos_mouse);
+			Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
 			break;
 		case "on_press_f":
-			if(Main.flip(this.ary_select)) Main.messageAll({ cmd : "flip", content : { ary_select : this.ary_select}});
+			if(Main.flip(this.ary_select)) Main.pushCmds({ cmd : "flip", content : { ary_select : this.ary_select}});
 			break;
 		case "on_press_l":
-			Main.listCard(this.ary_select,this.pos_mouse);
-			Main.messageAll({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
+			Main.listCard(this.ary_select,this.pos_mouse.slice(0));
+			Main.pushCmds({ cmd : "listCard", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
 			break;
 		case "on_press_a":
-			Main.listSeparate(this.ary_select,this.pos_mouse);
-			Main.messageAll({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
+			Main.listSeparate(this.ary_select,this.pos_mouse.slice(0));
+			Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
 			break;
 		case "on_press_s":
-			Main.shuffle(this.ary_select,this.pos_mouse);
-			Main.messageAll({ cmd : "shuffle", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse}});
+			Main.shuffle(this.ary_select,this.pos_mouse.slice(0));
+			Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.ary_select, pos_mouse : this.pos_mouse.slice(0)}});
 			break;
 		}
 	}
@@ -1369,11 +1381,12 @@ var Class = { __name__ : ["Class"]};
 var Enum = { };
 var __map_reserved = {}
 Main.j = $;
-Main.id = 0;
 Main.playerId = Main.getId();
 Main.otherPlayerId = [];
 Main.ary_cards = [];
+Main.ary_cmds = [];
 Main.tmpl_card = Main.j("#tmpl_card");
+Main.keepTime = 1000;
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";

@@ -17,12 +17,19 @@ import org.puremvc.haxe.patterns.facade.Facade;
 class Main 
 {
 	public static var j:Dynamic = untyped __js__('$');
-	static var id = 0;
+	
 	public static var playerId = getId();
 	public static var otherPlayerId = [];
 	public static var ary_cards:Array<Dynamic> = [];
+	public static var ary_cmds:Array<Dynamic> = [];
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
+	
+	#if debug
+	static var keepTime = 1000;
+	#else
+	static var keepTime = 1000 * 10;
+	#end
 	
 	function new() {
 		
@@ -38,13 +45,18 @@ class Main
 		var stack = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'', back:true } ];
 		
 		Animate.addCardAndPrepare( stack )().done( function() {
-			messageAll( { cmd:'addCards', content:stack } );
+			pushCmds( { cmd:'addCards', content:stack } );
 		});
 	}
 	
-	public static function messageAll( content:Dynamic ) {
-		j( '#txt_output2' ).html( 'messageAll: ' + content.cmd );
-		
+	public static function pushCmds( content:Dynamic ) {
+		ary_cmds.push( content );
+		trace( content );
+		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
+	}
+	
+	public static function messageAll( content:Array<Dynamic> ) {
+		j( '#txt_output2' ).html( 'messageAll' );
 		Lambda.foreach( otherPlayerId, function ( id ) {
 			message( {
 				FBID:playerId,
@@ -56,32 +68,24 @@ class Main
 			}));
 			return true;
 		});
-	}
-	/*
-	public static function messageAll( content:Array<Dynamic> ) {
-		Lambda.foreach( otherPlayerId, function ( id ) {
-			message( {
-				FBID:playerId,
-				TargetUser: id,
-				Content: Json.stringify( content ),
-				UnixTime: Date.now().getTime()
-			}, handleResponse( function( ret ) {
-				
-			}));
-			return true;
-		});
 		ary_cmds = [];
 	}
-	*/
+	
 	var lastPromise:Dynamic = null;
 	
 	function onBackCallback( ret:Dynamic ) {
+		
+		var allCmds:Array<Dynamic> = Lambda.fold( ret.Info, function( info, curr:Array<Dynamic> ) {
+			return curr.concat( Json.parse( info.Content ) );
+		}, []);
+		
+		trace( Json.stringify( allCmds ) );
+		
 		var prev:Dynamic = lastPromise;
 		
-		Lambda.foreach( ret.Info, function( info ) {
-			trace( info.Time );
+		Lambda.foreach( allCmds, function( cmd ) {
 			
-			lastPromise = callAction( Json.parse( info.Content ) );
+			lastPromise = callAction( cmd );
 			if ( prev != null ) {
 				try{
 					prev().pipe( lastPromise );
@@ -131,8 +135,9 @@ class Main
 	}
 	
 	function callAction( content:Dynamic ) {
-		
+		trace( content );
 		trace( content.content );
+		
 		if ( content.content.ary_select != null ) {
 			content.content.ary_select = Lambda.fold( content.content.ary_select, function( remoteCard, curr ) {
 				var localCard = getCardsById( remoteCard.id );
@@ -184,30 +189,16 @@ class Main
 			}else {
 				Timer.delay( function() {
 					callForOthers( cb );
-				}, 1000 * 10 );
+				}, keepTime );
 			}
 		}));
 	}
 	
-	function appStart() {
-		//fake player
-		//var cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:playerId, relate:'' } ];
-		//ary_cards = ary_cards.concat( cards );
-		
-		//fake enemy
-		//cards = [for ( i in 0...30 ) { id:getId(), name:i, owner:getId(), relate:'' } ];
-		//ary_cards = ary_cards.concat( cards );
-		
-		
-		//Animate.addCards( cards )().pipe( Animate.list( cards.slice(0, 15), [200, 200] )).pipe( Animate.listSeparate( cards.slice(0, 7), [300, 300] ));
-		//Animate.addCards( ary_cards )();
-		/*
-		Lambda.foreach( ary_cards, function( card ) {
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showOwner:Main.playerId == card.owner, seeCard: card.owner == card.relate }, 'owner_change' );
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:card, showRelate:Main.playerId == card.relate, seeCard: card.owner == card.relate }, 'relate_change' );
-			return true;
-		});
-		*/
+	function keepSend() {
+		if ( ary_cmds.length > 0 ) {
+			messageAll( ary_cmds );
+		}
+		Timer.delay( keepSend, keepTime );
 	}
 	
 	function onHtmlClick( type, ?params ) {
@@ -217,11 +208,11 @@ class Main
 					FBID:playerId,
 					Name:playerId
 				}, handleResponse( function( ret ) {
-					appStart();
 					callForOthers( function() {
 						j('#txt_output' ).html( 'others id: ' + Json.stringify( otherPlayerId ) );
 						installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
 						createSelfStack();
+						keepSend();
 					});
 				}));
 		}

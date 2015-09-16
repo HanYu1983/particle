@@ -97,26 +97,26 @@ class Model extends Mediator
 				sendNotification( on_card_move, notification.getBody() );
 			case Layer.on_press_c:
 				if ( Main.setOwner( ary_select ) ) 
-					Main.messageAll( { cmd:'setOwner', content:{ ary_select:ary_select } } );
+					Main.pushCmds( { cmd:'setOwner', content:{ ary_select:ary_select } } );
 			case Layer.on_press_v:
 				if ( Main.setRelate( ary_select ) )
-					Main.messageAll( { cmd:'setRelate', content:{ ary_select:ary_select } } );
+					Main.pushCmds( { cmd:'setRelate', content:{ ary_select:ary_select } } );
 			case Layer.on_press_r:
 				ary_select.reverse();
-				Main.listSeparate( ary_select, pos_mouse );
+				Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
 			case Layer.on_press_f:
 				if ( Main.flip( ary_select ) ) {
-					Main.messageAll( { cmd:'flip', content:{ ary_select:ary_select } } );
+					Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select } } );
 				}
 			case Layer.on_press_l:
-				Main.listCard( ary_select, pos_mouse );
-				Main.messageAll( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
+				Main.listCard( ary_select, pos_mouse.slice( 0 ) );
+				Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
 			case Layer.on_press_a:
-				Main.listSeparate( ary_select, pos_mouse );
-				Main.messageAll( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
+				Main.listSeparate( ary_select, pos_mouse.slice( 0 ) );
+				Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
 			case Layer.on_press_s:
-				Main.shuffle( ary_select, pos_mouse );
-				Main.messageAll( { cmd:'shuffle', content:{ ary_select:ary_select, pos_mouse:pos_mouse } } );
+				Main.shuffle( ary_select, pos_mouse.slice( 0 ) );
+				Main.pushCmds( { cmd:'shuffle', content:{ ary_select:ary_select, pos_mouse:pos_mouse.slice( 0 ) } } );
 		}
 	}
 }
