@@ -376,7 +376,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
   go func (){
     defer close( retCh )
     defer close( errCh )
-    maxtime := 1  // use long polling tech if maxtime > 1
+    maxtime := 3  // use long polling tech if maxtime > 1
     var times int
     var ok bool
     
