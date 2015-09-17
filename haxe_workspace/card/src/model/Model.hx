@@ -3,6 +3,7 @@ package model;
 import js.html.KeyboardEvent;
 import mediator.Card;
 import mediator.Layer;
+import mediator.UI;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
 
@@ -18,6 +19,7 @@ class Model extends Mediator
 	public static var on_select_cards = 'on_model_select_cards';
 	
 	var ary_select:Array<Dynamic> = [];
+	var currentDeckId = 0;
 	var isSeperate = false;
 	var isBack = true;
 	var pos_mouse = [0, 0];
@@ -34,13 +36,19 @@ class Model extends Mediator
 				Layer.on_layout_mouse_up, 
 				Layer.on_press,
 				Layer.on_body_mousemove,
-				Layer.on_select_cards
+				Layer.on_select_cards,
+				UI.on_combo_deck_change,
+				Main.on_createDeck_click
 				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case Main.on_createDeck_click:
+				Main.createSelfDeck( currentDeckId );
+			case UI.on_combo_deck_change:
+				currentDeckId = notification.getBody().deckId;
 			case Layer.on_select_cards:
 				var ori = notification.getBody().ary_select;
 				

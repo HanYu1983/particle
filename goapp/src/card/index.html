@@ -129,6 +129,14 @@ body{
 				<div class="hori"><a href="#" onclick="onHtmlClick('onBtnSendClick')" class="easyui-linkbutton" style="height:60px; width:100px" data-options="iconCls:'icon-save'">送出動作(G)</a></div>
 				<div class="hori"><a href="#" onclick="onHtmlClick('onBtnPollingClick')" class="easyui-linkbutton" style="height:60px;  width:100px" data-options="iconCls:'icon-save'">抓取動作(H)</a></div>
 			</div>
+			<div class="group" style="text-align:center; margin-top:20px;">
+				<div class="hori">
+					<select id="combo_deck" class="easyui-combobox" name="state" style="width:100px;"></select>
+				</div>
+				<div class="hori">
+					<a href="#" onclick="onHtmlClick('onBtnCreateDeck')" class="easyui-linkbutton" style="" data-options="iconCls:'icon-ok'">創建套牌</a>
+				</div>
+			</div>
 		</div>
 		<div data-options="region:'center',title:'卡牌詳細'">
             <div id="mc_detailContainer" style="position:relative; width:100%">

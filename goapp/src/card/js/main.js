@@ -243,8 +243,26 @@ var Main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
+	Main.getCardPackage("gundamWar",Main.handleResponse(function(ret) {
+		Main.cardPackage = ret;
+		Main.cardSuit = Main.getCardSuit(Main.cardPackage);
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
+		Main.slide("卡牌準備完成");
+	}));
 };
 Main.__name__ = true;
+Main.createSelfDeck = function(deckId) {
+	var tempGetCardId = function(i) {
+		return i + 1000 + ".jpg";
+	};
+	var deck = Main.cardSuit[deckId];
+	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
+		return { id : Main.getId(), cardId : cardId, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};
+	}));
+	(Animate.addCardAndPrepare(toDeck))().done(function() {
+		Main.pushCmds({ cmd : "addCards", content : toDeck});
+	});
+};
 Main.pushCmds = function(content) {
 	Main.ary_cmds.push(content);
 	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
@@ -447,6 +465,9 @@ Main.getCardPackage = function(name,cb) {
 Main.getCardImageUrlWithPackage = function(name,key) {
 	return api.getCardImageUrlWithPackage(name,key);
 };
+Main.getCardSuit = function(pkg) {
+	return api.getCardSuit(pkg);
+};
 Main.slide = function(msg) {
 	Main.j.messager.show({ title : "提示", msg : msg, timeout : 1000, showType : "slide"});
 };
@@ -462,23 +483,7 @@ Main.getId = function() {
 	return leo.utils.generateUUID();
 };
 Main.prototype = {
-	createSelfStack: function() {
-		var tempGetCardId = function(i) {
-			return i + 1000 + ".jpg";
-		};
-		var stack;
-		var _g = [];
-		var _g1 = 0;
-		while(_g1 < 30) {
-			var i1 = _g1++;
-			_g.push({ id : Main.getId(), cardId : tempGetCardId(i1 + 1), name : i1, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""});
-		}
-		stack = _g;
-		(Animate.addCardAndPrepare(stack))().done(function() {
-			Main.pushCmds({ cmd : "addCards", content : stack});
-		});
-	}
-	,callForOthers: function(cb) {
+	callForOthers: function(cb) {
 		var _g = this;
 		Main.users(Main.handleResponse(function(ret) {
 			Main.j("#txt_output").html("users searching...");
@@ -498,8 +503,10 @@ Main.prototype = {
 		haxe_Timer.delay($bind(this,this.keepSend),Main.keepTime);
 	}
 	,onHtmlClick: function(type,params) {
-		var _g = this;
 		switch(type) {
+		case "onBtnCreateDeck":
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+			break;
 		case "onBtnClearClick":
 			Main.clear(function() {
 				window.location.reload();
@@ -513,13 +520,7 @@ Main.prototype = {
 			break;
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				Main.getCardPackage("gundamWar",Main.handleResponse(function(ret1) {
-					Main.cardPackage = ret1;
-					_g.callForOthers(function() {
-						Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
-						_g.createSelfStack();
-					});
-				}));
+				Main.slide("debug 模式，對手配對成功");
 			}));
 			break;
 		}
@@ -933,12 +934,13 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 var mediator_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
+	this.combo_deck = this.getViewComponent().find("#combo_deck");
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_Model.on_select_cards,model_Model.on_state_change];
+		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -953,7 +955,23 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				_g1.showCard(notification.getBody().select);
 			},10);
 			break;
+		case "on_getSuit_success":
+			this.createComboDeck(notification.getBody().cardSuit);
+			break;
 		}
+	}
+	,createComboDeck: function(cardSuit) {
+		var _g = this;
+		var i = 0;
+		Lambda.foreach(cardSuit,function(deck) {
+			_g.combo_deck.append("<option value=\"" + i++ + "\">" + deck.name + "</option>");
+			return true;
+		});
+		this.combo_deck.combobox({ onSelect : function(record) {
+			_g.sendNotification(mediator_UI.on_combo_deck_change,{ deckId : record.value});
+		}});
+		this.combo_deck.combobox("textbox").prop("placeholder","選擇套牌");
+		this.combo_deck.combobox("setValue",0);
 	}
 	,showCards: function(ary_select) {
 		var _g = this;
@@ -980,6 +998,7 @@ var model_Model = function(mediatorName,viewComponent) {
 	this.pos_mouse = [0,0];
 	this.isBack = true;
 	this.isSeperate = false;
+	this.currentDeckId = 0;
 	this.ary_select = [];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
@@ -987,11 +1006,17 @@ model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards];
+		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards,mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_createDeck_click":
+			Main.createSelfDeck(this.currentDeckId);
+			break;
+		case "on_combo_deck_change":
+			this.currentDeckId = notification.getBody().deckId;
+			break;
 		case "on_select_cards":
 			var ori = notification.getBody().ary_select;
 			ori.sort(function(a,b) {
@@ -1484,6 +1509,8 @@ String.__name__ = true;
 Array.__name__ = true;
 Date.__name__ = ["Date"];
 var __map_reserved = {}
+Main.on_getSuit_success = "on_getSuit_success";
+Main.on_createDeck_click = "on_createDeck_click";
 Main.j = $;
 Main.playerId = Main.getId();
 Main.otherPlayerId = [];
@@ -1499,9 +1526,12 @@ mediator_Layer.on_layout_mouse_up = "on_layout_mouse_up";
 mediator_Layer.on_select_cards = "on_select_cards";
 mediator_Layer.on_press = "on_press";
 mediator_Layer.on_body_mousemove = "on_body_mousemove";
+mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 model_Model.on_card_enter = "on_card_enter";
 model_Model.on_card_move = "on_card_move";
 model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

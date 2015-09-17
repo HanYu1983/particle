@@ -17,6 +17,10 @@ import org.puremvc.haxe.patterns.facade.Facade;
  */
 class Main 
 {
+	
+	public static var on_getSuit_success = 'on_getSuit_success';
+	public static var on_createDeck_click = 'on_createDeck_click';
+	
 	public static var j:Dynamic = untyped __js__('$');
 	
 	public static var playerId = getId();
@@ -28,6 +32,7 @@ class Main
 	
 	//static var sendTimer:Timer = null;
 	public static var cardPackage = null;
+	public static var cardSuit = null;
 	
 	#if debug
 	static var keepTime = 1000;
@@ -43,13 +48,35 @@ class Main
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
+		
+		getCardPackage( 'gundamWar', handleResponse( function( ret ) {
+			cardPackage = ret;
+			cardSuit = getCardSuit( cardPackage );
+			Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+			
+			slide( '卡牌準備完成' );
+		}));
 	}
 	
-	function createSelfStack() {
+	public static function createSelfDeck( deckId:Int ) {
 		function tempGetCardId( i ) {
 			return ( i + 1000 ) + '.jpg';
 		}
 		
+		var deck = cardSuit[deckId];
+		var toDeck = Lambda.array( Lambda.map( deck.cards, function( cardId ) {
+			return { 	
+					id:getId(), 
+					cardId:cardId,
+					owner:playerId, 
+					relate:'', 
+					deg:0, 
+					pos:[0, 0], 
+					back:true,
+					showTo:''
+			}
+		}));
+		/*
 		var stack = [for ( i in 0...30 ) { 	id:getId(), 
 											cardId:tempGetCardId(i + 1) , 
 											name:i, 
@@ -59,10 +86,10 @@ class Main
 											pos:[0, 0], 
 											back:true,
 											showTo:''
-											} ];
+											} ];*/
 		
-		Animate.addCardAndPrepare( stack )().done( function() {
-			pushCmds( { cmd:'addCards', content:stack } );
+		Animate.addCardAndPrepare( toDeck )().done( function() {
+			pushCmds( { cmd:'addCards', content:toDeck } );
 		});
 	}
 	
@@ -110,30 +137,6 @@ class Main
 		}
 		doAction( allCmds );
 		
-		/*
-		
-		var prev:Dynamic = lastPromise;
-		
-		Lambda.foreach( allCmds, function( cmd ) {
-			
-			lastPromise = callAction( cmd );
-			if ( prev != null ) {
-				try{
-					prev().pipe( lastPromise );
-				}catch ( err:String ) {
-					Browser.alert( err );
-				}
-			}
-			prev = lastPromise;
-			return true;
-		});
-		
-		if ( lastPromise != null ) {
-			lastPromise().done( function() {
-				lastPromise = null;
-			});
-		}
-		*/
 	}
 	
 	static function callAction( content:Dynamic ) {
@@ -220,6 +223,8 @@ class Main
 	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnCreateDeck':
+				Facade.getInstance().sendNotification( on_createDeck_click );
 			case 'onBtnClearClick':
 				clear( function() {
 					Browser.location.reload();
@@ -234,22 +239,17 @@ class Main
 					Name:playerId
 				}, handleResponse( function( ret ) {
 					
-					getCardPackage( 'gundamWar', handleResponse( function( ret ) {
-						cardPackage = ret;
-						
-						#if debug 
-						createSelfStack();
-						#else
-						callForOthers( function() {
-							j('#txt_output' ).html( Json.stringify( otherPlayerId ) );
-							//installPollMessageCallback( { FBID:playerId }, handleResponse( onBackCallback ) );
-							createSelfStack();
-						});
-						#end
-					}));
-					
+					#if debug
+					slide( 'debug 模式，對手配對成功' );
+					#else
+					callForOthers( function() {
+						j('#txt_output' ).html( Json.stringify( otherPlayerId ) );
+						slide( '對手配對成功' );
+					});
+					#end
 				}));
 		}
+		
 	}
 	
 	public static function applyValue( ary_select:Array<Dynamic> ) {
@@ -451,6 +451,10 @@ class Main
 	public static function getCardImageUrlWithPackage( name:Dynamic, key ):String {
 		return untyped __js__('api.getCardImageUrlWithPackage' )( name, key );
 	}
+	
+	public static function getCardSuit( pkg ) {
+		return untyped __js__('api.getCardSuit' )( pkg );
+	} 
 	
 	public static function slide( msg ){
 		j.messager.show({
