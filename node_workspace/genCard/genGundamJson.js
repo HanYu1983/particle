@@ -1,7 +1,7 @@
 var fs = require('fs')
 var outputName = 'gundamWar.json'
 var imageDir = 'gundamWar/'
-var targetDir = 'output/'
+var targetDir = 'gundamWar/'
 var output = {
 	images: {}
 }
