@@ -42,7 +42,9 @@
 		<script>
 		api.getCardPackage( 'gundamWar', function(err, ret){
 			var pkg = ret
-			console.log(pkg.cardSuit)
+			var suit = api.getCardSuit( pkg )
+			console.log(suit)
+			
 			for( var key in pkg.images ){
 				var path = api.getCardImageUrlWithPackage( pkg, key )
 				console.log( path )

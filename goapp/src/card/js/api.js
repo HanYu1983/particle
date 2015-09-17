@@ -3,6 +3,7 @@ var api = api || {};
 (function( module ){
 	
 	/**
+	建立玩家
 	data: {
 		FBID: string,
 		Name: string
@@ -30,6 +31,7 @@ var api = api || {};
 		})
 	}
 	/**
+	查詢所有玩家
 	cb: function( err, ret ){
 		err:string,
 		ret: {
@@ -52,6 +54,7 @@ var api = api || {};
 		})
 	}
 	/**
+	建立房間
 	data: {
 		ID: string,
 		Name: string
@@ -79,6 +82,7 @@ var api = api || {};
 		})
 	}
 	/**
+	查詢所有房間
 	cb: function( err, ret ){
 		err:string,
 		ret: {
@@ -102,6 +106,7 @@ var api = api || {};
 	}
 	
 	/**
+	傳送訊息
 	data: {
 		FBID: string,
 		TargetUser: string,
@@ -132,6 +137,7 @@ var api = api || {};
 	}
 	
 	/**
+	接收訊息
 	data: {
 		FBID: string
 	}
@@ -158,8 +164,8 @@ var api = api || {};
 		})
 	}
 	
-	
 	/**
+	使用long polling接受訊息
 	data: {
 		FBID: string
 	}
@@ -184,6 +190,9 @@ var api = api || {};
 		})
 	}
 	
+	/**
+	清除所有資料
+	*/
 	function clear( cb ){
 		$.ajax({
 			url: '../fn/card/clear',
@@ -198,6 +207,7 @@ var api = api || {};
 	}
 	
 	/**
+	取得卡包
 	name: "gundamWar"
 	cb: function( err, data ){
 		data: {
@@ -226,12 +236,21 @@ var api = api || {};
 	}
 	
 	/**
+	取得圖片路徑
 	pkg: getCardPackage() 回傳的object
 	key: image的key
 	*/
 	function getCardImageUrlWithPackage( pkg, key ){
 		var path = pkg.images[key]
 		return getCardImageUrl( path )
+	}
+	
+	/**
+	取得卡組列表
+	return: [{name:string, cards:[cardId:string]}]
+	*/
+	function getCardSuit( pkg ){
+		return pkg.cardSuit
 	}
 	
 	module.createUser = createUser
@@ -245,5 +264,6 @@ var api = api || {};
 	module.getCardPackage = getCardPackage
 	module.getCardImageUrl = getCardImageUrl
 	module.getCardImageUrlWithPackage = getCardImageUrlWithPackage
+	module.getCardSuit = getCardSuit
 	
 }) (api)
