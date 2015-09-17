@@ -99,6 +99,19 @@ class Main
 			return curr.concat( Json.parse( info.Content ) );
 		}, []);
 		
+		function doAction( cmds ) {
+			if ( cmds.length > 0 ) {
+				var cmd:Dynamic = cmds.shift();
+				var action:Dynamic = callAction( cmd );
+				action().done( function() {
+					doAction( cmds );
+				});
+			}
+		}
+		doAction( allCmds );
+		
+		/*
+		
 		var prev:Dynamic = lastPromise;
 		
 		Lambda.foreach( allCmds, function( cmd ) {
@@ -120,6 +133,7 @@ class Main
 				lastPromise = null;
 			});
 		}
+		*/
 	}
 	
 	static function callAction( content:Dynamic ) {

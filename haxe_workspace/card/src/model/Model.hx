@@ -168,33 +168,33 @@ class Model extends Mediator
 			}
 		}
 		Main.applyValue( ary_select );
-		Main.pushCmds( { cmd:'flip', content:{ ary_select:ary_select.slice( 0 ) } } );
+		Main.pushCmds( { cmd:'flip', content:{ ary_select:deepCopy( ary_select ) } } );
 	}
 	
 	function doList() {
 		listCard();
 		Main.moveCards( ary_select, pos_mouse, true );
-		Main.pushCmds( { cmd:'listCard', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+		Main.pushCmds( { cmd:'listCard', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 	
 	function doListSeperate() {
 		listSeperate();
 		Main.moveCards( ary_select, pos_mouse, false );
-		Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+		Main.pushCmds( { cmd:'listSeparate', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 	
 	function doListReverse() {
 		ary_select.reverse();
 		listCard();
 		Main.moveCards( ary_select, pos_mouse, true );
-		Main.pushCmds( { cmd:'listCardReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+		Main.pushCmds( { cmd:'listCardReverse', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 	
 	function doSeperateReverse() {
 		ary_select.reverse();
 		listSeperate();
 		Main.moveCards( ary_select, pos_mouse, false );
-		Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+		Main.pushCmds( { cmd:'listSeparateReverse', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 	
 	function doListShuffle() {
@@ -203,7 +203,7 @@ class Model extends Mediator
 		});
 		listCard();
 		Main.moveCards( ary_select, pos_mouse, true );
-		Main.pushCmds( { cmd:'shuffle', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+		Main.pushCmds( { cmd:'shuffle', content: { ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 	
 	function doSeperateShuffle() {
@@ -212,7 +212,7 @@ class Model extends Mediator
 		});
 		listSeperate();
 		Main.moveCards( ary_select, pos_mouse, false );
-		Main.pushCmds( { cmd:'shuffleSeparate', content: { ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+		Main.pushCmds( { cmd:'shuffleSeparate', content: { ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 	
 	function doMoveCards() {
@@ -226,6 +226,22 @@ class Model extends Mediator
 			return true;
 		});
 		Main.moveCards( ary_select, pos_mouse, false );
-		Main.pushCmds( { cmd:'moveCards', content:{ ary_select:ary_select.slice( 0 ), pos_mouse:pos_mouse.slice( 0 ) } } );
+		Main.pushCmds( { cmd:'moveCards', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
+	}
+	
+	function deepCopy( ary_select ) {
+		return Lambda.array( Lambda.map( ary_select, function( card ) {
+			return {
+				id: card.id, 
+				cardId: card.cardId , 
+				name: card.name, 
+				owner: card.owner, 
+				relate: card.relate, 
+				deg: card.deg, 
+				pos: [card.pos[0], card.pos[1]], 
+				back: card.back,
+				showTo: card.showTo
+			}
+		}));
 	}
 }
