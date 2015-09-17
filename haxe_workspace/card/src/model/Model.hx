@@ -229,6 +229,7 @@ class Model extends Mediator
 		Main.pushCmds( { cmd:'moveCards', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 	
+	//沒有同步的原因是因為每個card物件沒有被深復制，所以移動了好幾次。pos永遠都會抓到最新的。這邊用深復制，才可以存下當時的資訊
 	function deepCopy( ary_select ) {
 		return Lambda.array( Lambda.map( ary_select, function( card ) {
 			return {
