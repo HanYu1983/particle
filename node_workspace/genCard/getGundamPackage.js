@@ -40,7 +40,7 @@ function filename( pkg, num ){
 package為1~67
 */
 function downloadPackage( id, cnt ){
-	for( var i =300; i<=cnt; ++i ){
+	for( var i =200; i<=cnt; ++i ){
 		var name = filename( id, i )
 		var url = 'http://www.shiner96500.com/cards/gundamwar/image/'+id+'/'+name
 		function closure( url, name ){
@@ -49,19 +49,19 @@ function downloadPackage( id, cnt ){
 				download(url, "gundamWar/"+name, function(){});
 			}
 		}
-		setTimeout( closure(url, name), (i-300)* 1000 )
+		setTimeout( closure(url, name), (i-200)* 1000 )
 	}
 }
 
 console.log('start')
 
-for( var i=48; i<49; ++i ){
+for( var i=59; i<60; ++i ){
 	function closure( pkg ){
 		return function(){
-			downloadPackage(pkg, 400)
+			downloadPackage(pkg, 300)
 		}
 	}
-	setTimeout( closure(i+1), (i-48)* 1000* 300)
+	setTimeout( closure(i+1), (i-59)* 1000* 300)
 }
 
 
