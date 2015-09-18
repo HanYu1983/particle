@@ -1,19 +1,52 @@
 {
   "info":[
-    {
-      "name":"sword", 
-      "level": 1, 
-      "weight": 1, 
-      "power": 1, 
-      "type":"武具",
-      "sub-type":"劍",
-      "attribute":[
-        "穿透",
-        "遠距",
-        "穿透預防",
-        "固傷預防"
-      ],
-      "text":"指令|任務"
-    }
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"雲去蒼梧",
+			"type":"招式",
+			"cost":"劍2",
+			"text":"擊倒(5)。產生p+2的傷害"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"擊倒",
+			"type":"狀態",
+			"cost":"2",
+			"text":"不能行動。常時(0)支付2移除這張卡。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"防滑鞋", 
+			"level": 1, 
+			"weight": 1, 
+			"power": 1,
+			"type":"鞋",
+		},
+		"skill":{
+			"name":"防擊倒",
+			"type":"狀態",
+			"cost":"1",
+			"text":"防擊倒"
+		}
+	}
   ]
 }
