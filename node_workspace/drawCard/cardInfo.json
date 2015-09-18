@@ -2,9 +2,9 @@
   "info":[
     {
       "name":"sword", 
-      "level": 3, 
+      "level": 1, 
       "weight": 1, 
-      "power": 10, 
+      "power": 1, 
       "type":"武具",
       "sub-type":"劍",
       "attribute":[
