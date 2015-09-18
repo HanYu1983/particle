@@ -1,0 +1,20 @@
+{
+  "info":[
+    {
+      "name":"sword", 
+      "level": 3, 
+      "weight": 1, 
+      "power": 10, 
+      "type":"武具",
+      "sub-type":"劍",
+      "attribute":[
+        "穿透",
+        "遠距",
+        "穿透預防",
+        "固傷預防"
+      ],
+      "command": "",
+      "operation":""
+    }
+  ]
+}
