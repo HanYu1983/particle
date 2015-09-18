@@ -13,7 +13,23 @@
 			"name":"雲去蒼梧",
 			"type":"招式",
 			"cost":"劍2",
-			"text":"擊倒(5)。產生p+2的傷害"
+			"text":"擊倒(5)。p+2。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"彈反",
+			"type":"反應",
+			"cost":"2",
+			"text":"行動力+1。產生傷害2。"
 		}
 	},
 	{
@@ -35,17 +51,177 @@
 	{
 		"type":"武具",
 		"weapon":{
-			"name":"防滑鞋", 
+			"name":"劍", 
 			"level": 1, 
-			"weight": 1, 
-			"power": 1,
-			"type":"鞋",
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
 		},
 		"skill":{
-			"name":"防擊倒",
-			"type":"狀態",
+			"name":"摘葉",
+			"type":"招式",
 			"cost":"1",
-			"text":"防擊倒"
+			"text":"遠程。傷害2。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"雨濺飛濤",
+			"type":"招式",
+			"cost":"劍2",
+			"text":"p+2。前一招為遠程時。p+2。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"截脈",
+			"type":"招式",
+			"cost":"2",
+			"text":"p+2。不產生傷害。被擊中玩家行動力-2。前一招為遠程時。前述所扣的行動力變更為3。沒得扣行動力的量，轉為扣血。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"千峰拔地",
+			"type":"招式",
+			"cost":"劍2",
+			"text":"p+2。對手狀態為擊倒時。p+2。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"蕩劍式",
+			"type":"狀態",
+			"cost":"劍",
+			"text":"被擊中時，可以廢棄這張卡。那個時候，對手不能連招，並且，自己行動力+1。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"雲羅飛仙",
+			"type":"招式",
+			"cost":"劍2",
+			"text":"p。這個招式產生的傷害不能被武具所減傷。在蕩劍式狀態下使用時，p+2。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"徵鴻投海",
+			"type":"狀態",
+			"cost":"2",
+			"text":"進場技能。下一個招式變為遠程，蕩劍式(5)。如果發動進場技能。效果解決時，廢棄這張卡。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"燕墨點水",
+			"type":"招式",
+			"cost":"劍2",
+			"text":"遠程。p。蕩劍式(5)"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"劍", 
+			"level": 1, 
+			"weight": 2, 
+			"power": 2,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"雨濺飛濤",
+			"type":"招式",
+			"cost":"劍2",
+			"text":"p+2。前一招為遠程時。這張卡傷害+2。"
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"長劍", 
+			"level": 2, 
+			"weight": 2, 
+			"power": 3,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"",
+			"type":"",
+			"cost":"",
+			"text":""
+		}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"都尉龍吟寶劍", 
+			"level": 2, 
+			"weight": 2, 
+			"power": 3,
+			"type":"劍",
+		},
+		"skill":{
+			"name":"龍吟之力",
+			"type":"狀態",
+			"cost":"2",
+			"text":"交戰時p+1"
 		}
 	}
   ]
