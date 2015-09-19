@@ -48,15 +48,15 @@ package view
 			
 			cardData.info.forEach( function( card ) {
 				var cardView = new template();
-				cardView['txt_weapon_name'].text = "[武名]" + card.weapon.name;
-				cardView['txt_weapon_level'].text = "[武等]" + card.weapon.level;
-				cardView['txt_weapon_weight'].text = "[武重]" + card.weapon.weight;
-				cardView['txt_weapon_power'].text = "[武力]" + card.weapon.power;
-				cardView['txt_weapon_type'].text = "[武別]" + card.weapon.type;
-				cardView['txt_skill_name'].text = "[技名]" + card.skill.name;
-				cardView['txt_skill_type'].text = "[技別]" + card.skill.type;
-				cardView['txt_skill_cost'].text = "[技耗]" + card.skill.cost;
-				cardView['txt_skill_text'].text = "[技文]" + card.skill.text;
+				cardView['txt_weapon_name'].text = card.weapon.name;
+				cardView['txt_weapon_level'].text = card.weapon.level;
+				cardView['txt_weapon_weight'].text = card.weapon.weight;
+				cardView['txt_weapon_power'].text = card.weapon.power;
+				cardView['txt_weapon_type'].text = card.weapon.type;
+				cardView['txt_skill_name'].text = card.skill.name;
+				cardView['txt_skill_type'].text = card.skill.type;
+				cardView['txt_skill_cost'].text = card.skill.cost;
+				cardView['txt_skill_text'].text = card.skill.text;
 				cardView['txt_id'].text = card.id;
 				cardView['data'] = card;
 				_ary_cardView.push( cardView );
