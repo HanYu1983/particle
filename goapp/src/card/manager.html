@@ -76,7 +76,10 @@ body{
 				<div class="group" ctype="level">
 					<div class="hori">武器等級</div>
 					<div class="hori" style="width:100%;">
-						<input class="easyui-textbox" style="width:80%">
+						<select class="easyui-combobox" style="width:80%;">
+							<option value="1">1</option>
+							<option value="2">2</option>
+						</select>
 					</div>
 				</div>
 				<div class="group" ctype="weight">
@@ -147,27 +150,22 @@ body{
 	
 	var currentRow = undefined;
 	
-	$('.easyui-textbox' ).textbox({
-		onChange:function( nv, ov ){
-			var ctype =$( this ).parent().parent().attr('ctype');
-			if( currentRow != undefined ){
-				currentRow.row[ctype] = nv;
-				/*
-				openLoading( '同步中...' );
-				capi.addCard( viewToModel( currentRow.row ), function(err, ret){
-					if( err != null ){
-						closeLoading();
-						alert1( err );
-					}else{
-						resetRows( function(){
-							closeLoading();
-						});
-					}
-				});
-				*/
-			}
-		}
+	$('.easyui-textbox ' ).textbox({
+		onChange:onUIChange
 	});
+	
+	$('.easyui-combobox' ).combobox({
+		onChange:onUIChange
+	});
+	
+	function onUIChange(nv, ov){
+		var ctype =$( this ).parent().parent().attr('ctype');
+		console.log( ctype, nv );
+		if( currentRow != undefined ){
+			currentRow.row[ctype] = nv;
+		}
+	}
+	
 	
 //	$('#grid_cards').edatagrid();
 	$('#grid_cards').datagrid( {
@@ -300,7 +298,7 @@ body{
 		setText( getInput( 'name' ), data.name );
 		setText( getInput( 'type' ), data.type );
 		setText( getInput( 'weight' ), data.weight );
-		setText( getInput( 'level' ), data.level );
+		setCombobox( getCombo( 'level' ), data.level );
 		setText( getInput( 'power' ), data.power );
 		setText( getInput( 'sname' ), data.sname );
 		setText( getInput( 'stype' ), data.stype );
@@ -308,16 +306,24 @@ body{
 		setText( getInput( 'stext' ), data.stext );
 	}
 	
-	
-	
 	function setText( textbox, str ){
 		textbox.textbox( {
 			value:str
 		} );
 	}
 	
+	function setCombobox( combo, str ){
+		combo.combobox( {
+			value:str
+		} );
+	}
+	
 	function getInput( type ){
 		return $('.group[ctype=' + type + ']').find( '.easyui-textbox' );
+	}
+	
+	function getCombo( type ){
+		return $('.group[ctype=' + type + ']').find( '.easyui-combobox' );
 	}
 	
 	function viewToModel( view ){
