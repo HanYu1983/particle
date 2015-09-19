@@ -26,6 +26,7 @@
 		import flash.events.Event;
 		import flash.events.EventDispatcher;
 		import flash.events.MouseEvent;
+		import flash.net.URLLoader;
 		import flash.net.URLRequest;
 		import flash.system.ApplicationDomain;
 		import view.UI;
@@ -42,10 +43,6 @@
 			l.contentLoaderInfo.addEventListener( Event.COMPLETE, onComplete );
 			
 			_ui = new UI();
-			_ui.addEventListener( 'onFlieUpload', onFlieUpload );
-			
-			_ui.dispatchEvent( new Event( 'browseFile' ) );
-			
 		}
 		
 		private function onFlieUpload( e:VicEvent ):void {
@@ -56,10 +53,24 @@
 			} ));
 		}
 		
+		private function getData():void {
+			var ul:URLLoader = new URLLoader();
+			ul.load( new URLRequest( 'http://particle-979.appspot.com/fn/cardInfo/cardList' ));
+			
+			ul.addEventListener(Event.COMPLETE, function( e:Event ):void {
+				_ui.dispatchEvent( new VicEvent( 'appendCard', {
+					template:_template,
+					data: JSON.parse( e.currentTarget.data )
+				} ));
+			});
+		}
+		
 		private function onComplete( e:Event ):void {
 			var info:LoaderInfo = e.currentTarget as LoaderInfo;
 			_source = info.applicationDomain;
 			_template = _source.getDefinition( 'TemplateCard' ) as Class;
+			
+			getData();
 		}
 		/*
 		public function onBtnClick( e:MouseEvent ):void {

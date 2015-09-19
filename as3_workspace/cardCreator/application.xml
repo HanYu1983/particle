@@ -20,6 +20,9 @@
 		<resizable>true</resizable> 
 	</initialWindow> 
 	
+	<icon> 
+		<image128x128>icons/icon.png</image128x128>  
+	</icon>
 	<!-- 
 	More options:
 	http://livedocs.adobe.com/flex/3/html/File_formats_1.html#1043413

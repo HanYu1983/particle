@@ -34,8 +34,6 @@ package view
 			addEventListener( 'browseFile', browseFile );
 			addEventListener( 'appendCard', appendCard );
 			
-			trace( File.desktopDirectory.url );
-			trace( File.applicationDirectory.url );
 		}
 		
 		function browseFile( event:Event ):void {
