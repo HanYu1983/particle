@@ -23,7 +23,29 @@
 		</form>
 		
 		<script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>
+		<script src="js/capi.js"></script>
 		<script>
+		
+		capi.addCard({
+			Id: "",
+			WName: "string",
+			WLevel: 0,
+			WWeight: 1,
+			WPower: 2,
+			WType: "string",
+			SName: "string",
+			SType: "string",
+			SCost: "string",
+			SText: "string",
+			Type: "string"
+		}, function(err, info){
+			console.log( err )
+			console.log( info )
+		})
+		
+		capi.cardList( function(err, ret){
+			console.log( ret )
+		})
 		
 		</script>
 	</body>
