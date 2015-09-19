@@ -10,6 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
 		
 	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script type="text/javascript" src="../common/js/lib/underscore/underscore.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.edatagrid.js"></script>
@@ -40,7 +41,10 @@ body{
 				<table id="grid_cards" class="easyui-datagrid" data-options="autoRowHeight:true, remoteSort:false,multiSort:true,fitColumns:true,singleSelect:true" style="width:100%;">
 					<thead>
 						<tr>
+							<!--
 							<th data-options="field:'id',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">ID</th>
+							-->
+							<th data-options="field:'ctype',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">卡片類別</th>
 							<th data-options="field:'name',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">名稱</th>
 							<th data-options="field:'type',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">類別</th>
 							<th data-options="field:'level',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">等級</th>
@@ -49,7 +53,7 @@ body{
 							<th data-options="field:'sname',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">技能名稱</th>
 							<th data-options="field:'stype',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">技能類別</th>
 							<th data-options="field:'scost',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">技能消耗</th>
-							<th data-options="field:'stext',width:'49%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
+							<th data-options="field:'stext',width:'45%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
 						</tr>
 					</thead>
 					<tbody></tbody>
@@ -58,6 +62,10 @@ body{
 		</div>
 		<div data-options="region:'east',title:'卡牌列表',split:true,collapsible:false" style="width:30%;">
 			<div class="group" style="text-align:center; margin-top:10px;">
+				<div class="group" ctype="ctype">
+					<div class="hori">卡片類別</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
 				<div class="group" ctype="name">
 					<div class="hori">武器名稱</div>
 					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
@@ -107,7 +115,18 @@ body{
 			
 		</div>
 	</div>
+	<script src="js/capi.js"></script>
 	<script>
+	
+	capi.cardList( function( err, ret ){
+		console.log( err, ret );
+		if( err != null ){
+			alert( err );
+		}else{
+			setRows( _.map( ret.info, modelToView ) );
+		}
+		
+	});
 	/*
 	var cardview = $.extend({}, $.fn.datagrid.defaults.view, {
 		renderRow: function(target, fields, frozen, rowIndex, rowData){
@@ -179,8 +198,11 @@ body{
 	function onBtnClick( dom ){
 		switch( dom.id ){
 			case 'btn_add':
+				var newobj;
 				if( currentRow != undefined ){
-					appendRow( {	name: currentRow.row.name, 
+					newobj = {	
+									ctype: currentRow.row.ctype,
+									name: currentRow.row.name, 
 									type: currentRow.row.type, 
 									level: currentRow.row.level, 
 									weight: currentRow.row.weight, 
@@ -188,10 +210,16 @@ body{
 									sname: currentRow.row.sname, 
 									stype: currentRow.row.stype, 
 									scost: currentRow.row.scost, 
-									stext: currentRow.row.stext} );
+									stext: currentRow.row.stext } ;
 				}else{
-					appendRow( {id:'001', name:'拳', type:'拳', level:'1', weight:'1', power:'1', sname:'', stype:'', scost:'', stext:'adsaf'} );
+					newobj = {id:'', ctype:'武具', name:'拳', type:'拳', level:'1', weight:'1', power:'1', sname:'', stype:'', scost:'', stext:'adsaf'}
 				}
+				
+				capi.addCard( viewToModel( newobj ), function(err, ret){
+					console.log( err, ret );
+					appendRow( newobj );
+				});
+				
 				break;
 			case 'btn_remove':
 				if( currentRow != undefined ){
@@ -248,6 +276,38 @@ body{
 	
 	function getInput( type ){
 		return $('.group[ctype=' + type + ']').find( '.easyui-textbox' );
+	}
+	
+	function viewToModel( view ){
+		return {
+			Id: view.id,
+			WName: view.name,
+			WLevel: view.level,
+			WWeight: view.weight,
+			WPower: view.power,
+			WType: view.type,
+			SName: view.sname,
+			SType: view.stype,
+			SCost: view.scost,
+			SText: view.stext,
+			Type: view.ctype
+		}
+	}
+	
+	function modelToView( model ){
+		return {
+			id:model.id,
+			name:model.weapon.name,
+			level:model.weapon.level,
+			weight:model.weapon.weight,
+			power:model.weapon.power,
+			type:model.weapon.type,
+			sname:model.skill.name,
+			stype:model.skill.type,
+			scost:model.skill.cost,
+			stext:model.skill.text,
+			ctype:model.type
+		}
 	}
 	</script>
 	<script src="js/manager.js"></script>
