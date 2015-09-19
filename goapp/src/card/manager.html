@@ -9,14 +9,10 @@
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
 	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
 		
-	<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
-	<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
-		
 	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
 		
 </head>
 <style>
@@ -28,7 +24,195 @@ body{
 	height:100%;
 	background-color:#333333;
 }
+.group{
+	position:relative;
+	width:100%;
+}
+.hori{
+	display:inline-block;
+}
 </style>
 <body>
+	<div id="cc" class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'center',title:'新增卡牌'" >
+			<div class="group">
+				<table id="grid_cards" class="easyui-datagrid" data-options="fitColumns:true,singleSelect:true" style="width:100%;">
+					<thead>
+						<tr>
+							<th data-options="field:'name',width:'8%'">名稱</th>
+							<th data-options="field:'type',width:'8%'">類別</th>
+							<th data-options="field:'level',width:'4%'">等級</th>
+							<th data-options="field:'weight',width:'4%'">重量</th>
+							<th data-options="field:'power',width:'4%'">武力</th>
+							<th data-options="field:'sname',width:'8%'">技能名稱</th>
+							<th data-options="field:'stype',width:'8%'">技能類別</th>
+							<th data-options="field:'scost',width:'8%'">技能消耗</th>
+							<th data-options="field:'stext',width:'49%'">內文</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div data-options="region:'east',title:'卡牌列表',split:true,collapsible:false" style="width:20%;">
+			<div class="group" style="text-align:center; margin-top:10px;">
+				<div class="group" ctype="name">
+					<div class="hori">武器名稱</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
+				<div class="group" ctype="level">
+					<div class="hori">武器等級</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
+				<div class="group" ctype="weight">
+					<div class="hori">武器重量</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
+				<div class="group" ctype="power">
+					<div class="hori">武器武力</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
+				<div class="group" ctype="type">
+					<div class="hori">武器類別</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
+				<div class="group" ctype="sname">
+					<div class="hori">技能名稱</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
+				<div class="group" ctype="stype">
+					<div class="hori">技能類別</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
+				<div class="group" ctype="scost">
+					<div class="hori">技能消耗</div>
+					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+				</div>
+				<div class="group" ctype="stext">
+					<div class="hori">技能內文</div>
+					<input id="txt_note" class="easyui-textbox" data-options="multiline:true" style="width:50%; height:100px;"></input>
+				</div>
+				<div class="group">
+					<div class="hori">
+						<a id="btn_add" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-add'" style="width:100px; height:60px; margin-top:10px;">新增</a>
+					</div>
+					<div class="hori">
+						<a id="btn_remove" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-remove'" style="width:100px; height:60px; margin-top:10px;">移除</a>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	<script>
+	
+	var currentRow = undefined;
+	
+	$('.easyui-textbox' ).textbox({
+		onChange:function( nv, ov ){
+			var ctype =$( this ).parent().parent().attr('ctype')
+			if( currentRow != undefined ){
+				currentRow.row[ctype] = nv;
+				updateRow( currentRow.id, currentRow.row );
+			}
+		}
+	});
+	
+	$('#grid_cards').datagrid( {
+		onSelect:function( index, row ){
+			currentRow = {
+				id:index,
+				row:row
+			}
+			showCard( row );
+		}
+	});
+		
+	/*
+	//test
+	setRows([
+				{name:'value11', type:'value12', level:'2', weight:'3', power:'3', sname:'sname', stype:'stype', scost:'cost', stext:'text'},
+				{name:'value11', type:'value12', level:'2', weight:'3', power:'3', sname:'sname', stype:'stype', scost:'cost', stext:'text'}
+			]);
+			
+	appendRow( {name:'3', type:'3', level:'2', weight:'3', power:'3', sname:'sname', stype:'stype', scost:'cost', stext:'text'} );
+	deleteRow( 1 );
+	*/
+	
+	function onBtnClick( dom ){
+		switch( dom.id ){
+			case 'btn_add':
+				if( currentRow != undefined ){
+					appendRow( {	name: currentRow.row.name, 
+									type: currentRow.row.type, 
+									level: currentRow.row.level, 
+									weight: currentRow.row.weight, 
+									power: currentRow.row.power, 
+									sname: currentRow.row.sname, 
+									stype: currentRow.row.stype, 
+									scost: currentRow.row.scost, 
+									stext: currentRow.row.stext} );
+				}else{
+					appendRow( {name:'拳', type:'拳', level:'1', weight:'1', power:'1', sname:'', stype:'', scost:'', stext:''} );
+				}
+				break;
+			case 'btn_remove':
+				if( currentRow != undefined ){
+					deleteRow( currentRow.id );
+				}
+		}
+	}
+	
+	function setRows( datas ){
+		$('#grid_cards').datagrid({
+			data: datas
+		});
+	}
+	
+	function appendRow( row ){
+		$('#grid_cards').datagrid('appendRow', row );
+	}
+	
+	function deleteRow( index ){
+		$('#grid_cards').datagrid( 'deleteRow', index );
+		currentRow = undefined;
+	}
+	
+	function getRowIndex( row ){
+		$('#grid_cards').datagrid( 'getRowIndex', row );
+	}
+	
+	function updateRow( index, row ){
+		$('#grid_cards').datagrid('updateRow',{
+			index: index,
+			row: row
+		});
+	}
+	
+	function showCard( data ){
+		setText( getInput( 'name' ), data.name );
+		setText( getInput( 'type' ), data.type );
+		setText( getInput( 'weight' ), data.weight );
+		setText( getInput( 'level' ), data.level );
+		setText( getInput( 'power' ), data.power );
+		setText( getInput( 'sname' ), data.sname );
+		setText( getInput( 'stype' ), data.stype );
+		setText( getInput( 'scost' ), data.scost );
+		setText( getInput( 'stext' ), data.stext );
+	}
+	
+	
+	
+	function setText( textbox, str ){
+		textbox.textbox( {
+			value:str
+		} );
+	}
+	
+	function getInput( type ){
+		return $('.group[ctype=' + type + ']').find( '.easyui-textbox' );
+	}
+	</script>
+	<script src="js/manager.js"></script>
 </body>
 </html>
