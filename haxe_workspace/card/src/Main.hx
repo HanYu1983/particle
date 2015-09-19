@@ -30,9 +30,10 @@ class Main
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	
-	//static var sendTimer:Timer = null;
 	public static var cardPackage = null;
 	public static var cardSuit = null;
+	
+	var packageName = 'fighter';
 	
 	#if debug
 	static var keepTime = 1000;
@@ -49,7 +50,8 @@ class Main
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 		
-		getCardPackage( 'gundamWar', handleResponse( function( ret ) {
+		getCardPackage( 'fighter', handleResponse( function( ret ) {
+			
 			cardPackage = ret;
 			cardSuit = getCardSuit( cardPackage );
 			Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
@@ -76,17 +78,6 @@ class Main
 					showTo:''
 			}
 		}));
-		/*
-		var stack = [for ( i in 0...30 ) { 	id:getId(), 
-											cardId:tempGetCardId(i + 1) , 
-											name:i, 
-											owner:playerId, 
-											relate:'', 
-											deg:0, 
-											pos:[0, 0], 
-											back:true,
-											showTo:''
-											} ];*/
 		
 		Animate.addCardAndPrepare( toDeck )().done( function() {
 			pushCmds( { cmd:'addCards', content:toDeck } );
@@ -326,6 +317,7 @@ class Main
 	}
 	
 	public static function createCard( model:Dynamic ) {
+		trace( model.cardId );
 		model.url = getCardImageUrlWithPackage( cardPackage, model.cardId );
 		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
 	}

@@ -238,12 +238,13 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
+	this.packageName = "fighter";
 	Main.j("#txt_id").html(Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
-	Main.getCardPackage("gundamWar",Main.handleResponse(function(ret) {
+	Main.getCardPackage("fighter",Main.handleResponse(function(ret) {
 		Main.cardPackage = ret;
 		Main.cardSuit = Main.getCardSuit(Main.cardPackage);
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
@@ -415,6 +416,7 @@ Main.rotate = function(ary_select,deg) {
 	Main.applyValue(ary_select);
 };
 Main.createCard = function(model) {
+	console.log(model.cardId);
 	model.url = Main.getCardImageUrlWithPackage(Main.cardPackage,model.cardId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -503,7 +505,6 @@ Main.prototype = {
 		haxe_Timer.delay($bind(this,this.keepSend),Main.keepTime);
 	}
 	,onHtmlClick: function(type,params) {
-		var _g = this;
 		switch(type) {
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
@@ -521,10 +522,7 @@ Main.prototype = {
 			break;
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				_g.callForOthers(function() {
-					Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
-					Main.slide("對手配對成功");
-				});
+				Main.slide("debug 模式，對手配對成功");
 			}));
 			break;
 		}
@@ -1537,3 +1535,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map
