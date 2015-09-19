@@ -12,6 +12,7 @@
 	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.edatagrid.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		
 </head>
@@ -36,25 +37,26 @@ body{
 	<div id="cc" class="easyui-layout" style="width:100%;height:100%;">
 		<div data-options="region:'center',title:'新增卡牌'" >
 			<div class="group">
-				<table id="grid_cards" class="easyui-datagrid" data-options="fitColumns:true,singleSelect:true" style="width:100%;">
+				<table id="grid_cards" class="easyui-datagrid" data-options="autoRowHeight:true, remoteSort:false,multiSort:true,fitColumns:true,singleSelect:true" style="width:100%;">
 					<thead>
 						<tr>
-							<th data-options="field:'name',width:'8%'">名稱</th>
-							<th data-options="field:'type',width:'8%'">類別</th>
-							<th data-options="field:'level',width:'4%'">等級</th>
-							<th data-options="field:'weight',width:'4%'">重量</th>
-							<th data-options="field:'power',width:'4%'">武力</th>
-							<th data-options="field:'sname',width:'8%'">技能名稱</th>
-							<th data-options="field:'stype',width:'8%'">技能類別</th>
-							<th data-options="field:'scost',width:'8%'">技能消耗</th>
-							<th data-options="field:'stext',width:'49%'">內文</th>
+							<th data-options="field:'id',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">ID</th>
+							<th data-options="field:'name',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">名稱</th>
+							<th data-options="field:'type',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">類別</th>
+							<th data-options="field:'level',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">等級</th>
+							<th data-options="field:'weight',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">重量</th>
+							<th data-options="field:'power',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">武力</th>
+							<th data-options="field:'sname',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">技能名稱</th>
+							<th data-options="field:'stype',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">技能類別</th>
+							<th data-options="field:'scost',width:'8%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">技能消耗</th>
+							<th data-options="field:'stext',width:'49%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
 						</tr>
 					</thead>
 					<tbody></tbody>
 				</table>
 			</div>
 		</div>
-		<div data-options="region:'east',title:'卡牌列表',split:true,collapsible:false" style="width:20%;">
+		<div data-options="region:'east',title:'卡牌列表',split:true,collapsible:false" style="width:30%;">
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="group" ctype="name">
 					<div class="hori">武器名稱</div>
@@ -90,7 +92,8 @@ body{
 				</div>
 				<div class="group" ctype="stext">
 					<div class="hori">技能內文</div>
-					<input id="txt_note" class="easyui-textbox" data-options="multiline:true" style="width:50%; height:100px;"></input>
+					<div class="hori" style="width:100%;"><input id="txt_note" class="easyui-textbox" data-options="multiline:true" style="width:70%; height:400px;"></input></div>
+					
 				</div>
 				<div class="group">
 					<div class="hori">
@@ -105,12 +108,42 @@ body{
 		</div>
 	</div>
 	<script>
+	/*
+	var cardview = $.extend({}, $.fn.datagrid.defaults.view, {
+		renderRow: function(target, fields, frozen, rowIndex, rowData){
+		
+		console.log( 'target', target );
+		console.log( 'fields', fields );
+		console.log( 'frozen', frozen );
+		console.log( 'rowIndex', rowIndex );
+		console.log( 'rowData', rowData );
+			var cc = [];
+			cc.push('<td colspan=' + fields.length + ' style="padding:10px 5px;border:0;">');
+			if (!frozen && rowData.itemid){
+				var aa = rowData.itemid.split('-');
+				var img = 'shirt' + aa[1] + '.gif';
+				cc.push('<img src="images/' + img + '" style="width:150px;float:left">');
+				cc.push('<div style="float:left;margin-left:20px;">');
+				for(var i=0; i<fields.length; i++){
+					var copts = $(target).datagrid('getColumnOption', fields[i]);
+					cc.push('<p><span class="c-label">' + copts.title + ':</span> ' + rowData[fields[i]] + '</p>');
+				}
+				cc.push('</div>');
+			}
+			cc.push('</td>');
+			return cc.join('');
+		}
+	});
 	
+	$('#grid_cards').datagrid({
+		view: cardview
+	});
+	*/
 	var currentRow = undefined;
 	
 	$('.easyui-textbox' ).textbox({
 		onChange:function( nv, ov ){
-			var ctype =$( this ).parent().parent().attr('ctype')
+			var ctype =$( this ).parent().parent().attr('ctype');
 			if( currentRow != undefined ){
 				currentRow.row[ctype] = nv;
 				updateRow( currentRow.id, currentRow.row );
@@ -118,7 +151,11 @@ body{
 		}
 	});
 	
+//	$('#grid_cards').edatagrid();
 	$('#grid_cards').datagrid( {
+		onAfterEdit:function( index, row, changes ){
+			console.log( index, row, changes );
+		},
 		onSelect:function( index, row ){
 			currentRow = {
 				id:index,
@@ -153,7 +190,7 @@ body{
 									scost: currentRow.row.scost, 
 									stext: currentRow.row.stext} );
 				}else{
-					appendRow( {name:'拳', type:'拳', level:'1', weight:'1', power:'1', sname:'', stype:'', scost:'', stext:''} );
+					appendRow( {id:'001', name:'拳', type:'拳', level:'1', weight:'1', power:'1', sname:'', stype:'', scost:'', stext:'adsaf'} );
 				}
 				break;
 			case 'btn_remove':
