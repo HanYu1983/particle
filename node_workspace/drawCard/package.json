@@ -1,0 +1,8 @@
+{
+  "name":"drawcard",
+  "dependencies":{
+    "canvas": "1.2.7",
+    "underscore":"*",
+    "async":"*"
+  }
+}
