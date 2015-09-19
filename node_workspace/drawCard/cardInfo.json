@@ -7,7 +7,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"雲去蒼梧",
@@ -23,7 +23,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"彈反",
@@ -39,7 +39,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"擊倒",
@@ -55,7 +55,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"摘葉",
@@ -71,7 +71,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"雨濺飛濤",
@@ -87,7 +87,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"截脈",
@@ -103,7 +103,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"千峰拔地",
@@ -119,7 +119,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"蕩劍式",
@@ -135,7 +135,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"雲羅飛仙",
@@ -151,7 +151,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"徵鴻投海",
@@ -167,7 +167,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"燕墨點水",
@@ -183,7 +183,7 @@
 			"level": 1, 
 			"weight": 2, 
 			"power": 2,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"雨濺飛濤",
@@ -199,7 +199,7 @@
 			"level": 2, 
 			"weight": 2, 
 			"power": 3,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"",
@@ -215,7 +215,7 @@
 			"level": 2, 
 			"weight": 2, 
 			"power": 3,
-			"type":"劍",
+			"type":"劍"
 		},
 		"skill":{
 			"name":"龍吟之力",
