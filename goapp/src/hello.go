@@ -37,6 +37,7 @@ func init(){
   http.HandleFunc("/fn/card/clear", game.Clear)
   http.HandleFunc("/fn/card/longPollingTargetMessage", game.LongPollingTargetMessage)
   http.HandleFunc("/fn/card/state", game.State)
+  http.HandleFunc("/fn/cardInfo/addCard", AddCard)
   
 }
 

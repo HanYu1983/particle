@@ -237,6 +237,124 @@
 			"cost":"2",
 			"text":"交戰時p+1"
 		}
-	}
+	},
+	{
+		"type":"武具",
+		"weapon":{
+			"name":"木槍", 
+			"level": 1, 
+			"weight": 3, 
+			"power": 3,
+			"type":"棍"
+		},
+		"skill":{
+			"name":"黑殺16閃",
+			"type":"招式",
+			"cost":"[棍|槍]1",
+			"text":"p+1"
+		}
+	},
+	{
+    "id":"14",
+		"type":"武具",
+		"weapon":{
+			"name":"木槍", 
+			"level": 1, 
+			"weight": 3, 
+			"power": 3,
+			"type":"棍"
+		},
+		"skill":{
+			"name":"黑散爆",
+			"type":"招式",
+			"cost":"[棍|槍]2",
+			"text":"p+2。這次交戰給予對手傷害的時候，可以將傷害改為－指定對方一武具爆掉"
+		}
+	},
+  	{
+      "id":"15",
+  		"type":"武具",
+  		"weapon":{
+  			"name":"木槍", 
+  			"level": 1, 
+  			"weight": 3, 
+  			"power": 3,
+  			"type":"棍"
+  		},
+  		"skill":{
+  			"name":"黑山炮",
+  			"type":"招式",
+  			"cost":"[棍|槍]3",
+  			"text":"穿透。p+3。"
+  		}
+  	},
+  	{
+      "id":"16",
+  		"type":"武具",
+  		"weapon":{
+  			"name":"木槍", 
+  			"level": 1, 
+  			"weight": 3, 
+  			"power": 3,
+  			"type":"棍"
+  		},
+  		"skill":{
+  			"name":"金光迴旋槍",
+  			"type":"招式",
+  			"cost":"[棍|槍]2",
+  			"text":"p+4。傷結步不能產生傷害"
+  		}
+  	},
+  	{
+      "id":"17",
+  		"type":"武具",
+  		"weapon":{
+  			"name":"木槍", 
+  			"level": 1, 
+  			"weight": 3, 
+  			"power": 3,
+  			"type":"棍"
+  		},
+  		"skill":{
+  			"name":"金光迴旋槍",
+  			"type":"招式",
+  			"cost":"[棍|槍]2",
+  			"text":"p+4。傷結步不能產生傷害"
+  		}
+  	},
+  	{
+      "id":"18",
+  		"type":"武具",
+  		"weapon":{
+  			"name":"腰劍", 
+  			"level": 1, 
+  			"weight": 2, 
+  			"power": 2,
+  			"type":"劍"
+  		},
+  		"skill":{
+  			"name":"好用",
+  			"type":"狀態",
+  			"cost":"1",
+  			"text":"支付cost進場時抽一張牌"
+  		}
+  	},
+  	{
+      "id":"19",
+  		"type":"武具",
+  		"weapon":{
+  			"name":"腰劍", 
+  			"level": 1, 
+  			"weight": 2, 
+  			"power": 2,
+  			"type":"劍"
+  		},
+  		"skill":{
+  			"name":"迴升斬",
+  			"type":"招式",
+  			"cost":"1",
+  			"text":"機率2對方的招式宣告無效"
+  		}
+  	}
   ]
 }
