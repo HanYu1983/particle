@@ -61,6 +61,9 @@ body{
 			</div>
 		</div>
 		<div data-options="region:'east',title:'卡牌列表',split:true,collapsible:false" style="width:30%;">
+			<div class="group" style="text-align:center; margin-top:30px;">
+				<div class="hori"><span id="txt_id" style="color:yellow"></span></div>
+			</div>
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="group" ctype="ctype">
 					<div class="hori">卡片類別</div>
@@ -121,6 +124,7 @@ body{
 	openLoading( '同步中...' );
 	resetRows( function(){
 		closeLoading();
+		selectRow( 0 );
 	});
 	
 	function resetRows( cb ){
@@ -240,8 +244,12 @@ body{
 			data: datas
 		});
 		if( currentRow != undefined ){
-			$('#grid_cards').datagrid( 'selectRow', currentRow.id );
+			selectRow( currentRow.id );
 		}
+	}
+	
+	function selectRow( index ){
+		$('#grid_cards').datagrid( 'selectRow', index );
 	}
 	
 	function appendRow( row ){
@@ -265,6 +273,7 @@ body{
 	}
 	
 	function showCard( data ){
+		$('#txt_id').html( data.id );
 		setText( getInput( 'name' ), data.name );
 		setText( getInput( 'type' ), data.type );
 		setText( getInput( 'weight' ), data.weight );
