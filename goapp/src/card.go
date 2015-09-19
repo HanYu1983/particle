@@ -11,6 +11,7 @@ import (
   "fmt"
   "crypto/rand"
   "io"
+  "errors"
 )
 
 var _ = dbfile.GetFile
@@ -38,7 +39,7 @@ type CardInfo struct {
 }
 
 type CardInfos struct {
-  Cards []CardInfo
+  Info []CardInfo `json:"info"`
 }
 
 // newUUID generates a random UUID according to RFC 4122
@@ -62,6 +63,62 @@ func Output(w http.ResponseWriter, info, err interface{}){
   }
   jsonstr, _ := json.Marshal( ret )
   fmt.Fprintf(w, "%s", string( jsonstr ))
+}
+
+func DeleteCard(w http.ResponseWriter, r *http.Request){
+  defer tool.Recover( func(err error){
+    Output( w, nil, err.Error() )
+  })
+  
+  ctx := appengine.NewContext( r )
+  var _ = ctx
+  form, err := tool.ReadAjaxPost( r )
+  tool.Assert( tool.IfError( err ) ) 
+  
+  tool.Assert( tool.ParameterIsNotExist( form, "Id" ) )
+  
+  id := form["Id"][0]
+  
+  err = datastore.RunInTransaction(ctx, func( c appengine.Context ) error {
+    file, err := dbfile.GetFile( ctx, CardInfoPosition )
+    if err != nil {
+      return err
+    }
+    
+    var infos CardInfos
+    err = json.Unmarshal( file.Content, &infos )
+    if err != nil {
+      return err
+    }
+    
+    var ok bool
+    for idx, originCard := range infos.Info {
+      if originCard.Id == id {
+        infos.Info = append(infos.Info[:idx], infos.Info[idx+1:]...)
+        ok = true
+        break
+      }
+    }
+    
+    if ok == false {
+      return errors.New( fmt.Sprintf("item not found %v", id) )
+    }
+    
+    data, err := json.Marshal( &infos )
+    if err != nil {
+      return err
+    }
+    
+    _, err = dbfile.MakeFile( ctx, file.Position, file.Name, data, true )
+    if err != nil {
+      return err
+    }
+    
+    return err
+  }, nil)
+  
+  tool.Assert( tool.IfError( err ) )
+  Output( w, nil, nil )
 }
 
 func AddCard(w http.ResponseWriter, r *http.Request){
@@ -98,11 +155,7 @@ func AddCard(w http.ResponseWriter, r *http.Request){
   WPower, err := strconv.Atoi( form["WPower"][0] )
   tool.Assert( tool.IfError( err ) )
   
-  uuid, err := newUUID()
-  tool.Assert( tool.IfError( err ) )
-  
   card := CardInfo {
-    Id: uuid,
     Type: Type,
     Weapon: WeaponInfo{
       Name: WName,
@@ -119,6 +172,11 @@ func AddCard(w http.ResponseWriter, r *http.Request){
     },
   }
   
+  var id string
+  if len( form["Id"] ) > 0 {
+    id = form["Id"][0]
+  }
+  
   err = datastore.RunInTransaction(ctx, func( c appengine.Context ) error {
     file, err := dbfile.GetFile( ctx, CardInfoPosition )
     if err != nil {
@@ -131,7 +189,30 @@ func AddCard(w http.ResponseWriter, r *http.Request){
       return err
     }
     
-    infos.Cards = append( infos.Cards, card )
+    if id != "" {
+      var ok bool
+      for idx, originCard := range infos.Info {
+        if originCard.Id == id {
+          card.Id = id
+          infos.Info[idx] = card
+          ok = true
+          break
+        }
+      }
+      
+      if ok == false {
+        return errors.New( fmt.Sprintf("item not found %v", id) )
+      }
+      
+    } else {
+      uuid, err := newUUID()
+      if err != nil {
+        return err
+      }
+      card.Id = uuid
+      infos.Info = append( infos.Info, card )
+      
+    }
     
     data, err := json.Marshal( &infos )
     if err != nil {

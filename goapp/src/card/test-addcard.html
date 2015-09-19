@@ -1,6 +1,8 @@
 <html>
 	<body>
-		<form name='add card' action='../fn/cardInfo/addCard' method='post'>
+		新增/修改
+		<form name='add/modify card' action='../fn/cardInfo/addCard' method='post'>
+			<input name='Id' value=''><br>
 			<input name='WName' value='劍'><br>
 			<input name='WLevel' value='2'><br>
 			<input name='WWeight' value='2'><br>
@@ -11,6 +13,12 @@
 			<input name='SCost' value='劍2'><br>
 			<input name='SText' value='出擊'><br>
 			<input name='Type' value='武具'><br>
+			<input type=submit>
+		</form>
+		<br>
+		刪除
+		<form name='delete card' action='../fn/cardInfo/deleteCard' method='post'>
+			<input name='Id' value=''><br>
 			<input type=submit>
 		</form>
 		
