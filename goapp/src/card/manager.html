@@ -67,48 +67,51 @@ body{
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="group" ctype="ctype">
 					<div class="hori">卡片類別</div>
-					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="name">
 					<div class="hori">武器名稱</div>
-					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="level">
 					<div class="hori">武器等級</div>
-					<div class="hori">
-						<input class="easyui-textbox" style="width:100px">
+					<div class="hori" style="width:100%;">
+						<input class="easyui-textbox" style="width:80%">
 					</div>
 				</div>
 				<div class="group" ctype="weight">
 					<div class="hori">武器重量</div>
-					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="power">
 					<div class="hori">武器武力</div>
-					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="type">
 					<div class="hori">武器類別</div>
-					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="sname">
 					<div class="hori">技能名稱</div>
-					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="stype">
 					<div class="hori">技能類別</div>
-					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="scost">
 					<div class="hori">技能消耗</div>
-					<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="stext">
 					<div class="hori">技能內文</div>
-					<div class="hori" style="width:100%;"><input id="txt_note" class="easyui-textbox" data-options="multiline:true" style="width:70%; height:300px;"></input></div>
+					<div class="hori" style="width:100%;"><input id="txt_note" class="easyui-textbox" data-options="multiline:true" style="width:80%; height:300px;"></input></div>
 					
 				</div>
 				<div class="group">
+					<div class="hori">
+						<a id="btn_modity" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-edit'" style="width:100px; height:60px; margin-top:10px;">修改</a>
+					</div>
 					<div class="hori">
 						<a id="btn_add" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-add'" style="width:100px; height:60px; margin-top:10px;">新增</a>
 					</div>
@@ -149,7 +152,7 @@ body{
 			var ctype =$( this ).parent().parent().attr('ctype');
 			if( currentRow != undefined ){
 				currentRow.row[ctype] = nv;
-				
+				/*
 				openLoading( '同步中...' );
 				capi.addCard( viewToModel( currentRow.row ), function(err, ret){
 					if( err != null ){
@@ -161,6 +164,7 @@ body{
 						});
 					}
 				});
+				*/
 			}
 		}
 	});
@@ -192,6 +196,21 @@ body{
 	
 	function onBtnClick( dom ){
 		switch( dom.id ){
+			case 'btn_modity':
+				openLoading( '同步中...' );
+				if( currentRow != undefined ){
+					capi.addCard( viewToModel( currentRow.row ), function(err, ret){
+						if( err != null ){
+							closeLoading();
+							alert1( err );
+						}else{
+							resetRows( function(){
+								closeLoading();
+							});
+						}
+					});
+				}
+				break;
 			case 'btn_add':
 				var newobj;
 				if( currentRow != undefined ){
@@ -225,9 +244,11 @@ body{
 				break;
 			case 'btn_remove':
 				if( currentRow != undefined ){
-				
+					
 					openLoading( '同步中...' );
 					capi.deleteCard( {Id:currentRow.row.id}, function(err, ret){
+						
+						currentRow = undefined;
 						if( err != null ){
 							closeLoading();
 							alert1( err );
