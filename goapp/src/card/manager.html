@@ -67,7 +67,12 @@ body{
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="group" ctype="ctype">
 					<div class="hori">卡片類別</div>
-					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>武備</option>
+							<option>道具</option>
+						</select>
+					</div>
 				</div>
 				<div class="group" ctype="name">
 					<div class="hori">武器名稱</div>
@@ -84,15 +89,34 @@ body{
 				</div>
 				<div class="group" ctype="weight">
 					<div class="hori">武器重量</div>
-					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+						</select>
+					</div>
 				</div>
 				<div class="group" ctype="power">
 					<div class="hori">武器武力</div>
-					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" value="2"></div>
 				</div>
 				<div class="group" ctype="type">
 					<div class="hori">武器類別</div>
-					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>拳</option>
+							<option>鞋</option>
+							<option>劍</option>
+							<option>刀</option>
+							<option>棍</option>
+							<option>槍</option>
+							<option>大刀</option>
+							<option>斧</option>
+							<option>大劍</option>
+						</select>
+					</div>
 				</div>
 				<div class="group" ctype="sname">
 					<div class="hori">技能名稱</div>
@@ -100,7 +124,12 @@ body{
 				</div>
 				<div class="group" ctype="stype">
 					<div class="hori">技能類別</div>
-					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>招式</option>
+							<option>狀態</option>
+						</select>
+					</div>
 				</div>
 				<div class="group" ctype="scost">
 					<div class="hori">技能消耗</div>
@@ -113,7 +142,7 @@ body{
 				</div>
 				<div class="group">
 					<div class="hori">
-						<a id="btn_modity" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-edit'" style="width:100px; height:60px; margin-top:10px;">修改</a>
+						<a id="btn_modify" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-edit'" style="width:100px; height:60px; margin-top:10px;">修改</a>
 					</div>
 					<div class="hori">
 						<a id="btn_add" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-add'" style="width:100px; height:60px; margin-top:10px;">新增</a>
@@ -132,7 +161,6 @@ body{
 	openLoading( '同步中...' );
 	resetRows( function(){
 		closeLoading();
-		selectRow( 0 );
 	});
 	
 	function resetRows( cb ){
@@ -192,22 +220,26 @@ body{
 	deleteRow( 1 );
 	*/
 	
-	function onBtnClick( dom ){
-		switch( dom.id ){
-			case 'btn_modity':
-				openLoading( '同步中...' );
-				if( currentRow != undefined ){
-					capi.addCard( viewToModel( currentRow.row ), function(err, ret){
-						if( err != null ){
-							closeLoading();
-							alert1( err );
-						}else{
-							resetRows( function(){
-								closeLoading();
-							});
-						}
+	function modify(){
+		if( currentRow != undefined ){
+			openLoading( '同步中...' );
+			capi.addCard( viewToModel( currentRow.row ), function(err, ret){
+				if( err != null ){
+					closeLoading();
+					alert1( err );
+				}else{
+					resetRows( function(){
+						closeLoading();
 					});
 				}
+			});
+		}
+	}
+	
+	function onBtnClick( dom ){
+		switch( dom.id ){
+			case 'btn_modify':
+				modify();
 				break;
 			case 'btn_add':
 				var newobj;
@@ -224,7 +256,7 @@ body{
 									scost: currentRow.row.scost, 
 									stext: currentRow.row.stext } ;
 				}else{
-					newobj = {id:'', ctype:'武具', name:'拳', type:'拳', level:'1', weight:'1', power:'1', sname:'', stype:'', scost:'', stext:'adsaf'}
+					newobj = {id:'', ctype:'武備', name:'拳', type:'拳', level:'1', weight:'1', power:'1', sname:'', stype:'招式', scost:'0', stext:''}
 				}
 				
 				openLoading( '同步中...' );
@@ -295,13 +327,14 @@ body{
 	
 	function showCard( data ){
 		$('#txt_id').html( data.id );
+		setCombobox( getCombo( 'ctype' ), data.ctype );
 		setText( getInput( 'name' ), data.name );
-		setText( getInput( 'type' ), data.type );
-		setText( getInput( 'weight' ), data.weight );
+		setCombobox( getCombo( 'type' ), data.type );
+		setCombobox( getCombo( 'weight' ), data.weight );
 		setCombobox( getCombo( 'level' ), data.level );
 		setText( getInput( 'power' ), data.power );
 		setText( getInput( 'sname' ), data.sname );
-		setText( getInput( 'stype' ), data.stype );
+		setCombobox( getCombo( 'stype' ), data.stype );
 		setText( getInput( 'scost' ), data.scost );
 		setText( getInput( 'stext' ), data.stext );
 	}
