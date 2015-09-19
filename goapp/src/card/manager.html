@@ -118,46 +118,24 @@ body{
 	<script src="js/capi.js"></script>
 	<script>
 	
-	capi.cardList( function( err, ret ){
-		console.log( err, ret );
-		if( err != null ){
-			alert( err );
-		}else{
-			setRows( _.map( ret.info, modelToView ) );
-		}
-		
-	});
-	/*
-	var cardview = $.extend({}, $.fn.datagrid.defaults.view, {
-		renderRow: function(target, fields, frozen, rowIndex, rowData){
-		
-		console.log( 'target', target );
-		console.log( 'fields', fields );
-		console.log( 'frozen', frozen );
-		console.log( 'rowIndex', rowIndex );
-		console.log( 'rowData', rowData );
-			var cc = [];
-			cc.push('<td colspan=' + fields.length + ' style="padding:10px 5px;border:0;">');
-			if (!frozen && rowData.itemid){
-				var aa = rowData.itemid.split('-');
-				var img = 'shirt' + aa[1] + '.gif';
-				cc.push('<img src="images/' + img + '" style="width:150px;float:left">');
-				cc.push('<div style="float:left;margin-left:20px;">');
-				for(var i=0; i<fields.length; i++){
-					var copts = $(target).datagrid('getColumnOption', fields[i]);
-					cc.push('<p><span class="c-label">' + copts.title + ':</span> ' + rowData[fields[i]] + '</p>');
-				}
-				cc.push('</div>');
-			}
-			cc.push('</td>');
-			return cc.join('');
-		}
+	openLoading( '同步中...' );
+	resetRows( function(){
+		closeLoading();
 	});
 	
-	$('#grid_cards').datagrid({
-		view: cardview
-	});
-	*/
+	function resetRows( cb ){
+		
+		capi.cardList( function( err, ret ){
+			
+			if( err != null ){
+				alert1( err );
+			}else{
+				setRows( _.map( ret.info, modelToView ) );
+			}
+			if( cb ) cb();
+		});
+	}
+	
 	var currentRow = undefined;
 	
 	$('.easyui-textbox' ).textbox({
@@ -165,7 +143,18 @@ body{
 			var ctype =$( this ).parent().parent().attr('ctype');
 			if( currentRow != undefined ){
 				currentRow.row[ctype] = nv;
-				updateRow( currentRow.id, currentRow.row );
+				
+				openLoading( '同步中...' );
+				capi.addCard( viewToModel( currentRow.row ), function(err, ret){
+					if( err != null ){
+						closeLoading();
+						alert1( err );
+					}else{
+						resetRows( function(){
+							closeLoading();
+						});
+					}
+				});
 			}
 		}
 	});
@@ -215,15 +204,33 @@ body{
 					newobj = {id:'', ctype:'武具', name:'拳', type:'拳', level:'1', weight:'1', power:'1', sname:'', stype:'', scost:'', stext:'adsaf'}
 				}
 				
+				openLoading( '同步中...' );
 				capi.addCard( viewToModel( newobj ), function(err, ret){
-					console.log( err, ret );
-					appendRow( newobj );
+					if( err != null ){
+						closeLoading();
+						alert1( err );
+					}else{
+						resetRows( function(){
+							closeLoading();
+						});
+					}
 				});
 				
 				break;
 			case 'btn_remove':
 				if( currentRow != undefined ){
-					deleteRow( currentRow.id );
+				
+					openLoading( '同步中...' );
+					capi.deleteCard( {Id:currentRow.row.id}, function(err, ret){
+						if( err != null ){
+							closeLoading();
+							alert1( err );
+						}else{
+							resetRows( function(){
+								closeLoading();
+							});
+						}
+					});
 				}
 		}
 	}
@@ -232,6 +239,9 @@ body{
 		$('#grid_cards').datagrid({
 			data: datas
 		});
+		if( currentRow != undefined ){
+			$('#grid_cards').datagrid( 'selectRow', currentRow.id );
+		}
 	}
 	
 	function appendRow( row ){
@@ -308,6 +318,30 @@ body{
 			stext:model.skill.text,
 			ctype:model.type
 		}
+	}
+	
+	function alert1( msg ){
+		$.messager.alert('error', msg);
+	}
+	
+	function slide( msg ){
+		$.messager.show({
+			title:'tip',
+			msg: msg,
+			timeout:1000,
+			showType:'slide'
+		});
+	}
+	
+	function openLoading( msg ){
+		var win = $.messager.progress({
+			title:'tip',
+			msg:msg
+		});
+	}
+	
+	function closeLoading(){
+		$.messager.progress('close');
 	}
 	</script>
 	<script src="js/manager.js"></script>
