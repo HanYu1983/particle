@@ -317,7 +317,6 @@ class Main
 	}
 	
 	public static function createCard( model:Dynamic ) {
-		trace( model.cardId );
 		model.url = getCardImageUrlWithPackage( cardPackage, model.cardId );
 		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
 	}

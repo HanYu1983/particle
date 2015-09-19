@@ -416,7 +416,6 @@ Main.rotate = function(ary_select,deg) {
 	Main.applyValue(ary_select);
 };
 Main.createCard = function(model) {
-	console.log(model.cardId);
 	model.url = Main.getCardImageUrlWithPackage(Main.cardPackage,model.cardId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -505,6 +504,7 @@ Main.prototype = {
 		haxe_Timer.delay($bind(this,this.keepSend),Main.keepTime);
 	}
 	,onHtmlClick: function(type,params) {
+		var _g = this;
 		switch(type) {
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
@@ -522,7 +522,10 @@ Main.prototype = {
 			break;
 		case "onBtnCreateClick":
 			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				Main.slide("debug 模式，對手配對成功");
+				_g.callForOthers(function() {
+					Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
+					Main.slide("對手配對成功");
+				});
 			}));
 			break;
 		}
@@ -1535,5 +1538,3 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map
