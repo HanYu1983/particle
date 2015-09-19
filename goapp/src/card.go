@@ -65,10 +65,27 @@ func Output(w http.ResponseWriter, info, err interface{}){
   fmt.Fprintf(w, "%s", string( jsonstr ))
 }
 
+func CardList(w http.ResponseWriter, r *http.Request){
+  defer tool.Recover( func(err error){
+    Output( w, nil, err.Error() )
+  })
+  
+  w.Header().Set("Content-Type", "application/json; charset=utf8")
+  
+  ctx := appengine.NewContext( r )
+  
+  file, err := dbfile.GetFile( ctx, CardInfoPosition )
+  tool.Assert( tool.IfError( err ) ) 
+  
+  fmt.Fprintf(w, "%v", string( file.Content ))
+}
+
 func DeleteCard(w http.ResponseWriter, r *http.Request){
   defer tool.Recover( func(err error){
     Output( w, nil, err.Error() )
   })
+  
+  w.Header().Set("Content-Type", "application/json; charset=utf8")
   
   ctx := appengine.NewContext( r )
   var _ = ctx
@@ -125,6 +142,8 @@ func AddCard(w http.ResponseWriter, r *http.Request){
   defer tool.Recover( func(err error){
     Output( w, nil, err.Error() )
   })
+  
+  w.Header().Set("Content-Type", "application/json; charset=utf8")
   
   ctx := appengine.NewContext( r )
   var _ = ctx

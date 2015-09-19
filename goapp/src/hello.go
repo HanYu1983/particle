@@ -39,6 +39,8 @@ func init(){
   http.HandleFunc("/fn/card/state", game.State)
   http.HandleFunc("/fn/cardInfo/addCard", AddCard)
   http.HandleFunc("/fn/cardInfo/deleteCard", DeleteCard)
+  http.HandleFunc("/fn/cardInfo/cardList", CardList)
+  
 }
 
 func handler(w http.ResponseWriter, r *http.Request){
