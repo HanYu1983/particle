@@ -218,12 +218,31 @@ var api = api || {};
 	}
 	*/
 	function getCardPackage( name, cb ){
+		getCardPackageWithUrl( '../common/cardPackage/'+name+'.json', cb )
+	}
+	
+	/**
+	取得卡包
+	url: string
+	cb: function( err, data ){
+		data: {
+			images: [
+				{key -> url}
+			]
+		}
+	}
+	*/
+	function getCardPackageWithUrl( url, cb ){
 		$.ajax({
-			url: '../common/cardPackage/'+name+'.json',
+			url: url,
 			type: 'get',
 			dataType: 'json',
 			success: function(ret){
-				cb( null, ret )
+				if( ret.images == undefined || ret.images == null ){
+					cb( 'format not right' )
+				} else {
+					cb( null, ret )
+				}
 			},
 			error: function(xhr, res, err){
 				cb( err, null )
@@ -232,7 +251,7 @@ var api = api || {};
 	}
 	
 	function getCardImageUrl( path ){
-		return '../common/cardPackage/' + path
+		return path
 	}
 	
 	/**
@@ -243,6 +262,35 @@ var api = api || {};
 	function getCardImageUrlWithPackage( pkg, key ){
 		var path = pkg.images[key]
 		return getCardImageUrl( path )
+	}
+	
+	/**
+	取得卡組包
+	cb: function(err, data){
+		data:{
+			cardSuit: [{
+				name: string,
+				cards: [cardId:string]
+			}]
+		}
+	}
+	*/
+	function getCardSuitPackageWithUrl( url, cb ){
+		$.ajax({
+			url: url,
+			type: 'get',
+			dataType: 'json',
+			success: function(ret){
+				if( ret.cardSuit == undefined || ret.cardSuit == null ){
+					cb( 'format not right' )
+				} else {
+					cb( null, ret )
+				}
+			},
+			error: function(xhr, res, err){
+				cb( err )
+			}
+		})
 	}
 	
 	/**
@@ -259,11 +307,14 @@ var api = api || {};
 	module.rooms = rooms
 	module.message = message
 	module.pollMessage = pollMessage
-	module.installPollMessageCallback = installPollMessageCallback
+	//先不公開這個函式
+	//module.installPollMessageCallback = installPollMessageCallback
 	module.clear = clear
 	module.getCardPackage = getCardPackage
+	module.getCardPackageWithUrl = getCardPackageWithUrl
 	module.getCardImageUrl = getCardImageUrl
 	module.getCardImageUrlWithPackage = getCardImageUrlWithPackage
+	module.getCardSuitPackageWithUrl = getCardSuitPackageWithUrl
 	module.getCardSuit = getCardSuit
 	
 }) (api)
