@@ -238,13 +238,13 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
-	this.packageName = "fighter";
+	this.packageName = "gundamWar";
 	Main.j("#txt_id").html(Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
-	Main.getCardPackage("fighter",Main.handleResponse(function(ret) {
+	Main.getCardPackage(this.packageName,Main.handleResponse(function(ret) {
 		Main.cardPackage = ret;
 		Main.cardSuit = Main.getCardSuit(Main.cardPackage);
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});

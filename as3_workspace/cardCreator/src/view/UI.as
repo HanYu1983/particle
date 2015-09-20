@@ -45,6 +45,7 @@ package view
 		function appendCard( e:VicEvent ):void {
 			var cardData = e.data.data;
 			var template = e.data.template;
+			var outputUrl = e.data.outputUrl;
 			
 			cardData.info.forEach( function( card ) {
 				var cardView = new template();
@@ -62,49 +63,48 @@ package view
 				_ary_cardView.push( cardView );
 			} );
 			
+			outputMapping( outputUrl );
+			outputImage( outputUrl );
 			
-			outputMapping();
-			outputImage();
-			
-			NativeApplication.nativeApplication.exit();
+			//NativeApplication.nativeApplication.exit();
 		}
 		
-		function outputMapping() {
+		function outputMapping( root:String ) {
 			var output = {
 				images:{}
 			}
 			_ary_cardView.forEach( function( cardView ) {
 				var data:Object = cardView['data'];
-				output.images[ data.id ] = 'fighter/' + data.id + '.jpg';
+				output.images[ data.id ] = root + 'fighter/' + data.id + '.jpg';
 			});
-			writeString( 'fighter', JSON.stringify( output ));
+			writeString( root, 'fighter', JSON.stringify( output ));
 		}
 		
-		function outputImage() {
+		function outputImage( root:String ) {
 			_ary_cardView.forEach( function( cardView ) {
-				drawCard( cardView );
+				drawCard( root, cardView );
 			});
 		}
 		
-		function drawCard( mc:DisplayObject ) {
+		function drawCard( root:String, mc:DisplayObject ) {
 			var bitmap:BitmapData = new BitmapData( mc.width, mc.height );
 			bitmap.draw( mc );
 			var jpeg:JPEGEncoder = new JPEGEncoder(80 );
 			var bytes:ByteArray = jpeg.encode( bitmap );
-			saveImage( mc['data'].id, bytes );
+			saveImage( root, mc['data'].id, bytes );
 		}
 		
-		function saveImage( fileName:Object, bytes:ByteArray ) {
+		function saveImage( root:String, fileName:Object, bytes:ByteArray ) {
 			var strem:FileStream = new FileStream();
-			var path = File.desktopDirectory.url + '/cards_output/fighter/' + fileName + '.jpg';
+			var path = root + '/fighter/' + fileName + '.jpg';
 			strem.open( new File( path ), FileMode.WRITE);
 			strem.writeBytes( bytes );
 			strem.close();
 		}
 		
-		function writeString( fileName:Object, str:String ) {
+		function writeString( root:String, fileName:Object, str:String ) {
 			var strem:FileStream = new FileStream();
-			var path = File.desktopDirectory.url + '/cards_output/' + fileName + '.json';
+			var path = root + fileName + '.json';
 			strem.open( new File( path ), FileMode.WRITE);
 			strem.writeUTFBytes( str );
 			strem.close();

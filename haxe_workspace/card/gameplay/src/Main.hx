@@ -33,7 +33,8 @@ class Main
 	public static var cardPackage = null;
 	public static var cardSuit = null;
 	
-	var packageName = 'fighter';
+	//var packageName = 'fighter';
+	var packageName = 'gundamWar';
 	
 	#if debug
 	static var keepTime = 1000;
@@ -50,7 +51,7 @@ class Main
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 		
-		getCardPackage( 'fighter', handleResponse( function( ret ) {
+		getCardPackage( packageName, handleResponse( function( ret ) {
 			
 			cardPackage = ret;
 			cardSuit = getCardSuit( cardPackage );
