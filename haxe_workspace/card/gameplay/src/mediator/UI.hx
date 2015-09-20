@@ -50,6 +50,7 @@ class UI extends Mediator
 	
 	function createComboDeck( cardSuit ) {
 		var i = 0;
+		combo_deck.empty();
 		Lambda.foreach( cardSuit, function( deck ) {
 			combo_deck.append( '<option value="' + i++ + '">' + deck.name + '</option>' );
 			return true;

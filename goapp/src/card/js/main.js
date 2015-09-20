@@ -983,6 +983,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 	,createComboDeck: function(cardSuit) {
 		var _g = this;
 		var i = 0;
+		this.combo_deck.empty();
 		Lambda.foreach(cardSuit,function(deck) {
 			_g.combo_deck.append("<option value=\"" + i++ + "\">" + deck.name + "</option>");
 			return true;
