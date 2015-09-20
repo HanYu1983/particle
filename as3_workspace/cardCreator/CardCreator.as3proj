@@ -6,8 +6,8 @@
     <movie input="" />
     <movie path="bin\CardCreator.swf" />
     <movie fps="30" />
-    <movie width="330" />
-    <movie height="200" />
+    <movie width="420" />
+    <movie height="320" />
     <movie version="18" />
     <movie minorVersion="0" />
     <movie platform="AIR" />

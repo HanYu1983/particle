@@ -9,6 +9,7 @@ package view
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
@@ -16,6 +17,8 @@ package view
 	import flash.net.FileReference;
 	import flash.net.FileReferenceList;
 	import flash.utils.ByteArray;
+	import flash.utils.SetIntervalTimer;
+	import flash.utils.Timer;
 	import mx.graphics.codec.JPEGEncoder;
 	import spark.components.Button;
 	
@@ -43,9 +46,13 @@ package view
 		}
 		
 		function appendCard( e:VicEvent ):void {
+			dispatchEvent( new Event( 'startProgress' ));
+			
 			var cardData = e.data.data;
 			var template = e.data.template;
 			var outputUrl = e.data.outputUrl;
+			var serverUrl = e.data.serverUrl;
+			var packageName = e.data.packageName;
 			
 			cardData.info.forEach( function( card ) {
 				var cardView = new template();
@@ -63,40 +70,45 @@ package view
 				_ary_cardView.push( cardView );
 			} );
 			
-			outputMapping( outputUrl );
-			outputImage( outputUrl );
-			
-			//NativeApplication.nativeApplication.exit();
+			var t:Timer = new Timer( 100 );
+			t.addEventListener( TimerEvent.TIMER, function( e:Event ) {
+				outputMapping( outputUrl, serverUrl, packageName );
+				outputImage( outputUrl, packageName );
+				t = null;
+			});
+			t.start();
 		}
 		
-		function outputMapping( root:String ) {
+		function outputMapping( root:String, serverUrl:String, packageName:String ) {
 			var output = {
 				images:{}
 			}
 			_ary_cardView.forEach( function( cardView ) {
 				var data:Object = cardView['data'];
-				output.images[ data.id ] = root + 'fighter/' + data.id + '.jpg';
+				output.images[ data.id ] = serverUrl + packageName + '/' + data.id + '.jpg';
 			});
-			writeString( root, 'fighter', JSON.stringify( output ));
+			writeString( root, packageName, JSON.stringify( output ));
 		}
 		
-		function outputImage( root:String ) {
+		function outputImage( root:String, packageName:String ) {
 			_ary_cardView.forEach( function( cardView ) {
-				drawCard( root, cardView );
+				drawCard( root, packageName, cardView );
 			});
+			
+			dispatchEvent( new Event( 'stopProgress' ));
 		}
 		
-		function drawCard( root:String, mc:DisplayObject ) {
+		function drawCard( root:String, packageName:String, mc:DisplayObject ) {
 			var bitmap:BitmapData = new BitmapData( mc.width, mc.height );
 			bitmap.draw( mc );
 			var jpeg:JPEGEncoder = new JPEGEncoder(80 );
 			var bytes:ByteArray = jpeg.encode( bitmap );
-			saveImage( root, mc['data'].id, bytes );
+			saveImage( root, packageName, mc['data'].id, bytes );
 		}
 		
-		function saveImage( root:String, fileName:Object, bytes:ByteArray ) {
+		function saveImage( root:String, packageName:String, fileName:Object, bytes:ByteArray ) {
 			var strem:FileStream = new FileStream();
-			var path = root + '/fighter/' + fileName + '.jpg';
+			var path = root + packageName + '/' + fileName + '.jpg';
 			strem.open( new File( path ), FileMode.WRITE);
 			strem.writeBytes( bytes );
 			strem.close();

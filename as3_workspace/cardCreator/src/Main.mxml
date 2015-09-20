@@ -5,18 +5,28 @@
 	
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:Fade id="fadeIn" duration="500" alphaFrom="0" alphaTo="1"></s:Fade>
 	</fx:Declarations>
 	<s:Panel title="卡牌產生器" width="100%" height="100%">
-		
 		<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
 			<s:VGroup horizontalAlign="center">
+				<s:Label>套牌名稱</s:Label>
+				<s:TextInput id="txt_packeName" text="fighter" width="350"></s:TextInput>
 				<s:Label>套牌網址</s:Label>
-				<s:TextInput id="txt_packageUrl" text="http://particle-979.appspot.com/fn/cardInfo/cardList" width="300"></s:TextInput>
+				<s:TextInput id="txt_packageUrl" text="http://particle-979.appspot.com/fn/cardInfo/cardList" width="350"></s:TextInput>
 				<s:Label>輸出路徑</s:Label>
-				<s:TextInput id="txt_outputUrl" text="/Custom/Server/git/particle/goapp/src/common/cardPackage/" width="300"></s:TextInput>
+				<s:TextInput id="txt_outputUrl" text="/Custom/Server/git/particle/goapp/src/common/cardPackage/" width="350"></s:TextInput>
+				<s:Label>伺服器路徑</s:Label>
+				<s:TextInput id="txt_serverUrl" text="http://particle-979.appspot.com/common/cardPackage/" width="350"></s:TextInput>
 				<s:Button id="btn_upload" click="onBtnClick( event )">執行</s:Button>
 			</s:VGroup>
-			
+		</s:HGroup>
+		<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+			<s:Panel id="panel_wait" title="繪圖中..." visible="false" width="300">
+				<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+					<s:Label>請稍等...，繪圖完畢會自動關閉程式。</s:Label>
+				</s:HGroup>
+			</s:Panel>
 		</s:HGroup>
 	</s:Panel>
 	<fx:Script>
@@ -25,13 +35,16 @@
 		import flash.desktop.NativeApplication;
 		import flash.display.Loader;
 		import flash.display.LoaderInfo;
+		import flash.errors.IOError;
 		import flash.events.Event;
 		import flash.events.EventDispatcher;
+		import flash.events.IOErrorEvent;
 		import flash.events.MouseEvent;
 		import flash.filesystem.File;
 		import flash.net.URLLoader;
 		import flash.net.URLRequest;
 		import flash.system.ApplicationDomain;
+		import mx.controls.Alert;
 		import view.UI;
 		import view.VicEvent;
 		
@@ -44,8 +57,6 @@
 			var l:Loader = new Loader();
 			l.load( new URLRequest( 'src/source.swf' ));
 			l.contentLoaderInfo.addEventListener( Event.COMPLETE, onComplete );
-			
-			_ui = new UI();
 			
 		}
 		
@@ -61,12 +72,17 @@
 			var ul:URLLoader = new URLLoader();
 			var url:String = txt_packageUrl.text;
 			ul.load( new URLRequest( url ));
+			ul.addEventListener(IOErrorEvent.IO_ERROR, function( e:IOErrorEvent ):void{
+				Alert.show( '套牌網址輸入錯誤!', '錯誤' );
+			});
 			
 			ul.addEventListener(Event.COMPLETE, function( e:Event ):void {
 				_ui.dispatchEvent( new VicEvent( 'appendCard', {
 					template:_template,
 					data: JSON.parse( e.currentTarget.data ),
-					outputUrl: File.documentsDirectory.url + txt_outputUrl.text 
+					outputUrl: File.documentsDirectory.url + txt_outputUrl.text,
+					packageName: txt_packeName.text,
+					serverUrl: txt_serverUrl.text
 				} ));
 			});
 		}
@@ -75,12 +91,22 @@
 			var info:LoaderInfo = e.currentTarget as LoaderInfo;
 			_source = info.applicationDomain;
 			_template = _source.getDefinition( 'TemplateCard' ) as Class;
+			
+			_ui = new UI();
+			_ui.addEventListener( 'startProgress', function( e:Event ):void {
+				panel_wait.visible = true;
+			});
+			_ui.addEventListener( 'stopProgress', function( e:Event ):void {
+				panel_wait.visible = false;
+				NativeApplication.nativeApplication.exit();
+			});
 		}
 		
 		public function onBtnClick( e:MouseEvent ):void {
 			switch( e.currentTarget.id ){
 				case 'btn_upload':
 					getData();
+					
 			}
 		}
 		
