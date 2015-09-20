@@ -207,7 +207,7 @@ class Main
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
 			case 'onBtnCardLoadClick':
-				//testurl: http://localhost:8080/common/cardPackage/gundamWar.json
+				//testurl: 8
 				
 				var url = j( '#txt_cardUrl' ).textbox( 'getValue' );
 				getCardPackageWithUrl( url, handleResponse( function( ret ) {
