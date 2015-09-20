@@ -50,19 +50,6 @@ class Main
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
-		/*
-		getCardPackageWithUrl( packageName, handleResponse( function( ret ) {
-			
-			cardPackage = ret;
-			getCardSuitPackageWithUrl( 'http://particle-979.appspot.com/common/cardPackage/gundamWarCardSuit.json', function( ret2 ) {
-				cardSuit = ret2;
-				Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
-				
-				slide( '卡牌準備完成' );
-			});
-			
-		}));
-		*/
 	}
 	
 	public static function createSelfDeck( deckId:Int ) {
