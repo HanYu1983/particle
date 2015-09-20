@@ -1,0 +1,44 @@
+{
+  "cardSuit":[
+    {
+      "name": "刺客",
+      "cards":[
+        "e97235a6-adba-44e9-8210-307bad04fe1a",
+        "7b27489f-bec4-4428-bbae-80d389be26ce",
+        "db4fd858-6830-48f0-aeb5-f48e08f5f967",
+        "17c426ef-3a35-471e-b44b-58069722a499",
+        "98dcbe56-a08a-4c8a-8c14-59211357e1b8",
+        "fd862dac-2d56-4913-a6b2-5e6b64ff7d93",
+        "57a391b3-098b-4411-ac8f-bcee3780b55b",
+        "1751e9c1-e26e-4bb5-8e3c-4e9d29afd4d2",
+        "3d745692-3348-4262-9cda-a5a27f8e2148",
+        "2bf896bc-ffce-4d9e-a5e8-86d352562d50",
+        "fe99e0b1-b564-453c-bddd-f35d854c6e95",
+        
+        "e97235a6-adba-44e9-8210-307bad04fe1a",
+        "7b27489f-bec4-4428-bbae-80d389be26ce",
+        "db4fd858-6830-48f0-aeb5-f48e08f5f967",
+        "17c426ef-3a35-471e-b44b-58069722a499",
+        "98dcbe56-a08a-4c8a-8c14-59211357e1b8",
+        "fd862dac-2d56-4913-a6b2-5e6b64ff7d93",
+        "57a391b3-098b-4411-ac8f-bcee3780b55b",
+        "1751e9c1-e26e-4bb5-8e3c-4e9d29afd4d2",
+        "3d745692-3348-4262-9cda-a5a27f8e2148",
+        "2bf896bc-ffce-4d9e-a5e8-86d352562d50",
+        "fe99e0b1-b564-453c-bddd-f35d854c6e95",
+        
+        "e97235a6-adba-44e9-8210-307bad04fe1a",
+        "7b27489f-bec4-4428-bbae-80d389be26ce",
+        "db4fd858-6830-48f0-aeb5-f48e08f5f967",
+        "17c426ef-3a35-471e-b44b-58069722a499",
+        "98dcbe56-a08a-4c8a-8c14-59211357e1b8",
+        "fd862dac-2d56-4913-a6b2-5e6b64ff7d93",
+        "57a391b3-098b-4411-ac8f-bcee3780b55b",
+        "1751e9c1-e26e-4bb5-8e3c-4e9d29afd4d2",
+        "3d745692-3348-4262-9cda-a5a27f8e2148",
+        "2bf896bc-ffce-4d9e-a5e8-86d352562d50",
+        "fe99e0b1-b564-453c-bddd-f35d854c6e95"
+      ]
+    }
+  ]
+}
