@@ -34,7 +34,7 @@ class Main
 	public static var cardSuit = null;
 	
 	//var packageName = 'fighter';
-	var packageName = 'gundamWar';
+	//var packageName = 'http://particle-979.appspot.com/common/cardPackage/gundamWar.json';
 	
 	#if debug
 	static var keepTime = 1000;
@@ -50,15 +50,19 @@ class Main
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
-		
-		getCardPackage( packageName, handleResponse( function( ret ) {
+		/*
+		getCardPackageWithUrl( packageName, handleResponse( function( ret ) {
 			
 			cardPackage = ret;
-			cardSuit = getCardSuit( cardPackage );
-			Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+			getCardSuitPackageWithUrl( 'http://particle-979.appspot.com/common/cardPackage/gundamWarCardSuit.json', function( ret2 ) {
+				cardSuit = ret2;
+				Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+				
+				slide( '卡牌準備完成' );
+			});
 			
-			slide( '卡牌準備完成' );
 		}));
+		*/
 	}
 	
 	public static function createSelfDeck( deckId:Int ) {
@@ -215,6 +219,25 @@ class Main
 	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnCardLoadClick':
+				//testurl: http://localhost:8080/common/cardPackage/gundamWar.json
+				
+				var url = j( '#txt_cardUrl' ).textbox( 'getValue' );
+				getCardPackageWithUrl( url, handleResponse( function( ret ) {
+					
+					trace( ret );
+					cardPackage = ret;
+					slide( '卡包準備完成。' );
+				}));
+			case 'onBtnCardSuitLoadClick':
+				//testurl: http://localhost:8080/common/cardPackage/gundamWarCardSuit.json
+				
+				var url = j( '#txt_cardsuitUrl' ).textbox( 'getValue' );
+				getCardSuitPackageWithUrl( url, handleResponse( function( ret:Dynamic ) {
+					cardSuit = ret.cardSuit;
+					Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+					slide( '卡牌準備完成' );
+				}));
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
 			case 'onBtnClearClick':
@@ -438,6 +461,14 @@ class Main
 	
 	public static function getCardPackage( name, cb ) {
 		untyped __js__('api.getCardPackage' )( name, cb );
+	}
+	
+	public static function getCardPackageWithUrl( url, cb ){
+		untyped __js__('api.getCardPackageWithUrl' )( url, cb );
+	}
+	
+	public static function getCardSuitPackageWithUrl( url, cb ) {
+		untyped __js__('api.getCardSuitPackageWithUrl' )( url, cb );
 	}
 	
 	public static function getCardImageUrlWithPackage( name:Dynamic, key ):String {

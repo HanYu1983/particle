@@ -238,18 +238,11 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
-	this.packageName = "gundamWar";
 	Main.j("#txt_id").html(Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
-	Main.getCardPackage(this.packageName,Main.handleResponse(function(ret) {
-		Main.cardPackage = ret;
-		Main.cardSuit = Main.getCardSuit(Main.cardPackage);
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
-		Main.slide("卡牌準備完成");
-	}));
 };
 Main.__name__ = true;
 Main.createSelfDeck = function(deckId) {
@@ -463,6 +456,12 @@ Main.clear = function(cb) {
 Main.getCardPackage = function(name,cb) {
 	api.getCardPackage(name,cb);
 };
+Main.getCardPackageWithUrl = function(url,cb) {
+	api.getCardPackageWithUrl(url,cb);
+};
+Main.getCardSuitPackageWithUrl = function(url,cb) {
+	api.getCardSuitPackageWithUrl(url,cb);
+};
 Main.getCardImageUrlWithPackage = function(name,key) {
 	return api.getCardImageUrlWithPackage(name,key);
 };
@@ -506,6 +505,22 @@ Main.prototype = {
 	,onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
+		case "onBtnCardLoadClick":
+			var url = Main.j("#txt_cardUrl").textbox("getValue");
+			Main.getCardPackageWithUrl(url,Main.handleResponse(function(ret) {
+				console.log(ret);
+				Main.cardPackage = ret;
+				Main.slide("卡包準備完成。");
+			}));
+			break;
+		case "onBtnCardSuitLoadClick":
+			var url1 = Main.j("#txt_cardsuitUrl").textbox("getValue");
+			Main.getCardSuitPackageWithUrl(url1,Main.handleResponse(function(ret1) {
+				Main.cardSuit = ret1.cardSuit;
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
+				Main.slide("卡牌準備完成");
+			}));
+			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
@@ -521,7 +536,7 @@ Main.prototype = {
 			Main.pollAllMessage();
 			break;
 		case "onBtnCreateClick":
-			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
+			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret2) {
 				_g.callForOthers(function() {
 					Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
 					Main.slide("對手配對成功");
