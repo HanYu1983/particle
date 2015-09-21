@@ -253,16 +253,19 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
   var _ = ctx
   
   r.ParseForm()
-  tool.Assert( tool.ParameterIsNotExist( r.Form, "FBID" ) ) 
+  tool.Assert( tool.ParameterIsNotExist( r.Form, "FBID" ) )
+  tool.Assert( tool.ParameterIsNotExist( r.Form, "Maxtime" ) )
   
   fbid := r.Form["FBID"][0]
+  // use long polling tech if maxtime > 1
+  maxtime, err := strconv.Atoi( r.Form["Maxtime"][0] )
+  tool.Assert( tool.IfError( err ) )
   
   retCh, errCh := make(chan []Message), make(chan error)
   
   go func (){
     defer close( retCh )
     defer close( errCh )
-    maxtime := 1  // use long polling tech if maxtime > 1
     var times int
     var ok bool
     

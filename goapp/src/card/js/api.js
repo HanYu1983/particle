@@ -140,6 +140,7 @@ var api = api || {};
 	接收訊息
 	data: {
 		FBID: string
+		Maxtime: 1		// 存取資料庫的次數。大於1代表要使用longPolling
 	}
 	cb: function( err, ret ){
 		err:string,
@@ -150,6 +151,8 @@ var api = api || {};
 	}
 	*/
 	function pollMessage( data, cb ){
+		// Maxtime剛好不能等於0，所以這句有效。若為0, 就是1
+		data.Maxtime = data.Maxtime || 1 
 		$.ajax({
 			url: '../fn/card/longPollingTargetMessage',
 			type: 'get',
@@ -178,6 +181,7 @@ var api = api || {};
 	}
 	*/
 	function installPollMessageCallback( data, cb ){
+		data.Maxtime = 3
 		var fn = arguments.callee
 		pollMessage( data, function( err, ret ){
 			if( err == null ){
@@ -307,8 +311,7 @@ var api = api || {};
 	module.rooms = rooms
 	module.message = message
 	module.pollMessage = pollMessage
-	//先不公開這個函式
-	//module.installPollMessageCallback = installPollMessageCallback
+	module.installPollMessageCallback = installPollMessageCallback
 	module.clear = clear
 	module.getCardPackage = getCardPackage
 	module.getCardPackageWithUrl = getCardPackageWithUrl
