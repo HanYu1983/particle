@@ -302,7 +302,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
         
       } else {
         if ( maxtime > 1 ) {
-          time.Sleep( 2 * time.Second )
+          time.Sleep( 1 * time.Second )
         }
 
         times += 1

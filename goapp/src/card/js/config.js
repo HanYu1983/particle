@@ -1,4 +1,4 @@
 var config = config || {};
 (function( module ){
-	module.longPolling = false;
+	module.longPolling = true;
 })( config );
