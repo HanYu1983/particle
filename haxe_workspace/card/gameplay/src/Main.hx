@@ -28,14 +28,12 @@ class Main
 	public static var ary_cards:Array<Dynamic> = [];
 	public static var ary_cmds:Array<Dynamic> = [];
 	
-	static var tmpl_card:Dynamic = j( '#tmpl_card' );
-	
 	public static var cardPackage = null;
 	public static var cardSuit = null;
 	
-	//var packageName = 'fighter';
-	//var packageName = 'http://particle-979.appspot.com/common/cardPackage/gundamWar.json';
-	
+	static var tmpl_card:Dynamic = j( '#tmpl_card' );
+	static var longPolling:Bool = untyped __js__( 'config.longPolling' );
+	//static var timer:Timer = null;
 	#if debug
 	static var keepTime = 1000;
 	#else
@@ -81,6 +79,20 @@ class Main
 		ary_cmds.push( content );
 		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
 		
+		if ( longPolling ) {
+			messageAll( ary_cmds );
+		}
+		/*
+		if ( timer == null ) {
+			timer = new Timer( 5000 );
+			timer.run = function() {
+				messageAll( ary_cmds );
+			}
+		}else {
+			timer.stop();
+			timer = null;
+		}
+		*/
 	}
 	
 	public static function messageAll( content:Array<Dynamic> ) {
@@ -211,8 +223,6 @@ class Main
 				
 				var url = j( '#txt_cardUrl' ).textbox( 'getValue' );
 				getCardPackageWithUrl( url, handleResponse( function( ret ) {
-					
-					trace( ret );
 					cardPackage = ret;
 					slide( '卡包準備完成。' );
 				}));
@@ -247,6 +257,12 @@ class Main
 					callForOthers( function() {
 						j('#txt_output' ).html( Json.stringify( otherPlayerId ) );
 						slide( '對手配對成功' );
+						
+						if ( longPolling ) {
+							installPollMessageCallback( {
+								FBID:playerId
+							}, handleResponse( onBackCallback ));
+						}
 					});
 					#end
 				}));

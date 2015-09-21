@@ -260,6 +260,7 @@ Main.createSelfDeck = function(deckId) {
 Main.pushCmds = function(content) {
 	Main.ary_cmds.push(content);
 	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
+	if(Main.longPolling) Main.messageAll(Main.ary_cmds);
 };
 Main.messageAll = function(content) {
 	Main.j("#txt_output2").html("messageAll");
@@ -508,7 +509,6 @@ Main.prototype = {
 		case "onBtnCardLoadClick":
 			var url = Main.j("#txt_cardUrl").textbox("getValue");
 			Main.getCardPackageWithUrl(url,Main.handleResponse(function(ret) {
-				console.log(ret);
 				Main.cardPackage = ret;
 				Main.slide("卡包準備完成。");
 			}));
@@ -540,6 +540,7 @@ Main.prototype = {
 				_g.callForOthers(function() {
 					Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
 					Main.slide("對手配對成功");
+					if(Main.longPolling) Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
 				});
 			}));
 			break;
@@ -1538,6 +1539,7 @@ Main.otherPlayerId = [];
 Main.ary_cards = [];
 Main.ary_cmds = [];
 Main.tmpl_card = Main.j("#tmpl_card");
+Main.longPolling = config.longPolling;
 Main.keepTime = 1000;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";
