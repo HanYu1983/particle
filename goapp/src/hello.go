@@ -5,9 +5,10 @@ import (
   "net/http"
   "lib/tool"
   "lib/db/file"
-  "appengine"
   auth "lib/hack/go-http-auth"
   "lib/game"
+  "appengine"
+  "appengine/user"
 )
 
 func Secret(user, realm string) string {
@@ -23,7 +24,7 @@ func init(){
   dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
   
   game.InitContext( GameContextPosition )
-  
+  http.HandleFunc("/welcome/", welcome)
   http.HandleFunc("/", handler)
   http.HandleFunc("/proxy", tool.Proxy)
   http.HandleFunc("/dbfile/", dbfileHandler)
@@ -40,80 +41,24 @@ func init(){
   http.HandleFunc("/fn/cardInfo/addCard", AddCard)
   http.HandleFunc("/fn/cardInfo/deleteCard", DeleteCard)
   http.HandleFunc("/fn/cardInfo/cardList", CardList)
-  
 }
 
 func handler(w http.ResponseWriter, r *http.Request){
 	fmt.Fprint(w, "Hello, world!")
 }
 
-func Load(w http.ResponseWriter, r *http.Request){
-  defer tool.Recover( tool.WriteErrorJson(w) )
-  ctx := appengine.NewContext( r )
-  
-  form, err := tool.ReadAjaxPost( r )
-  tool.Assert( tool.IfError( err ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "AccessToken" ) )
-  
-  fbid := form["FBID"][0]
-  accessToken := form["AccessToken"][0]
-  _, err = tool.AuthFB( ctx, fbid, accessToken )
-  tool.Assert( tool.IfError( err ) ) 
-  
-  tool.Assert( tool.ParameterIsNotExist( form, "Target" ) ) 
-  target := form["Target"][0]
-  
-  files, _, err := dbfile.QueryKeys( ctx, 0, "root" )
-  tool.Assert( tool.IfError( err ) ) 
-  rootDir := files[0].Key
-  
-  files, _, err = dbfile.QueryKeys( ctx, rootDir, target )
-  tool.Assert( tool.IfError( err ) ) 
-  targetDir := files[0].Key
-  
-  files, _, err = dbfile.QueryKeys( ctx, targetDir, fbid )
-  tool.Assert( tool.IfError( err ) ) 
-  userDir := files[0].Key
-  
-  files, _, err = dbfile.QueryKeys( ctx, userDir, "save.json" )
-  tool.Assert( tool.IfError( err ) ) 
-  fmt.Fprintf(w, "%s", string( files[0].Content ))
+func welcome(w http.ResponseWriter, r *http.Request) {
+  c := appengine.NewContext(r)
+      u, err := user.CurrentOAuth(c, "")
+      if err != nil {
+          http.Error(w, "OAuth Authorization header required", http.StatusUnauthorized)
+          return
+      }
+      if !u.Admin {
+          http.Error(w, "Admin login only", http.StatusUnauthorized)
+          return
+      }
+      fmt.Fprintf(w, `Welcome, admin user %s!`, u)
 }
 
-func Save(w http.ResponseWriter, r *http.Request){
-  defer tool.Recover( tool.WriteErrorJson(w) )
-  ctx := appengine.NewContext( r )
-  
-  form, err := tool.ReadAjaxPost( r )
-  tool.Assert( tool.IfError( err ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "AccessToken" ) )
-  
-  fbid := form["FBID"][0]
-  accessToken := form["AccessToken"][0]
-  _, err = tool.AuthFB( ctx, fbid, accessToken )
-  tool.Assert( tool.IfError( err ) ) 
-  
-  tool.Assert( tool.ParameterIsNotExist( form, "Target" ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "Data" ) ) 
-  target := form["Target"][0]
-  
-  data := form["Data"][0]
-  
-  files, _, err := dbfile.QueryKeys( ctx, 0, "root" )
-  tool.Assert( tool.IfError( err ) ) 
-  rootDir := files[0].Key
-  
-  files, _, err = dbfile.QueryKeys( ctx, rootDir, target )
-  tool.Assert( tool.IfError( err ) ) 
-  targetDir := files[0].Key
-  
-  // mkdir的error先忽略，因為會重覆建同名的dir
-  userDir, _ := dbfile.MakeDir( ctx, targetDir, fbid )
-  
-  _, err = dbfile.MakeFile( ctx, userDir, "save.json", []byte(data), true )
-  tool.Assert( tool.IfError( err ) ) 
-  
-  fmt.Fprintf(w, "%s", "{}")
-}
+
