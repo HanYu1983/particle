@@ -250,11 +250,14 @@ var Main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Main.openLoading("準備中...請稍等");
-	this.loadCardSuit("gundamWar",function() {
-		_g.loadCardSuit("fighter",function() {
-			Main.closeLoading();
-			_g.chooseCardSuit("fighter");
-			Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
+	var fbid = config.fbid[config.fbid.which];
+	myapp.facebook.init(fbid,function() {
+		_g.loadCardSuit("gundamWar",function() {
+			_g.loadCardSuit("fighter",function() {
+				Main.closeLoading();
+				_g.chooseCardSuit("fighter");
+				Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
+			});
 		});
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
@@ -519,12 +522,9 @@ Main.prototype = {
 	,onHtmlClick: function(type,params) {
 		switch(type) {
 		case "onBtnLoginClick":
-			var fbid = config.fbid[config.fbid.which];
-			myapp.facebook.init(fbid,function() {
-				myapp.facebook.login(function(ret) {
-					var fbid1 = ret.authResponse.userID;
-					Main.j("#txt_id").textbox("setValue",fbid1);
-				});
+			myapp.facebook.login(function(ret) {
+				var fbid = ret.authResponse.userID;
+				Main.j("#txt_id").textbox("setValue",fbid);
 			});
 			break;
 		case "onBtnLoadFighterClick":

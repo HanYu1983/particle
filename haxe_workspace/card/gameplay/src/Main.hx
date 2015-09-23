@@ -55,14 +55,16 @@ class Main
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
 		openLoading( '準備中...請稍等' );
-		loadCardSuit( 'gundamWar', function() {
-			loadCardSuit( 'fighter', function() {
-				closeLoading();
-				chooseCardSuit( 'fighter' );
-				slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
+		var fbid = untyped __js__( 'config.fbid[config.fbid.which]' );
+		untyped __js__( 'myapp.facebook.init' )( fbid, function() {
+			loadCardSuit( 'gundamWar', function() {
+				loadCardSuit( 'fighter', function() {
+					closeLoading();
+					chooseCardSuit( 'fighter' );
+					slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
+				});
 			});
 		});
-		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 	}
 	
@@ -179,13 +181,9 @@ class Main
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
 			case 'onBtnLoginClick':
-				
-				var fbid = untyped __js__( 'config.fbid[config.fbid.which]' );
-				untyped __js__( 'myapp.facebook.init' )( fbid, function() {
-					untyped __js__( 'myapp.facebook.login' )( function( ret ) {
-						var fbid = ret.authResponse.userID;
-						j( '#txt_id' ).textbox( 'setValue', fbid );
-					});
+				untyped __js__( 'myapp.facebook.login' )( function( ret ) {
+					var fbid = ret.authResponse.userID;
+					j( '#txt_id' ).textbox( 'setValue', fbid );
 				});
 				
 			case 'onBtnLoadFighterClick':
