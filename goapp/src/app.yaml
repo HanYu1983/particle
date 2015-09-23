@@ -16,3 +16,6 @@ handlers:
   static_dir: card
 - url: /.*
   script: _go_app
+
+inbound_services:
+- channel_presence

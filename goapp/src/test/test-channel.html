@@ -1,0 +1,103 @@
+<html>
+  <script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>	
+  <script type="text/javascript" src="/_ah/channel/jsapi"></script>
+  <script type="text/javascript" src="../common/js/channel.js"></script>
+  <script>
+  channel.createChannel('han', function(err, ch){
+    channel.addEventListenerAndOpenSocket( ch, {
+      onopen: function(){
+        console.log('onopen han')
+      },
+      onmessage: function(path, option){
+        console.log(path.data)
+      },
+      onerror: function(){},
+      onclose: function(){}
+    })
+  })
+  
+  channel.createChannel('vic', function(err, ch){
+    channel.addEventListenerAndOpenSocket( ch, {
+      onopen: function(){
+        console.log('onopen vic')
+      },
+      onmessage: function(path, option){
+        console.log(path.data)
+      },
+      onerror: function(){},
+      onclose: function(){}
+    })
+  })
+
+/*
+$.ajax({
+  url: '../fn/createChannel',
+  type: 'get',
+  dataType: 'json',
+  data:{ Name: 'wow2' },
+  success: function( ret ){
+    console.log( ret )
+    
+    var channel = new goog.appengine.Channel(ret.Info);
+    socket = channel.open();
+    socket.onopen = function(){
+      console.log('onopen')
+    };
+    socket.onmessage = function(path, opt_param){
+      console.log(path)
+      console.log(opt_param)
+      
+      if( path.data == "0" ){
+        console.log("reconnect!")
+      }
+    };
+    socket.onerror = function(){
+      console.log('onerror')
+    };
+    socket.onclose = function(){
+      console.log('onclose')
+    };
+    
+  },
+  error: function( err ){
+    console.log('err')
+  }
+})
+
+
+  $.ajax({
+    url: '../fn/createChannel',
+    type: 'get',
+    dataType: 'json',
+    data:{ Name: 'wow' },
+    success: function( ret ){
+      console.log( ret )
+      
+      var channel = new goog.appengine.Channel(ret.Info);
+      socket = channel.open();
+      socket.onopen = function(){
+        console.log('onopen')
+      };
+      socket.onmessage = function(path, opt_param){
+        console.log(path)
+        console.log(opt_param)
+        
+        if( path.data == "0" ){
+          console.log("reconnect!")
+        }
+      };
+      socket.onerror = function(){
+        console.log('onerror')
+      };
+      socket.onclose = function(){
+        console.log('onclose')
+      };
+      
+    },
+    error: function( err ){
+      console.log('err')
+    }
+  })
+  */
+  </script>
+</html>
