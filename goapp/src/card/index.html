@@ -115,12 +115,21 @@ body{
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
 	
 	<div class="easyui-layout" style="position:absolute; right:0; top:0; width:25%;height:100%;">
-        <div data-options="region:'north',title:'操作',split:true" style="height:250px">
+        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:300px;" >
+			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
+				<div class="hori">
+					<a href="#" onclick="onHtmlClick('onBtnLoginClick')" class="easyui-linkbutton" data-options="iconCls:'icon-fb-login'">登入</a>
+				</div>
+				<div class="hori">
+					<a id="btn_about" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-help'"></a>
+				</div>
+			</div>
+			
 			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div>玩家:</div>
-				<input id="txt_id" class="easyui-textbox" style="width:240px;" />
+				<input id="txt_id" class="easyui-textbox" style="width:120px;" />
 				<div>對手:</div>
-				<input id="txt_opponent" class="easyui-textbox" style="width:240px;" />
+				<input id="txt_opponent" class="easyui-textbox" style="width:120px;" />
 			</div>
 			<div class="group" style="text-align:center; margin-bottom:10px;">
 				<div class="group" style="margin-top:5px; margin-bottom:5px;">
@@ -133,12 +142,13 @@ body{
 					<select id="combo_deck" class="easyui-combobox" name="state" style="width:100px;"></select>
 				</div>
 				<div class="hori">
-					<a href="#" onclick="onHtmlClick('onBtnCreateDeck')" class="easyui-linkbutton" style="" data-options="iconCls:'icon-ok'">創建套牌</a>
+					<a href="#" onclick="onHtmlClick('onBtnCreateDeck')" class="easyui-linkbutton" data-options="iconCls:'icon-ok', disabled:false">創建套牌</a>
 				</div>
 			</div>
 		</div>
-		<div data-options="region:'center',title:'卡牌詳細'">
-            <div id="mc_detailContainer" style="position:relative; width:100%">
+		<div data-options="region:'center',title:'操作'" style="height:250px">
+           
+			<div id="mc_detailContainer" style="position:relative; width:100%">
 				<!-- create by script -->
 			</div>
         </div>

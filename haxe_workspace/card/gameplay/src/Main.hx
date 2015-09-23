@@ -23,8 +23,8 @@ class Main
 	
 	public static var j:Dynamic = untyped __js__('$');
 	
-	public static var playerId = getId();
-	public static var otherPlayerId = [];
+	public static var playerId = '';
+	public static var otherPlayerId = '';
 	public static var ary_cards:Array<Dynamic> = [];
 	
 	public static var cardPackages:Dynamic = { };
@@ -37,13 +37,19 @@ class Main
 	
 	function new() {
 		j( '#txt_id' ).textbox( {
-			editable:true,
+			editable:false,
 			onChange:function( nv, od ) {
 				playerId = nv;
 				createSocket( playerId );
 			}
 		});
-	//	j( '#txt_id' ).textbox( 'setValue', playerId );
+		
+		j( '#txt_opponent' ).textbox( {
+			onChange:function( nv, od ) {
+				otherPlayerId = nv;
+			}
+		});
+		
 		
 		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
@@ -54,10 +60,9 @@ class Main
 			loadCardSuit( 'fighter', function() {
 				closeLoading();
 				chooseCardSuit( 'fighter' );
-				slide( '所有卡牌準備完畢，請開始尋找對手' );
+				slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
 			});
 		});
-		//createSocket( playerId );
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 	}
@@ -177,14 +182,33 @@ class Main
 	}
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnLoginClick':
+				
+				var fbid = untyped __js__( 'config.fbid[config.fbid.which]' );
+				untyped __js__( 'myapp.facebook.init' )( fbid, function() {
+					untyped __js__( 'myapp.facebook.login' )( function( ret ) {
+						var fbid = ret.authResponse.userID;
+						j( '#txt_id' ).textbox( 'setValue', fbid );
+					});
+				});
+				
 			case 'onBtnLoadFighterClick':
 				chooseCardSuit( 'fighter' );
 			case 'onBtnLoadGundamWarClick':
 				chooseCardSuit( 'gundamWar' );
 			case 'onBtnCreateDeck':
-				Facade.getInstance().sendNotification( on_createDeck_click );
+				if( checkCanCreate() ){
+					Facade.getInstance().sendNotification( on_createDeck_click );
+					slide( '創建卡片完成' );
+				}else{
+					slide( '沒有登入或者沒有對手時，不能創建卡牌哦' );
+				}
 		}
 		
+	}
+	
+	function checkCanCreate() {
+		return ( playerId != '' && otherPlayerId != '' );
 	}
 	
 	function chooseCardSuit( suitName ) {
@@ -447,7 +471,7 @@ class Main
 		j.messager.show({
 			title:'提示',
 			msg: msg,
-			timeout:1000,
+			timeout:2000,
 			showType:'slide'
 		});
 	}

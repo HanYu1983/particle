@@ -239,9 +239,12 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
 		Main.playerId = nv;
 		Main.createSocket(Main.playerId);
+	}});
+	Main.j("#txt_opponent").textbox({ onChange : function(nv1,od1) {
+		Main.otherPlayerId = nv1;
 	}});
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
@@ -251,7 +254,7 @@ var Main = function() {
 		_g.loadCardSuit("fighter",function() {
 			Main.closeLoading();
 			_g.chooseCardSuit("fighter");
-			Main.slide("所有卡牌準備完畢，請開始尋找對手");
+			Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
 		});
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
@@ -481,7 +484,7 @@ Main.getCardSuit = function(pkg) {
 	return api.getCardSuit(pkg);
 };
 Main.slide = function(msg) {
-	Main.j.messager.show({ title : "提示", msg : msg, timeout : 1000, showType : "slide"});
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : 2000, showType : "slide"});
 };
 Main.openLoading = function(msg) {
 	Main.j.messager.progress({ title : "", msg : msg});
@@ -518,6 +521,15 @@ Main.prototype = {
 	}
 	,onHtmlClick: function(type,params) {
 		switch(type) {
+		case "onBtnLoginClick":
+			var fbid = config.fbid[config.fbid.which];
+			myapp.facebook.init(fbid,function() {
+				myapp.facebook.login(function(ret) {
+					var fbid1 = ret.authResponse.userID;
+					Main.j("#txt_id").textbox("setValue",fbid1);
+				});
+			});
+			break;
 		case "onBtnLoadFighterClick":
 			this.chooseCardSuit("fighter");
 			break;
@@ -525,9 +537,15 @@ Main.prototype = {
 			this.chooseCardSuit("gundamWar");
 			break;
 		case "onBtnCreateDeck":
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+			if(this.checkCanCreate()) {
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+				Main.slide("創建卡片完成");
+			} else Main.slide("沒有登入或者沒有對手時，不能創建卡牌哦");
 			break;
 		}
+	}
+	,checkCanCreate: function() {
+		return Main.playerId != "" && Main.otherPlayerId != "";
 	}
 	,chooseCardSuit: function(suitName) {
 		Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
@@ -1539,8 +1557,8 @@ var __map_reserved = {}
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.j = $;
-Main.playerId = Main.getId();
-Main.otherPlayerId = [];
+Main.playerId = "";
+Main.otherPlayerId = "";
 Main.ary_cards = [];
 Main.cardPackages = { };
 Main.cardSuits = { };
@@ -1561,5 +1579,3 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map
