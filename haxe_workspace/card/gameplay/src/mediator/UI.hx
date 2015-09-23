@@ -44,6 +44,7 @@ class UI extends Mediator
 					showCard( notification.getBody().select );
 				}, 10 );
 			case Main.on_getSuit_success:
+				trace( notification.getBody().cardSuit );
 				createComboDeck( notification.getBody().cardSuit );
 		}
 	}

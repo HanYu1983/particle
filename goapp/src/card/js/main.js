@@ -242,6 +242,7 @@ var Main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
+	this.loadCardSuit("fighter");
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
@@ -503,23 +504,29 @@ Main.prototype = {
 		if(Main.ary_cmds.length > 0) Main.messageAll(Main.ary_cmds);
 		haxe_Timer.delay($bind(this,this.keepSend),Main.keepTime);
 	}
+	,loadCardSuit: function(suitName) {
+		if(Reflect.field(Main.cardPackages,suitName) != null) {
+			Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
+			Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
+		} else Main.getCardPackageWithUrl("../common/cardPackage/" + suitName + ".json",Main.handleResponse(function(ret) {
+			Main.cardPackage = ret;
+			Main.cardPackages[suitName] = Main.cardPackage;
+			Main.getCardSuitPackageWithUrl("../common/cardPackage/" + suitName + "CardSuit.json",Main.handleResponse(function(ret1) {
+				Main.cardSuit = ret1.cardSuit;
+				Main.cardSuits[suitName] = Main.cardSuit;
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
+			}));
+		}));
+	}
 	,onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
-		case "onBtnCardLoadClick":
-			var url = Main.j("#txt_cardUrl").textbox("getValue");
-			Main.getCardPackageWithUrl(url,Main.handleResponse(function(ret) {
-				Main.cardPackage = ret;
-				Main.slide("卡包準備完成。");
-			}));
+		case "onBtnLoadFighterClick":
+			this.loadCardSuit("fighter");
 			break;
-		case "onBtnCardSuitLoadClick":
-			var url1 = Main.j("#txt_cardsuitUrl").textbox("getValue");
-			Main.getCardSuitPackageWithUrl(url1,Main.handleResponse(function(ret1) {
-				Main.cardSuit = ret1.cardSuit;
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
-				Main.slide("卡牌準備完成");
-			}));
+		case "onBtnLoadGundamWarClick":
+			this.loadCardSuit("gundamWar");
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
@@ -536,7 +543,7 @@ Main.prototype = {
 			Main.pollAllMessage();
 			break;
 		case "onBtnCreateClick":
-			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret2) {
+			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
 				_g.callForOthers(function() {
 					Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
 					Main.slide("對手配對成功");
@@ -550,6 +557,14 @@ Main.prototype = {
 Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
+Reflect.field = function(o,field) {
+	try {
+		return o[field];
+	} catch( e ) {
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
+		return null;
+	}
+};
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
@@ -977,6 +992,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			},10);
 			break;
 		case "on_getSuit_success":
+			console.log(notification.getBody().cardSuit);
 			this.createComboDeck(notification.getBody().cardSuit);
 			break;
 		}
@@ -1538,6 +1554,8 @@ Main.playerId = Main.getId();
 Main.otherPlayerId = [];
 Main.ary_cards = [];
 Main.ary_cmds = [];
+Main.cardPackages = { };
+Main.cardSuits = { };
 Main.tmpl_card = Main.j("#tmpl_card");
 Main.longPolling = config.longPolling;
 Main.keepTime = 1000;

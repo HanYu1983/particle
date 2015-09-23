@@ -28,7 +28,9 @@ class Main
 	public static var ary_cards:Array<Dynamic> = [];
 	public static var ary_cmds:Array<Dynamic> = [];
 	
+	public static var cardPackages:Dynamic = { };
 	public static var cardPackage = null;
+	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
@@ -46,6 +48,8 @@ class Main
 		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
+		
+		loadCardSuit( 'fighter' );
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 	}
@@ -216,8 +220,31 @@ class Main
 		pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
 	
+	function loadCardSuit( suitName ) {
+		if ( Reflect.field( cardPackages, suitName ) != null ) {
+			cardPackage = Reflect.field( cardPackages, suitName );
+			cardSuit = Reflect.field( cardSuits, suitName );
+			Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+		}else {
+			getCardPackageWithUrl( '../common/cardPackage/' + suitName + '.json', handleResponse( function( ret ) {
+				cardPackage = ret;
+				Reflect.setField( cardPackages, suitName, cardPackage );
+				
+				getCardSuitPackageWithUrl( '../common/cardPackage/' + suitName + 'CardSuit.json', handleResponse( function( ret:Dynamic ) {
+					cardSuit = ret.cardSuit;
+					Reflect.setField( cardSuits, suitName, cardSuit );
+					Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+				}));
+			}));
+		}
+	}
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnLoadFighterClick':
+				loadCardSuit( 'fighter' );
+			case 'onBtnLoadGundamWarClick':
+				loadCardSuit( 'gundamWar' );
+			/*
 			case 'onBtnCardLoadClick':
 				//testurl: 8
 				
@@ -235,6 +262,7 @@ class Main
 					Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
 					slide( '卡牌準備完成' );
 				}));
+				*/
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
 			case 'onBtnClearClick':
