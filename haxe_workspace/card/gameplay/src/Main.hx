@@ -66,17 +66,6 @@ class Main
 			});
 		});
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
-		
-		var btn_login:Dynamic = j( '#btn_login' );
-		btn_login.click( function() {
-			var fbid = untyped __js__( 'config.fbid[config.fbid.which]' );
-			untyped __js__( 'myapp.facebook.init' )( fbid, function() {
-				untyped __js__( 'myapp.facebook.login' )( function( ret ) {
-					var fbid = ret.authResponse.userID;
-					j( '#txt_id' ).textbox( 'setValue', fbid );
-				});
-			});
-		});
 	}
 	
 	public static function createSelfDeck( deckId:Int ) {
@@ -196,7 +185,6 @@ class Main
 					var fbid = ret.authResponse.userID;
 					j( '#txt_id' ).textbox( 'setValue', fbid );
 				});
-				
 			case 'onBtnLoadFighterClick':
 				chooseCardSuit( 'fighter' );
 			case 'onBtnLoadGundamWarClick':
