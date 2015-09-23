@@ -49,7 +49,27 @@ var channel = channel || {};
     socket.onclose = cbObj.onclose
   }
   
+  
+  /**
+  傳送訊息
+  */
+  function sendChannelMessage( name, msg, cb ){
+    $.ajax({
+      url: '../fn/sendChannelMessage',
+      type: 'post',
+      dataType: 'json',
+      data:{ Name: name, Message: msg },
+      success: function( ret ){
+        cb( ret.Error, ret )
+      },
+      error: function( xhr, res, err ){
+        cb( err )
+      }
+    })
+  }
+  
   module.createChannel = createChannel
   module.addEventListenerAndOpenSocket = addEventListenerAndOpenSocket
+  module.sendChannelMessage = sendChannelMessage
   
 }) (channel)
