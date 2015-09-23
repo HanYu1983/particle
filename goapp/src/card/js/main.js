@@ -261,9 +261,6 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.createSelfDeck = function(deckId) {
-	var tempGetCardId = function(i) {
-		return i + 1000 + ".jpg";
-	};
 	var deck = Main.cardSuit[deckId];
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
 		return { id : Main.getId(), cardId : cardId, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};

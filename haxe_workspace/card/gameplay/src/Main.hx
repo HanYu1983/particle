@@ -68,9 +68,6 @@ class Main
 	}
 	
 	public static function createSelfDeck( deckId:Int ) {
-		function tempGetCardId( i ) {
-			return ( i + 1000 ) + '.jpg';
-		}
 		
 		var deck = cardSuit[deckId];
 		var toDeck = Lambda.array( Lambda.map( deck.cards, function( cardId ) {
