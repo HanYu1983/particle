@@ -239,8 +239,10 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : false});
-	Main.j("#txt_id").textbox("setValue",Main.playerId);
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
+		Main.playerId = nv;
+		Main.createSocket(Main.playerId);
+	}});
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
@@ -252,7 +254,6 @@ var Main = function() {
 			Main.slide("所有卡牌準備完畢，請開始尋找對手");
 		});
 	});
-	Main.registerSocker(Main.playerId);
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
@@ -270,7 +271,7 @@ Main.createSelfDeck = function(deckId) {
 };
 Main.pushCmds = function(content) {
 	var toId = Main.j("#txt_opponent").textbox("getValue");
-	if(toId.length == 36) Main.messageSocket(toId,content.cmd,content);
+	if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
 };
 Main.messageAll = function(content) {
 	Main.j("#txt_output2").html("messageAll");
@@ -420,7 +421,7 @@ Main.getCardsById = function(id) {
 		return id == card.id;
 	});
 };
-Main.registerSocker = function(id) {
+Main.createSocket = function(id) {
 	var _channel = channel;
 	_channel.createChannel(id,function(err,ch) {
 		if(err != null) {
@@ -428,12 +429,15 @@ Main.registerSocker = function(id) {
 			return;
 		}
 		_channel.addEventListenerAndOpenSocket(ch,{ onopen : function() {
+			Main.slide("創建玩家成功");
 		}, onmessage : function(path,option) {
 			var origin = JSON.parse(path.data);
 			var json = JSON.parse(origin);
 			Main.onBackCallback(json);
 		}, onerror : function() {
+			js_Browser.alert("onerror");
 		}, onclose : function() {
+			Main.slide("onclose");
 		}});
 	});
 };

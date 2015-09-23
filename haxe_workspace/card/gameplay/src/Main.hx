@@ -37,9 +37,13 @@ class Main
 	
 	function new() {
 		j( '#txt_id' ).textbox( {
-			editable:false
+			editable:true,
+			onChange:function( nv, od ) {
+				playerId = nv;
+				createSocket( playerId );
+			}
 		});
-		j( '#txt_id' ).textbox( 'setValue', playerId );
+	//	j( '#txt_id' ).textbox( 'setValue', playerId );
 		
 		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
@@ -53,7 +57,7 @@ class Main
 				slide( '所有卡牌準備完畢，請開始尋找對手' );
 			});
 		});
-		registerSocker( playerId );
+		//createSocket( playerId );
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 	}
@@ -84,7 +88,7 @@ class Main
 	
 	public static function pushCmds( content:Dynamic ) {
 		var toId = j( '#txt_opponent' ).textbox( 'getValue' );
-		if ( toId.length == 36 ) {
+		if ( toId.length != 0 ) {
 			messageSocket( toId, content.cmd, content );
 		}
 	}
@@ -294,7 +298,7 @@ class Main
 		});
 	}
 	
-	public static function registerSocker( id ) {
+	public static function createSocket( id ) {
 		var _channel:Dynamic = untyped __js__( 'channel' );
 		_channel.createChannel( id, function(err, ch) {
 			if ( err != null ) {
@@ -303,15 +307,19 @@ class Main
 			}	
 			_channel.addEventListenerAndOpenSocket( ch, {
 				onopen: function() {
-					
+					slide( '創建玩家成功' );
 				},
 				onmessage: function(path, option){
 					var origin = Json.parse(path.data);
 					var json = Json.parse(origin);
 					onBackCallback( json );
 				},
-				onerror: function(){},
-				onclose: function(){}
+				onerror: function(){
+					Browser.alert( 'onerror' );
+				},
+				onclose: function(){
+					slide( 'onclose' );
+				}
 			});
 			
 		});
