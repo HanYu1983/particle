@@ -276,8 +276,7 @@ Main.messageAll = function(content) {
 	Main.j("#txt_output2").html("messageAll");
 };
 Main.onBackCallback = function(ret) {
-	var action = Main.callAction(ret.msg);
-	action();
+	(Main.callAction(ret.msg))();
 };
 Main.callAction = function(content) {
 	if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
@@ -1061,13 +1060,18 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 			break;
 		case "on_press":
-			if(this.ary_select.length == 0) return;
 			var _g1 = notification.getType();
 			switch(_g1) {
+			case 68:
+				break;
+			default:
+				if(this.ary_select.length == 0) return;
+			}
+			var _g11 = notification.getType();
+			switch(_g11) {
 			case 71:
 				break;
 			case 72:
-				Main.pollAllMessage();
 				break;
 			case 67:
 				if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select.slice(0)}});
@@ -1552,3 +1556,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

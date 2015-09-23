@@ -96,10 +96,7 @@ class Main
 	static var lastPromise:Dynamic = null;
 	
 	static function onBackCallback( ret:Dynamic ) {
-		
-		var action:Dynamic = callAction( ret.msg );
-		action();
-		
+		callAction( ret.msg )();
 	}
 	
 	static function callAction( content:Dynamic ) {
