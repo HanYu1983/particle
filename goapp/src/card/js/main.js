@@ -238,11 +238,13 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
-	Main.j("#txt_id").html(Main.playerId);
+	Main.j("#txt_id").textbox({ editable : false});
+	Main.j("#txt_id").textbox("setValue",Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	this.loadCardSuit("fighter");
+	Main.registerSocker(Main.playerId);
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
@@ -259,38 +261,16 @@ Main.createSelfDeck = function(deckId) {
 	});
 };
 Main.pushCmds = function(content) {
-	Main.ary_cmds.push(content);
-	Main.j("#txt_output2").html("pushCmds: " + Std.string(content.cmd));
-	if(Main.longPolling) Main.messageAll(Main.ary_cmds);
+	var toId = Main.j("#txt_opponent").textbox("getValue");
+	if(toId.length == 36) Main.messageSocket(toId,content.cmd,content);
 };
 Main.messageAll = function(content) {
 	Main.j("#txt_output2").html("messageAll");
-	Lambda.foreach(Main.otherPlayerId,function(id) {
-		Main.message({ FBID : Main.playerId, TargetUser : id, Content : JSON.stringify(content), UnixTime : Math.floor(new Date().getTime() / 1000)},Main.handleResponse(function(ret) {
-			Main.slide("送出完成");
-		}));
-		return true;
-	});
-	Main.ary_cmds = [];
 };
 Main.onBackCallback = function(ret) {
 	Main.slide("接收完成");
-	var allCmds = Lambda.fold(ret.Info,function(info,curr) {
-		return curr.concat(JSON.parse(info.Content));
-	},[]);
-	var doAction;
-	var doAction1 = null;
-	doAction1 = function(cmds) {
-		if(cmds.length > 0) {
-			var cmd = cmds.shift();
-			var action = Main.callAction(cmd);
-			action().done(function() {
-				doAction1(cmds);
-			});
-		}
-	};
-	doAction = doAction1;
-	doAction(allCmds);
+	var action = Main.callAction(ret.msg);
+	action();
 };
 Main.callAction = function(content) {
 	if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
@@ -335,9 +315,6 @@ Main.callAction = function(content) {
 	default:
 		return null;
 	}
-};
-Main.sendAllMessage = function() {
-	Main.messageAll(Main.ary_cmds);
 };
 Main.pollAllMessage = function() {
 	Main.pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
@@ -437,6 +414,29 @@ Main.getCardsById = function(id) {
 		return id == card.id;
 	});
 };
+Main.registerSocker = function(id) {
+	var _channel = channel;
+	_channel.createChannel(id,function(err,ch) {
+		if(err != null) {
+			js_Browser.alert("socket建立失敗!請重新整理");
+			return;
+		}
+		_channel.addEventListenerAndOpenSocket(ch,{ onopen : function() {
+		}, onmessage : function(path,option) {
+			var origin = JSON.parse(path.data);
+			var json = JSON.parse(origin);
+			Main.onBackCallback(json);
+		}, onerror : function() {
+		}, onclose : function() {
+		}});
+	});
+};
+Main.messageSocket = function(toId,type,msg) {
+	var _channel = channel;
+	var msg1 = { type : type, msg : msg};
+	_channel.sendChannelMessage(toId,JSON.stringify(msg1),Main.handleResponse(function(ret) {
+	}));
+};
 Main.createUser = function(data,cb) {
 	api.createUser(data,cb);
 };
@@ -485,26 +485,7 @@ Main.getId = function() {
 	return leo.utils.generateUUID();
 };
 Main.prototype = {
-	callForOthers: function(cb) {
-		var _g = this;
-		Main.users(Main.handleResponse(function(ret) {
-			Main.j("#txt_output").html("users searching...");
-			if(ret.Info != null && ret.Info.length >= 2) {
-				Lambda.fold(ret.Info,function(item,curr) {
-					if(item.Key != Main.playerId) curr.push(item.Key);
-					return curr;
-				},Main.otherPlayerId);
-				cb();
-			} else haxe_Timer.delay(function() {
-				_g.callForOthers(cb);
-			},Main.keepTime);
-		}));
-	}
-	,keepSend: function() {
-		if(Main.ary_cmds.length > 0) Main.messageAll(Main.ary_cmds);
-		haxe_Timer.delay($bind(this,this.keepSend),Main.keepTime);
-	}
-	,loadCardSuit: function(suitName) {
+	loadCardSuit: function(suitName) {
 		if(Reflect.field(Main.cardPackages,suitName) != null) {
 			Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
 			Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
@@ -520,7 +501,6 @@ Main.prototype = {
 		}));
 	}
 	,onHtmlClick: function(type,params) {
-		var _g = this;
 		switch(type) {
 		case "onBtnLoadFighterClick":
 			this.loadCardSuit("fighter");
@@ -530,26 +510,6 @@ Main.prototype = {
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
-			break;
-		case "onBtnClearClick":
-			Main.clear(function() {
-				window.location.reload();
-			});
-			break;
-		case "onBtnSendClick":
-			Main.sendAllMessage();
-			break;
-		case "onBtnPollingClick":
-			Main.pollAllMessage();
-			break;
-		case "onBtnCreateClick":
-			Main.createUser({ FBID : Main.playerId, Name : Main.playerId},Main.handleResponse(function(ret) {
-				_g.callForOthers(function() {
-					Main.j("#txt_output").html(JSON.stringify(Main.otherPlayerId));
-					Main.slide("對手配對成功");
-					if(Main.longPolling) Main.installPollMessageCallback({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
-				});
-			}));
 			break;
 		}
 	}
@@ -758,6 +718,11 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
 };
 var org_puremvc_haxe_interfaces_INotifier = function() { };
 org_puremvc_haxe_interfaces_INotifier.__name__ = true;
@@ -992,7 +957,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			},10);
 			break;
 		case "on_getSuit_success":
-			console.log(notification.getBody().cardSuit);
 			this.createComboDeck(notification.getBody().cardSuit);
 			break;
 		}
@@ -1080,10 +1044,10 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 			break;
 		case "on_press":
+			if(this.ary_select.length == 0) return;
 			var _g1 = notification.getType();
 			switch(_g1) {
 			case 71:
-				Main.sendAllMessage();
 				break;
 			case 72:
 				Main.pollAllMessage();
@@ -1545,7 +1509,6 @@ var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 String.__name__ = true;
 Array.__name__ = true;
-Date.__name__ = ["Date"];
 var __map_reserved = {}
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
@@ -1553,12 +1516,10 @@ Main.j = $;
 Main.playerId = Main.getId();
 Main.otherPlayerId = [];
 Main.ary_cards = [];
-Main.ary_cmds = [];
 Main.cardPackages = { };
 Main.cardSuits = { };
 Main.tmpl_card = Main.j("#tmpl_card");
 Main.longPolling = config.longPolling;
-Main.keepTime = 1000;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";
 mediator_Card.card_down = "card_down";

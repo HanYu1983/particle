@@ -26,7 +26,6 @@ class Main
 	public static var playerId = getId();
 	public static var otherPlayerId = [];
 	public static var ary_cards:Array<Dynamic> = [];
-	public static var ary_cmds:Array<Dynamic> = [];
 	
 	public static var cardPackages:Dynamic = { };
 	public static var cardPackage = null;
@@ -35,21 +34,19 @@ class Main
 	
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	static var longPolling:Bool = untyped __js__( 'config.longPolling' );
-	//static var timer:Timer = null;
-	#if debug
-	static var keepTime = 1000;
-	#else
-	static var keepTime = 1000 * 1;
-	#end
 	
 	function new() {
-		j( '#txt_id' ).html( playerId );
+		j( '#txt_id' ).textbox( {
+			editable:false
+		});
+		j( '#txt_id' ).textbox( 'setValue', playerId );
 		
 		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
 		loadCardSuit( 'fighter' );
+		registerSocker( playerId );
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 	}
@@ -79,40 +76,14 @@ class Main
 	}
 	
 	public static function pushCmds( content:Dynamic ) {
-		
-		ary_cmds.push( content );
-		j( '#txt_output2' ).html( 'pushCmds: ' + content.cmd );
-		
-		if ( longPolling ) {
-			messageAll( ary_cmds );
+		var toId = j( '#txt_opponent' ).textbox( 'getValue' );
+		if ( toId.length == 36 ) {
+			messageSocket( toId, content.cmd, content );
 		}
-		/*
-		if ( timer == null ) {
-			timer = new Timer( 5000 );
-			timer.run = function() {
-				messageAll( ary_cmds );
-			}
-		}else {
-			timer.stop();
-			timer = null;
-		}
-		*/
 	}
 	
 	public static function messageAll( content:Array<Dynamic> ) {
 		j( '#txt_output2' ).html( 'messageAll' );
-		Lambda.foreach( otherPlayerId, function ( id ) {
-			message( {
-				FBID:playerId,
-				TargetUser: id,
-				Content: Json.stringify( content ),
-				UnixTime: Math.floor( Date.now().getTime() / 1000 )
-			}, handleResponse( function( ret ) {
-				slide( '送出完成' );
-			}));
-			return true;
-		});
-		ary_cmds = [];
 	}
 	
 	static var lastPromise:Dynamic = null;
@@ -121,20 +92,8 @@ class Main
 		
 		slide( '接收完成' );
 		
-		var allCmds:Array<Dynamic> = Lambda.fold( ret.Info, function( info, curr:Array<Dynamic> ) {
-			return curr.concat( Json.parse( info.Content ) );
-		}, []);
-		
-		function doAction( cmds ) {
-			if ( cmds.length > 0 ) {
-				var cmd:Dynamic = cmds.shift();
-				var action:Dynamic = callAction( cmd );
-				action().done( function() {
-					doAction( cmds );
-				});
-			}
-		}
-		doAction( allCmds );
+		var action:Dynamic = callAction( ret.msg );
+		action();
 		
 	}
 	
@@ -186,36 +145,6 @@ class Main
 		}
 	}
 	
-	function callForOthers( cb ) {
-		users( handleResponse( function( ret ) {
-			j('#txt_output' ).html( 'users searching...' );
-			if ( ret.Info != null && ret.Info.length >= 2 ) {
-				Lambda.fold( ret.Info, function(item, curr ) {
-					if ( item.Key != playerId ) {
-						curr.push( item.Key );
-					}
-					return curr;
-				}, otherPlayerId);
-				cb();
-			}else {
-				Timer.delay( function() {
-					callForOthers( cb );
-				}, keepTime );
-			}
-		}));
-	}
-	
-	function keepSend() {
-		if ( ary_cmds.length > 0 ) {
-			messageAll( ary_cmds );
-		}
-		Timer.delay( keepSend, keepTime );
-	}
-	
-	public static function sendAllMessage() {
-		messageAll( ary_cmds );
-	}
-	
 	public static function pollAllMessage() {
 		pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
@@ -244,56 +173,8 @@ class Main
 				loadCardSuit( 'fighter' );
 			case 'onBtnLoadGundamWarClick':
 				loadCardSuit( 'gundamWar' );
-			/*
-			case 'onBtnCardLoadClick':
-				//testurl: 8
-				
-				var url = j( '#txt_cardUrl' ).textbox( 'getValue' );
-				getCardPackageWithUrl( url, handleResponse( function( ret ) {
-					cardPackage = ret;
-					slide( '卡包準備完成。' );
-				}));
-			case 'onBtnCardSuitLoadClick':
-				//testurl: http://localhost:8080/common/cardPackage/gundamWarCardSuit.json
-				
-				var url = j( '#txt_cardsuitUrl' ).textbox( 'getValue' );
-				getCardSuitPackageWithUrl( url, handleResponse( function( ret:Dynamic ) {
-					cardSuit = ret.cardSuit;
-					Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
-					slide( '卡牌準備完成' );
-				}));
-				*/
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
-			case 'onBtnClearClick':
-				clear( function() {
-					Browser.location.reload();
-				});
-			case 'onBtnSendClick':
-				sendAllMessage();
-			case 'onBtnPollingClick':
-				pollAllMessage();
-			case 'onBtnCreateClick':
-				createUser( {
-					FBID:playerId,
-					Name:playerId
-				}, handleResponse( function( ret ) {
-					
-					#if debug
-					slide( 'debug 模式，對手配對成功' );
-					#else
-					callForOthers( function() {
-						j('#txt_output' ).html( Json.stringify( otherPlayerId ) );
-						slide( '對手配對成功' );
-						
-						if ( longPolling ) {
-							installPollMessageCallback( {
-								FBID:playerId
-							}, handleResponse( onBackCallback ));
-						}
-					});
-					#end
-				}));
 		}
 		
 	}
@@ -401,6 +282,40 @@ class Main
 		return Lambda.find( Main.ary_cards, function( card:Dynamic ) {
 			return ( id == card.id );
 		});
+	}
+	
+	public static function registerSocker( id ) {
+		var _channel:Dynamic = untyped __js__( 'channel' );
+		_channel.createChannel( id, function(err, ch) {
+			if ( err != null ) {
+				Browser.alert( 'socket建立失敗!請重新整理' );
+				return;
+			}	
+			_channel.addEventListenerAndOpenSocket( ch, {
+				onopen: function() {
+					
+				},
+				onmessage: function(path, option){
+					var origin = Json.parse(path.data);
+					var json = Json.parse(origin);
+					onBackCallback( json );
+				},
+				onerror: function(){},
+				onclose: function(){}
+			});
+			
+		});
+	}
+	
+	public static function messageSocket( toId, type, msg ) {
+		var _channel:Dynamic = untyped __js__( 'channel' );
+		var msg = {
+			type:type,
+			msg:msg
+		};
+		_channel.sendChannelMessage( toId, Json.stringify( msg ), handleResponse( function( ret ) {
+			//trace( ret );
+		}));
 	}
 	
 	/**
