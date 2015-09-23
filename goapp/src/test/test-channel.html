@@ -9,7 +9,10 @@
         console.log('onopen han')
       },
       onmessage: function(path, option){
+        var origin = JSON.parse(path.data)
+        var json = JSON.parse(origin)
         console.log(path.data)
+        console.log(json)
       },
       onerror: function(){},
       onclose: function(){}
@@ -22,12 +25,24 @@
         console.log('onopen vic')
       },
       onmessage: function(path, option){
+        var origin = JSON.parse(path.data)
+        var json = JSON.parse(origin)
         console.log(path.data)
+        console.log(json)
       },
       onerror: function(){},
       onclose: function(){}
     })
   })
+  
+  setTimeout( function(){
+    channel.sendChannelMessage( 'han', '{"type":"dialog", "info":"wow"}', function(err, ret){
+      console.log(err, ret)
+    })
+    channel.sendChannelMessage( 'vic', '{"type":"dialog", "info":"wow2"}', function(err, ret){
+      console.log(err, ret)
+    })
+  }, 5000)
 
 /*
 $.ajax({

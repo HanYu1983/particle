@@ -89,14 +89,16 @@ func SendChannelMessage(w http.ResponseWriter, r *http.Request) {
   })
   ctx := appengine.NewContext( r )
   
-  r.ParseForm()
-  tool.Assert( tool.ParameterIsNotExist( r.Form, "Name" ) ) 
-  tool.Assert( tool.ParameterIsNotExist( r.Form, "Message" ) ) 
+  form, err := tool.ReadAjaxPost( r )
+  tool.Assert( tool.IfError( err ) ) 
+
+  tool.Assert( tool.ParameterIsNotExist( form, "Name" ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "Message" ) ) 
   
-  name := r.Form["Name"][0]
-  msg := r.Form["Message"][0]
+  name := form["Name"][0]
+  msg := form["Message"][0]
   
-  err := channel.SendJSON(ctx, name, msg)
+  err = channel.SendJSON(ctx, name, msg)
   tool.Assert( tool.IfError( err ) ) 
   
   Output( w, nil, nil )
