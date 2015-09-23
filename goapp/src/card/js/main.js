@@ -261,6 +261,16 @@ var Main = function() {
 		});
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
+	var btn_login = Main.j("#btn_login");
+	btn_login.click(function() {
+		var fbid = config.fbid[config.fbid.which];
+		myapp.facebook.init(fbid,function() {
+			myapp.facebook.login(function(ret) {
+				var fbid1 = ret.authResponse.userID;
+				Main.j("#txt_id").textbox("setValue",fbid1);
+			});
+		});
+	});
 };
 Main.__name__ = true;
 Main.createSelfDeck = function(deckId) {
@@ -521,12 +531,10 @@ Main.prototype = {
 	}
 	,onHtmlClick: function(type,params) {
 		switch(type) {
-		case "onBtnLoginClick":
+				myapp.facebook.login(function(ret) {
 			myapp.facebook.login(function(ret) {
 				var fbid = ret.authResponse.userID;
 				Main.j("#txt_id").textbox("setValue",fbid);
-			});
-			break;
 		case "onBtnLoadFighterClick":
 			this.chooseCardSuit("fighter");
 			break;
