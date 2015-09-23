@@ -50,7 +50,6 @@ class Main
 			}
 		});
 		
-		
 		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
