@@ -45,7 +45,14 @@ class Main
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
-		loadCardSuit( 'fighter' );
+		openLoading( '準備中...請稍等' );
+		loadCardSuit( 'gundamWar', function() {
+			loadCardSuit( 'fighter', function() {
+				closeLoading();
+				chooseCardSuit( 'fighter' );
+				slide( '所有卡牌準備完畢，請開始尋找對手' );
+			});
+		});
 		registerSocker( playerId );
 		
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
@@ -89,8 +96,6 @@ class Main
 	static var lastPromise:Dynamic = null;
 	
 	static function onBackCallback( ret:Dynamic ) {
-		
-		slide( '接收完成' );
 		
 		var action:Dynamic = callAction( ret.msg );
 		action();
@@ -149,20 +154,22 @@ class Main
 		pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
 	
-	function loadCardSuit( suitName ) {
+	function loadCardSuit( suitName, ?cb: Void -> Void ) {
 		if ( Reflect.field( cardPackages, suitName ) != null ) {
 			cardPackage = Reflect.field( cardPackages, suitName );
 			cardSuit = Reflect.field( cardSuits, suitName );
 			Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+			
+			if ( cb != null ) cb();
 		}else {
 			getCardPackageWithUrl( '../common/cardPackage/' + suitName + '.json', handleResponse( function( ret ) {
 				cardPackage = ret;
 				Reflect.setField( cardPackages, suitName, cardPackage );
 				
 				getCardSuitPackageWithUrl( '../common/cardPackage/' + suitName + 'CardSuit.json', handleResponse( function( ret:Dynamic ) {
-					cardSuit = ret.cardSuit;
-					Reflect.setField( cardSuits, suitName, cardSuit );
-					Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+					Reflect.setField( cardSuits, suitName, ret.cardSuit );
+					
+					if ( cb != null ) cb();
 				}));
 			}));
 		}
@@ -170,13 +177,18 @@ class Main
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
 			case 'onBtnLoadFighterClick':
-				loadCardSuit( 'fighter' );
+				chooseCardSuit( 'fighter' );
 			case 'onBtnLoadGundamWarClick':
-				loadCardSuit( 'gundamWar' );
+				chooseCardSuit( 'gundamWar' );
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
 		}
 		
+	}
+	
+	function chooseCardSuit( suitName ) {
+		cardSuit = Reflect.field( cardSuits, suitName ) ;
+		Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
 	}
 	
 	public static function applyValue( ary_select:Array<Dynamic> ) {
@@ -432,6 +444,17 @@ class Main
 			timeout:1000,
 			showType:'slide'
 		});
+	}
+	
+	public static function openLoading( msg ){
+		j.messager.progress({
+			title:'',
+			msg: msg
+		});
+	}
+	
+	public static function closeLoading() {
+		j.messager.progress('close');
 	}
 	
 	static function handleResponse( cb ) {

@@ -238,12 +238,20 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
+	var _g = this;
 	Main.j("#txt_id").textbox({ editable : false});
 	Main.j("#txt_id").textbox("setValue",Main.playerId);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
-	this.loadCardSuit("fighter");
+	Main.openLoading("準備中...請稍等");
+	this.loadCardSuit("gundamWar",function() {
+		_g.loadCardSuit("fighter",function() {
+			Main.closeLoading();
+			_g.chooseCardSuit("fighter");
+			Main.slide("所有卡牌準備完畢，請開始尋找對手");
+		});
+	});
 	Main.registerSocker(Main.playerId);
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
@@ -268,7 +276,6 @@ Main.messageAll = function(content) {
 	Main.j("#txt_output2").html("messageAll");
 };
 Main.onBackCallback = function(ret) {
-	Main.slide("接收完成");
 	var action = Main.callAction(ret.msg);
 	action();
 };
@@ -473,6 +480,12 @@ Main.getCardSuit = function(pkg) {
 Main.slide = function(msg) {
 	Main.j.messager.show({ title : "提示", msg : msg, timeout : 1000, showType : "slide"});
 };
+Main.openLoading = function(msg) {
+	Main.j.messager.progress({ title : "", msg : msg});
+};
+Main.closeLoading = function() {
+	Main.j.messager.progress("close");
+};
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
 		if(err != null) Main.slide(err); else cb(ret);
@@ -485,33 +498,37 @@ Main.getId = function() {
 	return leo.utils.generateUUID();
 };
 Main.prototype = {
-	loadCardSuit: function(suitName) {
+	loadCardSuit: function(suitName,cb) {
 		if(Reflect.field(Main.cardPackages,suitName) != null) {
 			Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
 			Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
+			if(cb != null) cb();
 		} else Main.getCardPackageWithUrl("../common/cardPackage/" + suitName + ".json",Main.handleResponse(function(ret) {
 			Main.cardPackage = ret;
 			Main.cardPackages[suitName] = Main.cardPackage;
 			Main.getCardSuitPackageWithUrl("../common/cardPackage/" + suitName + "CardSuit.json",Main.handleResponse(function(ret1) {
-				Main.cardSuit = ret1.cardSuit;
-				Main.cardSuits[suitName] = Main.cardSuit;
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
+				Main.cardSuits[suitName] = ret1.cardSuit;
+				if(cb != null) cb();
 			}));
 		}));
 	}
 	,onHtmlClick: function(type,params) {
 		switch(type) {
 		case "onBtnLoadFighterClick":
-			this.loadCardSuit("fighter");
+			this.chooseCardSuit("fighter");
 			break;
 		case "onBtnLoadGundamWarClick":
-			this.loadCardSuit("gundamWar");
+			this.chooseCardSuit("gundamWar");
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
 		}
+	}
+	,chooseCardSuit: function(suitName) {
+		Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
 	}
 };
 Math.__name__ = true;
