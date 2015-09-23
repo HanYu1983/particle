@@ -184,6 +184,7 @@ class Main
 	}
 	
 	function chooseCardSuit( suitName ) {
+		cardPackage = Reflect.field( cardPackages, suitName );
 		cardSuit = Reflect.field( cardSuits, suitName ) ;
 		Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
 	}

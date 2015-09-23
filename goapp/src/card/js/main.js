@@ -526,6 +526,7 @@ Main.prototype = {
 		}
 	}
 	,chooseCardSuit: function(suitName) {
+		Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
 		Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
 	}
