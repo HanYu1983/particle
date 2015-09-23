@@ -217,13 +217,14 @@ class Main
 		Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
 	}
 	
-	public static function applyValue( ary_select:Array<Dynamic> ) {
+	public static function applyValue( ary_select:Array<Dynamic>, self:Bool ) {
 		Lambda.foreach( ary_select, function( card:Dynamic ) {
 			Facade.getInstance().sendNotification( Model.on_state_change, { 
 																			select:card, 
 																			showRelate:Main.playerId == card.relate, 
 																			showOwner:Main.playerId == card.owner, 
-																			seeCard: seeCard( card ) 
+																			seeCard: seeCard( card ),
+																			notify: self
 																			}, 'ownerAndRelate_change' );
 			return true;
 		});
@@ -255,7 +256,7 @@ class Main
 			return true;
 		});
 		//統一和remote端用一樣的方法
-		applyValue( ary_select );
+		applyValue( ary_select, true );
 		return send;
 	}
 	
@@ -278,7 +279,7 @@ class Main
 			
 			return true;
 		});
-		applyValue( ary_select );
+		applyValue( ary_select, true );
 		return send;
 	}
 	
@@ -287,7 +288,7 @@ class Main
 			card.deg += deg;
 			return true;
 		});
-		applyValue( ary_select );
+		applyValue( ary_select, true );
 	}
 	
 	public static function createCard( model:Dynamic ) {
@@ -305,13 +306,13 @@ class Main
 			}
 			return true;
 		});
-		applyValue( ary_select );
+		applyValue( ary_select, true );
 		return send;
 	}
 	
 	public static function moveCards( ary_select:Dynamic, pos_mouse, zsort ) {
 		Lambda.foreach( ary_select, function( select ) {
-			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, zsort:zsort }, 'moveCards' );
+			Facade.getInstance().sendNotification( Model.on_state_change, { select:select, zsort:zsort, notify:false }, 'moveCards' );
 			return true;
 		});
 	}

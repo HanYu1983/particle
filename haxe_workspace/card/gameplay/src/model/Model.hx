@@ -182,7 +182,7 @@ class Model extends Mediator
 				card.back = !card.back;
 			}
 		}
-		Main.applyValue( ary_select );
+		Main.applyValue( ary_select, true );
 		Main.pushCmds( { cmd:'flip', content:{ ary_select:deepCopy( ary_select ) } } );
 	}
 	

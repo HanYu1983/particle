@@ -15,7 +15,7 @@ Animate.addCardAndPrepare = function(cards) {
 			Main.createCard(card);
 			return true;
 		});
-		Main.applyValue(cards);
+		Main.applyValue(cards,false);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},0);
@@ -25,7 +25,7 @@ Animate.addCardAndPrepare = function(cards) {
 Animate.setOwner = function(ary_select) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.applyValue(ary_select);
+		Main.applyValue(ary_select,false);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},200);
@@ -35,7 +35,7 @@ Animate.setOwner = function(ary_select) {
 Animate.setRelate = function(ary_select) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.applyValue(ary_select);
+		Main.applyValue(ary_select,false);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},200);
@@ -45,7 +45,7 @@ Animate.setRelate = function(ary_select) {
 Animate.flip = function(ary_select) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.applyValue(ary_select);
+		Main.applyValue(ary_select,false);
 		haxe_Timer.delay(function() {
 			d.resolve();
 		},200);
@@ -55,7 +55,7 @@ Animate.flip = function(ary_select) {
 Animate.rotate = function(ary_select,d) {
 	return function() {
 		var d1 = Main.j.Deferred();
-		Main.applyValue(ary_select);
+		Main.applyValue(ary_select,false);
 		haxe_Timer.delay(function() {
 			d1.resolve();
 		},300);
@@ -329,9 +329,9 @@ Main.callAction = function(content) {
 Main.pollAllMessage = function() {
 	Main.pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
 };
-Main.applyValue = function(ary_select) {
+Main.applyValue = function(ary_select,self) {
 	Lambda.foreach(ary_select,function(card) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card)},"ownerAndRelate_change");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card), notify : self},"ownerAndRelate_change");
 		return true;
 	});
 };
@@ -364,7 +364,7 @@ Main.setOwner = function(ary_select) {
 		}
 		return true;
 	});
-	Main.applyValue(ary_select);
+	Main.applyValue(ary_select,true);
 	return send;
 };
 Main.setRelate = function(ary_select) {
@@ -386,7 +386,7 @@ Main.setRelate = function(ary_select) {
 		}
 		return true;
 	});
-	Main.applyValue(ary_select);
+	Main.applyValue(ary_select,true);
 	return send;
 };
 Main.rotate = function(ary_select,deg) {
@@ -395,7 +395,7 @@ Main.rotate = function(ary_select,deg) {
 		card.deg += deg;
 		return true;
 	});
-	Main.applyValue(ary_select);
+	Main.applyValue(ary_select,true);
 };
 Main.createCard = function(model) {
 	model.url = Main.getCardImageUrlWithPackage(Main.cardPackage,model.cardId);
@@ -410,12 +410,12 @@ Main.flip = function(ary_select) {
 		}
 		return true;
 	});
-	Main.applyValue(ary_select);
+	Main.applyValue(ary_select,true);
 	return send;
 };
 Main.moveCards = function(ary_select,pos_mouse,zsort) {
 	Lambda.foreach(ary_select,function(select) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, zsort : zsort},"moveCards");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, zsort : zsort, notify : false},"moveCards");
 		return true;
 	});
 };
@@ -990,6 +990,8 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.showCards(notification.getBody().ary_select);
 			break;
 		case "on_state_change":
+			var notify = notification.getBody().notify;
+			if(!notify) return;
 			this.mc_detailContainer.empty();
 			haxe_Timer.delay(function() {
 				_g1.showCard(notification.getBody().select);
@@ -1186,7 +1188,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			var card1 = this.ary_select[0];
 			if(card1.owner == Main.playerId || card1.owner == "") card1.back = !card1.back;
 		}
-		Main.applyValue(this.ary_select);
+		Main.applyValue(this.ary_select,true);
 		Main.pushCmds({ cmd : "flip", content : { ary_select : this.deepCopy(this.ary_select)}});
 	}
 	,doList: function() {

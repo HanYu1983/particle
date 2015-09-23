@@ -18,7 +18,7 @@ class Animate
 				return true;
 			});
 			
-			Main.applyValue( cards );
+			Main.applyValue( cards, false );
 			
 			Timer.delay( function() {
 				d.resolve();
@@ -31,7 +31,7 @@ class Animate
 	public static function setOwner( ary_select ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.applyValue( ary_select );
+			Main.applyValue( ary_select, false );
 			Timer.delay( function() {
 				d.resolve();
 			}, 200 );
@@ -42,7 +42,7 @@ class Animate
 	public static function setRelate( ary_select ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.applyValue( ary_select );
+			Main.applyValue( ary_select, false );
 			Timer.delay( function() {
 				d.resolve();
 			}, 200 );
@@ -53,7 +53,7 @@ class Animate
 	public static function flip( ary_select ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.applyValue( ary_select );
+			Main.applyValue( ary_select, false );
 			Timer.delay( function() {
 				d.resolve();
 			}, 200 );
@@ -64,7 +64,7 @@ class Animate
 	public static function rotate( ary_select, d ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
-			Main.applyValue( ary_select );
+			Main.applyValue( ary_select, false );
 			Timer.delay( function() {
 				d.resolve();
 			}, 300 );
