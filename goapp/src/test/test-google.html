@@ -27,15 +27,15 @@
       // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
       // In your Developer Console project, add a JavaScript origin that corresponds to the domain
       // where you will be running the script.
-      var clientId = '36532962877-btn1ipjjfbu9dct3nrf3k9sv9msrfpgr.apps.googleusercontent.com';
+      var clientId = '777281021991-ucoudqqvcnmrj87b0kls8987rs4lpvpf.apps.googleusercontent.com';
       // Enter the API key from the Google Develoepr Console - to handle any unauthenticated
       // requests in the code.
       // The provided key works for this sample only when run from
       // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
       // To use in your own application, replace this API key with your own.
-      var apiKey = 'I5WWx6H3ptxyrE8xXJicupj9';
+      var apiKey = 'GXvwPTq6PK_EiRN6K3S_4Xds';
       // To enter one or more authentication scopes, refer to the documentation for the API.
-      var scopes = ['https://www.googleapis.com/auth/plus.me'];
+      var scopes = ['https://www.googleapis.com/auth/plus.me','https://www.googleapis.com/auth/calendar'];
       // Use a button to handle authentication the first time.
       function handleClientLoad() {
         gapi.client.setApiKey(apiKey);
@@ -60,9 +60,15 @@
       }
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
-        gapi.client.load('plus', 'v1', function() {
+       // gapi.client.load('plus', 'v1', function() {
 					var request = gapi.client.request({
 						path: 'https://www.googleapis.com/plus/v1/people/me'
+					}).then(function(resp){
+						var json = JSON.parse( resp.body )
+						console.log( json )
+					})
+			var request = gapi.client.request({
+						path: 'https://www.googleapis.com/calendar/v3/users/me/calendarList/primary'
 					}).then(function(resp){
 						var json = JSON.parse( resp.body )
 						console.log( json )
@@ -80,7 +86,7 @@
             document.getElementById('content').appendChild(heading);
           });
 					*/
-        });
+       // });
       }
     </script>
     <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
