@@ -10,7 +10,7 @@ import mediator.Layer;
 import mediator.UI;
 import model.Model;
 import org.puremvc.haxe.patterns.facade.Facade;
-
+using Reflect;
 /**
  * ...
  * @author vic
@@ -173,18 +173,6 @@ class Main
 			getCardPackageWithUrl( '../common/cardPackage/' + suitName + '.json', handleResponse( function( ret ) {
 				cardPackage = ret;
 				Reflect.setField( cardPackages, suitName, cardPackage );
-				
-				//trace( cardPackage );
-				/*
-				if ( Reflect.field( cardPackageUrlMapping, suitName ) == null ) {
-					Reflect.setField( cardPackageUrlMapping, suitName, {} );
-				}
-				
-				for ( f in Reflect.fields( cardPackage.images )) {
-					Reflect.field( cardPackageUrlMapping, suitName ).push( f );
-				}
-				*/
-				//trace( cardPackageUrlMapping );
 				
 				getCardSuitPackageWithUrl( '../common/cardPackage/' + suitName + 'CardSuit.json', handleResponse( function( ret:Dynamic ) {
 					Reflect.setField( cardSuits, suitName, ret.cardSuit );
@@ -474,9 +462,9 @@ class Main
 	public static function getCardImageUrlWithPackage( name:Dynamic, key ):String {
 		
 		var cpkg:Dynamic = null;
-		for ( pkg in Reflect.fields( cardPackages )) {
-			if ( Reflect.field( Reflect.field( cardPackages, pkg ).images, key ) != null ) {
-				cpkg = Reflect.field( cardPackages, pkg );
+		for ( pkg in cardPackages.fields() ) {
+			if ( cardPackages.field( pkg ).images.field( key ) != null ) {
+				cpkg = cardPackages.field( pkg );
 				break;
 			}
 		}
