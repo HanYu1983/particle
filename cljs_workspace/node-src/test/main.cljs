@@ -7,6 +7,9 @@
 
 (def outputDir "output/")
 (def host "http://sangokushi-taisen-tcg.segataiwan.com.tw/")
+(def packages 
+  ["第一彈：魏" "第一彈：蜀" "第一彈：吳" "第一彈：群"])
+(def page 2)
 
 (defn parseGroup [content]
   (let [group
@@ -91,7 +94,8 @@
                 parseOne
                 (map second tabs))
               (reduce concat '())
-              (drop 16))  ; 調整從第幾包開始
+              (filter (fn [[_ na]] (some #(= % na) packages)))
+              (map (fn [[li na]] [(str li "&page=" page) na])))
             parseCardInfos
             (for [[li na] links]
               (fn [cb]
