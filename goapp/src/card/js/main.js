@@ -1313,8 +1313,20 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		Main.pushCmds({ cmd : "shuffleSeparate", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
 	}
 	,doMoveCards: function() {
-		var offset_0 = this.pos_mouse[0] - this.ary_select[0].pos[0];
-		var offset_1 = this.pos_mouse[1] - this.ary_select[0].pos[1];
+		var moveTarget = { };
+		var copySelect = this.ary_select.slice(0);
+		copySelect.sort(function(ac,bc) {
+			if(ac.pos[0] < bc.pos[0]) return -1;
+			return 1;
+		});
+		moveTarget.x = copySelect[0].pos[0];
+		copySelect.sort(function(ac1,bc1) {
+			if(ac1.pos[1] < bc1.pos[1]) return -1;
+			return 1;
+		});
+		moveTarget.y = copySelect[0].pos[1];
+		var offset_0 = this.pos_mouse[0] - moveTarget.x;
+		var offset_1 = this.pos_mouse[1] - moveTarget.y;
 		Lambda.foreach(this.ary_select,function(select) {
 			select.pos[0] += offset_0;
 			select.pos[1] += offset_1;

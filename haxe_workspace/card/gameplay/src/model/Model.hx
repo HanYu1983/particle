@@ -239,9 +239,22 @@ class Model extends Mediator
 	}
 	
 	function doMoveCards() {
+		var moveTarget:Dynamic = { };
+		var copySelect = ary_select.slice( 0 );
+		copySelect.sort( function( ac, bc ) {
+			if ( ac.pos[0] < bc.pos[0] ) return -1;
+			return 1;
+		});
+		moveTarget.x = copySelect[0].pos[0];
+		copySelect.sort( function( ac, bc ) {
+			if ( ac.pos[1] < bc.pos[1] ) return -1;
+			return 1;
+		});
+		moveTarget.y = copySelect[0].pos[1];
+		
 		var offset = [
-			pos_mouse[0] - ary_select[0].pos[0],
-			pos_mouse[1] - ary_select[0].pos[1]
+			pos_mouse[0] - moveTarget.x,
+			pos_mouse[1] - moveTarget.y
 		];
 		Lambda.foreach( ary_select, function( select ) {
 			select.pos[0] += offset[0];
