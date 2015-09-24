@@ -59,9 +59,11 @@ class Main
 		untyped __js__( 'myapp.facebook.init' )( fbid, function() {
 			loadCardSuit( 'gundamWar', function() {
 				loadCardSuit( 'fighter', function() {
-					closeLoading();
-					chooseCardSuit( 'fighter' );
-					slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
+					loadCardSuit( 'sangoWar', function(){
+						closeLoading();
+						chooseCardSuit( 'fighter' );
+						slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
+					});
 				});
 			});
 		});
@@ -189,6 +191,8 @@ class Main
 				chooseCardSuit( 'fighter' );
 			case 'onBtnLoadGundamWarClick':
 				chooseCardSuit( 'gundamWar' );
+			case 'onBtnLoadSangoWarClick':
+				chooseCardSuit( 'sangoWar' );
 			case 'onBtnCreateDeck':
 				if( checkCanCreate() ){
 					Facade.getInstance().sendNotification( on_createDeck_click );
