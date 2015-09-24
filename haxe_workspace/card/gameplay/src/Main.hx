@@ -35,6 +35,8 @@ class Main
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	static var longPolling:Bool = untyped __js__( 'config.longPolling' );
 	
+	static var cardPackageUrlMapping:Dynamic = { };
+	
 	function new() {
 		j( '#txt_id' ).textbox( {
 			editable:false,
@@ -171,6 +173,18 @@ class Main
 			getCardPackageWithUrl( '../common/cardPackage/' + suitName + '.json', handleResponse( function( ret ) {
 				cardPackage = ret;
 				Reflect.setField( cardPackages, suitName, cardPackage );
+				
+				//trace( cardPackage );
+				/*
+				if ( Reflect.field( cardPackageUrlMapping, suitName ) == null ) {
+					Reflect.setField( cardPackageUrlMapping, suitName, {} );
+				}
+				
+				for ( f in Reflect.fields( cardPackage.images )) {
+					Reflect.field( cardPackageUrlMapping, suitName ).push( f );
+				}
+				*/
+				//trace( cardPackageUrlMapping );
 				
 				getCardSuitPackageWithUrl( '../common/cardPackage/' + suitName + 'CardSuit.json', handleResponse( function( ret:Dynamic ) {
 					Reflect.setField( cardSuits, suitName, ret.cardSuit );
@@ -458,7 +472,16 @@ class Main
 	}
 	
 	public static function getCardImageUrlWithPackage( name:Dynamic, key ):String {
-		return untyped __js__('api.getCardImageUrlWithPackage' )( name, key );
+		
+		var cpkg:Dynamic = null;
+		for ( pkg in Reflect.fields( cardPackages )) {
+			if ( Reflect.field( Reflect.field( cardPackages, pkg ).images, key ) != null ) {
+				cpkg = Reflect.field( cardPackages, pkg );
+				break;
+			}
+		}
+		if ( cpkg == null ) Browser.alert( '沒有套牌!' );
+		return untyped __js__('api.getCardImageUrlWithPackage' )( cpkg, key );
 	}
 	
 	public static function getCardSuit( pkg ) {

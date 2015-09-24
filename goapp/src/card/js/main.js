@@ -480,7 +480,19 @@ Main.getCardSuitPackageWithUrl = function(url,cb) {
 	api.getCardSuitPackageWithUrl(url,cb);
 };
 Main.getCardImageUrlWithPackage = function(name,key) {
-	return api.getCardImageUrlWithPackage(name,key);
+	var cpkg = null;
+	var _g = 0;
+	var _g1 = Reflect.fields(Main.cardPackages);
+	while(_g < _g1.length) {
+		var pkg = _g1[_g];
+		++_g;
+		if(Reflect.field(Reflect.field(Main.cardPackages,pkg).images,key) != null) {
+			cpkg = Reflect.field(Main.cardPackages,pkg);
+			break;
+		}
+	}
+	if(cpkg == null) js_Browser.alert("沒有套牌!");
+	return api.getCardImageUrlWithPackage(cpkg,key);
 };
 Main.getCardSuit = function(pkg) {
 	return api.getCardSuit(pkg);
@@ -568,6 +580,16 @@ Reflect.field = function(o,field) {
 };
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
+};
+Reflect.fields = function(o) {
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(f != "__id__" && f != "hx__closures__" && hasOwnProperty.call(o,f)) a.push(f);
+		}
+	}
+	return a;
 };
 var Std = function() { };
 Std.__name__ = true;
@@ -1568,6 +1590,7 @@ Main.cardPackages = { };
 Main.cardSuits = { };
 Main.tmpl_card = Main.j("#tmpl_card");
 Main.longPolling = config.longPolling;
+Main.cardPackageUrlMapping = { };
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";
 mediator_Card.card_down = "card_down";
@@ -1583,3 +1606,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map
