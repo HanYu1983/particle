@@ -150,6 +150,8 @@ class Main
 		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {
+			case 'changeIndex':
+				return Animate.changeIndex( content.content.cardId );
 			case 'removeCards':
 				return Animate.removeCards( content.content.ary_select );
 			case 'addCards':
@@ -351,6 +353,10 @@ class Main
 		});
 	}
 	
+	public static function changeIndex( cardId:String ) {
+		Facade.getInstance().sendNotification( Card.card_enter, Facade.getInstance().retrieveMediator( cardId ).getViewComponent() );
+	}
+	
 	public static function removeCards( ary_select:Array<Dynamic> ) {
 		Lambda.foreach( ary_select, function( card ) {
 			Main.ary_cards.remove( card );
@@ -397,85 +403,22 @@ class Main
 		}));
 	}
 	
-	/**
-	data: {
-		ID: string,
-		Name: string
-	}
-	cb: function( err, ret ){
-		err:string,
-		ret: {
-			Info: {}
-			Error: string
-		}
-	}
-	*/
 	public static function createUser( data, cb ) {
 		untyped __js__( 'api.createUser' )( data, cb );
 	}
 	
-	/**
-	data: {
-		ID: string,
-		Name: string
-	}
-	cb: function( err, ret ){
-		err:string,
-		ret: {
-			Info: {}
-			Error: string
-		}
-	}
-	*/
 	public static function users( cb ) {
 		untyped __js__('api.users' )( cb );
 	}
 	
-	/**
-	data: {
-		FBID: string,
-		TargetUser: string,
-		Content: string
-	}
-	cb: function( err, ret ){
-		err:string,
-		ret: {
-			Info: [{}]
-			Error: string
-		}
-	}
-	*/
 	public static function message( data:Dynamic, cb ) {
 		untyped __js__('api.message' )( data, cb );
 	}
 	
-	/**
-	data: {
-		FBID: string
-	}
-	cb: function( err, ret ){
-		err:string,
-		ret: {
-			Info: {}
-			Error: string
-		}
-	}
-	*/
 	public static function pollMessage( data:Dynamic, cb ) {
 		untyped __js__('api.pollMessage' )( data, cb );
 	}
-	/**
-	data: {
-		FBID: string
-	}
-	cb: function( err, ret ){
-		err:string,
-		ret: {
-			Info: {}
-			Error: string
-		}
-	}
-	*/
+	
 	public static function installPollMessageCallback( data, cb ) {
 		untyped __js__('api.installPollMessageCallback' )(data, cb );
 	}

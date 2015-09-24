@@ -92,6 +92,16 @@ Animate.moveCards = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
+Animate.changeIndex = function(cardId) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.changeIndex(cardId);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},10);
+		return d;
+	};
+};
 Animate.removeCards = function(ary_select) {
 	return function() {
 		var d = Main.j.Deferred();
@@ -267,7 +277,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 		Main.createSocket(Main.playerId);
 	}});
@@ -335,6 +345,8 @@ Main.callAction = function(content) {
 	Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
 	var _g = content.cmd;
 	switch(_g) {
+	case "changeIndex":
+		return Animate.changeIndex(content.content.cardId);
 	case "removeCards":
 		return Animate.removeCards(content.content.ary_select);
 	case "addCards":
@@ -464,6 +476,9 @@ Main.getCardsById = function(id) {
 		return id == card.id;
 	});
 };
+Main.changeIndex = function(cardId) {
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_Card.card_enter,org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId).getViewComponent());
+};
 Main.removeCards = function(ary_select) {
 	Lambda.foreach(ary_select,function(card) {
 		HxOverrides.remove(Main.ary_cards,card);
@@ -556,7 +571,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤已經回報"); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -961,7 +976,8 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 	,onCardClick: function(e) {
 		this.focusCard();
 		this.sendNotification(mediator_Card.card_click,{ id : this.getMediatorName(), focus : this._focus});
-		this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
+		Main.changeIndex(this.getMediatorName());
+		Main.pushCmds({ cmd : "changeIndex", content : { cardId : this.getMediatorName()}});
 	}
 	,onCardMouseDown: function(e) {
 		this.sendNotification(mediator_Card.card_down,{ id : this.getMediatorName()});
@@ -1683,3 +1699,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

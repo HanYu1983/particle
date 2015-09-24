@@ -159,7 +159,8 @@ class Card extends Mediator
 		focusCard();
 		
 		sendNotification( card_click, { id:getMediatorName(), focus:_focus } );
-		sendNotification( card_enter, getViewComponent() );
+		Main.changeIndex( getMediatorName() );
+		Main.pushCmds( { cmd:'changeIndex', content: { cardId:getMediatorName()} } );
 	}
 	
 	function onCardMouseDown( e ) {
