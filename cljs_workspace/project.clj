@@ -14,4 +14,14 @@
         :optimizations :none
         :pretty-print true}
     }
+    {
+      :source-paths ["node-src"]
+      :compiler {
+        :output-to "../node_workspace/getMagicCard/main.js"
+        :output-dir "../node_workspace/getMagicCard/"
+        :target :nodejs
+        :optimizations :advanced
+        :pretty-print false
+      }
+    }
     ]})
