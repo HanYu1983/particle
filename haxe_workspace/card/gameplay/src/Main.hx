@@ -43,7 +43,7 @@ class Main
 			#if debug
 			editable:true,
 			#else
-			editable:false,
+			editable:true,
 			#end
 			onChange:function( nv, od ) {
 				playerId = nv;
