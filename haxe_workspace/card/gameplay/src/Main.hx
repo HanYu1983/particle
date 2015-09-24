@@ -70,9 +70,6 @@ class Main
 						closeLoading();
 						chooseCardSuit( 'fighter' );
 						slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
-						
-						//keepOnlineTimer = new Timer( 1000 * 60 * 10 );
-						//keepOnlineTimer.stop
 					});
 				});
 			});
@@ -107,6 +104,7 @@ class Main
 			messageSocket( toId, content.cmd, content );
 		}
 		
+		/*
 		if ( keepOnlineTimer != null ) {
 			keepOnlineTimer.stop();
 			keepOnlineTimer = null;
@@ -119,13 +117,8 @@ class Main
 		#else
 		}, 1000 * 60 * 10 );
 		#end
+		*/
 	}
-	
-	public static function messageAll( content:Array<Dynamic> ) {
-		j( '#txt_output2' ).html( 'messageAll' );
-	}
-	
-	static var lastPromise:Dynamic = null;
 	
 	static function onBackCallback( ret:Dynamic ) {
 		callAction( ret.msg )();
@@ -146,8 +139,6 @@ class Main
 				return curr;
 			}, []);
 		}
-		
-		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {
 			case 'changeIndex':
