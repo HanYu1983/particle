@@ -23,7 +23,7 @@ class Main
 	
 	public static var j:Dynamic = untyped __js__('$');
 	
-	public static var playerId = '';
+	public static var playerId = 'smart';
 	public static var otherPlayerId = '';
 	public static var ary_cards:Array<Dynamic> = [];
 	
@@ -43,7 +43,7 @@ class Main
 			#if debug
 			editable:true,
 			#else
-			editable:true,
+			editable:false,
 			#end
 			onChange:function( nv, od ) {
 				playerId = nv;
@@ -223,12 +223,12 @@ class Main
 				Facade.getInstance().sendNotification( on_createDeck_click );
 				slide( '創建卡片完成' );
 				#else
-				if( checkCanCreate() ){
+				//if( checkCanCreate() ){
 					Facade.getInstance().sendNotification( on_createDeck_click );
 					slide( '創建卡片完成' );
-				}else{
-					slide( '沒有登入或者沒有對手時，不能創建卡牌哦' );
-				}
+				//}else{
+				//	slide( '沒有登入或者沒有對手時，不能創建卡牌哦' );
+				//}
 				#end
 		}
 		
@@ -296,6 +296,7 @@ class Main
 					//如果relate 是空白，就可以修改為自己
 					card.relate = Main.playerId;
 					send = true;
+					trace( card.relate );
 				case relate:
 					//如果relate 不是自己，就不能更改
 					if ( relate == Main.playerId ) {

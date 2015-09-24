@@ -267,7 +267,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
 		Main.playerId = nv;
 		Main.createSocket(Main.playerId);
 	}});
@@ -416,6 +416,7 @@ Main.setRelate = function(ary_select) {
 		case "":
 			card.relate = Main.playerId;
 			send = true;
+			console.log(card.relate);
 			break;
 		default:
 			if(relate == Main.playerId) {
@@ -598,10 +599,8 @@ Main.prototype = {
 			this.chooseCardSuit("sangoWar");
 			break;
 		case "onBtnCreateDeck":
-			if(this.checkCanCreate()) {
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
-				Main.slide("創建卡片完成");
-			} else Main.slide("沒有登入或者沒有對手時，不能創建卡牌哦");
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+			Main.slide("創建卡片完成");
 			break;
 		}
 	}
@@ -1659,7 +1658,7 @@ var __map_reserved = {}
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.j = $;
-Main.playerId = "";
+Main.playerId = "smart";
 Main.otherPlayerId = "";
 Main.ary_cards = [];
 Main.cardPackages = { };
