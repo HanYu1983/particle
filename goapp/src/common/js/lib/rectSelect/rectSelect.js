@@ -5,6 +5,9 @@ placed below to html
 <div id="grid">
   <div class="ghost-select"><span></span></div>
 </div>
+
+if something want to be selectable
+add class name = elements
 */
 
 var leo = leo || {};
@@ -16,6 +19,8 @@ leo.utils = leo.utils || {};
 		leo.utils.obj.onSelectFn = onSelectFn;
 		
 		$("#grid").mousedown(function (e) {
+			if( e.which == 3 ) return;
+			
 			$("#big-ghost").remove();
 			$(".ghost-select").addClass("ghost-active");
 			$(".ghost-select").css({
@@ -33,6 +38,7 @@ leo.utils = leo.utils || {};
 	}
 	
 	function selectElements(e) {
+		if( e.which == 3 ) return;
 		$(document).unbind("mousemove", openSelector);
 		$(document).unbind("mouseup", selectElements);
 		var maxX = 0;

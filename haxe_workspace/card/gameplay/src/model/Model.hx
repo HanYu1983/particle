@@ -1,6 +1,8 @@
 package model;
 
 import js.html.KeyboardEvent;
+import js.html.MouseEvent;
+import js.html.MouseEventInit;
 import mediator.Card;
 import mediator.Layer;
 import mediator.UI;
@@ -84,6 +86,7 @@ class Model extends Mediator
 				
 				sendNotification( on_select_cards, { ary_select:ary_select } );
 			case Layer.on_press:
+				
 				switch( notification.getType() ) {
 					case KeyboardEvent.DOM_VK_D:
 						// continue
@@ -91,7 +94,8 @@ class Model extends Mediator
 						if ( ary_select.length == 0 ) return;
 				}
 				
-				switch( notification.getType() ) {
+				switch( Std.parseInt( notification.getType() ) ) {
+					
 					case KeyboardEvent.DOM_VK_G:
 						//Main.sendAllMessage();
 					case KeyboardEvent.DOM_VK_H:
@@ -116,7 +120,7 @@ class Model extends Mediator
 						doListReverse();
 					case KeyboardEvent.DOM_VK_E:
 					case KeyboardEvent.DOM_VK_R:
-					case KeyboardEvent.DOM_VK_A:
+					case KeyboardEvent.DOM_VK_A, 3:
 						doMoveCards();
 					case KeyboardEvent.DOM_VK_S:
 						if ( isSeperate ) {
@@ -133,6 +137,7 @@ class Model extends Mediator
 					case KeyboardEvent.DOM_VK_F:
 						doFlip();
 					case KeyboardEvent.DOM_VK_SPACE:
+					case _:
 				}
 			case Layer.on_body_mousemove:
 				pos_mouse[0] = notification.getBody().x;

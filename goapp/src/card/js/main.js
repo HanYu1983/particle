@@ -555,7 +555,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤已經回報"); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -598,10 +598,8 @@ Main.prototype = {
 			this.chooseCardSuit("sangoWar");
 			break;
 		case "onBtnCreateDeck":
-			if(this.checkCanCreate()) {
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
-				Main.slide("創建卡片完成");
-			} else Main.slide("沒有登入或者沒有對手時，不能創建卡牌哦");
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+			Main.slide("創建卡片完成");
 			break;
 		}
 	}
@@ -1016,6 +1014,10 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
 		this._body.keyup($bind(this,this.onBodyKeyUp));
 		this._body.mousemove($bind(this,this.onBodyMouseMove));
+		window.document.addEventListener("contextmenu",function(e) {
+			e.preventDefault();
+		},false);
+		this._body.mousedown($bind(this,this.onBodyMouseDown));
 		leo.utils.initRectSelect(function(ary) {
 			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
 		});
@@ -1041,6 +1043,9 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		this.sendNotification(mediator_Layer.on_body_mousemove,{ x : e.pageX, y : e.pageY});
 	}
 	,onBodyKeyUp: function(e) {
+		this.sendNotification(mediator_Layer.on_press,null,e.which);
+	}
+	,onBodyMouseDown: function(e) {
 		this.sendNotification(mediator_Layer.on_press,null,e.which);
 	}
 });
@@ -1165,8 +1170,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			default:
 				if(this.ary_select.length == 0) return;
 			}
-			var _g11 = notification.getType();
-			switch(_g11) {
+			var _g11 = Std.parseInt(notification.getType());
+			if(_g11 != null) switch(_g11) {
 			case 71:
 				break;
 			case 72:
@@ -1198,7 +1203,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				break;
 			case 82:
 				break;
-			case 65:
+			case 65:case 3:
 				this.doMoveCards();
 				break;
 			case 83:
@@ -1216,6 +1221,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				break;
 			case 32:
 				break;
+			default:
+			} else {
 			}
 			break;
 		case "on_body_mousemove":
@@ -1663,3 +1670,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

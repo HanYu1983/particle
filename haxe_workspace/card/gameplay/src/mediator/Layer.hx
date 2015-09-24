@@ -1,5 +1,6 @@
 package mediator;
 
+import js.Browser;
 import js.html.KeyboardEvent;
 import model.Model;
 import org.puremvc.haxe.interfaces.INotification;
@@ -35,6 +36,12 @@ class Layer extends Mediator
 		_body.keyup( onBodyKeyUp );
 		_body.mousemove( onBodyMouseMove );
 		
+		Browser.document.addEventListener("contextmenu", function(e){
+			e.preventDefault();
+		}, false);
+		
+		_body.mousedown( onBodyMouseDown );
+		
 		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ){
 			sendNotification( on_select_cards, { ary_select:ary } );
 		});
@@ -64,6 +71,10 @@ class Layer extends Mediator
 	}
 	
 	function onBodyKeyUp( e ) {
+		sendNotification( on_press, null, e.which );
+	}
+	
+	function onBodyMouseDown( e ) {
 		sendNotification( on_press, null, e.which );
 	}
 }
