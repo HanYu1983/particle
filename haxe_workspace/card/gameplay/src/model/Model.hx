@@ -120,6 +120,7 @@ class Model extends Mediator
 						doListReverse();
 					case KeyboardEvent.DOM_VK_E:
 					case KeyboardEvent.DOM_VK_R:
+						//3 is right mouse click
 					case KeyboardEvent.DOM_VK_A, 3:
 						doMoveCards();
 					case KeyboardEvent.DOM_VK_S:
