@@ -13,6 +13,7 @@ class Card extends Mediator
 	public static var card_click = 'card_click';
 	public static var card_down = 'card_down';
 	public static var card_enter = 'card_enter';
+	public static var card_remove = 'card_remove';
 	
 	var _card:Dynamic;
 	var _focus = false;
@@ -24,6 +25,7 @@ class Card extends Mediator
 	{
 		super(mediatorName, viewComponent);
 		
+		trace( getMediatorName() );
 	}
 	
 	override public function onRegister():Void 
@@ -48,7 +50,8 @@ class Card extends Mediator
 	{
 		return [ 	
 					Model.on_state_change,
-					Model.on_select_cards
+					Model.on_select_cards,
+					Model.on_card_remove
 				];
 	}
 	
@@ -56,6 +59,9 @@ class Card extends Mediator
 	{
 		
 		switch( notification.getName() ) {
+			case Model.on_card_remove:
+				if ( !checkSelf( notification.getBody().select.id ) ) return;
+				sendNotification( card_remove, { dom:getViewComponent() } );
 			case Model.on_select_cards:
 				focusCard( false );
 				Lambda.foreach( Lambda.array( notification.getBody().ary_select ), function( dom ) {

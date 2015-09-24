@@ -14,6 +14,7 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 class Model extends Mediator
 {
 	public static var on_card_enter = 'on_card_enter';
+	public static var on_card_remove = 'on_card_remove';
 	public static var on_card_move = 'on_card_move';
 	public static var on_state_change = 'on_state_change';
 	public static var on_select_cards = 'on_model_select_cards';
@@ -85,6 +86,7 @@ class Model extends Mediator
 			case Layer.on_press:
 				switch( notification.getType() ) {
 					case KeyboardEvent.DOM_VK_D:
+					case KeyboardEvent.DOM_VK_H:
 						// continue
 					case _:
 						if ( ary_select.length == 0 ) return;
@@ -94,7 +96,17 @@ class Model extends Mediator
 					case KeyboardEvent.DOM_VK_G:
 						//Main.sendAllMessage();
 					case KeyboardEvent.DOM_VK_H:
-						//Main.pollAllMessage();
+						ary_select = Lambda.array( Lambda.filter( Main.ary_cards, function( card:Dynamic ) {
+							return ( card.owner == Main.playerId );
+						}));
+						
+						Lambda.foreach( ary_select, function( card ) {
+							sendNotification( on_card_remove, { select:card } );
+							return true;
+						});
+						
+						Main.ary_cards = [];
+						ary_select = [];
 					case KeyboardEvent.DOM_VK_C:
 						if ( Main.setOwner( ary_select ) ) 
 							Main.pushCmds( { cmd:'setOwner', content:{ ary_select:ary_select.slice( 0 ) } } );

@@ -551,10 +551,8 @@ Main.prototype = {
 			this.chooseCardSuit("sangoWar");
 			break;
 		case "onBtnCreateDeck":
-			if(this.checkCanCreate()) {
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
-				Main.slide("創建卡片完成");
-			} else Main.slide("沒有登入或者沒有對手時，不能創建卡牌哦");
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+			Main.slide("創建卡片完成");
 			break;
 		}
 	}
@@ -835,6 +833,7 @@ var mediator_Card = function(mediatorName,viewComponent) {
 	this._back = true;
 	this._focus = false;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+	console.log(this.getMediatorName());
 };
 mediator_Card.__name__ = true;
 mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -851,12 +850,16 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 		this.getViewComponent().off("click");
 	}
 	,listNotificationInterests: function() {
-		return [model_Model.on_state_change,model_Model.on_select_cards];
+		return [model_Model.on_state_change,model_Model.on_select_cards,model_Model.on_card_remove];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_card_remove":
+			if(!this.checkSelf(notification.getBody().select.id)) return;
+			this.sendNotification(mediator_Card.card_remove,{ dom : this.getViewComponent()});
+			break;
 		case "on_model_select_cards":
 			this.focusCard(false);
 			Lambda.foreach(Lambda.array(notification.getBody().ary_select),function(dom) {
@@ -975,13 +978,16 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		});
 	}
 	,listNotificationInterests: function() {
-		return [model_Model.on_card_enter,mediator_Card.card_down];
+		return [model_Model.on_card_enter,mediator_Card.card_down,mediator_Card.card_remove];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_card_enter":
 			this._container_cards.append(notification.getBody());
+			break;
+		case "card_remove":
+			notification.getBody().dom.remove();
 			break;
 		case "card_down":
 			this._currentMoveCardId = notification.getBody().id;
@@ -1076,6 +1082,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards,mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
+		var _g2 = this;
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_createDeck_click":
@@ -1113,6 +1120,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			switch(_g1) {
 			case 68:
 				break;
+			case 72:
+				break;
 			default:
 				if(this.ary_select.length == 0) return;
 			}
@@ -1121,6 +1130,15 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			case 71:
 				break;
 			case 72:
+				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
+					return card.owner == Main.playerId;
+				}));
+				Lambda.foreach(this.ary_select,function(card1) {
+					_g2.sendNotification(model_Model.on_card_remove,{ select : card1});
+					return true;
+				});
+				Main.ary_cards = [];
+				this.ary_select = [];
 				break;
 			case 67:
 				if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select.slice(0)}});
@@ -1154,8 +1172,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				this.isSeperate = !this.isSeperate;
 				break;
 			case 68:
-				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
-					return card.owner == Main.playerId;
+				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card2) {
+					return card2.owner == Main.playerId;
 				}));
 				this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 				break;
@@ -1595,12 +1613,14 @@ org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";
 mediator_Card.card_down = "card_down";
 mediator_Card.card_enter = "card_enter";
+mediator_Card.card_remove = "card_remove";
 mediator_Layer.on_layout_mouse_up = "on_layout_mouse_up";
 mediator_Layer.on_select_cards = "on_select_cards";
 mediator_Layer.on_press = "on_press";
 mediator_Layer.on_body_mousemove = "on_body_mousemove";
 mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 model_Model.on_card_enter = "on_card_enter";
+model_Model.on_card_remove = "on_card_remove";
 model_Model.on_card_move = "on_card_move";
 model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";

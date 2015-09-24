@@ -196,12 +196,17 @@ class Main
 			case 'onBtnLoadSangoWarClick':
 				chooseCardSuit( 'sangoWar' );
 			case 'onBtnCreateDeck':
+				#if debug
+				Facade.getInstance().sendNotification( on_createDeck_click );
+				slide( '創建卡片完成' );
+				#else
 				if( checkCanCreate() ){
 					Facade.getInstance().sendNotification( on_createDeck_click );
 					slide( '創建卡片完成' );
 				}else{
 					slide( '沒有登入或者沒有對手時，不能創建卡牌哦' );
 				}
+				#end
 		}
 		
 	}
