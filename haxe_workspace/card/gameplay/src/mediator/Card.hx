@@ -24,8 +24,6 @@ class Card extends Mediator
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
 		super(mediatorName, viewComponent);
-		
-		trace( getMediatorName() );
 	}
 	
 	override public function onRegister():Void 

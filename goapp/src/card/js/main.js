@@ -267,7 +267,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
 		Main.playerId = nv;
 		Main.createSocket(Main.playerId);
 	}});
@@ -305,6 +305,13 @@ Main.createSelfDeck = function(deckId) {
 Main.pushCmds = function(content) {
 	var toId = Main.j("#txt_opponent").textbox("getValue");
 	if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
+	if(Main.keepOnlineTimer != null) {
+		Main.keepOnlineTimer.stop();
+		Main.keepOnlineTimer = null;
+	}
+	Main.keepOnlineTimer = haxe_Timer.delay(function() {
+		Main.alert("連線超時，請重新整理!");
+	},600000);
 };
 Main.messageAll = function(content) {
 	Main.j("#txt_output2").html("messageAll");
@@ -467,7 +474,7 @@ Main.createSocket = function(id) {
 	var _channel = channel;
 	_channel.createChannel(id,function(err,ch) {
 		if(err != null) {
-			js_Browser.alert("socket建立失敗!請重新整理");
+			Main.alert("socket建立失敗!請重新整理");
 			return;
 		}
 		_channel.addEventListenerAndOpenSocket(ch,{ onopen : function() {
@@ -477,9 +484,9 @@ Main.createSocket = function(id) {
 			var json = JSON.parse(origin);
 			Main.onBackCallback(json);
 		}, onerror : function() {
-			js_Browser.alert("onerror");
+			Main.alert("已斷線，可能是網路不穩定");
 		}, onclose : function() {
-			Main.slide("onclose");
+			Main.alert("已斷線，可能是網路不穩定");
 		}});
 	});
 };
@@ -528,7 +535,7 @@ Main.getCardImageUrlWithPackage = function(name,key) {
 			break;
 		}
 	}
-	if(cpkg == null) js_Browser.alert("沒有套牌!");
+	if(cpkg == null) Main.alert("沒有套牌!");
 	return api.getCardImageUrlWithPackage(cpkg,key);
 };
 Main.getCardSuit = function(pkg) {
@@ -536,6 +543,9 @@ Main.getCardSuit = function(pkg) {
 };
 Main.slide = function(msg) {
 	Main.j.messager.show({ title : "提示", msg : msg, timeout : 2000, showType : "slide"});
+};
+Main.alert = function(msg) {
+	Main.j.messager.alert("錯誤",msg);
 };
 Main.openLoading = function(msg) {
 	Main.j.messager.progress({ title : "", msg : msg});
@@ -545,7 +555,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.slide(err); else cb(ret);
+		if(err != null) Main.alert("錯誤已經回報"); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -588,8 +598,10 @@ Main.prototype = {
 			this.chooseCardSuit("sangoWar");
 			break;
 		case "onBtnCreateDeck":
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
-			Main.slide("創建卡片完成");
+			if(this.checkCanCreate()) {
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+				Main.slide("創建卡片完成");
+			} else Main.slide("沒有登入或者沒有對手時，不能創建卡牌哦");
 			break;
 		}
 	}
@@ -817,11 +829,6 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
-var js_Browser = function() { };
-js_Browser.__name__ = true;
-js_Browser.alert = function(v) {
-	window.alert(js_Boot.__string_rec(v,""));
-};
 var org_puremvc_haxe_interfaces_INotifier = function() { };
 org_puremvc_haxe_interfaces_INotifier.__name__ = true;
 var org_puremvc_haxe_patterns_observer_Notifier = function() {
@@ -870,7 +877,6 @@ var mediator_Card = function(mediatorName,viewComponent) {
 	this._back = true;
 	this._focus = false;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
-	console.log(this.getMediatorName());
 };
 mediator_Card.__name__ = true;
 mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -1657,5 +1663,3 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

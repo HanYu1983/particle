@@ -32,6 +32,7 @@ class Main
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
 	
+	static var keepOnlineTimer:Timer;
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	static var longPolling:Bool = untyped __js__( 'config.longPolling' );
 	
@@ -69,6 +70,9 @@ class Main
 						closeLoading();
 						chooseCardSuit( 'fighter' );
 						slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
+						
+						//keepOnlineTimer = new Timer( 1000 * 60 * 10 );
+						//keepOnlineTimer.stop
 					});
 				});
 			});
@@ -102,6 +106,19 @@ class Main
 		if ( toId.length != 0 ) {
 			messageSocket( toId, content.cmd, content );
 		}
+		
+		if ( keepOnlineTimer != null ) {
+			keepOnlineTimer.stop();
+			keepOnlineTimer = null;
+		}
+		
+		keepOnlineTimer = Timer.delay( function() {
+			alert( '連線超時，請重新整理!' );
+		#if debug
+		}, 3000 );
+		#else
+		}, 1000 * 60 * 10 );
+		#end
 	}
 	
 	public static function messageAll( content:Array<Dynamic> ) {
@@ -345,7 +362,7 @@ class Main
 		var _channel:Dynamic = untyped __js__( 'channel' );
 		_channel.createChannel( id, function(err, ch) {
 			if ( err != null ) {
-				Browser.alert( 'socket建立失敗!請重新整理' );
+				alert( 'socket建立失敗!請重新整理' );
 				return;
 			}	
 			_channel.addEventListenerAndOpenSocket( ch, {
@@ -358,10 +375,10 @@ class Main
 					onBackCallback( json );
 				},
 				onerror: function(){
-					Browser.alert( 'onerror' );
+					alert( '已斷線，可能是網路不穩定' );
 				},
 				onclose: function(){
-					slide( 'onclose' );
+					alert( '已斷線，可能是網路不穩定' );
 				}
 			});
 			
@@ -487,7 +504,7 @@ class Main
 				break;
 			}
 		}
-		if ( cpkg == null ) Browser.alert( '沒有套牌!' );
+		if ( cpkg == null ) alert( '沒有套牌!' );
 		return untyped __js__('api.getCardImageUrlWithPackage' )( cpkg, key );
 	}
 	
@@ -504,6 +521,10 @@ class Main
 		});
 	}
 	
+	public static function alert( msg ) {
+        j.messager.alert('錯誤', msg );
+	}
+	
 	public static function openLoading( msg ){
 		j.messager.progress({
 			title:'',
@@ -518,7 +539,11 @@ class Main
 	static function handleResponse( cb ) {
 		return function ( err, ret ) {
 			if ( err != null ) {
-				slide( err );
+				#if debug
+				alert( err );
+				#else
+				alert( '錯誤已經回報' );
+				#end
 			}else {
 				cb( ret );
 			}
