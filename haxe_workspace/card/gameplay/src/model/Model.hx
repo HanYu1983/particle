@@ -86,7 +86,6 @@ class Model extends Mediator
 			case Layer.on_press:
 				switch( notification.getType() ) {
 					case KeyboardEvent.DOM_VK_D:
-					case KeyboardEvent.DOM_VK_H:
 						// continue
 					case _:
 						if ( ary_select.length == 0 ) return;
@@ -96,16 +95,8 @@ class Model extends Mediator
 					case KeyboardEvent.DOM_VK_G:
 						//Main.sendAllMessage();
 					case KeyboardEvent.DOM_VK_H:
-						ary_select = Lambda.array( Lambda.filter( Main.ary_cards, function( card:Dynamic ) {
-							return ( card.owner == Main.playerId );
-						}));
-						
-						Lambda.foreach( ary_select, function( card ) {
-							sendNotification( on_card_remove, { select:card } );
-							return true;
-						});
-						
-						Main.ary_cards = [];
+						Main.removeCards( ary_select );
+						Main.pushCmds( { cmd:'removeCards', content:{ ary_select:ary_select.slice( 0 ) } } );
 						ary_select = [];
 					case KeyboardEvent.DOM_VK_C:
 						if ( Main.setOwner( ary_select ) ) 

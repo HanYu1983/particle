@@ -39,7 +39,11 @@ class Main
 	
 	function new() {
 		j( '#txt_id' ).textbox( {
+			#if debug
+			editable:true,
+			#else
 			editable:false,
+			#end
 			onChange:function( nv, od ) {
 				playerId = nv;
 				createSocket( playerId );
@@ -129,6 +133,8 @@ class Main
 		j( '#txt_output2' ).html( 'receive: ' + content.cmd );
 		
 		switch( content.cmd ) {
+			case 'removeCards':
+				return Animate.removeCards( content.content.ary_select );
 			case 'addCards':
 				return Animate.addCardAndPrepare( content.content );
 			case 'listCard':
@@ -324,6 +330,14 @@ class Main
 	public static function getCardsById( id:String ) {
 		return Lambda.find( Main.ary_cards, function( card:Dynamic ) {
 			return ( id == card.id );
+		});
+	}
+	
+	public static function removeCards( ary_select:Array<Dynamic> ) {
+		Lambda.foreach( ary_select, function( card ) {
+			Main.ary_cards.remove( card );
+			Facade.getInstance().sendNotification( Model.on_card_remove, { select:card } );
+			return true;
 		});
 	}
 	

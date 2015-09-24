@@ -92,6 +92,16 @@ Animate.moveCards = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
+Animate.removeCards = function(ary_select) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.removeCards(ary_select);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},10);
+		return d;
+	};
+};
 Animate.shuffle = function(ary_select,pos_mouse) {
 	return function() {
 		var d = Main.j.Deferred();
@@ -118,6 +128,24 @@ HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
 	if(x != x) return undefined;
 	return x;
+};
+HxOverrides.indexOf = function(a,obj,i) {
+	var len = a.length;
+	if(i < 0) {
+		i += len;
+		if(i < 0) i = 0;
+	}
+	while(i < len) {
+		if(a[i] === obj) return i;
+		i++;
+	}
+	return -1;
+};
+HxOverrides.remove = function(a,obj) {
+	var i = HxOverrides.indexOf(a,obj,0);
+	if(i == -1) return false;
+	a.splice(i,1);
+	return true;
 };
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
@@ -239,7 +267,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 		Main.createSocket(Main.playerId);
 	}});
@@ -300,6 +328,8 @@ Main.callAction = function(content) {
 	Main.j("#txt_output2").html("receive: " + Std.string(content.cmd));
 	var _g = content.cmd;
 	switch(_g) {
+	case "removeCards":
+		return Animate.removeCards(content.content.ary_select);
 	case "addCards":
 		return Animate.addCardAndPrepare(content.content);
 	case "listCard":
@@ -424,6 +454,13 @@ Main.moveCards = function(ary_select,pos_mouse,zsort) {
 Main.getCardsById = function(id) {
 	return Lambda.find(Main.ary_cards,function(card) {
 		return id == card.id;
+	});
+};
+Main.removeCards = function(ary_select) {
+	Lambda.foreach(ary_select,function(card) {
+		HxOverrides.remove(Main.ary_cards,card);
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_card_remove,{ select : card});
+		return true;
 	});
 };
 Main.createSocket = function(id) {
@@ -1082,7 +1119,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards,mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
-		var _g2 = this;
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_createDeck_click":
@@ -1120,8 +1156,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			switch(_g1) {
 			case 68:
 				break;
-			case 72:
-				break;
 			default:
 				if(this.ary_select.length == 0) return;
 			}
@@ -1130,14 +1164,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			case 71:
 				break;
 			case 72:
-				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
-					return card.owner == Main.playerId;
-				}));
-				Lambda.foreach(this.ary_select,function(card1) {
-					_g2.sendNotification(model_Model.on_card_remove,{ select : card1});
-					return true;
-				});
-				Main.ary_cards = [];
+				Main.removeCards(this.ary_select);
+				Main.pushCmds({ cmd : "removeCards", content : { ary_select : this.ary_select.slice(0)}});
 				this.ary_select = [];
 				break;
 			case 67:
@@ -1172,8 +1200,8 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				this.isSeperate = !this.isSeperate;
 				break;
 			case 68:
-				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card2) {
-					return card2.owner == Main.playerId;
+				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
+					return card.owner == Main.playerId;
 				}));
 				this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
 				break;
@@ -1595,6 +1623,9 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
+if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
+	return Array.prototype.indexOf.call(a,o,i);
+};
 String.__name__ = true;
 Array.__name__ = true;
 var __map_reserved = {}

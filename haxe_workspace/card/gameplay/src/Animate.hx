@@ -105,6 +105,17 @@ class Animate
 		}
 	}
 	
+	public static function removeCards( ary_select ) {
+		return function(){
+			var d:Dynamic = Main.j.Deferred();
+			Main.removeCards( ary_select );
+			Timer.delay( function() {
+				d.resolve();
+			}, 10 );
+			return d;
+		}
+	}
+	
 	public static function shuffle( ary_select, pos_mouse ) {
 		return function(){
 			var d:Dynamic = Main.j.Deferred();
