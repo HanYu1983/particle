@@ -267,7 +267,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 		Main.createSocket(Main.playerId);
 	}});
@@ -535,7 +535,7 @@ Main.getCardImageUrlWithPackage = function(name,key) {
 			break;
 		}
 	}
-	if(cpkg == null) Main.alert("沒有套牌!");
+	if(cpkg == null) return "";
 	return api.getCardImageUrlWithPackage(cpkg,key);
 };
 Main.getCardSuit = function(pkg) {
@@ -555,7 +555,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤已經回報"); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -598,10 +598,8 @@ Main.prototype = {
 			this.chooseCardSuit("sangoWar");
 			break;
 		case "onBtnCreateDeck":
-			if(this.checkCanCreate()) {
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
-				Main.slide("創建卡片完成");
-			} else Main.slide("沒有登入或者沒有對手時，不能創建卡牌哦");
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+			Main.slide("創建卡片完成");
 			break;
 		}
 	}
@@ -1663,3 +1661,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

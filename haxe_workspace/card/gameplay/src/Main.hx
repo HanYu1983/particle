@@ -115,7 +115,7 @@ class Main
 		keepOnlineTimer = Timer.delay( function() {
 			alert( '連線超時，請重新整理!' );
 		#if debug
-		}, 3000 );
+		}, 1000 * 60 * 10 );
 		#else
 		}, 1000 * 60 * 10 );
 		#end
@@ -504,7 +504,7 @@ class Main
 				break;
 			}
 		}
-		if ( cpkg == null ) alert( '沒有套牌!' );
+		if ( cpkg == null ) return '';
 		return untyped __js__('api.getCardImageUrlWithPackage' )( cpkg, key );
 	}
 	
