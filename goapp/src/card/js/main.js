@@ -277,7 +277,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
 		Main.playerId = nv;
 		Main.createSocket(Main.playerId);
 	}});
@@ -571,7 +571,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert(err); else cb(ret);
+		if(err != null) Main.alert("錯誤已經回報"); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -1699,5 +1699,3 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map
