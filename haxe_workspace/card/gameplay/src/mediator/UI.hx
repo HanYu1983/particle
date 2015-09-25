@@ -51,10 +51,9 @@ class UI extends Mediator
 	}
 	
 	function createComboDeck( cardSuit ) {
-		
 		if ( cardSuit.length == 0 ) {
 			combo_deck.empty();
-			combo_deck.combobox();
+			combo_deck.combobox( 'clear' );
 			return;
 		}
 		var i = 0;

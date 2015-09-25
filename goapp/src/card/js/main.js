@@ -272,7 +272,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 	}});
 	Main.j("#txt_opponent").textbox({ onChange : function(nv1,od1) {
@@ -558,7 +558,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤已經回報"); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -617,7 +617,6 @@ Main.prototype = {
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
-			Main.slide("創建卡片完成");
 			break;
 		}
 	}
@@ -948,9 +947,6 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
 		this._body.keyup($bind(this,this.onBodyKeyUp));
 		this._body.mousemove($bind(this,this.onBodyMouseMove));
-		window.document.addEventListener("contextmenu",function(e) {
-			e.preventDefault();
-		},false);
 		this._body.mousedown($bind(this,this.onBodyMouseDown));
 		leo.utils.initRectSelect(function(ary) {
 			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
@@ -1017,7 +1013,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		var _g = this;
 		if(cardSuit.length == 0) {
 			this.combo_deck.empty();
-			this.combo_deck.combobox();
+			this.combo_deck.combobox("clear");
 			return;
 		}
 		var i = 0;
@@ -1605,3 +1601,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map
