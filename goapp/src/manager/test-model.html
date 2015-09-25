@@ -1,8 +1,25 @@
+<body>
+  <form name="option">
+    <input name='name' value='han'>
+    <select name='gender'>
+      <option value='m'>male</option>
+      <option value='f'>female</option>
+    </select>
+  </form>
+</body>
+
 <script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>	
+<script src="../common/js/lib/purl.js"></script>	
 <script src="../common/js/lib/underscore/underscore-min.js"></script>	
 <script src="../common/js/store.js"></script>	
 <script src="js/model.js"></script>	
 <script>
+
+var querystring = $(document.option).serialize() 
+var url = $.url("?"+querystring)
+console.log( url.param("name") )
+console.log( url.param("gender") )
+
 var mo = model.defaultModel()
 console.log( JSON.stringify(mo) )
 
