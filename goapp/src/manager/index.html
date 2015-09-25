@@ -240,7 +240,11 @@ a{
 							editAndShow( __model );
 							break;
 						case 'txt_cards':
+							try{
 							__model.cards = JSON.parse( '[' + nv + ']' );
+							}catch( e ){
+								console.log("DD");
+							}
 							editAndShow( __model );
 							break;
 					}
