@@ -1,0 +1,35 @@
+<script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>	
+<script src="../common/js/lib/underscore/underscore-min.js"></script>	
+<script src="../common/js/store.js"></script>	
+<script src="js/model.js"></script>	
+<script>
+var mo = model.defaultModel()
+console.log( JSON.stringify(mo) )
+
+model.editCardSuit( mo, {
+  name: "test",
+  game: "格鬥風雲錄"
+})
+
+console.log( JSON.stringify(mo) )
+
+model.editCardSuit( mo, {
+  name: "test",
+  cards: ['hahaha.jpg']
+})
+
+console.log( JSON.stringify(mo) )
+
+model.editCardSuit( mo, {
+  name: 'test2',
+  game: '鋼彈大戰',
+  cards: ['wow']
+})
+
+console.log( JSON.stringify(mo) )
+
+model.removeCardSuit( mo, 'test' )
+
+console.log( JSON.stringify(mo) )
+
+</script>
