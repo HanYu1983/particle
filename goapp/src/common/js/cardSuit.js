@@ -1,4 +1,4 @@
-var model = model || {};
+var cardSuit = cardSuit || {};
 
 (function(module){
   
@@ -315,4 +315,4 @@ var model = model || {};
   module.load = load
   module.save = save
   
-}) (model)
+}) (cardSuit)
