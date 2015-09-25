@@ -96,6 +96,9 @@ a{
 			</div>
 		</div>
 	</div>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>	
+	<script src="../common/js/store.js"></script>	
+	<script src="js/model.js"></script>	
 	<script>
 	/*
 	online:'425311264344425',
@@ -111,13 +114,29 @@ a{
 	
 	}
 	
+	function handleModel( func ){
+		return function( err, ret ){
+			if( err != null ){
+				alert( err );
+			}else{
+				func( ret );
+			}
+		}
+	}
+	
 	function onBtnClick( target ){
 		switch( target.id ){
 			case 'btn_login':
 				loginFacebook( function( ret ){
-					var userId = ret.authResponse.userID;
-					showMessage( '登入成功' );
 					$('#btn_login' ).linkbutton( 'disable' );
+					
+					var userId = ret.authResponse.userID;
+					var accessToken = ret.authResponse.accessToken;
+					showMessage( '登入成功' );
+					
+					model.load( userId, accessToken, handleModel( function( ret ){
+						console.log( ret );
+					}));
 				});
 				break;
 			case 'btn_stockLink':
