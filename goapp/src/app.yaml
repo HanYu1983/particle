@@ -4,6 +4,8 @@ runtime: go
 api_version: go1
 
 handlers:
+- url: /manager
+  static_dir: manager
 - url: /test
   static_dir: test
 - url: /particle
