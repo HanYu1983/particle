@@ -53,7 +53,8 @@ class UI extends Mediator
 	function createComboDeck( cardSuit ) {
 		if ( cardSuit.length == 0 ) {
 			combo_deck.empty();
-			combo_deck.combobox( 'clear' );
+			combo_deck.append( '<option></option>' );
+			combo_deck.combobox();
 			return;
 		}
 		var i = 0;
