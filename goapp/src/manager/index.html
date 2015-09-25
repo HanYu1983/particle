@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>上善若水</title>
+	<meta name="description" content="" />
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		
+	<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
+		
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
+		
+</head>
+<style>
+#btn_app, #btn_team{
+	position:relative;
+	width:97%;
+	height:40px;
+}
+
+.img_intro{
+	width:400px;
+}
+
+.group{
+	position:relative;
+	width:100%;
+	text-align:center;
+}
+a{
+	color:white;
+	font-size:20px;
+}
+</style>
+
+<body>
+	<div class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'north',split:false" style="height:40px;"></div>
+		<div data-options="region:'west',title:'West',split:false" style="width:150px;">
+			<a id="btn_app" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true">應用程式</a>
+			<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
+		</div>
+		<div data-options="region:'center',title:'center title'" style="">
+			<div id="mc_app" style="position:relative; width:100%; height:100%; ">
+				<div class="easyui-tabs" data-options="tabWidth:'100%;',width:'100%'" style="position:relative; width:100%; height:100%">
+					<div title="余氏k線圖" >
+						<div class="group" style="margin-top:30px;">
+							連結：<a href="http://particle-979.appspot.com/stock/index.html#">http://particle-979.appspot.com/stock/index.html#</a>
+						</div>
+					</div>
+					<div title="幽夢幻境" >
+						<div class="group" style="margin-top:30px;">
+							連結：<a href="http://particle-979.appspot.com/particle/index.html#">http://particle-979.appspot.com/particle/index.html#</a>
+						</div>
+					</div>
+					<div title="卡牌風雲" >
+						<div class="group" style="margin-top:30px;">
+							連結：<a href="http://particle-979.appspot.com/card/index.html#">http://particle-979.appspot.com/card/index.html#</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="mc_team" style="position:relative; width:100%; height:100%; display:none;">
+				team
+			</div>
+		</div>
+	</div>
+	<script>
+	function onBtnClick( target ){
+		switch( target.id ){
+			case 'btn_app':
+				openApp();
+				break;
+			case 'btn_team':
+				openTeam();
+				break;
+		}
+	}
+	
+	function openApp(){
+		$('#mc_app' ).show();
+		$('#mc_team' ).hide();
+	}
+	
+	function openTeam(){
+		$('#mc_app' ).hide();
+		$('#mc_team' ).show();
+	}
+	
+	</script>
+	<script src="js/manager.js"></script>
+</body>
+</html>

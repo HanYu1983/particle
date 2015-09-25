@@ -36,10 +36,12 @@ class Layer extends Mediator
 		_body.keyup( onBodyKeyUp );
 		_body.mousemove( onBodyMouseMove );
 		
+		#if debug
+		#else
 		Browser.document.addEventListener("contextmenu", function(e){
 			e.preventDefault();
 		}, false);
-		
+		#end
 		_body.mousedown( onBodyMouseDown );
 		
 		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ){
