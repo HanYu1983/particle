@@ -2,9 +2,7 @@ package hello
 
 const (
   // han local
-  GameContextPosition = 6401356696911872
-  // remote
-  //GameContextPosition = 5668600916475904
+  UserPosition = 5891733057437696
   
   // han local
   CardInfoPosition = 5733953138851840

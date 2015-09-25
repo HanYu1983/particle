@@ -56,15 +56,6 @@ func newUUID() (string, error) {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
 
-func Output(w http.ResponseWriter, info, err interface{}){
-  ret := map[string]interface{}{
-    "Info": info,
-    "Error": err,
-  }
-  jsonstr, _ := json.Marshal( ret )
-  fmt.Fprintf(w, "%s", string( jsonstr ))
-}
-
 func CardList(w http.ResponseWriter, r *http.Request){
   defer tool.Recover( func(err error){
     Output( w, nil, err.Error() )
