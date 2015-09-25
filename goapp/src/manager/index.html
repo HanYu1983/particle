@@ -20,7 +20,12 @@
 		
 </head>
 <style>
-#btn_app, #btn_team{
+
+#btn_team,
+#btn_stock,
+#btn_particle,
+#btn_card
+{
 	position:relative;
 	width:97%;
 	height:40px;
@@ -33,8 +38,13 @@
 .group{
 	position:relative;
 	width:100%;
-	text-align:center;
 }
+
+.hori{
+	position:relative;
+	display:inline-block;
+}
+
 a{
 	color:white;
 	font-size:20px;
@@ -43,41 +53,90 @@ a{
 
 <body>
 	<div class="easyui-layout" style="width:100%;height:100%;">
-		<div data-options="region:'north',split:false" style="height:40px;"></div>
-		<div data-options="region:'west',title:'West',split:false" style="width:150px;">
-			<a id="btn_app" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true">應用程式</a>
-			<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
+		<div data-options="region:'north',split:false" style="height:40px;">
+			<div style="position:absolute; right:0; top:0;">
+				<a href="#" id="btn_login" class="easyui-linkbutton" data-options="iconCls:'icon-fb-login',disabled:true" onclick="onBtnClick(this)" style="margin-top:5px; margin-right:5px; ">登入</a>
+			</div>
 		</div>
-		<div data-options="region:'center',title:'center title'" style="">
-			<div id="mc_app" style="position:relative; width:100%; height:100%; ">
-				<div class="easyui-tabs" data-options="tabWidth:'100%;',width:'100%'" style="position:relative; width:100%; height:100%">
-					<div title="余氏k線圖" >
-						<div class="group" style="margin-top:30px;">
-							連結：<a href="http://particle-979.appspot.com/stock/index.html#">http://particle-979.appspot.com/stock/index.html#</a>
-						</div>
+		<div data-options="region:'west',title:'選單',split:true" style="width:200px; min-width:200px;">
+			<div class="group">
+				<div class="group">
+					<div class="hori" style="width:20%">
+						<a id="btn_stockLink" href="#" class="easyui-linkbutton" style="width:100%; height:40px;" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
 					</div>
-					<div title="幽夢幻境" >
-						<div class="group" style="margin-top:30px;">
-							連結：<a href="http://particle-979.appspot.com/particle/index.html#">http://particle-979.appspot.com/particle/index.html#</a>
-						</div>
-					</div>
-					<div title="卡牌風雲" >
-						<div class="group" style="margin-top:30px;">
-							連結：<a href="http://particle-979.appspot.com/card/index.html#">http://particle-979.appspot.com/card/index.html#</a>
-						</div>
+					<div class="hori" style="width:78%">
+						<a id="btn_stock" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true" >余氏k線圖</a>
 					</div>
 				</div>
+				<div class="group">
+					<div class="hori" style="width:20%">
+						<a id="btn_particleLink"  href="#"  class="easyui-linkbutton" style="width:100%; height:40px;" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+					</div>
+					<div class="hori" style="width:78%">
+						<a id="btn_particle" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >幽夢幻境</a>
+					</div>
+				</div>
+				<div class="group">
+					<div class="hori" style="width:20%">
+						<a id="btn_cardLink" href="#" class="easyui-linkbutton" style="width:100%; height:40px;" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+					</div>
+					<div class="hori" style="width:78%">
+						<a id="btn_card" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >卡牌風雲</a>
+					</div>
+				</div>
+				<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
 			</div>
+		</div>
+		<div data-options="region:'center',title:'內容'" style="">
+			<div id="mc_stock" style="position:relative; width:100%; height:100%; "></div>
+			<div id="mc_particle" style="position:relative; width:100%; height:100%; "></div>
+			<div id="mc_card" style="position:relative; width:100%; height:100%; "></div>
 			<div id="mc_team" style="position:relative; width:100%; height:100%; display:none;">
 				team
 			</div>
 		</div>
 	</div>
 	<script>
+	/*
+	online:'425311264344425',
+	local:'679171275511375',
+	*/
+	myapp.facebook.init( '679171275511375', function(){
+		$('#btn_login' ).linkbutton( 'enable' );
+	});
+	
+	openStock();
+	
+	function appStart(){
+	
+	}
+	
 	function onBtnClick( target ){
 		switch( target.id ){
-			case 'btn_app':
-				openApp();
+			case 'btn_login':
+				loginFacebook( function( ret ){
+					var userId = ret.authResponse.userID;
+					showMessage( '登入成功' );
+					$('#btn_login' ).linkbutton( 'disable' );
+				});
+				break;
+			case 'btn_stockLink':
+				window.open( 'http://particle-979.appspot.com/stock/index.html#' );
+				break;
+			case 'btn_particleLink':
+				window.open( 'http://particle-979.appspot.com/particle/index.html#' );
+				break;
+			case 'btn_cardLink':
+				window.open( 'http://particle-979.appspot.com/card/index.html#' );
+				break;
+			case 'btn_stock':
+				openStock();
+				break;
+			case 'btn_particle':
+				openParticle();
+				break;
+			case 'btn_card':
+				openCard();
 				break;
 			case 'btn_team':
 				openTeam();
@@ -85,16 +144,46 @@ a{
 		}
 	}
 	
-	function openApp(){
-		$('#mc_app' ).show();
+	function loginFacebook( cb ){
+		myapp.facebook.login( cb );
+	}
+	
+	function openStock(){
+		$('#mc_stock' ).show();
+		$('#mc_particle' ).hide();
+		$('#mc_card' ).hide();
+		$('#mc_team' ).hide();
+	}
+	
+	function openParticle(){
+		$('#mc_stock' ).hide();
+		$('#mc_particle' ).show();
+		$('#mc_card' ).hide();
+		$('#mc_team' ).hide();
+	}
+	
+	function openCard(){
+		$('#mc_stock' ).hide();
+		$('#mc_particle' ).hide();
+		$('#mc_card' ).show();
 		$('#mc_team' ).hide();
 	}
 	
 	function openTeam(){
-		$('#mc_app' ).hide();
+		$('#mc_stock' ).hide();
+		$('#mc_particle' ).hide();
+		$('#mc_card' ).hide();
 		$('#mc_team' ).show();
 	}
 	
+	function showMessage( msg ){
+		$.messager.show({
+			title:'提示',
+			msg: msg,
+			timeout:2000,
+			showType:'slide'
+		});
+	}
 	</script>
 	<script src="js/manager.js"></script>
 </body>
