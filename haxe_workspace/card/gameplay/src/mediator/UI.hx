@@ -51,6 +51,12 @@ class UI extends Mediator
 	}
 	
 	function createComboDeck( cardSuit ) {
+		
+		if ( cardSuit.length == 0 ) {
+			combo_deck.empty();
+			combo_deck.combobox();
+			return;
+		}
 		var i = 0;
 		combo_deck.empty();
 		Lambda.foreach( cardSuit, function( deck ) {

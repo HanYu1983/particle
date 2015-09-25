@@ -6,6 +6,7 @@ function $extend(from, fields) {
 	return proto;
 }
 var Animate = function() { };
+Animate.__name__ = true;
 Animate.addCardAndPrepare = function(cards) {
 	return function() {
 		var d = Main.j.Deferred();
@@ -132,6 +133,7 @@ Animate.shuffleSeperate = function(ary_select,pos_mouse) {
 	};
 };
 var HxOverrides = function() { };
+HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
 	if(x != x) return undefined;
@@ -163,6 +165,7 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
+Lambda.__name__ = true;
 Lambda.array = function(it) {
 	var a = [];
 	var $it0 = $iterator(it)();
@@ -227,6 +230,7 @@ Lambda.find = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
+List.__name__ = true;
 List.prototype = {
 	add: function(item) {
 		var x = [item];
@@ -260,6 +264,7 @@ var _$List_ListIterator = function(head) {
 	this.head = head;
 	this.val = null;
 };
+_$List_ListIterator.__name__ = true;
 _$List_ListIterator.prototype = {
 	hasNext: function() {
 		return this.head != null;
@@ -283,13 +288,12 @@ var Main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
 	Main.openLoading("準備中...請稍等");
-	var fbid = config.fbid[config.fbid.which];
-	myapp.facebook.init(fbid,function() {
+	var fbappId = config.fbid[config.fbid.which];
+	myapp.facebook.init(fbappId,function() {
 		_g.loadCardSuit("gundamWar",function() {
 			_g.loadCardSuit("fighter",function() {
 				_g.loadCardSuit("sangoWar",function() {
 					Main.closeLoading();
-					_g.chooseCardSuit("fighter");
 					Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
 				});
 			});
@@ -297,6 +301,7 @@ var Main = function() {
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
+Main.__name__ = true;
 Main.createSelfDeck = function(deckId) {
 	var deck = Main.cardSuit[deckId];
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
@@ -411,7 +416,7 @@ Main.setRelate = function(ary_select) {
 		case "":
 			card.relate = Main.playerId;
 			send = true;
-			console.log(card.relate);
+			haxe_Log.trace(card.relate,{ fileName : "Main.hx", lineNumber : 309, className : "Main", methodName : "setRelate"});
 			break;
 		default:
 			if(relate == Main.playerId) {
@@ -495,6 +500,9 @@ Main.messageSocket = function(toId,type,msg) {
 	_channel.sendChannelMessage(toId,JSON.stringify(msg1),Main.handleResponse(function(ret) {
 	}));
 };
+Main.getCardSuit2 = function(fbid,token,cb) {
+	cardSuit.load(fbid,token,cb);
+};
 Main.createUser = function(data,cb) {
 	api.createUser(data,cb);
 };
@@ -567,24 +575,29 @@ Main.prototype = {
 	loadCardSuit: function(suitName,cb) {
 		if(Reflect.field(Main.cardPackages,suitName) != null) {
 			Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
-			Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
 			if(cb != null) cb();
 		} else Main.getCardPackageWithUrl("../common/cardPackage/" + suitName + ".json",Main.handleResponse(function(ret) {
 			Main.cardPackage = ret;
 			Main.cardPackages[suitName] = Main.cardPackage;
-			Main.getCardSuitPackageWithUrl("../common/cardPackage/" + suitName + "CardSuit.json",Main.handleResponse(function(ret1) {
-				Main.cardSuits[suitName] = ret1.cardSuit;
-				if(cb != null) cb();
-			}));
+			if(cb != null) cb();
 		}));
 	}
 	,onHtmlClick: function(type,params) {
+		var _g = this;
 		switch(type) {
 		case "onBtnLoginClick":
 			myapp.facebook.login(function(ret) {
-				var fbid = ret.authResponse.userID;
-				Main.j("#txt_id").textbox("setValue",fbid);
+				Main.fbid = ret.authResponse.userID;
+				Main.token = ret.authResponse.accessToken;
+				Main.j("#txt_id").textbox("setValue",Main.fbid);
+				Main.getCardSuit2(Main.fbid,Main.token,Main.handleResponse(function(ret1) {
+					Lambda.foreach(ret1.cardSuit,function(cs) {
+						if(Reflect.field(Main.cardSuits,cs.game) == null) Main.cardSuits[cs.game] = [];
+						Reflect.field(Main.cardSuits,cs.game).push(cs);
+						return true;
+					});
+					_g.chooseCardSuit("fighter");
+				}));
 			});
 			break;
 		case "onBtnLoadFighterClick":
@@ -606,12 +619,19 @@ Main.prototype = {
 		return Main.playerId != "" && Main.otherPlayerId != "";
 	}
 	,chooseCardSuit: function(suitName) {
+		haxe_Log.trace(Main.cardSuits,{ fileName : "Main.hx", lineNumber : 247, className : "Main", methodName : "chooseCardSuit", customParams : [suitName]});
 		Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
 		Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
+		haxe_Log.trace(Main.cardSuit,{ fileName : "Main.hx", lineNumber : 250, className : "Main", methodName : "chooseCardSuit"});
+		var _g = Main.cardSuit;
+		if(_g == null) Main.cardSuit = []; else switch(_g.length) {
+		}
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
 	}
 };
+Math.__name__ = true;
 var Reflect = function() { };
+Reflect.__name__ = true;
 Reflect.field = function(o,field) {
 	try {
 		return o[field];
@@ -634,6 +654,7 @@ Reflect.fields = function(o) {
 	return a;
 };
 var Std = function() { };
+Std.__name__ = true;
 Std.parseInt = function(x) {
 	var v = parseInt(x,10);
 	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
@@ -641,10 +662,12 @@ Std.parseInt = function(x) {
 	return v;
 };
 var StringTools = function() { };
+StringTools.__name__ = true;
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };
 var Type = function() { };
+Type.__name__ = true;
 Type.createInstance = function(cl,args) {
 	var _g = args.length;
 	switch(_g) {
@@ -672,12 +695,19 @@ Type.createInstance = function(cl,args) {
 	return null;
 };
 var haxe_IMap = function() { };
+haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
 		me.run();
 	},time_ms);
 };
+haxe_Timer.__name__ = true;
 haxe_Timer.delay = function(f,time_ms) {
 	var t = new haxe_Timer(time_ms);
 	t.run = function() {
@@ -698,6 +728,7 @@ haxe_Timer.prototype = {
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
+haxe_ds_StringMap.__name__ = true;
 haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
 haxe_ds_StringMap.prototype = {
 	set: function(key,value) {
@@ -741,13 +772,105 @@ var js__$Boot_HaxeError = function(val) {
 	this.message = String(val);
 	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
 };
+js__$Boot_HaxeError.__name__ = true;
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+};
 var org_puremvc_haxe_interfaces_INotifier = function() { };
+org_puremvc_haxe_interfaces_INotifier.__name__ = true;
 var org_puremvc_haxe_patterns_observer_Notifier = function() {
 	this.facade = org_puremvc_haxe_patterns_facade_Facade.getInstance();
 };
+org_puremvc_haxe_patterns_observer_Notifier.__name__ = true;
 org_puremvc_haxe_patterns_observer_Notifier.__interfaces__ = [org_puremvc_haxe_interfaces_INotifier];
 org_puremvc_haxe_patterns_observer_Notifier.prototype = {
 	sendNotification: function(notificationName,body,type) {
@@ -755,11 +878,13 @@ org_puremvc_haxe_patterns_observer_Notifier.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IMediator = function() { };
+org_puremvc_haxe_interfaces_IMediator.__name__ = true;
 var org_puremvc_haxe_patterns_mediator_Mediator = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_observer_Notifier.call(this);
 	if(mediatorName != null) this.mediatorName = mediatorName; else this.mediatorName = org_puremvc_haxe_patterns_mediator_Mediator.NAME;
 	if(viewComponent != null) this.viewComponent = viewComponent;
 };
+org_puremvc_haxe_patterns_mediator_Mediator.__name__ = true;
 org_puremvc_haxe_patterns_mediator_Mediator.__interfaces__ = [org_puremvc_haxe_interfaces_IMediator];
 org_puremvc_haxe_patterns_mediator_Mediator.__super__ = org_puremvc_haxe_patterns_observer_Notifier;
 org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe_patterns_observer_Notifier.prototype,{
@@ -789,6 +914,7 @@ var mediator_Card = function(mediatorName,viewComponent) {
 	this._focus = false;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
+mediator_Card.__name__ = true;
 mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
@@ -919,6 +1045,7 @@ var mediator_Layer = function(mediatorName,viewComponent) {
 	this._container_cards = viewComponent.container_cards;
 	this._body = viewComponent.body;
 };
+mediator_Layer.__name__ = true;
 mediator_Layer.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
@@ -963,6 +1090,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 };
+mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
@@ -990,6 +1118,11 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 	}
 	,createComboDeck: function(cardSuit) {
 		var _g = this;
+		if(cardSuit.length == 0) {
+			this.combo_deck.empty();
+			this.combo_deck.combobox();
+			return;
+		}
 		var i = 0;
 		this.combo_deck.empty();
 		Lambda.foreach(cardSuit,function(deck) {
@@ -1031,6 +1164,7 @@ var model_Model = function(mediatorName,viewComponent) {
 	this.ary_select = [];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
+model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
@@ -1249,11 +1383,13 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 	}
 });
 var org_puremvc_haxe_interfaces_IController = function() { };
+org_puremvc_haxe_interfaces_IController.__name__ = true;
 var org_puremvc_haxe_core_Controller = function() {
 	org_puremvc_haxe_core_Controller.instance = this;
 	this.commandMap = new haxe_ds_StringMap();
 	this.initializeController();
 };
+org_puremvc_haxe_core_Controller.__name__ = true;
 org_puremvc_haxe_core_Controller.__interfaces__ = [org_puremvc_haxe_interfaces_IController];
 org_puremvc_haxe_core_Controller.getInstance = function() {
 	if(org_puremvc_haxe_core_Controller.instance == null) org_puremvc_haxe_core_Controller.instance = new org_puremvc_haxe_core_Controller();
@@ -1284,11 +1420,13 @@ org_puremvc_haxe_core_Controller.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IModel = function() { };
+org_puremvc_haxe_interfaces_IModel.__name__ = true;
 var org_puremvc_haxe_core_Model = function() {
 	org_puremvc_haxe_core_Model.instance = this;
 	this.proxyMap = new haxe_ds_StringMap();
 	this.initializeModel();
 };
+org_puremvc_haxe_core_Model.__name__ = true;
 org_puremvc_haxe_core_Model.__interfaces__ = [org_puremvc_haxe_interfaces_IModel];
 org_puremvc_haxe_core_Model.getInstance = function() {
 	if(org_puremvc_haxe_core_Model.instance == null) org_puremvc_haxe_core_Model.instance = new org_puremvc_haxe_core_Model();
@@ -1317,12 +1455,14 @@ org_puremvc_haxe_core_Model.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IView = function() { };
+org_puremvc_haxe_interfaces_IView.__name__ = true;
 var org_puremvc_haxe_core_View = function() {
 	org_puremvc_haxe_core_View.instance = this;
 	this.mediatorMap = new haxe_ds_StringMap();
 	this.observerMap = new haxe_ds_StringMap();
 	this.initializeView();
 };
+org_puremvc_haxe_core_View.__name__ = true;
 org_puremvc_haxe_core_View.__interfaces__ = [org_puremvc_haxe_interfaces_IView];
 org_puremvc_haxe_core_View.getInstance = function() {
 	if(org_puremvc_haxe_core_View.instance == null) org_puremvc_haxe_core_View.instance = new org_puremvc_haxe_core_View();
@@ -1409,14 +1549,20 @@ org_puremvc_haxe_core_View.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_ICommand = function() { };
+org_puremvc_haxe_interfaces_ICommand.__name__ = true;
 var org_puremvc_haxe_interfaces_IFacade = function() { };
+org_puremvc_haxe_interfaces_IFacade.__name__ = true;
 var org_puremvc_haxe_interfaces_INotification = function() { };
+org_puremvc_haxe_interfaces_INotification.__name__ = true;
 var org_puremvc_haxe_interfaces_IObserver = function() { };
+org_puremvc_haxe_interfaces_IObserver.__name__ = true;
 var org_puremvc_haxe_interfaces_IProxy = function() { };
+org_puremvc_haxe_interfaces_IProxy.__name__ = true;
 var org_puremvc_haxe_patterns_facade_Facade = function() {
 	org_puremvc_haxe_patterns_facade_Facade.instance = this;
 	this.initializeFacade();
 };
+org_puremvc_haxe_patterns_facade_Facade.__name__ = true;
 org_puremvc_haxe_patterns_facade_Facade.__interfaces__ = [org_puremvc_haxe_interfaces_IFacade];
 org_puremvc_haxe_patterns_facade_Facade.getInstance = function() {
 	if(org_puremvc_haxe_patterns_facade_Facade.instance == null) org_puremvc_haxe_patterns_facade_Facade.instance = new org_puremvc_haxe_patterns_facade_Facade();
@@ -1489,6 +1635,7 @@ var org_puremvc_haxe_patterns_observer_Notification = function(name,body,type) {
 	if(body != null) this.body = body;
 	if(type != null) this.type = type;
 };
+org_puremvc_haxe_patterns_observer_Notification.__name__ = true;
 org_puremvc_haxe_patterns_observer_Notification.__interfaces__ = [org_puremvc_haxe_interfaces_INotification];
 org_puremvc_haxe_patterns_observer_Notification.prototype = {
 	getName: function() {
@@ -1517,6 +1664,7 @@ var org_puremvc_haxe_patterns_observer_Observer = function(notifyMethod,notifyCo
 	this.setNotifyMethod(notifyMethod);
 	this.setNotifyContext(notifyContext);
 };
+org_puremvc_haxe_patterns_observer_Observer.__name__ = true;
 org_puremvc_haxe_patterns_observer_Observer.__interfaces__ = [org_puremvc_haxe_interfaces_IObserver];
 org_puremvc_haxe_patterns_observer_Observer.prototype = {
 	setNotifyMethod: function(notifyMethod) {
@@ -1544,10 +1692,14 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
+String.__name__ = true;
+Array.__name__ = true;
 var __map_reserved = {}
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.j = $;
+Main.fbid = "";
+Main.token = "";
 Main.playerId = "smart";
 Main.otherPlayerId = "";
 Main.ary_cards = [];

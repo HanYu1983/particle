@@ -23,6 +23,8 @@ class Main
 	
 	public static var j:Dynamic = untyped __js__('$');
 	
+	public static var fbid = '';
+	public static var token = '';
 	public static var playerId = 'smart';
 	public static var otherPlayerId = '';
 	public static var ary_cards:Array<Dynamic> = [];
@@ -62,13 +64,12 @@ class Main
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
 		openLoading( '準備中...請稍等' );
-		var fbid = untyped __js__( 'config.fbid[config.fbid.which]' );
-		untyped __js__( 'myapp.facebook.init' )( fbid, function() {
+		var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
+		untyped __js__( 'myapp.facebook.init' )( fbappId, function() {
 			loadCardSuit( 'gundamWar', function() {
 				loadCardSuit( 'fighter', function() {
 					loadCardSuit( 'sangoWar', function(){
 						closeLoading();
-						chooseCardSuit( 'fighter' );
 						slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
 					});
 				});
@@ -181,29 +182,40 @@ class Main
 	function loadCardSuit( suitName, ?cb: Void -> Void ) {
 		if ( Reflect.field( cardPackages, suitName ) != null ) {
 			cardPackage = Reflect.field( cardPackages, suitName );
-			cardSuit = Reflect.field( cardSuits, suitName );
-			Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
-			
 			if ( cb != null ) cb();
 		}else {
+			
 			getCardPackageWithUrl( '../common/cardPackage/' + suitName + '.json', handleResponse( function( ret ) {
 				cardPackage = ret;
 				Reflect.setField( cardPackages, suitName, cardPackage );
 				
-				getCardSuitPackageWithUrl( '../common/cardPackage/' + suitName + 'CardSuit.json', handleResponse( function( ret:Dynamic ) {
-					Reflect.setField( cardSuits, suitName, ret.cardSuit );
-					
-					if ( cb != null ) cb();
-				}));
+				if ( cb != null ) cb();
 			}));
+			
 		}
 	}
+	
+	
+	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
 			case 'onBtnLoginClick':
 				untyped __js__( 'myapp.facebook.login' )( function( ret ) {
-					var fbid = ret.authResponse.userID;
+					fbid = ret.authResponse.userID;
+					token = ret.authResponse.accessToken;
+					
 					j( '#txt_id' ).textbox( 'setValue', fbid );
+					
+					getCardSuit2( fbid, token, handleResponse( function( ret ) {
+						Lambda.foreach( ret.cardSuit, function( cs ) {
+							if ( cardSuits.field( cs.game ) == null ) {
+								cardSuits.setField( cs.game, [] );
+							}
+							cardSuits.field( cs.game ).push( cs );
+							return true;
+						});
+						chooseCardSuit( 'fighter' );
+					}));
 				});
 			case 'onBtnLoadFighterClick':
 				chooseCardSuit( 'fighter' );
@@ -232,8 +244,13 @@ class Main
 	}
 	
 	function chooseCardSuit( suitName ) {
+		trace( cardSuits, suitName );
 		cardPackage = Reflect.field( cardPackages, suitName );
 		cardSuit = Reflect.field( cardSuits, suitName ) ;
+		trace( cardSuit );
+		switch( cardSuit ) {
+			case null:cardSuit = [];
+		}
 		Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
 	}
 	
@@ -392,6 +409,11 @@ class Main
 		_channel.sendChannelMessage( toId, Json.stringify( msg ), handleResponse( function( ret ) {
 			//trace( ret );
 		}));
+	}
+	
+	
+	public static function getCardSuit2( fbid, token, cb ) {
+		untyped __js__( 'cardSuit.load' )( fbid, token, cb );
 	}
 	
 	public static function createUser( data, cb ) {
