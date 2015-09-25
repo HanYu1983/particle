@@ -49,7 +49,6 @@ class Main
 			#end
 			onChange:function( nv, od ) {
 				playerId = nv;
-				createSocket( playerId );
 			}
 		});
 		
@@ -79,8 +78,9 @@ class Main
 	}
 	
 	public static function createSelfDeck( deckId:Int ) {
-		
+		if ( cardSuit == null ) return;
 		var deck = cardSuit[deckId];
+		if ( deck == null ) return;
 		var toDeck = Lambda.array( Lambda.map( deck.cards, function( cardId ) {
 			return { 	
 					id:getId(), 
@@ -94,6 +94,7 @@ class Main
 			}
 		}));
 		
+		slide( '創建卡片完成' );
 		Animate.addCardAndPrepare( toDeck )().done( function() {
 			pushCmds( { cmd:'addCards', content:toDeck } );
 		});
@@ -199,7 +200,15 @@ class Main
 	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
+			case 'onBtnStartServer':
+				if ( playerId == 'smart' || otherPlayerId == '' ) {
+					slide( '請先登入並且輸入對手的id' );
+					return;
+				}
+				createSocket( playerId );
 			case 'onBtnLoginClick':
+				openLoading( '登入並讀取資料中...' );
+				
 				untyped __js__( 'myapp.facebook.login' )( function( ret ) {
 					fbid = ret.authResponse.userID;
 					token = ret.authResponse.accessToken;
@@ -215,6 +224,9 @@ class Main
 							return true;
 						});
 						chooseCardSuit( 'fighter' );
+						
+						j( '#btn_login' ).linkbutton( 'disable' );
+						closeLoading();
 					}));
 				});
 			case 'onBtnLoadFighterClick':
@@ -226,7 +238,6 @@ class Main
 			case 'onBtnCreateDeck':
 				#if debug
 				Facade.getInstance().sendNotification( on_createDeck_click );
-				slide( '創建卡片完成' );
 				#else
 				//if( checkCanCreate() ){
 					Facade.getInstance().sendNotification( on_createDeck_click );
@@ -244,10 +255,8 @@ class Main
 	}
 	
 	function chooseCardSuit( suitName ) {
-		trace( cardSuits, suitName );
 		cardPackage = Reflect.field( cardPackages, suitName );
 		cardSuit = Reflect.field( cardSuits, suitName ) ;
-		trace( cardSuit );
 		switch( cardSuit ) {
 			case null:cardSuit = [];
 		}
@@ -306,7 +315,6 @@ class Main
 					//如果relate 是空白，就可以修改為自己
 					card.relate = Main.playerId;
 					send = true;
-					trace( card.relate );
 				case relate:
 					//如果relate 不是自己，就不能更改
 					if ( relate == Main.playerId ) {
@@ -382,7 +390,8 @@ class Main
 			}	
 			_channel.addEventListenerAndOpenSocket( ch, {
 				onopen: function() {
-					slide( '創建玩家成功' );
+					slide( '連線成功' );
+					j( '#btn_connect' ).linkbutton( 'disable' );
 				},
 				onmessage: function(path, option){
 					var origin = Json.parse(path.data);

@@ -118,10 +118,10 @@ body{
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
 	
 	<div class="easyui-layout" style="position:absolute; right:0; top:0; width:25%;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:300px;" >
+        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:320px;" >
 			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div class="hori">
-					<a href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
+					<a id="btn_login" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
 				</div>
 				<div class="hori">
 					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
@@ -133,6 +133,10 @@ body{
 				<input id="txt_id" class="easyui-textbox" style="width:120px;" />
 				<div>對手:</div>
 				<input id="txt_opponent" class="easyui-textbox" style="width:120px;" />
+				<div style="margin-top:5px;">
+					<a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="iconCls:'icon-add',disabled:false">開始連線</a>
+				</div>
+				
 			</div>
 			<div class="group" style="text-align:center; margin-bottom:10px;">
 				<div class="group" style="margin-top:5px; margin-bottom:5px;">
