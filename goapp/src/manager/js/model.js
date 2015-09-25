@@ -15,6 +15,7 @@ var model = model || {};
   }
   
   /**
+  新增/修改。若找到name代表修改，否則為新增
   params; {
     name: string,
     game: "鋼彈大戰" | "三國誌大戰" | "格鬥風雲錄",
@@ -39,6 +40,9 @@ var model = model || {};
     }
   }
   
+  /**
+  刪除指定名稱的card suit
+  */
   function removeCardSuit( mo, name ){
     var target = _.find(mo.cardSuit, function(item){
       return item.name == name
@@ -48,6 +52,13 @@ var model = model || {};
     }
   }
   
+  /**
+  讀取
+  若沒有資料，會回傳預設model
+  cb: function( err, model ){
+    model: {}
+  }
+  */
   function load( fbid, token, cb ){
     store.load({
       FBID: fbid,
@@ -58,10 +69,10 @@ var model = model || {};
         cb( err )
       } else {
         if( ret == "" ){
-          cb( nil, defaultModel() )
+          cb( null, defaultModel() )
           
         } else {
-          cb( nil, JSON.parse( ret ))
+          cb( null, JSON.parse( ret ))
           
         }
       }
