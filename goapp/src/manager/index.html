@@ -101,7 +101,12 @@ a{
 			<div id="mc_particle" style="position:relative; width:100%; height:100%; "></div>
 			<div id="mc_card" style="position:relative; width:100%; height:100%; ">
 				<div class="group" style="text-align:center; margin-top:10px;">
-					<a id="btn_addDeck" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-add'" >新增套牌</a>
+					<div class="hori">
+						<a id="btn_addDeck" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-add',disabled:true" >新增套牌</a>
+					</div>
+					<div class="hori">
+						<a id="btn_saveDeck" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-save',disabled:true" >存檔</a>
+					</div>
 				</div>
 				<div id="mc_deckContainer" class="group" style="text-align:center; margin-top:10px;">
 					
@@ -132,10 +137,6 @@ a{
 	});
 	
 	openCard();
-	
-	function appStart(){
-	
-	}
 	
 	function showDeckList( retModel ){
 		console.log( retModel );
@@ -170,6 +171,8 @@ a{
 					model.load( fbid, token, handleModel( function( ret ){
 						loadModel = ret;
 						showDeckList( loadModel );
+						
+						$('#btn_addDeck').linkbutton( 'enable' );
 					}));
 				});
 				break;
@@ -209,9 +212,12 @@ a{
 		model.editCardSuit( loadModel, editModel );
 		showDeckList( loadModel );
 		
+		$('#btn_saveDeck' ).linkbutton( 'enable' );
+		/*
 		model.save( fbid, token, loadModel, handleModel( function( ret ){
 			console.log( ret );
 		}));
+		*/
 	}
 	
 	function addDeck( _model ){
@@ -241,9 +247,9 @@ a{
 							break;
 						case 'txt_cards':
 							try{
-							__model.cards = JSON.parse( '[' + nv + ']' );
+								__model.cards = JSON.parse( '[' + nv + ']' );
 							}catch( e ){
-								console.log("DD");
+								showAlert("格式輸入錯誤，請檢查");
 							}
 							editAndShow( __model );
 							break;
@@ -275,11 +281,12 @@ a{
 		
 		dom.find( '#btn_remove' ).click( function(){
 			model.removeCardSuit( loadModel, $(this).attr( 'group' ) );
+			/*
 			model.save( fbid, token, loadModel, handleModel( function( ret ){
 				console.log( ret );
 				showDeckList( loadModel );
 			}));
-			
+			*/
 		});
 	}
 	
@@ -322,6 +329,10 @@ a{
 			timeout:2000,
 			showType:'slide'
 		});
+	}
+	
+	function showAlert( msg ){
+		$.messager.alert('錯誤', msg );
 	}
 	</script>
 	<script src="js/manager.js"></script>
