@@ -50,7 +50,16 @@ a{
 	font-size:20px;
 }
 </style>
-
+<script id="tmpl_deck" type="jquery-x-tmpl">
+	<div class="group">
+		<a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-remove'" ></a>
+		<div class="hori"><a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g2',selected:true" >格</a></div>
+		<div class="hori"><a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g2',selected:false" >鋼</a></div>
+		<div class="hori"><a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g2',selected:false" >三</a></div>
+		<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
+		<div class="hori"><input class="easyui-textbox" style="width:500px"></div>
+	</div>
+</script>
 <body>
 	<div class="easyui-layout" style="width:100%;height:100%;">
 		<div data-options="region:'north',split:false" style="height:36px;">
@@ -91,8 +100,11 @@ a{
 			<div id="mc_stock" style="position:relative; width:100%; height:100%; "></div>
 			<div id="mc_particle" style="position:relative; width:100%; height:100%; "></div>
 			<div id="mc_card" style="position:relative; width:100%; height:100%; ">
-				<div class="group">
-					<div class="hori"><a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g2',selected:false" >格</a></div>
+				<div class="group" style="text-align:center; margin-top:10px;">
+					<a id="btn_addDeck" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-add'" >新增套牌</a>
+				</div>
+				<div id="mc_deckContainer" class="group" style="text-align:center; margin-top:10px;">
+					
 				</div>
 			</div>
 			<div id="mc_team" style="position:relative; width:100%; height:100%; display:none;">
@@ -108,11 +120,18 @@ a{
 	online:'425311264344425',
 	local:'679171275511375',
 	*/
+	
+	var id = 0;
+	
+	function getNewName(){
+		
+	}
+	
 	myapp.facebook.init( '679171275511375', function(){
 		$('#btn_login' ).linkbutton( 'enable' );
 	});
 	
-	openStock();
+	openCard();
 	
 	function appStart(){
 	
@@ -143,6 +162,9 @@ a{
 					}));
 				});
 				break;
+			case 'btn_addDeck':
+				addDeck();
+				break;
 			case 'btn_stockLink':
 				window.open( 'http://particle-979.appspot.com/stock/index.html#' );
 				break;
@@ -165,6 +187,13 @@ a{
 				openTeam();
 				break;
 		}
+	}
+	
+	function addDeck(){
+		var dom = $("#tmpl_deck" ).tmpl();
+		$('#mc_deckContainer').append( dom );
+		dom.find( '.easyui-linkbutton' ).linkbutton();
+		dom.find( '.easyui-textbox' ).textbox();
 	}
 	
 	function loginFacebook( cb ){
