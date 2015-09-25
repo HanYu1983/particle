@@ -95,6 +95,12 @@ func LoadFormUser(w http.ResponseWriter, r *http.Request){
   
   files, _, err = dbfile.QueryKeys( ctx, userDir, fileName )
   tool.Assert( tool.IfError( err ) ) 
+  
+  if len( files ) == 0 {
+    fmt.Fprintf(w, "%s", "")
+    return
+  }
+  
   fmt.Fprintf(w, "%s", string( files[0].Content ))
 }
 
