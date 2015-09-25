@@ -51,13 +51,13 @@ a{
 }
 </style>
 <script id="tmpl_deck" type="jquery-x-tmpl">
-	<div class="group">
-		<a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-remove'" ></a>
-		<div class="hori"><a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g2',selected:true" >格</a></div>
-		<div class="hori"><a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g2',selected:false" >鋼</a></div>
-		<div class="hori"><a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g2',selected:false" >三</a></div>
-		<div class="hori"><input class="easyui-textbox" style="width:100px"></div>
-		<div class="hori"><input class="easyui-textbox" style="width:500px"></div>
+	<div id=${name} class="group">
+		<a id="btn_remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" ></a>
+		<div class="hori"><a id="btn_fighter" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:true" >格</a></div>
+		<div class="hori"><a id="btn_gundamWar" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:false" >鋼</a></div>
+		<div class="hori"><a id="btn_sangoWar" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:false" >三</a></div>
+		<div class="hori"><input id="txt_name" class="easyui-textbox" style="width:100px" value=${name}></div>
+		<div class="hori"><input id="txt_cards" class="easyui-textbox" style="width:500px"></div>
 	</div>
 </script>
 <body>
@@ -121,8 +121,8 @@ a{
 	local:'679171275511375',
 	*/
 	
-	var id = 0;
-	
+	var fbid, token;
+	var loadModel;
 	function getNewName(){
 		
 	}
@@ -135,6 +135,16 @@ a{
 	
 	function appStart(){
 	
+	}
+	
+	function showDeckList( retModel ){
+		console.log( retModel );
+		$("#mc_deckContainer").empty();
+		_.each( retModel.cardSuit, function( deck ){
+			var copyDeck = JSON.parse( JSON.stringify( deck ) );
+			addDeck( copyDeck );
+		});
+		console.log( 'end' );
 	}
 	
 	function handleModel( func ){
@@ -152,18 +162,24 @@ a{
 			case 'btn_login':
 				loginFacebook( function( ret ){
 					$('#btn_login' ).linkbutton( 'disable' );
-					
-					var userId = ret.authResponse.userID;
-					var accessToken = ret.authResponse.accessToken;
 					showMessage( '登入成功' );
 					
-					model.load( userId, accessToken, handleModel( function( ret ){
-						console.log( ret );
+					fbid = ret.authResponse.userID;
+					token = ret.authResponse.accessToken;
+					
+					model.load( fbid, token, handleModel( function( ret ){
+						loadModel = ret;
+						showDeckList( loadModel );
 					}));
 				});
 				break;
 			case 'btn_addDeck':
-				addDeck();
+				model.editCardSuit( loadModel, {
+					name: leo.utils.generateUUID(),
+					game: "fighter",
+					cards:[]
+				})
+				showDeckList( loadModel );
 				break;
 			case 'btn_stockLink':
 				window.open( 'http://particle-979.appspot.com/stock/index.html#' );
@@ -189,11 +205,78 @@ a{
 		}
 	}
 	
-	function addDeck(){
-		var dom = $("#tmpl_deck" ).tmpl();
+	function editAndShow( editModel ){
+		model.editCardSuit( loadModel, editModel );
+		showDeckList( loadModel );
+		
+		model.save( fbid, token, loadModel, handleModel( function( ret ){
+			console.log( ret );
+		}));
+	}
+	
+	function addDeck( _model ){
+		var dom = $("#tmpl_deck" ).tmpl( _model );
 		$('#mc_deckContainer').append( dom );
-		dom.find( '.easyui-linkbutton' ).linkbutton();
+		dom.find( '.easyui-linkbutton' ).linkbutton({
+			group:_model.name,
+			onClick:(function( __model ){
+				return function(){
+					switch( this.id ){
+						case 'btn_fighter':__model.game = 'fighter';break;
+						case 'btn_gundamWar':__model.game = 'gundamWar';break;
+						case 'btn_sangoWar':__model.game = 'sangoWar';break;
+					}
+					editAndShow( __model );
+				}
+			})( _model )
+		});
 		dom.find( '.easyui-textbox' ).textbox();
+		dom.find( '.easyui-textbox' ).textbox({
+			onChange:(function( __model ){
+				return function( nv, ov ){
+					switch( $( this ).attr( 'id' )){
+						case 'txt_name':
+							__model.name = nv;
+							editAndShow( __model );
+							break;
+						case 'txt_cards':
+							__model.cards = JSON.parse( '[' + nv + ']' );
+							editAndShow( __model );
+							break;
+					}
+					
+				}
+			})( _model )
+		});
+		
+		var cardstr = (function(){
+			var str = JSON.stringify( _model.cards );
+			str = str.substr( 1, str.length - 2 );
+			return str;
+		})();
+		switch( _model.game ){
+			case 'fighter':
+				dom.find( '#btn_fighter' ).linkbutton( 'select' );
+				break;
+			case 'gundamWar':
+				dom.find( '#btn_gundamWar' ).linkbutton( 'select' );
+				break;
+			case 'sangoWar':
+				dom.find( '#btn_sangoWar' ).linkbutton( 'select' );
+		}
+		
+		dom.find( '#txt_cards' ).textbox( {
+			value:cardstr
+		});
+		
+		dom.find( '#btn_remove' ).click( function(){
+			model.removeCardSuit( loadModel, $(this).attr( 'group' ) );
+			model.save( fbid, token, loadModel, handleModel( function( ret ){
+				console.log( ret );
+				showDeckList( loadModel );
+			}));
+			
+		});
 	}
 	
 	function loginFacebook( cb ){
