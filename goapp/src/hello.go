@@ -22,6 +22,8 @@ func init(){
   authenticator := auth.NewDigestAuthenticator("dbpublic", Secret)
   dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
   
+  SetUserPosition( UserPosition )
+  
   http.HandleFunc("/welcome/", welcome)
   http.HandleFunc("/", handler)
   http.HandleFunc("/proxy", tool.Proxy)
@@ -29,6 +31,8 @@ func init(){
   http.HandleFunc("/write", dbfile.WriteFile)
   http.HandleFunc("/simple/save", Save)
   http.HandleFunc("/simple/load", Load)
+  http.HandleFunc("/fn/saveUser", SaveToUser)
+  http.HandleFunc("/fn/loadUser", LoadFormUser)
   http.HandleFunc("/fn/cardInfo/addCard", AddCard)
   http.HandleFunc("/fn/cardInfo/deleteCard", DeleteCard)
   http.HandleFunc("/fn/cardInfo/cardList", CardList)

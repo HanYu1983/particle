@@ -6,7 +6,97 @@ import (
   "lib/tool"
   "lib/db/file"
   "appengine"
+  "encoding/json"
 )
+
+func Output(w http.ResponseWriter, info, err interface{}){
+  ret := map[string]interface{}{
+    "Info": info,
+    "Error": err,
+  }
+  jsonstr, _ := json.Marshal( ret )
+  fmt.Fprintf(w, "%s", string( jsonstr ))
+}
+
+var rootDir int64
+
+func SetUserPosition(dir int64){
+  rootDir = dir
+}
+
+func SaveToUser(w http.ResponseWriter, r *http.Request){
+  defer tool.Recover( func(err error){
+    Output( w, nil, err.Error() )
+  })
+  
+  ctx := appengine.NewContext( r )
+  
+  form, err := tool.ReadAjaxPost( r )
+  tool.Assert( tool.IfError( err ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "AccessToken" ) )
+  
+  fbid := form["FBID"][0]
+  accessToken := form["AccessToken"][0]
+  _, err = tool.AuthFB( ctx, fbid, accessToken )
+  tool.Assert( tool.IfError( err ) ) 
+  
+  tool.Assert( tool.ParameterIsNotExist( form, "FileName" ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "Data" ) ) 
+  
+  files, _, err := dbfile.QueryKeys( ctx, rootDir, fbid )
+  tool.Assert( tool.IfError( err ) ) 
+  
+  var userDir int64
+  if len( files ) == 0 {
+    userDir, err = dbfile.MakeDir( ctx, rootDir, fbid )
+  } else {
+    userDir = files[0].Key
+  }
+  
+  fileName := form["FileName"][0]
+  data := form["Data"][0]
+  
+  _, err = dbfile.MakeFile( ctx, userDir, fileName, []byte(data), true )
+  tool.Assert( tool.IfError( err ) ) 
+  
+  Output( w, nil, nil )
+}
+
+func LoadFormUser(w http.ResponseWriter, r *http.Request){
+  defer tool.Recover( func(err error){
+    Output( w, nil, err.Error() )
+  })
+  
+  ctx := appengine.NewContext( r )
+  
+  form, err := tool.ReadAjaxPost( r )
+  tool.Assert( tool.IfError( err ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
+  tool.Assert( tool.ParameterIsNotExist( form, "AccessToken" ) )
+  
+  fbid := form["FBID"][0]
+  accessToken := form["AccessToken"][0]
+  _, err = tool.AuthFB( ctx, fbid, accessToken )
+  tool.Assert( tool.IfError( err ) ) 
+  
+  tool.Assert( tool.ParameterIsNotExist( form, "FileName" ) ) 
+  
+  files, _, err := dbfile.QueryKeys( ctx, rootDir, fbid )
+  tool.Assert( tool.IfError( err ) ) 
+  
+  if len( files ) == 0 {
+    fmt.Fprintf(w, "%s", "")
+    return
+  }
+  
+  userDir := files[0].Key
+  fileName := form["FileName"][0]
+  
+  files, _, err = dbfile.QueryKeys( ctx, userDir, fileName )
+  tool.Assert( tool.IfError( err ) ) 
+  fmt.Fprintf(w, "%s", string( files[0].Content ))
+}
 
 func Load(w http.ResponseWriter, r *http.Request){
   defer tool.Recover( tool.WriteErrorJson(w) )
