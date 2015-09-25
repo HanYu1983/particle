@@ -20,7 +20,8 @@
         :output-to "../node_workspace/getMagicCard/main.js"
         :output-dir "../node_workspace/getMagicCard/"
         :target :nodejs
-        :optimizations :advanced
+        ; 不要用advanced，不然不能跑
+        :optimizations :simple  
         :pretty-print false
       }
     }

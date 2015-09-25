@@ -8,7 +8,7 @@
 (def outputDir "output/")
 (def host "http://sangokushi-taisen-tcg.segataiwan.com.tw/")
 (def packages 
-  ["第一彈：魏" "第一彈：蜀" "第一彈：吳" "第一彈：群"])
+  ["PR卡片：PR"])
 (def page 2)
 
 (defn parseGroup [content]
