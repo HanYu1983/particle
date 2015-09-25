@@ -32,6 +32,14 @@ func QueryKeys (ctx appengine.Context, position int64, name string) ([]DBFile, [
 
 func MakeFile (ctx appengine.Context, position int64, name string, content []byte, override bool) (int64, error) {
   
+  // 0 代表為桌面，不必檢查
+  if position != 0 {
+    _, err := GetFile( ctx, position )
+    if err != nil {
+      return 0, err
+    }
+  }
+  
   file := DBFile{
     Key: 0,
     Position: position,
@@ -67,6 +75,14 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
 }
 
 func MakeDir (ctx appengine.Context, position int64, name string) (int64, error){
+  
+  // 0 代表為桌面，不必檢查
+  if position != 0 {
+    _, err := GetFile( ctx, position )
+    if err != nil {
+      return 0, err
+    }
+  }
   
   file := DBFile{
     Position: position,
