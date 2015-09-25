@@ -65,7 +65,7 @@ a{
 						<a id="btn_stockLink" href="#" class="easyui-linkbutton" style="width:100%; height:40px;" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
 					</div>
 					<div class="hori" style="width:78%">
-						<a id="btn_stock" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true" >余氏k線圖</a>
+						<a id="btn_stock" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >余氏k線圖</a>
 					</div>
 				</div>
 				<div class="group">
@@ -81,7 +81,7 @@ a{
 						<a id="btn_cardLink" href="#" class="easyui-linkbutton" style="width:100%; height:40px;" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
 					</div>
 					<div class="hori" style="width:78%">
-						<a id="btn_card" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >卡牌風雲</a>
+						<a id="btn_card" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true" >卡牌風雲</a>
 					</div>
 				</div>
 				<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
@@ -90,7 +90,11 @@ a{
 		<div data-options="region:'center',title:'內容'" style="">
 			<div id="mc_stock" style="position:relative; width:100%; height:100%; "></div>
 			<div id="mc_particle" style="position:relative; width:100%; height:100%; "></div>
-			<div id="mc_card" style="position:relative; width:100%; height:100%; "></div>
+			<div id="mc_card" style="position:relative; width:100%; height:100%; ">
+				<div class="group">
+					<div class="hori"><a id="" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g2',selected:false" >格</a></div>
+				</div>
+			</div>
 			<div id="mc_team" style="position:relative; width:100%; height:100%; display:none;">
 				team
 			</div>
