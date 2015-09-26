@@ -279,7 +279,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 	}});
 	Main.j("#txt_opponent").textbox({ onChange : function(nv1,od1) {
@@ -581,7 +581,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤已經回報"); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -1050,6 +1050,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			this._card.showTo = Main.playerId;
 		}
 		if(this._back) this.getViewComponent().find("#img_back").show(); else this.getViewComponent().find("#img_back").hide();
+		if(!this._back) this.showWho("");
 	}
 	,seeCard: function(see) {
 		this._see = see;
@@ -1074,9 +1075,6 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
 		this._body.keyup($bind(this,this.onBodyKeyUp));
 		this._body.mousemove($bind(this,this.onBodyMouseMove));
-		window.document.addEventListener("contextmenu",function(e) {
-			e.preventDefault();
-		},false);
 		this._body.mousedown($bind(this,this.onBodyMouseDown));
 		leo.utils.initRectSelect(function(ary) {
 			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
@@ -1795,3 +1793,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

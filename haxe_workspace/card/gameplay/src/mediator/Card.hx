@@ -112,7 +112,6 @@ class Card extends Mediator
 		}else {
 			getViewComponent().find( '#mc_see' ).hide();
 		}
-		
 	}
 	
 	function showOnwer( show ) {
@@ -223,6 +222,11 @@ class Card extends Mediator
 			getViewComponent().find( '#img_back' ).show();
 		}else {
 			getViewComponent().find( '#img_back' ).hide();
+		}
+		
+		//牌面朝上的話，就把顏色拿掉
+		if ( !_back ) {
+			showWho( '' );
 		}
 	}
 	
