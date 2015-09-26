@@ -1050,6 +1050,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			this._card.showTo = Main.playerId;
 		}
 		if(this._back) this.getViewComponent().find("#img_back").show(); else this.getViewComponent().find("#img_back").hide();
+		if(!this._back) this.showWho("");
 	}
 	,seeCard: function(see) {
 		this._see = see;
