@@ -8,7 +8,7 @@ import mediator.Layer;
 import mediator.UI;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
-
+using Reflect;
 /**
  * ...
  * @author vic
@@ -119,6 +119,7 @@ class Model extends Mediator
 					case KeyboardEvent.DOM_VK_W:
 						doListReverse();
 					case KeyboardEvent.DOM_VK_E:
+						doSeperateSameTogether();
 					case KeyboardEvent.DOM_VK_R:
 						//3 is right mouse click
 					case KeyboardEvent.DOM_VK_A, 3:
@@ -166,7 +167,7 @@ class Model extends Mediator
 		});
 	}
 	
-	function listSeperate(){
+	function listSeperate() {
 		Lambda.foreach( ary_select, function( select ) {
 			var cardIndex = Lambda.indexOf( ary_select, select );
 			select.pos[0] = pos_mouse[0] + ( cardIndex % 10 * 55 );
@@ -212,6 +213,27 @@ class Model extends Mediator
 		listCard();
 		Main.moveCards( ary_select, pos_mouse, true );
 		Main.pushCmds( { cmd:'listCardReverse', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
+	}
+	
+	function doSeperateSameTogether() {
+		var collectobj:Dynamic = { };
+		Lambda.foreach( ary_select, function( card ) {
+			if ( collectobj.field( card.cardId ) == null ) {
+				collectobj.setField( card.cardId, [] );
+			}
+			collectobj.field( card.cardId ).push( card );
+			return true;
+		});
+		
+		var newary = [];
+		for ( c in collectobj.fields() ) {
+			newary = newary.concat( collectobj.field( c ) );
+		}
+		
+		ary_select = newary;
+		listSeperate();
+		Main.moveCards( ary_select, pos_mouse, true );
+		Main.pushCmds( { cmd:'seperateCardSameTogether', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
 	
 	function doSeperateReverse() {

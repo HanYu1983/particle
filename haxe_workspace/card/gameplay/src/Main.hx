@@ -144,6 +144,8 @@ class Main
 		}
 		
 		switch( content.cmd ) {
+			case 'seperateCardSameTogether':
+				return Animate.sameTogetherSeperate( content.content.ary_select, content.content.pos_mouse );
 			case 'changeIndex':
 				return Animate.changeIndex( content.content.cardId );
 			case 'removeCards':
