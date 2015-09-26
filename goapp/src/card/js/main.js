@@ -469,6 +469,8 @@ Main.getCardsById = function(id) {
 };
 Main.changeIndex = function(cardId) {
 	try {
+		var cm = org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId);
+		if(cm == null) return;
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_Card.card_enter,org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId).getViewComponent());
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
@@ -1156,6 +1158,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		});
 	}
 	,showCard: function(card) {
+		if(card == null) return;
 		if(card.showTo == Main.playerId) {
 			var url = Main.getCardImageUrlWithPackage(Main.cardPackage,card.cardId);
 			var img = Main.j("<img></img>");

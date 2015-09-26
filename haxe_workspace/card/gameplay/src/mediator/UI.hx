@@ -82,6 +82,7 @@ class UI extends Mediator
 	}
 	
 	function showCard( card ) {
+		if ( card == null ) return;
 		if ( card.showTo == Main.playerId ) {
 			var url = Main.getCardImageUrlWithPackage( Main.cardPackage, card.cardId );
 			var img = Main.j( '<img></img>' );

@@ -375,7 +375,10 @@ class Main
 	
 	public static function changeIndex( cardId:String ) {
 		//有可能會因為牌還沒有創建，就被call到這個方法，先try起來，再慢慢查
-		try{
+		
+		try {
+			var cm = Facade.getInstance().retrieveMediator( cardId );
+			if ( cm == null ) return;
 			Facade.getInstance().sendNotification( Card.card_enter, Facade.getInstance().retrieveMediator( cardId ).getViewComponent() );
 		}catch ( e:String ) {
 			trace( e );
