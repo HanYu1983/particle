@@ -374,7 +374,13 @@ Main.pollAllMessage = function() {
 };
 Main.applyValue = function(ary_select,self) {
 	Lambda.foreach(ary_select,function(card) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card), notify : self},"ownerAndRelate_change");
+		var showWho = (function() {
+			if(card.relate == card.owner) {
+				if(card.relate == Main.playerId) return ""; else if(card.relate == Main.otherPlayerId) return "red";
+			}
+			return "";
+		})();
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showWho : showWho, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card), notify : self},"ownerAndRelate_change");
 		return true;
 	});
 };
@@ -963,6 +969,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 				this.rotateAnimation(notification.getBody().select.deg);
 				this.showOnwer(notification.getBody().showOwner);
 				this.showRelate(notification.getBody().showRelate);
+				this.showWho(notification.getBody().showWho);
 				this.seeCard(notification.getBody().seeCard);
 				this.setView();
 				break;
@@ -979,6 +986,12 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 			}
 			break;
 		}
+	}
+	,showWho: function(color) {
+		if(color != "") {
+			this.getViewComponent().find("#mc_see").css("background-color",color);
+			this.getViewComponent().find("#mc_see").show();
+		} else this.getViewComponent().find("#mc_see").hide();
 	}
 	,showOnwer: function(show) {
 		if(show) this.getViewComponent().find("#img_owner").show(); else this.getViewComponent().find("#img_owner").hide();

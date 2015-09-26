@@ -75,6 +75,7 @@ class Card extends Mediator
 						rotateAnimation( notification.getBody().select.deg );
 						showOnwer( notification.getBody().showOwner );
 						showRelate( notification.getBody().showRelate );
+						showWho( notification.getBody().showWho );
 						seeCard( notification.getBody().seeCard );
 						setView();
 					case 'moveCards':
@@ -102,6 +103,16 @@ class Card extends Mediator
 				flip( notification.getBody().select.back );
 				*/
 		}
+	}
+	
+	function showWho( color:String ) {
+		if ( color != '' ) {
+			getViewComponent().find( '#mc_see' ).css( 'background-color', color );
+			getViewComponent().find( '#mc_see' ).show();
+		}else {
+			getViewComponent().find( '#mc_see' ).hide();
+		}
+		
 	}
 	
 	function showOnwer( show ) {

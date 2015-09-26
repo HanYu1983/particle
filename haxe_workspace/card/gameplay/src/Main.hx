@@ -269,8 +269,19 @@ class Main
 	
 	public static function applyValue( ary_select:Array<Dynamic>, self:Bool ) {
 		Lambda.foreach( ary_select, function( card:Dynamic ) {
+			var showWho = (function(){
+				if ( card.relate == card.owner ) {
+					if ( card.relate == Main.playerId ) {
+						return '';
+					}else if( card.relate == Main.otherPlayerId ){
+						return 'red';
+					}
+				}
+				return '';
+			})();
 			Facade.getInstance().sendNotification( Model.on_state_change, { 
 																			select:card, 
+																			showWho:showWho,
 																			showRelate:Main.playerId == card.relate, 
 																			showOwner:Main.playerId == card.owner, 
 																			seeCard: seeCard( card ),
