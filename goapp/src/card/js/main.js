@@ -561,7 +561,10 @@ Main.getCardImageUrlWithPackage = function(name,key) {
 			break;
 		}
 	}
-	if(cpkg == null) return "";
+	if(cpkg == null) {
+		console.log("缺了這張牌的圖哦! id是: " + key);
+		return "";
+	}
 	return api.getCardImageUrlWithPackage(cpkg,key);
 };
 Main.getCardSuit = function(pkg) {

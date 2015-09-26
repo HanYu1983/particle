@@ -493,7 +493,10 @@ class Main
 				break;
 			}
 		}
-		if ( cpkg == null ) return '';
+		if ( cpkg == null ) {
+			trace( '缺了這張牌的圖哦! id是: ' + key );
+			return '';
+		}
 		return untyped __js__('api.getCardImageUrlWithPackage' )( cpkg, key );
 	}
 	
