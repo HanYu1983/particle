@@ -148,4 +148,15 @@ class Animate
 			return d;
 		}
 	}
+	
+	public static function sameTogetherSeperate( ary_select, pos_mouse ) {
+		return function(){
+			var d:Dynamic = Main.j.Deferred();
+			Main.moveCards( ary_select, pos_mouse, false );
+			Timer.delay( function() {
+				d.resolve();
+			}, 1000 );
+			return d;
+		}
+	}
 }

@@ -132,6 +132,16 @@ Animate.shuffleSeperate = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
+Animate.sameTogetherSeperate = function(ary_select,pos_mouse) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.moveCards(ary_select,pos_mouse,false);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},1000);
+		return d;
+	};
+};
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
@@ -337,6 +347,8 @@ Main.callAction = function(content) {
 	},[]);
 	var _g = content.cmd;
 	switch(_g) {
+	case "seperateCardSameTogether":
+		return Animate.sameTogetherSeperate(content.content.ary_select,content.content.pos_mouse);
 	case "changeIndex":
 		return Animate.changeIndex(content.content.cardId);
 	case "removeCards":
@@ -1273,6 +1285,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				this.doListReverse();
 				break;
 			case 69:
+				this.doSeperateSameTogether();
 				break;
 			case 82:
 				break;
@@ -1362,6 +1375,26 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		this.listCard();
 		Main.moveCards(this.ary_select,this.pos_mouse,true);
 		Main.pushCmds({ cmd : "listCardReverse", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
+	}
+	,doSeperateSameTogether: function() {
+		var collectobj = { };
+		Lambda.foreach(this.ary_select,function(card) {
+			if(Reflect.field(collectobj,card.cardId) == null) collectobj[card.cardId] = [];
+			Reflect.field(collectobj,card.cardId).push(card);
+			return true;
+		});
+		var newary = [];
+		var _g = 0;
+		var _g1 = Reflect.fields(collectobj);
+		while(_g < _g1.length) {
+			var c = _g1[_g];
+			++_g;
+			newary = newary.concat(Reflect.field(collectobj,c));
+		}
+		this.ary_select = newary;
+		this.listSeperate();
+		Main.moveCards(this.ary_select,this.pos_mouse,true);
+		Main.pushCmds({ cmd : "seperateCardSameTogether", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
 	}
 	,doSeperateReverse: function() {
 		this.ary_select.reverse();
