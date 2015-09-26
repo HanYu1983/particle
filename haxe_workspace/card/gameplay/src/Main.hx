@@ -29,6 +29,7 @@ class Main
 	public static var otherPlayerId = '';
 	public static var ary_cards:Array<Dynamic> = [];
 	
+	public static var currentSelect = 'fighter';
 	public static var cardPackages:Dynamic = { };
 	public static var cardPackage = null;
 	public static var cardSuits:Dynamic = {};
@@ -223,17 +224,20 @@ class Main
 							cardSuits.field( cs.game ).push( cs );
 							return true;
 						});
-						chooseCardSuit( 'fighter' );
+						chooseCardSuit( currentSelect );
 						
 						j( '#btn_login' ).linkbutton( 'disable' );
 						closeLoading();
 					}));
 				});
 			case 'onBtnLoadFighterClick':
+				currentSelect = 'fighter';
 				chooseCardSuit( 'fighter' );
 			case 'onBtnLoadGundamWarClick':
+				currentSelect = 'gundamWar';
 				chooseCardSuit( 'gundamWar' );
 			case 'onBtnLoadSangoWarClick':
+				currentSelect = 'sangoWar';
 				chooseCardSuit( 'sangoWar' );
 			case 'onBtnCreateDeck':
 				#if debug
@@ -241,7 +245,7 @@ class Main
 				#else
 				//if( checkCanCreate() ){
 					Facade.getInstance().sendNotification( on_createDeck_click );
-					slide( '創建卡片完成' );
+					//slide( '創建卡片完成' );
 				//}else{
 				//	slide( '沒有登入或者沒有對手時，不能創建卡牌哦' );
 				//}

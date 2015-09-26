@@ -600,24 +600,26 @@ Main.prototype = {
 						Reflect.field(Main.cardSuits,cs.game).push(cs);
 						return true;
 					});
-					_g.chooseCardSuit("fighter");
+					_g.chooseCardSuit(Main.currentSelect);
 					Main.j("#btn_login").linkbutton("disable");
 					Main.closeLoading();
 				}));
 			});
 			break;
 		case "onBtnLoadFighterClick":
+			Main.currentSelect = "fighter";
 			this.chooseCardSuit("fighter");
 			break;
 		case "onBtnLoadGundamWarClick":
+			Main.currentSelect = "gundamWar";
 			this.chooseCardSuit("gundamWar");
 			break;
 		case "onBtnLoadSangoWarClick":
+			Main.currentSelect = "sangoWar";
 			this.chooseCardSuit("sangoWar");
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
-			Main.slide("創建卡片完成");
 			break;
 		}
 	}
@@ -1584,6 +1586,7 @@ Main.token = "";
 Main.playerId = "smart";
 Main.otherPlayerId = "";
 Main.ary_cards = [];
+Main.currentSelect = "fighter";
 Main.cardPackages = { };
 Main.cardSuits = { };
 Main.tmpl_card = Main.j("#tmpl_card");
