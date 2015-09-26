@@ -6,6 +6,7 @@ function $extend(from, fields) {
 	return proto;
 }
 var Animate = function() { };
+Animate.__name__ = true;
 Animate.addCardAndPrepare = function(cards) {
 	return function() {
 		var d = Main.j.Deferred();
@@ -132,6 +133,7 @@ Animate.shuffleSeperate = function(ary_select,pos_mouse) {
 	};
 };
 var HxOverrides = function() { };
+HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
 	if(x != x) return undefined;
@@ -163,6 +165,7 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
+Lambda.__name__ = true;
 Lambda.array = function(it) {
 	var a = [];
 	var $it0 = $iterator(it)();
@@ -227,6 +230,7 @@ Lambda.find = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
+List.__name__ = true;
 List.prototype = {
 	add: function(item) {
 		var x = [item];
@@ -255,11 +259,13 @@ List.prototype = {
 	,iterator: function() {
 		return new _$List_ListIterator(this.h);
 	}
+	,__class__: List
 };
 var _$List_ListIterator = function(head) {
 	this.head = head;
 	this.val = null;
 };
+_$List_ListIterator.__name__ = true;
 _$List_ListIterator.prototype = {
 	hasNext: function() {
 		return this.head != null;
@@ -269,6 +275,7 @@ _$List_ListIterator.prototype = {
 		this.head = this.head[1];
 		return this.val;
 	}
+	,__class__: _$List_ListIterator
 };
 var Main = function() {
 	var _g = this;
@@ -295,6 +302,7 @@ var Main = function() {
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
+Main.__name__ = true;
 Main.createSelfDeck = function(deckId) {
 	if(Main.cardSuit == null) return;
 	var deck = Main.cardSuit[deckId];
@@ -460,7 +468,14 @@ Main.getCardsById = function(id) {
 	});
 };
 Main.changeIndex = function(cardId) {
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_Card.card_enter,org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId).getViewComponent());
+	try {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_Card.card_enter,org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId).getViewComponent());
+	} catch( e ) {
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
+		if( js_Boot.__instanceof(e,String) ) {
+			console.log(e);
+		} else throw(e);
+	}
 };
 Main.removeCards = function(ary_select) {
 	Lambda.foreach(ary_select,function(card) {
@@ -634,8 +649,11 @@ Main.prototype = {
 		}
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_getSuit_success,{ cardSuit : Main.cardSuit});
 	}
+	,__class__: Main
 };
+Math.__name__ = true;
 var Reflect = function() { };
+Reflect.__name__ = true;
 Reflect.field = function(o,field) {
 	try {
 		return o[field];
@@ -658,6 +676,7 @@ Reflect.fields = function(o) {
 	return a;
 };
 var Std = function() { };
+Std.__name__ = true;
 Std.parseInt = function(x) {
 	var v = parseInt(x,10);
 	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
@@ -665,10 +684,12 @@ Std.parseInt = function(x) {
 	return v;
 };
 var StringTools = function() { };
+StringTools.__name__ = true;
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };
 var Type = function() { };
+Type.__name__ = true;
 Type.createInstance = function(cl,args) {
 	var _g = args.length;
 	switch(_g) {
@@ -696,12 +717,14 @@ Type.createInstance = function(cl,args) {
 	return null;
 };
 var haxe_IMap = function() { };
+haxe_IMap.__name__ = true;
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
 		me.run();
 	},time_ms);
 };
+haxe_Timer.__name__ = true;
 haxe_Timer.delay = function(f,time_ms) {
 	var t = new haxe_Timer(time_ms);
 	t.run = function() {
@@ -718,10 +741,12 @@ haxe_Timer.prototype = {
 	}
 	,run: function() {
 	}
+	,__class__: haxe_Timer
 };
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
+haxe_ds_StringMap.__name__ = true;
 haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
 haxe_ds_StringMap.prototype = {
 	set: function(key,value) {
@@ -758,6 +783,7 @@ haxe_ds_StringMap.prototype = {
 			return true;
 		}
 	}
+	,__class__: haxe_ds_StringMap
 };
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
@@ -765,25 +791,104 @@ var js__$Boot_HaxeError = function(val) {
 	this.message = String(val);
 	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
 };
+js__$Boot_HaxeError.__name__ = true;
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
+	__class__: js__$Boot_HaxeError
 });
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.getClass = function(o) {
+	if((o instanceof Array) && o.__enum__ == null) return Array; else {
+		var cl = o.__class__;
+		if(cl != null) return cl;
+		var name = js_Boot.__nativeClassName(o);
+		if(name != null) return js_Boot.__resolveNativeClass(name);
+		return null;
+	}
+};
+js_Boot.__interfLoop = function(cc,cl) {
+	if(cc == null) return false;
+	if(cc == cl) return true;
+	var intf = cc.__interfaces__;
+	if(intf != null) {
+		var _g1 = 0;
+		var _g = intf.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var i1 = intf[i];
+			if(i1 == cl || js_Boot.__interfLoop(i1,cl)) return true;
+		}
+	}
+	return js_Boot.__interfLoop(cc.__super__,cl);
+};
+js_Boot.__instanceof = function(o,cl) {
+	if(cl == null) return false;
+	switch(cl) {
+	case Int:
+		return (o|0) === o;
+	case Float:
+		return typeof(o) == "number";
+	case Bool:
+		return typeof(o) == "boolean";
+	case String:
+		return typeof(o) == "string";
+	case Array:
+		return (o instanceof Array) && o.__enum__ == null;
+	case Dynamic:
+		return true;
+	default:
+		if(o != null) {
+			if(typeof(cl) == "function") {
+				if(o instanceof cl) return true;
+				if(js_Boot.__interfLoop(js_Boot.getClass(o),cl)) return true;
+			} else if(typeof(cl) == "object" && js_Boot.__isNativeObj(cl)) {
+				if(o instanceof cl) return true;
+			}
+		} else return false;
+		if(cl == Class && o.__name__ != null) return true;
+		if(cl == Enum && o.__ename__ != null) return true;
+		return o.__enum__ == cl;
+	}
+};
+js_Boot.__nativeClassName = function(o) {
+	var name = js_Boot.__toStr.call(o).slice(8,-1);
+	if(name == "Object" || name == "Function" || name == "Math" || name == "JSON") return null;
+	return name;
+};
+js_Boot.__isNativeObj = function(o) {
+	return js_Boot.__nativeClassName(o) != null;
+};
+js_Boot.__resolveNativeClass = function(name) {
+	return (Function("return typeof " + name + " != \"undefined\" ? " + name + " : null"))();
+};
 var org_puremvc_haxe_interfaces_INotifier = function() { };
+org_puremvc_haxe_interfaces_INotifier.__name__ = true;
+org_puremvc_haxe_interfaces_INotifier.prototype = {
+	__class__: org_puremvc_haxe_interfaces_INotifier
+};
 var org_puremvc_haxe_patterns_observer_Notifier = function() {
 	this.facade = org_puremvc_haxe_patterns_facade_Facade.getInstance();
 };
+org_puremvc_haxe_patterns_observer_Notifier.__name__ = true;
 org_puremvc_haxe_patterns_observer_Notifier.__interfaces__ = [org_puremvc_haxe_interfaces_INotifier];
 org_puremvc_haxe_patterns_observer_Notifier.prototype = {
 	sendNotification: function(notificationName,body,type) {
 		this.facade.sendNotification(notificationName,body,type);
 	}
+	,__class__: org_puremvc_haxe_patterns_observer_Notifier
 };
 var org_puremvc_haxe_interfaces_IMediator = function() { };
+org_puremvc_haxe_interfaces_IMediator.__name__ = true;
+org_puremvc_haxe_interfaces_IMediator.prototype = {
+	__class__: org_puremvc_haxe_interfaces_IMediator
+};
 var org_puremvc_haxe_patterns_mediator_Mediator = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_observer_Notifier.call(this);
 	if(mediatorName != null) this.mediatorName = mediatorName; else this.mediatorName = org_puremvc_haxe_patterns_mediator_Mediator.NAME;
 	if(viewComponent != null) this.viewComponent = viewComponent;
 };
+org_puremvc_haxe_patterns_mediator_Mediator.__name__ = true;
 org_puremvc_haxe_patterns_mediator_Mediator.__interfaces__ = [org_puremvc_haxe_interfaces_IMediator];
 org_puremvc_haxe_patterns_mediator_Mediator.__super__ = org_puremvc_haxe_patterns_observer_Notifier;
 org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe_patterns_observer_Notifier.prototype,{
@@ -805,6 +910,7 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 	}
 	,onRemove: function() {
 	}
+	,__class__: org_puremvc_haxe_patterns_mediator_Mediator
 });
 var mediator_Card = function(mediatorName,viewComponent) {
 	this._see = false;
@@ -813,6 +919,7 @@ var mediator_Card = function(mediatorName,viewComponent) {
 	this._focus = false;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
+mediator_Card.__name__ = true;
 mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
@@ -936,6 +1043,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 	,setState: function(state) {
 		this.getViewComponent().find("#txt_state").html(state);
 	}
+	,__class__: mediator_Card
 });
 var mediator_Layer = function(mediatorName,viewComponent) {
 	this._currentMoveCardId = "";
@@ -943,6 +1051,7 @@ var mediator_Layer = function(mediatorName,viewComponent) {
 	this._container_cards = viewComponent.container_cards;
 	this._body = viewComponent.body;
 };
+mediator_Layer.__name__ = true;
 mediator_Layer.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
@@ -984,12 +1093,14 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 	,onBodyMouseDown: function(e) {
 		this.sendNotification(mediator_Layer.on_press,null,e.which);
 	}
+	,__class__: mediator_Layer
 });
 var mediator_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 };
+mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
@@ -1055,6 +1166,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.mc_detailContainer.append(img);
 		}
 	}
+	,__class__: mediator_UI
 });
 var model_Model = function(mediatorName,viewComponent) {
 	this.pos_mouse = [0,0];
@@ -1064,6 +1176,7 @@ var model_Model = function(mediatorName,viewComponent) {
 	this.ary_select = [];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
+model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
@@ -1280,13 +1393,19 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			return { id : card.id, cardId : card.cardId, name : card.name, owner : card.owner, relate : card.relate, deg : card.deg, pos : [card.pos[0],card.pos[1]], back : card.back, showTo : card.showTo};
 		}));
 	}
+	,__class__: model_Model
 });
 var org_puremvc_haxe_interfaces_IController = function() { };
+org_puremvc_haxe_interfaces_IController.__name__ = true;
+org_puremvc_haxe_interfaces_IController.prototype = {
+	__class__: org_puremvc_haxe_interfaces_IController
+};
 var org_puremvc_haxe_core_Controller = function() {
 	org_puremvc_haxe_core_Controller.instance = this;
 	this.commandMap = new haxe_ds_StringMap();
 	this.initializeController();
 };
+org_puremvc_haxe_core_Controller.__name__ = true;
 org_puremvc_haxe_core_Controller.__interfaces__ = [org_puremvc_haxe_interfaces_IController];
 org_puremvc_haxe_core_Controller.getInstance = function() {
 	if(org_puremvc_haxe_core_Controller.instance == null) org_puremvc_haxe_core_Controller.instance = new org_puremvc_haxe_core_Controller();
@@ -1315,13 +1434,19 @@ org_puremvc_haxe_core_Controller.prototype = {
 			this.commandMap.remove(notificationName);
 		}
 	}
+	,__class__: org_puremvc_haxe_core_Controller
 };
 var org_puremvc_haxe_interfaces_IModel = function() { };
+org_puremvc_haxe_interfaces_IModel.__name__ = true;
+org_puremvc_haxe_interfaces_IModel.prototype = {
+	__class__: org_puremvc_haxe_interfaces_IModel
+};
 var org_puremvc_haxe_core_Model = function() {
 	org_puremvc_haxe_core_Model.instance = this;
 	this.proxyMap = new haxe_ds_StringMap();
 	this.initializeModel();
 };
+org_puremvc_haxe_core_Model.__name__ = true;
 org_puremvc_haxe_core_Model.__interfaces__ = [org_puremvc_haxe_interfaces_IModel];
 org_puremvc_haxe_core_Model.getInstance = function() {
 	if(org_puremvc_haxe_core_Model.instance == null) org_puremvc_haxe_core_Model.instance = new org_puremvc_haxe_core_Model();
@@ -1348,14 +1473,20 @@ org_puremvc_haxe_core_Model.prototype = {
 		}
 		return proxy;
 	}
+	,__class__: org_puremvc_haxe_core_Model
 };
 var org_puremvc_haxe_interfaces_IView = function() { };
+org_puremvc_haxe_interfaces_IView.__name__ = true;
+org_puremvc_haxe_interfaces_IView.prototype = {
+	__class__: org_puremvc_haxe_interfaces_IView
+};
 var org_puremvc_haxe_core_View = function() {
 	org_puremvc_haxe_core_View.instance = this;
 	this.mediatorMap = new haxe_ds_StringMap();
 	this.observerMap = new haxe_ds_StringMap();
 	this.initializeView();
 };
+org_puremvc_haxe_core_View.__name__ = true;
 org_puremvc_haxe_core_View.__interfaces__ = [org_puremvc_haxe_interfaces_IView];
 org_puremvc_haxe_core_View.getInstance = function() {
 	if(org_puremvc_haxe_core_View.instance == null) org_puremvc_haxe_core_View.instance = new org_puremvc_haxe_core_View();
@@ -1440,16 +1571,38 @@ org_puremvc_haxe_core_View.prototype = {
 	,hasMediator: function(mediatorName) {
 		return this.mediatorMap.exists(mediatorName);
 	}
+	,__class__: org_puremvc_haxe_core_View
 };
 var org_puremvc_haxe_interfaces_ICommand = function() { };
+org_puremvc_haxe_interfaces_ICommand.__name__ = true;
+org_puremvc_haxe_interfaces_ICommand.prototype = {
+	__class__: org_puremvc_haxe_interfaces_ICommand
+};
 var org_puremvc_haxe_interfaces_IFacade = function() { };
+org_puremvc_haxe_interfaces_IFacade.__name__ = true;
+org_puremvc_haxe_interfaces_IFacade.prototype = {
+	__class__: org_puremvc_haxe_interfaces_IFacade
+};
 var org_puremvc_haxe_interfaces_INotification = function() { };
+org_puremvc_haxe_interfaces_INotification.__name__ = true;
+org_puremvc_haxe_interfaces_INotification.prototype = {
+	__class__: org_puremvc_haxe_interfaces_INotification
+};
 var org_puremvc_haxe_interfaces_IObserver = function() { };
+org_puremvc_haxe_interfaces_IObserver.__name__ = true;
+org_puremvc_haxe_interfaces_IObserver.prototype = {
+	__class__: org_puremvc_haxe_interfaces_IObserver
+};
 var org_puremvc_haxe_interfaces_IProxy = function() { };
+org_puremvc_haxe_interfaces_IProxy.__name__ = true;
+org_puremvc_haxe_interfaces_IProxy.prototype = {
+	__class__: org_puremvc_haxe_interfaces_IProxy
+};
 var org_puremvc_haxe_patterns_facade_Facade = function() {
 	org_puremvc_haxe_patterns_facade_Facade.instance = this;
 	this.initializeFacade();
 };
+org_puremvc_haxe_patterns_facade_Facade.__name__ = true;
 org_puremvc_haxe_patterns_facade_Facade.__interfaces__ = [org_puremvc_haxe_interfaces_IFacade];
 org_puremvc_haxe_patterns_facade_Facade.getInstance = function() {
 	if(org_puremvc_haxe_patterns_facade_Facade.instance == null) org_puremvc_haxe_patterns_facade_Facade.instance = new org_puremvc_haxe_patterns_facade_Facade();
@@ -1516,12 +1669,14 @@ org_puremvc_haxe_patterns_facade_Facade.prototype = {
 	,notifyObservers: function(notification) {
 		if(this.view != null) this.view.notifyObservers(notification);
 	}
+	,__class__: org_puremvc_haxe_patterns_facade_Facade
 };
 var org_puremvc_haxe_patterns_observer_Notification = function(name,body,type) {
 	this.name = name;
 	if(body != null) this.body = body;
 	if(type != null) this.type = type;
 };
+org_puremvc_haxe_patterns_observer_Notification.__name__ = true;
 org_puremvc_haxe_patterns_observer_Notification.__interfaces__ = [org_puremvc_haxe_interfaces_INotification];
 org_puremvc_haxe_patterns_observer_Notification.prototype = {
 	getName: function() {
@@ -1545,11 +1700,13 @@ org_puremvc_haxe_patterns_observer_Notification.prototype = {
 		msg += "\nType:" + (this.type == null?"null":this.type);
 		return msg;
 	}
+	,__class__: org_puremvc_haxe_patterns_observer_Notification
 };
 var org_puremvc_haxe_patterns_observer_Observer = function(notifyMethod,notifyContext) {
 	this.setNotifyMethod(notifyMethod);
 	this.setNotifyContext(notifyContext);
 };
+org_puremvc_haxe_patterns_observer_Observer.__name__ = true;
 org_puremvc_haxe_patterns_observer_Observer.__interfaces__ = [org_puremvc_haxe_interfaces_IObserver];
 org_puremvc_haxe_patterns_observer_Observer.prototype = {
 	setNotifyMethod: function(notifyMethod) {
@@ -1570,6 +1727,7 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 	,compareNotifyContext: function(object) {
 		return object == this.context;
 	}
+	,__class__: org_puremvc_haxe_patterns_observer_Observer
 };
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
@@ -1577,6 +1735,17 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
+String.prototype.__class__ = String;
+String.__name__ = true;
+Array.__name__ = true;
+var Int = { __name__ : ["Int"]};
+var Dynamic = { __name__ : ["Dynamic"]};
+var Float = Number;
+Float.__name__ = ["Float"];
+var Bool = Boolean;
+Bool.__ename__ = ["Bool"];
+var Class = { __name__ : ["Class"]};
+var Enum = { };
 var __map_reserved = {}
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
@@ -1592,6 +1761,7 @@ Main.cardSuits = { };
 Main.tmpl_card = Main.j("#tmpl_card");
 Main.longPolling = config.longPolling;
 Main.cardPackageUrlMapping = { };
+js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_Card.card_click = "card_click";
 mediator_Card.card_down = "card_down";
