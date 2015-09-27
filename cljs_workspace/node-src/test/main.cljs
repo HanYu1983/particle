@@ -8,18 +8,27 @@
 (def outputDir "output/")
 (def host "http://sangokushi-taisen-tcg.segataiwan.com.tw/")
 (def packages 
-  ["兩週年：魏" "兩週年：蜀" "兩週年：吳" "兩週年：群" "兩週年：漢"])
+  ["PR卡片：PR"])
 (def page 1)
 (def specPackage
   [
-    ["cardinfo.php?id=59" "2"]
-    ["cardinfo.php?id=60" "2"]
-    ["cardinfo.php?id=61" "2"]
-    ["cardinfo.php?id=80" "2"]
-    ["cardinfo.php?id=81" "2"]
-    ["cardinfo.php?id=82" "2"]
-    ["cardinfo.php?id=83" "2"]
-    ["cardinfo.php?id=84" "2"]
+    ["cardinfo.php?id=120&page=2" "2"]
+    ["cardinfo.php?id=120&page=3" "2"]
+    ["cardinfo.php?id=120&page=4" "2"]
+    ["cardinfo.php?id=120&page=5" "2"]
+    
+    ["cardinfo.php?id=28&page=1" "2"]
+    ["cardinfo.php?id=22&page=1" "2"]
+    ["cardinfo.php?id=29&page=1" "2"]
+    ["cardinfo.php?id=24&page=1" "2"]
+    ["cardinfo.php?id=30&page=1" "2"]
+    ["cardinfo.php?id=27&page=1" "2"]
+    
+    ["cardinfo.php?id=95&page=1" "2"]
+    ["cardinfo.php?id=96&page=1" "2"]
+    ["cardinfo.php?id=97&page=1" "2"]
+    ["cardinfo.php?id=98&page=1" "2"]
+    ["cardinfo.php?id=99&page=1" "2"]
   ])
 
 (defn parseGroup [content]
@@ -57,7 +66,7 @@
           (->
             ;(str "<span>([\\d|-]+)<\\/span>")
             ;(str "<span>[ANVPR]+-\\d+<\\/span>")
-            (str "<span>([ANVPRCPOS]+-\\d+\\(?[\\d-]*\\)?)<\\/span>")
+            (str "<span>([ANVPRCPOS]+-\\d+)\\(?[\\d-]*\\)?<\\/span>")
             re-pattern)
           content)
         imgsrcs
@@ -133,7 +142,7 @@
               (-> src
                 (request)
                 (.pipe (.createWriteStream fs (str outputDir id ".jpg")))
-                (.on "close" #(js/setTimeout cb 2000)))
+                (.on "close" #(js/setTimeout cb 3000)))
               (comment "end write"))]
         (.series 
           async
