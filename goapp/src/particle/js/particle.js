@@ -27,7 +27,7 @@ var particle = particle || {};
 			put: function( obj ){
 				for( var k in obj ){
 					if( k != 'id' ){
-						delete obj.k
+						delete obj[k]
 					}
 				}
 				obj.using = false
@@ -39,7 +39,7 @@ var particle = particle || {};
 	}
 	
 	function initParticle( obj, info ){
-		obj.lifetime = info.lifetime != undefined ? info.lifetime : 5.0
+		obj.lifetime = info.lifetime != undefined ? info.lifetime : 1.0
 		obj.mass = info.mass != undefined ? info.mass : 1.0
 		obj.color = info.color != undefined ? info.color : '#33ddff'
 		obj.size = info.size != undefined ? info.size : [50, 50]
@@ -76,8 +76,12 @@ var particle = particle || {};
 		// update formula
 		for( var i in part.formulaList ){
 			var f = part.formulaList[i]
-			var lifep = part.timer/ part.lifetime
-			f( part, lifep )
+			if( part.lifetime <= 0 ){
+				f( part, 0 )
+			} else {
+				var lifep = part.timer/ part.lifetime
+				f( part, lifep )
+			}
 		}
 		// update timer
 		part.timer += delta
@@ -90,8 +94,20 @@ var particle = particle || {};
 	}
 	
 	function stepParticles( pool, parts, delta ){
-		for( var i = parts.length-1; i>=0; --i ){
-			var part = parts[i]
+		
+		var tmp = parts.slice()
+		parts.length = 0
+			
+		for(var i in tmp){
+			var part = tmp[i]
+			// remove time > lifetime
+			if( part.lifetime > 0 ){
+				if( part.timer > part.lifetime ){
+					pool.put( part )
+					continue
+				}
+			}
+			
 			stepParticle( part, delta )
 			// emit
 			if( part.emit ){
@@ -104,10 +120,9 @@ var particle = particle || {};
 						var obj = pool.get()
 						if( obj != null ){
 							initParticle( obj, newp )
-							
 							obj.pos[0] = part.pos[0]
-							obj.pos[0] = part.pos[0]
-							obj.pos[0] = part.pos[0]
+							obj.pos[1] = part.pos[1]
+							obj.pos[2] = part.pos[2]
 							
 							var angle = part.pos[2]
 							angle += part.emit.angle
@@ -126,12 +141,7 @@ var particle = particle || {};
 					part.emitTimes = shouldTimes
 				}
 			}
-			
-			// remove time > lifetime
-			if( part.timer > part.lifetime ){
-				pool.put( part )
-				parts.splice( i, 1 )
-			}
+			parts.push( part )
 		}
 	}
 	

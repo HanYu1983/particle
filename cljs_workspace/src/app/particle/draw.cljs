@@ -118,3 +118,45 @@
               
       
       ctx)))
+      
+(defn drawThree [elem]
+  (let [useWebgl? true
+        [w h] [400 400]
+        scene (js/THREE.Scene.)
+        camera (js/THREE.OrthographicCamera (/ w -2) (/ w 2) (/ h 2) (/ h -2) -500 1000)
+        renderer
+        (if useWebgl?
+          (js/THREE.WebGLRenderer. (js-obj "antialias" true))
+          (js/THREE.CanvasRenderer. (js-obj "antialias" true)))
+        objs (atom {})
+        dirtyTag (atom {})
+        createObject
+        (fn [scene id part]
+          (let [obj (get @objs id)]
+            (if-not obj
+              (let [mat 
+                    (doto
+                      (js/THREE.MeshBasicMaterial.)
+                      (aset "transparent" true))
+                    mash
+                    (js/THREE.Mesh (js/THREE.PlaneBufferGeometry. 1 1) mat)]
+                (swap! objs assoc id obj)
+                (.add scene obj))
+              obj)))
+        removeObject
+        (fn [id]
+          (if-let [obj (get @objs id)]
+            (.remove scene obj)))
+        markDirty
+        (fn [id]
+          (swap! dirtyTag assoc id false))
+          
+        clearDirtyTag
+        (fn [f])]
+          
+    (.set (.-position camera) 0 0 200)
+    (.setSize renderer w h)
+    (.setClearColor renderer 0 1)
+    (.appendTo (js/$ (.-domElement renderer)) elem)
+    
+  (fn [{[cx cy] :centerPos [br bg bb] :bgColor {ps :ps} :part :as ctx}])))

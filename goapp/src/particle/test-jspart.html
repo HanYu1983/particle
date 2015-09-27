@@ -1,12 +1,15 @@
 <html>
 	<body>
 		<img id='logo' src='../common/images/logo.jpg'>
+		<div id='count'></div>
 		<div id='webgl'></div>
 		<script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>	
 		<script src='../common/js/lib/three.min.js'></script>
 		<script src='../common/js/lib/underscore/underscore-min.js'></script>
 		<script src='js/particle.js'></script>
 		<script>
+		
+		var countElem = $('#count')
 		
 		
 		function drawer( elem ){
@@ -30,10 +33,10 @@
 			$(renderer.domElement).appendTo( elem )
 			
 			var objs = {}
-			var dirtyTag = {}
 			
-			function createObject( scene, key, part ){
+			function createObject( scene, key ){
 				var obj = objs[key]
+				
 				if( obj == null ){
 					
 					var material = new THREE.MeshBasicMaterial( { map:null, color: 0x33aa55 } );
@@ -67,76 +70,96 @@
 				}
 			}
 			
-			function markDirty( key ){
-				dirtyTag[key] = true
-			}
-			
-			function clearDirtyTag(){
-				for( var k in dirtyTag ){
-					dirtyTag[k] = false
+			var life = {}
+			function compareAndReset( nowlife, fn ){
+				for(var k in nowlife){
+					delete life[k]
 				}
-			}
-			
-			function useDirty( fn ){
-				for( var k in dirtyTag ){
-					if( dirtyTag[k] == false ){
-						delete dirtyTag[k]
-						fn(k)
-					}
+				for( var k in life ){
+					fn(k)
 				}
+				life = nowlife
 			}
 			
 			return function( ctx ){
 				
-				clearDirtyTag()
-				
+				var nowlife = {}
 				var parts = ctx.parts
 				for( var idx in parts ){
 					var part = parts[idx]
-					var obj = createObject( scene, part.id, part )
+					var obj = createObject( scene, part.id )
 					obj.material.map = tex
 					obj.material.color.setHex(parseInt( part.color.substr(1), 16 ))
 					obj.position.set( part.pos[0], part.pos[1], 0 )
-					obj.rotation.z = part.pos[2]*180/ 3.14
+					obj.rotation.z = part.pos[2]
 					obj.scale.set( part.size[0], part.size[1], 1 )
-					markDirty( part.id )
+					nowlife[idx] = true
 				}
-				
-				useDirty( function( key ){
-					removeObject( key )
+				compareAndReset( nowlife, function(key){
+					removeObject(key)
 				})
-				
 				renderer.render( scene, camera )
 			}
 		}
 		
 		var draw = drawer($('#webgl'))
-		var pool = particle.pool( 5 )
+		var pool = particle.pool( 5000 )
 		var first = particle.initParticle( pool.get(), { 
-			vel: [1, 1, 5],
+			lifetime: 0,
+			vel: [1, 1, 1],
 			emit: {
-				duration: 0.05,
+				duration: 0.1,
 				force: 100,
+				range: 0,
 				proto: [
 					{
 						color: '#aabb44',
-						lifetime: 3,
-						vel: [0, 0, 1]
+						vel: [0, 0, 1],
+						emit: {
+							duration: 0.1,
+							proto:[
+								{
+									vel: [0, -100, 1]
+								}
+							]
+						}
+					},
+					{
+						lifetime: 10,
+						color: '#ff0000',
+						vel: [0, 200, 5],
+						emit: {
+							lifetime: 5,
+							duration: 0.05,
+							proto:[
+								{
+									vel: [0, -100, 0]
+								},
+								{
+									vel: [100, 0, 0]
+								}
+							]
+						}
 					}
 				]
 			},
 			formulaList: [
 				function(part, lifep){
-					return part.pos[0] -= 10
+					
 				}
 			]
 		})
 		var ctx = {
 			parts: [first]
 		}
+		var last = new Date().getTime()
 		setTimeout( function(){
-			particle.stepParticles( pool, ctx.parts, 0.1 )
+			var now = new Date().getTime()
+			var elap = now - last
+			last = now
+			particle.stepParticles( pool, ctx.parts, elap/ 1000.0 )
 			draw( ctx )
+			countElem.html( ctx.parts.length )
 			setTimeout( arguments.callee, 50 )
 		}, 1000)
 		</script>
