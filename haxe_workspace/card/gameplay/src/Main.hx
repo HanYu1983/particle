@@ -43,7 +43,6 @@ class Main
 	static var cardPackageUrlMapping:Dynamic = { };
 	
 	function new() {
-		//ConnectJs.console_log( 'sab' );
 		
 		j( '#txt_id' ).textbox( {
 			#if debug
@@ -61,6 +60,11 @@ class Main
 				otherPlayerId = nv;
 			}
 		});
+		
+		if ( CallJs.getCookie( 'otherPlayerId' ) != null ) {
+			j( '#txt_opponent' ).textbox( 'setValue', CallJs.getCookie( 'otherPlayerId' ) );
+		}
+		
 		
 		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
@@ -211,6 +215,7 @@ class Main
 					slide( '請先登入並且輸入對手的id' );
 					return;
 				}
+				CallJs.setCookie( 'otherPlayerId', otherPlayerId );
 				createSocket( playerId );
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );

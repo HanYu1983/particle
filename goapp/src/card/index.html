@@ -15,6 +15,7 @@
 	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
 		
@@ -179,6 +180,17 @@ body{
 			</div>
 		</div>
     </div>
+	<script>
+	
+	function setCookie( key, value ){
+		$.cookie( key, value );
+	}
+	
+	function getCookie( key ){
+		return $.cookie( key );
+	}
+	
+	</script>
 	<script type="text/javascript" src="/_ah/channel/jsapi"></script>
 	<script type="text/javascript" src="../common/js/channel.js"></script>
 	<script src="../common/js/store.js"></script>	

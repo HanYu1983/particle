@@ -142,6 +142,8 @@ Animate.sameTogetherSeperate = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
+var CallJs = function() { };
+CallJs.__name__ = true;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.cca = function(s,index) {
@@ -295,6 +297,7 @@ var Main = function() {
 	Main.j("#txt_opponent").textbox({ onChange : function(nv1,od1) {
 		Main.otherPlayerId = nv1;
 	}});
+	if(CallJs.getCookie("otherPlayerId") != null) Main.j("#txt_opponent").textbox("setValue",CallJs.getCookie("otherPlayerId"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
@@ -624,6 +627,7 @@ Main.prototype = {
 				Main.slide("請先登入並且輸入對手的id");
 				return;
 			}
+			CallJs.setCookie("otherPlayerId",Main.otherPlayerId);
 			Main.createSocket(Main.playerId);
 			break;
 		case "onBtnLoginClick":
@@ -1800,6 +1804,8 @@ Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
 var __map_reserved = {}
+CallJs.setCookie = setCookie;
+CallJs.getCookie = getCookie;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.j = $;
