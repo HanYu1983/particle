@@ -294,13 +294,13 @@ var Main = function() {
 	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
 		Main.playerId = nv;
 	}});
-	Main.j("#txt_opponent").textbox({ onChange : function(nv1,od1) {
-		Main.otherPlayerId = nv1;
-	}});
-	if(CallJs.getCookie("otherPlayerId") != null) Main.j("#txt_opponent").textbox("setValue",CallJs.getCookie("otherPlayerId"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
+	if(CallJs.getCookie("otherPlayerId") != null) {
+		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
+	} else Main.ary_ops = [];
 	Main.openLoading("準備中...請稍等");
 	var fbappId = config.fbid[config.fbid.which];
 	myapp.facebook.init(fbappId,function() {
@@ -316,6 +316,15 @@ var Main = function() {
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
+Main.selectOps = function(ops) {
+	Main.otherPlayerId = ops;
+	if(HxOverrides.indexOf(Main.ary_ops,Main.otherPlayerId,0) == -1) {
+		Main.ary_ops.push(Main.otherPlayerId);
+		if(Main.ary_ops.length > 10) Main.ary_ops.shift();
+		CallJs.setCookie("otherPlayerId",JSON.stringify(Main.ary_ops));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
+	}
+};
 Main.createSelfDeck = function(deckId) {
 	if(Main.cardSuit == null) return;
 	var deck = Main.cardSuit[deckId];
@@ -329,7 +338,7 @@ Main.createSelfDeck = function(deckId) {
 	});
 };
 Main.pushCmds = function(content) {
-	var toId = Main.j("#txt_opponent").textbox("getValue");
+	var toId = Main.otherPlayerId;
 	if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
 };
 Main.onBackCallback = function(ret) {
@@ -627,7 +636,6 @@ Main.prototype = {
 				Main.slide("請先登入並且輸入對手的id");
 				return;
 			}
-			CallJs.setCookie("otherPlayerId",Main.otherPlayerId);
 			Main.createSocket(Main.playerId);
 			break;
 		case "onBtnLoginClick":
@@ -1134,17 +1142,26 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
+	this.combo_ops = this.getViewComponent().find("#combo_ops");
+	this.combo_ops.combobox({ onChange : function(nv,ov) {
+		Main.selectOps(nv);
+	}});
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success];
+		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_receiveOps":
+			var ary_ops = notification.getBody().ary_ops;
+			this.setComboOps(ary_ops);
+			this.combo_ops.combobox("select",ary_ops[ary_ops.length - 1]);
+			break;
 		case "on_model_select_cards":
 			this.showCards(notification.getBody().ary_select);
 			break;
@@ -1160,6 +1177,15 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.createComboDeck(notification.getBody().cardSuit);
 			break;
 		}
+	}
+	,setComboOps: function(ary_ops) {
+		var _g = this;
+		this.combo_ops.empty();
+		Lambda.foreach(ary_ops,function(str) {
+			_g.combo_ops.append("<option value=\"" + str + "\">" + str + "</option>");
+			return true;
+		});
+		this.combo_ops.combobox();
 	}
 	,createComboDeck: function(cardSuit) {
 		var _g = this;
@@ -1808,6 +1834,7 @@ CallJs.setCookie = setCookie;
 CallJs.getCookie = getCookie;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
+Main.on_receiveOps = "on_receiveOps";
 Main.j = $;
 Main.fbid = "";
 Main.token = "";

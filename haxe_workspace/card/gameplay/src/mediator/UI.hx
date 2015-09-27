@@ -13,9 +13,11 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 class UI extends Mediator
 {
 	public static var on_combo_deck_change = 'on_combo_deck_change';
+	//public static var on_op_change = 'on_op_change';
 	
 	var mc_detailContainer:Dynamic;
 	var combo_deck:Dynamic;
+	var combo_ops:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -23,19 +25,30 @@ class UI extends Mediator
 		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
 		combo_deck = getViewComponent().find( '#combo_deck' );
+		combo_ops = getViewComponent().find( '#combo_ops' );
+		combo_ops.combobox( {
+			onChange:function( nv, ov ) {
+				Main.selectOps( nv );
+			}
+		});
 	}
 	
 	override public function listNotificationInterests():Array<String> 
 	{
 		return [ 	Model.on_select_cards, 
 					Model.on_state_change,
-					Main.on_getSuit_success
+					Main.on_getSuit_success,
+					Main.on_receiveOps
 				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case Main.on_receiveOps:
+				var ary_ops = notification.getBody().ary_ops;
+				setComboOps( ary_ops );
+				combo_ops.combobox( 'select', ary_ops[ary_ops.length -1] );
 			case Model.on_select_cards:
 				showCards( notification.getBody().ary_select );
 			case Model.on_state_change:
@@ -48,6 +61,15 @@ class UI extends Mediator
 			case Main.on_getSuit_success:
 				createComboDeck( notification.getBody().cardSuit );
 		}
+	}
+	
+	function setComboOps( ary_ops:Array<String> ) {
+		combo_ops.empty();
+		Lambda.foreach( ary_ops, function( str ) {
+			combo_ops.append( '<option value="' + str + '">' + str + '</option>' );
+			return true;
+		});
+		combo_ops.combobox();
 	}
 	
 	function createComboDeck( cardSuit ) {

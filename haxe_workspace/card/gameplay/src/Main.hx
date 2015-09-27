@@ -21,6 +21,7 @@ class Main
 	
 	public static var on_getSuit_success = 'on_getSuit_success';
 	public static var on_createDeck_click = 'on_createDeck_click';
+	public static var on_receiveOps = 'on_receiveOps';
 	
 	public static var j:Dynamic = untyped __js__('$');
 	
@@ -39,7 +40,7 @@ class Main
 	static var keepOnlineTimer:Timer;
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
 	static var longPolling:Bool = untyped __js__( 'config.longPolling' );
-	
+	static var ary_ops:Array<String>;
 	static var cardPackageUrlMapping:Dynamic = { };
 	
 	function new() {
@@ -55,20 +56,18 @@ class Main
 			}
 		});
 		
-		j( '#txt_opponent' ).textbox( {
-			onChange:function( nv, od ) {
-				otherPlayerId = nv;
-			}
-		});
-		
-		if ( CallJs.getCookie( 'otherPlayerId' ) != null ) {
-			j( '#txt_opponent' ).textbox( 'setValue', CallJs.getCookie( 'otherPlayerId' ) );
-		}
-		
-		
 		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
+		
+		
+		if ( CallJs.getCookie( 'otherPlayerId' ) != null ) {
+			ary_ops = Json.parse( CallJs.getCookie( 'otherPlayerId' ));
+			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
+		}else {
+			ary_ops = [];
+		}
+		
 		
 		openLoading( '準備中...請稍等' );
 		var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
@@ -83,6 +82,19 @@ class Main
 			});
 		});
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
+	}
+	
+	public static function selectOps( ops:String ) {
+		otherPlayerId = ops;
+		
+		if ( ary_ops.indexOf( otherPlayerId ) == -1 ) {
+			ary_ops.push( otherPlayerId );
+			if ( ary_ops.length > 10 ) {
+				ary_ops.shift();
+			}
+			CallJs.setCookie( 'otherPlayerId', Json.stringify( ary_ops ) );
+			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
+		}
 	}
 	
 	public static function createSelfDeck( deckId:Int ) {
@@ -109,7 +121,7 @@ class Main
 	}
 	
 	public static function pushCmds( content:Dynamic ) {
-		var toId = j( '#txt_opponent' ).textbox( 'getValue' );
+		var toId = otherPlayerId;
 		if ( toId.length != 0 ) {
 			messageSocket( toId, content.cmd, content );
 		}
@@ -215,7 +227,7 @@ class Main
 					slide( '請先登入並且輸入對手的id' );
 					return;
 				}
-				CallJs.setCookie( 'otherPlayerId', otherPlayerId );
+				
 				createSocket( playerId );
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );

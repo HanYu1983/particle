@@ -132,9 +132,10 @@ body{
 			</div>
 			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div>玩家:</div>
-				<input id="txt_id" class="easyui-textbox" style="width:120px;" />
+				<input id="txt_id" class="easyui-textbox" style="width:155px;" />
 				<div>對手:</div>
-				<input id="txt_opponent" class="easyui-textbox" style="width:120px;" />
+				<select id="combo_ops" name="dept" style="width:150px;">
+				</select>
 				<div style="margin-top:5px;">
 					<a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="iconCls:'icon-add',disabled:false">開始連線</a>
 				</div>
@@ -189,6 +190,12 @@ body{
 	function getCookie( key ){
 		return $.cookie( key );
 	}
+	
+	function removeCookie( key ){
+		$.removeCookie( key );
+	}
+	
+	removeCookie( 'han' );
 	
 	</script>
 	<script type="text/javascript" src="/_ah/channel/jsapi"></script>
