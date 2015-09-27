@@ -10,6 +10,7 @@ import mediator.Layer;
 import mediator.UI;
 import model.Model;
 import org.puremvc.haxe.patterns.facade.Facade;
+
 using Reflect;
 /**
  * ...
@@ -42,6 +43,8 @@ class Main
 	static var cardPackageUrlMapping:Dynamic = { };
 	
 	function new() {
+		//ConnectJs.console_log( 'sab' );
+		
 		j( '#txt_id' ).textbox( {
 			#if debug
 			editable:true,

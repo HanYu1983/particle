@@ -267,7 +267,7 @@ a{
 				break;
 			case 'btn_addDeck':
 				cardSuit.editCardSuit( loadModel, {
-					name: leo.utils.generateUUID(),
+					name: '',
 					game: "fighter",
 					cards:[]
 				})
@@ -339,6 +339,7 @@ a{
 						case 'txt_name':
 							__model.name = nv;
 							cardSuit.editCardSuit( loadModel, __model );
+							cardSuit.removeCardSuit( loadModel, ov );
 							editAndShow();
 							break;
 						case 'txt_cards':

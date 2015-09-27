@@ -17,6 +17,7 @@
   <classpaths>
     <class path="src" />
     <class path="C:\HaxeToolkit\haxe\lib\download\puremvc-haxe-standard-framework-master\src" />
+    <class path="C:\HaxeToolkit\haxe\lib\download\vic" />
   </classpaths>
   <!-- Build options -->
   <build>
