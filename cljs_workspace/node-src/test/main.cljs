@@ -8,8 +8,19 @@
 (def outputDir "output/")
 (def host "http://sangokushi-taisen-tcg.segataiwan.com.tw/")
 (def packages 
-  ["PR卡片：PR"])
-(def page 2)
+  ["兩週年：魏" "兩週年：蜀" "兩週年：吳" "兩週年：群" "兩週年：漢"])
+(def page 1)
+(def specPackage
+  [
+    ["cardinfo.php?id=59" "2"]
+    ["cardinfo.php?id=60" "2"]
+    ["cardinfo.php?id=61" "2"]
+    ["cardinfo.php?id=80" "2"]
+    ["cardinfo.php?id=81" "2"]
+    ["cardinfo.php?id=82" "2"]
+    ["cardinfo.php?id=83" "2"]
+    ["cardinfo.php?id=84" "2"]
+  ])
 
 (defn parseGroup [content]
   (let [group
@@ -44,7 +55,9 @@
   (let [ids
         (re-seq
           (->
-            (str "<span>([\\d|-]+)<\\/span>")
+            ;(str "<span>([\\d|-]+)<\\/span>")
+            ;(str "<span>[ANVPR]+-\\d+<\\/span>")
+            (str "<span>([ANVPRCPOS]+-\\d+\\(?[\\d-]*\\)?)<\\/span>")
             re-pattern)
           content)
         imgsrcs
@@ -89,13 +102,16 @@
     (fn [err res body]
       (let [tabs (parseGroup body)
             links 
-            (->>
-              (map
-                parseOne
-                (map second tabs))
-              (reduce concat '())
-              (filter (fn [[_ na]] (some #(= % na) packages)))
-              (map (fn [[li na]] [(str li "&page=" page) na])))
+            (if specPackage
+              specPackage
+              (->>
+                (map
+                  parseOne
+                  (map second tabs))
+                (reduce concat '())
+                (filter (fn [[_ na]] (some #(= % na) packages)))
+                (map (fn [[li na]] [(str li "&page=" page) na]))))
+                
             parseCardInfos
             (for [[li na] links]
               (fn [cb]
