@@ -151,7 +151,7 @@ var particle = particle || {};
 			} else if( lifep < 0.75 ){
 				var adj = p[2] + (p[3]-p[2]) * (lifep - 0.5) / 0.25
 				setFormulaTarget( target, part, adj )
-			} else if( lifep < 0.1 ){
+			} else if( lifep < 1 ){
 				var adj = p[3] + (p[4]-p[3]) * (lifep - 0.75) / 0.25
 				setFormulaTarget( target, part, adj )
 			} else {
