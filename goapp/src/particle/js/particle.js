@@ -115,29 +115,174 @@ var particle = particle || {};
 	
 	var formula = {
 		"const": function( target, p, part, lifep ){
-			updateFormulaTarget( target, part, p[0] )
+			setFormulaTarget( target, part, p[0] )
+		},
+		"constAdd": function( target, p, part, lifep ){
+			var ori = getFormulaTarget( target, part )
+			setFormulaTarget( target, part, ori + p[0] )
 		},
 		"linear": function( target, p, part, lifep ){
 			var offset = p[1] - p[0]
 			var adj = p[0] + offset* lifep 
-			updateFormulaTarget( target, part, adj )
+			setFormulaTarget( target, part, adj )
+		},
+		"linearAdd": function( target, p, part, lifep ){
+			var ori = getFormulaTarget( target, part )
+			var offset = p[1] - p[0]
+			var adj = p[0] + offset* lifep 
+			setFormulaTarget( target, part, ori + adj )
+		},
+		"randStartAdd": function( target, p, part, lifep ){
+			if( lifep == 0.0 ){
+				var ori = getFormulaTarget( target, part )
+				var adj = p[0]*Math.random() - p[0]/2
+				setFormulaTarget( target, part, ori + adj )
+			}
+		},
+		"custom": function( target, p, part, lifep ){
+			if( lifep == 0.0 ){
+				setFormulaTarget( target, part, p[0] )
+			} else if( lifep < 0.25 ){
+				var adj = p[0] + (p[1]-p[0]) * lifep / 0.25
+				setFormulaTarget( target, part, adj )
+			} else if( lifep < 0.5 ){
+				var adj = p[1] + (p[2]-p[1]) * (lifep - 0.25) / 0.25
+				setFormulaTarget( target, part, adj )
+			} else if( lifep < 0.75 ){
+				var adj = p[2] + (p[3]-p[2]) * (lifep - 0.5) / 0.25
+				setFormulaTarget( target, part, adj )
+			} else if( lifep < 0.1 ){
+				var adj = p[3] + (p[4]-p[3]) * (lifep - 0.75) / 0.25
+				setFormulaTarget( target, part, adj )
+			} else {
+				setFormulaTarget( target, part, p[4] )
+			}
+		},
+	}
+		
+	function getFormulaTarget( target, part ){
+		switch( target ){
+		case 'life':
+			return part.lifetime
+		case 'x':
+			return part.pos[0]
+		case 'y':
+			return part.pos[1]
+		case 'rot':
+			return part.pos[2]
+		case 'vx':
+			return part.vel[0]
+		case 'vy':
+			return part.vel[1]
+		case 'vr':
+			return part.vel[2]
+		case 'scale-x':
+			return part.size[0]
+		case 'scale-y':
+			return part.size[1]
+		case 'r':
+			return part.color[0]
+		case 'g':
+			return part.color[1]
+		case 'b':
+			return part.color[2]
+		case 'a':
+			return part.color[3]
+		case 'emit-angle':
+			if( part.emit ){
+				return part.emit.angle
+			} else {
+				return 0
+			}
+		case 'emit-range':
+			if( part.emit ){
+				return part.emit.range
+			} else {
+				return 0
+			}
+		case 'emit-count':
+			if( part.emit ){
+				return 0
+			} else {
+				return 0
+			}
+		case 'emit-force':
+			if( part.emit ){
+				return part.emit.force
+			} else {
+				return 0
+			}
+		case 'emit-duration':
+			if( part.emit ){
+				return part.emit.duration
+			} else {
+				return 0
+			}
 		}
 	}
 	
-		
-	function updateFormulaTarget( target, part, v ){
+	function setFormulaTarget( target, part, v ){
 		switch( target ){
+		case 'life':
+			return part.lifetime = v
 		case 'x':
-			part.pos[0] = v
-			break
+			return part.pos[0] = v
+		case 'y':
+			return part.pos[1] = v
+		case 'rot':
+			return part.pos[2] = v
+		case 'vx':
+			return part.vel[0] = v
+		case 'vy':
+			return part.vel[1] = v
+		case 'vr':
+			return part.vel[2] = v 
 		case 'scale-x':
-			part.size[0] = v
-			break
+			return part.size[0] = v
 		case 'scale-y':
-			part.size[1] = v
-			break
+			return part.size[1] = v
+		case 'r':
+			return part.color[0] = v
+		case 'g':
+			return part.color[1] = v
+		case 'b':
+			return part.color[2] = v
+		case 'a':
+			return part.color[3] = v
+		case 'emit-angle':
+			if( part.emit ){
+				return part.emit.angle = v
+			} else {
+				return 0
+			}
+		case 'emit-range':
+			if( part.emit ){
+				return part.emit.range = v
+			} else {
+				return 0
+			}
+		case 'emit-count':
+			if( part.emit ){
+				return 0
+			} else {
+				return 0
+			}
+		case 'emit-force':
+			if( part.emit ){
+				return part.emit.force = v
+			} else {
+				return 0
+			}
+		case 'emit-duration':
+			if( part.emit ){
+				return part.emit.duration = v
+			} else {
+				return 0
+			}
 		}
 	}
+	
+	
 	
 	function stepParticle( part, delta ){
 		// update position
