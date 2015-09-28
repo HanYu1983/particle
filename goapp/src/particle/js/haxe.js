@@ -1393,5 +1393,3 @@ view_component_TreeView.ON_TREE_NODE_CLICK = "ON_TREE_NODE_CLICK";
 view_component_TreeView.ON_TREE_DRAG = "ON_TREE_DRAG";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=haxe.js.map
