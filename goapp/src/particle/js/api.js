@@ -237,9 +237,8 @@ var api = api || {};
 				for( var k in copy ){
 					part[k] = copy[k]
 				}
-				// 必須將時間重設，發射粒子的次數才不會算錯
-				part.timer = 0
-				part.emitTimes = 0
+				// 必須將發射次數重設，發射粒子的次數才不會算錯
+				part.emitTimes = Math.floor( part.timer/ part.emit.duration )
 				break
 			}
 		}
