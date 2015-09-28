@@ -31,9 +31,11 @@ var api = api || {};
 				objs[key] = obj
 			}
 		
-			scene.add( obj )
-			
 			return obj
+		}
+		
+		function addObject( obj ){
+			scene.add( obj )
 		}
 	
 		function removeObject( key ){
@@ -82,16 +84,18 @@ var api = api || {};
 				}
 				
 				obj.material.color.setRGB( part.color[0], part.color[1], part.color[2] )
+				obj.material.opacity = part.color[3]
 				obj.position.set( part.pos[0], -part.pos[1], 0 )
 				obj.rotation.z = part.pos[2]
-
 				obj.scale.set( part.size[0], part.size[1], 1 )
+				
+				addObject( obj )
 				nowlife[part.poolId] = true
 			}
 			compareAndReset( nowlife, function(key){
 				removeObject(key)
 			})
-			var bgColor = (ctx.bgColor[0]*255<<16) || (ctx.bgColor[1]*255<<8) || (ctx.bgColor[2]*255)
+			var bgColor = (ctx.bgColor[0]*255<<16) | (ctx.bgColor[1]*255<<8) | (ctx.bgColor[2]*255)
 			renderer.setClearColor( bgColor, 1 );
 			renderer.render( scene, camera )
 		}
