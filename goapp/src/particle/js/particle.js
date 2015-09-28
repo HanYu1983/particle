@@ -351,6 +351,8 @@ var particle = particle || {};
 								Math.sin( angle )* part.emit.force,
 								0
 							])
+							
+							stepParticle( obj, 0 )
 							parts.push( obj )
 							
 						} else {
