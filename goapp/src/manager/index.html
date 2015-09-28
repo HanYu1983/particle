@@ -21,11 +21,13 @@
 </head>
 <style>
 
+
 #btn_about,
 #btn_team,
 #btn_login,
 #btn_stock,
 #btn_particle,
+#btn_particleClojure,
 #btn_card
 {
 	position:relative;
@@ -33,6 +35,7 @@
 	//height:40px;
 }
 
+#btn_particleClojureLink,
 #btn_stockLink,
 #btn_particleLink,
 #btn_cardLink{
@@ -109,12 +112,22 @@ a{
 					<div class="hori" style="width:83%">
 						<a id="btn_card" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true" >卡牌風雲</a>
 					</div>
-					<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
+					
+				</div>
+				<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
+				<div class="group">
+					<div class="hori" style="width:15%">
+						<a id="btn_particleClojureLink"  href="#"  class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+					</div>
+					<div class="hori" style="width:83%">
+						<a id="btn_particleClojure" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >幽夢幻境函數式語言版</a>
+					</div>
 				</div>
 				<div class="group" style="margin-top:30px;">
 					<a href="#" id="btn_login" class="easyui-linkbutton" data-options="iconCls:'icon-fb-login',disabled:true" onclick="onBtnClick(this)" >登入</a>
 					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
 				</div>
+				
 			</div>
 		</div>
 		<div data-options="region:'center',title:'內容'" style="">
@@ -133,7 +146,16 @@ a{
 			</div>
 			<div id="mc_particle" style="position:relative; width:100%; height:100%; ">
 				<div class="group" style="text-align:center; margin-top:10px;">
-					開發中的粒子系統，<span style="color:yellow;">目前尚存有效能問題及操作友好度問題</span>，待下次改版會解決
+					開發中...
+					<br>
+					<br>
+					開發環境：google app engine<br>
+					開發語言：golang/ haxe/ clojurescript/ javascript/ jqxWidget<br>
+				</div>
+			</div>
+			<div id="mc_particle_clojure" style="position:relative; width:100%; height:100%; ">
+				<div class="group" style="text-align:center; margin-top:10px;">
+					粒子系統，<span style="color:yellow;">目前尚存有效能問題及操作友好度問題</span>
 					<br>
 					<br>
 					開發環境：google app engine<br>
@@ -282,11 +304,17 @@ a{
 			case 'btn_cardLink':
 				window.open( 'http://particle-979.appspot.com/card/index.html#' );
 				break;
+			case 'btn_particleClojureLink':
+				window.open( 'http://particle-979.appspot.com/particle/index_clojure.html#' );
+				break;
 			case 'btn_stock':
 				openStock();
 				break;
 			case 'btn_particle':
 				openParticle();
+				break;
+			case 'btn_particleClojure':
+				openParticleClojure();
 				break;
 			case 'btn_card':
 				openCard();
@@ -390,6 +418,15 @@ a{
 	function openStock(){
 		$('#mc_stock' ).show();
 		$('#mc_particle' ).hide();
+		$('#mc_particle_clojure' ).hide();
+		$('#mc_card' ).hide();
+		$('#mc_team' ).hide();
+	}
+	
+	function openParticleClojure(){
+		$('#mc_stock' ).hide();
+		$('#mc_particle' ).hide();
+		$('#mc_particle_clojure' ).show();
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
 	}
@@ -397,6 +434,7 @@ a{
 	function openParticle(){
 		$('#mc_stock' ).hide();
 		$('#mc_particle' ).show();
+		$('#mc_particle_clojure' ).hide();
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
 	}
@@ -404,6 +442,7 @@ a{
 	function openCard(){
 		$('#mc_stock' ).hide();
 		$('#mc_particle' ).hide();
+		$('#mc_particle_clojure' ).hide();
 		$('#mc_card' ).show();
 		$('#mc_team' ).hide();
 	}
@@ -411,6 +450,7 @@ a{
 	function openTeam(){
 		$('#mc_stock' ).hide();
 		$('#mc_particle' ).hide();
+		$('#mc_particle_clojure' ).hide();
 		$('#mc_card' ).hide();
 		$('#mc_team' ).show();
 	}
