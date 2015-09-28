@@ -91,7 +91,7 @@ var api = api || {};
 			compareAndReset( nowlife, function(key){
 				removeObject(key)
 			})
-			var bgColor = (ctx.bgColor[0]*255<<16) || (ctx.bgColor[1]*255<<8) || (ctx.bgColor[2]*255)
+			var bgColor = (ctx.bgColor[0]*255<<16) | (ctx.bgColor[1]*255<<8) | (ctx.bgColor[2]*255)
 			renderer.setClearColor( bgColor, 1 );
 			renderer.render( scene, camera )
 		}
