@@ -194,7 +194,7 @@ body{
 	<script>
 	
 	function setCookie( key, value ){
-		$.cookie( key, value );
+		$.cookie( key, value, { expires: 7 });
 	}
 	
 	function getCookie( key ){
@@ -204,8 +204,6 @@ body{
 	function removeCookie( key ){
 		$.removeCookie( key );
 	}
-	
-	removeCookie( 'han' );
 	
 	</script>
 	<script type="text/javascript" src="/_ah/channel/jsapi"></script>
