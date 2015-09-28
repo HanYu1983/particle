@@ -102,7 +102,7 @@ var api = api || {};
 	}
 	
 	
-	var pool = particle.pool( 5000 )
+	var pool = particle.pool( 2000 )
 	var first = particle.initParticle( pool.get(), { 
 		id: 'root',
 		lifetime: 0,
