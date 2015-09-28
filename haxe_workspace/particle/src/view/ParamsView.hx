@@ -53,8 +53,8 @@ class ParamsView extends Model
 		setPropValue( 'size_y', particle.size[1] );
 		setPropValue( 'vel_x', particle.vel[0] );
 		setPropValue( 'vel_y', particle.vel[1] );
-		setPropValue( 'vel_r', particle.vel[2] / Math.PI * 180 );
-		setPropValue( 'pos_r', particle.pos[2] / Math.PI * 180 );
+		setPropValue( 'vel_r', particle.vel[2] );
+		setPropValue( 'pos_r', particle.pos[2] );
 		setPropValue( 'alpha', particle.color[3] );
 		
 		var color = particle.color;
@@ -65,8 +65,8 @@ class ParamsView extends Model
 		if ( isEmit ) {
 			setPropValue( 'count', particle.emit.count );
 			setPropValue( 'duration', particle.emit.duration );
-			setPropValue( 'angle', particle.emit.angle / Math.PI * 180 );
-			setPropValue( 'range', particle.emit.range / Math.PI * 180 );
+			setPropValue( 'angle', particle.emit.angle );
+			setPropValue( 'range', particle.emit.range );
 			setPropValue( 'force', particle.emit.force );
 			
 			getPropContainer( 'count' ).show();
@@ -109,12 +109,12 @@ class ParamsView extends Model
 			var jdom = j( untyped __js__( 'this' ) );
 			var proptype = jdom.parent().parent().attr( 'proptype' );
 			var newValue = Std.parseFloat( event.args.value );
-			switch( proptype ) {
+			//switch( proptype ) {
 			//	case 'duration', 'lifetime':
 			//		newValue /= 1000;
-				case 'angle', 'range', 'pos_r', 'vel_r':
-					newValue = newValue / 180 * Math.PI;
-			}
+			//	case 'angle', 'range', 'pos_r', 'vel_r':
+					//newValue = newValue / 180 * Math.PI;
+			//}
 			notify( ON_PROP_CHANGE, { id:currentParticleObj.id, proptype:proptype, value:newValue } );
 			currentPropSpr = jdom;
 		}); 

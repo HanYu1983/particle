@@ -1106,8 +1106,8 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		this.setPropValue("size_y",particle.size[1]);
 		this.setPropValue("vel_x",particle.vel[0]);
 		this.setPropValue("vel_y",particle.vel[1]);
-		this.setPropValue("vel_r",particle.vel[2] / Math.PI * 180);
-		this.setPropValue("pos_r",particle.pos[2] / Math.PI * 180);
+		this.setPropValue("vel_r",particle.vel[2]);
+		this.setPropValue("pos_r",particle.pos[2]);
 		this.setPropValue("alpha",particle.color[3]);
 		var color = particle.color;
 		this.color_color.jqxColorPicker("setColor",{ r : color[0] * 255, g : color[1] * 255, b : color[2] * 255});
@@ -1115,8 +1115,8 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 		if(isEmit) {
 			this.setPropValue("count",particle.emit.count);
 			this.setPropValue("duration",particle.emit.duration);
-			this.setPropValue("angle",particle.emit.angle / Math.PI * 180);
-			this.setPropValue("range",particle.emit.range / Math.PI * 180);
+			this.setPropValue("angle",particle.emit.angle);
+			this.setPropValue("range",particle.emit.range);
 			this.setPropValue("force",particle.emit.force);
 			this.getPropContainer("count").show();
 			this.getPropContainer("duration").show();
@@ -1151,11 +1151,6 @@ view_ParamsView.prototype = $extend(model_Model.prototype,{
 			var jdom = _g.j(this);
 			var proptype = jdom.parent().parent().attr("proptype");
 			var newValue = parseFloat(event.args.value);
-			switch(proptype) {
-			case "angle":case "range":case "pos_r":case "vel_r":
-				newValue = newValue / 180 * Math.PI;
-				break;
-			}
 			_g.notify(view_ParamsView.ON_PROP_CHANGE,{ id : _g.currentParticleObj.id, proptype : proptype, value : newValue});
 			_g.currentPropSpr = jdom;
 		});
