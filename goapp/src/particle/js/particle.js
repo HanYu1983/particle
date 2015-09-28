@@ -42,10 +42,10 @@ var particle = particle || {};
 		obj.id = info.id != undefined ? info.id : null
 		obj.lifetime = info.lifetime != undefined ? info.lifetime : 1.0
 		obj.mass = info.mass != undefined ? info.mass : 1.0
-		obj.color = info.color != undefined ? info.color : [0.2, 0.2, 0.2, 1]
+		obj.color = info.color != undefined ? info.color.slice() : [0.2, 0.2, 0.2, 1]
 		obj.size = info.size != undefined ? info.size : [50, 50]
-		obj.pos = info.pos != undefined ? info.pos : [0,0,0]
-		obj.vel = info.vel != undefined ? info.vel : [0,0,0]
+		obj.pos = info.pos != undefined ? info.pos.slice() : [0,0,0]
+		obj.vel = info.vel != undefined ? info.vel.slice() : [0,0,0]
 		obj.tex = info.tex != undefined ? info.tex : null
 		obj.blending = info.blending != undefined ? info.blending : null
 		if( info.emit ){

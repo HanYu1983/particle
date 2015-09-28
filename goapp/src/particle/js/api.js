@@ -26,16 +26,6 @@ var api = api || {};
 				var material = new THREE.MeshBasicMaterial( { map:null, color: 0x33aa55 } );
 				// 加上transparent:true才會有png的透明效果, 也才有blending效果
 				material.transparent = true;
-				
-				material.blending = THREE[ 'CustomBlending' ];
-				
-				material.blendSrc = THREE[ 'OneFactor' ];
-				material.blendDst = THREE[ 'OneFactor' ];
-				material.blendEquation = THREE.AddEquation;
-
-				material.blendSrcAlpha = THREE[ 'OneFactor' ];
-				material.blendDstAlpha = THREE[ 'OneFactor' ];
-				material.blendEquationAlpha = THREE.AddEquation;
 			
 				obj = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), material)
 				objs[key] = obj
@@ -74,8 +64,23 @@ var api = api || {};
 				var part = parts[idx]
 				var obj = createObject( scene, part.poolId )
 				if( ctx.textures[ part.tex ] ){
-					//obj.material.map = ctx.textures[ part.tex ]
+					obj.material.map = ctx.textures[ part.tex ]
 				}
+				
+				var material = obj.material
+				material.blending = THREE[ 'CustomBlending' ];
+				switch( part.blending ){
+				case 'normal':
+					//var blendings = [ "NoBlending", "NormalBlending", "AdditiveBlending", "SubtractiveBlending", "MultiplyBlending", "AdditiveAlphaBlending" ];
+					material.blending = THREE[ 'NormalBlending' ];
+					break;
+				case 'add':
+					material.blending = THREE[ 'AdditiveBlending' ];
+					break;
+				default:
+					material.blending = THREE[ 'NoBlending' ];
+				}
+				
 				obj.material.color.setRGB( part.color[0], part.color[1], part.color[2] )
 				obj.position.set( part.pos[0], -part.pos[1], 0 )
 				obj.rotation.z = part.pos[2]
@@ -93,8 +98,9 @@ var api = api || {};
 	}
 	
 	
-	var pool = particle.pool( 10 )
+	var pool = particle.pool( 5000 )
 	var first = particle.initParticle( pool.get(), { 
+		id: 'root',
 		lifetime: 0,
 		vel: [1, 1, 1],
 		emit: {
@@ -143,7 +149,8 @@ var api = api || {};
 	var ctx = {
 		parts: [],
 		textures: {},
-		bgColor: [0, 0, 0]
+		bgColor: [0, 0, 0],
+		fps: 60,
 	}
 	
 	var callback
@@ -158,49 +165,58 @@ var api = api || {};
 			last = now
 			particle.stepParticles( pool, ctx.parts, elap )
 			draw( ctx )
-			setTimeout( arguments.callee, 1000/60.0 )
+			setTimeout( arguments.callee, 1000.0/ctx.fps )
 			if (callback){
 				callback(["tick", elap])
 			}
 		}, 0)
-		
+		/*
 		setTimeout( function(){
 			var obj = pool.get()
 			if( obj ){
 				var input = {
-					id: 'root',
-					lifetime: 0,
-					pos: [150, 300, 0],
-					vel: [0, 0, 1],
-					emit: {
-						duration: 0.1,
-						force: 100,
-						range: 0,
-						prototype: [
+					"poolId":1,
+					"using":true,
+					"id":"22bb721e-016c-4a40-ab21-18ddc7ce2b72",
+					"lifetime":0,
+					"mass":1,
+					"color":[1,1,1,1],
+					"size":[40,40],
+					"pos":[216.67830823198068,264.9950804124453,0],
+					"vel":[0,0,0],
+					"tex":"d0e9b66e-b99a-42cf-b693-35e674ccc557",
+					"blending":"add",
+					"timer":1.433,
+					"emitTimes":28,
+					"forceVel":[0,0,0],
+					"name":"粒子",
+					"emit":{
+						"prototype":[
 							{
-								lifetime: 1,
-								color: [0, 0, 1, 1],
-								vel: [100, 0, 1],
-								/*
-								emit: {
-									duration: 0.1,
-									prototype:[
-										{
-											vel: [0, -100, 1]
-										}
-									]
-								}
-								*/
-							}
-						]
-					}
-				}
+								"id":"b8b483cf-3557-42bd-b2d6-18cbcfae9427",
+								"name":"粒子",
+								"lifetime":2,
+								"vel":[0,0,0],
+								"pos":[216.47288528997586,264.74385051555663,0],
+								"mass":1,
+								"color":[1,1,1,1],
+								"size":[40,40],
+								"tex":"d0e9b66e-b99a-42cf-b693-35e674ccc557",
+								"blending":"add",
+								"formulaList":[["scale-x","linear",20,0,0,0,0,"4ffe2b0a-e0cb-417e-b730-3cad11207920"],["scale-y","linear",20,0,0,0,0,"9bfc43e6-6a1a-448e-8a71-08360f1bcb4f"]]
+							}],
+						"count":1,
+						"duration":0.05,
+						"angle":0,
+						"range":6.28,
+						"force":100
+					}}
 				var np = particle.initParticle( obj, input )
 				ctx.parts.push( np )
 			}
 			
 		}, 1000)
-		
+		*/
 	}
 	
 	
@@ -254,39 +270,22 @@ var api = api || {};
 	}
 	*/
 	function editParticle( inpart ){
-		/*
+		var i = 0
 		for(;i< ctx.parts.length; ++i){
 			var part = ctx.parts[i]
-			if( part.id == 'root' ){
-				part.pos = inpart.pos
+			if( part.id == inpart.id ){
+				for( var k in inpart ){
+					part[k] = inpart[k]
+				}
+				
 				break
 			}
 		}
-		*/
-		
-		
-		/*
-		var obj = pool.get()
-		
-		if( obj != null ){
+		if( i == ctx.parts.length ){
+			var obj = pool.get()
 			var np = particle.initParticle( obj, inpart )
-			var i = 0
-			
-			for(;i< ctx.parts.length; ++i){
-				var part = ctx.parts[i]
-				if( part.id == 'root' ){
-					for( var k in np ){
-						part[k] = np[k]
-					}
-					break
-				}
-			}
-			
-			if( i == ctx.parts.length ){
-				ctx.parts.push( np )
-			}
+			ctx.parts.push( np )
 		}
-		*/
 	}
 	
 	/**
@@ -326,7 +325,7 @@ var api = api || {};
 	function addTexture( id, img ){
 		var tex = new THREE.Texture(img)
 		tex.needsUpdate = true
-		ctx.textures[id] = img
+		ctx.textures[id] = tex
 	}
 	
 	/**
