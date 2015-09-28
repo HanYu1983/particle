@@ -124,6 +124,7 @@ var particle = particle || {};
 		}
 	}
 	
+		
 	function updateFormulaTarget( target, part, v ){
 		switch( target ){
 		case 'x':
