@@ -43,7 +43,7 @@ var particle = particle || {};
 		obj.lifetime = info.lifetime != undefined ? info.lifetime : 1.0
 		obj.mass = info.mass != undefined ? info.mass : 1.0
 		obj.color = info.color != undefined ? info.color.slice() : [0.2, 0.2, 0.2, 1]
-		obj.size = info.size != undefined ? info.size : [50, 50]
+		obj.size = info.size != undefined ? info.size.slice() : [50, 50]
 		obj.pos = info.pos != undefined ? info.pos.slice() : [0,0,0]
 		obj.vel = info.vel != undefined ? info.vel.slice() : [0,0,0]
 		obj.tex = info.tex != undefined ? info.tex : null
@@ -58,7 +58,7 @@ var particle = particle || {};
 			obj.emit.prototype = info.emit.prototype
 		}
 		if( info.formulaList ){
-			obj.formulaList = info.formulaList
+			obj.formulaList = info.formulaList.slice()
 		}
 		obj.timer = 0.0
 		obj.emitTimes = 0
@@ -85,12 +85,11 @@ var particle = particle || {};
 			]
 		]
 	*/
-	function formatParticle( obj, inpart ){
-		initParticle( obj, inpart )
-		if( part.formulaList ){
+	function formatFormula( inpart ){
+		if( inpart.formulaList ){
 			var newf = []
-			for( var i in part.formulaList ){
-				var f = part.formulaList[i]
+			for( var i in inpart.formulaList ){
+				var f = inpart.formulaList[i]
 				var target = f[0]
 				var type = f[1]
 				var p1 = f[2]
@@ -98,19 +97,30 @@ var particle = particle || {};
 				var p3 = f[4]
 				var p4 = f[5]
 				var p5 = f[6]
-				f.push( formula[type].bind( target, params ) )
+				var ff = _.partial( formula[type], target, [p1, p2, p3, p4, p5] )
+				newf.push( ff )
 			}
-			part.formulaList = newf
+			inpart.formulaList = newf
 		}
-		return obj
+		
+		if( inpart.emit ){
+			if( inpart.emit.prototype ){
+				for( var i in inpart.emit.prototype ){
+					var sub = inpart.emit.prototype[i]
+					formatFormula( sub )
+				}
+			}
+		}
 	}
 	
 	var formula = {
-		"const": function( target, params, part, lifep ){
-			updateFormulaTarget( target, part, params[0] )
+		"const": function( target, p, part, lifep ){
+			updateFormulaTarget( target, part, p[0] )
 		},
-		"linear": function( target, params, part, lifep ){
-			updateFormulaTarget( target, part, params[0] )
+		"linear": function( target, p, part, lifep ){
+			var offset = p[1] - p[0]
+			var adj = p[0] + offset* lifep 
+			updateFormulaTarget( target, part, adj )
 		}
 	}
 	
@@ -118,6 +128,13 @@ var particle = particle || {};
 		switch( target ){
 		case 'x':
 			part.pos[0] = v
+			break
+		case 'scale-x':
+			part.size[0] = v
+			break
+		case 'scale-y':
+			part.size[1] = v
+			break
 		}
 	}
 	
@@ -133,10 +150,10 @@ var particle = particle || {};
 		for( var i in part.formulaList ){
 			var f = part.formulaList[i]
 			if( part.lifetime <= 0 ){
-				//f( part, 0 )
+				f( part, 0 )
 			} else {
 				var lifep = part.timer/ part.lifetime
-				//f( part, lifep )
+				f( part, lifep )
 			}
 		}
 		// update timer
@@ -204,5 +221,6 @@ var particle = particle || {};
 	module.pool = pool
 	module.initParticle = initParticle
 	module.stepParticles = stepParticles
+	module.formatFormula = formatFormula
 	
 }) ( particle )

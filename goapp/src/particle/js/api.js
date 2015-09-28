@@ -195,7 +195,7 @@ var api = api || {};
 							{
 								"id":"b8b483cf-3557-42bd-b2d6-18cbcfae9427",
 								"name":"粒子",
-								"lifetime":2,
+								"lifetime":5,
 								"vel":[0,0,0],
 								"pos":[216.47288528997586,264.74385051555663,0],
 								"mass":1,
@@ -205,12 +205,13 @@ var api = api || {};
 								"blending":"add",
 								"formulaList":[["scale-x","linear",20,0,0,0,0,"4ffe2b0a-e0cb-417e-b730-3cad11207920"],["scale-y","linear",20,0,0,0,0,"9bfc43e6-6a1a-448e-8a71-08360f1bcb4f"]]
 							}],
-						"count":1,
-						"duration":0.05,
+						"count":0.5,
+						"duration":2,
 						"angle":0,
 						"range":6.28,
-						"force":100
+						"force":30
 					}}
+				particle.formatFormula( input )
 				var np = particle.initParticle( obj, input )
 				ctx.parts.push( np )
 			}
@@ -270,20 +271,22 @@ var api = api || {};
 	}
 	*/
 	function editParticle( inpart ){
+		copy = JSON.parse( JSON.stringify( inpart ) )
+		particle.formatFormula( copy )
+		
 		var i = 0
 		for(;i< ctx.parts.length; ++i){
 			var part = ctx.parts[i]
-			if( part.id == inpart.id ){
-				for( var k in inpart ){
-					part[k] = inpart[k]
+			if( part.id == copy.id ){
+				for( var k in copy ){
+					part[k] = copy[k]
 				}
-				
 				break
 			}
 		}
 		if( i == ctx.parts.length ){
 			var obj = pool.get()
-			var np = particle.initParticle( obj, inpart )
+			var np = particle.initParticle( obj, copy )
 			ctx.parts.push( np )
 		}
 	}
