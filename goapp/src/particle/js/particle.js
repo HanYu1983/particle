@@ -151,7 +151,7 @@ var particle = particle || {};
 			} else if( lifep < 0.75 ){
 				var adj = p[2] + (p[3]-p[2]) * (lifep - 0.5) / 0.25
 				setFormulaTarget( target, part, adj )
-			} else if( lifep < 0.1 ){
+			} else if( lifep < 1 ){
 				var adj = p[3] + (p[4]-p[3]) * (lifep - 0.75) / 0.25
 				setFormulaTarget( target, part, adj )
 			} else {
@@ -202,7 +202,7 @@ var particle = particle || {};
 			}
 		case 'emit-count':
 			if( part.emit ){
-				return 0
+				return part.emit.count
 			} else {
 				return 0
 			}
@@ -263,7 +263,7 @@ var particle = particle || {};
 			}
 		case 'emit-count':
 			if( part.emit ){
-				return 0
+				return part.emit.count = v
 			} else {
 				return 0
 			}
@@ -333,30 +333,31 @@ var particle = particle || {};
 				var shouldTimes = Math.floor(part.timer/ part.emit.duration)
 				var offsetTimes = shouldTimes - part.emitTimes
 				if( offsetTimes > 0 ){
-					
 					for( var i in part.emit.prototype ){
 						var newp = part.emit.prototype[i]
-						var obj = pool.get()
-						if( obj != null ){
-							initParticle( obj, newp )
-							obj.pos[0] = part.pos[0]
-							obj.pos[1] = part.pos[1]
-							obj.pos[2] = part.pos[2]
+						for( var j =0; j< part.emit.count; ++j ){
+							var obj = pool.get()
+							if( obj != null ){
+								initParticle( obj, newp )
+								obj.pos[0] = part.pos[0]
+								obj.pos[1] = part.pos[1]
+								obj.pos[2] = part.pos[2]
 							
-							var angle = part.pos[2]
-							angle += part.emit.angle
-							angle += Math.random()* part.emit.range - part.emit.range/2
-							forceParticle( obj, [
-								Math.cos( angle )* part.emit.force,
-								Math.sin( angle )* part.emit.force,
-								0
-							])
+								var angle = part.pos[2]
+								angle += part.emit.angle
+								angle += Math.random()* part.emit.range - part.emit.range/2
+								forceParticle( obj, [
+									Math.cos( angle )* part.emit.force,
+									Math.sin( angle )* part.emit.force,
+									0
+								])
 							
-							stepParticle( obj, 0 )
-							parts.push( obj )
+								stepParticle( obj, 0 )
+								parts.push( obj )
 							
-						} else {
-							console.log('no more idle obj in pool')
+							} else {
+								console.log('no more idle obj in pool')
+							}
 						}
 					}
 					part.emitTimes = shouldTimes

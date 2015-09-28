@@ -102,7 +102,7 @@ var api = api || {};
 	}
 	
 	
-	var pool = particle.pool( 5000 )
+	var pool = particle.pool( 2000 )
 	var first = particle.initParticle( pool.get(), { 
 		id: 'root',
 		lifetime: 0,
@@ -237,6 +237,9 @@ var api = api || {};
 				for( var k in copy ){
 					part[k] = copy[k]
 				}
+				// 必須將時間重設，發射粒子的次數才不會算錯
+				part.timer = 0
+				part.emitTimes = 0
 				break
 			}
 		}
