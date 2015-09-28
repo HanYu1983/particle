@@ -154,7 +154,7 @@ var api = api || {};
 		parts: [],
 		textures: {},
 		bgColor: [0, 0, 0],
-		fps: 60,
+		fps: 30,
 	}
 	
 	var callback
@@ -174,54 +174,6 @@ var api = api || {};
 				callback(["tick", elap])
 			}
 		}, 0)
-		/*
-		setTimeout( function(){
-			var obj = pool.get()
-			if( obj ){
-				var input = {
-					"poolId":1,
-					"using":true,
-					"id":"22bb721e-016c-4a40-ab21-18ddc7ce2b72",
-					"lifetime":0,
-					"mass":1,
-					"color":[1,1,1,1],
-					"size":[40,40],
-					"pos":[216.67830823198068,264.9950804124453,0],
-					"vel":[0,0,0],
-					"tex":"d0e9b66e-b99a-42cf-b693-35e674ccc557",
-					"blending":"add",
-					"timer":1.433,
-					"emitTimes":28,
-					"forceVel":[0,0,0],
-					"name":"粒子",
-					"emit":{
-						"prototype":[
-							{
-								"id":"b8b483cf-3557-42bd-b2d6-18cbcfae9427",
-								"name":"粒子",
-								"lifetime":5,
-								"vel":[0,0,0],
-								"pos":[216.47288528997586,264.74385051555663,0],
-								"mass":1,
-								"color":[1,1,1,1],
-								"size":[40,40],
-								"tex":"d0e9b66e-b99a-42cf-b693-35e674ccc557",
-								"blending":"add",
-								"formulaList":[["scale-x","linear",20,0,0,0,0,"4ffe2b0a-e0cb-417e-b730-3cad11207920"],["scale-y","linear",20,0,0,0,0,"9bfc43e6-6a1a-448e-8a71-08360f1bcb4f"]]
-							}],
-						"count":0.5,
-						"duration":2,
-						"angle":0,
-						"range":6.28,
-						"force":30
-					}}
-				particle.formatFormula( input )
-				var np = particle.initParticle( obj, input )
-				ctx.parts.push( np )
-			}
-			
-		}, 1000)
-		*/
 	}
 	
 	
