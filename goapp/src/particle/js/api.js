@@ -268,8 +268,11 @@ var api = api || {};
 	
 	/**
 	初使化，這必須在一開始呼叫
+	info:{
+		dom: htmlDiv
+	}
 	*/
-	function init( canvas ){
+	function init( info ){
 		
 	}
 	
