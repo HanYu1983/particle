@@ -6,7 +6,7 @@ var particle = particle || {};
 		var ary = []
 		for( var i=0; i<size; ++i ){
 			ary.push({
-				id: i,
+				poolId: i,
 				using: false
 			})
 		}
@@ -26,7 +26,7 @@ var particle = particle || {};
 			},
 			put: function( obj ){
 				for( var k in obj ){
-					if( k != 'id' ){
+					if( k != 'poolId' ){
 						delete obj[k]
 					}
 				}
@@ -39,9 +39,10 @@ var particle = particle || {};
 	}
 	
 	function initParticle( obj, info ){
+		obj.id = info.id != undefined ? info.id : null
 		obj.lifetime = info.lifetime != undefined ? info.lifetime : 1.0
 		obj.mass = info.mass != undefined ? info.mass : 1.0
-		obj.color = info.color != undefined ? info.color : '#33ddff'
+		obj.color = info.color != undefined ? info.color : [0.2, 0.2, 0.2, 1]
 		obj.size = info.size != undefined ? info.size : [50, 50]
 		obj.pos = info.pos != undefined ? info.pos : [0,0,0]
 		obj.vel = info.vel != undefined ? info.vel : [0,0,0]
@@ -54,7 +55,7 @@ var particle = particle || {};
 			obj.emit.angle = info.emit.angle != undefined ? info.emit.angle : 0
 			obj.emit.range = info.emit.range != undefined ? info.emit.range : 0
 			obj.emit.force = info.emit.force != undefined ? info.emit.force : 0
-			obj.emit.proto = info.emit.proto
+			obj.emit.prototype = info.emit.prototype
 		}
 		if( info.formulaList ){
 			obj.formulaList = info.formulaList
@@ -63,6 +64,61 @@ var particle = particle || {};
 		obj.emitTimes = 0
 		obj.forceVel = [0, 0, 0]
 		return obj
+	}
+	
+	/**
+		formulaList: [
+			[
+				target: 
+					"x" | "y" | "rot" | "vx" | "vy" | "vr" | 
+					"scale-x" | "scale-y" | "r" | "g" | "b" | "a" |
+					"emit-angle" | "emit-range" | "emit-count" | "emit-force" | "emit-duration",
+	
+				type:
+					"const" | "constAdd" | "linear" | "linearAdd" | "randStartAdd"
+	
+				p1:int,
+				p2:int,
+				p3:int,
+				p4:int,
+				p5:int
+			]
+		]
+	*/
+	function formatParticle( obj, inpart ){
+		initParticle( obj, inpart )
+		if( part.formulaList ){
+			var newf = []
+			for( var i in part.formulaList ){
+				var f = part.formulaList[i]
+				var target = f[0]
+				var type = f[1]
+				var p1 = f[2]
+				var p2 = f[3]
+				var p3 = f[4]
+				var p4 = f[5]
+				var p5 = f[6]
+				f.push( formula[type].bind( target, params ) )
+			}
+			part.formulaList = newf
+		}
+		return obj
+	}
+	
+	var formula = {
+		"const": function( target, params, part, lifep ){
+			updateFormulaTarget( target, part, params[0] )
+		},
+		"linear": function( target, params, part, lifep ){
+			updateFormulaTarget( target, part, params[0] )
+		}
+	}
+	
+	function updateFormulaTarget( target, part, v ){
+		switch( target ){
+		case 'x':
+			part.pos[0] = v
+		}
 	}
 	
 	function stepParticle( part, delta ){
@@ -77,10 +133,10 @@ var particle = particle || {};
 		for( var i in part.formulaList ){
 			var f = part.formulaList[i]
 			if( part.lifetime <= 0 ){
-				f( part, 0 )
+				//f( part, 0 )
 			} else {
 				var lifep = part.timer/ part.lifetime
-				f( part, lifep )
+				//f( part, lifep )
 			}
 		}
 		// update timer
@@ -115,8 +171,8 @@ var particle = particle || {};
 				var offsetTimes = shouldTimes - part.emitTimes
 				if( offsetTimes > 0 ){
 					
-					for( var i in part.emit.proto ){
-						var newp = part.emit.proto[i]
+					for( var i in part.emit.prototype ){
+						var newp = part.emit.prototype[i]
 						var obj = pool.get()
 						if( obj != null ){
 							initParticle( obj, newp )

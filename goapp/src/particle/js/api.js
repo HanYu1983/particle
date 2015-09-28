@@ -2,42 +2,33 @@ var api = api || {};
 
 (function( pkg ){
 	
-	
-	var countElem = $('#count')
-	
-	function drawer( elem ){
-		var logo = $('#logo')[0]
-		var tex = new THREE.Texture(logo)
-		// 需要這行，不然畫不出材質
-		tex.needsUpdate = true
-		
+	function drawer( elem ){	
 		var useWebgl = true
-		var w = 1200.0
-		var h = 627.0
+		var w = elem.width()
+		var h = elem.height()
 		var scene = new THREE.Scene
 		var camera = new THREE.OrthographicCamera( w/-2, w/2, h/2, h/-2, -500, 1000 )
-		camera.position.set( 0, 0, 200 )
+		camera.position.set( w/2, -h/2, 200 )
 
 		var renderer = useWebgl ? new THREE.WebGLRenderer({antialias: true}) : new THREE.CanvasRenderer({antialias: true})
-		
+	
 		renderer.setSize( w, h )
-		renderer.setClearColor( 0, 1 );
-		
+	
 		$(renderer.domElement).appendTo( elem )
-		
+	
 		var objs = {}
-		
+	
 		function createObject( scene, key ){
 			var obj = objs[key]
-			
+		
 			if( obj == null ){
-				
+			
 				var material = new THREE.MeshBasicMaterial( { map:null, color: 0x33aa55 } );
 				// 加上transparent:true才會有png的透明效果, 也才有blending效果
 				material.transparent = true;
 				
 				material.blending = THREE[ 'CustomBlending' ];
-
+				
 				material.blendSrc = THREE[ 'OneFactor' ];
 				material.blendDst = THREE[ 'OneFactor' ];
 				material.blendEquation = THREE.AddEquation;
@@ -45,15 +36,16 @@ var api = api || {};
 				material.blendSrcAlpha = THREE[ 'OneFactor' ];
 				material.blendDstAlpha = THREE[ 'OneFactor' ];
 				material.blendEquationAlpha = THREE.AddEquation;
-				
+			
 				obj = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), material)
 				objs[key] = obj
-				scene.add( obj )
 			}
+		
+			scene.add( obj )
 			
 			return obj
 		}
-		
+	
 		function removeObject( key ){
 			var obj = objs[key]
 			if( obj != null ){
@@ -62,7 +54,7 @@ var api = api || {};
 				//delete objs[key]
 			}
 		}
-		
+	
 		var life = {}
 		function compareAndReset( nowlife, fn ){
 			for(var k in nowlife){
@@ -73,30 +65,35 @@ var api = api || {};
 			}
 			life = nowlife
 		}
-		
+	
 		return function( ctx ){
-			
+		
 			var nowlife = {}
 			var parts = ctx.parts
 			for( var idx in parts ){
 				var part = parts[idx]
-				var obj = createObject( scene, part.id )
-				obj.material.map = tex
-				obj.material.color.setHex(parseInt( part.color.substr(1), 16 ))
-				obj.position.set( part.pos[0], part.pos[1], 0 )
+				var obj = createObject( scene, part.poolId )
+				if( ctx.textures[ part.tex ] ){
+					//obj.material.map = ctx.textures[ part.tex ]
+				}
+				obj.material.color.setRGB( part.color[0], part.color[1], part.color[2] )
+				obj.position.set( part.pos[0], -part.pos[1], 0 )
 				obj.rotation.z = part.pos[2]
+
 				obj.scale.set( part.size[0], part.size[1], 1 )
-				nowlife[idx] = true
+				nowlife[part.poolId] = true
 			}
 			compareAndReset( nowlife, function(key){
 				removeObject(key)
 			})
+			var bgColor = (ctx.bgColor[0]*255<<16) || (ctx.bgColor[1]*255<<8) || (ctx.bgColor[2]*255)
+			renderer.setClearColor( bgColor, 1 );
 			renderer.render( scene, camera )
 		}
 	}
 	
-	var draw = drawer($('#webgl'))
-	var pool = particle.pool( 5000 )
+	
+	var pool = particle.pool( 10 )
 	var first = particle.initParticle( pool.get(), { 
 		lifetime: 0,
 		vel: [1, 1, 1],
@@ -104,13 +101,13 @@ var api = api || {};
 			duration: 0.1,
 			force: 100,
 			range: 0,
-			proto: [
+			prototype: [
 				{
-					color: '#aabb44',
+					color: [0, 1, 1, 1],
 					vel: [0, 0, 1],
 					emit: {
 						duration: 0.1,
-						proto:[
+						prototype:[
 							{
 								vel: [0, -100, 1]
 							}
@@ -119,12 +116,12 @@ var api = api || {};
 				},
 				{
 					lifetime: 10,
-					color: '#ff0000',
+					color: [0, 0, 1, 1],
 					vel: [0, 200, 5],
 					emit: {
 						lifetime: 5,
 						duration: 0.05,
-						proto:[
+						prototype:[
 							{
 								vel: [0, -100, 0]
 							},
@@ -142,21 +139,69 @@ var api = api || {};
 			}
 		]
 	})
+	
 	var ctx = {
-		parts: [first]
+		parts: [],
+		textures: {},
+		bgColor: [0, 0, 0]
 	}
-	var last = new Date().getTime()
-	/*
-	setTimeout( function(){
-		var now = new Date().getTime()
-		var elap = now - last
-		last = now
-		particle.stepParticles( pool, ctx.parts, elap/ 1000.0 )
-		draw( ctx )
-		countElem.html( ctx.parts.length )
-		setTimeout( arguments.callee, 50 )
-	}, 1000)
-	*/
+	
+	var callback
+	
+	function startParticleStep( dom ){
+		var countElem = $('#count')
+		var draw = drawer($(dom))
+		var last = new Date().getTime()
+		setTimeout( function(){
+			var now = new Date().getTime()
+			var elap = (now - last)/ 1000.0
+			last = now
+			particle.stepParticles( pool, ctx.parts, elap )
+			draw( ctx )
+			setTimeout( arguments.callee, 1000/60.0 )
+			if (callback){
+				callback(["tick", elap])
+			}
+		}, 0)
+		
+		setTimeout( function(){
+			var obj = pool.get()
+			if( obj ){
+				var input = {
+					id: 'root',
+					lifetime: 0,
+					pos: [150, 300, 0],
+					vel: [0, 0, 1],
+					emit: {
+						duration: 0.1,
+						force: 100,
+						range: 0,
+						prototype: [
+							{
+								lifetime: 1,
+								color: [0, 0, 1, 1],
+								vel: [100, 0, 1],
+								/*
+								emit: {
+									duration: 0.1,
+									prototype:[
+										{
+											vel: [0, -100, 1]
+										}
+									]
+								}
+								*/
+							}
+						]
+					}
+				}
+				var np = particle.initParticle( obj, input )
+				ctx.parts.push( np )
+			}
+			
+		}, 1000)
+		
+	}
 	
 	
 	/**
@@ -208,8 +253,40 @@ var api = api || {};
 		]
 	}
 	*/
-	function editParticle( particle ){
+	function editParticle( inpart ){
+		/*
+		for(;i< ctx.parts.length; ++i){
+			var part = ctx.parts[i]
+			if( part.id == 'root' ){
+				part.pos = inpart.pos
+				break
+			}
+		}
+		*/
 		
+		
+		/*
+		var obj = pool.get()
+		
+		if( obj != null ){
+			var np = particle.initParticle( obj, inpart )
+			var i = 0
+			
+			for(;i< ctx.parts.length; ++i){
+				var part = ctx.parts[i]
+				if( part.id == 'root' ){
+					for( var k in np ){
+						part[k] = np[k]
+					}
+					break
+				}
+			}
+			
+			if( i == ctx.parts.length ){
+				ctx.parts.push( np )
+			}
+		}
+		*/
 	}
 	
 	/**
@@ -222,7 +299,12 @@ var api = api || {};
 	}
 	*/
 	function info( cb ){
-		
+		cb( null,
+			{
+				count: ctx.parts.length,
+				bgColor: ctx.bgColor
+			}
+		)
 	}
 	
 	
@@ -235,14 +317,16 @@ var api = api || {};
 	}
 	*/
 	function addEventListener( listener ){
-		
+		callback = listener
 	}
 	
 	/**
 	新增材質
 	*/
 	function addTexture( id, img ){
-		
+		var tex = new THREE.Texture(img)
+		tex.needsUpdate = true
+		ctx.textures[id] = img
 	}
 	
 	/**
@@ -256,24 +340,25 @@ var api = api || {};
 	改變背景顏色
 	*/
 	function changeBgColor( r, g, b ){
-		
+		ctx.bgColor = [r, g, b]
 	}
 	
 	/**
 	清除所有粒子
 	*/
 	function clearParticle(){
-		
+		for( var i in ctx.parts ){
+			var obj = ctx.parts[i]
+			pool.put( obj )
+		}
+		ctx.parts.length = 0
 	}
 	
 	/**
 	初使化，這必須在一開始呼叫
-	info:{
-		dom: htmlDiv
-	}
 	*/
-	function init( info ){
-		
+	function init( dom ){
+		startParticleStep( dom )
 	}
 	
 	pkg.editParticle = editParticle

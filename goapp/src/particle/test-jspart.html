@@ -55,8 +55,9 @@
 					
 					obj = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), material)
 					objs[key] = obj
-					scene.add( obj )
-				}
+				} 
+				
+				scene.add( obj )
 				
 				return obj
 			}
@@ -87,13 +88,13 @@
 				var parts = ctx.parts
 				for( var idx in parts ){
 					var part = parts[idx]
-					var obj = createObject( scene, part.id )
+					var obj = createObject( scene, part.poolId )
 					obj.material.map = tex
-					obj.material.color.setHex(parseInt( part.color.substr(1), 16 ))
+					obj.material.color.setRGB( part.color[0], part.color[1], part.color[2] )
 					obj.position.set( part.pos[0], part.pos[1], 0 )
 					obj.rotation.z = part.pos[2]
 					obj.scale.set( part.size[0], part.size[1], 1 )
-					nowlife[idx] = true
+					nowlife[part.poolId] = true
 				}
 				compareAndReset( nowlife, function(key){
 					removeObject(key)
@@ -103,18 +104,20 @@
 		}
 		
 		var draw = drawer($('#webgl'))
-		var pool = particle.pool( 5000 )
+		var pool = particle.pool( 10 )
 		var first = particle.initParticle( pool.get(), { 
 			lifetime: 0,
-			vel: [1, 1, 1],
+			vel: [0, 0, 1],
 			emit: {
 				duration: 0.1,
 				force: 100,
 				range: 0,
-				proto: [
+				prototype: [
 					{
-						color: '#aabb44',
+						lifetime: 3,
+						color: [1, 0, 1, 1],
 						vel: [0, 0, 1],
+						/*
 						emit: {
 							duration: 0.1,
 							proto:[
@@ -123,7 +126,9 @@
 								}
 							]
 						}
+						*/
 					},
+					/*
 					{
 						lifetime: 10,
 						color: '#ff0000',
@@ -141,6 +146,7 @@
 							]
 						}
 					}
+					*/
 				]
 			},
 			formulaList: [
