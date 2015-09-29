@@ -262,6 +262,7 @@ a{
 		return function( err, ret ){
 			if( err != null ){
 				alert( err );
+				window.location.reload();
 			}else{
 				func( ret );
 			}
