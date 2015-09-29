@@ -1,6 +1,6 @@
 var fs = require('fs')
 var outputName = 'gundamWar.json'
-var imageDir = 'http://particle-979.appspot.com/common/cardPackage/gundamWar/'
+var imageDir = 'https://particle-979.appspot.com/common/cardPackage/gundamWar/'
 var targetDir = 'gundamWar/'
 var output = {
 	images: {}
