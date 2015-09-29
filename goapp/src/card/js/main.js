@@ -531,9 +531,11 @@ Main.createSocket = function(id) {
 			var json = JSON.parse(origin);
 			Main.onBackCallback(json);
 		}, onerror : function() {
-			Main.alert("已斷線，可能是網路不穩定");
+			Main.j("#btn_connect").linkbutton("enable");
+			Main.alert("已斷線，請重新連線");
 		}, onclose : function() {
-			Main.alert("已斷線，可能是網路不穩定");
+			Main.j("#btn_connect").linkbutton("enable");
+			Main.alert("已斷線，請重新連線");
 		}});
 	});
 };
@@ -586,7 +588,7 @@ Main.getCardImageUrlWithPackage = function(name,key) {
 		}
 	}
 	if(cpkg == null) {
-		console.log("缺了這張牌的圖哦! id是: " + key);
+		Main.slide("缺了這張牌的圖哦! id是: " + key,30000);
 		return "";
 	}
 	return api.getCardImageUrlWithPackage(cpkg,key);
@@ -594,8 +596,9 @@ Main.getCardImageUrlWithPackage = function(name,key) {
 Main.getCardSuit = function(pkg) {
 	return api.getCardSuit(pkg);
 };
-Main.slide = function(msg) {
-	Main.j.messager.show({ title : "提示", msg : msg, timeout : 2000, showType : "slide"});
+Main.slide = function(msg,time) {
+	if(time == null) time = 2000;
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide"});
 };
 Main.alert = function(msg) {
 	Main.j.messager.alert("錯誤",msg);

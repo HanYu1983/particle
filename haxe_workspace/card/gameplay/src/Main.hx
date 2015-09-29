@@ -443,11 +443,13 @@ class Main
 					var json = Json.parse(origin);
 					onBackCallback( json );
 				},
-				onerror: function(){
-					alert( '已斷線，可能是網路不穩定' );
+				onerror: function() {
+					j( '#btn_connect' ).linkbutton( 'enable' );
+					alert( '已斷線，請重新連線' );
 				},
-				onclose: function(){
-					alert( '已斷線，可能是網路不穩定' );
+				onclose: function() {
+					j( '#btn_connect' ).linkbutton( 'enable' );	
+					alert( '已斷線，請重新連線' );
 				}
 			});
 			
@@ -516,7 +518,7 @@ class Main
 			}
 		}
 		if ( cpkg == null ) {
-			trace( '缺了這張牌的圖哦! id是: ' + key );
+			slide( '缺了這張牌的圖哦! id是: ' + key, 1000 * 30 );
 			return '';
 		}
 		return untyped __js__('api.getCardImageUrlWithPackage' )( cpkg, key );
@@ -526,11 +528,11 @@ class Main
 		return untyped __js__('api.getCardSuit' )( pkg );
 	} 
 	
-	public static function slide( msg ){
+	public static function slide( msg, ?time = 2000 ){
 		j.messager.show({
 			title:'提示',
 			msg: msg,
-			timeout:2000,
+			timeout:time,
 			showType:'slide'
 		});
 	}
