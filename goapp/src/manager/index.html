@@ -241,7 +241,7 @@ a{
 	var loadModel;
 	
 	showLoading( '準備中...' );
-	myapp.facebook.init( '425311264344425', function(){
+	myapp.facebook.init( '679171275511375', function(){
 		$('#btn_login' ).linkbutton( 'enable' );
 		closeLoading();
 	});
@@ -377,6 +377,12 @@ a{
 							}catch( e ){
 								showAlert("格式輸入錯誤，請檢查");
 							}
+							__model.cards = _.map( __model.cards, function( str ){
+								if( str.indexOf( '.jpg' ) == -1 ){
+									return str + '.jpg';
+								}
+								return str;
+							});
 							cardSuit.editCardSuit( loadModel, __model );
 							editAndShow();
 							break;
