@@ -106,39 +106,16 @@
         <div data-options="region:'west',split:true" title="West" style="width:600px;">
 			<div class="easyui-layout" style="width:100%;height:100%;">
 				<div data-options="region:'north',split:true" style="height:300px">
-					<ul class="easyui-tree">
-						<li>
-							<span>My Documents</span>
-							<ul>
-								<li data-options="state:'closed'">
-									<span>Photos</span>
-									<ul>
-										<li>
-											<span>Friend</span>
-										</li>
-										<li>
-											<span>Wife</span>
-										</li>
-										<li>
-											<span>Company</span>
-										</li>
-									</ul>
-								</li>
-								<li>
-									<span>Program Files</span>
-									<ul>
-										<li>Intel</li>
-										<li>Java</li>
-										<li>Microsoft Office</li>
-										<li>Games</li>
-									</ul>
-								</li>
-								<li>index.html</li>
-								<li>about.html</li>
-								<li>welcome.html</li>
-							</ul>
-						</li>
-					</ul>
+					<div class="group" style="text-align:center;">
+						<div class="hori"><a id="btn_addTree" href="#" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-search'">新增</a></div>
+						<div class="hori"><a id="btn_removeTree" href="#" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-search'">刪除</a></div>
+					</div>
+					<div class="group">
+						<ul id="tree_particle" class="easyui-tree" data-options="dnd:true">
+						
+						</ul>
+					</div>
+					
 				</div>
 				<div data-options="region:'center',title:'Main Title',iconCls:'icon-ok'">
 					<div class="easyui-tabs" style="width:100%;height:100%">
@@ -232,9 +209,10 @@
 <script src="js/haxe.js"></script>
 <script type="text/javascript">
 
-	$(document).ready( appStart );
+	//$(document).ready( appStart );
 	
-	function appStart(){
+	//function appStart(){
+		var tree_particle = $("#tree_particle" );
 		var dgd_props = $("#dgd_props" );
 		var combo_props = $("#combo_props" );
 		var ary_props = [ 	{id:'life', name:'生命'}, 
@@ -273,8 +251,64 @@
 			}
 		});
 		
+		var currentNode = undefined;
+		
+		tree_particle.tree( {
+			onSelect:function( node ){
+				console.log( node );
+				currentNode = node;
+			}
+		});
+		
+		setTree( tree_particle,  [
+			{id:'root', text:'root'}
+		]);
+		
+		function onHtmlClick( dom ){
+			switch( dom.id ){
+				case 'btn_addTree':
+					if( currentNode == undefined ){
+						appendTree( tree_particle, getTreeRoot( tree_particle ), { id:'d', text:'f'} );
+					}else{
+						appendTree( tree_particle, currentNode, { id:'d', text:'f'} );
+					}
+					break;
+				case 'btn_removeTree':
+					if( currentNode != undefined ){
+						removeTree( tree_particle, currentNode );
+					}
+					break;
+			}
+		}
+		
+		function selectTreeNode(){
+		
+		}
+		
+		function setTree( tree, datas ){
+			tree.tree({
+				data: datas
+			});
+		}
+		
+		function getTreeRoot( tree ){
+			return tree.tree( 'getRoot' );
+		}
+		
+		
+		function appendTree( tree, select, datas ){
+			tree.tree('append', {
+				parent: select.target,
+				data: datas
+			});
+		}
+		
+		function removeTree( tree, node ){
+			tree.tree( 'remove', node.target );
+		}
+		
 	//	window.haxeStart();
-	}
+	//}
 	
 	
 	
