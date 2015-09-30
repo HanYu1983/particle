@@ -45,3 +45,4 @@ goog.addDependency("../app/main2.js", ['app.main2'], ['gl.shader', 'cljs.core', 
 goog.addDependency("../test/ann.js", ['test.ann'], ['cljs.core', 'cljs.core.async', 'ai.ann']);
 goog.addDependency("../test/ann_xor.js", ['test.ann_xor'], ['cljs.core', 'cljs.core.async', 'clojure.walk', 'ai.ann']);
 goog.addDependency("../app/particle/main.js", ['app.particle.main'], ['app.particle.draw', 'cljs.core', 'cljs.core.async', 'tool.particle', 'app.particle.impl', 'gl.util', 'app.particle.abstract$']);
+goog.addDependency("../test/stock_game.js", ['test.stock_game'], ['cljs.core']);
