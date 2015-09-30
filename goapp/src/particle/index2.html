@@ -12,6 +12,7 @@
 		<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/vic/vic.easyui.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
@@ -255,18 +256,16 @@
 							{id:'emit-range', name:'發射範圍'}, 
 							{id:'emit-force', name:'發射力道'}];
 		
-		setRows( dgd_props, _.map( ary_props, function( prop ){
+		vic.easyui.setDatagridRows( dgd_props, _.map( ary_props, function( prop ){
 			return { id:prop.name, type:'初始值', v1:'3', v2:'4', v3:'3', v4:'2', v5:'34'};
 		}) );
 		
-		setCombobox( combo_props, _.map( ary_props, function( prop ){
+		vic.easyui.setCombobox( combo_props, _.map( ary_props, function( prop ){
 			return { label:prop.name, value:prop.id};
 		}) );
 		
-		setComboxSelect( combo_props, 'life' );
-		
-		var downSpr = undefined;
-		var oldMouseY = undefined;
+		vic.easyui.setComboxSelect( combo_props, 'life' );
+		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
 		
 		$('.easyui-numberspinner' ).numberspinner( {
 			onChange:function( nv, ov ){
@@ -274,84 +273,10 @@
 			}
 		});
 		
-		$('.easyui-numberspinner' ).parent().mousedown( function( e ){
-			downSpr = $( this ).find( '.easyui-numberspinner' );
-		});
-		
-	
-		
-		$( 'body' ).mouseup( function(){
-			console.log( 'up' );
-			
-			downSpr = undefined;
-			oldMouseY = undefined;
-		});
-		
-		$( 'body' ).mousemove( function( e ){
-			if( downSpr != undefined ){
-				var newY = -e.pageY;
-				if( oldMouseY != undefined ){
-					var offset = Math.floor( newY - oldMouseY );
-					var oldvalue = Math.floor( getSpinnerValue( downSpr ) );
-					setSpinnerValue( downSpr, Math.floor( oldvalue + offset ) );
-				}
-				oldMouseY = newY;
-			}
-		});
-		
-		
 	//	window.haxeStart();
 	}
 	
-	function setSpinnerValue( spr, value ){
-		spr.numberspinner( 'setValue', value );
-	}
 	
-	function getSpinnerValue( spr ){
-		return spr.numberspinner( 'getValue' );
-	}
-	
-	function setCombobox( combobox, datas ){
-		console.log( datas );
-		combobox.combobox( {
-			valueField:'value',
-			textField:'label',
-			data:datas
-		});
-	}
-	
-	function setComboxSelect( combobox, value ){
-		combobox.combobox( 'select', value );
-	}
-	
-	function setRows( dataGrid, datas ){
-		dataGrid.datagrid({
-			data: datas
-		});
-	}
-	
-	function selectRow( dataGrid, index ){
-		dataGrid.datagrid( 'selectRow', index );
-	}
-	
-	function appendRow( dataGrid, row ){
-		dataGrid.datagrid('appendRow', row );
-	}
-	
-	function deleteRow( dataGrid, index ){
-		dataGrid.datagrid( 'deleteRow', index );
-	}
-	
-	function getRowIndex( dataGrid, row ){
-		dataGrid.datagrid( 'getRowIndex', row );
-	}
-	
-	function updateRow( dataGrid, index, row ){
-		dataGrid.datagrid('updateRow',{
-			index: index,
-			row: row
-		});
-	}
 	
 </script>
 
