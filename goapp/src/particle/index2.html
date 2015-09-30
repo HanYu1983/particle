@@ -171,16 +171,11 @@
 								</div>
 								<div class="group" style="text-align:center; margin-bottom:5px;">
 									<div class="hori">
-										<select id="cc" class="easyui-combobox" name="dept" style="width:100px;">
-											<option value="aa">aitem1</option>
-											<option>bitem2</option>
-											<option>bitem3</option>
-											<option>ditem4</option>
-											<option>eitem5</option>
+										<select id="combo_props" class="easyui-combobox" name="dept" style="width:100px;">
 										</select>
 									</div>
 									<div class="hori">
-										<select id="cc" class="easyui-combobox" name="dept" style="width:100px;">
+										<select id="combo_type" class="easyui-combobox" name="dept" style="width:100px;">
 											<option value="aa">aitem1</option>
 											<option>bitem2</option>
 											<option>bitem3</option>
@@ -240,6 +235,7 @@
 	
 	function appStart(){
 		var dgd_props = $("#dgd_props" );
+		var combo_props = $("#combo_props" );
 		var ary_props = [ 	{id:'life', name:'生命'}, 
 							{id:'x', name:'位置x'}, 
 							{id:'y', name:'位置y'}, 
@@ -262,7 +258,26 @@
 		setRows( dgd_props, _.map( ary_props, function( prop ){
 			return { id:prop.name, type:'初始值', v1:'3', v2:'4', v3:'3', v4:'2', v5:'34'};
 		}) );
+		
+		setCombobox( combo_props, _.map( ary_props, function( prop ){
+			return { label:prop.name, value:prop.id};
+		}) );
+		
+		setComboxSelect( combo_props, 'life' );
 	//	window.haxeStart();
+	}
+	
+	function setCombobox( combobox, datas ){
+		console.log( datas );
+		combobox.combobox( {
+			valueField:'value',
+			textField:'label',
+			data:datas
+		});
+	}
+	
+	function setComboxSelect( combobox, value ){
+		combobox.combobox( 'select', value );
 	}
 	
 	function setRows( dataGrid, datas ){
