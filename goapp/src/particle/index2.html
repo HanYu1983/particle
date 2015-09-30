@@ -144,7 +144,7 @@
 						<div title="普通模式">
 							<div class="group" style="height:100%;">
 								<div class="group" style="text-align:center; margin-bottom:5px;">
-									<div class="hori"><input class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
 								</div>
 								<div class="group" style="height:100%; text-align:center;">
 									<div class="hori" style="width:50%; height:100%;">
@@ -234,6 +234,15 @@
 	$(document).ready( appStart );
 	
 	function appStart(){
+		var spr_value = $("#spr_value");
+		
+		spr_value.numberspinner( {
+			min:-10000,
+			max:10000
+		});
+		
+		
+		
 		var dgd_props = $("#dgd_props" );
 		var combo_props = $("#combo_props" );
 		var ary_props = [ 	{id:'life', name:'生命'}, 
@@ -264,7 +273,44 @@
 		}) );
 		
 		setComboxSelect( combo_props, 'life' );
+		setSpinnerValue( spr_value, 0 );
+		
+		var downSpr = undefined;
+		var oldMouseY = undefined;
+		
+		$('.easyui-numberspinner' ).parent().mousedown( function( e ){
+			downSpr = $( this ).find( '.easyui-numberspinner' );
+		});
+		
+		$( 'body' ).mouseup( function(){
+			console.log( 'up' );
+			
+			downSpr = undefined;
+			oldMouseY = undefined;
+		});
+		
+		$( 'body' ).mousemove( function( e ){
+			if( downSpr != undefined ){
+				var newY = -e.pageY;
+				if( oldMouseY != undefined ){
+					var offset = Math.floor( newY - oldMouseY );
+					var oldvalue = Math.floor( getSpinnerValue( downSpr ) );
+					setSpinnerValue( downSpr, Math.floor( oldvalue + offset ) );
+				}
+				oldMouseY = newY;
+			}
+		});
+		
+		
 	//	window.haxeStart();
+	}
+	
+	function setSpinnerValue( spr, value ){
+		spr.numberspinner( 'setValue', value );
+	}
+	
+	function getSpinnerValue( spr ){
+		return spr.numberspinner( 'getValue' );
 	}
 	
 	function setCombobox( combobox, datas ){
