@@ -234,15 +234,6 @@
 	$(document).ready( appStart );
 	
 	function appStart(){
-		var spr_value = $("#spr_value");
-		
-		spr_value.numberspinner( {
-			min:-10000,
-			max:10000
-		});
-		
-		
-		
 		var dgd_props = $("#dgd_props" );
 		var combo_props = $("#combo_props" );
 		var ary_props = [ 	{id:'life', name:'生命'}, 
@@ -273,14 +264,21 @@
 		}) );
 		
 		setComboxSelect( combo_props, 'life' );
-		setSpinnerValue( spr_value, 0 );
 		
 		var downSpr = undefined;
 		var oldMouseY = undefined;
 		
+		$('.easyui-numberspinner' ).numberspinner( {
+			onChange:function( nv, ov ){
+				console.log( nv );
+			}
+		});
+		
 		$('.easyui-numberspinner' ).parent().mousedown( function( e ){
 			downSpr = $( this ).find( '.easyui-numberspinner' );
 		});
+		
+	
 		
 		$( 'body' ).mouseup( function(){
 			console.log( 'up' );
