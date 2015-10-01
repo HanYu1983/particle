@@ -217,6 +217,7 @@
 		var dgd_props = $("#dgd_props" );
 		var dgd_advprops = $("#dgd_advprops" );
 		var combo_props = $("#combo_props" );
+		var webgl = $('#webgl' );
 		var ary_props = [ 	{id:'life', name:'生命'}, 
 							{id:'x', name:'位置x'}, 
 							{id:'y', name:'位置y'}, 
@@ -253,8 +254,6 @@
 			}
 		});
 		
-		
-		
 		vic.easyui.setTree( tree_particle,  [
 			{id:'root', text:'rooto'}
 		]);
@@ -263,11 +262,77 @@
 			vic.easyui.selectTreeNode( tree_particle,vic.easyui.getTreeNodeById( tree_particle, 'root' ));
 		}, 10 );
 		
-		
-		
+		module.webgl = webgl;
 		module.tree_particle = tree_particle;
 		module.dgd_advprops = dgd_advprops;
 	})( app.ui );
+	
+	
+	var app = app || {};
+	app.model = app.model || {};
+	
+	(function( module ){
+	
+		var particles = createInitParticle();
+		
+		function getParticles(){
+			return particles;
+		}
+		
+		function createInitParticle(){
+			return { 
+				id:0, 
+				lifetime:5,
+				mass:3,
+				color:'#33ddff',
+				size:[10, 10],
+				pos:[300, 300, 0], 
+				vel:[0, 0, 0],
+				tex: "texture id",
+				blending: "add",
+				emit: { 
+					count:1,
+					duration:.5,
+					angle:0,
+					range:0,
+					force:100,
+					prototype:[ 
+						{
+							id:1, 
+							lifetime:2,
+							mass:3,
+							color:'#33ddff',
+							size:[10, 10],
+							pos:[0, 0, 0], 
+							vel:[0,0,0]
+						}
+					]
+				},
+				formulaList: [
+					[
+						"x",
+						"const",
+						0,
+						0,
+						0,
+						0,
+						0
+					]
+				]
+			}
+		}
+		
+		module.getParticles = getParticles;
+	})( app.model );
+	
+	(function( view, model ){
+		var webgl = view.webgl;
+		api.init( webgl );
+		
+		var particles = model.getParticles();
+		api.editParticle( particles );
+		
+	})( app.ui, app.model);
 	
 	var currentAdvRow = undefined;
 	app.ui.dgd_advprops.datagrid({
@@ -287,7 +352,7 @@
 	function onHtmlClick( dom ){
 		var tree_particle = app.ui.tree_particle;
 		var dgd_advprops = app.ui.dgd_advprops;
-	
+		
 		switch( dom.id ){
 			case 'btn_addTree':
 				if( currentNode == undefined ){
