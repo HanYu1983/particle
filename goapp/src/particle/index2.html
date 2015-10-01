@@ -331,8 +331,6 @@
 		}
 		
 		module.webgl = webgl;
-		module.tree_particle = tree_particle;
-		module.dgd_advprops = dgd_advprops;
 		module.addTree = addTree;
 		module.removeTree = removeTree;
 		module.addProp = addProp;
@@ -410,9 +408,6 @@
 	
 	
 	function onHtmlClick( dom ){
-		var tree_particle = app.ui.tree_particle;
-		var dgd_advprops = app.ui.dgd_advprops;
-		
 		switch( dom.id ){
 			case 'btn_addTree':
 				app.ui.addTree();
