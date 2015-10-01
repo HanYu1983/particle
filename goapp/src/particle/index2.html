@@ -129,8 +129,8 @@
 										<table id="dgd_props" class="easyui-datagrid" data-options="fitColumns:true,singleSelect:true" style="width:100%;">
 											<thead>
 												<tr>
-													<th data-options="field:'id',width:'53%'">屬性</th>
-													<th data-options="field:'v1',width:'53%'">參數1</th>
+													<th data-options="field:'name',width:'53%'">屬性</th>
+													<th data-options="field:'v',width:'53%'">參數1</th>
 												</tr>
 											</thead>
 										</table>
@@ -210,14 +210,18 @@
 <script type="text/javascript">
 
 	var app = app || {};
-	app.ui = app.ui || {};
+	app.view = app.view || {};
 	
 	(function( module ){
+		var event = $('<div></div>' );
 		var tree_particle = $("#tree_particle" );
 		var dgd_props = $("#dgd_props" );
 		var dgd_advprops = $("#dgd_advprops" );
 		var combo_props = $("#combo_props" );
 		var webgl = $('#webgl' );
+		var isMouseDown = false;
+		var targetPos = [0.0, 0.0];
+		var currentPos = [0.0, 0.0];
 		var ary_props = [ 	{id:'life', name:'生命'}, 
 							{id:'x', name:'位置x'}, 
 							{id:'y', name:'位置y'}, 
@@ -237,10 +241,6 @@
 							{id:'emit-range', name:'發射範圍'}, 
 							{id:'emit-force', name:'發射力道'}];
 		
-		vic.easyui.setDatagridRows( dgd_props, _.map( ary_props, function( prop ){
-			return { id:prop.name, type:'初始值', v1:'3', v2:'4', v3:'3', v4:'2', v5:'34'};
-		}) );
-		
 		vic.easyui.setCombobox( combo_props, _.map( ary_props, function( prop ){
 			return { label:prop.name, value:prop.id};
 		}) );
@@ -253,8 +253,7 @@
 				console.log( nv );
 			}
 		});
-	
-		
+			
 		var currentAdvRow = undefined;
 		dgd_advprops.datagrid({
 			onSelect:function( index, row ){
@@ -267,29 +266,59 @@
 			onSelect:function( node ){
 				console.log( node );
 				currentNode = node;
+				event.trigger( 'onTreeClick', { node:node } );
 			}
 		});
 		
+		webgl.mousedown( onmousedown );
+		webgl.mouseup( onmouseup );
+		webgl.mousemove( onMousemove );
+		
+		function onMousemove(e) {
+			var px = e.offsetX;
+			var py = e.offsetY;
+			if ( isMouseDown ) {
+				targetPos[0] = px;
+				targetPos[1] = py;
+				event.trigger( 'onMouseMove', { targetPos:targetPos } );
+			}
+		}
+		
+		function onmousedown( e ) {
+			isMouseDown = true;
+		}
+		
+		function onmouseup( e ) {
+			isMouseDown = false;
+		}
+		
+		function setDgdProp( ary_props ){
+			vic.easyui.setDatagridRows( dgd_props, ary_props );
+		}
+		
 		function setTree( nodes, selectId ){
-			console.log( nodes );
 			vic.easyui.setTree( tree_particle, nodes );
 			
 			setTimeout( function(){
 				vic.easyui.selectTreeNode( tree_particle,vic.easyui.getTreeNodeById( tree_particle, selectId ));
+				event.trigger( 'onViewTreeChange' );
 			}, 10 );
 		}
 		
-		function addTree(){
+		function addTree( model ){
 			if( currentNode == undefined ){
-				vic.easyui.appendTree( tree_particle, vic.easyui.getTreeRoot( tree_particle ), { id:'d', text:'f'} );
+				vic.easyui.appendTree( tree_particle, vic.easyui.getTreeNodeById( tree_particle, 0 ), { id:model.id, text:model.name, particle:model } );
 			}else{
-				vic.easyui.appendTree( tree_particle, currentNode, { id:'d', text:'f'} );
+				vic.easyui.appendTree( tree_particle, currentNode, { id:model.id , text:model.name, particle:model } );
 			}
+			event.trigger( 'onViewTreeChange' );
 		}
 		
 		function removeTree(){
 			if( currentNode != undefined ){
 				vic.easyui.removeTree( tree_particle, currentNode );
+				currentNode = undefined;
+				event.trigger( 'onViewTreeChange' );
 			}
 		}
 		
@@ -319,7 +348,6 @@
 			}
 		}
 		
-		
 		function downMove(){
 			if( currentAdvRow != undefined ){
 				var maxCount = vic.easyui.getDatagridRows( dgd_advprops ).length;
@@ -331,7 +359,12 @@
 			}
 		}
 		
+		function getTreeRootNode(){
+			return vic.easyui.getTreeNodeById( tree_particle, 0 );
+		}
+		
 		module.webgl = webgl;
+		module.tree_particle = tree_particle;
 		module.addTree = addTree;
 		module.removeTree = removeTree;
 		module.addProp = addProp;
@@ -339,7 +372,11 @@
 		module.upMove = upMove;
 		module.downMove = downMove;
 		module.setTree = setTree;
-	})( app.ui );
+		module.setDgdProp = setDgdProp;
+		module.getTreeRootNode = getTreeRootNode;
+		
+		module.event = event;
+	})( app.view );
 	
 	
 	var app = app || {};
@@ -347,70 +384,107 @@
 	
 	(function( module ){
 	
-		var particles = createInitParticle();
+		//var particles = createInitParticle();
+		var particles = createParticle( 0, 'e' );
+		particles.lifetime = 0;
+		particles.pos[0] = 100;
+		particles.pos[1] = 100;
+		particles.emit = { 
+							count:1,
+							duration:.5,
+							angle:0,
+							range:0,
+							force:100,
+							prototype:[ createParticle( 1, 'p' ) ] };
 		
 		function getParticles(){
 			return particles;
 		}
 		
-		function createInitParticle(){
+		function createParticle( id, name ){
 			return { 
-				id: 0, 
-				name:'emitter',
+				id: id, 
+				name:name,
 				lifetime:5,
-				mass:3,
+				mass:1,
 				color:'#33ddff',
 				size:[10, 10],
-				pos:[300, 300, 0], 
+				pos:[0, 0, 0], 
 				vel:[0, 0, 0],
 				tex: "texture id",
-				blending: "add",
-				emit: { 
-					count:1,
-					duration:.5,
-					angle:0,
-					range:0,
-					force:100,
-					prototype:[ 
-						{
-							name:'particle',
-							id:1, 
-							lifetime:2,
-							mass:3,
-							color:'#33ddff',
-							size:[10, 10],
-							pos:[0, 0, 0], 
-							vel:[0,0,0]
-						}
-					]
-				},
-				formulaList: [
-					[
-						"x",
-						"const",
-						0,
-						0,
-						0,
-						0,
-						0
-					]
-				]
+				blending: "normal",
 			}
 		}
 		
 		module.getParticles = getParticles;
+		module.createParticle = createParticle;
 	})( app.model );
 	
 	(function( view, model ){
 		var webgl = view.webgl;
+		var currentParticle = undefined;
+		
 		api.init( webgl );
 		
 		var particles = model.getParticles();
-		api.editParticle( particles );
 		
 		var treeModel = {};
 		modelToTree( particles, treeModel )
 		view.setTree( [ treeModel ], 1 );
+		
+		view.event.on( 'onViewTreeChange', function(){
+			updateRender();
+		});
+		
+		view.event.on( 'onTreeClick', function( e, options ){
+			
+			view.setDgdProp( (function( node ){
+				var p = node.particle;
+				if( vic.easyui.getTreeIsLeaf( view.tree_particle, node ) ){
+					return [
+						{id:'lifetime', name:'生命毫秒', v: p.lifetime},
+						{id:'mass', name:'質量', v: p.mass},
+						{id:'pos_r', name:'角度', v: p.pos[2]},
+						{id:'vel_x', name:'速度x', v: p.vel[0]},
+						{id:'vel_y', name:'速度y', v: p.vel[1]},
+						{id:'vel_r', name:'轉速', v: p.vel[2]}
+					];
+				}
+				return [
+					{id:'lifetime', name:'生命毫秒', v: p.lifetime},
+					{id:'mass', name:'質量', v: p.mass},
+					{id:'pos_r', name:'角度', v: p.pos[2]},
+					{id:'vel_x', name:'速度x', v: p.vel[0]},
+					{id:'vel_y', name:'速度y', v: p.vel[1]},
+					{id:'vel_r', name:'轉速', v: p.vel[2]},
+					{id:'count', name:'發射數目', v: p.emit.count},
+					{id:'duration', name:'發射間隔', v: p.emit.duration},
+					{id:'angle', name:'發射角度', v: p.emit.angle},
+					{id:'range', name:'發射範圍', v: p.emit.range},
+					{id:'force', name:'發射力道', v: p.emit.force}
+				];
+			})( options.node ));
+			
+			//currentParticle = options.node.particle;
+		});
+		
+		view.event.on( 'onMouseMove', function( e, options ){
+			var rootParticle = view.getTreeRootNode().particle;
+			rootParticle.pos[0] = options.targetPos[0];
+			rootParticle.pos[1] = options.targetPos[1];
+			updateRender();
+		});
+		
+		function updateRender(){
+			var retobj2 = { };
+			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj2 );
+		//	console.log( retobj2 );
+			api.editParticle( retobj2 );
+		}
+		
+		function moveParticle(id, x, y) {
+			api.changeCenterPos(id, x, y );
+		}
 		
 		function modelToTree( fields, retobj ) {
 			retobj.id = fields.id;
@@ -427,28 +501,60 @@
 			}
 		}
 		
-	})( app.ui, app.model );
+		function treeToModel( node, outputData ) {
+			var particleData = node.particle;
+			outputData.id = particleData.id;
+			outputData.lifetime = particleData.lifetime;
+			outputData.vel = particleData.vel;
+			outputData.pos = particleData.pos;
+			outputData.mass = particleData.mass;
+			outputData.color = particleData.color;
+			outputData.size = particleData.size;
+		
+			if ( node.children && node.children.length > 0 ) {
+				if( outputData.emit == undefined ){
+					outputData.emit = {};
+					outputData.emit.count = 1;
+					outputData.emit.duration = .5;
+					outputData.emit.angle = 0;
+					outputData.emit.range = 0;
+					outputData.emit.force = 100;
+					outputData.emit.prototype = [];
+				}
+				_.each( node.children, function( nc ){
+					var obj = { };
+					outputData.emit.prototype.push( obj );
+					treeToModel( nc, obj );
+				});
+			}
+		}
+		
+	})( app.view, app.model );
 	
+	function getUid(){
+		return leo.utils.generateUUID();
+	}
 	
 	function onHtmlClick( dom ){
 		switch( dom.id ){
 			case 'btn_addTree':
-				app.ui.addTree();
+				var uid = getUid();
+				app.view.addTree( app.model.createParticle( uid, uid ) );
 				break;
 			case 'btn_removeTree':
-				app.ui.removeTree();
+				app.view.removeTree();
 				break;
 			case 'btn_addProp':
-				app.ui.addProp();
+				app.view.addProp();
 				break;
 			case 'btn_removeProp':
-				app.ui.removeProp();
+				app.view.removeProp();
 				break;
 			case 'btn_upMove':
-				app.ui.upMove();
+				app.view.upMove();
 				break;
 			case 'btn_downMove':
-				app.ui.downMove();
+				app.view.downMove();
 				break;
 		}
 	}

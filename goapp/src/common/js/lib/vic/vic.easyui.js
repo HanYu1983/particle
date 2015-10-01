@@ -103,6 +103,10 @@ vic.easyui = vic.easyui || {};
 		});
 	}
 	
+	function getTreeIsLeaf( tree, node ){
+		return tree.tree( 'isLeaf', node.target );
+	}
+	
 	function getTreeNodeById( tree, id ){
 		return tree.tree( 'find', id );
 	}
@@ -145,6 +149,7 @@ vic.easyui = vic.easyui || {};
 	
 	module.selectTreeNode = selectTreeNode;
 	module.setTree = setTree;
+	module.getTreeIsLeaf = getTreeIsLeaf;
 	module.getTreeNodeById = getTreeNodeById;
 	module.getTreeRoot = getTreeRoot;
 	module.getTreeRoots = getTreeRoots;
