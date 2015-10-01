@@ -3,7 +3,6 @@ vic.easyui = vic.easyui || {};
 
 (function( module ){
 	function setSpinnerValue( spr, value, dispatch ){
-		console.log( dispatch );
 		if( dispatch ){
 			spr.numberspinner( 'setValue', value );
 		}else{

@@ -250,6 +250,7 @@
 		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
 		
 		$('.easyui-numberspinner' ).numberspinner( {
+		//	precision:1,
 			onChange:function( nv, ov ){
 				console.log( nv );
 			}
@@ -262,6 +263,7 @@
 				clearInterval( tid );
 			}
 			tid = setInterval( function(){
+				clearInterval( tid );
 				vic.easyui.updateDatagridRow( dgd_props, currentRow.index, currentRow.row );
 			}, 100 );
 		}
@@ -271,10 +273,7 @@
 				if( currentRow != undefined ){
 					currentRow.row.v = nv;
 					keepUpdateGrid();
-					
 					event.trigger( 'onPropChange', { currentRow: currentRow } );
-					//vic.easyui.updateDatagridRow( dgd_props, currentRow.index, currentRow.row );
-					//event.trigger( 'onPropChange', { currentRow: currentRow } );
 				}
 			}
 		});
@@ -396,6 +395,10 @@
 			return vic.easyui.getTreeNodeById( tree_particle, 0 );
 		}
 		
+		function selectPropDgdFirst(){
+			vic.easyui.selectDatagridRow( dgd_props, 0 );
+		}
+		
 		module.webgl = webgl;
 		module.tree_particle = tree_particle;
 		module.addTree = addTree;
@@ -407,6 +410,7 @@
 		module.setTree = setTree;
 		module.setDgdProp = setDgdProp;
 		module.getTreeRootNode = getTreeRootNode;
+		module.selectPropDgdFirst = selectPropDgdFirst;
 		
 		module.event = event;
 	})( app.view );
@@ -466,7 +470,7 @@
 		view.setTree( [ treeModel ], 1 );
 		
 		view.event.on( 'onViewTreeChange', function(){
-			updateRender( true );
+			updateRender();
 		});
 		
 		view.event.on( 'onTreeClick', function( e, options ){
@@ -479,16 +483,18 @@
 						{id:'pos_r', name:'角度', v: p.pos[2]},
 						{id:'vel_x', name:'速度x', v: p.vel[0]},
 						{id:'vel_y', name:'速度y', v: p.vel[1]},
-						{id:'vel_r', name:'轉速', v: p.vel[2]}
+						{id:'vel_r', name:'轉速', v: p.vel[2]},
+						{id:'size_x', name:'寬度', v: p.size[0]},
+						{id:'size_y', name:'高度', v: p.size[1]}
 					];
 				}
 				return [
 					{id:'lifetime', name:'生命毫秒', v: p.lifetime},
 					{id:'mass', name:'質量', v: p.mass},
 					{id:'pos_r', name:'角度', v: p.pos[2]},
-					{id:'vel_x', name:'速度x', v: p.vel[0]},
-					{id:'vel_y', name:'速度y', v: p.vel[1]},
 					{id:'vel_r', name:'轉速', v: p.vel[2]},
+					{id:'size_x', name:'寬度', v: p.size[0]},
+					{id:'size_y', name:'高度', v: p.size[1]},
 					{id:'count', name:'發射數目', v: p.emit.count},
 					{id:'duration', name:'發射間隔', v: p.emit.duration},
 					{id:'angle', name:'發射角度', v: p.emit.angle},
@@ -496,7 +502,8 @@
 					{id:'force', name:'發射力道', v: p.emit.force}
 				];
 			})( options.node ));
-			
+			//vic.easyui.selectDatagridRow( 
+			view.selectPropDgdFirst();
 			currentParticle = options.node.particle;
 		});
 		
@@ -504,7 +511,7 @@
 			var rootParticle = view.getTreeRootNode().particle;
 			rootParticle.pos[0] = options.targetPos[0];
 			rootParticle.pos[1] = options.targetPos[1];
-			updateRender( false );
+			updateRender();
 		});
 		
 		view.event.on( 'onDgdPropsClick', function( e, options ){
@@ -513,8 +520,6 @@
 		
 		view.event.on( 'onPropChange', function( e, options ){
 			var row = options.currentRow.row;
-			console.log( row.v );
-			console.log( row.id );
 			switch( row.id ){
 				case 'pos_r':
 					currentParticle.pos[0] = row.v; break;
@@ -524,20 +529,30 @@
 					currentParticle.vel[1] = row.v; break;
 				case 'vel_r':
 					currentParticle.vel[2] = row.v; break;
+				case 'size_x':
+					currentParticle.size[0] = row.v; break;
+				case 'size_y':
+					currentParticle.size[1] = row.v; break;
+				case 'count':
+					currentParticle.emit.count = row.v; break;
+				case 'duration':
+					currentParticle.emit.duration = row.v; break;
+				case 'range':
+					currentParticle.emit.range = row.v; break;
+				case 'angle':
+					currentParticle.emit.angle = row.v; break;
+				case 'force':
+					currentParticle.emit.force = row.v; break;
 				default:
 					currentParticle[row.id] = row.v;
 			}
-			updateRender( false );
+			updateRender();
 		});
 		
-		function updateRender( parserTree ){
-			if( parserTree ){
-				var retobj2 = { };
-				treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj2 );
-				api.editParticle( retobj2 );
-			}else{
-				api.editParticle( particles );
-			}
+		function updateRender(){
+			var retobj = { };
+			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
+			api.editParticle( retobj );
 		}
 		
 		function moveParticle(id, x, y) {
@@ -570,24 +585,34 @@
 			outputData.size = particleData.size;
 		
 			if ( node.children && node.children.length > 0 ) {
+				
+				if( particleData.emit == undefined ){
+					particleData.emit = {};
+					particleData.emit.count = 1;
+					particleData.emit.duration = .5;
+					particleData.emit.angle = 0;
+					particleData.emit.range = 0;
+					particleData.emit.force = 100;
+				}
+				particleData.emit.prototype = [];
 				if( outputData.emit == undefined ){
-					outputData.emit = {};
-					outputData.emit.count = 1;
-					outputData.emit.duration = .5;
-					outputData.emit.angle = 0;
-					outputData.emit.range = 0;
-					outputData.emit.force = 100;
-					outputData.emit.prototype = [];
+					outputData.emit = deepCopy( node.particle.emit );
 				}
 				_.each( node.children, function( nc ){
 					var obj = { };
 					outputData.emit.prototype.push( obj );
+					//outputData.emit.prototype.push( obj );
 					treeToModel( nc, obj );
 				});
 			}
 		}
 		
 	})( app.view, app.model );
+	
+	
+	function deepCopy( obj ){
+		return JSON.parse( JSON.stringify( obj ));
+	}
 	
 	function getUid(){
 		return leo.utils.generateUUID();
