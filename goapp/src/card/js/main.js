@@ -142,6 +142,22 @@ Animate.sameTogetherSeperate = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
+Animate.searchOpponent = function(id) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.searchOpponent(id);
+		d.resolve();
+		return d;
+	};
+};
+Animate.confirmConnect = function(id) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.confirmConnect(id);
+		d.resolve();
+		return d;
+	};
+};
 var CallJs = function() { };
 CallJs.__name__ = true;
 var HxOverrides = function() { };
@@ -291,7 +307,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 	}});
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
@@ -338,6 +354,7 @@ Main.createSelfDeck = function(deckId) {
 	});
 };
 Main.pushCmds = function(content) {
+	haxe_Log.trace("cmd",{ fileName : "Main.hx", lineNumber : 125, className : "Main", methodName : "pushCmds", customParams : [Main.otherPlayerId,content.cmd]});
 	var toId = Main.otherPlayerId;
 	if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
 };
@@ -357,8 +374,13 @@ Main.callAction = function(content) {
 		}
 		return curr;
 	},[]);
+	haxe_Log.trace(content,{ fileName : "Main.hx", lineNumber : 166, className : "Main", methodName : "callAction"});
 	var _g = content.cmd;
 	switch(_g) {
+	case "confirmConnect":
+		return Animate.confirmConnect(content.content.id);
+	case "searchOpponent":
+		return Animate.searchOpponent(content.content.id);
 	case "seperateCardSameTogether":
 		return Animate.sameTogetherSeperate(content.content.ary_select,content.content.pos_mouse);
 	case "changeIndex":
@@ -392,6 +414,19 @@ Main.callAction = function(content) {
 	default:
 		return null;
 	}
+};
+Main.confirmConnect = function(id) {
+	if(id == Main.otherPlayerId) {
+		Main.isConntect = true;
+		if(Main.searchOpponentTimer != null) {
+			Main.searchOpponentTimer.stop();
+			Main.searchOpponentTimer = null;
+		}
+		Main.slide("對手配對成功!");
+	}
+};
+Main.searchOpponent = function(id) {
+	if(id == Main.otherPlayerId) Main.pushCmds({ cmd : "confirmConnect", content : { id : Main.playerId}});
 };
 Main.pollAllMessage = function() {
 	Main.pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
@@ -505,7 +540,7 @@ Main.changeIndex = function(cardId) {
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		if( js_Boot.__instanceof(e,String) ) {
-			console.log(e);
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 440, className : "Main", methodName : "changeIndex"});
 		} else throw(e);
 	}
 };
@@ -515,6 +550,12 @@ Main.removeCards = function(ary_select) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_card_remove,{ select : card});
 		return true;
 	});
+};
+Main.keepSearchOpponent = function() {
+	Main.searchOpponentTimer = haxe_Timer.delay(function() {
+		Main.pushCmds({ cmd : "searchOpponent", content : { id : Main.playerId}});
+		if(!Main.isConntect) Main.keepSearchOpponent();
+	},3000);
 };
 Main.createSocket = function(id) {
 	var _channel = channel;
@@ -532,9 +573,11 @@ Main.createSocket = function(id) {
 			Main.onBackCallback(json);
 		}, onerror : function() {
 			Main.j("#btn_connect").linkbutton("enable");
+			Main.isConntect = false;
 			Main.alert("已斷線，請重新連線");
 		}, onclose : function() {
 			Main.j("#btn_connect").linkbutton("enable");
+			Main.isConntect = false;
 			Main.alert("已斷線，請重新連線");
 		}});
 	});
@@ -611,7 +654,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤已經回報"); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -640,6 +683,7 @@ Main.prototype = {
 				return;
 			}
 			Main.createSocket(Main.playerId);
+			Main.keepSearchOpponent();
 			break;
 		case "onBtnLoginClick":
 			Main.openLoading("登入並讀取資料中...");
@@ -756,6 +800,11 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -836,6 +885,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -843,6 +911,74 @@ js_Boot.getClass = function(o) {
 		var name = js_Boot.__nativeClassName(o);
 		if(name != null) return js_Boot.__resolveNativeClass(name);
 		return null;
+	}
+};
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
 	}
 };
 js_Boot.__interfLoop = function(cc,cl) {
@@ -1105,9 +1241,6 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
 		this._body.keyup($bind(this,this.onBodyKeyUp));
 		this._body.mousemove($bind(this,this.onBodyMouseMove));
-		window.document.addEventListener("contextmenu",function(e) {
-			e.preventDefault();
-		},false);
 		this._body.mousedown($bind(this,this.onBodyMouseDown));
 		leo.utils.initRectSelect(function(ary) {
 			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
@@ -1847,6 +1980,7 @@ Main.ary_cards = [];
 Main.currentSelect = "fighter";
 Main.cardPackages = { };
 Main.cardSuits = { };
+Main.isConntect = false;
 Main.tmpl_card = Main.j("#tmpl_card");
 Main.longPolling = config.longPolling;
 Main.cardPackageUrlMapping = { };
@@ -1868,3 +2002,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

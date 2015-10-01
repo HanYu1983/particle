@@ -159,4 +159,22 @@ class Animate
 			return d;
 		}
 	}
+	
+	public static function searchOpponent( id ) {
+		return function() {
+			var d:Dynamic = Main.j.Deferred();
+			Main.searchOpponent( id );
+			d.resolve();
+			return d;
+		}
+	}
+	
+	public static function confirmConnect( id ) {
+		return function() {
+			var d:Dynamic = Main.j.Deferred();
+			Main.confirmConnect( id );
+			d.resolve();
+			return d;
+		}
+	}
 }

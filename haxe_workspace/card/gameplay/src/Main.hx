@@ -36,6 +36,7 @@ class Main
 	public static var cardPackage = null;
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
+	public static var isConntect = false;
 	
 	static var keepOnlineTimer:Timer;
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
@@ -121,6 +122,7 @@ class Main
 	}
 	
 	public static function pushCmds( content:Dynamic ) {
+		trace( 'cmd', otherPlayerId, content.cmd );
 		var toId = otherPlayerId;
 		if ( toId.length != 0 ) {
 			messageSocket( toId, content.cmd, content );
@@ -161,8 +163,12 @@ class Main
 				return curr;
 			}, []);
 		}
-		
+		trace( content );
 		switch( content.cmd ) {
+			case 'confirmConnect':
+				return Animate.confirmConnect( content.content.id );
+			case 'searchOpponent':
+				return Animate.searchOpponent( content.content.id );
 			case 'seperateCardSameTogether':
 				return Animate.sameTogetherSeperate( content.content.ary_select, content.content.pos_mouse );
 			case 'changeIndex':
@@ -198,6 +204,22 @@ class Main
 		}
 	}
 	
+	public static function confirmConnect( id ) {
+		if ( id == otherPlayerId ) {
+			isConntect = true;
+			if ( searchOpponentTimer != null ) {
+				searchOpponentTimer.stop();
+				searchOpponentTimer = null;
+			}
+			slide( '對手配對成功!' );
+		}
+	}
+	
+	public static function searchOpponent( id ) {
+		if ( id == otherPlayerId )
+			pushCmds( {cmd:'confirmConnect', content:{id:playerId}} );
+	}
+	
 	public static function pollAllMessage() {
 		pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
@@ -229,6 +251,7 @@ class Main
 				}
 				
 				createSocket( playerId );
+				keepSearchOpponent();
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );
 				
@@ -426,6 +449,15 @@ class Main
 		});
 	}
 	
+	public static var searchOpponentTimer:Timer = null;
+	
+	public static function keepSearchOpponent() {
+		searchOpponentTimer = Timer.delay( function() {
+			pushCmds( { cmd:'searchOpponent', content: { id:playerId } } );
+			if ( !isConntect ) keepSearchOpponent();
+		}, 3000 );
+	}
+	
 	public static function createSocket( id ) {
 		var _channel:Dynamic = untyped __js__( 'channel' );
 		_channel.createChannel( id, function(err, ch) {
@@ -445,10 +477,12 @@ class Main
 				},
 				onerror: function() {
 					j( '#btn_connect' ).linkbutton( 'enable' );
+					isConntect = false;
 					alert( '已斷線，請重新連線' );
 				},
 				onclose: function() {
 					j( '#btn_connect' ).linkbutton( 'enable' );	
+					isConntect = false;
 					alert( '已斷線，請重新連線' );
 				}
 			});
