@@ -415,6 +415,7 @@
 		function modelToTree( fields, retobj ) {
 			retobj.id = fields.id;
 			retobj.text = fields.name;
+			retobj.particle = fields;
 			
 			if ( fields.emit != undefined ) {
 				retobj.children = [];
