@@ -38,13 +38,16 @@ class UI extends Mediator
 		return [ 	Model.on_select_cards, 
 					Model.on_state_change,
 					Main.on_getSuit_success,
-					Main.on_receiveOps
+					Main.on_receiveOps,
+					Main.on_searchComplete
 				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case Main.on_searchComplete:
+				disabledOpponent();
 			case Main.on_receiveOps:
 				var ary_ops = notification.getBody().ary_ops;
 				setComboOps( ary_ops );
@@ -61,6 +64,10 @@ class UI extends Mediator
 			case Main.on_getSuit_success:
 				createComboDeck( notification.getBody().cardSuit );
 		}
+	}
+	
+	function disabledOpponent() {
+		combo_ops.combobox( 'disable' );
 	}
 	
 	function setComboOps( ary_ops:Array<String> ) {

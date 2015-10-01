@@ -22,6 +22,7 @@ class Main
 	public static var on_getSuit_success = 'on_getSuit_success';
 	public static var on_createDeck_click = 'on_createDeck_click';
 	public static var on_receiveOps = 'on_receiveOps';
+	public static var on_searchComplete = 'on_searchComplete';
 	
 	public static var j:Dynamic = untyped __js__('$');
 	
@@ -87,7 +88,7 @@ class Main
 	
 	public static function selectOps( ops:String ) {
 		otherPlayerId = ops;
-		
+		//j( '#btn_connect' ).linkbutton( 'enable' );
 		if ( ary_ops.indexOf( otherPlayerId ) == -1 ) {
 			ary_ops.push( otherPlayerId );
 			if ( ary_ops.length > 10 ) {
@@ -211,6 +212,9 @@ class Main
 				searchOpponentTimer = null;
 			}
 			slide( '對手配對成功!' );
+			
+			j( '#btn_connect' ).linkbutton( 'disable' );
+			Facade.getInstance().sendNotification( on_searchComplete );
 		}
 	}
 	

@@ -307,7 +307,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 	}});
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
@@ -334,6 +334,7 @@ var Main = function() {
 Main.__name__ = true;
 Main.selectOps = function(ops) {
 	Main.otherPlayerId = ops;
+	Main.j("#btn_connect").linkbutton("enable");
 	if(HxOverrides.indexOf(Main.ary_ops,Main.otherPlayerId,0) == -1) {
 		Main.ary_ops.push(Main.otherPlayerId);
 		if(Main.ary_ops.length > 10) Main.ary_ops.shift();
@@ -421,6 +422,8 @@ Main.confirmConnect = function(id) {
 			Main.searchOpponentTimer = null;
 		}
 		Main.slide("對手配對成功!");
+		Main.j("#btn_connect").linkbutton("disable");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_searchComplete);
 	}
 };
 Main.searchOpponent = function(id) {
@@ -652,7 +655,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -1147,9 +1150,6 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
 		this._body.keyup($bind(this,this.onBodyKeyUp));
 		this._body.mousemove($bind(this,this.onBodyMouseMove));
-		window.document.addEventListener("contextmenu",function(e) {
-			e.preventDefault();
-		},false);
 		this._body.mousedown($bind(this,this.onBodyMouseDown));
 		leo.utils.initRectSelect(function(ary) {
 			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
@@ -1196,12 +1196,15 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps];
+		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_searchComplete":
+			this.disabledOpponent();
+			break;
 		case "on_receiveOps":
 			var ary_ops = notification.getBody().ary_ops;
 			this.setComboOps(ary_ops);
@@ -1222,6 +1225,9 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.createComboDeck(notification.getBody().cardSuit);
 			break;
 		}
+	}
+	,disabledOpponent: function() {
+		this.combo_ops.combobox("disable");
 	}
 	,setComboOps: function(ary_ops) {
 		var _g = this;
@@ -1880,6 +1886,7 @@ CallJs.getCookie = getCookie;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
+Main.on_searchComplete = "on_searchComplete";
 Main.j = $;
 Main.fbid = "";
 Main.token = "";
@@ -1911,3 +1918,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map
