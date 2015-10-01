@@ -272,8 +272,7 @@
 		setTimeout( function(){
 			vic.easyui.selectTreeNode( tree_particle,vic.easyui.getTreeNodeById( tree_particle, 'root' ));
 		}, 10 );
-
-		//vic.easyui.setDatagridRows( dgd_advprops, [] );
+		
 		
 		var currentAdvRow = undefined;
 		dgd_advprops.datagrid({
@@ -281,8 +280,6 @@
 				currentAdvRow = {index:index, row:row};
 			}
 		});
-		
-	
 		
 		function onHtmlClick( dom ){
 			switch( dom.id ){
@@ -299,12 +296,11 @@
 					}
 					break;
 				case 'btn_addProp':
-					vic.easyui.appendDatagridRow( dgd_advprops, { id:'x', type:'linear'} );
+					vic.easyui.appendDatagridRow( dgd_advprops, { id:Math.random() , type:'linear'} );
 					vic.easyui.selectDatagridRow( dgd_advprops, vic.easyui.getDatagridRows( dgd_advprops ).length - 1 );
 					break;
 				case 'btn_removeProp':
 					if( currentAdvRow != undefined ){
-						
 						vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
 						currentAdvRow = undefined;
 						var ary_rows = vic.easyui.getDatagridRows( dgd_advprops );
@@ -314,7 +310,24 @@
 					}
 					break;
 				case 'btn_upMove':
+					if( currentAdvRow != undefined ){
+						if( currentAdvRow.index > 0 ){
+							vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
+							vic.easyui.insertDatagridRow( dgd_advprops, currentAdvRow.index - 1, currentAdvRow.row );
+							vic.easyui.selectDatagridRow( dgd_advprops, currentAdvRow.index - 1 );
+						}
+					}
+					break;
 				case 'btn_downMove':
+					if( currentAdvRow != undefined ){
+						var maxCount = vic.easyui.getDatagridRows( dgd_advprops ).length;
+						if( currentAdvRow.index < maxCount - 1 ){
+							vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
+							vic.easyui.insertDatagridRow( dgd_advprops, currentAdvRow.index + 1 , currentAdvRow.row );
+							vic.easyui.selectDatagridRow( dgd_advprops, currentAdvRow.index + 1 );
+						}
+					}
+					break;
 			}
 		}
 		

@@ -48,6 +48,13 @@ vic.easyui = vic.easyui || {};
 		dataGrid.datagrid( 'getRowIndex', row );
 	}
 	
+	function insertDatagridRow( dataGrid, index, row ){
+		dataGrid.datagrid('insertRow',{
+			index: index,	
+			row: row
+		});
+	}
+	
 	function updateDatagridRow( dataGrid, index, row ){
 		dataGrid.datagrid('updateRow',{
 			index: index,
@@ -131,6 +138,7 @@ vic.easyui = vic.easyui || {};
 	module.appendDatagridRow = appendDatagridRow;
 	module.deleteDatagridRow = deleteDatagridRow;
 	module.getDatagridRowIndex = getDatagridRowIndex;
+	module.insertDatagridRow = insertDatagridRow;
 	module.updateDatagridRow = updateDatagridRow;
 	
 	module.initSprWheel = initSprWheel;
