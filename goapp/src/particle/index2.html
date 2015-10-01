@@ -251,18 +251,28 @@
 			}
 		});
 		
+		
+		
 		var currentNode = undefined;
 		
 		tree_particle.tree( {
 			onSelect:function( node ){
 				console.log( node );
 				currentNode = node;
+				
+				console.log( getTreeRoots( tree_particle ));
 			}
 		});
 		
 		setTree( tree_particle,  [
-			{id:'root', text:'root'}
+			{id:'root', text:'rooto'}
 		]);
+		
+		
+		console.log( getTreeRoots( tree_particle ));
+		//console.log( getTreeRoot( tree_particle ) );
+		//console.log( getTreeRoots( tree_particle ));
+		//selectTreeNode( tree_particle, getTreeRoot( tree_particle ));
 		
 		function onHtmlClick( dom ){
 			switch( dom.id ){
@@ -281,8 +291,8 @@
 			}
 		}
 		
-		function selectTreeNode(){
-		
+		function selectTreeNode( tree, node ){
+			tree.tree( 'select', node.target );
 		}
 		
 		function setTree( tree, datas ){
@@ -295,6 +305,9 @@
 			return tree.tree( 'getRoot' );
 		}
 		
+		function getTreeRoots( tree ){
+			return tree.tree( 'getRoots' );
+		}
 		
 		function appendTree( tree, select, datas ){
 			tree.tree('append', {
