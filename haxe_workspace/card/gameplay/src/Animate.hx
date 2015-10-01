@@ -160,19 +160,19 @@ class Animate
 		}
 	}
 	
-	public static function searchOpponent( id ) {
+	public static function searchOpponent( id, otherPlayerId ) {
 		return function() {
 			var d:Dynamic = Main.j.Deferred();
-			Main.searchOpponent( id );
+			Main.searchOpponent( id, otherPlayerId );
 			d.resolve();
 			return d;
 		}
 	}
 	
-	public static function confirmConnect( id ) {
+	public static function confirmConnect( id ,otherPlayerId  ) {
 		return function() {
 			var d:Dynamic = Main.j.Deferred();
-			Main.confirmConnect( id );
+			Main.confirmConnect( id, otherPlayerId );
 			d.resolve();
 			return d;
 		}

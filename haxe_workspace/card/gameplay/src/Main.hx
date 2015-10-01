@@ -46,7 +46,7 @@ class Main
 	static var cardPackageUrlMapping:Dynamic = { };
 	
 	function new() {
-		
+		j( '#btn_connect' ).linkbutton();
 		j( '#txt_id' ).textbox( {
 			#if debug
 			editable:true,
@@ -88,7 +88,7 @@ class Main
 	
 	public static function selectOps( ops:String ) {
 		otherPlayerId = ops;
-		//j( '#btn_connect' ).linkbutton( 'enable' );
+		
 		if ( ary_ops.indexOf( otherPlayerId ) == -1 ) {
 			ary_ops.push( otherPlayerId );
 			if ( ary_ops.length > 10 ) {
@@ -97,6 +97,8 @@ class Main
 			CallJs.setCookie( 'otherPlayerId', Json.stringify( ary_ops ) );
 			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
 		}
+		
+		j( '#btn_connect' ).linkbutton( 'enable' );
 	}
 	
 	public static function createSelfDeck( deckId:Int ) {
@@ -166,9 +168,9 @@ class Main
 		
 		switch( content.cmd ) {
 			case 'confirmConnect':
-				return Animate.confirmConnect( content.content.id );
+				return Animate.confirmConnect( content.content.id, content.content.otherPlayerId );
 			case 'searchOpponent':
-				return Animate.searchOpponent( content.content.id );
+				return Animate.searchOpponent( content.content.id, content.content.otherPlayerId );
 			case 'seperateCardSameTogether':
 				return Animate.sameTogetherSeperate( content.content.ary_select, content.content.pos_mouse );
 			case 'changeIndex':
@@ -204,8 +206,8 @@ class Main
 		}
 	}
 	
-	public static function confirmConnect( id ) {
-		if ( id == otherPlayerId ) {
+	public static function confirmConnect( id, oid ) {
+		if ( id == otherPlayerId && oid == playerId ) {
 			isConntect = true;
 			if ( searchOpponentTimer != null ) {
 				searchOpponentTimer.stop();
@@ -218,9 +220,9 @@ class Main
 		}
 	}
 	
-	public static function searchOpponent( id ) {
-		if ( id == otherPlayerId )
-			pushCmds( {cmd:'confirmConnect', content:{id:playerId}} );
+	public static function searchOpponent( id, oid ) {
+		if ( id == otherPlayerId && oid == playerId )
+			pushCmds( {cmd:'confirmConnect', content:{id:playerId, otherPlayerId:otherPlayerId}} );
 	}
 	
 	public static function pollAllMessage() {
@@ -456,7 +458,7 @@ class Main
 	
 	public static function keepSearchOpponent() {
 		searchOpponentTimer = Timer.delay( function() {
-			pushCmds( { cmd:'searchOpponent', content: { id:playerId } } );
+			pushCmds( { cmd:'searchOpponent', content: { id:playerId, otherPlayerId:otherPlayerId } } );
 			if ( !isConntect ) keepSearchOpponent();
 		}, 3000 );
 	}

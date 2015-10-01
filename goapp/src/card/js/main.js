@@ -142,18 +142,18 @@ Animate.sameTogetherSeperate = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
-Animate.searchOpponent = function(id) {
+Animate.searchOpponent = function(id,otherPlayerId) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.searchOpponent(id);
+		Main.searchOpponent(id,otherPlayerId);
 		d.resolve();
 		return d;
 	};
 };
-Animate.confirmConnect = function(id) {
+Animate.confirmConnect = function(id,otherPlayerId) {
 	return function() {
 		var d = Main.j.Deferred();
-		Main.confirmConnect(id);
+		Main.confirmConnect(id,otherPlayerId);
 		d.resolve();
 		return d;
 	};
@@ -307,6 +307,7 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
+	Main.j("#btn_connect").linkbutton();
 	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 	}});
@@ -334,13 +335,13 @@ var Main = function() {
 Main.__name__ = true;
 Main.selectOps = function(ops) {
 	Main.otherPlayerId = ops;
-	Main.j("#btn_connect").linkbutton("enable");
 	if(HxOverrides.indexOf(Main.ary_ops,Main.otherPlayerId,0) == -1) {
 		Main.ary_ops.push(Main.otherPlayerId);
 		if(Main.ary_ops.length > 10) Main.ary_ops.shift();
 		CallJs.setCookie("otherPlayerId",JSON.stringify(Main.ary_ops));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
 	}
+	Main.j("#btn_connect").linkbutton("enable");
 };
 Main.createSelfDeck = function(deckId) {
 	if(Main.cardSuit == null) return;
@@ -377,9 +378,9 @@ Main.callAction = function(content) {
 	var _g = content.cmd;
 	switch(_g) {
 	case "confirmConnect":
-		return Animate.confirmConnect(content.content.id);
+		return Animate.confirmConnect(content.content.id,content.content.otherPlayerId);
 	case "searchOpponent":
-		return Animate.searchOpponent(content.content.id);
+		return Animate.searchOpponent(content.content.id,content.content.otherPlayerId);
 	case "seperateCardSameTogether":
 		return Animate.sameTogetherSeperate(content.content.ary_select,content.content.pos_mouse);
 	case "changeIndex":
@@ -414,8 +415,8 @@ Main.callAction = function(content) {
 		return null;
 	}
 };
-Main.confirmConnect = function(id) {
-	if(id == Main.otherPlayerId) {
+Main.confirmConnect = function(id,oid) {
+	if(id == Main.otherPlayerId && oid == Main.playerId) {
 		Main.isConntect = true;
 		if(Main.searchOpponentTimer != null) {
 			Main.searchOpponentTimer.stop();
@@ -426,8 +427,8 @@ Main.confirmConnect = function(id) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_searchComplete);
 	}
 };
-Main.searchOpponent = function(id) {
-	if(id == Main.otherPlayerId) Main.pushCmds({ cmd : "confirmConnect", content : { id : Main.playerId}});
+Main.searchOpponent = function(id,oid) {
+	if(id == Main.otherPlayerId && oid == Main.playerId) Main.pushCmds({ cmd : "confirmConnect", content : { id : Main.playerId, otherPlayerId : Main.otherPlayerId}});
 };
 Main.pollAllMessage = function() {
 	Main.pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
@@ -554,7 +555,7 @@ Main.removeCards = function(ary_select) {
 };
 Main.keepSearchOpponent = function() {
 	Main.searchOpponentTimer = haxe_Timer.delay(function() {
-		Main.pushCmds({ cmd : "searchOpponent", content : { id : Main.playerId}});
+		Main.pushCmds({ cmd : "searchOpponent", content : { id : Main.playerId, otherPlayerId : Main.otherPlayerId}});
 		if(!Main.isConntect) Main.keepSearchOpponent();
 	},3000);
 };
