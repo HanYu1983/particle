@@ -12,8 +12,11 @@
           (.demand (array "c"))
           (aget "argv"))]
     (condp = (.-c argv)
-      "getMagicCard"
+      "getSangoCard"
       (test.getSangoCard/testGetAll)
+      
+      "getMagicCard"
+      (test.getMagicCard/main 110 10 1000)
       
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動
