@@ -262,9 +262,83 @@
 			vic.easyui.selectTreeNode( tree_particle,vic.easyui.getTreeNodeById( tree_particle, 'root' ));
 		}, 10 );
 		
+		var currentAdvRow = undefined;
+		dgd_advprops.datagrid({
+			onSelect:function( index, row ){
+				currentAdvRow = {index:index, row:row};
+			}
+		});
+		
+		var currentNode = undefined;
+		tree_particle.tree( {
+			onSelect:function( node ){
+				console.log( node );
+				currentNode = node;
+			}
+		});
+		
+		
+		function addTree(){
+			if( currentNode == undefined ){
+				vic.easyui.appendTree( tree_particle, vic.easyui.getTreeRoot( tree_particle ), { id:'d', text:'f'} );
+			}else{
+				vic.easyui.appendTree( tree_particle, currentNode, { id:'d', text:'f'} );
+			}
+		}
+		
+		function removeTree(){
+			if( currentNode != undefined ){
+				vic.easyui.removeTree( tree_particle, currentNode );
+			}
+		}
+		
+		function addProp(){
+			vic.easyui.appendDatagridRow( dgd_advprops, { id:Math.random() , type:'linear'} );
+			vic.easyui.selectDatagridRow( dgd_advprops, vic.easyui.getDatagridRows( dgd_advprops ).length - 1 );
+		}
+		
+		function removeProp(){
+			if( currentAdvRow != undefined ){
+				vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
+				currentAdvRow = undefined;
+				var ary_rows = vic.easyui.getDatagridRows( dgd_advprops );
+				if( ary_rows.length > 0 ){
+					vic.easyui.selectDatagridRow( dgd_advprops, vic.easyui.getDatagridRows( dgd_advprops ).length - 1 );
+				}
+			}
+		}
+		
+		function upMove(){
+			if( currentAdvRow != undefined ){
+				if( currentAdvRow.index > 0 ){
+					vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
+					vic.easyui.insertDatagridRow( dgd_advprops, currentAdvRow.index - 1, currentAdvRow.row );
+					vic.easyui.selectDatagridRow( dgd_advprops, currentAdvRow.index - 1 );
+				}
+			}
+		}
+		
+		
+		function downMove(){
+			if( currentAdvRow != undefined ){
+				var maxCount = vic.easyui.getDatagridRows( dgd_advprops ).length;
+				if( currentAdvRow.index < maxCount - 1 ){
+					vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
+					vic.easyui.insertDatagridRow( dgd_advprops, currentAdvRow.index + 1 , currentAdvRow.row );
+					vic.easyui.selectDatagridRow( dgd_advprops, currentAdvRow.index + 1 );
+				}
+			}
+		}
+		
 		module.webgl = webgl;
 		module.tree_particle = tree_particle;
 		module.dgd_advprops = dgd_advprops;
+		module.addTree = addTree;
+		module.removeTree = removeTree;
+		module.addProp = addProp;
+		module.removeProp = removeProp;
+		module.upMove = upMove;
+		module.downMove = downMove;
 	})( app.ui );
 	
 	
@@ -334,20 +408,6 @@
 		
 	})( app.ui, app.model);
 	
-	var currentAdvRow = undefined;
-	app.ui.dgd_advprops.datagrid({
-		onSelect:function( index, row ){
-			currentAdvRow = {index:index, row:row};
-		}
-	});
-	
-	var currentNode = undefined;
-	app.ui.tree_particle.tree( {
-		onSelect:function( node ){
-			console.log( node );
-			currentNode = node;
-		}
-	});
 	
 	function onHtmlClick( dom ){
 		var tree_particle = app.ui.tree_particle;
@@ -355,49 +415,22 @@
 		
 		switch( dom.id ){
 			case 'btn_addTree':
-				if( currentNode == undefined ){
-					vic.easyui.appendTree( tree_particle, vic.easyui.getTreeRoot( tree_particle ), { id:'d', text:'f'} );
-				}else{
-					vic.easyui.appendTree( tree_particle, currentNode, { id:'d', text:'f'} );
-				}
+				app.ui.addTree();
 				break;
 			case 'btn_removeTree':
-				if( currentNode != undefined ){
-					vic.easyui.removeTree( tree_particle, currentNode );
-				}
+				app.ui.removeTree();
 				break;
 			case 'btn_addProp':
-				vic.easyui.appendDatagridRow( dgd_advprops, { id:Math.random() , type:'linear'} );
-				vic.easyui.selectDatagridRow( dgd_advprops, vic.easyui.getDatagridRows( dgd_advprops ).length - 1 );
+				app.ui.addProp();
 				break;
 			case 'btn_removeProp':
-				if( currentAdvRow != undefined ){
-					vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
-					currentAdvRow = undefined;
-					var ary_rows = vic.easyui.getDatagridRows( dgd_advprops );
-					if( ary_rows.length > 0 ){
-						vic.easyui.selectDatagridRow( dgd_advprops, vic.easyui.getDatagridRows( dgd_advprops ).length - 1 );
-					}
-				}
+				app.ui.removeProp();
 				break;
 			case 'btn_upMove':
-				if( currentAdvRow != undefined ){
-					if( currentAdvRow.index > 0 ){
-						vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
-						vic.easyui.insertDatagridRow( dgd_advprops, currentAdvRow.index - 1, currentAdvRow.row );
-						vic.easyui.selectDatagridRow( dgd_advprops, currentAdvRow.index - 1 );
-					}
-				}
+				app.ui.upMove();
 				break;
 			case 'btn_downMove':
-				if( currentAdvRow != undefined ){
-					var maxCount = vic.easyui.getDatagridRows( dgd_advprops ).length;
-					if( currentAdvRow.index < maxCount - 1 ){
-						vic.easyui.deleteDatagridRow( dgd_advprops, currentAdvRow.index );
-						vic.easyui.insertDatagridRow( dgd_advprops, currentAdvRow.index + 1 , currentAdvRow.row );
-						vic.easyui.selectDatagridRow( dgd_advprops, currentAdvRow.index + 1 );
-					}
-				}
+				app.ui.downMove();
 				break;
 		}
 	}
