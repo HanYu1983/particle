@@ -592,7 +592,7 @@ class Main
 				#if debug
 				alert( err );
 				#else
-				alert( '錯誤已經回報' );
+				alert( '錯誤:', err );
 				#end
 			}else {
 				cb( ret );
