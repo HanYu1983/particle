@@ -80,6 +80,42 @@ vic.easyui = vic.easyui || {};
 		});
 	}
 	
+	/**
+	不能在剛初始化完tree的時候就直接呼叫，至少要setTimeout之後再呼叫
+	**/
+	function selectTreeNode( tree, node ){
+		tree.tree( 'select', node.target );
+	}
+	
+	function setTree( tree, datas ){
+		tree.tree({
+			data: datas
+		});
+	}
+	
+	function getTreeNodeById( tree, id ){
+		return tree.tree( 'find', id );
+	}
+	
+	function getTreeRoot( tree ){
+		return tree.tree( 'getRoot' );
+	}
+	
+	function getTreeRoots( tree ){
+		return tree.tree( 'getRoots' );
+	}
+	
+	function appendTree( tree, select, datas ){
+		tree.tree('append', {
+			parent: select.target,
+			data: datas
+		});
+	}
+	
+	function removeTree( tree, node ){
+		tree.tree( 'remove', node.target );
+	}
+	
 	module.setSpinnerValue = setSpinnerValue;
 	module.getSpinnerValue = getSpinnerValue;
 	
@@ -94,5 +130,13 @@ vic.easyui = vic.easyui || {};
 	module.updateDatagridRow = updateDatagridRow;
 	
 	module.initSprWheel = initSprWheel;
+	
+	module.selectTreeNode = selectTreeNode;
+	module.setTree = setTree;
+	module.getTreeNodeById = getTreeNodeById;
+	module.getTreeRoot = getTreeRoot;
+	module.getTreeRoots = getTreeRoots;
+	module.appendTree = appendTree;
+	module.removeTree = removeTree;
 	
 })( vic.easyui );
