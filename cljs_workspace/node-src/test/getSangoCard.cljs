@@ -1,5 +1,5 @@
 ; 抓三國卡牌的程式
-(ns test.main)
+(ns test.getSangoCard)
 
 (def async (js/require "async"))
 (def request (js/require "request"))
@@ -155,10 +155,3 @@
                     (clj->js))]
               (.eachSeries async allList writeImage 
                 (fn [err ret] (println "ok!!"))))))))))
-
-(defn -main [& args]
-  (testGetAll))
-    
-;沒有這兩行nodejs跑不動
-(enable-console-print!)
-(set! *main-cli-fn* -main)

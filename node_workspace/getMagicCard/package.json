@@ -2,7 +2,8 @@
   "name":"getMagicCard",
   "dependencies":{
     "async":"*",
-    "request": "*"
+    "request": "*",
+    "yargs": "3.26.0"
   },
   "main": "main.js"
 }
