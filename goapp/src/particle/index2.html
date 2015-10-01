@@ -215,6 +215,7 @@
 	(function( module ){
 		var event = $('<div></div>' );
 		var tree_particle = $("#tree_particle" );
+		var spr_value = $("#spr_value" );
 		var dgd_props = $("#dgd_props" );
 		var dgd_advprops = $("#dgd_advprops" );
 		var combo_props = $("#combo_props" );
@@ -253,7 +254,39 @@
 				console.log( nv );
 			}
 		});
+		
+		
+		var tid = undefined;
+		function keepUpdateGrid(){
+			if( tid != undefined ){
+				clearInterval( tid );
+			}
+			tid = setInterval( function(){
+				vic.easyui.updateDatagridRow( dgd_props, currentRow.index, currentRow.row );
+			}, 100 );
+		}
+		
+		spr_value.numberspinner( {
+			onChange:function( nv, ov ){
+				if( currentRow != undefined ){
+					currentRow.row.v = nv;
+					keepUpdateGrid();
+					
+					event.trigger( 'onPropChange', { currentRow: currentRow } );
+					//vic.easyui.updateDatagridRow( dgd_props, currentRow.index, currentRow.row );
+					//event.trigger( 'onPropChange', { currentRow: currentRow } );
+				}
+			}
+		});
 			
+		var currentRow = undefined;
+		dgd_props.datagrid({
+			onSelect:function( index, row ){
+				currentRow =  {index:index, row:row};
+				vic.easyui.setSpinnerValue( spr_value, row.v, false );
+			}
+		});
+		
 		var currentAdvRow = undefined;
 		dgd_advprops.datagrid({
 			onSelect:function( index, row ){
@@ -433,11 +466,10 @@
 		view.setTree( [ treeModel ], 1 );
 		
 		view.event.on( 'onViewTreeChange', function(){
-			updateRender();
+			updateRender( true );
 		});
 		
 		view.event.on( 'onTreeClick', function( e, options ){
-			
 			view.setDgdProp( (function( node ){
 				var p = node.particle;
 				if( vic.easyui.getTreeIsLeaf( view.tree_particle, node ) ){
@@ -465,21 +497,47 @@
 				];
 			})( options.node ));
 			
-			//currentParticle = options.node.particle;
+			currentParticle = options.node.particle;
 		});
 		
 		view.event.on( 'onMouseMove', function( e, options ){
 			var rootParticle = view.getTreeRootNode().particle;
 			rootParticle.pos[0] = options.targetPos[0];
 			rootParticle.pos[1] = options.targetPos[1];
-			updateRender();
+			updateRender( false );
 		});
 		
-		function updateRender(){
-			var retobj2 = { };
-			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj2 );
-		//	console.log( retobj2 );
-			api.editParticle( retobj2 );
+		view.event.on( 'onDgdPropsClick', function( e, options ){
+			console.log( options );
+		});
+		
+		view.event.on( 'onPropChange', function( e, options ){
+			var row = options.currentRow.row;
+			console.log( row.v );
+			console.log( row.id );
+			switch( row.id ){
+				case 'pos_r':
+					currentParticle.pos[0] = row.v; break;
+				case 'vel_x':
+					currentParticle.vel[0] = row.v; break;
+				case 'vel_y':
+					currentParticle.vel[1] = row.v; break;
+				case 'vel_r':
+					currentParticle.vel[2] = row.v; break;
+				default:
+					currentParticle[row.id] = row.v;
+			}
+			updateRender( false );
+		});
+		
+		function updateRender( parserTree ){
+			if( parserTree ){
+				var retobj2 = { };
+				treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj2 );
+				api.editParticle( retobj2 );
+			}else{
+				api.editParticle( particles );
+			}
 		}
 		
 		function moveParticle(id, x, y) {

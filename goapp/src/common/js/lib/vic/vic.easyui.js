@@ -2,8 +2,16 @@ var vic = vic || {};
 vic.easyui = vic.easyui || {};
 
 (function( module ){
-	function setSpinnerValue( spr, value ){
-		spr.numberspinner( 'setValue', value );
+	function setSpinnerValue( spr, value, dispatch ){
+		console.log( dispatch );
+		if( dispatch ){
+			spr.numberspinner( 'setValue', value );
+		}else{
+			spr.numberspinner( {
+				value:value
+			});
+		}
+		
 	}
 	
 	function getSpinnerValue( spr ){
@@ -71,8 +79,6 @@ vic.easyui = vic.easyui || {};
 		});
 		
 		$( 'body' ).mouseup( function(){
-			console.log( 'up' );
-			
 			downSpr = undefined;
 			oldMouseY = undefined;
 		});
@@ -83,7 +89,7 @@ vic.easyui = vic.easyui || {};
 				if( oldMouseY != undefined ){
 					var offset = Math.floor( newY - oldMouseY );
 					var oldvalue = Math.floor( vic.easyui.getSpinnerValue( downSpr ) );
-					vic.easyui.setSpinnerValue( downSpr, Math.floor( oldvalue + offset ) );
+					vic.easyui.setSpinnerValue( downSpr, Math.floor( oldvalue + offset ), true );
 				}
 				oldMouseY = newY;
 			}
