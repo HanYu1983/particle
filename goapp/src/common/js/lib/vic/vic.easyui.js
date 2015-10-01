@@ -11,7 +11,6 @@ vic.easyui = vic.easyui || {};
 	}
 	
 	function setCombobox( combobox, datas ){
-		console.log( datas );
 		combobox.combobox( {
 			valueField:'value',
 			textField:'label',
@@ -31,6 +30,10 @@ vic.easyui = vic.easyui || {};
 	
 	function selectDatagridRow( dataGrid, index ){
 		dataGrid.datagrid( 'selectRow', index );
+	}
+	
+	function getDatagridRows( dataGrid ){
+		return dataGrid.datagrid( 'getRows' );
 	}
 	
 	function appendDatagridRow( dataGrid, row ){
@@ -123,6 +126,7 @@ vic.easyui = vic.easyui || {};
 	module.setComboxSelect = setComboxSelect;
 	
 	module.setDatagridRows = setDatagridRows;
+	module.getDatagridRows = getDatagridRows;
 	module.selectDatagridRow = selectDatagridRow;
 	module.appendDatagridRow = appendDatagridRow;
 	module.deleteDatagridRow = deleteDatagridRow;
