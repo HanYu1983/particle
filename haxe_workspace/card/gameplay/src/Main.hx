@@ -122,7 +122,6 @@ class Main
 	}
 	
 	public static function pushCmds( content:Dynamic ) {
-		trace( 'cmd', otherPlayerId, content.cmd );
 		var toId = otherPlayerId;
 		if ( toId.length != 0 ) {
 			messageSocket( toId, content.cmd, content );
@@ -163,7 +162,7 @@ class Main
 				return curr;
 			}, []);
 		}
-		trace( content );
+		
 		switch( content.cmd ) {
 			case 'confirmConnect':
 				return Animate.confirmConnect( content.content.id );
@@ -592,7 +591,7 @@ class Main
 				#if debug
 				alert( err );
 				#else
-				alert( '錯誤:', err );
+				alert( '錯誤:' + err );
 				#end
 			}else {
 				cb( ret );
