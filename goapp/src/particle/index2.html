@@ -170,7 +170,7 @@
 									<table id="dgd_advprops" class="easyui-datagrid" data-options="singleSelect:true" style="width:100%;">
 										<thead>
 											<tr>
-												<th data-options="field:'id',width:'14%'">屬性</th>
+												<th data-options="field:'name',width:'14%'">屬性</th>
 												<th data-options="field:'type',width:'14%'">種類</th>
 												<th data-options="field:'v1',width:'15%'">參數1</th>
 												<th data-options="field:'v2',width:'15%'">參數2</th>
@@ -326,6 +326,12 @@
 		
 		function setDgdProp( ary_props ){
 			vic.easyui.setDatagridRows( dgd_props, ary_props );
+			vic.easyui.selectDatagridRow( dgd_props, 0 );
+		}
+		
+		function setAdvDgdProp( ary_props ){
+			vic.easyui.setDatagridRows( dgd_advprops, ary_props );
+			vic.easyui.selectDatagridRow( dgd_advprops, 0 );
 		}
 		
 		function setTree( nodes, selectId ){
@@ -395,10 +401,6 @@
 			return vic.easyui.getTreeNodeById( tree_particle, 0 );
 		}
 		
-		function selectPropDgdFirst(){
-			vic.easyui.selectDatagridRow( dgd_props, 0 );
-		}
-		
 		module.webgl = webgl;
 		module.tree_particle = tree_particle;
 		module.addTree = addTree;
@@ -409,9 +411,8 @@
 		module.downMove = downMove;
 		module.setTree = setTree;
 		module.setDgdProp = setDgdProp;
+		module.setAdvDgdProp = setAdvDgdProp;
 		module.getTreeRootNode = getTreeRootNode;
-		module.selectPropDgdFirst = selectPropDgdFirst;
-		
 		module.event = event;
 	})( app.view );
 	
@@ -420,19 +421,61 @@
 	app.model = app.model || {};
 	
 	(function( module ){
-	
-		//var particles = createInitParticle();
-		var particles = createParticle( 0, 'e' );
-		particles.lifetime = 0;
-		particles.pos[0] = 100;
-		particles.pos[1] = 100;
-		particles.emit = { 
-							count:1,
-							duration:.5,
-							angle:0,
-							range:0,
-							force:100,
-							prototype:[ createParticle( 1, 'p' ) ] };
+		
+		var particles = { 
+			id: 0, 
+			name:'e',
+			lifetime:0,
+			mass:1,
+			color:'#33ddff',
+			size:[10, 10],
+			pos:[0, 0, 0], 
+			vel:[0, 0, 0],
+			tex: "",
+			blending: "normal",
+			formulaList: [
+				[
+					'scale-x',
+					"randStartAdd",
+					20, 0, 0, 0, 0 
+				]
+			],
+			emit:{
+				count:1,
+				duration:.5,
+				angle:0,
+				range:0,
+				force:100,
+				prototype:[	{	
+								id: 1, 
+								name:'p',
+								lifetime:5,
+								mass:1,
+								color:'#33ddff',
+								size:[10, 10],
+								pos:[0, 0, 0], 
+								vel:[0, 0, 0],
+								tex: "",
+								blending: "normal",
+								formulaList: [
+									[
+										'scale-x',
+										"randStartAdd",
+										20, 100, 0, 0, 0 
+									],
+									[
+										'scale-y',
+										"randStartAdd",
+										20, 100, 0, 0, 0 
+									],
+									[
+										'vy',
+										"linearAdd",
+										30, 0, 0, 0, 0 
+									]
+							]} ]
+			}
+		}
 		
 		function getParticles(){
 			return particles;
@@ -502,8 +545,20 @@
 					{id:'force', name:'發射力道', v: p.emit.force}
 				];
 			})( options.node ));
-			//vic.easyui.selectDatagridRow( 
-			view.selectPropDgdFirst();
+			
+			if( options.node.particle.formulaList != undefined ){
+				view.setAdvDgdProp((function( node ){
+					var p = node.particle;
+					return _.map( p.formulaList, function( f ){
+						return {
+							id:f[0], name:keyToName(f[0]), type:keyToName(f[1]), v1:f[2], v2:f[3], v3:f[4], v4:f[5], v5:f[6]
+						}
+					});
+				})( options.node ));
+			}
+			
+			console.log( options.node.particle );
+			
 			currentParticle = options.node.particle;
 		});
 		
@@ -552,6 +607,7 @@
 		function updateRender(){
 			var retobj = { };
 			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
+			console.log( 'render', retobj );
 			api.editParticle( retobj );
 		}
 		
@@ -583,6 +639,7 @@
 			outputData.mass = particleData.mass;
 			outputData.color = particleData.color;
 			outputData.size = particleData.size;
+			outputData.formulaList = deepCopy( particleData.formulaList );
 		
 			if ( node.children && node.children.length > 0 ) {
 				
@@ -609,6 +666,32 @@
 		
 	})( app.view, app.model );
 	
+	function keyToName( key ){
+		switch( key ){
+			case 'x':return '位置x';break;
+			case 'y':return '位置y';break;
+			case 'rot':return '角度';break;
+			case 'vx':return '速度x';break;
+			case 'vy':return '速度y';break;
+			case 'vr':return '轉速';break;
+			case 'scale-x':return '寬度';break;
+			case 'scale-y':return '高度';break;
+			case 'r':return '紅';break;
+			case 'g':return '綠';break;
+			case 'b':return '藍';break;
+			case 'a':return 'alpha';break;
+			case 'emit-angle':return '發射角度';break;
+			case 'emit-range':return '發射範圍';break;
+			case 'emit-count':return '發射數目';break;
+			case 'emit-force':return '發射力道';break;
+			case 'emit-duration':return '發射週期';break;
+			case 'const':return '常數';break;
+			case 'constAdd':return '常數累加';break;
+			case 'linear':return '線性';break;
+			case 'linearAdd':return '線性累加';break;
+			case 'randStartAdd':return '亂數開始';break;
+		}
+	}
 	
 	function deepCopy( obj ){
 		return JSON.parse( JSON.stringify( obj ));
