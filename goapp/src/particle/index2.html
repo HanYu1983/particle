@@ -141,24 +141,41 @@
 						<div title="進階參數">
 							<div class="group" style="height:100%;">
 								<div class="group" style="text-align:center; margin-bottom:5px;">
-									<div class="hori"><input class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v1" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v2" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v3" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v4" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v5" class="easyui-numberspinner" style="width:80px;"></input></div>
 								</div>
 								<div class="group" style="text-align:center; margin-bottom:5px;">
 									<div class="hori">
 										<select id="combo_props" class="easyui-combobox" name="dept" style="width:100px;">
+											<option value="x">位置x</option>
+											<option value="y">位置y</option>
+											<option value="rot">角度</option>
+											<option value="vx">速度x</option>
+											<option value="vy">速度y</option>
+											<option value="vr">轉速</option>
+											<option value="scale-x">寬度</option>
+											<option value="scale-y">高度</option>
+											<option value="r">紅</option>
+											<option value="g">綠</option>
+											<option value="b">藍</option>
+											<option value="a">alpha</option>
+											<option value="emit-angle">發射角度</option>
+											<option value="emit-range">發射範圍</option>
+											<option value="emit-count">發射數目</option>
+											<option value="emit-force">發射力道</option>
+											<option value="emit-duration">發射週期</option>
 										</select>
 									</div>
 									<div class="hori">
 										<select id="combo_type" class="easyui-combobox" name="dept" style="width:100px;">
-											<option value="aa">aitem1</option>
-											<option>bitem2</option>
-											<option>bitem3</option>
-											<option>ditem4</option>
-											<option>eitem5</option>
+											<option value="const">常數</option>
+											<option value="constAdd">常數累加</option>
+											<option value="linear">線性</option>
+											<option value="linearAdd">線性累加</option>
+											<option value="randStartAdd">亂數開始</option>
 										</select>
 									</div>
 									<div class="hori"> <a href="#" id="btn_addProp" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-add'">新增</a></div>
@@ -216,9 +233,15 @@
 		var event = $('<div></div>' );
 		var tree_particle = $("#tree_particle" );
 		var spr_value = $("#spr_value" );
+		var spr_v1 = $("#spr_v1" );
+		var spr_v2 = $("#spr_v2" );
+		var spr_v3 = $("#spr_v3" );
+		var spr_v4 = $("#spr_v4" );
+		var spr_v5 = $("#spr_v5" );
 		var dgd_props = $("#dgd_props" );
 		var dgd_advprops = $("#dgd_advprops" );
 		var combo_props = $("#combo_props" );
+		var combo_type = $("#combo_type" );
 		var webgl = $('#webgl' );
 		var isMouseDown = false;
 		var targetPos = [0.0, 0.0];
@@ -241,12 +264,12 @@
 							{id:'emit-angle', name:'發射弧度'}, 
 							{id:'emit-range', name:'發射範圍'}, 
 							{id:'emit-force', name:'發射力道'}];
-		
+		/*
 		vic.easyui.setCombobox( combo_props, _.map( ary_props, function( prop ){
 			return { label:prop.name, value:prop.id};
 		}) );
-		
-		vic.easyui.setComboxSelect( combo_props, 'life' );
+		*/
+		//vic.easyui.setComboxSelect( combo_props, 'life' );
 		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
 		
 		$('.easyui-numberspinner' ).numberspinner( {
@@ -290,6 +313,13 @@
 		dgd_advprops.datagrid({
 			onSelect:function( index, row ){
 				currentAdvRow = {index:index, row:row};
+				vic.easyui.setSpinnerValue( spr_v1, row.v1, false );
+				vic.easyui.setSpinnerValue( spr_v2, row.v2, false );
+				vic.easyui.setSpinnerValue( spr_v3, row.v3, false );
+				vic.easyui.setSpinnerValue( spr_v4, row.v4, false );
+				vic.easyui.setSpinnerValue( spr_v5, row.v5, false );
+				vic.easyui.setComboxSelect( combo_props, row.id, false );
+				vic.easyui.setComboxSelect( combo_type, row.type, false );
 			}
 		});
 		
@@ -556,8 +586,6 @@
 					});
 				})( options.node ));
 			}
-			
-			console.log( options.node.particle );
 			
 			currentParticle = options.node.particle;
 		});
