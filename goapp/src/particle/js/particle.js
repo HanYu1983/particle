@@ -121,6 +121,10 @@ var particle = particle || {};
 			var ori = getFormulaTarget( target, part )
 			setFormulaTarget( target, part, ori + p[0] )
 		},
+		"constMul": function( target, p, part, lifep ){
+			var ori = getFormulaTarget( target, part )
+			setFormulaTarget( target, part, ori * p[0] )
+		},
 		"linear": function( target, p, part, lifep ){
 			var offset = p[1] - p[0]
 			var adj = p[0] + offset* lifep 
@@ -131,6 +135,12 @@ var particle = particle || {};
 			var offset = p[1] - p[0]
 			var adj = p[0] + offset* lifep 
 			setFormulaTarget( target, part, ori + adj )
+		},
+		"linearMul": function( target, p, part, lifep ){
+			var ori = getFormulaTarget( target, part )
+			var offset = p[1] - p[0]
+			var adj = p[0] + offset* lifep 
+			setFormulaTarget( target, part, ori * adj )
 		},
 		"randStartAdd": function( target, p, part, lifep ){
 			if( lifep == 0.0 ){
