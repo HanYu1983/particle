@@ -51,6 +51,9 @@
 		outline:red solid 2px;
 	}
 	
+	.outline{
+		outline:red solid 2px;
+	}
 	</style>
 	
 </head>
@@ -204,15 +207,14 @@
 					</div>
 				</div>
 				<div data-options="region:'south', title:'貼圖',split:true" style="height:30%">
+					<div id="mc_imgs" class="group">
+					</div>
 				</div>
 			</div>
 		</div>
         <div data-options="region:'center',title:'Main Title',iconCls:'icon-ok'">
            <div id="canvas_container" style="position:relative; width:100%; height:100%">
 				<div id="webgl" style="position:relative; width:100%; height:100%; left:0; top:0;"></div>
-				<!--
-				<canvas id='webgl' width=800 height=600></canvas>
-				-->
 			</div>
         </div>
     </div>
@@ -232,6 +234,7 @@
 	(function( module ){
 		var event = $('<div></div>' );
 		var tree_particle = $("#tree_particle" );
+		var mc_imgs = $("#mc_imgs" );
 		var spr_value = $("#spr_value" );
 		var spr_v1 = $("#spr_v1" );
 		var spr_v2 = $("#spr_v2" );
@@ -435,6 +438,26 @@
 			isMouseDown = false;
 		}
 		
+		function appendImage( id, dom ){
+			$( dom ).attr( 'id', id );
+			$( dom ).css( 'width', '100px' );
+			$( dom ).css( 'height', '100px' );
+			mc_imgs.append( dom );
+			
+			mc_imgs.undelegate( 'click' );
+			mc_imgs.delegate( 'img', 'click', function(){
+				//mc_imgs.find( '.outline' ).removeClass( 'outline' );
+				//$(this).addClass( 'outline' );
+				event.trigger( 'onImgClick', { id: $(this).attr( 'id' ) } );
+			});
+		}
+		
+		function setImgFocus( id ){
+			mc_imgs.find('img').each( function( id, dom ){
+				console.log( dom.id);
+			});
+		}
+		
 		function setDgdProp( ary_props ){
 			vic.easyui.setDatagridRows( dgd_props, ary_props );
 			if( ary_props.length > 0 )
@@ -545,6 +568,8 @@
 		module.setDgdProp = setDgdProp;
 		module.setAdvDgdProp = setAdvDgdProp;
 		module.getTreeRootNode = getTreeRootNode;
+		module.appendImage = appendImage;
+		module.setImgFocus = setImgFocus;
 		module.event = event;
 	})( app.view );
 	
@@ -579,7 +604,7 @@
 				 40
 			  ],
 			  "formulaList":[],
-			  "tex":"2819aaf9-80d6-4f6b-b6ae-7636c584f891",
+			  "tex":"0",
 			  "blending":"add",
 			  "emit":{  
 				 "prototype":[  
@@ -608,7 +633,7 @@
 						  40,
 						  40
 					   ],
-					   "tex":"2819aaf9-80d6-4f6b-b6ae-7636c584f891",
+					   "tex":0,
 					   "blending":"add",
 					   "formulaList":[  
 						  [  
@@ -657,7 +682,7 @@
 				pos:[0, 0, 0], 
 				vel:[0, 0, 0],
 				tex: "texture id",
-				blending: "normal",
+				blending: "add",
 			}
 		}
 		
@@ -676,6 +701,19 @@
 		var treeModel = {};
 		modelToTree( particles, treeModel )
 		view.setTree( [ treeModel ], 1 );
+		
+		
+		loadImage( 'images/glow.jpg', function( img ) {
+			var imgId = 0;
+			view.appendImage( imgId, img );
+			api.addTexture( imgId, img );
+			
+			loadImage( 'images/leadB_32_32.png', function( img ) {
+				imgId = 1;
+				view.appendImage( imgId, img );
+				api.addTexture( imgId, img );
+			});
+		});
 		
 		view.event.on( 'onViewTreeChange', function(){
 			updateRender();
@@ -722,6 +760,8 @@
 				})( options.node ));
 			}
 			
+			view.setImgFocus( options.node.particle.tex );
+			
 			currentParticle = options.node.particle;
 		});
 		
@@ -729,6 +769,11 @@
 			var rootParticle = view.getTreeRootNode().particle;
 			rootParticle.pos[0] = options.targetPos[0];
 			rootParticle.pos[1] = options.targetPos[1];
+			updateRender();
+		});
+		
+		view.event.on( 'onImgClick', function( e, options ){
+			currentParticle.tex = options.id;
 			updateRender();
 		});
 		
@@ -785,7 +830,7 @@
 		function updateRender(){
 			var retobj = { };
 			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
-		//	console.log( 'render', JSON.stringify( retobj ) );
+			console.log( 'render', JSON.stringify( retobj ) );
 			api.editParticle( retobj );
 		}
 		
@@ -817,8 +862,10 @@
 			outputData.mass = particleData.mass;
 			outputData.color = particleData.color;
 			outputData.size = particleData.size;
+			outputData.tex = particleData.tex;
+			outputData.blending = particleData.blending;
 			outputData.formulaList = deepCopy( particleData.formulaList );
-		
+			
 			if ( node.children && node.children.length > 0 ) {
 				if( particleData.emit == undefined ){
 					particleData.emit = {};
@@ -875,6 +922,14 @@
 	
 	function getUid(){
 		return leo.utils.generateUUID();
+	}
+	
+	function loadImage( src, cb ) {
+		var img = new Image();
+		img.src = src;
+		img.onload = function() {
+			cb( img );
+		};
 	}
 	
 	function onHtmlClick( dom ){
