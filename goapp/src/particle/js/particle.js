@@ -186,6 +186,12 @@ var particle = particle || {};
 			return part.vel[1]
 		case 'vr':
 			return part.vel[2]
+		case 'force-x':
+			return part.forceVel[0]
+		case 'force-y':
+			return part.forceVel[1]
+		case 'force-r':
+			return part.forceVel[2]
 		case 'scale-x':
 			return part.size[0]
 		case 'scale-y':
@@ -247,6 +253,12 @@ var particle = particle || {};
 			return part.vel[1] = v
 		case 'vr':
 			return part.vel[2] = v 
+		case 'force-x':
+			return part.forceVel[0] = v
+		case 'force-y':
+			return part.forceVel[1] = v
+		case 'force-r':
+			return part.forceVel[2] = v
 		case 'scale-x':
 			return part.size[0] = v
 		case 'scale-y':

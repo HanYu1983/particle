@@ -222,7 +222,7 @@ var api = api || {};
 		formulaList: [
 			[
 				target: 
-					"x" | "y" | "rot" | "vx" | "vy" | "vr" | 
+					"x" | "y" | "rot" | "vx" | "vy" | "vr" | "force-x" | "force-y" | "force-r"
 					"scale-x" | "scale-y" | "r" | "g" | "b" | "a" |
 					"emit-angle" | "emit-range" | "emit-count" | "emit-force" | "emit-duration",
 	
