@@ -142,13 +142,7 @@
 						</div>
 						<div title="進階參數">
 							<div class="group" style="height:100%; margin-top:10px;">
-								<div class="group" style="text-align:center; margin-bottom:5px;">
-									<div class="hori"><input id="spr_v1" class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input id="spr_v2" class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input id="spr_v3" class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input id="spr_v4" class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input id="spr_v5" class="easyui-numberspinner" style="width:80px;"></input></div>
-								</div>
+								
 								<div class="group" style="text-align:center; margin-bottom:5px;">
 									<div class="hori">
 										<select id="combo_advProps" class="easyui-combobox" name="dept" style="width:100px;">
@@ -175,8 +169,10 @@
 										<select id="combo_advType" class="easyui-combobox" name="dept" style="width:100px;">
 											<option value="const">常數</option>
 											<option value="constAdd">常數累加</option>
+											<option value="constMul">常數累乘</option>
 											<option value="linear">線性</option>
 											<option value="linearAdd">線性累加</option>
+											<option value="linearMul">線性累乘</option>
 											<option value="randStartAdd">亂數開始</option>
 										</select>
 									</div>
@@ -184,6 +180,13 @@
 									<div class="hori"> <a href="#" id="btn_removeAdvProp" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-remove'">刪除</a></div>
 									<div class="hori"> <a href="#" id="btn_upMove" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-undo'">上移</a></div>
 									<div class="hori"> <a href="#" id="btn_downMove" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-redo'">下移</a></div>
+								</div>
+								<div class="group" style="text-align:center; margin-bottom:5px;">
+									<div class="hori"><input id="spr_v1" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v2" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v3" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v4" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v5" class="easyui-numberspinner" style="width:80px;"></input></div>
 								</div>
 								<div class="group" style="text-align:center; margin-bottom:50px;">
 									<div class="hori" style="width:90%;">
@@ -269,14 +272,11 @@
 							{id:'emit-force', name:'發射力道'}];
 							
 		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
-		
+		/*
 		$('.easyui-numberspinner' ).numberspinner( {
-		//	precision:1,
-			onChange:function( nv, ov ){
-				//console.log( nv );
-			}
+			precision:1
 		});
-		
+		*/
 		
 		var tid = undefined;
 		function keepUpdateGrid( cb ){
@@ -453,7 +453,6 @@
 		
 		function setImgFocus( imgId ){
 			mc_imgs.find('img').each( function( id, dom ){
-				console.log( dom.id);
 				$( dom ).removeClass( 'outline' );
 				if( dom.id == imgId ){
 					$( dom ).addClass( 'outline' );
@@ -676,16 +675,33 @@
 		
 		function createParticle( id, name ){
 			return { 
-				id: id, 
-				name:name,
-				lifetime:5,
-				mass:1,
-				color:'#33ddff',
-				size:[10, 10],
-				pos:[0, 0, 0], 
-				vel:[0, 0, 0],
-				tex: "texture id",
-				blending: "add",
+				"id":id,
+				"name":name,
+				"lifetime":1,
+				"vel":[  
+				 0,
+				 0,
+				 0
+				],
+				"pos":[  
+				 256.52719250452884,
+				 463.7413907217794,
+				 0
+				],
+				"mass":1,
+				"color":[  
+				 1,
+				 1,
+				 1,
+				 1
+				],
+				"size":[  
+				 40,
+				 40
+				],
+				"formulaList":[],
+				"tex":"0",
+				"blending":"add"
 			}
 		}
 		
@@ -754,6 +770,8 @@
 				];
 			})( options.node ));
 			
+			console.log( options.node.particle.formulaList.length );
+			
 			if( options.node.particle.formulaList != undefined ){
 				view.setAdvDgdProp((function( node ){
 					var p = node.particle;
@@ -787,21 +805,23 @@
 		});
 		
 		view.event.on( 'onPropChange', function( e, options ){
+			if( currentParticle == undefined ) return;
 			var row = options.currentRow.row;
 			var rows = options.rows;
 			if( rows != undefined ){
-				if( currentParticle != undefined ) {
-					currentParticle.formulaList = _.map( rows, function( r ){
-						return [r.id, r.tid, 
-								Math.floor( r.v1 ),
-								Math.floor( r.v2 ),
-								Math.floor( r.v3 ),
-								Math.floor( r.v4 ),
-								Math.floor( r.v5 )];
-					});
-				}
+				currentParticle.formulaList = _.map( rows, function( r ){
+					return [r.id, r.tid, 
+							parseFloat( r.v1 ),
+							parseFloat( r.v2 ),
+							parseFloat( r.v3 ),
+							parseFloat( r.v4 ),
+							parseFloat( r.v5 )];
+				});
+				
+				console.log( rows );
 			}else{
-				row.v = Math.floor( row.v );
+			//	currentParticle.formulaList = [];
+				row.v = parseFloat( row.v );
 				switch( row.id ){
 					case 'pos_r':
 						currentParticle.pos[0] = row.v; break;
@@ -835,7 +855,7 @@
 		function updateRender(){
 			var retobj = { };
 			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
-			console.log( 'render', JSON.stringify( retobj ) );
+			//console.log( 'render', JSON.stringify( retobj ) );
 			api.editParticle( retobj );
 		}
 		
@@ -914,8 +934,10 @@
 			case 'emit-duration':return '發射週期';break;
 			case 'const':return '常數';break;
 			case 'constAdd':return '常數累加';break;
+			case 'constMul':return '常數累乘';break;
 			case 'linear':return '線性';break;
 			case 'linearAdd':return '線性累加';break;
+			case 'linearMul':return '線性累乘';break;
 			case 'randStartAdd':return '亂數開始';break;
 		}
 	}
