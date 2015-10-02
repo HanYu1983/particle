@@ -152,6 +152,9 @@
 											<option value="vx">速度x</option>
 											<option value="vy">速度y</option>
 											<option value="vr">轉速</option>
+											<option value="fvx">作用力x</option>
+											<option value="fvy">作用力y</option>
+											<option value="fvr">作用力旋轉</option>
 											<option value="scale-x">寬度</option>
 											<option value="scale-y">高度</option>
 											<option value="r">紅</option>
@@ -265,9 +268,9 @@
 							{id:'g', name:'綠'}, 
 							{id:'b', name:'藍'}, 
 							{id:'a', name:'alpha'}, 
-							{id:'force-x', name:'作用力x'}, 
-							{id:'force-y', name:'作用力y'}, 
-							{id:'force-r', name:'作用力旋轉'}, 
+							{id:'fvx', name:'作用力x'}, 
+							{id:'fvy', name:'作用力y'}, 
+							{id:'fvr', name:'作用力旋轉'}, 
 							{id:'emit-count', name:'發射數目'}, 
 							{id:'emit-duration', name:'週期毫秒'}, 
 							{id:'emit-angle', name:'發射弧度'}, 
@@ -924,6 +927,9 @@
 			case 'vx':return '速度x';break;
 			case 'vy':return '速度y';break;
 			case 'vr':return '轉速';break;
+			case 'fvx':return '作用力x';break;
+			case 'fvy':return '作用力y';break;
+			case 'fvr':return '作用力旋轉';break;
 			case 'scale-x':return '寬度';break;
 			case 'scale-y':return '高度';break;
 			case 'r':return '紅';break;
