@@ -160,14 +160,26 @@ var api = api || {};
 	var callback
 	
 	function startParticleStep( dom ){
+		var jdom = $(dom)
+		var w = jdom.width()
+		var h = jdom.height()
 		var countElem = $('#count')
-		var draw = drawer($(dom))
+		var draw = drawer(jdom)
 		var last = new Date().getTime()
 		setTimeout( function(){
 			var now = new Date().getTime()
 			var elap = (now - last)/ 1000.0
 			last = now
 			particle.stepParticles( pool, ctx.parts, elap )
+			// 刪除超過螢幕的
+			ctx.parts = _.filter( ctx.parts, function(item){
+				// 函數式的函式中增加了副作用，還在可以接受的範圍
+				var shouldRemove = item.pos[0] < 0 || item.pos[0] > w || item.pos[1] < 0 || item.pos[1] > h
+				if( shouldRemove ){
+					pool.put( item )
+				}
+				return shouldRemove == false
+			})
 			draw( ctx )
 			setTimeout( arguments.callee, 1000.0/ctx.fps )
 			if (callback){
