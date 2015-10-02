@@ -165,7 +165,6 @@
 											<option value="emit-range">發射範圍</option>
 											<option value="emit-count">發射數目</option>
 											<option value="emit-force">發射力道</option>
-											<option value="emit-duration">發射週期</option>
 										</select>
 									</div>
 									<div class="hori">
@@ -751,40 +750,54 @@
 				var p = node.particle;
 				if( vic.easyui.getTreeIsLeaf( view.tree_particle, node ) ){
 					return [
-						{id:'lifetime', name:'生命毫秒', v: p.lifetime},
+						{id:'lifetime', name:'生命毫秒', v: p.lifetime * 1000 },
 						{id:'mass', name:'質量', v: p.mass},
-						{id:'pos_r', name:'角度', v: p.pos[2]},
+						{id:'pos_r', name:'角度', v: radianToDegree( p.pos[2] )},
 						{id:'vel_x', name:'速度x', v: p.vel[0]},
 						{id:'vel_y', name:'速度y', v: p.vel[1]},
-						{id:'vel_r', name:'轉速', v: p.vel[2]},
+						{id:'vel_r', name:'轉速', v: radianToDegree( p.vel[2] )},
 						{id:'size_x', name:'寬度', v: p.size[0]},
 						{id:'size_y', name:'高度', v: p.size[1]}
 					];
 				}
 				return [
-					{id:'lifetime', name:'生命毫秒', v: p.lifetime},
+					{id:'lifetime', name:'生命毫秒', v: p.lifetime * 1000 },
 					{id:'mass', name:'質量', v: p.mass},
-					{id:'pos_r', name:'角度', v: p.pos[2]},
-					{id:'vel_r', name:'轉速', v: p.vel[2]},
+					{id:'pos_r', name:'角度', v: radianToDegree( p.pos[2] )},
+					{id:'vel_x', name:'速度x', v: p.vel[0]},
+					{id:'vel_y', name:'速度y', v: p.vel[1]},
+					{id:'vel_r', name:'轉速', v: radianToDegree( p.vel[2] )},
 					{id:'size_x', name:'寬度', v: p.size[0]},
 					{id:'size_y', name:'高度', v: p.size[1]},
 					{id:'count', name:'發射數目', v: p.emit.count},
-					{id:'duration', name:'發射間隔', v: p.emit.duration},
-					{id:'angle', name:'發射角度', v: p.emit.angle},
-					{id:'range', name:'發射範圍', v: p.emit.range},
+					{id:'duration', name:'發射週期', v: p.emit.duration * 1000 },
+					{id:'angle', name:'發射角度', v: radianToDegree( p.emit.angle )},
+					{id:'range', name:'發射範圍', v: radianToDegree( p.emit.range )},
 					{id:'force', name:'發射力道', v: p.emit.force}
 				];
 			})( options.node ));
-			
-			console.log( options.node.particle.formulaList.length );
 			
 			if( options.node.particle.formulaList != undefined ){
 				view.setAdvDgdProp((function( node ){
 					var p = node.particle;
 					return _.map( p.formulaList, function( f ){
-						return {
+						var retobj = {
 							id:f[0], tid:f[1], name:keyToName(f[0]), type:keyToName(f[1]), v1:f[2], v2:f[3], v3:f[4], v4:f[5], v5:f[6]
 						}
+						
+						switch( retobj.id ){
+							case 'rot':
+							case 'vr':
+							case 'emit-range':
+							case 'emit-angle':
+								retobj.v1 = radianToDegree( retobj.v1 );
+								retobj.v2 = radianToDegree( retobj.v2 );
+								retobj.v3 = radianToDegree( retobj.v3 );
+								retobj.v4 = radianToDegree( retobj.v4 );
+								retobj.v5 = radianToDegree( retobj.v5 );
+								break;
+						}
+						return retobj;
 					});
 				})( options.node ));
 			}
@@ -816,27 +829,42 @@
 			var rows = options.rows;
 			if( rows != undefined ){
 				currentParticle.formulaList = _.map( rows, function( r ){
-					return [r.id, r.tid, 
-							parseFloat( r.v1 ),
-							parseFloat( r.v2 ),
-							parseFloat( r.v3 ),
-							parseFloat( r.v4 ),
-							parseFloat( r.v5 )];
+					
+					var retobj = [r.id, r.tid, 
+								parseInt( r.v1 ),
+								parseInt( r.v2 ),
+								parseInt( r.v3 ),
+								parseInt( r.v4 ),
+								parseInt( r.v5 )];
+								
+					switch( r.id ){
+						case 'rot':
+						case 'vr':
+						case 'emit-range':
+						case 'emit-angle':
+							retobj[2] = degreeToRadian( retobj[2] );
+							retobj[3] = degreeToRadian( retobj[3] );
+							retobj[4] = degreeToRadian( retobj[4] );
+							retobj[5] = degreeToRadian( retobj[5] );
+							retobj[6] = degreeToRadian( retobj[6] );
+							break;
+					}
+					return retobj;
 				});
 				
-				console.log( rows );
 			}else{
-			//	currentParticle.formulaList = [];
-				row.v = parseFloat( row.v );
+				row.v = parseInt( row.v );
 				switch( row.id ){
+					case 'lifetime':
+						currentParticle.lifetime = ( row.v / 1000 ); break;
 					case 'pos_r':
-						currentParticle.pos[0] = row.v; break;
+						currentParticle.pos[0] = degreeToRadian( row.v ); break;
 					case 'vel_x':
 						currentParticle.vel[0] = row.v; break;
 					case 'vel_y':
 						currentParticle.vel[1] = row.v; break;
 					case 'vel_r':
-						currentParticle.vel[2] = row.v; break;
+						currentParticle.vel[2] = degreeToRadian( row.v ); break;
 					case 'size_x':
 						currentParticle.size[0] = row.v; break;
 					case 'size_y':
@@ -844,11 +872,11 @@
 					case 'count':
 						currentParticle.emit.count = row.v; break;
 					case 'duration':
-						currentParticle.emit.duration = row.v; break;
+						currentParticle.emit.duration = ( row.v / 1000 ); break;
 					case 'range':
-						currentParticle.emit.range = row.v; break;
+						currentParticle.emit.range = degreeToRadian( row.v ); break;
 					case 'angle':
-						currentParticle.emit.angle = row.v; break;
+						currentParticle.emit.angle = degreeToRadian( row.v ); break;
 					case 'force':
 						currentParticle.emit.force = row.v; break;
 					default:
@@ -861,7 +889,7 @@
 		function updateRender(){
 			var retobj = { };
 			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
-			//console.log( 'render', JSON.stringify( retobj ) );
+			console.log( 'render', JSON.stringify( retobj ) );
 			api.editParticle( retobj );
 		}
 		
@@ -953,6 +981,14 @@
 	
 	function deepCopy( obj ){
 		return JSON.parse( JSON.stringify( obj ));
+	}
+	
+	function radianToDegree( r ){
+		return r / Math.PI * 180;
+	}
+	
+	function degreeToRadian( d ){
+		return d / 180 * Math.PI;
 	}
 	
 	function getUid(){
