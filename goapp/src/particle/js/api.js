@@ -227,7 +227,7 @@ var api = api || {};
 					"emit-angle" | "emit-range" | "emit-count" | "emit-force" | "emit-duration",
 	
 				type:
-					"const" | "constAdd" | "linear" | "linearAdd" | "randStartAdd"
+					"const" | "constAdd" | "constMul" | "linear" | "linearAdd" | "linearMul" | "randStartAdd"
 	
 				p1:int,
 				p2:int,
