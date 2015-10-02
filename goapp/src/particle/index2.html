@@ -446,15 +446,18 @@
 			
 			mc_imgs.undelegate( 'click' );
 			mc_imgs.delegate( 'img', 'click', function(){
-				//mc_imgs.find( '.outline' ).removeClass( 'outline' );
-				//$(this).addClass( 'outline' );
+				setImgFocus( $(this).attr( 'id' ) );
 				event.trigger( 'onImgClick', { id: $(this).attr( 'id' ) } );
 			});
 		}
 		
-		function setImgFocus( id ){
+		function setImgFocus( imgId ){
 			mc_imgs.find('img').each( function( id, dom ){
 				console.log( dom.id);
+				$( dom ).removeClass( 'outline' );
+				if( dom.id == imgId ){
+					$( dom ).addClass( 'outline' );
+				}
 			});
 		}
 		
@@ -690,7 +693,22 @@
 		module.createParticle = createParticle;
 	})( app.model );
 	
-	(function( view, model ){
+	
+	loadImage( 'images/glow.jpg', function( img ) {
+		var imgId = 0;
+		app.view.appendImage( imgId, img );
+		api.addTexture( imgId, img );
+		
+		loadImage( 'images/leadB_32_32.png', function( img ) {
+			imgId = 1;
+			app.view.appendImage( imgId, img );
+			api.addTexture( imgId, img );
+			
+			appStart( app.view, app.model );
+		});
+	});
+	
+	function appStart( view, model ){
 		var webgl = view.webgl;
 		var currentParticle = undefined;
 		
@@ -701,19 +719,6 @@
 		var treeModel = {};
 		modelToTree( particles, treeModel )
 		view.setTree( [ treeModel ], 1 );
-		
-		
-		loadImage( 'images/glow.jpg', function( img ) {
-			var imgId = 0;
-			view.appendImage( imgId, img );
-			api.addTexture( imgId, img );
-			
-			loadImage( 'images/leadB_32_32.png', function( img ) {
-				imgId = 1;
-				view.appendImage( imgId, img );
-				api.addTexture( imgId, img );
-			});
-		});
 		
 		view.event.on( 'onViewTreeChange', function(){
 			updateRender();
@@ -886,8 +891,7 @@
 				});
 			}
 		}
-		
-	})( app.view, app.model );
+	}
 	
 	function keyToName( key ){
 		switch( key ){
