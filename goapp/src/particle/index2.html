@@ -105,7 +105,7 @@
         <div data-options="region:'north'" style="height:50px"></div>
         <div data-options="region:'west',split:true" title="West" style="width:600px;">
 			<div class="easyui-layout" style="width:100%;height:100%;">
-				<div data-options="region:'north',split:true" style="height:300px">
+				<div data-options="region:'north',split:true" style="height:20%">
 					<div class="group" style="text-align:center;">
 						<div class="hori"><a id="btn_addTree" href="#" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-search'">新增</a></div>
 						<div class="hori"><a id="btn_removeTree" href="#" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-search'">刪除</a></div>
@@ -115,12 +115,11 @@
 						
 						</ul>
 					</div>
-					
 				</div>
 				<div data-options="region:'center',title:'Main Title',iconCls:'icon-ok'">
 					<div class="easyui-tabs" style="width:100%;height:100%">
 						<div title="基本參數">
-							<div class="group" style="height:100%;">
+							<div class="group" style="height:100%; margin-top:10px;">
 								<div class="group" style="text-align:center; margin-bottom:5px;">
 									<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
 								</div>
@@ -139,7 +138,7 @@
 							</div>
 						</div>
 						<div title="進階參數">
-							<div class="group" style="height:100%;">
+							<div class="group" style="height:100%; margin-top:10px;">
 								<div class="group" style="text-align:center; margin-bottom:5px;">
 									<div class="hori"><input id="spr_v1" class="easyui-numberspinner" style="width:80px;"></input></div>
 									<div class="hori"><input id="spr_v2" class="easyui-numberspinner" style="width:80px;"></input></div>
@@ -183,27 +182,28 @@
 									<div class="hori"> <a href="#" id="btn_upMove" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-undo'">上移</a></div>
 									<div class="hori"> <a href="#" id="btn_downMove" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-redo'">下移</a></div>
 								</div>
-								<div class="group" style="height:100%;">
-									<table id="dgd_advprops" class="easyui-datagrid" data-options="singleSelect:true" style="width:100%;">
-										<thead>
-											<tr>
-												<th data-options="field:'name',width:'14%'">屬性</th>
-												<th data-options="field:'type',width:'14%'">種類</th>
-												<th data-options="field:'v1',width:'15%'">參數1</th>
-												<th data-options="field:'v2',width:'15%'">參數2</th>
-												<th data-options="field:'v3',width:'15%'">參數3</th>
-												<th data-options="field:'v4',width:'15%'">參數4</th>
-												<th data-options="field:'v5',width:'15%'">參數5</th>
-											</tr>
-										</thead>
-									</table>
+								<div class="group" style="text-align:center; margin-bottom:50px;">
+									<div class="hori" style="width:90%;">
+										<table id="dgd_advprops" class="easyui-datagrid" data-options="singleSelect:true" style="width:100%;">
+											<thead>
+												<tr>
+													<th data-options="field:'name',width:'14%'">屬性</th>
+													<th data-options="field:'type',width:'14%'">種類</th>
+													<th data-options="field:'v1',width:'15%'">參數1</th>
+													<th data-options="field:'v2',width:'15%'">參數2</th>
+													<th data-options="field:'v3',width:'15%'">參數3</th>
+													<th data-options="field:'v4',width:'15%'">參數4</th>
+													<th data-options="field:'v5',width:'15%'">參數5</th>
+												</tr>
+											</thead>
+										</table>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					
-					
-				   
+				</div>
+				<div data-options="region:'south', title:'貼圖',split:true" style="height:30%">
 				</div>
 			</div>
 		</div>
@@ -264,18 +264,13 @@
 							{id:'emit-angle', name:'發射弧度'}, 
 							{id:'emit-range', name:'發射範圍'}, 
 							{id:'emit-force', name:'發射力道'}];
-		/*
-		vic.easyui.setCombobox( combo_advProps, _.map( ary_props, function( prop ){
-			return { label:prop.name, value:prop.id};
-		}) );
-		*/
-		//vic.easyui.setComboxSelect( combo_advProps, 'life' );
+							
 		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
 		
 		$('.easyui-numberspinner' ).numberspinner( {
 		//	precision:1,
 			onChange:function( nv, ov ){
-				console.log( nv );
+				//console.log( nv );
 			}
 		});
 		
@@ -365,28 +360,13 @@
 		
 		combo_advProps.combobox({
 			onChange:function( nv, ov ){
-				currentAdvRow.row.id = nv;
-				currentAdvRow.row.name = keyToName( currentAdvRow.row.id );
-				console.log( currentAdvRow );
-				vic.easyui.updateDatagridRow( dgd_advprops, currentAdvRow.index, currentAdvRow.row );
-				event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
-			}
-		});
-		
-		combo_advType.combobox({
-			onChange:function( nv, ov ){
-				currentAdvRow.row.tid = nv;
-				currentAdvRow.row.type = keyToName( currentAdvRow.row.tid );
-				vic.easyui.updateDatagridRow( dgd_advprops, currentAdvRow.index, currentAdvRow.row );
-				event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
-			}
-		});
-			
-		var currentRow = undefined;
-		dgd_props.datagrid({
-			onSelect:function( index, row ){
-				currentRow =  {index:index, row:row};
-				vic.easyui.setSpinnerValue( spr_value, row.v, false );
+				console.log( nv );
+				if( currentAdvRow != undefined ){
+					currentAdvRow.row.id = nv;
+					currentAdvRow.row.name = keyToName( currentAdvRow.row.id );
+					vic.easyui.updateDatagridRow( dgd_advprops, currentAdvRow.index, currentAdvRow.row );
+					event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
+				}
 			}
 		});
 		
@@ -405,10 +385,29 @@
 			}
 		});
 		
+		combo_advType.combobox({
+			onChange:function( nv, ov ){
+				console.log( nv );
+				if( currentAdvRow != undefined ){
+					currentAdvRow.row.tid = nv;
+					currentAdvRow.row.type = keyToName( currentAdvRow.row.tid );
+					vic.easyui.updateDatagridRow( dgd_advprops, currentAdvRow.index, currentAdvRow.row );
+					event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
+				}
+			}
+		});
+			
+		var currentRow = undefined;
+		dgd_props.datagrid({
+			onSelect:function( index, row ){
+				currentRow =  {index:index, row:row};
+				vic.easyui.setSpinnerValue( spr_value, row.v, false );
+			}
+		});
+		
 		var currentNode = undefined;
 		tree_particle.tree( {
 			onSelect:function( node ){
-				console.log( node );
 				currentNode = node;
 				event.trigger( 'onTreeClick', { node:node } );
 			}
@@ -734,7 +733,7 @@
 		});
 		
 		view.event.on( 'onDgdPropsClick', function( e, options ){
-			console.log( options );
+			//console.log( options );
 		});
 		
 		view.event.on( 'onPropChange', function( e, options ){
@@ -786,7 +785,7 @@
 		function updateRender(){
 			var retobj = { };
 			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
-			console.log( 'render', JSON.stringify( retobj ) );
+		//	console.log( 'render', JSON.stringify( retobj ) );
 			api.editParticle( retobj );
 		}
 		
@@ -821,7 +820,6 @@
 			outputData.formulaList = deepCopy( particleData.formulaList );
 		
 			if ( node.children && node.children.length > 0 ) {
-				
 				if( particleData.emit == undefined ){
 					particleData.emit = {};
 					particleData.emit.count = 1;
@@ -837,7 +835,6 @@
 				_.each( node.children, function( nc ){
 					var obj = { };
 					outputData.emit.prototype.push( obj );
-					//outputData.emit.prototype.push( obj );
 					treeToModel( nc, obj );
 				});
 			}

@@ -25,8 +25,15 @@ vic.easyui = vic.easyui || {};
 		});
 	}
 	
-	function setComboxSelect( combobox, value ){
-		combobox.combobox( 'select', value );
+	function setComboxSelect( combobox, value, dispatch ){
+		if( dispatch ){
+			combobox.combobox( 'select', value );
+		}else{
+			combobox.combobox( {
+				value:value
+			});
+		}
+		
 	}
 	
 	function setDatagridRows( dataGrid, datas ){
