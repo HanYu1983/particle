@@ -300,6 +300,17 @@
 				}
 			}
 		});
+		
+		spr_v1.numberspinner( {
+			onChange:function( nv, ov ){
+				if( currentRow != undefined ){
+					currentAdvRow.row.v1 = nv;
+					vic.easyui.updateDatagridRow( dgd_advprops, currentRow.index, currentRow.row );
+					//keepUpdateGrid();
+					event.trigger( 'onPropChange', { currentRow: currentRow } );
+				}
+			}
+		});
 			
 		var currentRow = undefined;
 		dgd_props.datagrid({
