@@ -501,6 +501,7 @@
 		var currentNode = undefined;
 		tree_particle.tree( {
 			onSelect:function( node ){
+				if( currentNode == node ) return;
 				currentNode = node;
 				event.trigger( 'onTreeClick', { node:node } );
 			}
@@ -559,19 +560,14 @@
 		}
 		
 		function setDgdProp( ary_props ){
-			console.log( ary_props );
-			
 			disableAllProps();
 			_.each( ary_props, function( prop ){
 				var type = prop.id;
 				var value = prop.v;
 				var spr = $( 'div[ptype="' + type + '"]' ).find( '#spr_value' );
 				spr.parent().parent().show();
-				//$( 'div[ptype="' + type + '"]' ).find( '.easyui-linkbutton' ).linkbutton( 'enable' );
-				
 				spr.numberspinner( 'enable' );
 				vic.easyui.setSpinnerValue( spr, value, false );
-				console.log( spr );
 			});
 		/*
 			vic.easyui.setDatagridRows( dgd_props, ary_props );
@@ -598,7 +594,6 @@
 			
 			var ary_props = vic.easyui.getDatagridRows( dgd_advprops, ary_props );
 			
-			console.log( ary_props );
 			_.each( ary_props, function( prop ){
 				switch( prop.tid ){
 					case 'randStartAdd':
@@ -621,20 +616,6 @@
 						*/
 				}
 			});
-		/*
-			console.log( ary_props );
-			_.each( ary_props, function( prop ){
-				var dom = $( 'div[ptype="' + prop[0] + '"]' );
-				switch( prop[1] ){
-					case 'randStartAdd':
-						dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'select' );break;
-					case 'fvx':
-						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );break;
-					case 'fvy':
-						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );break;
-				}
-			});
-			*/
 		}
 		
 		function setTree( nodes, selectId ){
@@ -806,7 +787,7 @@
 					   "tex":0,
 					   "blending":"add",
 					   "formulaList":[ 
-							['vx', 'constMul', 2, 0, 0, 0, 0 ]
+							
 					   ]
 					}
 				 ],
@@ -1100,7 +1081,6 @@
 		function updateRender(){
 			var retobj = { };
 			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
-			//console.log( 'render', JSON.stringify( retobj ) );
 			api.editParticle( retobj );
 		}
 		
