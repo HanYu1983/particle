@@ -110,9 +110,7 @@
 		<div class="hori"><div style="width:100px;">${name}</div></div>
 		<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
 		<div class="hori"><a id="btn_rand" class="easyui-linkbutton" data-options="toggle:true">亂數</a></div>
-		<!--
 		<div class="hori"><a id="btn_fric" class="easyui-linkbutton" data-options="toggle:true">阻力</a></div>
-			-->
 	</div>
 </script>
 <body>
@@ -330,21 +328,20 @@
 							ary_remainRow = _.filter( advrows, function( row ){
 								return !( row.id == type && row.tid == 'randStartAdd' );
 							});
+							if( ary_randomRow.length == 0 ){
+								ary_remainRow.unshift( {id:type, name:keyToName(type), tid:'randStartAdd', type:keyToName( 'randStartAdd' ), v1:100, v2:0, v3:0, v4:0, v5:0 } );
+							}
 							break;
-							/*
 						case 'btn_fric':
 							ary_randomRow = _.filter( advrows, function( row ){
-								return ( row.id == type && row.tid == 'randStartAdd' );
+								return ( row.id == type && row.tid == 'constMul' );
 							});
 							ary_remainRow = _.filter( advrows, function( row ){
-								return !( row.id == type && row.tid == 'randStartAdd' );
-							});*/
-					}
-					
-					if( ary_randomRow.length == 0 ){
-						console.log( type );
-						console.log( keyToName(type) );
-						ary_remainRow.unshift( {id:type, name:keyToName(type), tid:'randStartAdd', type:keyToName( 'randStartAdd' ), v1:100, v2:0, v3:0, v4:0, v5:0 } );
+								return !( row.id == type && row.tid == 'constMul' );
+							});
+							if( ary_randomRow.length == 0 ){
+								ary_remainRow.push( {id:type, name:keyToName(type), tid:'constMul', type:keyToName( 'constMul' ), v1:950, v2:0, v3:0, v4:0, v5:0 } );
+							}
 					}
 					
 					setAdvDgdProp( ary_remainRow );
@@ -607,6 +604,10 @@
 					case 'randStartAdd':
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
 						dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'select' );
+						break;
+					case 'constMul':
+						var dom = $( 'div[ptype="' + prop.id + '"]' );
+						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
 						break;
 						/*
 					case 'fvx':
@@ -975,7 +976,7 @@
 								retobj.v5 = retobj.v5 * 1000;
 								break;
 						}
-						/*
+						
 						switch( retobj.tid ){
 							case 'linearMul','constMul':
 								retobj.v1 = retobj.v1 * 1000;
@@ -984,7 +985,7 @@
 								retobj.v4 = retobj.v4 * 1000;
 								retobj.v5 = retobj.v5 * 1000;
 						}
-						*/
+						
 						return retobj;
 					});
 				})( options.node ));
@@ -1042,12 +1043,23 @@
 							break;
 						case 'lifetime':
 							retobj[2] = retobj[2] / 1000;
-							retobj[3] = retobj[2] / 1000;
-							retobj[4] = retobj[2] / 1000;
-							retobj[5] = retobj[2] / 1000;
-							retobj[6] = retobj[2] / 1000;
+							retobj[3] = retobj[3] / 1000;
+							retobj[4] = retobj[4] / 1000;
+							retobj[5] = retobj[5] / 1000;
+							retobj[6] = retobj[6] / 1000;
 							break;
 					}
+					
+					switch( r.tid ){
+						case 'linearMul','constMul':
+							retobj[2] = retobj[2] / 1000;
+							retobj[3] = retobj[3] / 1000;
+							retobj[4] = retobj[4] / 1000;
+							retobj[5] = retobj[5] / 1000;
+							retobj[6] = retobj[6] / 1000;
+							break;
+					}
+					
 					return retobj;
 				});
 				
