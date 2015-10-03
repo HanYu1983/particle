@@ -281,25 +281,25 @@
 		var targetPos = [0.0, 0.0];
 		var currentPos = [0.0, 0.0];
 		
-		var ary_propsModel = [ 	{id:'lifetime', name:'生命'}, 
-								{id:'mass', name:'質量'}, 
-								{id:'pos_r', name:'弧度'}, 
-								{id:'vel_x', name:'速度x'}, 
-								{id:'vel_y', name:'速度y'}, 
-								{id:'vel_r', name:'旋轉速度'}, 
-								{id:'size_x', name:'粒子寬度'}, 
-								{id:'size_y', name:'粒子高度'}, 
-								{id:'count', name:'發射數目'}, 
-								{id:'duration', name:'週期毫秒'}, 
-								{id:'angle', name:'發射弧度'}, 
-								{id:'range', name:'發射範圍'}, 
-								{id:'force', name:'發射力道'}];
+		var ary_propsModel = [ 	{id:'lifetime', name:'生命', random:true, friction:false}, 
+								{id:'mass', name:'質量', random:true, friction:false}, 
+								{id:'pos_r', name:'角度', random:true, friction:false}, 
+								{id:'vel_x', name:'速度x', random:true, friction:true}, 
+								{id:'vel_y', name:'速度y', random:true, friction:true}, 
+								{id:'vel_r', name:'旋轉速度', random:true, friction:false}, 
+								{id:'size_x', name:'粒子寬度', random:true, friction:false}, 
+								{id:'size_y', name:'粒子高度', random:true, friction:false}, 
+								{id:'count', name:'發射數目', random:false, friction:false}, 
+								{id:'duration', name:'週期毫秒', random:false, friction:false}, 
+								{id:'angle', name:'發射角度', random:true, friction:false}, 
+								{id:'range', name:'發射範圍', random:true, friction:false}, 
+								{id:'force', name:'發射力道', random:true, friction:false}];
 							
-		
-		
 		_.each( ary_propsModel, function( prop ){
 			var dom = $( '#tmpl_prop' ).tmpl( prop );
 			mc_propContainer.append( dom );
+			
+			
 			
 			dom.find( '.easyui-numberspinner' ).numberspinner({
 				onChange:function(nv, ov ){
@@ -312,6 +312,21 @@
 					} } );
 				}
 			});
+			
+			dom.find( '.easyui-linkbutton' ).linkbutton( {
+				onClick:function(){
+					var type = $( this ).parent().parent().attr( 'ptype' );
+					console.log( type );
+				}
+			});
+			
+			if( !prop.random ){
+				dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'disable' );
+			}
+			
+			if( !prop.friction ){
+				dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'disable' );
+			}
 		});
 		
 		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
@@ -504,9 +519,9 @@
 		
 		function disableAllProps(){
 			$( 'div[ptype]' ).each( function( id, dom ){
-				//$( dom ).hide();
-				$( dom ).find( '.easyui-numberspinner' ).numberspinner( 'disable' );
-				$( dom ).find( '.easyui-linkbutton' ).linkbutton( 'disable' );
+				$( dom ).hide();
+				//$( dom ).find( '.easyui-numberspinner' ).numberspinner( 'disable' );
+				//$( dom ).find( '.easyui-linkbutton' ).linkbutton( 'disable' );
 			});
 		}
 		
@@ -518,8 +533,8 @@
 				var type = prop.id;
 				var value = prop.v;
 				var spr = $( 'div[ptype="' + type + '"]' ).find( '#spr_value' );
-				//spr.parent().parent().show();
-				$( 'div[ptype="' + type + '"]' ).find( '.easyui-linkbutton' ).linkbutton( 'enable' );
+				spr.parent().parent().show();
+				//$( 'div[ptype="' + type + '"]' ).find( '.easyui-linkbutton' ).linkbutton( 'enable' );
 				
 				spr.numberspinner( 'enable' );
 				vic.easyui.setSpinnerValue( spr, value, false );
@@ -713,6 +728,26 @@
 				 "force":0
 			  }
 		   }
+		   
+		particles.view = {
+			easyAdv:[
+				{id:'lifetime', type:'randStartAdd', show:false, v1:20, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'mass', type:'randStartAdd', show:false, v1:10, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'pos_r', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vel_x', type:'randStartAdd', show:false, v1:100, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vel_x', type:'fvx', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vel_y', type:'randStartAdd', show:false, v1:100, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vel_y', type:'fvx', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vel_r', type:'randStartAdd', show:false, v1:1, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'size_x', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'size_y', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'count', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'duration', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'angle', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'range', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'force', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }
+			]
+		}
 		
 		function getParticles(){
 			return particles;
@@ -729,8 +764,8 @@
 				 0
 				],
 				"pos":[  
-				 256.52719250452884,
-				 463.7413907217794,
+				 0,
+				 0,
 				 0
 				],
 				"mass":1,
