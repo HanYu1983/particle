@@ -367,7 +367,6 @@
 		
 		combo_advProps.combobox({
 			onChange:function( nv, ov ){
-				console.log( nv );
 				if( currentAdvRow != undefined ){
 					currentAdvRow.row.id = nv;
 					currentAdvRow.row.name = keyToName( currentAdvRow.row.id );
@@ -394,7 +393,6 @@
 		
 		combo_advType.combobox({
 			onChange:function( nv, ov ){
-				console.log( nv );
 				if( currentAdvRow != undefined ){
 					currentAdvRow.row.tid = nv;
 					currentAdvRow.row.type = keyToName( currentAdvRow.row.tid );
@@ -529,7 +527,6 @@
 					vic.easyui.selectDatagridRow( dgd_advprops, vic.easyui.getDatagridRows( dgd_advprops ).length - 1 );
 				}
 			}
-			
 			event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
 		}
 		
@@ -594,8 +591,8 @@
 				 0
 			  ],
 			  "pos":[  
-				 256.52719250452884,
-				 463.7413907217794,
+				 0,
+				 0,
 				 0
 			  ],
 			  "mass":1,
@@ -641,35 +638,14 @@
 					   ],
 					   "tex":0,
 					   "blending":"add",
-					   "formulaList":[  
-						  [  
-							 "scale-x",
-							 "linear",
-							 20,
-							 0,
-							 0,
-							 0,
-							 0,
-							 "e136f7b4-7246-4c84-b5f2-042fe3536f5a"
-						  ],
-						  [  
-							 "scale-y",
-							 "linear",
-							 20,
-							 0,
-							 0,
-							 0,
-							 0,
-							 "8f6fd77e-beb3-4ae2-935d-83ef765e9d9f"
-						  ]
-					   ]
+					   "formulaList":[  ]
 					}
 				 ],
 				 "count":1,
 				 "duration":0.05,
 				 "angle":0,
-				 "range":6.28,
-				 "force":100
+				 "range":0,
+				 "force":0
 			  }
 		   }
 		
@@ -714,19 +690,27 @@
 	})( app.model );
 	
 	
-	loadImage( 'images/glow.jpg', function( img ) {
-		var imgId = 0;
-		app.view.appendImage( imgId, img );
-		api.addTexture( imgId, img );
-		
-		loadImage( 'images/leadB_32_32.png', function( img ) {
-			imgId = 1;
-			app.view.appendImage( imgId, img );
-			api.addTexture( imgId, img );
-			
-			appStart( app.view, app.model );
+//	['images/fire_128_128.jpg'];
+	
+	loadImages( [
+					{id:0, path:'images/glow.jpg' },
+					{id:1, path:'images/leadB_32_32.png' },
+					{id:2, path:'images/fire_128_128.jpg' },
+					{id:3, path:'images/smoke_128_128_half_hlaf.png' }
+				] );
+	
+	function loadImages( ary_image ){
+		var imgItem = ary_image.shift();
+		loadImage( imgItem.path, function( img ) {
+			app.view.appendImage( imgItem.id, img );
+			api.addTexture( imgItem.id, img );
 		});
-	});
+		if( ary_image.length > 0 ){
+			loadImages( ary_image );
+		}else{
+			appStart( app.view, app.model );
+		}
+	}
 	
 	function appStart( view, model ){
 		var webgl = view.webgl;
@@ -824,6 +808,10 @@
 		
 		view.event.on( 'onPropChange', function( e, options ){
 			if( currentParticle == undefined ) return;
+			if( options.currentRow == undefined ) {
+				currentParticle.formulaList = [];
+				return;
+			}
 			var row = options.currentRow.row;
 			var rows = options.rows;
 			if( rows != undefined ){
@@ -888,7 +876,7 @@
 		function updateRender(){
 			var retobj = { };
 			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
-			console.log( 'render', JSON.stringify( retobj ) );
+			//console.log( 'render', JSON.stringify( retobj ) );
 			api.editParticle( retobj );
 		}
 		
