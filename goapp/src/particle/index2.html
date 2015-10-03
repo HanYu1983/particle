@@ -109,8 +109,8 @@
 	<div class="group" ptype=${id}>
 		<div class="hori"><div style="width:100px;">${name}</div></div>
 		<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
-		<div class="hori"><a class="easyui-linkbutton" data-options="toggle:true">亂數</a></div>
-		<div class="hori"><a class="easyui-linkbutton" data-options="toggle:true">阻力</a></div>
+		<div class="hori"><a id="btn_rand" class="easyui-linkbutton" data-options="toggle:true">亂數</a></div>
+		<div class="hori"><a id="btn_fric" class="easyui-linkbutton" data-options="toggle:true">阻力</a></div>
 	</div>
 </script>
 <body>
@@ -171,6 +171,8 @@
 								<div class="group" style="text-align:center; margin-bottom:5px;">
 									<div class="hori">
 										<select id="combo_advProps" class="easyui-combobox" name="dept" style="width:100px;">
+											<option value="x">位置x</option>
+											<option value="y">位置y</option>
 											<option value="rot">角度</option>
 											<option value="vx">速度x</option>
 											<option value="vy">速度y</option>
@@ -316,7 +318,30 @@
 			dom.find( '.easyui-linkbutton' ).linkbutton( {
 				onClick:function(){
 					var type = $( this ).parent().parent().attr( 'ptype' );
-					console.log( type );
+					var id = $( this ).attr( 'id' );
+					var advrows = vic.easyui.getDatagridRows( dgd_advprops );
+					var ary_randomRow = [];
+					var ary_remainRow = [];
+					switch( id ){
+						case 'btn_rand':
+							ary_randomRow = _.filter( advrows, function( row ){
+								return ( row.id == type && row.tid == 'randStartAdd' );
+							});
+							ary_remainRow = _.filter( advrows, function( row ){
+								return !( row.id == type && row.tid == 'randStartAdd' );
+							});
+							break;
+					}
+					
+					if( ary_randomRow.length == 0 ){
+						console.log( type );
+						console.log( keyToName(type) );
+						ary_remainRow.unshift( {id:type, name:keyToName(type), tid:'randStartAdd', type:keyToName( 'randStartAdd' ), v1:100, v2:0, v3:0, v4:0, v5:0 } );
+					}
+					
+					setAdvDgdProp( ary_remainRow );
+					event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
+					
 				}
 			});
 			
@@ -426,6 +451,7 @@
 					currentAdvRow.row.id = nv;
 					currentAdvRow.row.name = keyToName( currentAdvRow.row.id );
 					vic.easyui.updateDatagridRow( dgd_advprops, currentAdvRow.index, currentAdvRow.row );
+					setAdvLinkButton();
 					event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
 				}
 			}
@@ -452,6 +478,7 @@
 					currentAdvRow.row.tid = nv;
 					currentAdvRow.row.type = keyToName( currentAdvRow.row.tid );
 					vic.easyui.updateDatagridRow( dgd_advprops, currentAdvRow.index, currentAdvRow.row );
+					setAdvLinkButton();
 					event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
 				}
 			}
@@ -550,11 +577,39 @@
 		
 		function setAdvDgdProp( ary_props ){
 			vic.easyui.setDatagridRows( dgd_advprops, ary_props );
-			if( ary_props.length > 0 )
+			if( ary_props.length > 0 ){
 				vic.easyui.selectDatagridRow( dgd_advprops, 0 );
+			}
+			setAdvLinkButton();
 		}
 		
-		function setAdvLinkButton( ary_props ){
+		function setAdvLinkButton(){
+			_.each( ary_propsModel, function( prop ){
+				var dom = $( 'div[ptype="' + prop.id + '"]' );
+				dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'unselect' );
+				dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'unselect' );
+			});
+			
+			var ary_props = vic.easyui.getDatagridRows( dgd_advprops, ary_props );
+			
+			console.log( ary_props );
+			_.each( ary_props, function( prop ){
+				switch( prop.tid ){
+					case 'randStartAdd':
+						var dom = $( 'div[ptype="' + prop.id + '"]' );
+						dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'select' );
+						break;
+					case 'fvx':
+						var dom = $( 'div[ptype="' + prop.id + '"]' );
+						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
+						break;
+					case 'fvy':
+						var dom = $( 'div[ptype="' + prop.id + '"]' );
+						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
+						break;
+				}
+			});
+		/*
 			console.log( ary_props );
 			_.each( ary_props, function( prop ){
 				var dom = $( 'div[ptype="' + prop[0] + '"]' );
@@ -567,6 +622,7 @@
 						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );break;
 				}
 			});
+			*/
 		}
 		
 		function setTree( nodes, selectId ){
@@ -610,6 +666,7 @@
 			vic.easyui.appendDatagridRow( dgd_advprops, newf );
 			vic.easyui.selectDatagridRow( dgd_advprops, vic.easyui.getDatagridRows( dgd_advprops ).length - 1 );
 			
+			setAdvLinkButton();
 			event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
 		}
 		
@@ -621,6 +678,8 @@
 				if( ary_rows.length > 0 ){
 					vic.easyui.selectDatagridRow( dgd_advprops, vic.easyui.getDatagridRows( dgd_advprops ).length - 1 );
 				}
+				
+				setAdvLinkButton();
 			}
 			event.trigger( 'onPropChange', { currentRow: currentAdvRow, rows:vic.easyui.getDatagridRows( dgd_advprops ) } );
 		}
@@ -665,7 +724,7 @@
 		module.setTree = setTree;
 		module.setDgdProp = setDgdProp;
 		module.setAdvDgdProp = setAdvDgdProp;
-		module.setAdvLinkButton = setAdvLinkButton;
+	//	module.setAdvLinkButton = setAdvLinkButton;
 		module.getTreeRootNode = getTreeRootNode;
 		module.appendImage = appendImage;
 		module.setImgFocus = setImgFocus;
@@ -734,7 +793,9 @@
 					   ],
 					   "tex":0,
 					   "blending":"add",
-					   "formulaList":[  ]
+					   "formulaList":[ 
+							['vx', 'randStartAdd', 100, 0, 0, 0, 0 ]
+					   ]
 					}
 				 ],
 				 "count":1,
@@ -744,7 +805,7 @@
 				 "force":0
 			  }
 		   }
-		   
+		   /*
 		particles.emit.prototype[0].view = {
 			easyAdv:[
 				{id:'lifetime', tid:'randStartAdd', show:false, v1:20, v2:0, v3:0, v4:0, v5:0 }, 
@@ -764,7 +825,7 @@
 				{id:'emit-force', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }
 			]
 		}
-		
+		*/
 		function getParticles(){
 			return particles;
 		}
@@ -876,7 +937,7 @@
 					{id:'emit-force', name:'發射力道', v: p.emit.force}
 				];
 			})( options.node ));
-			
+			/*
 			var insertAdvAry = [];
 			_.each( options.node.particle.view.easyAdv, function( easyadv ){
 				if( easyadv.show ){
@@ -893,7 +954,7 @@
 				options.node.particle.formulaList = insertAdvAry.concat( options.node.particle.formulaList );
 				view.setAdvLinkButton( insertAdvAry );
 			}
-			
+			*/
 			if( options.node.particle.formulaList != undefined ){
 				view.setAdvDgdProp((function( node ){
 					var p = node.particle;
@@ -941,7 +1002,6 @@
 		});
 		
 		view.event.on( 'onPropChange', function( e, options ){
-			console.log( options );
 			if( currentParticle == undefined ) return;
 			if( options.currentRow == undefined ) {
 				currentParticle.formulaList = [];
@@ -1071,6 +1131,8 @@
 	
 	function keyToName( key ){
 		switch( key ){
+			case 'lifetime':return '生命毫秒'; break;
+			case 'mass':return '質量'; break;
 			case 'x':return '位置x';break;
 			case 'y':return '位置y';break;
 			case 'rot':return '角度';break;
