@@ -110,7 +110,9 @@
 		<div class="hori"><div style="width:100px;">${name}</div></div>
 		<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
 		<div class="hori"><a id="btn_rand" class="easyui-linkbutton" data-options="toggle:true">亂數</a></div>
+		<!--
 		<div class="hori"><a id="btn_fric" class="easyui-linkbutton" data-options="toggle:true">阻力</a></div>
+			-->
 	</div>
 </script>
 <body>
@@ -331,6 +333,14 @@
 								return !( row.id == type && row.tid == 'randStartAdd' );
 							});
 							break;
+							/*
+						case 'btn_fric':
+							ary_randomRow = _.filter( advrows, function( row ){
+								return ( row.id == type && row.tid == 'randStartAdd' );
+							});
+							ary_remainRow = _.filter( advrows, function( row ){
+								return !( row.id == type && row.tid == 'randStartAdd' );
+							});*/
 					}
 					
 					if( ary_randomRow.length == 0 ){
@@ -348,10 +358,11 @@
 			if( !prop.random ){
 				dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'disable' );
 			}
-			
+			/*
 			if( !prop.friction ){
 				dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'disable' );
 			}
+			*/
 		});
 		
 		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
