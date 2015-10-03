@@ -62,7 +62,6 @@ var particle = particle || {};
 		}
 		obj.timer = 0.0
 		obj.emitTimes = 0
-		obj.forceVel = [0, 0, 0]
 		return obj
 	}
 	
@@ -186,12 +185,6 @@ var particle = particle || {};
 			return part.vel[1]
 		case 'vr':
 			return part.vel[2]
-		case 'fvx':
-			return part.forceVel[0]
-		case 'fvy':
-			return part.forceVel[1]
-		case 'fvr':
-			return part.forceVel[2]
 		case 'scale-x':
 			return part.size[0]
 		case 'scale-y':
@@ -252,13 +245,7 @@ var particle = particle || {};
 		case 'vy':
 			return part.vel[1] = v
 		case 'vr':
-			return part.vel[2] = v 
-		case 'fvx':
-			return part.forceVel[0] = v
-		case 'fvy':
-			return part.forceVel[1] = v
-		case 'fvr':
-			return part.forceVel[2] = v
+			return part.vel[2] = v
 		case 'scale-x':
 			return part.size[0] = v
 		case 'scale-y':
@@ -311,9 +298,6 @@ var particle = particle || {};
 		part.pos[0] += part.vel[0]* delta
 		part.pos[1] += part.vel[1]* delta
 		part.pos[2] += part.vel[2]* delta
-		part.pos[0] += part.forceVel[0]* delta
-		part.pos[1] += part.forceVel[1]* delta
-		part.pos[2] += part.forceVel[2]* delta
 		// update formula
 		for( var i in part.formulaList ){
 			var f = part.formulaList[i]
@@ -329,9 +313,9 @@ var particle = particle || {};
 	}
 	
 	function forceParticle( part, force ){
-		part.forceVel[0] += force[0]/ part.mass
-		part.forceVel[1] += force[1]/ part.mass
-		part.forceVel[2] += force[2]/ part.mass
+		part.vel[0] += force[0]/ part.mass
+		part.vel[1] += force[1]/ part.mass
+		part.vel[2] += force[2]/ part.mass
 	}
 	
 	function stepParticles( pool, parts, delta ){
