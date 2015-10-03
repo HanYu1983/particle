@@ -283,17 +283,17 @@
 		
 		var ary_propsModel = [ 	{id:'lifetime', name:'生命', random:true, friction:false}, 
 								{id:'mass', name:'質量', random:true, friction:false}, 
-								{id:'pos_r', name:'角度', random:true, friction:false}, 
-								{id:'vel_x', name:'速度x', random:true, friction:true}, 
-								{id:'vel_y', name:'速度y', random:true, friction:true}, 
-								{id:'vel_r', name:'旋轉速度', random:true, friction:false}, 
-								{id:'size_x', name:'粒子寬度', random:true, friction:false}, 
-								{id:'size_y', name:'粒子高度', random:true, friction:false}, 
-								{id:'count', name:'發射數目', random:false, friction:false}, 
-								{id:'duration', name:'週期毫秒', random:false, friction:false}, 
-								{id:'angle', name:'發射角度', random:true, friction:false}, 
-								{id:'range', name:'發射範圍', random:true, friction:false}, 
-								{id:'force', name:'發射力道', random:true, friction:false}];
+								{id:'rot', name:'角度', random:true, friction:false}, 
+								{id:'vx', name:'速度x', random:true, friction:true}, 
+								{id:'vy', name:'速度y', random:true, friction:true}, 
+								{id:'vr', name:'旋轉速度', random:true, friction:false}, 
+								{id:'scale-x', name:'粒子寬度', random:true, friction:false}, 
+								{id:'scale-y', name:'粒子高度', random:true, friction:false}, 
+								{id:'emit-count', name:'發射數目', random:false, friction:false}, 
+								{id:'emit-duration', name:'週期毫秒', random:false, friction:false}, 
+								{id:'emit-angle', name:'發射角度', random:true, friction:false}, 
+								{id:'emit-range', name:'發射範圍', random:true, friction:false}, 
+								{id:'emit-force', name:'發射力道', random:true, friction:false}];
 							
 		_.each( ary_propsModel, function( prop ){
 			var dom = $( '#tmpl_prop' ).tmpl( prop );
@@ -554,6 +554,21 @@
 				vic.easyui.selectDatagridRow( dgd_advprops, 0 );
 		}
 		
+		function setAdvLinkButton( ary_props ){
+			console.log( ary_props );
+			_.each( ary_props, function( prop ){
+				var dom = $( 'div[ptype="' + prop[0] + '"]' );
+				switch( prop[1] ){
+					case 'randStartAdd':
+						dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'select' );break;
+					case 'fvx':
+						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );break;
+					case 'fvy':
+						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );break;
+				}
+			});
+		}
+		
 		function setTree( nodes, selectId ){
 			vic.easyui.setTree( tree_particle, nodes );
 			
@@ -650,6 +665,7 @@
 		module.setTree = setTree;
 		module.setDgdProp = setDgdProp;
 		module.setAdvDgdProp = setAdvDgdProp;
+		module.setAdvLinkButton = setAdvLinkButton;
 		module.getTreeRootNode = getTreeRootNode;
 		module.appendImage = appendImage;
 		module.setImgFocus = setImgFocus;
@@ -729,23 +745,23 @@
 			  }
 		   }
 		   
-		particles.view = {
+		particles.emit.prototype[0].view = {
 			easyAdv:[
-				{id:'lifetime', type:'randStartAdd', show:false, v1:20, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'mass', type:'randStartAdd', show:false, v1:10, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'pos_r', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vel_x', type:'randStartAdd', show:false, v1:100, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vel_x', type:'fvx', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vel_y', type:'randStartAdd', show:false, v1:100, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vel_y', type:'fvx', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vel_r', type:'randStartAdd', show:false, v1:1, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'size_x', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'size_y', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'count', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'duration', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'angle', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'range', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'force', type:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }
+				{id:'lifetime', tid:'randStartAdd', show:false, v1:20, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'mass', tid:'randStartAdd', show:false, v1:10, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'rot', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vx', tid:'randStartAdd', show:true, v1:100, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vx', tid:'fvx', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vy', tid:'randStartAdd', show:true, v1:100, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vy', tid:'fvx', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'vr', tid:'randStartAdd', show:false, v1:1, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'scale-x', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'scale-y', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'emit-count', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'emit-duration', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'emit-angle', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'emit-range', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
+				{id:'emit-force', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }
 			]
 		}
 		
@@ -836,30 +852,47 @@
 					return [
 						{id:'lifetime', name:'生命毫秒', v: p.lifetime * 1000 },
 						{id:'mass', name:'質量', v: p.mass},
-						{id:'pos_r', name:'角度', v: radianToDegree( p.pos[2] )},
-						{id:'vel_x', name:'速度x', v: p.vel[0]},
-						{id:'vel_y', name:'速度y', v: p.vel[1]},
-						{id:'vel_r', name:'轉速', v: radianToDegree( p.vel[2] )},
-						{id:'size_x', name:'寬度', v: p.size[0]},
-						{id:'size_y', name:'高度', v: p.size[1]}
+						{id:'rot', name:'角度', v: radianToDegree( p.pos[2] )},
+						{id:'vx', name:'速度x', v: p.vel[0]},
+						{id:'vy', name:'速度y', v: p.vel[1]},
+						{id:'vr', name:'轉速', v: radianToDegree( p.vel[2] )},
+						{id:'scale-x', name:'寬度', v: p.size[0]},
+						{id:'scale-y', name:'高度', v: p.size[1]}
 					];
 				}
 				return [
 					{id:'lifetime', name:'生命毫秒', v: p.lifetime * 1000 },
 					{id:'mass', name:'質量', v: p.mass},
-					{id:'pos_r', name:'角度', v: radianToDegree( p.pos[2] )},
-					{id:'vel_x', name:'速度x', v: p.vel[0]},
-					{id:'vel_y', name:'速度y', v: p.vel[1]},
-					{id:'vel_r', name:'轉速', v: radianToDegree( p.vel[2] )},
-					{id:'size_x', name:'寬度', v: p.size[0]},
-					{id:'size_y', name:'高度', v: p.size[1]},
-					{id:'count', name:'發射數目', v: p.emit.count},
-					{id:'duration', name:'發射週期', v: p.emit.duration * 1000 },
-					{id:'angle', name:'發射角度', v: radianToDegree( p.emit.angle )},
-					{id:'range', name:'發射範圍', v: radianToDegree( p.emit.range )},
-					{id:'force', name:'發射力道', v: p.emit.force}
+					{id:'rot', name:'角度', v: radianToDegree( p.pos[2] )},
+					{id:'vx', name:'速度x', v: p.vel[0]},
+					{id:'vy', name:'速度y', v: p.vel[1]},
+					{id:'vr', name:'轉速', v: radianToDegree( p.vel[2] )},
+					{id:'scale-x', name:'寬度', v: p.size[0]},
+					{id:'scale-y', name:'高度', v: p.size[1]},
+					{id:'emit-count', name:'發射數目', v: p.emit.count},
+					{id:'emit-duration', name:'發射週期', v: p.emit.duration * 1000 },
+					{id:'emit-angle', name:'發射角度', v: radianToDegree( p.emit.angle )},
+					{id:'emit-range', name:'發射範圍', v: radianToDegree( p.emit.range )},
+					{id:'emit-force', name:'發射力道', v: p.emit.force}
 				];
 			})( options.node ));
+			
+			var insertAdvAry = [];
+			_.each( options.node.particle.view.easyAdv, function( easyadv ){
+				if( easyadv.show ){
+					var id = easyadv.id;
+					var tid = easyadv.tid;
+					insertAdvAry.push( [id, tid, easyadv.v1, easyadv.v2, easyadv.v3, easyadv.v4, easyadv.v5 ] );
+				}
+			});
+			
+			if( insertAdvAry.length > 0 ){
+				if( options.node.particle.formulaList == undefined ){
+					options.node.particle.formulaList = [];
+				}
+				options.node.particle.formulaList = insertAdvAry.concat( options.node.particle.formulaList );
+				view.setAdvLinkButton( insertAdvAry );
+			}
 			
 			if( options.node.particle.formulaList != undefined ){
 				view.setAdvDgdProp((function( node ){
@@ -946,27 +979,27 @@
 				switch( row.id ){
 					case 'lifetime':
 						currentParticle.lifetime = ( row.v / 1000 ); break;
-					case 'pos_r':
+					case 'rot':
 						currentParticle.pos[0] = degreeToRadian( row.v ); break;
-					case 'vel_x':
+					case 'vx':
 						currentParticle.vel[0] = row.v; break;
-					case 'vel_y':
+					case 'vy':
 						currentParticle.vel[1] = row.v; break;
-					case 'vel_r':
+					case 'vr':
 						currentParticle.vel[2] = degreeToRadian( row.v ); break;
-					case 'size_x':
+					case 'scale-x':
 						currentParticle.size[0] = row.v; break;
-					case 'size_y':
+					case 'scale-y':
 						currentParticle.size[1] = row.v; break;
-					case 'count':
+					case 'emit-count':
 						currentParticle.emit.count = row.v; break;
-					case 'duration':
+					case 'emit-duration':
 						currentParticle.emit.duration = ( row.v / 1000 ); break;
-					case 'range':
+					case 'emit-range':
 						currentParticle.emit.range = degreeToRadian( row.v ); break;
-					case 'angle':
+					case 'emit-angle':
 						currentParticle.emit.angle = degreeToRadian( row.v ); break;
-					case 'force':
+					case 'emit-force':
 						currentParticle.emit.force = row.v; break;
 					default:
 						currentParticle[row.id] = row.v;
