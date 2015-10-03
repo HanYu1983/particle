@@ -173,15 +173,13 @@
 								<div class="group" style="text-align:center; margin-bottom:5px;">
 									<div class="hori">
 										<select id="combo_advProps" class="easyui-combobox" name="dept" style="width:100px;">
+											<option value="lifetime">生命毫秒</option>
 											<option value="x">位置x</option>
 											<option value="y">位置y</option>
 											<option value="rot">角度</option>
 											<option value="vx">速度x</option>
 											<option value="vy">速度y</option>
 											<option value="vr">轉速</option>
-											<option value="fvx">作用力x</option>
-											<option value="fvy">作用力y</option>
-											<option value="fvr">作用力旋轉</option>
 											<option value="scale-x">寬度</option>
 											<option value="scale-y">高度</option>
 											<option value="r">紅</option>
@@ -610,6 +608,7 @@
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
 						dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'select' );
 						break;
+						/*
 					case 'fvx':
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
 						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
@@ -618,6 +617,7 @@
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
 						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
 						break;
+						*/
 				}
 			});
 		/*
@@ -948,24 +948,7 @@
 					{id:'emit-force', name:'發射力道', v: p.emit.force}
 				];
 			})( options.node ));
-			/*
-			var insertAdvAry = [];
-			_.each( options.node.particle.view.easyAdv, function( easyadv ){
-				if( easyadv.show ){
-					var id = easyadv.id;
-					var tid = easyadv.tid;
-					insertAdvAry.push( [id, tid, easyadv.v1, easyadv.v2, easyadv.v3, easyadv.v4, easyadv.v5 ] );
-				}
-			});
 			
-			if( insertAdvAry.length > 0 ){
-				if( options.node.particle.formulaList == undefined ){
-					options.node.particle.formulaList = [];
-				}
-				options.node.particle.formulaList = insertAdvAry.concat( options.node.particle.formulaList );
-				view.setAdvLinkButton( insertAdvAry );
-			}
-			*/
 			if( options.node.particle.formulaList != undefined ){
 				view.setAdvDgdProp((function( node ){
 					var p = node.particle;
@@ -973,7 +956,6 @@
 						var retobj = {
 							id:f[0], tid:f[1], name:keyToName(f[0]), type:keyToName(f[1]), v1:f[2], v2:f[3], v3:f[4], v4:f[5], v5:f[6]
 						}
-						
 						switch( retobj.id ){
 							case 'rot':
 							case 'vr':
@@ -985,7 +967,24 @@
 								retobj.v4 = radianToDegree( retobj.v4 );
 								retobj.v5 = radianToDegree( retobj.v5 );
 								break;
+							case 'lifetime':
+								retobj.v1 = retobj.v1 * 1000;
+								retobj.v2 = retobj.v2 * 1000;
+								retobj.v3 = retobj.v3 * 1000;
+								retobj.v4 = retobj.v4 * 1000;
+								retobj.v5 = retobj.v5 * 1000;
+								break;
 						}
+						/*
+						switch( retobj.tid ){
+							case 'linearMul','constMul':
+								retobj.v1 = retobj.v1 * 1000;
+								retobj.v2 = retobj.v2 * 1000;
+								retobj.v3 = retobj.v3 * 1000;
+								retobj.v4 = retobj.v4 * 1000;
+								retobj.v5 = retobj.v5 * 1000;
+						}
+						*/
 						return retobj;
 					});
 				})( options.node ));
@@ -1040,6 +1039,13 @@
 							retobj[4] = degreeToRadian( retobj[4] );
 							retobj[5] = degreeToRadian( retobj[5] );
 							retobj[6] = degreeToRadian( retobj[6] );
+							break;
+						case 'lifetime':
+							retobj[2] = retobj[2] / 1000;
+							retobj[3] = retobj[2] / 1000;
+							retobj[4] = retobj[2] / 1000;
+							retobj[5] = retobj[2] / 1000;
+							retobj[6] = retobj[2] / 1000;
 							break;
 					}
 					return retobj;
