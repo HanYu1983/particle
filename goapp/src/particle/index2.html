@@ -209,11 +209,11 @@
 									<div class="hori"> <a href="#" id="btn_downMove" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-redo'">下移</a></div>
 								</div>
 								<div class="group" style="text-align:center; margin-bottom:5px;">
-									<div class="hori"><input id="spr_v1" class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input id="spr_v2" class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input id="spr_v3" class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input id="spr_v4" class="easyui-numberspinner" style="width:80px;"></input></div>
-									<div class="hori"><input id="spr_v5" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><input id="spr_v1" class="easyui-numberspinner" style="width:80px;" data-options="value:0"></input></div>
+									<div class="hori"><input id="spr_v2" class="easyui-numberspinner" style="width:80px;" data-options="value:0"></input></div>
+									<div class="hori"><input id="spr_v3" class="easyui-numberspinner" style="width:80px;" data-options="value:0"></input></div>
+									<div class="hori"><input id="spr_v4" class="easyui-numberspinner" style="width:80px;" data-options="value:0"></input></div>
+									<div class="hori"><input id="spr_v5" class="easyui-numberspinner" style="width:80px;" data-options="value:0"></input></div>
 								</div>
 								<div class="group" style="text-align:center; margin-bottom:50px;">
 									<div class="hori" style="width:90%;">
@@ -297,12 +297,26 @@
 								{id:'range', name:'發射範圍'}, 
 								{id:'force', name:'發射力道'}];
 							
-		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
+		
 		
 		_.each( ary_propsModel, function( prop ){
 			var dom = $( '#tmpl_prop' ).tmpl( prop );
 			mc_propContainer.append( dom );
+			
+			dom.find( '.easyui-numberspinner' ).numberspinner({
+				onChange:function(nv, ov ){
+					var type = $( this ).parent().parent().attr( 'ptype' );
+					event.trigger( 'onPropChange', { currentRow: {
+						row:{
+							id:type,
+							v:nv
+						}
+					} } );
+				}
+			});
 		});
+		
+		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
 		
 		/*
 		$('.easyui-numberspinner' ).numberspinner( {
@@ -492,7 +506,7 @@
 		
 		function disableAllProps(){
 			$( 'div[ptype]' ).each( function( id, dom ){
-				console.log( dom );
+				//$( dom ).hide();
 				$( dom ).find( '.easyui-numberspinner' ).numberspinner( 'disable' );
 				$( dom ).find( '.easyui-linkbutton' ).linkbutton( 'disable' );
 			});
@@ -506,6 +520,7 @@
 				var type = prop.id;
 				var value = prop.v;
 				var spr = $( 'div[ptype="' + type + '"]' ).find( '#spr_value' );
+				//spr.parent().parent().show();
 				$( 'div[ptype="' + type + '"]' ).find( '.easyui-linkbutton' ).linkbutton( 'enable' );
 				
 				spr.numberspinner( 'enable' );
@@ -860,6 +875,7 @@
 		});
 		
 		view.event.on( 'onPropChange', function( e, options ){
+			console.log( options );
 			if( currentParticle == undefined ) return;
 			if( options.currentRow == undefined ) {
 				currentParticle.formulaList = [];
