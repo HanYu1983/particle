@@ -57,6 +57,7 @@
 	</style>
 	
 </head>
+<!--
 <script id="tmpl_prop" type="jquery-x-tmpl">
 	<div title="生命毫秒" style="overflow:auto; padding-top:10px;">
 		<div class="group" style="text-align:center; margin-bottom:5px;">
@@ -103,6 +104,15 @@
 		</table>
 	</div>
 </script>
+-->
+<script id="tmpl_prop" type="jquery-x-tmpl">
+	<div class="group" ptype=${id}>
+		<div class="hori"><div style="width:100px;">${name}</div></div>
+		<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
+		<div class="hori"><a class="easyui-linkbutton" data-options="toggle:true">亂數</a></div>
+		<div class="hori"><a class="easyui-linkbutton" data-options="toggle:true">阻力</a></div>
+	</div>
+</script>
 <body>
 	<div class="easyui-layout" style="width:100%;height:100%;">
         <div data-options="region:'north'" style="height:50px"></div>
@@ -125,7 +135,16 @@
 							<div class="group" style="text-align:center; margin-top:10px;">
 								<div class="hori">基本參數</div>
 							</div>
-							<div class="group" style="margin-top:10px;">
+							<div id="mc_propContainer" class="group" style="margin-top:10px; text-align:center;">
+								<!--
+								<div class="group" ptype="lifetime">
+									<div class="hori"><div>生命毫秒</div></div>
+									<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
+									<div class="hori"><a class="easyui-linkbutton" data-options="toggle:true">亂數</a></div>
+									<div class="hori"><a class="easyui-linkbutton" data-options="toggle:true">阻力</a></div>
+								</div>
+								-->
+								<!--
 								<div class="group" style="text-align:center; margin-bottom:5px;">
 									<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
 								</div>
@@ -141,6 +160,7 @@
 										</table>
 									</div>
 								</div>
+								-->
 							</div>
 						</div>
 						<div class="hori" style="width:50%; vertical-align:top;">
@@ -247,13 +267,14 @@
 		var event = $('<div></div>' );
 		var tree_particle = $("#tree_particle" );
 		var mc_imgs = $("#mc_imgs" );
-		var spr_value = $("#spr_value" );
+		//var spr_value = $("#spr_value" );
 		var spr_v1 = $("#spr_v1" );
 		var spr_v2 = $("#spr_v2" );
 		var spr_v3 = $("#spr_v3" );
 		var spr_v4 = $("#spr_v4" );
 		var spr_v5 = $("#spr_v5" );
-		var dgd_props = $("#dgd_props" );
+		//var dgd_props = $("#dgd_props" );
+		var mc_propContainer = $("#mc_propContainer" );
 		var dgd_advprops = $("#dgd_advprops" );
 		var combo_advProps = $("#combo_advProps" );
 		var combo_advType = $("#combo_advType" );
@@ -261,29 +282,28 @@
 		var isMouseDown = false;
 		var targetPos = [0.0, 0.0];
 		var currentPos = [0.0, 0.0];
-		var ary_props = [ 	{id:'life', name:'生命'}, 
-							{id:'x', name:'位置x'}, 
-							{id:'y', name:'位置y'}, 
-							{id:'rot', name:'弧度'}, 
-							{id:'vx', name:'速度x'}, 
-							{id:'vy', name:'速度y'}, 
-							{id:'vr', name:'旋轉速度'}, 
-							{id:'scale-x', name:'粒子寬度'}, 
-							{id:'scale-y', name:'粒子高度'}, 
-							{id:'r', name:'紅'}, 
-							{id:'g', name:'綠'}, 
-							{id:'b', name:'藍'}, 
-							{id:'a', name:'alpha'}, 
-							{id:'fvx', name:'作用力x'}, 
-							{id:'fvy', name:'作用力y'}, 
-							{id:'fvr', name:'作用力旋轉'}, 
-							{id:'emit-count', name:'發射數目'}, 
-							{id:'emit-duration', name:'週期毫秒'}, 
-							{id:'emit-angle', name:'發射弧度'}, 
-							{id:'emit-range', name:'發射範圍'}, 
-							{id:'emit-force', name:'發射力道'}];
+		
+		var ary_propsModel = [ 	{id:'lifetime', name:'生命'}, 
+								{id:'mass', name:'質量'}, 
+								{id:'pos_r', name:'弧度'}, 
+								{id:'vel_x', name:'速度x'}, 
+								{id:'vel_y', name:'速度y'}, 
+								{id:'vel_r', name:'旋轉速度'}, 
+								{id:'size_x', name:'粒子寬度'}, 
+								{id:'size_y', name:'粒子高度'}, 
+								{id:'count', name:'發射數目'}, 
+								{id:'duration', name:'週期毫秒'}, 
+								{id:'angle', name:'發射弧度'}, 
+								{id:'range', name:'發射範圍'}, 
+								{id:'force', name:'發射力道'}];
 							
 		vic.easyui.initSprWheel( $('.easyui-numberspinner' ) );
+		
+		_.each( ary_propsModel, function( prop ){
+			var dom = $( '#tmpl_prop' ).tmpl( prop );
+			mc_propContainer.append( dom );
+		});
+		
 		/*
 		$('.easyui-numberspinner' ).numberspinner( {
 			precision:1
@@ -300,7 +320,7 @@
 				cb();
 			}, 100 );
 		}
-		
+		/*
 		spr_value.numberspinner( {
 			onChange:function( nv, ov ){
 				if( currentRow != undefined ){
@@ -312,7 +332,7 @@
 				}
 			}
 		});
-		
+		*/
 		spr_v1.numberspinner( {
 			onChange:function( nv, ov ){
 				if( currentAdvRow != undefined ){
@@ -409,7 +429,7 @@
 				}
 			}
 		});
-			
+		/*
 		var currentRow = undefined;
 		dgd_props.datagrid({
 			onSelect:function( index, row ){
@@ -417,7 +437,7 @@
 				vic.easyui.setSpinnerValue( spr_value, row.v, false );
 			}
 		});
-		
+		*/
 		var currentNode = undefined;
 		tree_particle.tree( {
 			onSelect:function( node ){
@@ -470,11 +490,35 @@
 			});
 		}
 		
+		function disableAllProps(){
+			$( 'div[ptype]' ).each( function( id, dom ){
+				console.log( dom );
+				$( dom ).find( '.easyui-numberspinner' ).numberspinner( 'disable' );
+				$( dom ).find( '.easyui-linkbutton' ).linkbutton( 'disable' );
+			});
+		}
+		
 		function setDgdProp( ary_props ){
+			console.log( ary_props );
+			
+			disableAllProps();
+			_.each( ary_props, function( prop ){
+				var type = prop.id;
+				var value = prop.v;
+				var spr = $( 'div[ptype="' + type + '"]' ).find( '#spr_value' );
+				$( 'div[ptype="' + type + '"]' ).find( '.easyui-linkbutton' ).linkbutton( 'enable' );
+				
+				spr.numberspinner( 'enable' );
+				vic.easyui.setSpinnerValue( spr, value, false );
+				console.log( spr );
+			});
+		/*
 			vic.easyui.setDatagridRows( dgd_props, ary_props );
 			if( ary_props.length > 0 )
 				vic.easyui.selectDatagridRow( dgd_props, 0 );
+				*/
 		}
+
 		
 		function setAdvDgdProp( ary_props ){
 			vic.easyui.setDatagridRows( dgd_advprops, ary_props );
@@ -737,6 +781,7 @@
 		});
 		
 		view.event.on( 'onTreeClick', function( e, options ){
+			
 			view.setDgdProp( (function( node ){
 				var p = node.particle;
 				if( vic.easyui.getTreeIsLeaf( view.tree_particle, node ) ){
