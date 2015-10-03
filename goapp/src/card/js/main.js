@@ -360,7 +360,7 @@ Main.pushCmds = function(content) {
 	if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
 };
 Main.onBackCallback = function(ret) {
-	(Main.callAction(ret.msg))();
+	if(Main.isConntect) (Main.callAction(ret.msg))();
 };
 Main.callAction = function(content) {
 	if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
@@ -554,6 +554,7 @@ Main.removeCards = function(ary_select) {
 	});
 };
 Main.keepSearchOpponent = function() {
+	Main.slide("正在等待對手...");
 	Main.searchOpponentTimer = haxe_Timer.delay(function() {
 		Main.pushCmds({ cmd : "searchOpponent", content : { id : Main.playerId, otherPlayerId : Main.otherPlayerId}});
 		if(!Main.isConntect) Main.keepSearchOpponent();

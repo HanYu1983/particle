@@ -147,7 +147,9 @@ class Main
 	}
 	
 	static function onBackCallback( ret:Dynamic ) {
-		callAction( ret.msg )();
+		if ( isConntect ) {
+			callAction( ret.msg )();
+		}
 	}
 	
 	static function callAction( content:Dynamic ) {
@@ -457,6 +459,7 @@ class Main
 	public static var searchOpponentTimer:Timer = null;
 	
 	public static function keepSearchOpponent() {
+		slide( '正在等待對手...' );
 		searchOpponentTimer = Timer.delay( function() {
 			pushCmds( { cmd:'searchOpponent', content: { id:playerId, otherPlayerId:otherPlayerId } } );
 			if ( !isConntect ) keepSearchOpponent();
