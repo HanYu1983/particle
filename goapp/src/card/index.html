@@ -18,6 +18,7 @@
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
+	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
 		
 </head>
 <style>
@@ -193,6 +194,7 @@ body{
 		</div>
     </div>
 	<script>
+	googleTracking.init( 'UA-55273266-3' );
 	
 	function setCookie( key, value ){
 		$.cookie( key, value, { expires: 7 });
