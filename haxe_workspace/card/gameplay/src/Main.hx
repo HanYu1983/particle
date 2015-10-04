@@ -147,9 +147,7 @@ class Main
 	}
 	
 	static function onBackCallback( ret:Dynamic ) {
-		if ( isConntect ) {
-			callAction( ret.msg )();
-		}
+		callAction( ret.msg )();
 	}
 	
 	static function callAction( content:Dynamic ) {
@@ -257,6 +255,8 @@ class Main
 					return;
 				}
 				
+				slide( '正在等待對手...' );
+				
 				createSocket( playerId );
 				keepSearchOpponent();
 			case 'onBtnLoginClick':
@@ -332,6 +332,7 @@ class Main
 				return '';
 			})();
 			Facade.getInstance().sendNotification( Model.on_state_change, { 
+																			noOwner: card.owner == '',
 																			select:card, 
 																			showWho:showWho,
 																			showRelate:Main.playerId == card.relate, 
@@ -459,7 +460,6 @@ class Main
 	public static var searchOpponentTimer:Timer = null;
 	
 	public static function keepSearchOpponent() {
-		slide( '正在等待對手...' );
 		searchOpponentTimer = Timer.delay( function() {
 			pushCmds( { cmd:'searchOpponent', content: { id:playerId, otherPlayerId:otherPlayerId } } );
 			if ( !isConntect ) keepSearchOpponent();

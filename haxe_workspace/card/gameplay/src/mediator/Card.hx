@@ -74,6 +74,7 @@ class Card extends Mediator
 						_back = notification.getBody().select.back;
 						rotateAnimation( notification.getBody().select.deg );
 						showOnwer( notification.getBody().showOwner );
+						showNoOwner( notification.getBody().noOwner );
 						showRelate( notification.getBody().showRelate );
 						showWho( notification.getBody().showWho );
 						seeCard( notification.getBody().seeCard );
@@ -119,6 +120,14 @@ class Card extends Mediator
 			getViewComponent().find( '#img_owner' ).show();
 		}else {
 			getViewComponent().find( '#img_owner' ).hide();
+		}
+	}
+	
+	function showNoOwner( show ) {
+		if ( show ) {
+			getViewComponent().css( 'opacity', .5 );
+		}else {
+			getViewComponent().css( 'opacity', 1 );
 		}
 	}
 	

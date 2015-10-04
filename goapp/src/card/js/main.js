@@ -360,7 +360,7 @@ Main.pushCmds = function(content) {
 	if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
 };
 Main.onBackCallback = function(ret) {
-	if(Main.isConntect) (Main.callAction(ret.msg))();
+	(Main.callAction(ret.msg))();
 };
 Main.callAction = function(content) {
 	if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
@@ -441,7 +441,7 @@ Main.applyValue = function(ary_select,self) {
 			}
 			return "";
 		})();
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : card, showWho : showWho, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card), notify : self},"ownerAndRelate_change");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ noOwner : card.owner == "", select : card, showWho : showWho, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card), notify : self},"ownerAndRelate_change");
 		return true;
 	});
 };
@@ -554,7 +554,6 @@ Main.removeCards = function(ary_select) {
 	});
 };
 Main.keepSearchOpponent = function() {
-	Main.slide("正在等待對手...");
 	Main.searchOpponentTimer = haxe_Timer.delay(function() {
 		Main.pushCmds({ cmd : "searchOpponent", content : { id : Main.playerId, otherPlayerId : Main.otherPlayerId}});
 		if(!Main.isConntect) Main.keepSearchOpponent();
@@ -685,6 +684,7 @@ Main.prototype = {
 				Main.slide("請先登入並且輸入對手的id");
 				return;
 			}
+			Main.slide("正在等待對手...");
 			Main.createSocket(Main.playerId);
 			Main.keepSearchOpponent();
 			break;
@@ -1045,6 +1045,7 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 				this._back = notification.getBody().select.back;
 				this.rotateAnimation(notification.getBody().select.deg);
 				this.showOnwer(notification.getBody().showOwner);
+				this.showNoOwner(notification.getBody().noOwner);
 				this.showRelate(notification.getBody().showRelate);
 				this.showWho(notification.getBody().showWho);
 				this.seeCard(notification.getBody().seeCard);
@@ -1072,6 +1073,9 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 	}
 	,showOnwer: function(show) {
 		if(show) this.getViewComponent().find("#img_owner").show(); else this.getViewComponent().find("#img_owner").hide();
+	}
+	,showNoOwner: function(show) {
+		if(show) this.getViewComponent().css("opacity",.5); else this.getViewComponent().css("opacity",1);
 	}
 	,showRelate: function(show) {
 		if(show) this.getViewComponent().find("#img_relate").show(); else this.getViewComponent().find("#img_relate").hide();
