@@ -175,9 +175,28 @@ vic.easyui = vic.easyui || {};
 			},
 			onChange: function (hsb, hex, rgb) {
 				dom.trigger( 'onColorChange', { hsb:hsb, hex:hex, rgb:rgb} );
-				cdom.css('backgroundColor', '#' + hex);
+				cdom.css('background-color', '#' + hex);
 			}
 		});
+	}
+	
+	function setColorPickerColor( dom, color ){
+		dom.find('div' ).css('background-color', '#' + rgbToHex( color ) );
+	//	dom.ColorPickerSetColor( color );
+	}
+	
+	function rgbToHex( rgb ){
+		var hex = [
+			rgb.r.toString(16),
+			rgb.g.toString(16),
+			rgb.b.toString(16)
+		];
+		$.each(hex, function (nr, val) {
+			if (val.length == 1) {
+				hex[nr] = '0' + val;
+			}
+		});
+		return hex.join('');
 	}
 	
 	module.setSpinnerValue = setSpinnerValue;
@@ -207,5 +226,6 @@ vic.easyui = vic.easyui || {};
 	module.removeTree = removeTree;
 	
 	module.initColorPicker = initColorPicker;
+	module.setColorPickerColor = setColorPickerColor;
 	
 })( vic.easyui );

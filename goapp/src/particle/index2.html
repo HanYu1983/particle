@@ -252,20 +252,30 @@
 		var isMouseDown = false;
 		var targetPos = [0.0, 0.0];
 		var currentPos = [0.0, 0.0];
-		var cpr_back = $('#cpr_color');
+		var cpr_color = $('#cpr_color');
+		var cpr_back = $('#cpr_back');
 		
-		vic.easyui.initColorPicker( cpr_back, 36, 36, '#ff0000' );
-		cpr_back.on( 'onColorChange', function( e, options ){
-			console.log( options );
-			event.trigger( 'onParticleColorChange', options );
+		vic.easyui.initColorPicker( cpr_color, 36, 36, '#ffffff' );
+		cpr_color.on( 'onColorChange', function( e, options ){
+			//event.trigger( 'onPropChange', options );
+			
+			event.trigger( 'onPropChange', { currentRow: {
+				row:{
+					id:'color',
+					v:0,
+					extra:options.rgb
+				}
+			} } );
 		});
 		
-		var cpr_back = $("#cpr_back" );
 		vic.easyui.initColorPicker( cpr_back, 36, 36, 'black' );
 		cpr_back.on( 'onColorChange', function( e, options ){
-			console.log( options );
 			event.trigger( 'onBackColorChange', options );
 		});
+		
+		function setParticleColor( r, g, b ){
+			vic.easyui.setColorPickerColor(cpr_color,  {r:Math.floor( r* 255 ), g:Math.floor( g* 255 ), b:Math.floor( b* 255 )} );
+		}
 		
 		var ary_propsModel = [ 	{id:'lifetime', name:'生命', random:true, friction:false}, 
 								{id:'mass', name:'質量', random:true, friction:false}, 
@@ -707,6 +717,7 @@
 		module.getTreeRootNode = getTreeRootNode;
 		module.appendImage = appendImage;
 		module.setImgFocus = setImgFocus;
+		module.setParticleColor = setParticleColor;
 		module.event = event;
 	})( app.view );
 	
@@ -888,7 +899,12 @@
 		view.event.on( 'onBackColorChange', function( e, options ){
 			api.changeBgColor( options.rgb.r / 255, options.rgb.g / 255, options.rgb.b / 255 );
 		});
-		
+		/*
+		view.event.on( 'onParticleColorChange', function( e, options ){
+			
+			api.changeBgColor( options.rgb.r / 255, options.rgb.g / 255, options.rgb.b / 255 );
+		});
+		*/
 		view.event.on( 'onViewTreeChange', function( e, options ){
 			updateRender();
 		});
@@ -969,6 +985,7 @@
 			}
 			
 			view.setImgFocus( options.node.particle.tex );
+			view.setParticleColor( options.node.particle.color[0], options.node.particle.color[1], options.node.particle.color[2] );
 			
 			currentParticle = options.node.particle;
 		});
@@ -1053,6 +1070,11 @@
 			}else{
 				row.v = parseInt( row.v );
 				switch( row.id ){
+					case 'color':
+						currentParticle.color[0] = row.extra.r / 255;
+						currentParticle.color[1] = row.extra.g / 255;
+						currentParticle.color[2] = row.extra.b / 255;
+						break;
 					case 'lifetime':
 						currentParticle.lifetime = ( row.v / 1000 ); break;
 					case 'rot':
