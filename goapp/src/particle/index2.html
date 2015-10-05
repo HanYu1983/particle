@@ -58,22 +58,6 @@
 		outline:red solid 2px;
 	}
 	
-	#colorSelector {
-		position: relative;
-		top: 14px;
-		left: 0;
-		width: 36px;
-		height: 36px;
-		background: url(../common/js/lib/colorpicker/images/select.png);
-	}
-	#colorSelector div {
-		position: relative;
-		top: 4px;
-		left: 4px;
-		width: 28px;
-		height: 28px;
-		background: url(../common/js/lib/colorpicker/images/select.png) center;
-	}
 	</style>
 	
 </head>
@@ -115,8 +99,10 @@
 							</div>
 							<div class="group" style="text-align:center;">
 								<div class="hori">顏色</div>
-								<div class="hori" style="top:10px;">
-									<div id="colorSelector"><div style="background-color: #0000ff"></div></div>
+								<div class="hori">
+									<div style="position:relative; top:14px; ">
+										<div id="cpr_color"></div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -215,21 +201,6 @@
 <script src="js/haxe.js"></script>
 <script type="text/javascript">
 
-	$('#colorSelector').ColorPicker({
-		color: '#0000ff',
-		onShow: function (colpkr) {
-			$(colpkr).fadeIn(500);
-			return false;
-		},
-		onHide: function (colpkr) {
-			$(colpkr).fadeOut(500);
-			return false;
-		},
-		onChange: function (hsb, hex, rgb) {
-			$('#colorSelector div').css('backgroundColor', '#' + hex);
-		}
-	});
-
 	var app = app || {};
 	app.view = app.view || {};
 	
@@ -252,6 +223,11 @@
 		var isMouseDown = false;
 		var targetPos = [0.0, 0.0];
 		var currentPos = [0.0, 0.0];
+		var cpr_back = $('#cpr_color');
+		vic.easyui.initColorPicker( cpr_back, 36, 36, '#ff0000' );
+		cpr_back.on( 'onColorChange', function( e, options ){
+			console.log( options );
+		});
 		
 		var ary_propsModel = [ 	{id:'lifetime', name:'生命', random:true, friction:false}, 
 								{id:'mass', name:'質量', random:true, friction:false}, 

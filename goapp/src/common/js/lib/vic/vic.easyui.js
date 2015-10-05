@@ -142,6 +142,45 @@ vic.easyui = vic.easyui || {};
 		tree.tree( 'remove', node.target );
 	}
 	
+	/**
+	<div id="colorSelector"><div style="background-color: #0000ff"></div></div>
+	**/
+	function initColorPicker( dom, w, h, color ){
+		dom.css( 'position', 'relative' );
+		dom.css( 'top', '0' );
+		dom.css( 'left', '0' );
+		dom.css( 'width', w + 'px' );
+		dom.css( 'height', h + 'px' );
+		dom.css( 'background', 'url(../common/js/lib/colorpicker/images/select.png)' );
+		
+		var cdom = $("<div></div>" );
+		cdom.css( 'position', 'relative' );
+		cdom.css( 'top', '4px' );
+		cdom.css( 'left', '4px' );
+		cdom.css( 'width', w - 8 + 'px' );
+		cdom.css( 'height', h - 8 + 'px' );
+		cdom.css( 'background', 'url(../common/js/lib/colorpicker/images/select.png) center' );
+		cdom.css( 'background-color', color )
+		dom.append( cdom );
+		
+		
+		dom.ColorPicker({
+			color: color,
+			onShow: function (colpkr) {
+				$(colpkr).fadeIn(500);
+				return false;
+			},
+			onHide: function (colpkr) {
+				$(colpkr).fadeOut(500);
+				return false;
+			},
+			onChange: function (hsb, hex, rgb) {
+				dom.trigger( 'onColorChange', [hsb, hex, rgb ] );
+				cdom.css('backgroundColor', '#' + hex);
+			}
+		});
+	}
+	
 	module.setSpinnerValue = setSpinnerValue;
 	module.getSpinnerValue = getSpinnerValue;
 	
@@ -167,5 +206,7 @@ vic.easyui = vic.easyui || {};
 	module.getTreeRoots = getTreeRoots;
 	module.appendTree = appendTree;
 	module.removeTree = removeTree;
+	
+	module.initColorPicker = initColorPicker;
 	
 })( vic.easyui );
