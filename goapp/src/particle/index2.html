@@ -867,17 +867,23 @@
 		var particles = model.getParticles();
 		
 		var treeModel = {};
-		modelToTree( particles, treeModel )
-		view.setTree( [ treeModel ], 1 );
+		modelToTree( particles, treeModel );
+		console.log( treeModel );
+		view.setTree( [ {
+			id:'root',
+			text:'渲染層',
+			children:[treeModel]
+		} ], 1 );
 		
 		view.event.on( 'onViewTreeChange', function(){
 			updateRender();
 		});
 		
 		view.event.on( 'onTreeClick', function( e, options ){
-			
+			if( options.node.particle == undefined ) return;
 			view.setDgdProp( (function( node ){
 				var p = node.particle;
+				
 				if( vic.easyui.getTreeIsLeaf( view.tree_particle, node ) ){
 					return [
 						{id:'lifetime', name:'生命毫秒', v: p.lifetime * 1000 },
@@ -954,9 +960,19 @@
 		});
 		
 		view.event.on( 'onMouseMove', function( e, options ){
+			var renderRoots = vic.easyui.getTreeNodeById( view.tree_particle, 'root' );
+			if( renderRoots.children.length > 0 ){
+				_.each( renderRoots.children, function( root ){
+					var rootParticle = root.particle;
+					rootParticle.pos[0] = options.targetPos[0];
+					rootParticle.pos[1] = options.targetPos[1];
+				});
+			}
+		/*
 			var rootParticle = view.getTreeRootNode().particle;
 			rootParticle.pos[0] = options.targetPos[0];
 			rootParticle.pos[1] = options.targetPos[1];
+			*/
 			updateRender();
 		});
 		
@@ -1055,13 +1071,20 @@
 		});
 		
 		function updateRender(){
-			var retobj = { };
-			treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, 0 ), retobj );
-			api.editParticle( retobj );
-		}
-		
-		function moveParticle(id, x, y) {
-			api.changeCenterPos(id, x, y );
+			var renderRoots = vic.easyui.getTreeNodeById( view.tree_particle, 'root' );
+			if( renderRoots.children.length > 0 ){
+				_.each( renderRoots.children, function( root ){
+					var retobj = { };
+					treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, root.id ), retobj );
+					try{
+						api.editParticle( retobj );
+					}catch( e ){
+						//還不知道錯在哪裡，先catch起來
+						console.log( e );
+						
+					}
+				});
+			}
 		}
 		
 		function modelToTree( fields, retobj ) {
