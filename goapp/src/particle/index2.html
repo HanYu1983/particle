@@ -67,6 +67,7 @@
 		<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
 		<div class="hori"><a id="btn_rand" class="easyui-linkbutton" data-options="toggle:true">亂數</a></div>
 		<div class="hori"><a id="btn_fric" class="easyui-linkbutton" data-options="toggle:true">阻力</a></div>
+		<div class="hori"><a id="btn_custom" class="easyui-linkbutton" data-options="toggle:true">自訂</a></div>
 	</div>
 </script>
 <body>
@@ -346,6 +347,18 @@
 							if( ary_randomRow.length == 0 ){
 								ary_remainRow.push( {id:type, name:keyToName(type), tid:'constMul', type:keyToName( 'constMul' ), v1:950, v2:0, v3:0, v4:0, v5:0 } );
 							}
+							break;
+						case 'btn_custom':
+							ary_randomRow = _.filter( advrows, function( row ){
+								return ( row.id == type && row.tid == 'custom' );
+							});
+							ary_remainRow = _.filter( advrows, function( row ){
+								return !( row.id == type && row.tid == 'custom' );
+							});
+							if( ary_randomRow.length == 0 ){
+								ary_remainRow.push( {id:type, name:keyToName(type), tid:'custom', type:keyToName( 'custom' ), v1:0, v2:50, v3:100, v4:50, v5:0 } );
+							}
+							break;
 					}
 					
 					setAdvDgdProp( ary_remainRow );
@@ -594,6 +607,7 @@
 				var dom = $( 'div[ptype="' + prop.id + '"]' );
 				dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'unselect' );
 				dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'unselect' );
+				dom.find( '.easyui-linkbutton' ).eq(2).linkbutton( 'unselect' );
 			});
 			
 			var ary_props = vic.easyui.getDatagridRows( dgd_advprops, ary_props );
@@ -607,6 +621,10 @@
 					case 'constMul':
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
 						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
+						break;
+					case 'custom':
+						var dom = $( 'div[ptype="' + prop.id + '"]' );
+						dom.find( '.easyui-linkbutton' ).eq(2).linkbutton( 'select' );
 						break;
 						/*
 					case 'fvx':
