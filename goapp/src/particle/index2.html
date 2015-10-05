@@ -66,6 +66,7 @@
 		<div class="hori"><div style="width:100px;">${name}</div></div>
 		<div class="hori"><input id="spr_value" class="easyui-numberspinner" style="width:80px;"></input></div>
 		<div class="hori"><a id="btn_rand" class="easyui-linkbutton" data-options="toggle:true">亂數</a></div>
+		<div class="hori"><a id="btn_turbu" class="easyui-linkbutton" data-options="toggle:true">湍流</a></div>
 		<div class="hori"><a id="btn_fric" class="easyui-linkbutton" data-options="toggle:true">阻力</a></div>
 		<div class="hori"><a id="btn_custom" class="easyui-linkbutton" data-options="toggle:true">自訂</a></div>
 	</div>
@@ -332,6 +333,17 @@
 					var ary_randomRow = [];
 					var ary_remainRow = [];
 					switch( id ){
+						case 'btn_turbu':
+							ary_randomRow = _.filter( advrows, function( row ){
+								return ( row.id == type && row.tid == 'randAdd' );
+							});
+							ary_remainRow = _.filter( advrows, function( row ){
+								return !( row.id == type && row.tid == 'randAdd' );
+							});
+							if( ary_randomRow.length == 0 ){
+								ary_remainRow.unshift( {id:type, name:keyToName(type), tid:'randAdd', type:keyToName( 'randAdd' ), v1:100, v2:0, v3:0, v4:0, v5:0 } );
+							}
+							break;
 						case 'btn_rand':
 							ary_randomRow = _.filter( advrows, function( row ){
 								return ( row.id == type && row.tid == 'randStartAdd' );
@@ -614,6 +626,7 @@
 				dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'unselect' );
 				dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'unselect' );
 				dom.find( '.easyui-linkbutton' ).eq(2).linkbutton( 'unselect' );
+				dom.find( '.easyui-linkbutton' ).eq(3).linkbutton( 'unselect' );
 			});
 			
 			var ary_props = vic.easyui.getDatagridRows( dgd_advprops, ary_props );
@@ -624,24 +637,18 @@
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
 						dom.find( '.easyui-linkbutton' ).eq(0).linkbutton( 'select' );
 						break;
-					case 'constMul':
+					case 'randAdd':
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
 						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
 						break;
-					case 'custom':
+					case 'constMul':
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
 						dom.find( '.easyui-linkbutton' ).eq(2).linkbutton( 'select' );
 						break;
-						/*
-					case 'fvx':
+					case 'custom':
 						var dom = $( 'div[ptype="' + prop.id + '"]' );
-						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
+						dom.find( '.easyui-linkbutton' ).eq(3).linkbutton( 'select' );
 						break;
-					case 'fvy':
-						var dom = $( 'div[ptype="' + prop.id + '"]' );
-						dom.find( '.easyui-linkbutton' ).eq(1).linkbutton( 'select' );
-						break;
-						*/
 				}
 			});
 		}
@@ -830,27 +837,6 @@
 		   }
 		   
 		   var event = $('<div></div>' );
-		   /*
-		particles.emit.prototype[0].view = {
-			easyAdv:[
-				{id:'lifetime', tid:'randStartAdd', show:false, v1:20, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'mass', tid:'randStartAdd', show:false, v1:10, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'rot', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vx', tid:'randStartAdd', show:true, v1:100, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vx', tid:'fvx', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vy', tid:'randStartAdd', show:true, v1:100, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vy', tid:'fvx', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'vr', tid:'randStartAdd', show:false, v1:1, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'scale-x', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'scale-y', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'emit-count', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'emit-duration', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'emit-angle', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'emit-range', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }, 
-				{id:'emit-force', tid:'randStartAdd', show:false, v1:0, v2:0, v3:0, v4:0, v5:0 }
-			]
-		}
-		*/
 		
 		var ary_elapsedTime = [];
 		api.addEventListener( function ( info ) {
