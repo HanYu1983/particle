@@ -163,7 +163,6 @@ vic.easyui = vic.easyui || {};
 		cdom.css( 'background-color', color )
 		dom.append( cdom );
 		
-		
 		dom.ColorPicker({
 			color: color,
 			onShow: function (colpkr) {
@@ -175,7 +174,7 @@ vic.easyui = vic.easyui || {};
 				return false;
 			},
 			onChange: function (hsb, hex, rgb) {
-				dom.trigger( 'onColorChange', [hsb, hex, rgb ] );
+				dom.trigger( 'onColorChange', { hsb:hsb, hex:hex, rgb:rgb} );
 				cdom.css('backgroundColor', '#' + hex);
 			}
 		});

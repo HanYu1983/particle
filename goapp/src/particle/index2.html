@@ -77,15 +77,44 @@
         <div data-options="region:'east',split:true" title="West" style="width:70%;">
 			<div class="easyui-layout" style="width:100%;height:100%;">
 				<div data-options="region:'north',split:true" style="height:20%">
-					<div class="group" style="text-align:center;">
-						<div class="hori"><a id="btn_addTree" href="#" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-search'">新增</a></div>
-						<div class="hori"><a id="btn_removeTree" href="#" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-search'">刪除</a></div>
+					<div class="easyui-layout" style="width:100%;height:100%;">
+						<div data-options="region:'center'" style="width:50%;">
+							<div class="group" style="text-align:center;">
+								<div class="hori"><a id="btn_addTree" href="#" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-search'">新增</a></div>
+								<div class="hori"><a id="btn_removeTree" href="#" class="easyui-linkbutton" onclick="onHtmlClick(this)" data-options="iconCls:'icon-search'">刪除</a></div>
+							</div>
+							<div class="group">
+								<ul id="tree_particle" class="easyui-tree" data-options="dnd:true">
+									<!-- by script -->
+								</ul>
+							</div>
+						</div>
+						<div data-options="region:'east',split:true" style="width:50%;">
+							<div class="group">
+								<div class="group" style="text-align:center; margin-top:10px; ">
+									<div class="hori">
+										<div>粒子數目(最大2000) :</div>
+										<div id="txt_count" style="color:yellow">0</div>
+									</div>
+								</div>
+								<div class="group" style="text-align:center; margin-top:10px; ">
+									<div class="hori">
+										<div>FPS:</div>
+										<div id="txt_fps" style="color:yellow">0</div>
+									</div>
+								</div>
+								<div class="group" style="text-align:center; margin-top:10px;">
+									<div class="hori">
+										<div>背景顏色</div>
+										<div style="position:relative; top:5px; left:4px;">
+											<div id="cpr_back"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="group">
-						<ul id="tree_particle" class="easyui-tree" data-options="dnd:true">
-						
-						</ul>
-					</div>
+					
 				</div>
 				<div data-options="region:'center',title:'Main Title',iconCls:'icon-ok'">
 					
@@ -224,9 +253,18 @@
 		var targetPos = [0.0, 0.0];
 		var currentPos = [0.0, 0.0];
 		var cpr_back = $('#cpr_color');
+		
 		vic.easyui.initColorPicker( cpr_back, 36, 36, '#ff0000' );
 		cpr_back.on( 'onColorChange', function( e, options ){
 			console.log( options );
+			event.trigger( 'onParticleColorChange', options );
+		});
+		
+		var cpr_back = $("#cpr_back" );
+		vic.easyui.initColorPicker( cpr_back, 36, 36, 'black' );
+		cpr_back.on( 'onColorChange', function( e, options ){
+			console.log( options );
+			event.trigger( 'onBackColorChange', options );
 		});
 		
 		var ary_propsModel = [ 	{id:'lifetime', name:'生命', random:true, friction:false}, 
@@ -847,7 +885,11 @@
 			children:[treeModel]
 		} ], 1 );
 		
-		view.event.on( 'onViewTreeChange', function(){
+		view.event.on( 'onBackColorChange', function( e, options ){
+			api.changeBgColor( options.rgb.r / 255, options.rgb.g / 255, options.rgb.b / 255 );
+		});
+		
+		view.event.on( 'onViewTreeChange', function( e, options ){
 			updateRender();
 		});
 		
