@@ -84,6 +84,15 @@ vic.easyui = vic.easyui || {};
 			downSpr = $( this ).find( '.easyui-numberspinner' );
 		});
 		
+		sprDoms.parent().mouseup( function( e ){
+			switch( e.which ){
+				case 3:
+					downSpr = $( this ).find( '.easyui-numberspinner' );
+					vic.easyui.setSpinnerValue( downSpr, 0, true );
+					break;
+			}
+		});
+		
 		$( 'body' ).mouseup( function(){
 			downSpr = undefined;
 			oldMouseY = undefined;

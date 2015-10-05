@@ -231,7 +231,11 @@
 <script src='js/api.js'></script>
 <script src="js/haxe.js"></script>
 <script type="text/javascript">
-
+	
+	document.addEventListener("contextmenu", function(e){
+		e.preventDefault();
+	}, false);
+		
 	var app = app || {};
 	app.view = app.view || {};
 	
