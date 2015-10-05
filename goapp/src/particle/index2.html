@@ -254,6 +254,8 @@
 		var currentPos = [0.0, 0.0];
 		var cpr_color = $('#cpr_color');
 		var cpr_back = $('#cpr_back');
+		var txt_count = $('#txt_count');
+		var txt_fps = $('#txt_fps');
 		
 		vic.easyui.initColorPicker( cpr_color, 36, 36, '#ffffff' );
 		cpr_color.on( 'onColorChange', function( e, options ){
@@ -272,6 +274,11 @@
 		cpr_back.on( 'onColorChange', function( e, options ){
 			event.trigger( 'onBackColorChange', options );
 		});
+		
+		function setInfo( count, fps ){
+			txt_count.html( count );
+			txt_fps.html( fps );
+		}
 		
 		function setParticleColor( r, g, b ){
 			vic.easyui.setColorPickerColor(cpr_color,  {r:Math.floor( r* 255 ), g:Math.floor( g* 255 ), b:Math.floor( b* 255 )} );
@@ -718,6 +725,7 @@
 		module.appendImage = appendImage;
 		module.setImgFocus = setImgFocus;
 		module.setParticleColor = setParticleColor;
+		module.setInfo = setInfo;
 		module.event = event;
 	})( app.view );
 	
@@ -795,6 +803,8 @@
 				 "force":0
 			  }
 		   }
+		   
+		   var event = $('<div></div>' );
 		   /*
 		particles.emit.prototype[0].view = {
 			easyAdv:[
@@ -816,6 +826,32 @@
 			]
 		}
 		*/
+		
+		var ary_elapsedTime = [];
+		api.addEventListener( function ( info ) {
+			switch( info[0] ) {
+				case 'tick':
+					var elapsedTime = info[1];
+					if ( ary_elapsedTime.length > 20 ) {
+						ary_elapsedTime.shift();
+					}
+					ary_elapsedTime.push( elapsedTime );
+					
+					var sum = _.reduce( ary_elapsedTime, function( t, curr ) {
+						return curr + t;
+					}, 0 );
+					
+					var fps = Math.ceil( 1 / ( sum / ary_elapsedTime.length ));
+					
+					api.info( function( err, data ) {
+						if ( err == null ) {
+							event.trigger( 'onInfoChange', {count:data.count, fps:fps} );
+						}
+					});
+			}
+		});
+		
+		
 		function getParticles(){
 			return particles;
 		}
@@ -854,6 +890,7 @@
 		
 		module.getParticles = getParticles;
 		module.createParticle = createParticle;
+		module.event = event;
 	})( app.model );
 	
 	
@@ -899,12 +936,11 @@
 		view.event.on( 'onBackColorChange', function( e, options ){
 			api.changeBgColor( options.rgb.r / 255, options.rgb.g / 255, options.rgb.b / 255 );
 		});
-		/*
-		view.event.on( 'onParticleColorChange', function( e, options ){
-			
-			api.changeBgColor( options.rgb.r / 255, options.rgb.g / 255, options.rgb.b / 255 );
+		
+		model.event.on( 'onInfoChange', function( e, options ){
+			view.setInfo( options.count, options.fps );
 		});
-		*/
+		
 		view.event.on( 'onViewTreeChange', function( e, options ){
 			updateRender();
 		});
