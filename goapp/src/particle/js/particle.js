@@ -345,7 +345,7 @@ var particle = particle || {};
 			if( part.emit ){
 				var shouldTimes = Math.floor(part.timer/ part.emit.duration)
 				var offsetTimes = shouldTimes - part.emitTimes
-				if( offsetTimes > 0 ){
+				while( offsetTimes-- > 0 ){
 					for( var i in part.emit.prototype ){
 						var newp = part.emit.prototype[i]
 						for( var j =0; j< part.emit.count; ++j ){
