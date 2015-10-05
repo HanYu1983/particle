@@ -55,13 +55,13 @@ function downloadPackage( id, cnt ){
 
 console.log('start')
 
-for( var i=59; i<60; ++i ){
+for( var i=41; i<42; ++i ){
 	function closure( pkg ){
 		return function(){
-			downloadPackage(pkg, 300)
+			downloadPackage(pkg, 350)
 		}
 	}
-	setTimeout( closure(i+1), (i-59)* 1000* 300)
+	setTimeout( closure(i+1), (i-41)* 1000* 300)
 }
 
 
