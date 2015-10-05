@@ -293,19 +293,19 @@
 			vic.easyui.setColorPickerColor(cpr_color,  {r:Math.floor( r* 255 ), g:Math.floor( g* 255 ), b:Math.floor( b* 255 )} );
 		}
 		
-		var ary_propsModel = [ 	{id:'lifetime', name:'生命', random:true, friction:false}, 
-								{id:'mass', name:'質量', random:true, friction:false}, 
-								{id:'rot', name:'角度', random:true, friction:false}, 
-								{id:'vx', name:'速度x', random:true, friction:true}, 
-								{id:'vy', name:'速度y', random:true, friction:true}, 
-								{id:'vr', name:'旋轉速度', random:true, friction:false}, 
-								{id:'scale-x', name:'粒子寬度', random:true, friction:false}, 
-								{id:'scale-y', name:'粒子高度', random:true, friction:false}, 
-								{id:'emit-count', name:'發射數目', random:false, friction:false}, 
-								{id:'emit-duration', name:'週期毫秒', random:false, friction:false}, 
-								{id:'emit-angle', name:'發射角度', random:true, friction:false}, 
-								{id:'emit-range', name:'發射範圍', random:true, friction:false}, 
-								{id:'emit-force', name:'發射力道', random:true, friction:false}];
+		var ary_propsModel = [ 	{id:'lifetime', name:'生命', random:true, friction:false, randomAdd:false, custom:false}, 
+								{id:'mass', name:'質量', random:true, friction:false, randomAdd:true, custom:true}, 
+								{id:'rot', name:'角度', random:true, friction:false, randomAdd:true, custom:true}, 
+								{id:'vx', name:'速度x', random:true, friction:true, randomAdd:true, custom:true}, 
+								{id:'vy', name:'速度y', random:true, friction:true, randomAdd:true, custom:true}, 
+								{id:'vr', name:'旋轉速度', random:true, friction:false, randomAdd:true, custom:true}, 
+								{id:'scale-x', name:'粒子寬度', random:true, friction:false, randomAdd:true, custom:true}, 
+								{id:'scale-y', name:'粒子高度', random:true, friction:false, randomAdd:true, custom:true}, 
+								{id:'emit-count', name:'發射數目', random:false, friction:false, randomAdd:true, custom:true}, 
+								{id:'emit-duration', name:'週期毫秒', random:false, friction:false, randomAdd:true, custom:true}, 
+								{id:'emit-angle', name:'發射角度', random:true, friction:false, randomAdd:true, custom:true}, 
+								{id:'emit-range', name:'發射範圍', random:true, friction:false, randomAdd:true, custom:true}, 
+								{id:'emit-force', name:'發射力道', random:true, friction:false, randomAdd:true, custom:true}];
 							
 		_.each( ary_propsModel, function( prop ){
 			var dom = $( '#tmpl_prop' ).tmpl( prop );
