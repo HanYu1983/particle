@@ -141,6 +141,15 @@ var particle = particle || {};
 			var adj = p[0] + offset* lifep 
 			setFormulaTarget( target, part, ori * adj )
 		},
+		"rand": function( target, p, part, lifep ){
+			var adj = p[0]*Math.random() - p[0]/2
+			setFormulaTarget( target, part, adj )
+		},
+		"randAdd": function( target, p, part, lifep ){
+			var ori = getFormulaTarget( target, part )
+			var adj = p[0]*Math.random() - p[0]/2
+			setFormulaTarget( target, part, ori + adj )
+		},
 		"randStartAdd": function( target, p, part, lifep ){
 			if( lifep == 0.0 ){
 				var ori = getFormulaTarget( target, part )
@@ -291,8 +300,6 @@ var particle = particle || {};
 		}
 	}
 	
-	
-	
 	function stepParticle( part, delta ){
 		// update position
 		part.pos[0] += part.vel[0]* delta
@@ -345,9 +352,9 @@ var particle = particle || {};
 							var obj = pool.get()
 							if( obj != null ){
 								initParticle( obj, newp )
-								obj.pos[0] = part.pos[0]
-								obj.pos[1] = part.pos[1]
-								obj.pos[2] = part.pos[2]
+								obj.pos[0] += part.pos[0]
+								obj.pos[1] += part.pos[1]
+								obj.pos[2] += part.pos[2]
 							
 								var angle = part.pos[2]
 								angle += part.emit.angle
