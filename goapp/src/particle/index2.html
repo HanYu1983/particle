@@ -1058,11 +1058,6 @@
 					rootParticle.pos[1] = options.targetPos[1];
 				});
 			}
-		/*
-			var rootParticle = view.getTreeRootNode().particle;
-			rootParticle.pos[0] = options.targetPos[0];
-			rootParticle.pos[1] = options.targetPos[1];
-			*/
 			updateRender();
 		});
 		
@@ -1137,7 +1132,7 @@
 					case 'lifetime':
 						currentParticle.lifetime = ( row.v / 1000 ); break;
 					case 'rot':
-						currentParticle.pos[0] = degreeToRadian( row.v ); break;
+						currentParticle.pos[2] = degreeToRadian( row.v );break;
 					case 'vx':
 						currentParticle.vel[0] = row.v; break;
 					case 'vy':
@@ -1171,6 +1166,7 @@
 				_.each( renderRoots.children, function( root ){
 					var retobj = { };
 					treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, root.id ), retobj );
+					console.log( retobj );
 					try{
 						api.editParticle( retobj );
 					}catch( e ){
