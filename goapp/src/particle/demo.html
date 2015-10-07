@@ -25,12 +25,11 @@
 			onCreate: function( key, ctx ){
 				console.log('oncreate')
 				var dom = $('<div></div>');
+				$('#div' ).append( dom );
 				return dom;
 			},
-			onAdd: function( obj, part, ctx ){
+			onUpdate: function( obj, part, ctx ){
 			
-				$('#div' ).append( obj );
-				
 				obj.css( 'position', 'absolute' );
 				obj.css( 'left', part.pos[0] - part.size[0] / 2 );
 				obj.css( 'top', part.pos[1] - part.size[1] / 2 );
