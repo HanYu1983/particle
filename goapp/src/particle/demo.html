@@ -19,65 +19,10 @@
 		<script src="js/haxe.js"></script>
 		<script>
 		
+		var divDom = $('#div' )
 		
 		// -------- div drawer ---------- //
-		var drawDiv = particleDrawer.basic({
-			onCreate: function( key, ctx ){
-				var dom = $('<div></div>');
-				$('#div' ).append( dom );
-				return dom;
-			},
-			onUpdate: function( obj, part, ctx ){
-				
-				obj.css( 'position', 'absolute' );
-				obj.css( 'left', part.pos[0] - part.size[0] / 2 );
-				obj.css( 'top', part.pos[1] - part.size[1] / 2 );
-				obj.css( 'width', part.size[0] + 'px' );
-				obj.css( 'height', part.size[1] + 'px' );
-				
-				var hexcolor = (function( rgb ){
-					var hex = [
-						rgb.r.toString(16),
-						rgb.g.toString(16),
-						rgb.b.toString(16)
-					];
-					$.each(hex, function (nr, val) {
-						if (val.length == 1) {
-							hex[nr] = '0' + val;
-						}
-					});
-					return hex.join('');
-				})( {
-					r:Math.floor( part.color[0] * 255 ),
-					g:Math.floor( part.color[1] * 255 ),
-					b:Math.floor( part.color[2] * 255 )
-				} );
-				
-				if( part.tex != '' ) {
-					if( obj.find( '#img' ).length == 0 ){
-						var tex = ctx.texture( 'div', part.tex ).clone();
-						tex.css( 'position', 'relative' );
-						tex.css( 'width', '100%' );
-						tex.css( 'height', '100%' );
-						tex.css( 'left', '0' );
-						tex.css( 'top', '0' );
-						tex.attr( 'id', 'img' );
-						obj.prepend( tex );
-					}
-				}
-				
-				obj.css( 'background-color', '#' + hexcolor );
-				obj.css( 'opacity', part.color[3] );
-				obj.css( 'transform', 'rotate(' + -part.pos[2] / Math.PI * 180 + 'deg)' );
-			},
-			onRemove: function( obj, ctx ){
-				obj.empty();
-				obj.remove();
-			},
-			onRender: function( ctx ){
-				
-			}
-		})
+		var drawDiv = particleDrawer.dom( divDom )
 		// -------- three drawer ---------- //
 		var jdom = $('#three')
 		var w = jdom.width()
@@ -142,11 +87,7 @@
 					return tex;
 				}
 				if( type == 'div' ){
-					return $('#tex1');
-					switch( key ){
-						case '0':return $('#tex1');
-						case '1':return $('#tex1');
-					}
+					return null
 				}
 				return null
 			}

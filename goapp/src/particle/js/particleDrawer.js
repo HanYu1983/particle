@@ -113,6 +113,60 @@ var particleDrawer = particleDrawer || {};
 		})
 	}
 	
+	function dom( elem ){
+		return basic({
+			onCreate: function( key, ctx ){
+				var dom = $('<div></div>');
+				elem.append( dom );
+				return dom;
+			},
+			onUpdate: function( obj, part, ctx ){
+			
+				obj.css( 'position', 'absolute' );
+				obj.css( 'left', part.pos[0] - part.size[0] / 2 );
+				obj.css( 'top', part.pos[1] - part.size[1] / 2 );
+				obj.css( 'width', part.size[0] + 'px' );
+				obj.css( 'height', part.size[1] + 'px' );
+			
+				var hexcolor = 
+					(Math.floor( part.color[0] * 255 ) << 16) |
+					(Math.floor( part.color[1] * 255 ) << 8) |
+					(Math.floor( part.color[2] * 255 ))
+				hexcolor = hexcolor.toString(16)
+				while( hexcolor.length< 6 )
+					hexcolor = '0' + hexcolor
+					
+				obj.css( 'background-color', '#' + hexcolor );
+				obj.css( 'opacity', part.color[3] );
+				
+				if( part.tex != '' ) {
+					if( obj.find( '#img' ).length == 0 ){
+						if( ctx.texture( 'div', part.tex ) != null ){
+							var tex = ctx.texture( 'div', part.tex ).clone();
+							tex.css( 'position', 'relative' );
+							tex.css( 'width', '100%' );
+							tex.css( 'height', '100%' );
+							tex.css( 'left', '0' );
+							tex.css( 'top', '0' );
+							tex.attr( 'id', 'img' );
+							obj.prepend( tex );
+						}
+					}
+				}
+				// transform需要放在最後面，不然長寬會抓錯
+				obj.css( 'transform', 'rotate(' + -part.pos[2] / Math.PI * 180 + 'deg)' );
+			},
+			onRemove: function( obj, ctx ){
+				obj.empty();
+				obj.remove();
+			},
+			onRender: function( ctx ){
+			
+			}
+		})
+	}
+	
+	/*
 	function three2( w, h, scene, renderer ){	
 		var camera = new THREE.OrthographicCamera( w/-2, w/2, h/2, h/-2, -500, 1000 )
 		camera.position.set( w/2, -h/2, 200 )
@@ -203,9 +257,10 @@ var particleDrawer = particleDrawer || {};
 			render( ctx )
 		}
 	}
+	*/
 	
 	module.basic = basic
 	module.three = three
-	
+	module.dom = dom
 	
 }) ( particleDrawer )
