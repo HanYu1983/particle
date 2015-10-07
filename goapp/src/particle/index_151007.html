@@ -1,0 +1,443 @@
+<html>
+	<head>
+		<title>幽夢幻境</title>
+		<meta charset="utf-8"/>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>	
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxcore.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxbuttons.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxsplitter.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxdragdrop.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxinput.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxtree.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxnumberinput.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxexpander.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxscrollbar.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxpanel.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxcombobox.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxlistbox.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxgrid.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxdata.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxfileupload.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxgrid.selection.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxmenu.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxcolorpicker.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxwindow.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jqwidgets/jqxdropdownbutton.js"></script>
+			
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+		<script type="text/javascript" src="../common/js/lib/load-image.all.min.js"></script>
+		
+		<link rel="stylesheet" href="../common/js/lib/jqwidgets/styles/jqx.base.css" type="text/css" />
+		<link rel="stylesheet" href="../common/js/lib/jqwidgets/styles/jqx.metrodark.css" type="text/css" />
+		<link rel="stylesheet" href="../common/js/lib/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+		<link rel="stylesheet" href="../common/js/lib/jqwidgets/styles/jqx.ui-start.css" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="css/normalize.css">
+	</head>
+	<style>
+	body{
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		outline: 0;
+	}
+
+
+	body{
+		padding:0;
+		position:absolute;
+		width:100%;
+		height:100%;
+		overflow:hidden;
+		cursor:move;
+	}
+	input{
+		font-family:Microsoft JhengHei;
+	}
+	
+	.hori{
+		display:inline-block;
+	}
+	
+	.group{
+		position:relative; 
+		width:100%;
+		min-width:250px;
+	}
+	
+	.textImg{
+		position:relative;
+		width:100px;
+		height:100px;
+		margin-left:5px;
+		display:inline-block;
+		cursor:pointer;
+	}
+	
+	.outline{
+		outline:red solid 2px;
+	}
+	
+	</style>
+	<script id="tmpl_prop" type="jquery-x-tmpl">
+		<div proptype=${id} class="hori" style="margin-bottom:5px;">
+			<div class="hori" style="width:60px; text-align:right;">${name}</div>
+			<div class="hori">
+				<div id="spr_value" jqx="jqxNumberInput" style="position:relative; top:10px; " data-options=${datastr}></div>
+			</div>
+		</div>
+	</script>
+</head>
+<body>
+	<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "disabled":false, "showSplitBar":false, "panels": [{ "size": 30 }]}'>
+		<div>
+			<div id='mc_menu' jqx="jqxMenu">
+				<ul>
+					<li>幽夢幻境
+						<ul>
+							<li><div onclick="window.notifyFromHtml('onBtnImportClick', '{}')" id="btn_import">匯入</div></li>
+							<li><div onclick="window.notifyFromHtml('onBtnExportClick', '{}')" id="btn_export">匯出</div></li>
+						</ul>
+					</li>
+					<li><div onclick="window.notifyFromHtml('onBtnAboutClick', '{}')" id="btn_about">關於</div></li>
+				</ul>
+			</div>
+		</div>
+		<div>
+			<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "resizable":false, "panels": [{ "size": "38%","min":"38%", "collapsible":false }, {"collapsible":false}]}'>
+				<div>
+					<div id="canvas_container" style="position:relative; width:100%; height:100%">
+						<div id="webgl" style="position:relative; width:100%; height:100%; left:0; top:0;"></div>
+						<!--
+						<canvas id='webgl' width=800 height=600></canvas>
+						-->
+					</div>
+				</div>
+				<div>
+					<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "150px" }]}'>
+						<div>
+							<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "showSplitBar":true, "resizable":false, "panels": [{ "size": "50%", "collapsible":false }, { "collapsible":false }]}'>
+								<div>
+									<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+										<div class="group" style="text-align:center; margin-top:10px; ">
+											<div class="hori">
+												<div>粒子數目(最大2000) :</div>
+												<div id="txt_count" style="color:yellow">0</div>
+											</div>
+										</div>
+										<div class="group" style="text-align:center; margin-top:10px; ">
+											<div class="hori">
+												<div>FPS:</div>
+												<div id="txt_fps" style="color:yellow">0</div>
+											</div>
+										</div>
+										<div class="group" style="text-align:center; margin-top:10px;">
+											<div class="hori">
+												<div>背景顏色</div>
+												<div id="ddb_background" jqx="jqxDropDownButton" data-options='{"width": 80}'>
+													<div id="color_background" jqx="jqxColorPicker" data-options='{ "color": "ffffff", "colorMode": "saturation", "width": 220, "height": 220}'></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div>
+									<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+										<div class="group" style="text-align:center;">
+											<div class="hori">
+												<input id="btn_addTreeNode" jqx="jqxButton" type="button" value="新增" />
+											</div>
+											<div class="hori">
+												<input id="btn_removeTreeNode" jqx="jqxButton" type="button" value="刪除" />
+											</div>
+										</div>
+										<div id="tree_particle" jqx="jqxTree" class="jqx-hideborder" data-options='{"allowDrag": true, "allowDrop": true, "height": "180px", "width": "100%"}'>
+											<!-- created by script -->
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+						<div>
+							<div jqx="jqxSplitter" data-options='{"height": "100%", "width": "100%", "orientation": "horizontal", "panels": [{ "size": "70%","collapsible":false }, {"collapsed":false}]}'>
+								<div>
+									<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+										<div class="group" style="text-align:center; margin-bottom:10px; margin-top:10px; ">
+											<div class="hori" style="width:100px; ">
+												<input id="txt_name" type="text" jqx="jqxInput" style="width:100%; " >
+											</div>
+											<div class="hori">
+												<input id="btn_confirmName" type="button" jqx="jqxButton" value="確定" >
+											</div>
+										</div>
+										<div class="group" id="mc_props_container" style="min-width:150px; margin-bottom:30px;" >
+											<!-- created by script -->
+										</div>
+										<div class="group" style="text-align:center; margin-bottom:30px; ">
+											<div class="hori">
+												<div id="combo_blend" jqx="jqxComboBox" >
+													<!-- created by script -->
+												</div>
+											</div>
+											<div class="hori">
+												<div id="ddb_color" jqx="jqxDropDownButton" data-options='{"width": 80}'>
+													<div id="color_color" jqx="jqxColorPicker" data-options='{ "color": "ffffff", "colorMode": "saturation", "width": 220, "height": 220}'></div>
+												</div>
+											</div>
+										</div>
+										<div class="group" style="min-width:700px; text-align:center; margin-bottom:10px; ">
+											<div class="hori">
+												<input id="btn_addDynamic" jqx="jqxButton" type="button" value="新增" />
+												<input id="btn_removeDynamic" jqx="jqxButton" type="button" value="刪除" />
+												<input id="btn_moveUp" jqx="jqxButton" type="button" value="上移" />
+												<input id="btn_moveDown" jqx="jqxButton" type="button" value="下移" />
+											</div>
+										</div>
+										<div class="group" style="text-align:center">
+											<div class="hori">
+												<div id="combo_props"  jqx="jqxComboBox">
+													<!-- created by script below -->
+												</div>
+											</div>
+											<div class="hori">
+												<div id="combo_dtype"  jqx="jqxComboBox">
+													<!-- created by script below -->
+												</div>
+											</div>
+											<div class="hori">
+												<div id="spr_value1" jqx="jqxNumberInput"  data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+											</div>
+											<div class="hori">
+												<div id="spr_value2" jqx="jqxNumberInput"  data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+											</div>
+											<div class="hori">
+												<div id="spr_value3" jqx="jqxNumberInput"  data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+											</div>
+											<div class="hori">
+												<div id="spr_value4" jqx="jqxNumberInput"  data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+											</div>
+											<div class="hori">
+												<div id="spr_value5" jqx="jqxNumberInput"  data-options='{"width":"80px","inputMode":"simple","spinButtons":true}'></div>
+											</div>
+											<div class="hori" style="width:700px;">
+												<div id="table_props" jqx="jqxGrid" data-options='{"height":"400"}'>
+													<!-- created by script -->
+												</div>
+											</div>
+										</div>	
+									</div>
+								</div>
+								<div>
+									<div jqx="jqxPanel" data-options='{"height": "100%", "width": "100%"}'>
+										<div class="group" style="text-align:center; margin-top:10px;">
+											<div class="hori">
+												<input id="btn_removeTexture" jqx="jqxButton" type="button" value="取消當前貼圖" />
+											</div>
+											<div class="hori">
+												<input id="file_upload" type="file" accept="image/gif, image/jpeg, image/png" jqx="jqxButton"/>
+											</div>
+										</div>
+										<div id="mc_textContainer" class="group" style="margin-top:10px;">
+											<!-- created by script -->
+										</div>
+									</div>
+									
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div id="win_import" jqx="jqxWindow" data-options='{"autoOpen":false, "resizable": false,"width":"600","height":"300"}'>
+				<div>
+					匯入 / 匯出
+				</div>
+				<div>
+					<textarea style="width:100%; height:87%; background-color:#222222; color:white"></textarea>
+					<div class="group" style="text-align:center; margin-top:5px;">
+						<input id="btn_confirm" jqx="jqxButton" type="button" value="確定" />
+					</div>
+				</div>
+			</div>
+			<div id="win_about" jqx="jqxWindow" data-options='{"autoOpen":false, "resizable": false, "width": 400}'>
+				<div>
+					幽夢幻境
+				</div>
+				<div>
+					<div class="hori" style="position:relative; width:100%; text-align:center;">
+						上善若水APP<br><img src="images/logo.jpg" width="100" height="100"><br><a style="color:gray" href="https://www.facebook.com/pages/上善若水/1653920964852269" target="_blank">https://www.facebook.com/pages/上善若水/1653920964852269</a>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+</body>
+<script src='../common/js/lib/async.js'></script>
+<script src='../common/js/lib/rxjs/rx.all.min.js'></script>
+<script src='../common/js/lib/three.min.js'></script>
+<script src='../common/js/lib/underscore/underscore-min.js'></script>
+<script src='js/particle.js'></script>
+<script src='js/api.js'></script>
+<script src="js/haxe.js"></script>
+<script type="text/javascript">
+
+	$(document).ready( parseJqx );
+	
+	function initJqx( root, theme ){
+		root.find('[jqx]').each( function( id, dom ){
+			var jdom = $( dom );
+			var jqxType = jdom.attr( 'jqx' );
+			var constr = jdom.attr( 'data-options' );
+			var constrobj;
+			if( constr == undefined ){
+				constrobj = {};
+			}else{
+				constrobj = JSON.parse( constr );
+			}
+			constrobj.theme = theme;
+			jdom[jqxType]( constrobj );
+		});
+	}
+	
+	function parseJqx(){
+		//var theme = 'ui-start';
+		var theme = 'metrodark';
+		//var theme = 'arctic';
+		
+		initJqx( $('body'), theme );
+		
+		var ary_props = [ 	{id:'lifetime', name:'生命(秒)', min:0, max:1000}, 
+							{id:'mass', name:'質量', min:0, max:100000}, 
+							{id:'pos_r', name:'弧度', min:-6.28, max:6.28}, 
+							{id:'vel_x', name:'速度x', min:-100000, max:100000}, 
+							{id:'vel_y', name:'速度y', min:-100000, max:100000}, 
+							{id:'vel_r', name:'旋轉速度', min:-100, max:100}, 
+							{id:'size_x', name:'粒子寬度', min:0, max:100000}, 
+							{id:'size_y', name:'粒子高度', min:0, max:100000}, 
+							{id:'alpha', name:'alpha', min:0, max:1}, 
+							{id:'count', name:'發射數目', min:1, max:3}, 
+							{id:'duration', name:'週期(秒)', min:.02, max:1000}, 
+							{id:'angle', name:'發射弧度', min:0, max:360}, 
+							{id:'range', name:'發射範圍', min:0, max:360}, 
+							{id:'force', name:'發射力道', min:0, max:100000}];
+							
+		var tmpl_prop = $('#tmpl_prop' );
+		var mc_props_container = $('#mc_props_container');
+		
+		for( var i = 0; i < ary_props.length; ++i ){
+			var tmplModel = ary_props[i];
+			tmplModel.datastr = JSON.stringify({	
+									"width":"80px",
+									"inputMode":"simple",
+									"spinButtons":true, 
+									"spinMode":"simple",
+									"spinButtonsStep":0.1,
+									"min": tmplModel.min , 
+									"max": tmplModel.max });
+			var jdom = tmpl_prop.tmpl( tmplModel ) ;
+			initJqx( jdom, theme );
+			mc_props_container.append( jdom );
+		}
+		
+		var combo_props = $('#combo_props' );
+		ary_props = [ 	{id:'life', name:'生命'}, 
+						{id:'x', name:'位置x'}, 
+						{id:'y', name:'位置y'}, 
+						{id:'rot', name:'弧度'}, 
+						{id:'vx', name:'速度x'}, 
+						{id:'vy', name:'速度y'}, 
+						{id:'vr', name:'旋轉速度'}, 
+						{id:'scale-x', name:'粒子寬度'}, 
+						{id:'scale-y', name:'粒子高度'}, 
+						{id:'r', name:'紅'}, 
+						{id:'g', name:'綠'}, 
+						{id:'b', name:'藍'}, 
+						{id:'a', name:'alpha'}, 
+						{id:'emit-count', name:'發射數目'}, 
+						{id:'emit-duration', name:'週期毫秒'}, 
+						{id:'emit-angle', name:'發射弧度'}, 
+						{id:'emit-range', name:'發射範圍'}, 
+						{id:'emit-force', name:'發射力道'}];
+						
+		var comboSource = [];
+		for( var i = 0; i < ary_props.length; ++i ){
+			comboSource.push( '<div ptype="' + ary_props[i].id + '">' + ary_props[i].name + '</div>' );
+		}
+		combo_props.jqxComboBox( { source: comboSource, width:80, selectedIndex:0 } );
+		
+		combo_dtype = $('#combo_dtype' );
+		ary_props = [ 	{id:'const', name:'常數'}, 
+						{id:'constAdd', name:'常數累加'}, 
+						{id:'linear', name:'線性'}, 
+						{id:'linearAdd', name:'線性累加'}, 
+						{id:'randStartAdd', name:'隨機開始'}, 
+						{id:'custom', name:'自訂'} ]
+		
+		comboSource = [];
+		for( var i = 0; i < ary_props.length; ++i ){
+			comboSource.push( '<div ptype="' + ary_props[i].id + '">' + ary_props[i].name + '</div>' );
+		}
+		combo_dtype.jqxComboBox( { source: comboSource, width:80, selectedIndex:0 } );
+		
+		var combo_blend = $('#combo_blend' );
+		ary_props = [ 	{id:'nil', name:'乎視透明'}, 
+						{id:'normal', name:'正常'}, 
+						{id:'add', name:'疊加'}]
+		comboSource = [];
+		for( var i = 0; i < ary_props.length; ++i ){
+			comboSource.push( '<div ptype="' + ary_props[i].id + '">' + ary_props[i].name + '</div>' );
+		}
+		combo_blend.jqxComboBox( { source: comboSource, width:80, selectedIndex:1 } );
+		//create gried
+		
+		$("#table_props").jqxGrid(
+		{
+			width: '100%',
+			source: {},
+			showtoolbar: false,
+			columns: [
+			  { text: '屬性', datafield: 'ptype', width: 100 },
+			  { text: '方法', datafield: 'method', width: 100 },
+			  { text: '參數一', datafield: 'value1', width: 100 },
+			  { text: '參數二', datafield: 'value2', width: 100 },
+			  { text: '參數三', datafield: 'value3', width: 100},
+			  { text: '參數四', datafield: 'value4', width:100 },
+			  { text: '參數五', datafield: 'value5', width:100 }
+			]
+		});    
+		
+		function getTextElementByColor(color) {
+			if (color == 'transparent' || color.hex == "") {
+				return $("<div style='text-shadow: none; position: relative; padding-bottom: 2px; margin-top: 2px;'>transparent</div>");
+			}
+			var element = $("<div style='text-shadow: none; position: relative; padding-bottom: 2px; margin-top: 2px;'>#" + color.hex + "</div>");
+			var nThreshold = 105;
+			var bgDelta = (color.r * 0.299) + (color.g * 0.587) + (color.b * 0.114);
+			var foreColor = (255 - bgDelta < nThreshold) ? 'Black' : 'White';
+			element.css('color', foreColor);
+			element.css('background', "#" + color.hex);
+			element.addClass('jqx-rc-all');
+			return element;
+		}
+		
+		function createColorPicker( color, dropdown ){
+			color.on('colorchange', function (event) {
+				dropdown.jqxDropDownButton('setContent', getTextElementByColor(event.args.color));
+			});
+			dropdown.jqxDropDownButton('setContent', getTextElementByColor(new $.jqx.color({ hex: "ffaabb" })));
+		}
+		
+		createColorPicker( $("#color_color"), $("#ddb_color") );
+		createColorPicker( $("#color_background"), $("#ddb_background") );
+		
+		window.haxeStart();
+	}
+</script>
+
+</html>
