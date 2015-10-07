@@ -237,6 +237,8 @@
 <script src='js/api.js'></script>
 <script src="js/haxe.js"></script>
 <script type="text/javascript">
+
+	
 	
 	document.addEventListener("contextmenu", function(e){
 		e.preventDefault();
@@ -957,9 +959,7 @@
 		module.event = event;
 	})( app.model );
 	
-	
-//	['images/fire_128_128.jpg'];
-	
+	vic.easyui.showLoading();
 	loadImages( [
 					{id:0, path:'images/glow.jpg' },
 					{id:1, path:'images/leadB_32_32.png' },
@@ -976,6 +976,7 @@
 		if( ary_image.length > 0 ){
 			loadImages( ary_image );
 		}else{
+			vic.easyui.closeLoading();
 			appStart( app.view, app.model );
 		}
 	}
