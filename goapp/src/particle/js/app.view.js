@@ -68,19 +68,18 @@ app.view = app.view || {};
 	function setWinOutput( value ){
 		vic.easyui.setTextboxValue( win_output.find( '.easyui-textbox' ), value, false );
 		vic.easyui.setWindowOpen(  win_output );
-		
-		if( value == '' ){
-			win_output.attr( 'type', 'import' );
-		}else{
-			win_output.attr( 'type', 'output' );
-		}
 	}
 	
 	function closeImport(){
-		vic.easyui.setWindowClose( win_output );
-		if( win_output.attr( 'type' ) == 'import' ){
-			var importstr = vic.easyui.getTextboxValue( win_output.find( '.easyui-textbox' ) );
-			event.trigger( 'onImportEvent', { importstr:importstr } );
+		var str = vic.easyui.getTextboxValue( win_output.find( '.easyui-textbox' ) );
+		if( str != '' ){
+			try{
+				JSON.parse( str );
+				event.trigger( 'onImportEvent', { importstr:str } );
+				vic.easyui.setWindowClose( win_output );
+			}catch( e ){
+				vic.easyui.showAlert( '格式錯誤哦，請檢查!' );
+			}
 		}
 	}
 
@@ -517,7 +516,6 @@ app.view = app.view || {};
 	}
 	
 	function removeTree(){
-	console.log( currentNode );
 		if( currentNode != undefined ){
 			if( currentNode.id == 'root' ){
 				vic.easyui.showAlert( '渲染層無法刪除哦' );

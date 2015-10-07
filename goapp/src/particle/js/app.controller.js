@@ -305,7 +305,6 @@ app.controller = app.controller || {};
 				_.each( renderRoots.children, function( root ){
 					var retobj = { };
 					treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, root.id ), retobj );
-					console.log( retobj );
 					try{
 						api.editParticle( retobj );
 					}catch( e ){

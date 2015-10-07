@@ -241,8 +241,7 @@
         </div>
     </div>
 	<div id="m1">
-		<div id="btn_import" onclick="onHtmlClick(this)">匯入</div>
-        <div id="btn_output" onclick="onHtmlClick(this)">匯出</div>
+		<div id="btn_import" onclick="onHtmlClick(this)">匯入/匯出</div>
 	</div>
 	<div id="dia_about" class="easyui-dialog" title="幽夢仙境" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 		<div class="group" style="position:relative; width:100%; text-align:center;">
@@ -314,9 +313,6 @@ function loadImage( src, cb ) {
 function onHtmlClick( dom ){
 	switch( dom.id ){
 		case 'btn_import':
-			app.view.setWinOutput( '' );
-			break;
-		case 'btn_output':
 			app.view.setWinOutput( JSON.stringify( app.controller.renderToOutputString() ));
 			break;
 		case 'btn_outputConfirm':
