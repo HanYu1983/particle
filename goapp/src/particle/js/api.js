@@ -55,6 +55,9 @@ var api = api || {};
 		textures: {},
 		bgColor: [0, 0, 0],
 		fps: 30,
+		texture: function( type, key ){
+			return this.textures[key]
+		}
 	}
 	
 	var callback

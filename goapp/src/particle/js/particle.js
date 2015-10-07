@@ -342,7 +342,7 @@ var particle = particle || {};
 			
 			stepParticle( part, delta )
 			// emit
-			if( part.emit ){
+			if( part.emit && part.emit.duration > 0){
 				var shouldTimes = Math.floor(part.timer/ part.emit.duration)
 				var offsetTimes = shouldTimes - part.emitTimes
 				while( offsetTimes-- > 0 ){
@@ -365,7 +365,8 @@ var particle = particle || {};
 									0
 								])
 							
-								stepParticle( obj, 0 )
+								// 使用0.01這個值讓位置的初始亂數可以正確計算
+								stepParticle( obj, 0.01 )
 								parts.push( obj )
 							
 							} else {
