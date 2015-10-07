@@ -129,7 +129,10 @@
 								<!-- by script -->
 							</div>
 							<div class="group" style="text-align:center;">
-								<div class="hori">顏色</div>
+								<div class="hori">
+									<a id='btn_normalMode' class="easyui-linkbutton" data-options="group:'gType',toggle:true">普通</a>
+									<a id='btn_addMode' class="easyui-linkbutton" data-options="group:'gType',toggle:true">疊加</a>
+								</div>
 								<div class="hori">
 									<div style="position:relative; top:14px; ">
 										<div id="cpr_color"></div>
@@ -246,13 +249,13 @@
 		var event = $('<div></div>' );
 		var tree_particle = $("#tree_particle" );
 		var mc_imgs = $("#mc_imgs" );
-		//var spr_value = $("#spr_value" );
+		var btn_normalMode = $("#btn_normalMode" );
+		var btn_addMode = $("#btn_addMode" );
 		var spr_v1 = $("#spr_v1" );
 		var spr_v2 = $("#spr_v2" );
 		var spr_v3 = $("#spr_v3" );
 		var spr_v4 = $("#spr_v4" );
 		var spr_v5 = $("#spr_v5" );
-		//var dgd_props = $("#dgd_props" );
 		var mc_propContainer = $("#mc_propContainer" );
 		var dgd_advprops = $("#dgd_advprops" );
 		var combo_advProps = $("#combo_advProps" );
@@ -265,6 +268,40 @@
 		var cpr_back = $('#cpr_back');
 		var txt_count = $('#txt_count');
 		var txt_fps = $('#txt_fps');
+		
+		btn_normalMode.linkbutton({
+			onClick:function(){
+				event.trigger( 'onPropChange',  { currentRow: {
+					row:{
+						id:'blending',
+						v:'normal'
+					}
+				} });
+			}
+		});
+		
+		btn_addMode.linkbutton({
+			onClick:function(){
+				event.trigger( 'onPropChange', { currentRow: {
+					row:{
+						id:'blending',
+						v:'add'
+					}
+				} });
+			}
+		});
+		
+		function setBlending( type ){
+			switch( type ){
+				case 'normal':
+					btn_normalMode.linkbutton( 'select' );
+					break;
+				case 'add':
+					btn_addMode.linkbutton( 'select' );
+					break;
+					
+			}
+		}
 		
 		vic.easyui.initColorPicker( cpr_color, 36, 36, '#ffffff' );
 		cpr_color.on( 'onColorChange', function( e, options ){
@@ -767,6 +804,7 @@
 		module.setImgFocus = setImgFocus;
 		module.setParticleColor = setParticleColor;
 		module.setInfo = setInfo;
+		module.setBlending = setBlending;
 		module.event = event;
 	})( app.view );
 	
@@ -1046,6 +1084,7 @@
 			
 			view.setImgFocus( options.node.particle.tex );
 			view.setParticleColor( options.node.particle.color[0], options.node.particle.color[1], options.node.particle.color[2] );
+			view.setBlending( options.node.particle.blending );
 			
 			currentParticle = options.node.particle;
 		});
@@ -1123,38 +1162,54 @@
 				});
 				
 			}else{
-				row.v = parseInt( row.v );
+				
 				switch( row.id ){
 					case 'color':
+						row.v = parseInt( row.v );
 						currentParticle.color[0] = row.extra.r / 255;
 						currentParticle.color[1] = row.extra.g / 255;
 						currentParticle.color[2] = row.extra.b / 255;
 						break;
 					case 'lifetime':
+						row.v = parseInt( row.v );
 						currentParticle.lifetime = ( row.v / 1000 ); break;
 					case 'rot':
+						row.v = parseInt( row.v );
 						currentParticle.pos[2] = degreeToRadian( row.v );break;
 					case 'vx':
+						row.v = parseInt( row.v );
 						currentParticle.vel[0] = row.v; break;
 					case 'vy':
+						row.v = parseInt( row.v );
 						currentParticle.vel[1] = row.v; break;
 					case 'vr':
+						row.v = parseInt( row.v );
 						currentParticle.vel[2] = degreeToRadian( row.v ); break;
 					case 'scale-x':
+						row.v = parseInt( row.v );
 						currentParticle.size[0] = row.v; break;
 					case 'scale-y':
+						row.v = parseInt( row.v );
 						currentParticle.size[1] = row.v; break;
+					case 'blending':
+						currentParticle.blending = row.v; break;
 					case 'emit-count':
+						row.v = parseInt( row.v );
 						currentParticle.emit.count = row.v; break;
 					case 'emit-duration':
+						row.v = parseInt( row.v );
 						currentParticle.emit.duration = ( row.v / 1000 ); break;
 					case 'emit-range':
+						row.v = parseInt( row.v );
 						currentParticle.emit.range = degreeToRadian( row.v ); break;
 					case 'emit-angle':
+						row.v = parseInt( row.v );
 						currentParticle.emit.angle = degreeToRadian( row.v ); break;
 					case 'emit-force':
+						row.v = parseInt( row.v );
 						currentParticle.emit.force = row.v; break;
 					default:
+						row.v = parseInt( row.v );
 						currentParticle[row.id] = row.v;
 				}
 			}
