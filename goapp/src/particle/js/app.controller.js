@@ -12,12 +12,25 @@ app.controller = app.controller || {};
 		
 		var treeModel = {};
 		modelToTree( particles, treeModel );
-		//console.log( treeModel );
-		view.setTree( [ {
-			id:'root',
-			text:'渲染層',
-			children:[treeModel]
-		} ], 1 );
+		startToSetTree( [ treeModel ] );
+		
+		function startToSetTree( ary_ps ){
+			view.setTree( [ {
+				id:'root',
+				text:'渲染層',
+				children:ary_ps
+			} ], 1 );
+		}
+		
+		view.event.on( 'onImportEvent', function( e, options ){
+			var importobj = JSON.parse( options.importstr );
+			var ary_particls = _.map( importobj, function( pobj ){
+				var treeModel = {};
+				modelToTree( pobj, treeModel );
+				return treeModel;
+			});
+			startToSetTree( ary_particls );
+		});
 		
 		view.event.on( 'onBackColorChange', function( e, options ){
 			api.changeBgColor( options.rgb.r / 255, options.rgb.g / 255, options.rgb.b / 255 );
@@ -324,6 +337,7 @@ app.controller = app.controller || {};
 	function treeToModel( node, outputData ) {
 		var particleData = node.particle;
 		outputData.id = particleData.id;
+		outputData.name = particleData.name;
 		outputData.lifetime = particleData.lifetime;
 		outputData.vel = particleData.vel;
 		outputData.pos = particleData.pos;
@@ -380,9 +394,7 @@ app.controller = app.controller || {};
 		return d / 180 * Math.PI;
 	}
 
-	function getUid(){
-		return leo.utils.generateUUID();
-	}
+	
 
 
 	module.renderToOutputString = renderToOutputString;

@@ -79,7 +79,8 @@ app.view = app.view || {};
 	function closeImport(){
 		vic.easyui.setWindowClose( win_output );
 		if( win_output.attr( 'type' ) == 'import' ){
-			
+			var importstr = vic.easyui.getTextboxValue( win_output.find( '.easyui-textbox' ) );
+			event.trigger( 'onImportEvent', { importstr:importstr } );
 		}
 	}
 
@@ -498,16 +499,17 @@ app.view = app.view || {};
 	
 	function setTree( nodes, selectId ){
 		vic.easyui.setTree( tree_particle, nodes );
-		
-		setTimeout( function(){
-			vic.easyui.selectTreeNode( tree_particle,vic.easyui.getTreeNodeById( tree_particle, selectId ));
-			event.trigger( 'onViewTreeChange' );
-		}, 10 );
+		if( selectId != undefined ){
+			setTimeout( function(){
+				vic.easyui.selectTreeNode( tree_particle,vic.easyui.getTreeNodeById( tree_particle, selectId ));
+				event.trigger( 'onViewTreeChange' );
+			}, 10 );
+		}
 	}
 	
 	function addTree( model ){
 		if( currentNode == undefined ){
-			vic.easyui.appendTree( tree_particle, vic.easyui.getTreeNodeById( tree_particle, 0 ), { id:model.id, text:model.name, particle:model } );
+			vic.easyui.appendTree( tree_particle, vic.easyui.getTreeNodeById( tree_particle, 'root' ), { id:model.id, text:model.name, particle:model } );
 		}else{
 			vic.easyui.appendTree( tree_particle, currentNode, { id:model.id , text:model.name, particle:model } );
 		}

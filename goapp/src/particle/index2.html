@@ -323,7 +323,7 @@ function onHtmlClick( dom ){
 			app.view.closeImport();
 			break;
 		case 'btn_addTree':
-			var uid = getUid();
+			var uid = app.utils.getUid();
 			app.view.addTree( app.model.createParticle( uid, uid ) );
 			break;
 		case 'btn_removeTree':

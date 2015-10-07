@@ -21,6 +21,10 @@ vic.easyui = vic.easyui || {};
 		}
 	}
 	
+	function getTextboxValue( tbox ){
+		return tbox.textbox( 'getValue' );
+	}
+	
 	function setSpinnerValue( spr, value, dispatch ){
 		if( dispatch ){
 			spr.numberspinner( 'setValue', value );
@@ -260,6 +264,7 @@ vic.easyui = vic.easyui || {};
 	module.setWindowClose = setWindowClose;
 	
 	module.setTextboxValue = setTextboxValue;
+	module.getTextboxValue = getTextboxValue;
 	
 	module.setSpinnerValue = setSpinnerValue;
 	module.getSpinnerValue = getSpinnerValue;

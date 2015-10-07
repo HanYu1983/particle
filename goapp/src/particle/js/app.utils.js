@@ -1,6 +1,10 @@
 var app = app || {};
 app.utils = app.utils || {};
 (function( module ){
+	function getUid(){
+		return leo.utils.generateUUID();
+	}
+	
 	function keyToName( key ){
 		switch( key ){
 			case 'lifetime':return '生命毫秒'; break;
@@ -38,5 +42,6 @@ app.utils = app.utils || {};
 		}
 	}
 	
+	module.getUid = getUid;
 	module.keyToName = keyToName;
 })( app.utils );
