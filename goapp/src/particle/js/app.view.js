@@ -5,6 +5,7 @@ app.view = app.view || {};
 	var event = $('<div></div>' );
 	var tree_particle = $("#tree_particle" );
 	var txt_name = $("#txt_name" );
+	var win_output = $("#win_output" );
 	var btn_confirmName = $("#btn_confirmName" );
 	var mc_imgs = $("#mc_imgs" );
 	var btn_normalMode = $("#btn_normalMode" );
@@ -63,6 +64,10 @@ app.view = app.view || {};
 			} });
 		}
 	});
+
+	function setWinOutput( value ){
+		vic.easyui.setTextboxValue( win_output.find( '.easyui-textbox' ), value, false );
+	}
 
 	function setName( value ){
 		vic.easyui.setTextboxValue( txt_name, value, false );
@@ -591,5 +596,6 @@ app.view = app.view || {};
 	module.setInfo = setInfo;
 	module.setBlending = setBlending;
 	module.setName = setName;
+	module.setWinOutput = setWinOutput;
 	module.event = event;
 })( app.view );
