@@ -6,7 +6,7 @@ var particleDrawer = particleDrawer || {};
 
 		var objs = {}
 	
-		function createObject( key, ctx ){
+		function needObject( key, ctx ){
 			var obj = objs[key]
 		
 			if( obj == null ){
@@ -17,8 +17,8 @@ var particleDrawer = particleDrawer || {};
 			return obj
 		}
 		
-		function addObject( obj, part, ctx ){
-			callback.onAdd( obj, part, ctx )
+		function apply( obj, part, ctx ){
+			callback.onUpdate( obj, part, ctx )
 		}
 	
 		function removeObject( key, ctx ){
@@ -50,8 +50,8 @@ var particleDrawer = particleDrawer || {};
 			var parts = ctx.parts
 			for( var idx in parts ){
 				var part = parts[idx]
-				var obj = createObject( part.poolId, ctx )
-				addObject( obj, part, ctx )
+				var obj = needObject( part.poolId, ctx )
+				apply( obj, part, ctx )
 				nowlife[part.poolId] = true
 			}
 			compareAndReset( nowlife, function(key){
@@ -73,14 +73,10 @@ var particleDrawer = particleDrawer || {};
 				material.transparent = true;
 			
 				var obj = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), material)
+				scene.add( obj )
 				return obj
 			},
-			onAdd: function( obj, part, ctx ){
-				/*
-				if( ctx.textures[ part.tex ] ){
-					obj.material.map = ctx.textures[ part.tex ]
-				}
-				*/
+			onUpdate: function( obj, part, ctx ){
 				var tex = ctx.texture( 'three', part.tex )
 				if( tex ){
 					obj.material.map = tex
@@ -105,7 +101,6 @@ var particleDrawer = particleDrawer || {};
 				obj.position.set( part.pos[0], -part.pos[1], 0 )
 				obj.rotation.z = part.pos[2]
 				obj.scale.set( part.size[0], part.size[1], 1 )
-				scene.add( obj )
 			},
 			onRemove: function( obj, ctx ){
 				scene.remove( obj )
