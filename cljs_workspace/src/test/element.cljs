@@ -13,13 +13,5 @@
             map
             #(result))
           concat
-          flatten)
-        ;oldelems
-        ;(->>
-        ;  (reduce
-        ;    (fn [rl elem]
-        ;      (cons (filter #(= % elem) elems) rl))
-        ;    '())
-        ;  (drop (count newelems))
-          ]
+          flatten)]
     (into elems newelems)))

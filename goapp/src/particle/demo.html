@@ -1,0 +1,113 @@
+<html>
+	<head>
+		<title>
+			
+		</title>
+	</head>
+	<body>
+		<div id='three' style='width: 300px; height: 300px'></div>
+		<div id='div' style='width: 300px; height: 300px'></div>
+		<script src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script src='../common/js/lib/async.js'></script>
+		<script src='../common/js/lib/rxjs/rx.all.min.js'></script>
+		<script src='../common/js/lib/three.min.js'></script>
+		<script src='../common/js/lib/underscore/underscore-min.js'></script>
+		<script src='js/particle.js'></script>
+		<script src='js/particleDrawer.js'></script>
+		<script src='js/api.js'></script>
+		<script src="js/haxe.js"></script>
+		<script>
+		
+		
+		// -------- div drawer ---------- //
+		var drawDiv = particleDrawer.basic({
+			onCreate: function( key, ctx ){
+				console.log('oncreate')
+				return {"id": key}
+			},
+			onAdd: function( obj, part, ctx ){
+				console.log('onadd ', JSON.stringify(obj) )
+			},
+			onRemove: function( obj, ctx ){
+				console.log('onremove ', JSON.stringify(obj) )
+			},
+			onRender: function( ctx ){
+				console.log('onrender')
+			}
+		})
+		
+		
+		// -------- three drawer ---------- //
+		var jdom = $('#three')
+		var w = jdom.width()
+		var h = jdom.height()
+
+		var useWebgl = true
+		var renderer = useWebgl ? new THREE.WebGLRenderer({antialias: true}) : new THREE.CanvasRenderer({antialias: true})
+		renderer.setSize( w, h )
+		$(renderer.domElement).appendTo( jdom )
+		
+		var scene = new THREE.Scene
+		var drawThree = particleDrawer.three(w, h, scene, renderer)
+		
+		// ------- main ----------- //
+		var pool = particle.pool( 2000 )
+		var first = particle.initParticle( pool.get(), { 
+			id: 'root',
+			lifetime: 0,
+			vel: [1, 1, 1],
+			emit: {
+				duration: 0.1,
+				force: 100,
+				range: 0,
+				prototype: [
+					{
+						color: [0, 1, 1, 1],
+						vel: [0, 0, 1],
+						emit: {
+							duration: 1,
+							prototype:[
+								{
+									vel: [0, -100, 1]
+								}
+							]
+						}
+					}
+				]
+			},
+			formulaList: [
+				function(part, lifep){
+				
+				}
+			]
+		})
+	
+		var ctx = {
+			parts: [first],
+			textures: {},
+			bgColor: [0, 0, 0],
+			fps: 30,
+		}
+		
+		var last = new Date().getTime()
+		setTimeout( function(){
+			var now = new Date().getTime()
+			var elap = (now - last)/ 1000.0
+			last = now
+			particle.stepParticles( pool, ctx.parts, elap )
+			// 刪除超過螢幕的
+			ctx.parts = _.filter( ctx.parts, function(item){
+				// 函數式的函式中增加了副作用，還在可以接受的範圍
+				var shouldRemove = item.pos[0] < 0 || item.pos[0] > w || item.pos[1] < 0 || item.pos[1] > h
+				if( shouldRemove ){
+					pool.put( item )
+				}
+				return shouldRemove == false
+			})
+			drawThree( ctx )
+			drawDiv( ctx )
+			setTimeout( arguments.callee, 1000.0/ctx.fps )
+		}, 0)
+		</script>
+	</body>
+</html>
