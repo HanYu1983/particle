@@ -717,7 +717,13 @@
 		}
 		
 		function removeTree(){
+		console.log( currentNode );
 			if( currentNode != undefined ){
+				if( currentNode.id == 'root' ){
+					vic.easyui.showAlert( '渲染層無法刪除哦' );
+					return; 
+				}
+				
 				vic.easyui.removeTree( tree_particle, currentNode );
 				currentNode = undefined;
 				api.clearParticle();

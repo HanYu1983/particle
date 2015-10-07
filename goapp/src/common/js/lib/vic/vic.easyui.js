@@ -208,6 +208,31 @@ vic.easyui = vic.easyui || {};
 		return hex.join('');
 	}
 	
+	
+	function showMessage( msg, time ){
+		$.messager.show({
+			title:'提示',
+			msg: msg,
+			timeout: time,
+			showType:'slide'
+		});
+	}
+	
+	function showAlert( msg ){
+		$.messager.alert('錯誤', msg, 'warning');
+	}
+	
+	function showLoading( msg ){
+		$.messager.progress({
+			title:'提示',
+			msg: msg
+		});
+	}
+	
+	function closeLoading(){
+		$.messager.progress('close');
+	}
+	
 	module.setSpinnerValue = setSpinnerValue;
 	module.getSpinnerValue = getSpinnerValue;
 	
@@ -236,5 +261,10 @@ vic.easyui = vic.easyui || {};
 	
 	module.initColorPicker = initColorPicker;
 	module.setColorPickerColor = setColorPickerColor;
+	
+	module.showMessage = showMessage;
+	module.showAlert = showAlert;
+	module.showLoading = showLoading;
+	module.closeLoading = closeLoading;
 	
 })( vic.easyui );
