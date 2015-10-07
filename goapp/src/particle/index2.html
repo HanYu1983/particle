@@ -257,7 +257,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false" style="width:600px;height:300px;text-align:center;">
+	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false,closed:true" style="width:600px;height:300px;text-align:center;">
         <input class="easyui-textbox" data-options="multiline:true" value="This TextBox will allow the user to enter multiple lines of text." style="width:100%;height:85%">
 		<div class="group" style="margin-top:5px;">
 			<a id="btn_outputConfirm" class="easyui-linkbutton" onclick="onHtmlClick(this)">確定</a>
@@ -314,10 +314,13 @@ function loadImage( src, cb ) {
 function onHtmlClick( dom ){
 	switch( dom.id ){
 		case 'btn_import':
+			app.view.setWinOutput( '' );
 			break;
 		case 'btn_output':
+			app.view.setWinOutput( JSON.stringify( app.controller.renderToOutputString() ));
 			break;
 		case 'btn_outputConfirm':
+			app.view.closeImport();
 			break;
 		case 'btn_addTree':
 			var uid = getUid();

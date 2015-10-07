@@ -3,6 +3,14 @@ vic.easyui = vic.easyui || {};
 
 (function( module ){
 	
+	function setWindowOpen( win ){
+		win.window( 'open' );
+	}
+	
+	function setWindowClose( win ){
+		win.window( 'close' );
+	}
+	
 	function setTextboxValue( tbox, value, dispatch ){
 		if( dispatch ){
 			tbox.textbox( 'setValue', value );
@@ -247,6 +255,9 @@ vic.easyui = vic.easyui || {};
 	function closeLoading(){
 		$.messager.progress('close');
 	}
+	
+	module.setWindowOpen = setWindowOpen;
+	module.setWindowClose = setWindowClose;
 	
 	module.setTextboxValue = setTextboxValue;
 	

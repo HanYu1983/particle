@@ -67,6 +67,20 @@ app.view = app.view || {};
 
 	function setWinOutput( value ){
 		vic.easyui.setTextboxValue( win_output.find( '.easyui-textbox' ), value, false );
+		vic.easyui.setWindowOpen(  win_output );
+		
+		if( value == '' ){
+			win_output.attr( 'type', 'import' );
+		}else{
+			win_output.attr( 'type', 'output' );
+		}
+	}
+	
+	function closeImport(){
+		vic.easyui.setWindowClose( win_output );
+		if( win_output.attr( 'type' ) == 'import' ){
+			
+		}
 	}
 
 	function setName( value ){
@@ -597,5 +611,6 @@ app.view = app.view || {};
 	module.setBlending = setBlending;
 	module.setName = setName;
 	module.setWinOutput = setWinOutput;
+	module.closeImport = closeImport;
 	module.event = event;
 })( app.view );

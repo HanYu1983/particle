@@ -304,57 +304,69 @@ app.controller = app.controller || {};
 			}
 		}
 		
-		function modelToTree( fields, retobj ) {
-			retobj.id = fields.id;
-			retobj.text = fields.name;
-			retobj.particle = fields;
-			
-			if ( fields.emit != undefined ) {
-				retobj.children = [];
-				_.each( fields.emit.prototype, function( p ){
-					var tobj = {};
-					retobj.children.push( tobj );
-					modelToTree( p, tobj );
-				});
-			}
-		}
+	}
+	
+	function modelToTree( fields, retobj ) {
+		retobj.id = fields.id;
+		retobj.text = fields.name;
+		retobj.particle = fields;
 		
-		function treeToModel( node, outputData ) {
-			var particleData = node.particle;
-			outputData.id = particleData.id;
-			outputData.lifetime = particleData.lifetime;
-			outputData.vel = particleData.vel;
-			outputData.pos = particleData.pos;
-			outputData.mass = particleData.mass;
-			outputData.color = particleData.color;
-			outputData.size = particleData.size;
-			outputData.tex = particleData.tex;
-			outputData.blending = particleData.blending;
-			outputData.formulaList = deepCopy( particleData.formulaList );
-			
-			if ( node.children && node.children.length > 0 ) {
-				if( particleData.emit == undefined ){
-					particleData.emit = {};
-					particleData.emit.count = 1;
-					particleData.emit.duration = .5;
-					particleData.emit.angle = 0;
-					particleData.emit.range = 0;
-					particleData.emit.force = 100;
-				}
-				particleData.emit.prototype = [];
-				if( outputData.emit == undefined ){
-					outputData.emit = deepCopy( node.particle.emit );
-				}
-				_.each( node.children, function( nc ){
-					var obj = { };
-					outputData.emit.prototype.push( obj );
-					treeToModel( nc, obj );
-				});
+		if ( fields.emit != undefined ) {
+			retobj.children = [];
+			_.each( fields.emit.prototype, function( p ){
+				var tobj = {};
+				retobj.children.push( tobj );
+				modelToTree( p, tobj );
+			});
+		}
+	}
+	
+	function treeToModel( node, outputData ) {
+		var particleData = node.particle;
+		outputData.id = particleData.id;
+		outputData.lifetime = particleData.lifetime;
+		outputData.vel = particleData.vel;
+		outputData.pos = particleData.pos;
+		outputData.mass = particleData.mass;
+		outputData.color = particleData.color;
+		outputData.size = particleData.size;
+		outputData.tex = particleData.tex;
+		outputData.blending = particleData.blending;
+		outputData.formulaList = deepCopy( particleData.formulaList );
+		
+		if ( node.children && node.children.length > 0 ) {
+			if( particleData.emit == undefined ){
+				particleData.emit = {};
+				particleData.emit.count = 1;
+				particleData.emit.duration = .5;
+				particleData.emit.angle = 0;
+				particleData.emit.range = 0;
+				particleData.emit.force = 100;
 			}
+			particleData.emit.prototype = [];
+			if( outputData.emit == undefined ){
+				outputData.emit = deepCopy( node.particle.emit );
+			}
+			_.each( node.children, function( nc ){
+				var obj = { };
+				outputData.emit.prototype.push( obj );
+				treeToModel( nc, obj );
+			});
 		}
 	}
 
-	
+	function renderToOutputString(){
+		var ary_forToString = [];
+		var renderRoots = vic.easyui.getTreeNodeById( app.view.tree_particle, 'root' );
+		if( renderRoots.children.length > 0 ){
+			_.each( renderRoots.children, function( root ){
+				var retobj = { };
+				treeToModel( vic.easyui.getTreeNodeById( app.view.tree_particle, root.id ), retobj );
+				ary_forToString.push( retobj );
+			});
+		}
+		return ary_forToString;
+	}
 
 	function deepCopy( obj ){
 		return JSON.parse( JSON.stringify( obj ));
@@ -373,7 +385,7 @@ app.controller = app.controller || {};
 	}
 
 
-	
+	module.renderToOutputString = renderToOutputString;
 	module.appStart = appStart;
 
 })( app.controller );
