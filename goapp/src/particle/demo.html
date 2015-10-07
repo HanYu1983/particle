@@ -38,18 +38,21 @@
 				obj.css( 'transform', 'rotate(' + -part.pos[2] / Math.PI * 180 + 'deg)' );
 				obj.css( 'background-color', 'gray' );
 				
+				var imgdom = undefined;
 				if( part.tex != '' && ( obj.find( '#img' ).length == 0 ) ){
 					var tex = ctx.texture( 'div', part.tex )
-					var nctx = tex.clone(true);
+					imgdom = tex.clone();
+					imgdom.attr( 'id', 'img' );
+					obj.append( imgdom );
+				}
+				
+				if( imgdom != undefined ){
+					imgdom.css( 'position', 'relative' );
+					imgdom.css( 'width', '100%;' );
+					imgdom.css( 'height', '100%;' );
 					
-					nctx.attr( 'id', 'img' );
-					nctx.css( 'position', 'relative' );
-					nctx.css( 'width', '100%;' );
-					nctx.css( 'height', '100%;' );
-					
-					nctx.css( 'left', '0' );
-					nctx.css( 'top', '0' );
-					obj.append( nctx );
+					imgdom.css( 'left', '0' );
+					imgdom.css( 'top', '0' );
 				}
 				
 			},
@@ -82,7 +85,7 @@
 			vel: [1, 1, 1],
 			tex:'0',
 			emit: {
-				duration: 10,
+				duration: .5,
 				force: 100,
 				range: 0,
 				prototype: [
