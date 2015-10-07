@@ -125,6 +125,14 @@
 							<div class="group" style="text-align:center; margin-top:10px;">
 								<div class="hori">基本參數</div>
 							</div>
+							<div class="group" style="text-align:center; margin-bottom:10px; margin-top:10px; ">
+								<div class="hori" style="width:100px; ">
+									<input id="txt_name" class="easyui-textbox" style="width:100px;"></input>
+								</div>
+								<div class="hori">
+									<a id="btn_confirmName" class="easyui-linkbutton" data-options="iconCls:'icon-ok'">確定</a>
+								</div>
+							</div>
 							<div id="mc_propContainer" class="group" style="margin-top:10px; text-align:center;">
 								<!-- by script -->
 							</div>
@@ -250,6 +258,8 @@
 	(function( module ){
 		var event = $('<div></div>' );
 		var tree_particle = $("#tree_particle" );
+		var txt_name = $("#txt_name" );
+		var btn_confirmName = $("#btn_confirmName" );
 		var mc_imgs = $("#mc_imgs" );
 		var btn_normalMode = $("#btn_normalMode" );
 		var btn_addMode = $("#btn_addMode" );
@@ -270,6 +280,21 @@
 		var cpr_back = $('#cpr_back');
 		var txt_count = $('#txt_count');
 		var txt_fps = $('#txt_fps');
+		
+		txt_name.textbox( {
+			onChange:function( nv, ob ){
+				if( currentNode != undefined ){
+					currentNode.text = nv;
+					vic.easyui.updateTree( tree_particle, currentNode );
+					event.trigger( 'onPropChange',  { currentRow: {
+						row:{
+							id:'name',
+							v:nv
+						}
+					} });
+				}
+			}
+		});
 		
 		btn_normalMode.linkbutton({
 			onClick:function(){
@@ -292,6 +317,10 @@
 				} });
 			}
 		});
+
+		function setName( value ){
+			vic.easyui.setTextboxValue( txt_name, value, false );
+		}
 		
 		function setBlending( type ){
 			switch( type ){
@@ -813,6 +842,7 @@
 		module.setParticleColor = setParticleColor;
 		module.setInfo = setInfo;
 		module.setBlending = setBlending;
+		module.setName = setName;
 		module.event = event;
 	})( app.view );
 	
@@ -1107,6 +1137,7 @@
 			view.setImgFocus( options.node.particle.tex );
 			view.setParticleColor( options.node.particle.color[0], options.node.particle.color[1], options.node.particle.color[2] );
 			view.setBlending( options.node.particle.blending );
+			view.setName( options.node.particle.name );
 			
 			currentParticle = options.node.particle;
 		});
@@ -1225,6 +1256,8 @@
 						currentParticle.size[1] = row.v; break;
 					case 'blending':
 						currentParticle.blending = row.v; break;
+					case 'name':
+						currentParticle.name = row.v;break;
 					case 'emit-count':
 						row.v = parseInt( row.v );
 						currentParticle.emit.count = row.v; break;

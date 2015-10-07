@@ -2,6 +2,17 @@ var vic = vic || {};
 vic.easyui = vic.easyui || {};
 
 (function( module ){
+	
+	function setTextboxValue( tbox, value, dispatch ){
+		if( dispatch ){
+			tbox.textbox( 'setValue', value );
+		}else{
+			tbox.textbox( {
+				value:value
+			});
+		}
+	}
+	
 	function setSpinnerValue( spr, value, dispatch ){
 		if( dispatch ){
 			spr.numberspinner( 'setValue', value );
@@ -140,6 +151,10 @@ vic.easyui = vic.easyui || {};
 		return tree.tree( 'getRoots' );
 	}
 	
+	function updateTree( tree, node ){
+		tree.tree('update', node);
+	}
+	
 	function appendTree( tree, select, datas ){
 		tree.tree('append', {
 			parent: select.target,
@@ -233,6 +248,8 @@ vic.easyui = vic.easyui || {};
 		$.messager.progress('close');
 	}
 	
+	module.setTextboxValue = setTextboxValue;
+	
 	module.setSpinnerValue = setSpinnerValue;
 	module.getSpinnerValue = getSpinnerValue;
 	
@@ -256,6 +273,7 @@ vic.easyui = vic.easyui || {};
 	module.getTreeNodeById = getTreeNodeById;
 	module.getTreeRoot = getTreeRoot;
 	module.getTreeRoots = getTreeRoots;
+	module.updateTree = updateTree;
 	module.appendTree = appendTree;
 	module.removeTree = removeTree;
 	
