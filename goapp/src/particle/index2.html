@@ -393,6 +393,7 @@
 								{id:'vx', name:'速度x', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'vy', name:'速度y', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'vr', name:'旋轉速度', random:true, friction:true, randomAdd:true, custom:true}, 
+								{id:'a', name:'alpha', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'scale-x', name:'粒子寬度', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'scale-y', name:'粒子高度', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'emit-count', name:'發射數目', random:true, friction:true, randomAdd:true, custom:true}, 
@@ -1080,6 +1081,7 @@
 						{id:'vx', name:'速度x', v: p.vel[0]},
 						{id:'vy', name:'速度y', v: p.vel[1]},
 						{id:'vr', name:'轉速', v: radianToDegree( p.vel[2] )},
+						{id:'a', name:'alpha', v: p.color[3] * 1000 },
 						{id:'scale-x', name:'寬度', v: p.size[0]},
 						{id:'scale-y', name:'高度', v: p.size[1]}
 					];
@@ -1093,6 +1095,7 @@
 					{id:'vx', name:'速度x', v: p.vel[0]},
 					{id:'vy', name:'速度y', v: p.vel[1]},
 					{id:'vr', name:'轉速', v: radianToDegree( p.vel[2] )},
+					{id:'a', name:'alpha', v: p.color[3] * 1000 },
 					{id:'scale-x', name:'寬度', v: p.size[0]},
 					{id:'scale-y', name:'高度', v: p.size[1]},
 					{id:'emit-count', name:'發射數目', v: p.emit.count},
@@ -1135,6 +1138,7 @@
 							
 								break;
 							case 'lifetime':
+							case 'a':
 								retobj.v1 = retobj.v1 * 1000;
 								retobj.v2 = retobj.v2 * 1000;
 								retobj.v3 = retobj.v3 * 1000;
@@ -1228,6 +1232,7 @@
 									break;
 							}
 							break;
+						case 'a':
 						case 'lifetime':
 							retobj[2] = retobj[2] / 1000;
 							retobj[3] = retobj[3] / 1000;
@@ -1257,6 +1262,10 @@
 						currentParticle.color[0] = row.extra.r / 255;
 						currentParticle.color[1] = row.extra.g / 255;
 						currentParticle.color[2] = row.extra.b / 255;
+						break;
+					case 'a':
+						row.v = parseInt( row.v );
+						currentParticle.color[3] = row.v / 1000;
 						break;
 					case 'lifetime':
 						row.v = parseInt( row.v );
