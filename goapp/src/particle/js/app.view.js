@@ -512,6 +512,7 @@ app.view = app.view || {};
 		}else{
 			vic.easyui.appendTree( tree_particle, currentNode, { id:model.id , text:model.name, particle:model } );
 		}
+		vic.easyui.selectTreeNode( tree_particle,vic.easyui.getTreeNodeById( tree_particle, model.id ));
 		event.trigger( 'onViewTreeChange' );
 	}
 	

@@ -4,7 +4,7 @@ app.model = app.model || {};
 (function( module ){
 	var particles =  {  
 		  "id":0,
-		  "name":"粒子",
+		  "name":"發射器",
 		  "lifetime":0,
 		  "vel":[  
 			 0,
