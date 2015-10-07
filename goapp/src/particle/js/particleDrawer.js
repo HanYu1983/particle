@@ -76,8 +76,14 @@ var particleDrawer = particleDrawer || {};
 				return obj
 			},
 			onAdd: function( obj, part, ctx ){
+				/*
 				if( ctx.textures[ part.tex ] ){
 					obj.material.map = ctx.textures[ part.tex ]
+				}
+				*/
+				var tex = ctx.texture( 'three', part.tex )
+				if( tex ){
+					obj.material.map = tex
 				}
 			
 				var material = obj.material

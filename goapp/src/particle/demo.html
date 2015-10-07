@@ -7,6 +7,7 @@
 	<body>
 		<div id='three' style='width: 300px; height: 300px'></div>
 		<div id='div' style='width: 300px; height: 300px'></div>
+		<img id='tex1' src='images/glow.jpg'>
 		<script src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script src='../common/js/lib/async.js'></script>
 		<script src='../common/js/lib/rxjs/rx.all.min.js'></script>
@@ -82,11 +83,20 @@
 			]
 		})
 	
+		var tex = new THREE.Texture($('#tex1')[0])
+		tex.needsUpdate = true
+		
 		var ctx = {
 			parts: [first],
 			textures: {},
 			bgColor: [0, 0, 0],
 			fps: 30,
+			texture: function( type, key ){
+				if( type == 'three' ){
+					return tex
+				}
+				return null
+			}
 		}
 		
 		var last = new Date().getTime()
