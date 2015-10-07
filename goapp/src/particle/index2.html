@@ -1053,11 +1053,24 @@
 							case 'vr':
 							case 'emit-range':
 							case 'emit-angle':
-								retobj.v1 = radianToDegree( retobj.v1 );
-								retobj.v2 = radianToDegree( retobj.v2 );
-								retobj.v3 = radianToDegree( retobj.v3 );
-								retobj.v4 = radianToDegree( retobj.v4 );
-								retobj.v5 = radianToDegree( retobj.v5 );
+								switch( retobj.tid ){
+									case 'linearMul','constMul':
+										retobj.v1 = retobj.v1 * 1000;
+										retobj.v2 = retobj.v2 * 1000;
+										retobj.v3 = retobj.v3 * 1000;
+										retobj.v4 = retobj.v4 * 1000;
+										retobj.v5 = retobj.v5 * 1000;
+										break;
+									default:
+										retobj.v1 = radianToDegree( retobj.v1 );
+										retobj.v2 = radianToDegree( retobj.v2 );
+										retobj.v3 = radianToDegree( retobj.v3 );
+										retobj.v4 = radianToDegree( retobj.v4 );
+										retobj.v5 = radianToDegree( retobj.v5 );
+										break;
+									
+								}
+							
 								break;
 							case 'lifetime':
 								retobj.v1 = retobj.v1 * 1000;
@@ -1066,17 +1079,19 @@
 								retobj.v4 = retobj.v4 * 1000;
 								retobj.v5 = retobj.v5 * 1000;
 								break;
+							default:
+								switch( retobj.tid ){
+									case 'linearMul','constMul':
+										retobj.v1 = retobj.v1 * 1000;
+										retobj.v2 = retobj.v2 * 1000;
+										retobj.v3 = retobj.v3 * 1000;
+										retobj.v4 = retobj.v4 * 1000;
+										retobj.v5 = retobj.v5 * 1000;
+								}
 						}
+						/*
 						
-						switch( retobj.tid ){
-							case 'linearMul','constMul':
-								retobj.v1 = retobj.v1 * 1000;
-								retobj.v2 = retobj.v2 * 1000;
-								retobj.v3 = retobj.v3 * 1000;
-								retobj.v4 = retobj.v4 * 1000;
-								retobj.v5 = retobj.v5 * 1000;
-						}
-						
+						*/
 						return retobj;
 					});
 				})( options.node ));
@@ -1133,11 +1148,22 @@
 						case 'vr':
 						case 'emit-range':
 						case 'emit-angle':
-							retobj[2] = degreeToRadian( retobj[2] );
-							retobj[3] = degreeToRadian( retobj[3] );
-							retobj[4] = degreeToRadian( retobj[4] );
-							retobj[5] = degreeToRadian( retobj[5] );
-							retobj[6] = degreeToRadian( retobj[6] );
+							switch( r.tid ){
+								case 'linearMul','constMul':
+									retobj[2] = retobj[2] / 1000;
+									retobj[3] = retobj[3] / 1000;
+									retobj[4] = retobj[4] / 1000;
+									retobj[5] = retobj[5] / 1000;
+									retobj[6] = retobj[6] / 1000;
+									break;
+								default:
+									retobj[2] = degreeToRadian( retobj[2] );
+									retobj[3] = degreeToRadian( retobj[3] );
+									retobj[4] = degreeToRadian( retobj[4] );
+									retobj[5] = degreeToRadian( retobj[5] );
+									retobj[6] = degreeToRadian( retobj[6] );
+									break;
+							}
 							break;
 						case 'lifetime':
 							retobj[2] = retobj[2] / 1000;
@@ -1146,18 +1172,17 @@
 							retobj[5] = retobj[5] / 1000;
 							retobj[6] = retobj[6] / 1000;
 							break;
+						default:
+							switch( r.tid ){
+								case 'linearMul','constMul':
+									retobj[2] = retobj[2] / 1000;
+									retobj[3] = retobj[3] / 1000;
+									retobj[4] = retobj[4] / 1000;
+									retobj[5] = retobj[5] / 1000;
+									retobj[6] = retobj[6] / 1000;
+									break;
+							}
 					}
-					
-					switch( r.tid ){
-						case 'linearMul','constMul':
-							retobj[2] = retobj[2] / 1000;
-							retobj[3] = retobj[3] / 1000;
-							retobj[4] = retobj[4] / 1000;
-							retobj[5] = retobj[5] / 1000;
-							retobj[6] = retobj[6] / 1000;
-							break;
-					}
-					
 					return retobj;
 				});
 				
