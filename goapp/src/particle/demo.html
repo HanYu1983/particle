@@ -5,8 +5,8 @@
 		</title>
 	</head>
 	<body>
-		<div id='three' style='width: 300px; height: 300px'></div>
-		<div id='div' style='width: 300px; height: 300px'></div>
+		<div id='three' style='position:relative; width: 300px; height: 300px'></div>
+		<div id='div' style='position:relative; width: 300px; height: 300px'></div>
 		<img id='tex1' src='images/glow.jpg'>
 		<script src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script src='../common/js/lib/async.js'></script>
@@ -24,20 +24,44 @@
 		var drawDiv = particleDrawer.basic({
 			onCreate: function( key, ctx ){
 				console.log('oncreate')
-				return {"id": key}
+				var dom = $('<div></div>');
+				return dom;
 			},
 			onAdd: function( obj, part, ctx ){
-				console.log('onadd ', JSON.stringify(obj) )
+			
+				$('#div' ).append( obj );
+				
+				obj.css( 'position', 'absolute' );
+				obj.css( 'left', part.pos[0] - part.size[0] / 2 );
+				obj.css( 'top', part.pos[1] - part.size[1] / 2 );
+				obj.css( 'width', part.size[0] );
+				obj.css( 'height', part.size[1] );
+				obj.css( 'transform', 'rotate(' + -part.pos[2] / Math.PI * 180 + 'deg)' );
+				obj.css( 'background-color', 'gray' );
+				
+				if( part.tex != '' && ( obj.find( '#img' ).length == 0 ) ){
+					var tex = ctx.texture( 'div', part.tex )
+					var nctx = tex.clone(true);
+					
+					nctx.attr( 'id', 'img' );
+					nctx.css( 'position', 'relative' );
+					nctx.css( 'width', '100%;' );
+					nctx.css( 'height', '100%;' );
+					
+					nctx.css( 'left', '0' );
+					nctx.css( 'top', '0' );
+					obj.append( nctx );
+				}
+				
 			},
 			onRemove: function( obj, ctx ){
-				console.log('onremove ', JSON.stringify(obj) )
+				obj.empty();
+				obj.remove();
 			},
 			onRender: function( ctx ){
-				console.log('onrender')
+				
 			}
 		})
-		
-		
 		// -------- three drawer ---------- //
 		var jdom = $('#three')
 		var w = jdom.width()
@@ -57,14 +81,16 @@
 			id: 'root',
 			lifetime: 0,
 			vel: [1, 1, 1],
+			tex:'0',
 			emit: {
-				duration: 0.1,
+				duration: 10,
 				force: 100,
 				range: 0,
 				prototype: [
 					{
 						color: [0, 1, 1, 1],
 						vel: [0, 0, 1],
+						tex:'1',
 						emit: {
 							duration: 1,
 							prototype:[
@@ -93,7 +119,14 @@
 			fps: 30,
 			texture: function( type, key ){
 				if( type == 'three' ){
-					return tex
+					return tex;
+				}
+				if( type == 'div' ){
+					return $('#tex1');
+					switch( key ){
+						case '0':return $('#tex1');
+						case '1':return $('#tex1');
+					}
 				}
 				return null
 			}
