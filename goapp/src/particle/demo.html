@@ -6,7 +6,7 @@
 	</head>
 	<body>
 		<div id='three' style='position:relative; width: 300px; height: 300px'></div>
-		<div id='div' style='position:relative; width: 300px; height: 300px'></div>
+		<div id='div' style='position:relative; width: 300px; height: 300px; background-color:gray;'></div>
 		<img id='tex1' src='images/glow.jpg'>
 		<script src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script src='../common/js/lib/async.js'></script>
@@ -23,38 +23,52 @@
 		// -------- div drawer ---------- //
 		var drawDiv = particleDrawer.basic({
 			onCreate: function( key, ctx ){
-				console.log('oncreate')
 				var dom = $('<div></div>');
 				$('#div' ).append( dom );
 				return dom;
 			},
 			onUpdate: function( obj, part, ctx ){
-			
+				
 				obj.css( 'position', 'absolute' );
 				obj.css( 'left', part.pos[0] - part.size[0] / 2 );
 				obj.css( 'top', part.pos[1] - part.size[1] / 2 );
-				obj.css( 'width', part.size[0] );
-				obj.css( 'height', part.size[1] );
+				obj.css( 'width', part.size[0] + 'px' );
+				obj.css( 'height', part.size[1] + 'px' );
+				
+				var hexcolor = (function( rgb ){
+					var hex = [
+						rgb.r.toString(16),
+						rgb.g.toString(16),
+						rgb.b.toString(16)
+					];
+					$.each(hex, function (nr, val) {
+						if (val.length == 1) {
+							hex[nr] = '0' + val;
+						}
+					});
+					return hex.join('');
+				})( {
+					r:Math.floor( part.color[0] * 255 ),
+					g:Math.floor( part.color[1] * 255 ),
+					b:Math.floor( part.color[2] * 255 )
+				} );
+				
+				if( part.tex != '' ) {
+					if( obj.find( '#img' ).length == 0 ){
+						var tex = ctx.texture( 'div', part.tex ).clone();
+						tex.css( 'position', 'relative' );
+						tex.css( 'width', '100%' );
+						tex.css( 'height', '100%' );
+						tex.css( 'left', '0' );
+						tex.css( 'top', '0' );
+						tex.attr( 'id', 'img' );
+						obj.prepend( tex );
+					}
+				}
+				
+				obj.css( 'background-color', '#' + hexcolor );
+				obj.css( 'opacity', part.color[3] );
 				obj.css( 'transform', 'rotate(' + -part.pos[2] / Math.PI * 180 + 'deg)' );
-				obj.css( 'background-color', 'gray' );
-				
-				var imgdom = undefined;
-				if( part.tex != '' && ( obj.find( '#img' ).length == 0 ) ){
-					var tex = ctx.texture( 'div', part.tex )
-					imgdom = tex.clone();
-					imgdom.attr( 'id', 'img' );
-					obj.append( imgdom );
-				}
-				
-				if( imgdom != undefined ){
-					imgdom.css( 'position', 'relative' );
-					imgdom.css( 'width', '100%;' );
-					imgdom.css( 'height', '100%;' );
-					
-					imgdom.css( 'left', '0' );
-					imgdom.css( 'top', '0' );
-				}
-				
 			},
 			onRemove: function( obj, ctx ){
 				obj.empty();
@@ -84,15 +98,19 @@
 			lifetime: 0,
 			vel: [1, 1, 1],
 			tex:'0',
+			size:[50, 50],
 			emit: {
-				duration: .5,
+				duration: .05,
 				force: 100,
 				range: 0,
 				prototype: [
 					{
+						lifetime:10,
 						color: [0, 1, 1, 1],
 						vel: [0, 0, 1],
 						tex:'1',
+						size:[50, 50],
+						blending:'add',
 						emit: {
 							duration: 1,
 							prototype:[
