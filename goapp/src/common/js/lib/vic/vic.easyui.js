@@ -2,6 +2,17 @@ var vic = vic || {};
 vic.easyui = vic.easyui || {};
 
 (function( module ){
+	
+	function setTextboxValue( tbox, value, dispatch ){
+		if( dispatch ){
+			tbox.textbox( 'setValue', value );
+		}else{
+			tbox.textbox( {
+				value:value
+			});
+		}
+	}
+	
 	function setSpinnerValue( spr, value, dispatch ){
 		if( dispatch ){
 			spr.numberspinner( 'setValue', value );
@@ -140,6 +151,10 @@ vic.easyui = vic.easyui || {};
 		return tree.tree( 'getRoots' );
 	}
 	
+	function updateTree( tree, node ){
+		tree.tree('update', node);
+	}
+	
 	function appendTree( tree, select, datas ){
 		tree.tree('append', {
 			parent: select.target,
@@ -208,6 +223,33 @@ vic.easyui = vic.easyui || {};
 		return hex.join('');
 	}
 	
+	
+	function showMessage( msg, time ){
+		$.messager.show({
+			title:'提示',
+			msg: msg,
+			timeout: time,
+			showType:'slide'
+		});
+	}
+	
+	function showAlert( msg ){
+		$.messager.alert('錯誤', msg, 'warning');
+	}
+	
+	function showLoading( msg ){
+		$.messager.progress({
+			title:'提示',
+			msg: msg
+		});
+	}
+	
+	function closeLoading(){
+		$.messager.progress('close');
+	}
+	
+	module.setTextboxValue = setTextboxValue;
+	
 	module.setSpinnerValue = setSpinnerValue;
 	module.getSpinnerValue = getSpinnerValue;
 	
@@ -231,10 +273,16 @@ vic.easyui = vic.easyui || {};
 	module.getTreeNodeById = getTreeNodeById;
 	module.getTreeRoot = getTreeRoot;
 	module.getTreeRoots = getTreeRoots;
+	module.updateTree = updateTree;
 	module.appendTree = appendTree;
 	module.removeTree = removeTree;
 	
 	module.initColorPicker = initColorPicker;
 	module.setColorPickerColor = setColorPickerColor;
+	
+	module.showMessage = showMessage;
+	module.showAlert = showAlert;
+	module.showLoading = showLoading;
+	module.closeLoading = closeLoading;
 	
 })( vic.easyui );
