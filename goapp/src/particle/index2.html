@@ -364,8 +364,8 @@
 		var ary_propsModel = [ 	{id:'lifetime', name:'生命', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'mass', name:'質量', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'rot', name:'角度', random:true, friction:true, randomAdd:true, custom:true}, 
-								//{id:'x', name:'位置x', random:true, friction:true, randomAdd:true, custom:true}, 
-								//{id:'y', name:'位置y', random:true, friction:true, randomAdd:true, custom:true}, 
+								{id:'x', name:'位置x', random:true, friction:true, randomAdd:true, custom:true}, 
+								{id:'y', name:'位置y', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'vx', name:'速度x', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'vy', name:'速度y', random:true, friction:true, randomAdd:true, custom:true}, 
 								{id:'vr', name:'旋轉速度', random:true, friction:true, randomAdd:true, custom:true}, 
@@ -1050,8 +1050,8 @@
 						{id:'lifetime', name:'生命毫秒', v: p.lifetime * 1000 },
 						{id:'mass', name:'質量', v: p.mass},
 						{id:'rot', name:'角度', v: radianToDegree( p.pos[2] )},
-						//{id:'x', name:'位置x', v: p.pos[0]},
-						//{id:'y', name:'位置y', v: p.pos[1]},
+						{id:'x', name:'位置x', v: p.pos[0]},
+						{id:'y', name:'位置y', v: p.pos[1]},
 						{id:'vx', name:'速度x', v: p.vel[0]},
 						{id:'vy', name:'速度y', v: p.vel[1]},
 						{id:'vr', name:'轉速', v: radianToDegree( p.vel[2] )},
@@ -1063,8 +1063,8 @@
 					{id:'lifetime', name:'生命毫秒', v: p.lifetime * 1000 },
 					{id:'mass', name:'質量', v: p.mass},
 					{id:'rot', name:'角度', v: radianToDegree( p.pos[2] )},
-					//{id:'x', name:'位置x', v: p.pos[0]},
-					//{id:'y', name:'位置y', v: p.pos[1]},
+					{id:'x', name:'位置x', v: p.pos[0]},
+					{id:'y', name:'位置y', v: p.pos[1]},
 					{id:'vx', name:'速度x', v: p.vel[0]},
 					{id:'vy', name:'速度y', v: p.vel[1]},
 					{id:'vr', name:'轉速', v: radianToDegree( p.vel[2] )},
@@ -1239,6 +1239,12 @@
 					case 'rot':
 						row.v = parseInt( row.v );
 						currentParticle.pos[2] = degreeToRadian( row.v );break;
+					case 'x':
+						row.v = parseInt( row.v );
+						currentParticle.pos[0] = row.v; break;
+					case 'y':
+						row.v = parseInt( row.v );
+						currentParticle.pos[1] = row.v; break;
 					case 'vx':
 						row.v = parseInt( row.v );
 						currentParticle.vel[0] = row.v; break;
