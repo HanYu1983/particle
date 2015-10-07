@@ -8,16 +8,14 @@ var particleDrawer = particleDrawer || {};
 	
 		function needObject( key, ctx ){
 			var obj = objs[key]
-		
 			if( obj == null ){
 				obj = callback.onCreate( key, ctx )
 				objs[key] = obj
 			}
-		
 			return obj
 		}
 		
-		function apply( obj, part, ctx ){
+		function update( obj, part, ctx ){
 			callback.onUpdate( obj, part, ctx )
 		}
 	
@@ -51,7 +49,7 @@ var particleDrawer = particleDrawer || {};
 			for( var idx in parts ){
 				var part = parts[idx]
 				var obj = needObject( part.poolId, ctx )
-				apply( obj, part, ctx )
+				update( obj, part, ctx )
 				nowlife[part.poolId] = true
 			}
 			compareAndReset( nowlife, function(key){
@@ -73,7 +71,8 @@ var particleDrawer = particleDrawer || {};
 				material.transparent = true;
 			
 				var obj = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), material)
-				scene.add( obj )
+				obj.__alreadyAdd__ = false
+				
 				return obj
 			},
 			onUpdate: function( obj, part, ctx ){
@@ -101,8 +100,15 @@ var particleDrawer = particleDrawer || {};
 				obj.position.set( part.pos[0], -part.pos[1], 0 )
 				obj.rotation.z = part.pos[2]
 				obj.scale.set( part.size[0], part.size[1], 1 )
+				
+				if( obj.__alreadyAdd__ == false ){
+					scene.add( obj )
+					obj.__alreadyAdd__ = true
+				}
+				
 			},
 			onRemove: function( obj, ctx ){
+				obj.__alreadyAdd__ = false
 				scene.remove( obj )
 			},
 			onRender: function( ctx ){
@@ -117,7 +123,6 @@ var particleDrawer = particleDrawer || {};
 		return basic({
 			onCreate: function( key, ctx ){
 				var dom = $('<div></div>');
-				elem.append( dom );
 				return dom;
 			},
 			onUpdate: function( obj, part, ctx ){
@@ -155,6 +160,10 @@ var particleDrawer = particleDrawer || {};
 				}
 				// transform需要放在最後面，不然長寬會抓錯
 				obj.css( 'transform', 'rotate(' + -part.pos[2] / Math.PI * 180 + 'deg)' );
+				
+				if( obj.parent().length == 0){
+					elem.append( obj );
+				}
 			},
 			onRemove: function( obj, ctx ){
 				obj.empty();
