@@ -69,7 +69,7 @@ var api = api || {};
 		var countElem = $('#count')
 		
 		var useWebgl = true
-		var renderer = useWebgl ? new THREE.WebGLRenderer({antialias: true}) : new THREE.CanvasRenderer({antialias: true})
+		var renderer = useWebgl ? new THREE.WebGLRenderer({antialias: false}) : new THREE.CanvasRenderer({antialias: false})
 		renderer.setSize( w, h )
 		$(renderer.domElement).appendTo( jdom )
 		var scene = new THREE.Scene
@@ -137,7 +137,10 @@ var api = api || {};
 					"emit-angle" | "emit-range" | "emit-count" | "emit-force" | "emit-duration",
 	
 				type:
-					"const" | "constAdd" | "constMul" | "linear" | "linearAdd" | "linearMul" | "rand" | "randAdd" | "randStartAdd"
+					"const" | "constAdd" | "constMul" |
+					"linear" | "linearAdd" | "linearMul" |
+					"rand" | "randAdd" | "randStartAdd" |
+					"custom" | "customAdd" | "customMul"
 	
 				p1:int,
 				p2:int,
