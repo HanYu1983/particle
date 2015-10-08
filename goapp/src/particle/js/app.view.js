@@ -202,13 +202,13 @@ app.view = app.view || {};
 						break;
 					case 'btn_custom':
 						ary_randomRow = _.filter( advrows, function( row ){
-							return ( row.id == type && row.tid == 'custom' );
+							return ( row.id == type && row.tid == 'customMul' );
 						});
 						ary_remainRow = _.filter( advrows, function( row ){
-							return !( row.id == type && row.tid == 'custom' );
+							return !( row.id == type && row.tid == 'customMul' );
 						});
 						if( ary_randomRow.length == 0 ){
-							ary_remainRow.push( {id:type, name:app.utils.keyToName(type), tid:'custom', type:app.utils.keyToName( 'custom' ), v1:0, v2:50, v3:100, v4:50, v5:0 } );
+							ary_remainRow.push( {id:type, name:app.utils.keyToName(type), tid:'customMul', type:app.utils.keyToName( 'customMul' ), v1:0, v2:50, v3:100, v4:50, v5:0 } );
 						}
 						break;
 				}
@@ -488,7 +488,7 @@ app.view = app.view || {};
 					var dom = $( 'div[ptype="' + prop.id + '"]' );
 					dom.find( '.easyui-linkbutton' ).eq(2).linkbutton( 'select' );
 					break;
-				case 'custom':
+				case 'customMul':
 					var dom = $( 'div[ptype="' + prop.id + '"]' );
 					dom.find( '.easyui-linkbutton' ).eq(3).linkbutton( 'select' );
 					break;

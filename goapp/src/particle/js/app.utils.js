@@ -38,7 +38,9 @@ app.utils = app.utils || {};
 			case 'randStartAdd':return '亂數開始';break;
 			case 'rand':return '亂數重設';break;
 			case 'randAdd':return '亂數累加';break;
-			case 'custom':return '自訂';break;
+			case 'custom':return '自訂重設';break;
+			case 'customAdd':return '自訂累加';break;
+			case 'customMul':return '自訂累乘';break;
 		}
 	}
 	

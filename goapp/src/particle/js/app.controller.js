@@ -194,7 +194,7 @@ app.controller = app.controller || {};
 						case 'emit-range':
 						case 'emit-angle':
 							switch( r.tid ){
-								case 'linearMul','constMul':
+								case 'linearMul','constMul','customMul':
 									retobj[2] = retobj[2] / 1000;
 									retobj[3] = retobj[3] / 1000;
 									retobj[4] = retobj[4] / 1000;
@@ -220,7 +220,7 @@ app.controller = app.controller || {};
 							break;
 						default:
 							switch( r.tid ){
-								case 'linearMul','constMul':
+								case 'linearMul','constMul','customMul':
 									retobj[2] = retobj[2] / 1000;
 									retobj[3] = retobj[3] / 1000;
 									retobj[4] = retobj[4] / 1000;
@@ -306,6 +306,7 @@ app.controller = app.controller || {};
 					var retobj = { };
 					treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, root.id ), retobj );
 					try{
+						console.log( retobj );
 						api.editParticle( retobj );
 					}catch( e ){
 						//還不知道錯在哪裡，先catch起來
