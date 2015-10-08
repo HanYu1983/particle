@@ -208,7 +208,7 @@ app.view = app.view || {};
 							return !( row.id == type && row.tid == 'customMul' );
 						});
 						if( ary_randomRow.length == 0 ){
-							ary_remainRow.push( {id:type, name:app.utils.keyToName(type), tid:'customMul', type:app.utils.keyToName( 'customMul' ), v1:0, v2:50, v3:100, v4:50, v5:0 } );
+							ary_remainRow.push( {id:type, name:app.utils.keyToName(type), tid:'customMul', type:app.utils.keyToName( 'customMul' ), v1:0, v2:500, v3:1000, v4:500, v5:0 } );
 						}
 						break;
 				}
