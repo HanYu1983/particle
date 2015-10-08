@@ -113,51 +113,51 @@ var particle = particle || {};
 	}
 	
 	var formula = {
-		"const": function( target, p, part, lifep ){
+		"const": function( target, p, part, lifep, delta ){
 			setFormulaTarget( target, part, p[0] )
 		},
-		"constAdd": function( target, p, part, lifep ){
+		"constAdd": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
-			setFormulaTarget( target, part, ori + p[0] )
+			setFormulaTarget( target, part, ori + p[0] * delta )
 		},
-		"constMul": function( target, p, part, lifep ){
+		"constMul": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
-			setFormulaTarget( target, part, ori * p[0] )
+			setFormulaTarget( target, part, ori * p[0] * delta )
 		},
-		"linear": function( target, p, part, lifep ){
+		"linear": function( target, p, part, lifep, delta ){
 			var offset = p[1] - p[0]
 			var adj = p[0] + offset* lifep 
 			setFormulaTarget( target, part, adj )
 		},
-		"linearAdd": function( target, p, part, lifep ){
+		"linearAdd": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			var offset = p[1] - p[0]
 			var adj = p[0] + offset* lifep 
-			setFormulaTarget( target, part, ori + adj )
+			setFormulaTarget( target, part, ori + adj  * delta)
 		},
-		"linearMul": function( target, p, part, lifep ){
+		"linearMul": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			var offset = p[1] - p[0]
 			var adj = p[0] + offset* lifep 
-			setFormulaTarget( target, part, ori * adj )
+			setFormulaTarget( target, part, ori * adj  * delta)
 		},
-		"rand": function( target, p, part, lifep ){
+		"rand": function( target, p, part, lifep, delta ){
 			var adj = p[0]*Math.random() - p[0]/2
 			setFormulaTarget( target, part, adj )
 		},
-		"randAdd": function( target, p, part, lifep ){
+		"randAdd": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			var adj = p[0]*Math.random() - p[0]/2
-			setFormulaTarget( target, part, ori + adj )
+			setFormulaTarget( target, part, ori + adj * delta)
 		},
-		"randStartAdd": function( target, p, part, lifep ){
+		"randStartAdd": function( target, p, part, lifep, delta ){
 			if( lifep == 0.0 ){
 				var ori = getFormulaTarget( target, part )
 				var adj = p[0]*Math.random() - p[0]/2
 				setFormulaTarget( target, part, ori + adj )
 			}
 		},
-		"custom": function( target, p, part, lifep ){
+		"custom": function( target, p, part, lifep, delta ){
 			if( lifep == 0.0 ){
 				setFormulaTarget( target, part, p[0] )
 			} else if( lifep < 0.25 ){
@@ -176,44 +176,44 @@ var particle = particle || {};
 				setFormulaTarget( target, part, p[4] )
 			}
 		},
-		"customAdd": function( target, p, part, lifep ){
+		"customAdd": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			if( lifep == 0.0 ){
-				setFormulaTarget( target, part, ori + p[0] )
+				setFormulaTarget( target, part, ori + p[0] * delta )
 			} else if( lifep < 0.25 ){
 				var adj = p[0] + (p[1]-p[0]) * lifep / 0.25
-				setFormulaTarget( target, part, ori + adj )
+				setFormulaTarget( target, part, ori + adj * delta )
 			} else if( lifep < 0.5 ){
 				var adj = p[1] + (p[2]-p[1]) * (lifep - 0.25) / 0.25
-				setFormulaTarget( target, part, ori + adj )
+				setFormulaTarget( target, part, ori + adj * delta )
 			} else if( lifep < 0.75 ){
 				var adj = p[2] + (p[3]-p[2]) * (lifep - 0.5) / 0.25
-				setFormulaTarget( target, part, ori + adj )
+				setFormulaTarget( target, part, ori + adj * delta )
 			} else if( lifep < 1 ){
 				var adj = p[3] + (p[4]-p[3]) * (lifep - 0.75) / 0.25
-				setFormulaTarget( target, part, ori + adj )
+				setFormulaTarget( target, part, ori + adj * delta )
 			} else {
-				setFormulaTarget( target, part, ori + p[4] )
+				setFormulaTarget( target, part, ori + p[4] * delta )
 			}
 		},
-		"customMul": function( target, p, part, lifep ){
+		"customMul": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			if( lifep == 0.0 ){
-				setFormulaTarget( target, part, ori * p[0] )
+				setFormulaTarget( target, part, ori * p[0] * delta )
 			} else if( lifep < 0.25 ){
 				var adj = p[0] + (p[1]-p[0]) * lifep / 0.25
-				setFormulaTarget( target, part, ori * adj )
+				setFormulaTarget( target, part, ori * adj * delta )
 			} else if( lifep < 0.5 ){
 				var adj = p[1] + (p[2]-p[1]) * (lifep - 0.25) / 0.25
-				setFormulaTarget( target, part, ori * adj )
+				setFormulaTarget( target, part, ori * adj * delta )
 			} else if( lifep < 0.75 ){
 				var adj = p[2] + (p[3]-p[2]) * (lifep - 0.5) / 0.25
-				setFormulaTarget( target, part, ori * adj )
+				setFormulaTarget( target, part, ori * adj * delta )
 			} else if( lifep < 1 ){
 				var adj = p[3] + (p[4]-p[3]) * (lifep - 0.75) / 0.25
-				setFormulaTarget( target, part, ori * adj )
+				setFormulaTarget( target, part, ori * adj * delta )
 			} else {
-				setFormulaTarget( target, part, ori * p[4] )
+				setFormulaTarget( target, part, ori * p[4] * delta )
 			}
 		},
 	}
@@ -349,10 +349,10 @@ var particle = particle || {};
 		for( var i in part.formulaList ){
 			var f = part.formulaList[i]
 			if( part.lifetime <= 0 ){
-				f( part, 0 )
+				f( part, 0, delta )
 			} else {
 				var lifep = part.timer/ part.lifetime
-				f( part, lifep )
+				f( part, lifep, delta )
 			}
 		}
 		// update timer
