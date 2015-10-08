@@ -421,9 +421,27 @@ var particle = particle || {};
 		}
 	}
 	
+	function parseInput( pool, input ){
+		var parts = _.map( input, function(item){
+			particle.formatFormula( item )
+			return particle.initParticle( pool.get(), item )
+		})
+		return parts
+	}
+	
+	function clear( pool, parts ){
+		for( var i in parts ){
+			var obj = parts[i]
+			pool.put( obj )
+		}
+		parts.length = 0
+	}
+	
 	module.pool = pool
 	module.initParticle = initParticle
 	module.stepParticles = stepParticles
 	module.formatFormula = formatFormula
+	module.parseInput = parseInput
+	module.clear = clear
 	
 }) ( particle )
