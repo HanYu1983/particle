@@ -143,22 +143,22 @@ var particleDrawer = particleDrawer || {};
 				while( hexcolor.length< 6 )
 					hexcolor = '0' + hexcolor
 					
-				obj.css( 'background-color', '#' + hexcolor );
+				
 				obj.css( 'opacity', part.color[3] );
 				
-				if( part.tex != '' ) {
+				if( ctx.texture( 'div', part.tex ) != null ){
 					if( obj.find( '#img' ).length == 0 ){
-						if( ctx.texture( 'div', part.tex ) != null ){
-							var tex = $(ctx.texture( 'div', part.tex )).clone();
-							tex.css( 'position', 'relative' );
-							tex.css( 'width', '100%' );
-							tex.css( 'height', '100%' );
-							tex.css( 'left', '0' );
-							tex.css( 'top', '0' );
-							tex.attr( 'id', 'img' );
-							obj.prepend( tex );
-						}
+						var tex = $(ctx.texture( 'div', part.tex )).clone(false);
+						tex.css( 'position', 'relative' );
+						tex.css( 'width', '100%' );
+						tex.css( 'height', '100%' );
+						tex.css( 'left', '0' );
+						tex.css( 'top', '0' );
+						tex.attr( 'id', 'img' );
+						obj.prepend( tex );
 					}
+				}else{
+					obj.css( 'background-color', '#' + hexcolor );
 				}
 				// transform需要放在最後面，不然長寬會抓錯
 				obj.css( 'transform', 'rotate(' + -part.pos[2] / Math.PI * 180 + 'deg)' );

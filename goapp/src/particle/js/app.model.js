@@ -28,7 +28,7 @@ app.model = app.model || {};
 			 40
 		  ],
 		  "formulaList":[],
-		  "tex":"0",
+		  "tex":"glow_128_128",
 		  "blending":"add",
 		  "emit":{  
 			 "prototype":[  
@@ -57,7 +57,7 @@ app.model = app.model || {};
 					  40,
 					  40
 				   ],
-				   "tex":0,
+				   "tex":'glow_128_128',
 				   "blending":"add",
 				   "formulaList":[ 
 						
