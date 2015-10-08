@@ -118,11 +118,11 @@ var particle = particle || {};
 		},
 		"constAdd": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
-			setFormulaTarget( target, part, ori + p[0] * delta )
+			setFormulaTarget( target, part, ori + p[0] )
 		},
 		"constMul": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
-			setFormulaTarget( target, part, ori * p[0] * delta )
+			setFormulaTarget( target, part, ori * p[0] )
 		},
 		"linear": function( target, p, part, lifep, delta ){
 			var offset = p[1] - p[0]
@@ -133,13 +133,13 @@ var particle = particle || {};
 			var ori = getFormulaTarget( target, part )
 			var offset = p[1] - p[0]
 			var adj = p[0] + offset* lifep 
-			setFormulaTarget( target, part, ori + adj  * delta)
+			setFormulaTarget( target, part, ori + adj )
 		},
 		"linearMul": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			var offset = p[1] - p[0]
 			var adj = p[0] + offset* lifep 
-			setFormulaTarget( target, part, ori * adj  * delta)
+			setFormulaTarget( target, part, ori * adj )
 		},
 		"rand": function( target, p, part, lifep, delta ){
 			var adj = p[0]*Math.random() - p[0]/2
@@ -148,7 +148,7 @@ var particle = particle || {};
 		"randAdd": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			var adj = p[0]*Math.random() - p[0]/2
-			setFormulaTarget( target, part, ori + adj * delta)
+			setFormulaTarget( target, part, ori + adj )
 		},
 		"randStartAdd": function( target, p, part, lifep, delta ){
 			if( lifep == 0.0 ){
@@ -179,41 +179,41 @@ var particle = particle || {};
 		"customAdd": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			if( lifep == 0.0 ){
-				setFormulaTarget( target, part, ori + p[0] * delta )
+				setFormulaTarget( target, part, ori + p[0] )
 			} else if( lifep < 0.25 ){
 				var adj = p[0] + (p[1]-p[0]) * lifep / 0.25
-				setFormulaTarget( target, part, ori + adj * delta )
+				setFormulaTarget( target, part, ori + adj )
 			} else if( lifep < 0.5 ){
 				var adj = p[1] + (p[2]-p[1]) * (lifep - 0.25) / 0.25
-				setFormulaTarget( target, part, ori + adj * delta )
+				setFormulaTarget( target, part, ori + adj )
 			} else if( lifep < 0.75 ){
 				var adj = p[2] + (p[3]-p[2]) * (lifep - 0.5) / 0.25
-				setFormulaTarget( target, part, ori + adj * delta )
+				setFormulaTarget( target, part, ori + adj )
 			} else if( lifep < 1 ){
 				var adj = p[3] + (p[4]-p[3]) * (lifep - 0.75) / 0.25
-				setFormulaTarget( target, part, ori + adj * delta )
+				setFormulaTarget( target, part, ori + adj )
 			} else {
-				setFormulaTarget( target, part, ori + p[4] * delta )
+				setFormulaTarget( target, part, ori + p[4] )
 			}
 		},
 		"customMul": function( target, p, part, lifep, delta ){
 			var ori = getFormulaTarget( target, part )
 			if( lifep == 0.0 ){
-				setFormulaTarget( target, part, ori * p[0] * delta )
+				setFormulaTarget( target, part, ori * p[0] )
 			} else if( lifep < 0.25 ){
 				var adj = p[0] + (p[1]-p[0]) * lifep / 0.25
-				setFormulaTarget( target, part, ori * adj * delta )
+				setFormulaTarget( target, part, ori * adj )
 			} else if( lifep < 0.5 ){
 				var adj = p[1] + (p[2]-p[1]) * (lifep - 0.25) / 0.25
-				setFormulaTarget( target, part, ori * adj * delta )
+				setFormulaTarget( target, part, ori * adj )
 			} else if( lifep < 0.75 ){
 				var adj = p[2] + (p[3]-p[2]) * (lifep - 0.5) / 0.25
-				setFormulaTarget( target, part, ori * adj * delta )
+				setFormulaTarget( target, part, ori * adj )
 			} else if( lifep < 1 ){
 				var adj = p[3] + (p[4]-p[3]) * (lifep - 0.75) / 0.25
-				setFormulaTarget( target, part, ori * adj * delta )
+				setFormulaTarget( target, part, ori * adj )
 			} else {
-				setFormulaTarget( target, part, ori * p[4] * delta )
+				setFormulaTarget( target, part, ori * p[4] )
 			}
 		},
 	}
