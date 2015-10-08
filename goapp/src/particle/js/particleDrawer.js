@@ -66,7 +66,7 @@ var particleDrawer = particleDrawer || {};
 		
 		return basic({
 			onCreate: function( key, ctx ){
-				var material = new THREE.MeshBasicMaterial( { map:null, color: 0x33aa55 } );
+				var material = new THREE.MeshBasicMaterial();
 				// 加上transparent:true才會有png的透明效果, 也才有blending效果
 				material.transparent = true;
 			
@@ -112,8 +112,10 @@ var particleDrawer = particleDrawer || {};
 				scene.remove( obj )
 			},
 			onRender: function( ctx ){
-				var bgColor = (ctx.bgColor[0]*255<<16) | (ctx.bgColor[1]*255<<8) | (ctx.bgColor[2]*255)
-				renderer.setClearColor( bgColor, 1 );
+				if( ctx.bgColor ){
+					var bgColor = (ctx.bgColor[0]*255<<16) | (ctx.bgColor[1]*255<<8) | (ctx.bgColor[2]*255)
+					renderer.setClearColor( bgColor, 1 );
+				}
 				renderer.render( scene, camera )
 			}
 		})
@@ -147,7 +149,7 @@ var particleDrawer = particleDrawer || {};
 				if( part.tex != '' ) {
 					if( obj.find( '#img' ).length == 0 ){
 						if( ctx.texture( 'div', part.tex ) != null ){
-							var tex = ctx.texture( 'div', part.tex ).clone();
+							var tex = $(ctx.texture( 'div', part.tex )).clone();
 							tex.css( 'position', 'relative' );
 							tex.css( 'width', '100%' );
 							tex.css( 'height', '100%' );
@@ -171,6 +173,56 @@ var particleDrawer = particleDrawer || {};
 			},
 			onRender: function( ctx ){
 			
+			}
+		})
+	}
+	
+	function canvas( ctx2d ){
+		
+		return particleDrawer.basic({
+			onCreate: function( key, ctx ){
+			
+			},
+			onUpdate: function( obj, part, ctx ){
+			
+			},
+			onRemove: function( obj, ctx ){
+			
+			},
+			onRender: function( ctx ){
+			
+				var parts = ctx.parts
+				for( var i in parts ){
+					var part = parts[i]
+					var tex = ctx.texture( 'canvas', part.tex )
+					ctx2d.save()
+					ctx2d.translate( part.pos[0], part.pos[1] )
+					ctx2d.rotate( -part.pos[2] )
+	
+					if( tex ){
+						switch( part.blending ){
+						case 'normal':
+							ctx2d.globalCompositeOperation = 'normal';
+							break;
+						case 'add':
+							ctx2d.globalCompositeOperation = 'screen';
+							break;
+						default:
+							ctx2d.globalCompositeOperation = 'normal';
+						}
+						
+						ctx2d.globalAlpha = part.color[3]
+						ctx2d.drawImage( tex, 0, 0, tex.width, tex.height, -part.size[0]/2, -part.size[1]/2, part.size[0], part.size[1])
+					
+					} else {
+						ctx2d.fillStyle = "rgba("+Math.floor(part.color[0]*255)+", "+Math.floor(part.color[1]*255)+", "+Math.floor(part.color[2]*255)+", "+part.color[3]+")";
+						ctx2d.opacity = part.color[3]
+						ctx2d.fillRect( -part.size[0]/2, -part.size[1]/2, part.size[0], part.size[1] )
+					
+					}
+				
+					ctx2d.restore()
+				}
 			}
 		})
 	}
@@ -271,5 +323,6 @@ var particleDrawer = particleDrawer || {};
 	module.basic = basic
 	module.three = three
 	module.dom = dom
+	module.canvas = canvas
 	
 }) ( particleDrawer )
