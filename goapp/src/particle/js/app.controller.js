@@ -97,7 +97,7 @@ app.controller = app.controller || {};
 							case 'emit-range':
 							case 'emit-angle':
 								switch( retobj.tid ){
-									case 'linearMul','constMul':
+									case 'linearMul','constMul','customMul':
 										retobj.v1 = retobj.v1 * 1000;
 										retobj.v2 = retobj.v2 * 1000;
 										retobj.v3 = retobj.v3 * 1000;
@@ -125,7 +125,7 @@ app.controller = app.controller || {};
 								break;
 							default:
 								switch( retobj.tid ){
-									case 'linearMul','constMul':
+									case 'linearMul','constMul','customMul':
 										retobj.v1 = retobj.v1 * 1000;
 										retobj.v2 = retobj.v2 * 1000;
 										retobj.v3 = retobj.v3 * 1000;
