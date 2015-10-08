@@ -120,6 +120,7 @@
 			var texs = _.reduce( $('img'), function(start, img2){
 				var tex = new THREE.Texture(img2)
 				tex.needsUpdate = true
+				tex.minFilter = THREE.LinearFilter 
 			
 				var id = $(img2).attr('id')
 				var obj = {}
