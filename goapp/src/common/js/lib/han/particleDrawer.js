@@ -147,14 +147,13 @@ var particleDrawer = particleDrawer || {};
 				obj.css( 'opacity', part.color[3] );
 				
 				if( ctx.texture( 'div', part.tex ) != null ){
-					if( obj.find( '#img' ).length == 0 ){
+					if( obj.find( 'img' ).length == 0 ){
 						var tex = $(ctx.texture( 'div', part.tex )).clone(false);
 						tex.css( 'position', 'relative' );
 						tex.css( 'width', '100%' );
 						tex.css( 'height', '100%' );
 						tex.css( 'left', '0' );
 						tex.css( 'top', '0' );
-						tex.attr( 'id', 'img' );
 						obj.prepend( tex );
 					}
 				}else{
