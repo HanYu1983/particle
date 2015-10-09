@@ -73,14 +73,15 @@
 			</div>
 		</div>
 		<div style="display:none;">
-			<img id='glow_128_128' src='images/glow_128_128.jpg'>
-			<img id='glow_png_128_128' src='images/glow_png_128_128.png'>
-			<img id='glow_color_png_128_128' src='images/glow_color_png_128_128.png'>
-			<img id='fire_128_128' src='images/fire_128_128.jpg'>
-			<img id='fire_png_128_128' src='images/fire_png_128_128.png'>
-			<img id='fire_color_png_128_128' src='images/fire_color_png_128_128.png'>
-			<img id='smoke_128_128' src='images/smoke_128_128.png'>
-			<img id='lead_32_32' src='images/lead_32_32.png'>
+			<img id='glow_128_128' src='../common/images/effect/glow_128_128.jpg'>
+			<img id='glow_png_128_128' src='../common/images/effect/glow_png_128_128.png'>
+			<img id='glow_color_png_128_128' src='../common/images/effect/glow_color_png_128_128.png'>
+			<img id='fire_128_128' src='../common/images/effect/fire_128_128.jpg'>
+			<img id='fire_png_128_128' src='../common/images/effect/fire_png_128_128.png'>
+			<img id='fire_color_png_128_128' src='../common/images/effect/fire_color_png_128_128.png'>
+			<img id='smoke_128_128' src='../common/images/effect/smoke_128_128.png'>
+			<img id='lead_32_32' src='../common/images/effect/lead_32_32.png'>
+			<img id='cornerGlow_256_256' src='../common/images/effect/cornerGlow_256_256.png'>
 		</div>
 		<div id="dia_about" class="easyui-dialog" title="幽夢仙境" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 			<div class="group" style="position:relative; width:100%; text-align:center;">
@@ -220,7 +221,7 @@
 			}
 		})
 		
-		txt_input.textbox("setValue", '[{"id":0,"name":"fire","lifetime":0,"vel":[0,0,0],"pos":[192,653,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"0","blending":"add","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":1,"vel":[0,-58,1.7627825445142729],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[83,99],"tex":"fire_color_png_128_128","blending":"normal","formulaList":[["rot","randStartAdd",6.283185307179586,0,0,0,0],["vr","randStartAdd",1.7453292519943295,0,0,0,0],["lifetime","randStartAdd",0.371,0,0,0,0],["scale-y","randStartAdd",100,0,0,0,0],["scale-x","randStartAdd",100,0,0,0,0],["y","randStartAdd",24,0,0,0,0],["x","randStartAdd",23,0,0,0,0],["vy","constAdd",-135,0,0,0,0],["scale-x","custom",0,50,100,50,0],["scale-y","custom",0,50,100,50,0]]}],"count":1,"duration":0.026,"angle":0,"range":0,"force":0}},{"id":"7e8f1d5c-4c48-47cd-a58e-07ce284080f4","name":"glow","lifetime":0,"vel":[0,0,0],"pos":[192,653,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"0","blending":"add","formulaList":[],"emit":{"count":1,"duration":0.1,"angle":0,"range":0,"force":0,"prototype":[{"id":"22b65a15-5960-4488-a661-1f02d1cda099","name":"pari","lifetime":0.229,"vel":[0,0,0],"pos":[0,-35,0],"mass":1,"color":[1,1,1,0.088],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["scale-y","randStartAdd",100,0,0,0,0],["scale-x","randStartAdd",100,0,0,0,0],["lifetime","randStartAdd",0.134,0,0,0,0],["scale-x","custom",0,90,238,93,0],["scale-y","custom",0,83,249,90,0]]}]}},{"id":"b3c59990-7fbb-485d-ba03-8fdd6f73a910","name":"smoke","lifetime":0,"vel":[0,0,0],"pos":[192,653,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"0","blending":"add","formulaList":[],"emit":{"count":1,"duration":0.302,"angle":0,"range":0,"force":0,"prototype":[{"id":"8aa34c3a-25e6-475c-8da9-cca95d0c0042","name":"8aa34c3a-25e6-475c-8da9-cca95d0c0042","lifetime":6,"vel":[12,-104,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,0.532],"size":[208,224],"tex":"smoke_128_128","blending":"normal","formulaList":[["vx","randStartAdd",14,0,0,0,0],["vy","randStartAdd",15,0,0,0,0],["lifetime","randStartAdd",3,0,0,0,0],["a","randStartAdd",0.438,0,0,0,0],["rot","randStartAdd",6.283185307179586,0,0,0,0],["a","custom",0,0.326,0.891,0.534,0],["scale-x","custom",0,139,213,280,263],["scale-y","custom",0,123,217,274,283]]}]}}]')
+		txt_input.textbox("setValue", '[{"id":0,"name":"發射器","lifetime":0.081,"vel":[0,0,0],"pos":[261,453,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_png_128_128","blending":"normal","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":4,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[16,16],"tex":"glow_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",2,0,0,0,0],["vy","randAdd",100,0,0,0,0],["vx","randAdd",100,0,0,0,0],["vy","randStartAdd",3000,0,0,0,0],["vx","randStartAdd",3000,0,0,0,0],["scale-x","constMul",0.995,0,0,0,0],["scale-y","constMul",0.995,0,0,0,0],["vx","constMul",0.95,0,0,0,0],["vy","constMul",0.95,0,0,0,0]]}],"count":2,"duration":0.005,"angle":0,"range":0,"force":0}}]')
 		
 		</script>
 	</body>
