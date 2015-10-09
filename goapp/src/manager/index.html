@@ -18,6 +18,8 @@
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
 	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+	<script type="text/javascript" src="../common/js/lib/han/particle.js"></script>
+	<script type="text/javascript" src="../common/js/lib/han/particleDrawer.js"></script>
 		
 </head>
 <style>
@@ -229,37 +231,25 @@ a{
 			</div>
 		</div>
 	</div>
+	<div id="div" style="position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none;">
+		
+	</div>
+	<div style="display:none;">
+		<img id='glow_128_128' src='images/glow_128_128.jpg'>
+		<img id='glow_png_128_128' src='images/glow_png_128_128.png'>
+		<img id='glow_color_png_128_128' src='images/glow_color_png_128_128.png'>
+		<img id='fire_128_128' src='images/fire_128_128.jpg'>
+		<img id='fire_png_128_128' src='images/fire_png_128_128.png'>
+		<img id='fire_color_png_128_128' src='images/fire_color_png_128_128.png'>
+		<img id='smoke_128_128' src='images/smoke_128_128.png'>
+		<img id='lead_32_32' src='images/lead_32_32.png'>
+	</div>
 	<script src="../common/js/lib/underscore/underscore-min.js"></script>	
 	<script src="../common/js/store.js"></script>	
 	<script src="../common/js/cardSuit.js"></script>	
 	<script>
-	googleTracking.init( 'UA-55273266-3' );
 	
-	/*
-	online:'425311264344425',
-	local:'679171275511375',
-	*/
-	
-	var fbid, token;
-	var loadModel;
-	
-	showLoading( '準備中...' );
-	myapp.facebook.init( '425311264344425', function(){
-		$('#btn_login' ).linkbutton( 'enable' );
-		closeLoading();
-	});
-	
-	openCard();
-	
-	function showDeckList( retModel ){
-		console.log( retModel );
-		$("#mc_deckContainer").empty();
-		_.each( retModel.cardSuit, function( deck ){
-			var copyDeck = JSON.parse( JSON.stringify( deck ) );
-			addDeck( copyDeck );
-		});
-		console.log( 'end' );
-	}
+	/* utils function */
 	
 	function handleModel( func ){
 		return function( err, ret ){
@@ -270,159 +260,6 @@ a{
 				func( ret );
 			}
 		}
-	}
-	
-	function onBtnClick( target ){
-		switch( target.id ){
-			case 'btn_login':
-				showLoading( '登入並讀取資料中...' );
-				loginFacebook( function( ret ){
-					$('#btn_login' ).linkbutton( 'disable' );
-					showMessage( '登入成功' );
-					
-					fbid = ret.authResponse.userID;
-					token = ret.authResponse.accessToken;
-					
-					cardSuit.load( fbid, token, handleModel( function( ret ){
-						loadModel = ret;
-						showDeckList( loadModel );
-						
-						$('#btn_addDeck').linkbutton( 'enable' );
-						closeLoading();
-					}));
-				});
-				break;
-			case 'btn_addDeck':
-				cardSuit.editCardSuit( loadModel, {
-					name: 'default',
-					game: "fighter",
-					cards:[]
-				})
-				showDeckList( loadModel );
-				break;
-			case 'btn_stockLink':
-				window.open( '//particle-979.appspot.com/stock/index.html#' );
-				break;
-			case 'btn_particleLink':
-				window.open( '//particle-979.appspot.com/particle/index.html#' );
-				break;
-			case 'btn_cardLink':
-				window.open( '//particle-979.appspot.com/card/index.html#' );
-				break;
-			case 'btn_particleClojureLink':
-				window.open( '//particle-979.appspot.com/particle/index_clojure.html#' );
-				break;
-			case 'btn_stock':
-				openStock();
-				break;
-			case 'btn_particle':
-				openParticle();
-				break;
-			case 'btn_particleClojure':
-				openParticleClojure();
-				break;
-			case 'btn_card':
-				openCard();
-				break;
-			case 'btn_team':
-				openTeam();
-				break;
-		}
-	}
-	
-	$('#btn_saveDeck' ).linkbutton( {
-		onClick:function(){
-			showLoading( '存檔中...' );
-			cardSuit.save( fbid, token, loadModel, handleModel( function( ret ){
-				showMessage( '存檔成功' );
-				$('#btn_saveDeck' ).linkbutton( 'disable' );
-				
-				closeLoading();
-			}));
-		}
-	});
-	
-	function editAndShow(){
-		showDeckList( loadModel );
-		$('#btn_saveDeck' ).linkbutton( 'enable' );
-	}
-	
-	function addDeck( _model ){
-		var dom = $("#tmpl_deck" ).tmpl( _model );
-		$('#mc_deckContainer').append( dom );
-		dom.find( '.easyui-linkbutton' ).linkbutton({
-			group:_model.name,
-			onClick:(function( __model ){
-				return function(){
-					switch( this.id ){
-						case 'btn_fighter':__model.game = 'fighter';break;
-						case 'btn_gundamWar':__model.game = 'gundamWar';break;
-						case 'btn_sangoWar':__model.game = 'sangoWar';break;
-					}
-					cardSuit.editCardSuit( loadModel, __model );
-					editAndShow();
-				}
-			})( _model )
-		});
-		dom.find( '.easyui-textbox' ).textbox();
-		dom.find( '.easyui-textbox' ).textbox({
-			onChange:(function( __model ){
-				return function( nv, ov ){
-					switch( $( this ).attr( 'id' )){
-						case 'txt_name':
-							__model.name = nv;
-							cardSuit.editCardSuit( loadModel, __model );
-							cardSuit.removeCardSuit( loadModel, ov );
-							editAndShow();
-							break;
-						case 'txt_cards':
-							try{
-								__model.cards = JSON.parse( '[' + nv + ']' );
-							}catch( e ){
-								showAlert("格式輸入錯誤，請檢查");
-							}
-							//auto add .jpg
-							/*
-							__model.cards = _.map( __model.cards, function( str ){
-								if( str.indexOf( '.jpg' ) == -1 ){
-									return str + '.jpg';
-								}
-								return str;
-							});
-							*/
-							cardSuit.editCardSuit( loadModel, __model );
-							editAndShow();
-							break;
-					}
-					
-				}
-			})( _model )
-		});
-		
-		var cardstr = (function(){
-			var str = JSON.stringify( _model.cards );
-			str = str.substr( 1, str.length - 2 );
-			return str;
-		})();
-		switch( _model.game ){
-			case 'fighter':
-				dom.find( '#btn_fighter' ).linkbutton( 'select' );
-				break;
-			case 'gundamWar':
-				dom.find( '#btn_gundamWar' ).linkbutton( 'select' );
-				break;
-			case 'sangoWar':
-				dom.find( '#btn_sangoWar' ).linkbutton( 'select' );
-		}
-		
-		dom.find( '#txt_cards' ).textbox( {
-			value:cardstr
-		});
-		
-		dom.find( '#btn_remove' ).click( function(){
-			cardSuit.removeCardSuit( loadModel, $(this).attr( 'group' ) );
-			editAndShow();
-		});
 	}
 	
 	function loginFacebook( cb ){
@@ -494,5 +331,148 @@ a{
 	}
 	
 	</script>
-	<script src="js/manager.js"></script>
+	<script src="js/app.card.js"></script>	
+	<script>
+	googleTracking.init( 'UA-55273266-3' );
+	
+	/*
+	online:'425311264344425',
+	local:'679171275511375',
+	*/
+	
+	var fbid, token;
+	var loadModel;
+	
+	showLoading( '準備中...' );
+	myapp.facebook.init( '679171275511375', function(){
+		$('#btn_login' ).linkbutton( 'enable' );
+		closeLoading();
+	});
+	
+	openCard();
+	
+	function onBtnClick( target ){
+		switch( target.id ){
+			case 'btn_login':
+				showLoading( '登入並讀取資料中...' );
+				loginFacebook( function( ret ){
+					$('#btn_login' ).linkbutton( 'disable' );
+					showMessage( '登入成功' );
+					
+					fbid = ret.authResponse.userID;
+					token = ret.authResponse.accessToken;
+					
+					cardSuit.load( fbid, token, handleModel( function( ret ){
+						loadModel = ret;
+						app.card.showDeckList( loadModel );
+						
+						$('#btn_addDeck').linkbutton( 'enable' );
+						closeLoading();
+					}));
+				});
+				break;
+			case 'btn_addDeck':
+				cardSuit.editCardSuit( loadModel, {
+					name: 'default',
+					game: "fighter",
+					cards:[]
+				})
+				app.card.showDeckList( loadModel );
+				break;
+			case 'btn_stockLink':
+				window.open( '//particle-979.appspot.com/stock/index.html#' );
+				break;
+			case 'btn_particleLink':
+				window.open( '//particle-979.appspot.com/particle/index.html#' );
+				break;
+			case 'btn_cardLink':
+				window.open( '//particle-979.appspot.com/card/index.html#' );
+				break;
+			case 'btn_particleClojureLink':
+				window.open( '//particle-979.appspot.com/particle/index_clojure.html#' );
+				break;
+			case 'btn_stock':
+				openStock();
+				break;
+			case 'btn_particle':
+				openParticle();
+				break;
+			case 'btn_particleClojure':
+				openParticleClojure();
+				break;
+			case 'btn_card':
+				openCard();
+				break;
+			case 'btn_team':
+				openTeam();
+				break;
+		}
+	}
+	
+	
+	var imgs = _.reduce( $('img'), function(start, img2){
+		var id = $(img2).attr('id')
+		var obj = {}
+		obj[id] = img2
+		return _.extend( start, obj )
+	}, {})
+	
+	var divDom = $('#div' )
+	var drawDiv = particleDrawer.dom( divDom )
+	
+	var w = divDom.width()
+	var h = divDom.height()
+	
+	var pool = particle.pool( 4000 )
+	var ps = particle.particleSystem(pool, function( type, key ){
+		if( type == 'div' ){
+			return imgs[key]
+		}
+		return null
+	})
+	var last = new Date().getTime()
+	setTimeout( function(){
+		var now = new Date().getTime()
+		var elap = (now - last)/ 1000.0
+		last = now
+		
+		ps.clearOutBound( w, h )
+		ps.step( elap )
+		ps.draw( drawDiv )
+		setTimeout( arguments.callee, 1000.0/30 )
+	}, 0)
+	
+	var particleConfig = [{"id":0,"name":"發射器","lifetime":0,"vel":[0,0,0],"pos":[236,382,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_128_128","blending":"add","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":0.3,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",0.1,0,0,0,0],["scale-y","custom",106,33,19,27,0],["scale-x","custom",106,41,25,22,0]]}],"count":1,"duration":0.019,"angle":0,"range":0,"force":0}},{"id":"0652790d-0a2f-4408-810b-6bc4592373bf","name":"0652790d-0a2f-4408-810b-6bc4592373bf","lifetime":0,"vel":[0,0,0],"pos":[236,382,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"0","blending":"add","formulaList":[],"emit":{"count":1,"duration":0.05,"angle":0,"range":0,"force":0,"prototype":[{"id":"9f0eb3f5-d82e-474c-a419-ec8916404988","name":"9f0eb3f5-d82e-474c-a419-ec8916404988","lifetime":0.6,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",0.1,0,0,0,0],["vy","randStartAdd",246,0,0,0,0],["vx","randStartAdd",213,0,0,0,0],["scale-x","custom",0,24,49,36,0],["scale-y","custom",0,24,49,36,0]]}]}}];
+	var explodeConfig = [{"id":0,"name":"發射器","lifetime":0.6,"vel":[0,0,0],"pos":[61,14,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_128_128","blending":"add","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":0.3,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["x","randStartAdd",100,0,0,0,0],["y","randStartAdd",100,0,0,0,0],["vx","randStartAdd",100,0,0,0,0],["vy","randStartAdd",100,0,0,0,0],["lifetime","randStartAdd",0.1,0,0,0,0],["scale-y","custom",106,33,19,27,0],["scale-x","custom",106,41,25,22,0]]}],"count":1,"duration":0.019,"angle":0,"range":0,"force":0}}];
+	
+	ps.clear()
+	var parts = addParticle(pool, particleConfig);
+	
+	function addParticle( pool, config ){
+		var parts = particle.parseInput( pool, config );
+		ps.emit( parts )
+		return parts;
+	}
+	
+	$( 'body' ).mousemove( function( e ){
+		moveRootParticles( parts, e.pageX, e.pageY );
+	});
+	
+	$( 'body' ).click( function( e ){
+		var particles = addParticle( pool, deepCopy( explodeConfig ) );
+		moveRootParticles( particles, e.pageX, e.pageY );
+	});
+	
+	function moveRootParticles( particles, x, y ){
+		_.each( particles, function( p ){
+			p.pos[0]= x;
+			p.pos[1]= y;
+		});
+	}
+	
+	function deepCopy( ori ){
+		return JSON.parse( JSON.stringify( ori ) );
+	}
+	
+	</script>
 </body>
