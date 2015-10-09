@@ -231,6 +231,19 @@ a{
 			</div>
 		</div>
 	</div>
+	<div id="div" style="position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none;">
+		
+	</div>
+	<div style="display:none;">
+		<img id='glow_128_128' src='images/glow_128_128.jpg'>
+		<img id='glow_png_128_128' src='images/glow_png_128_128.png'>
+		<img id='glow_color_png_128_128' src='images/glow_color_png_128_128.png'>
+		<img id='fire_128_128' src='images/fire_128_128.jpg'>
+		<img id='fire_png_128_128' src='images/fire_png_128_128.png'>
+		<img id='fire_color_png_128_128' src='images/fire_color_png_128_128.png'>
+		<img id='smoke_128_128' src='images/smoke_128_128.png'>
+		<img id='lead_32_32' src='images/lead_32_32.png'>
+	</div>
 	<script src="../common/js/lib/underscore/underscore-min.js"></script>	
 	<script src="../common/js/store.js"></script>	
 	<script src="../common/js/cardSuit.js"></script>	
@@ -397,5 +410,65 @@ a{
 	}
 	
 	
+	var imgs = _.reduce( $('img'), function(start, img2){
+		var id = $(img2).attr('id')
+		var obj = {}
+		obj[id] = img2
+		return _.extend( start, obj )
+	}, {})
+	
+	var divDom = $('#div' )
+	var drawDiv = particleDrawer.dom( divDom )
+	
+	var w = divDom.width()
+	var h = divDom.height()
+	
+	var pool = particle.pool( 4000 )
+	var ps = particle.particleSystem(pool, function( type, key ){
+		if( type == 'div' ){
+			return imgs[key]
+		}
+		return null
+	})
+	var last = new Date().getTime()
+	setTimeout( function(){
+		var now = new Date().getTime()
+		var elap = (now - last)/ 1000.0
+		last = now
+		
+		ps.clearOutBound( w, h )
+		ps.step( elap )
+		ps.draw( drawDiv )
+		setTimeout( arguments.callee, 1000.0/30 )
+	}, 0)
+	
+	var particleConfig = [{"id":0,"name":"發射器","lifetime":0,"vel":[0,0,0],"pos":[236,382,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_128_128","blending":"add","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":0.3,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",0.1,0,0,0,0],["scale-y","custom",106,33,19,27,0],["scale-x","custom",106,41,25,22,0]]}],"count":1,"duration":0.019,"angle":0,"range":0,"force":0}},{"id":"0652790d-0a2f-4408-810b-6bc4592373bf","name":"0652790d-0a2f-4408-810b-6bc4592373bf","lifetime":0,"vel":[0,0,0],"pos":[236,382,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"0","blending":"add","formulaList":[],"emit":{"count":1,"duration":0.05,"angle":0,"range":0,"force":0,"prototype":[{"id":"9f0eb3f5-d82e-474c-a419-ec8916404988","name":"9f0eb3f5-d82e-474c-a419-ec8916404988","lifetime":0.6,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",0.1,0,0,0,0],["vy","randStartAdd",246,0,0,0,0],["vx","randStartAdd",213,0,0,0,0],["scale-x","custom",0,24,49,36,0],["scale-y","custom",0,24,49,36,0]]}]}}];
+	var explodeConfig = [{"id":0,"name":"發射器","lifetime":0.6,"vel":[0,0,0],"pos":[61,14,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_128_128","blending":"add","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":0.3,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["x","randStartAdd",100,0,0,0,0],["y","randStartAdd",100,0,0,0,0],["vx","randStartAdd",100,0,0,0,0],["vy","randStartAdd",100,0,0,0,0],["lifetime","randStartAdd",0.1,0,0,0,0],["scale-y","custom",106,33,19,27,0],["scale-x","custom",106,41,25,22,0]]}],"count":1,"duration":0.019,"angle":0,"range":0,"force":0}}];
+	
+	ps.clear()
+	var parts = addParticle(pool, particleConfig);
+	
+	function addParticle( pool, config ){
+		var parts = particle.parseInput( pool, config );
+		ps.emit( parts )
+		return parts;
+	}
+	
+	$( 'body' ).mousemove( function( e ){
+		console.log( e.pageX );
+		moveRootParticles( parts, e.pageX, e.pageY );
+	});
+	
+	$( 'body' ).click( function( e ){
+		var particles = addParticle( pool, explodeConfig );
+		moveRootParticles( particles, parts[0].pos[0], parts[0].pos[1] );
+	});
+	
+	function moveRootParticles( particles, x, y ){
+		_.each( particles, function( p ){
+			p.pos[0]= x;
+			p.pos[1]= y;
+		});
+	}
 	</script>
 </body>
