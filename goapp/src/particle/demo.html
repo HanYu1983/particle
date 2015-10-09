@@ -109,37 +109,7 @@
 		<script src='js/api.js'></script>
 		<script>
 		
-		function particleSystem( pool, texture ){
-			var ctx = {
-				"texture": texture,
-				"parts":[]
-			} 
-			return {
-				emit: function( parts ){
-					ctx.parts = ctx.parts.concat( parts )
-				},
-				clear: function(){
-					particle.clear( pool, ctx.parts )
-				},
-				clearOutBound: function( w, h ){
-					// 刪除超過螢幕的
-					ctx.parts = _.filter( ctx.parts, function(item){
-						// 函數式的函式中增加了副作用，還在可以接受的範圍
-						var shouldRemove = item.pos[0] < 0 || item.pos[0] > w || item.pos[1] < 0 || item.pos[1] > h
-						if( shouldRemove ){
-							pool.put( item )
-						}
-						return shouldRemove == false
-					})
-				},
-				step: function( delta ){
-					particle.stepParticles( pool, ctx.parts, delta )
-				},
-				draw: function( drawer ){
-					drawer( ctx )
-				}
-			}
-		}
+		
 		
 		function App(){
 			
@@ -194,27 +164,8 @@
 			var scene = new THREE.Scene
 			var drawThree = particleDrawer.three(w, h, scene, renderer)
 			
-			/*
 			var pool = particle.pool( 4000 )
-			var ctx = {
-				parts: [],
-				fps: 30,
-				texture: function( type, key ){
-					if( type == 'three' ){
-						return texs[key]
-					}
-					if( type == 'div' ){
-						return imgs[key]
-					}
-					if( type == 'canvas' ){
-						return imgs[key]
-					}
-					return null
-				}
-			}
-			*/
-			var pool = particle.pool( 4000 )
-			var ps = particleSystem(pool, function( type, key ){
+			var ps = particle.particleSystem(pool, function( type, key ){
 				if( type == 'three' ){
 					return texs[key]
 				}
@@ -226,30 +177,12 @@
 				}
 				return null
 			})
-		
 			var last = new Date().getTime()
 			setTimeout( function(){
 				var now = new Date().getTime()
 				var elap = (now - last)/ 1000.0
 				last = now
-				/*
-				particle.stepParticles( pool, ctx.parts, elap )
-				// 刪除超過螢幕的
-				ctx.parts = _.filter( ctx.parts, function(item){
-					// 函數式的函式中增加了副作用，還在可以接受的範圍
-					var shouldRemove = item.pos[0] < 0 || item.pos[0] > w || item.pos[1] < 0 || item.pos[1] > h
-					if( shouldRemove ){
-						pool.put( item )
-					}
-					return shouldRemove == false
-				})
-				*/
-				/*
-				drawThree( ctx )
-				drawDiv( ctx )
-				ctx2d.fillRect(0, 0, w, h)
-				drawCanvas( ctx )
-				*/
+				
 				ps.clearOutBound( w, h )
 				ps.step( elap )
 				ps.draw( drawThree )
@@ -260,6 +193,7 @@
 			}, 0)
 			
 			return {
+				
 				reset: function( input ){
 					ps.clear()
 					var parts =_.map(particle.parseInput( pool, input ), function(item){
@@ -268,17 +202,6 @@
 						return item
 					})
 					ps.emit( parts )
-					
-					
-					/*
-					particle.clear( pool, ctx.parts )
-					var parts =_.map(particle.parseInput( pool, input ), function(item){
-						item.pos[0] = w/2
-						item.pos[1] = h/2
-						return item
-					})
-					ctx.parts = parts
-					*/
 				}
 			}
 		}

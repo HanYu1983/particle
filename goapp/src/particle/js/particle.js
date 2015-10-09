@@ -437,11 +437,45 @@ var particle = particle || {};
 		parts.length = 0
 	}
 	
+	
+	function particleSystem( pool, texture ){
+		var ctx = {
+			"texture": texture,
+			"parts":[]
+		} 
+		return {
+			emit: function( parts ){
+				ctx.parts = ctx.parts.concat( parts )
+			},
+			clear: function(){
+				clear( pool, ctx.parts )
+			},
+			clearOutBound: function( w, h ){
+				// 刪除超過螢幕的
+				ctx.parts = _.filter( ctx.parts, function(item){
+					// 函數式的函式中增加了副作用，還在可以接受的範圍
+					var shouldRemove = item.pos[0] < 0 || item.pos[0] > w || item.pos[1] < 0 || item.pos[1] > h
+					if( shouldRemove ){
+						pool.put( item )
+					}
+					return shouldRemove == false
+				})
+			},
+			step: function( delta ){
+				stepParticles( pool, ctx.parts, delta )
+			},
+			draw: function( drawer ){
+				drawer( ctx )
+			}
+		}
+	}
+	
 	module.pool = pool
 	module.initParticle = initParticle
 	module.stepParticles = stepParticles
 	module.formatFormula = formatFormula
 	module.parseInput = parseInput
 	module.clear = clear
+	module.particleSystem = particleSystem
 	
 }) ( particle )
