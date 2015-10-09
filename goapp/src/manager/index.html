@@ -455,13 +455,12 @@ a{
 	}
 	
 	$( 'body' ).mousemove( function( e ){
-		console.log( e.pageX );
 		moveRootParticles( parts, e.pageX, e.pageY );
 	});
 	
 	$( 'body' ).click( function( e ){
-		var particles = addParticle( pool, explodeConfig );
-		moveRootParticles( particles, parts[0].pos[0], parts[0].pos[1] );
+		var particles = addParticle( pool, deepCopy( explodeConfig ) );
+		moveRootParticles( particles, e.pageX, e.pageY );
 	});
 	
 	function moveRootParticles( particles, x, y ){
@@ -470,5 +469,10 @@ a{
 			p.pos[1]= y;
 		});
 	}
+	
+	function deepCopy( ori ){
+		return JSON.parse( JSON.stringify( ori ) );
+	}
+	
 	</script>
 </body>
