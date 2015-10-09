@@ -97,7 +97,9 @@ app.controller = app.controller || {};
 							case 'emit-range':
 							case 'emit-angle':
 								switch( retobj.tid ){
-									case 'linearMul','constMul','customMul':
+									case 'linearMul':
+									case 'constMul':
+									case 'customMul':
 										retobj.v1 = retobj.v1 * 1000;
 										retobj.v2 = retobj.v2 * 1000;
 										retobj.v3 = retobj.v3 * 1000;
@@ -125,7 +127,9 @@ app.controller = app.controller || {};
 								break;
 							default:
 								switch( retobj.tid ){
-									case 'linearMul','constMul','customMul':
+									case 'linearMul':
+									case 'constMul':
+									case 'customMul':
 										retobj.v1 = retobj.v1 * 1000;
 										retobj.v2 = retobj.v2 * 1000;
 										retobj.v3 = retobj.v3 * 1000;
@@ -194,7 +198,9 @@ app.controller = app.controller || {};
 						case 'emit-range':
 						case 'emit-angle':
 							switch( r.tid ){
-								case 'linearMul','constMul','customMul':
+								case 'linearMul':
+								case 'constMul':
+								case 'customMul':
 									retobj[2] = retobj[2] / 1000;
 									retobj[3] = retobj[3] / 1000;
 									retobj[4] = retobj[4] / 1000;
@@ -220,7 +226,9 @@ app.controller = app.controller || {};
 							break;
 						default:
 							switch( r.tid ){
-								case 'linearMul','constMul','customMul':
+								case 'linearMul':
+								case 'constMul':
+								case 'customMul':
 									retobj[2] = retobj[2] / 1000;
 									retobj[3] = retobj[3] / 1000;
 									retobj[4] = retobj[4] / 1000;
