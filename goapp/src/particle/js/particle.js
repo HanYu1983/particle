@@ -422,16 +422,6 @@ var particle = particle || {};
 	}
 	
 	function parseInput( pool, input ){
-		/*
-		var parts = _.map( input, function(item){
-			var obj = pool.get()
-			if( obj ){
-				particle.formatFormula( item )
-				return particle.initParticle( obj, item )
-			}
-			return null
-		})
-		*/
 		var parts = _.reduce( input, function( ret, item ){
 			var obj = pool.get()
 			if( obj ){
