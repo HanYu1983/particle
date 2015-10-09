@@ -422,10 +422,15 @@ var particle = particle || {};
 	}
 	
 	function parseInput( pool, input ){
-		var parts = _.map( input, function(item){
-			particle.formatFormula( item )
-			return particle.initParticle( pool.get(), item )
-		})
+		var parts = _.reduce( input, function( ret, item ){
+			var obj = pool.get()
+			if( obj ){
+				particle.formatFormula( item )
+				particle.initParticle( obj, item )
+				ret.push( obj )
+			}
+			return ret
+		}, [])
 		return parts
 	}
 	
