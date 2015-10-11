@@ -15,6 +15,7 @@
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
 		<script type="text/javascript" src="../common/js/lib/colorpicker/js/colorpicker.js"></script>
+		<script type="text/javascript" src="../common/js/lib/load-image.all.min.js"></script>
 	</head>
 	<style>
 
@@ -77,6 +78,7 @@
 			<div class="width:90%;">
 				<div style="position:relative; left:5px; top:5px">
 					<a href="#" class="easyui-menubutton" data-options="menu:'#m1'">幽夢仙境</a>
+					<a href="#" class="easyui-menubutton" data-options="menu:'#m2'">本地端功能</a>
 				</div>
 				<div style="position:absolute; right:5px; top:5px;">
 					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
@@ -243,8 +245,12 @@
         </div>
     </div>
 	<div id="m1">
-		<div id="btn_import" onclick="onHtmlClick(this)">匯入/匯出</div>
+		<div id="btn_import" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">匯入/匯出</div>
 	</div>
+	<div id="m2">
+		<div id="btn_uploadText" onclick="onHtmlClick(this)" data-options="iconCls:'icon-add'">上傳貼圖</div>
+	</div>
+	<input type="file" id="file" style="display:none">
 	<div id="dia_about" class="easyui-dialog" title="幽夢仙境" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 		<div class="group" style="position:relative; width:100%; text-align:center;">
 			<div class="hori" >
@@ -297,10 +303,11 @@ loadImages( [
 
 function loadImages( ary_image ){
 	var imgItem = ary_image.shift();
-	loadImage( imgItem.path, function( img ) {
+	appLoadImage( imgItem.path, function( img ) {
 		app.view.appendImage( imgItem.id, img );
 		api.addTexture( imgItem.id, img );
 	});
+	
 	if( ary_image.length > 0 ){
 		loadImages( ary_image );
 	}else{
@@ -309,7 +316,7 @@ function loadImages( ary_image ){
 	}
 }
 
-function loadImage( src, cb ) {
+function appLoadImage( src, cb ) {
 	var img = new Image();
 	img.src = src;
 	img.onload = function() {
@@ -320,6 +327,9 @@ function loadImage( src, cb ) {
 
 function onHtmlClick( dom ){
 	switch( dom.id ){
+		case 'btn_uploadText':
+			app.view.openFileBrowser();
+			break;
 		case 'btn_import':
 			app.view.setWinOutput( JSON.stringify( app.controller.renderToOutputString() ));
 			break;

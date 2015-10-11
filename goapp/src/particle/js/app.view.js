@@ -15,6 +15,7 @@ app.view = app.view || {};
 	var spr_v3 = $("#spr_v3" );
 	var spr_v4 = $("#spr_v4" );
 	var spr_v5 = $("#spr_v5" );
+	var input_file = $("#file" );
 	var mc_propContainer = $("#mc_propContainer" );
 	var dgd_advprops = $("#dgd_advprops" );
 	var combo_advProps = $("#combo_advProps" );
@@ -27,6 +28,20 @@ app.view = app.view || {};
 	var cpr_back = $('#cpr_back');
 	var txt_count = $('#txt_count');
 	var txt_fps = $('#txt_fps');
+	
+	input_file.change( function( e ){
+		var elem = input_file[0];
+		if ( elem.files && elem.files[0] ) {
+			loadImage.parseMetaData( elem.files[0], function (data) {
+				var orientation = data.exif ? data.exif.get('Orientation') : 1;// 1 is keep orientation
+				loadImage( elem.files[0], function (img) {
+					var uid = app.utils.getUid();
+					appendImage( uid, img );
+					api.addTexture( uid, img );
+				});
+			});
+		}
+	});
 	
 	txt_name.textbox( {
 		onChange:function( nv, ob ){
@@ -64,6 +79,11 @@ app.view = app.view || {};
 			} });
 		}
 	});
+	
+	function openFileBrowser(){
+		console.log( input_file );
+		input_file.click();
+	}
 
 	function setWinOutput( value ){
 		vic.easyui.setTextboxValue( win_output.find( '.easyui-textbox' ), value, false );
@@ -613,5 +633,6 @@ app.view = app.view || {};
 	module.setName = setName;
 	module.setWinOutput = setWinOutput;
 	module.closeImport = closeImport;
+	module.openFileBrowser = openFileBrowser;
 	module.event = event;
 })( app.view );
