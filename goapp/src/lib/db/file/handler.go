@@ -107,7 +107,7 @@ func DBFileSystem2( user auth.User ) http.HandlerFunc {
       paths := []interface{}{}
       for _, file := range files {
         if isDetail {
-          paths = append( paths, file )
+          paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner } )
         } else {
           paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name } )
         }
@@ -163,7 +163,7 @@ func DBFileSystem2( user auth.User ) http.HandlerFunc {
           }
         
         } else {
-          jsonstr, _ := json.Marshal( file )
+          jsonstr, _ := json.Marshal( map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner }  )
           w.Header().Set("Content-Type", "application/json; charset=utf8")
           fmt.Fprintf(w, "%s", jsonstr)
         
