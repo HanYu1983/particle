@@ -117,7 +117,7 @@ func DeleteCard(w http.ResponseWriter, r *http.Request){
       return err
     }
     
-    _, err = dbfile.MakeFile( ctx, file.Position, file.Name, data, true )
+    _, err = dbfile.MakeFile( ctx, file.Position, file.Name, data, true, "" )
     if err != nil {
       return err
     }
@@ -229,7 +229,7 @@ func AddCard(w http.ResponseWriter, r *http.Request){
       return err
     }
     
-    _, err = dbfile.MakeFile( ctx, file.Position, file.Name, data, true )
+    _, err = dbfile.MakeFile( ctx, file.Position, file.Name, data, true, "" )
     if err != nil {
       return err
     }

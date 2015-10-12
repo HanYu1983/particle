@@ -10,6 +10,8 @@ import (
   auth "lib/hack/go-http-auth"
 )
 
+var Output = tool.Output
+
 func Secret(user, realm string) string {
   if user == "hanvicadmin" {
     // password is "91281121"
@@ -28,6 +30,8 @@ func init(){
   // 需要認證，保護使用者資料
   dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
   http.HandleFunc("/dbfile/", dbfileHandler)
+  //
+  http.HandleFunc("/appdbfile/", tool.WrapFBAuth(dbfile.DBFileSystem))
   // 檔案的操做管理
   http.HandleFunc("/write", dbfile.WriteFile)
   // 簡易將app的存檔記到個人資料夾
@@ -68,5 +72,4 @@ func welcome(w http.ResponseWriter, r *http.Request) {
   }
   fmt.Fprintf(w, `Welcome, admin user %s!`, u)
 }
-
 

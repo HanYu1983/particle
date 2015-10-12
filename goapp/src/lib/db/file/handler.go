@@ -65,7 +65,7 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
       } else {
         override = false
       }
-      _, err := MakeFile( ctx, parent, name, []byte(content), override )
+      _, err := MakeFile( ctx, parent, name, []byte(content), override, "" )
       tool.Assert( tool.IfError( err ) ) 
       
     } else {
@@ -79,23 +79,24 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
     return
   }
   
+  
   // get為顯示資料
   pathToken := strings.Split(r.URL.Path, "/")
   
   position, err := strconv.ParseInt( pathToken[len(pathToken)-1], 10, 0 )
   tool.Assert( tool.IfError( err ))
   
-  WriteList := func( id int64){
+  WriteList := func( id int64, isDetail bool){
     files, err := FileList( ctx, id )
     tool.Assert( tool.IfError( err ))
   
-    type Info struct {
-      Key int64
-      Name string
-    }
-    paths := []Info{}
+    paths := []interface{}{}
     for _, file := range files {
-      paths = append( paths, Info{ Key:file.Key, Name: file.Name } )
+      if isDetail {
+        paths = append( paths, file )
+      } else {
+        paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name } )
+      }
     }
     jsonstr, _ := json.Marshal( paths )
     w.Header().Set("Content-Type", "application/json; charset=utf8")
@@ -103,7 +104,12 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
   }
   
   if position == 0 {
-    WriteList( position )
+    r.ParseForm()
+    var isDetail bool
+    if len( r.Form["Detail"] ) > 0 {
+      isDetail = true
+    }
+    WriteList( position, isDetail )
     
     
   } else {
@@ -112,18 +118,37 @@ func DBFileSystem(w http.ResponseWriter, r *http.Request){
     tool.Assert( tool.IfError( err ))
   
     if file.IsDir {
-      WriteList( position )
+      r.ParseForm()
+      var isDetail bool
+      if len( r.Form["Detail"] ) > 0 {
+        isDetail = true
+      }
+      WriteList( position, isDetail )
       
     } else {
-      filetype := filepath.Ext( file.Name )[1:]  //delete first "."
-      switch filetype {
-      case "txt", "json":
-        w.Header().Set("Content-Type", "text/plain; charset=utf8")
-        fmt.Fprintf(w, "%s", string( file.Content ))
-        break;
+      r.ParseForm()
+      var isContent bool
+      if len( r.Form["Content"] ) > 0 {
+        isContent = true
+      }
       
-      case "jpg", "jpeg":
-        break;
+      if isContent {
+        filetype := filepath.Ext( file.Name )[1:]  //delete first "."
+        switch filetype {
+        case "txt", "json":
+          w.Header().Set("Content-Type", "text/plain; charset=utf8")
+          fmt.Fprintf(w, "%s", string( file.Content ))
+          break;
+      
+        case "jpg", "jpeg":
+          break;
+        }
+        
+      } else {
+        jsonstr, _ := json.Marshal( file )
+        w.Header().Set("Content-Type", "application/json; charset=utf8")
+        fmt.Fprintf(w, "%s", jsonstr)
+        
       }
     
     }

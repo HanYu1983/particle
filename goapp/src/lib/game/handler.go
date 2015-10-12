@@ -412,7 +412,7 @@ func SaveGameContext (ctx appengine.Context, gameCtx Context) error {
     return err
   }
   
-  _, err = dbfile.MakeFile( ctx, file.Position, file.Name, []byte(data), true )
+  _, err = dbfile.MakeFile( ctx, file.Position, file.Name, []byte(data), true, "" )
   if err != nil {
     return err
   }
