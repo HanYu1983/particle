@@ -16,7 +16,7 @@
       "success"
       (fn [data]
         (am/go
-          (a/>! ret [nil data])
+          (a/>! ret [(.-Error data) (.-Info data)])
           (a/close! ret)))
       "error"
       (fn [xhr _ err]
@@ -75,7 +75,7 @@
       "AccessToken" accessToken)))
       
 (defn loadFromUser [fbid accessToken filename]
-  (ajax (str @*domain* "fn/loadUser") "POST" "text"
+  (ajax (str @*domain* "fn/loadUser") "POST" "json"
     (js-obj
       "FileName" filename
       "FBID" fbid

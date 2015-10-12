@@ -6,15 +6,18 @@ import (
   "lib/tool"
   "lib/db/file"
   "appengine"
+  "lib/auth"
 )
 
+var _ = fmt.Printf
 var rootDir int64
 
 func SetUserPosition(dir int64){
   rootDir = dir
 }
 
-func SaveToUser(w http.ResponseWriter, r *http.Request){
+func SaveToUser (user auth.User) http.HandlerFunc {
+  return func (w http.ResponseWriter, r *http.Request){
   defer tool.Recover( func(err error){
     Output( w, nil, err.Error() )
   })
@@ -22,24 +25,15 @@ func SaveToUser(w http.ResponseWriter, r *http.Request){
   ctx := appengine.NewContext( r )
   
   form, err := tool.ReadAjaxPost( r )
-  tool.Assert( tool.IfError( err ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "AccessToken" ) )
-  
-  fbid := form["FBID"][0]
-  accessToken := form["AccessToken"][0]
-  _, err = tool.AuthFB( ctx, fbid, accessToken )
-  tool.Assert( tool.IfError( err ) ) 
-  
   tool.Assert( tool.ParameterIsNotExist( form, "FileName" ) ) 
   tool.Assert( tool.ParameterIsNotExist( form, "Data" ) ) 
   
-  files, _, err := dbfile.QueryKeys( ctx, rootDir, fbid )
+  files, _, err := dbfile.QueryKeys( ctx, rootDir, user.Key )
   tool.Assert( tool.IfError( err ) ) 
   
   var userDir int64
   if len( files ) == 0 {
-    userDir, err = dbfile.MakeDir( ctx, rootDir, fbid, fbid )
+    userDir, err = dbfile.MakeDir( ctx, rootDir, user.Key, "" )
   } else {
     userDir = files[0].Key
   }
@@ -47,13 +41,15 @@ func SaveToUser(w http.ResponseWriter, r *http.Request){
   fileName := form["FileName"][0]
   data := form["Data"][0]
   
-  _, err = dbfile.MakeFile( ctx, userDir, fileName, []byte(data), true, "" )
+  _, err = dbfile.MakeFile( ctx, userDir, fileName, []byte(data), true, user.Key )
   tool.Assert( tool.IfError( err ) ) 
   
   Output( w, nil, nil )
 }
+}
 
-func LoadFormUser(w http.ResponseWriter, r *http.Request){
+func LoadFormUser (user auth.User) http.HandlerFunc {
+  return func (w http.ResponseWriter, r *http.Request){
   defer tool.Recover( func(err error){
     Output( w, nil, err.Error() )
   })
@@ -61,22 +57,13 @@ func LoadFormUser(w http.ResponseWriter, r *http.Request){
   ctx := appengine.NewContext( r )
   
   form, err := tool.ReadAjaxPost( r )
-  tool.Assert( tool.IfError( err ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "FBID" ) ) 
-  tool.Assert( tool.ParameterIsNotExist( form, "AccessToken" ) )
-  
-  fbid := form["FBID"][0]
-  accessToken := form["AccessToken"][0]
-  _, err = tool.AuthFB( ctx, fbid, accessToken )
-  tool.Assert( tool.IfError( err ) ) 
-  
   tool.Assert( tool.ParameterIsNotExist( form, "FileName" ) ) 
   
-  files, _, err := dbfile.QueryKeys( ctx, rootDir, fbid )
+  files, _, err := dbfile.QueryKeys( ctx, rootDir, user.Key )
   tool.Assert( tool.IfError( err ) ) 
   
   if len( files ) == 0 {
-    Output( w, nil, fmt.Sprintf("file not exist: %v", fbid))
+    Output( w, "", nil )
     return
   }
   
@@ -87,11 +74,16 @@ func LoadFormUser(w http.ResponseWriter, r *http.Request){
   tool.Assert( tool.IfError( err ) ) 
   
   if len( files ) == 0 {
-    Output( w, nil, fmt.Sprintf("file not exist: %v", fileName))
+    Output( w, "", nil )
     return
   }
   
-  fmt.Fprintf(w, "%s", string( files[0].Content ))
+  if user.HasPermission( files[0].Owner ) == false {
+    panic( "you are not owner" )
+  }
+  
+  Output( w, string( files[0].Content ), nil )
+}
 }
 
 

@@ -37,8 +37,10 @@ func init(){
   http.HandleFunc("/write", dbfile.WriteFile)
   // 簡易將app的存檔記到個人資料夾
   SetUserPosition( UserPosition )
-  http.HandleFunc("/fn/saveUser", SaveToUser)
-  http.HandleFunc("/fn/loadUser", LoadFormUser)
+  http.HandleFunc("/fn/saveUser", appauth.WrapFBAuth( SaveToUser ))
+  http.HandleFunc("/fn/loadUser", appauth.WrapFBAuth( LoadFormUser ))
+  //http.HandleFunc("/fn/saveUser", SaveToUser(appauth.User{ Key: "admin" }))
+  //http.HandleFunc("/fn/loadUser", LoadFormUser(appauth.User{ Key: "admin" }))
   // 格鬥風雲錄卡表
   http.HandleFunc("/fn/cardInfo/addCard", AddCard)
   http.HandleFunc("/fn/cardInfo/deleteCard", DeleteCard)

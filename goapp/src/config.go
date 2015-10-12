@@ -2,9 +2,9 @@ package hello
 
 const (
   // han local
-  UserPosition = 5066549580791808
+  //UserPosition = 5066549580791808
   // remote
-  //UserPosition = 5757334940811264
+  UserPosition = 5757334940811264
   
   // han local
   //CardInfoPosition = 5733953138851840
