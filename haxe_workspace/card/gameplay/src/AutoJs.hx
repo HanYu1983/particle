@@ -11,7 +11,7 @@ class AutoJs
 {
 	/**
 	 * 
-	 * @param	config : ['console.log', 'app_doA']
+	 * @param	config : ['console_log', 'app_doA']
 	 * @return
 	 */
 	macro static public function build( config:Array<String> ):Array<Field> {
