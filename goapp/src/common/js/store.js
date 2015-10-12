@@ -38,6 +38,7 @@ var store = store || {};
     $.ajax({
       url: '../fn/loadUser',
       type: 'post',
+			dataType: 'json',
       data: data,
       success: function( ret ){
         cb( ret.Error, ret.Info )

@@ -33,16 +33,20 @@ func WrapFBAuth ( handler BindUserFunc ) http.HandlerFunc {
     ctx := appengine.NewContext( r )
   
     var form url.Values
-    var err error
+    //var err error
     
+    r.ParseForm()
     if r.Method == "POST" { 
-      form, err = ReadAjaxPost( r )
-      Assert( IfError( err ) )
+      //form, err = ReadAjaxPost( r )
+      //Assert( IfError( err ) )
+      form = r.PostForm
       
     } else {
+      r.ParseForm()
       form = r.Form
       
     }
+    
     Assert( ParameterIsNotExist( form, "FBID" ) ) 
     Assert( ParameterIsNotExist( form, "AccessToken" ) )
   

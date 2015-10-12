@@ -24,7 +24,8 @@ func SaveToUser (user auth.User) http.HandlerFunc {
   
   ctx := appengine.NewContext( r )
   
-  form, err := tool.ReadAjaxPost( r )
+  //form, err := tool.ReadAjaxPost( r )
+  form := r.PostForm
   tool.Assert( tool.ParameterIsNotExist( form, "FileName" ) ) 
   tool.Assert( tool.ParameterIsNotExist( form, "Data" ) ) 
   
@@ -56,7 +57,8 @@ func LoadFormUser (user auth.User) http.HandlerFunc {
   
   ctx := appengine.NewContext( r )
   
-  form, err := tool.ReadAjaxPost( r )
+  //form, err := tool.ReadAjaxPost( r )
+  form := r.PostForm
   tool.Assert( tool.ParameterIsNotExist( form, "FileName" ) ) 
   
   files, _, err := dbfile.QueryKeys( ctx, rootDir, user.Key )
