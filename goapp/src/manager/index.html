@@ -153,7 +153,11 @@ a{
 				<div class="group" style="text-align:center; margin-top:10px;">
 					傻瓜也能用的粒子系統！好用！
 					<br>
+					<br>
 					<span style="color:yellow;">效能已優化、功能強大</span>
+					<br>
+					<span style="color:yellow;">本網站粒子特效均由幽夢仙境製作而來! 有拖拉效果、點擊效果、全螢幕效果</span>
+					<br>
 					<br>
 					開發環境：google app engine<br>
 					開發語言：golang/ haxe/ javascript/ jquery easy ui<br>
@@ -200,7 +204,8 @@ a{
 					<br/>
 					後端工程師
 					<br/>
-					主要負責上善若水app的技術研發、後台資料庫、server端管理、model端編寫<br>
+					主要負責上善若水app的技術研發、後台資料庫、server端管理、model端編寫
+					<br>
 					專長：golang/ clojurescript/ javascript
 					<br/>
 					聯絡
@@ -212,11 +217,33 @@ a{
 					<br/>
 					前端工程師
 					<br/>
-					主要負責上善若水app的html、ui介面、前台編寫<br>
+					主要負責上善若水app的html、ui介面、前台編寫
+					<br>
 					專長：haxe/ as3/ javascript/ html/ css
 					<br/>
 					<a href="https://www.facebook.com/vic.yu.14">https://www.facebook.com/vic.yu.14</a>
 				</div>
+				<!--
+				<div class="group" style="text-align:center; margin-top:100px; margin-bottom:50px; ">
+					<div style="font-size:20px;">
+						特別感謝：林竹君
+					</div>
+				</div>
+				-->
+				<!--
+				<div class="group" style="text-align:center; margin-top:40px;">
+					<span style="font-size:20px;">林竹君 Xiao Za</span>
+					<br/>
+					<br/>
+					美術設計師
+					<br/>
+					主要負責上善若水app需要美術圖形的部分
+					<br>
+					硬底子的美術實力
+					<br/>
+					<a href="https://www.facebook.com/xiao.sa.5076">https://www.facebook.com/xiao.sa.5076</a>
+				</div>
+				-->
 			</div>
 		</div>
 		<div id="dia_about" class="easyui-dialog" title="上善若水" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
@@ -445,6 +472,7 @@ a{
 		setTimeout( arguments.callee, 1000.0/30 )
 	}, 0)
 	
+	var snowConfig = [{"id":0,"name":"發射器","lifetime":0,"vel":[0,0,0],"pos":[860,0,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_128_128","blending":"add","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":6,"vel":[51,136,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[14,15],"tex":"glow_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",2,0,0,0,0],["vy","randAdd",12,0,0,0,0],["vx","randAdd",18,0,0,0,0],["y","randStartAdd",252,0,0,0,0],["x","randStartAdd",1200,0,0,0,0],["rot","randStartAdd",6.283185307179586,0,0,0,0],["scale-y","randStartAdd",15,0,0,0,0],["scale-x","randStartAdd",15,0,0,0,0],["a","custom",0,0.5,1,0.5,0]]}],"count":1,"duration":0.113,"angle":0,"range":0,"force":0}}]
 	//var particleConfig = [{"id":0,"name":"發射器","lifetime":0,"vel":[0,0,0],"pos":[236,382,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_128_128","blending":"add","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":0.3,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",0.1,0,0,0,0],["scale-y","custom",106,33,19,27,0],["scale-x","custom",106,41,25,22,0]]}],"count":1,"duration":0.019,"angle":0,"range":0,"force":0}},{"id":"0652790d-0a2f-4408-810b-6bc4592373bf","name":"0652790d-0a2f-4408-810b-6bc4592373bf","lifetime":0,"vel":[0,0,0],"pos":[236,382,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"0","blending":"add","formulaList":[],"emit":{"count":1,"duration":0.05,"angle":0,"range":0,"force":0,"prototype":[{"id":"9f0eb3f5-d82e-474c-a419-ec8916404988","name":"9f0eb3f5-d82e-474c-a419-ec8916404988","lifetime":0.6,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_color_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",0.1,0,0,0,0],["vy","randStartAdd",246,0,0,0,0],["vx","randStartAdd",213,0,0,0,0],["scale-x","custom",0,24,49,36,0],["scale-y","custom",0,24,49,36,0]]}]}}];
 	//var particleConfig = [{"id":0,"name":"發射器","lifetime":0,"vel":[0,0,0],"pos":[309,499,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_128_128","blending":"normal","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":0.329,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",0.229,0,0,0,0],["scale-y","custom",0,25,50,25,0],["scale-x","custom",0,25,50,25,0]],"emit":{"count":1,"duration":0.116,"angle":0,"range":0,"force":0,"prototype":[{"id":"9bd78069-f8dd-4246-bd94-5aee311c0297","name":"small","lifetime":0.751,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"glow_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",0.1,0,0,0,0],["vy","randAdd",100,0,0,0,0],["vx","randAdd",100,0,0,0,0],["scale-y","constMul",0.9,0,0,0,0],["scale-x","constMul",0.9,0,0,0,0]]}]}}],"count":1,"duration":0.053,"angle":0,"range":0,"force":0}}];
 	var particleConfig = [{"id":0,"name":"發射器","lifetime":0,"vel":[0,0,0],"pos":[227,578,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_128_128","blending":"normal","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":0.55,"vel":[0,0,4.328416544945937],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"cornerGlow_256_256","blending":"normal","formulaList":[["lifetime","randStartAdd",0.145,0,0,0,0],["rot","randStartAdd",6.283185307179586,0,0,0,0],["scale-y","constMul",0.95,0,0,0,0],["scale-x","constMul",0.95,0,0,0,0],["a","constMul",0.95,0,0,0,0]]}],"count":1,"duration":0.031,"angle":0,"range":0,"force":0}}];
@@ -455,6 +483,7 @@ a{
 	
 	ps.clear()
 	var parts = addParticle(pool, particleConfig);
+	var snowParts = addParticle( pool, snowConfig );
 	
 	function addParticle( pool, config ){
 		var parts = particle.parseInput( pool, config );
