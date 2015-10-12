@@ -76,7 +76,7 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
   return nkey.IntID(), err
 }
 
-func MakeDir (ctx appengine.Context, position int64, name string) (int64, error){
+func MakeDir (ctx appengine.Context, position int64, name string, owner string) (int64, error){
   
   // 0 代表為桌面，不必檢查
   if position != 0 {
@@ -91,6 +91,7 @@ func MakeDir (ctx appengine.Context, position int64, name string) (int64, error)
     IsDir: true,
     Name: name,
     Content: nil,
+    Owner: owner,
   }
   
   _, keys, err := QueryKeys( ctx, position, name )

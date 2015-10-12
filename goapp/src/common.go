@@ -39,7 +39,7 @@ func SaveToUser(w http.ResponseWriter, r *http.Request){
   
   var userDir int64
   if len( files ) == 0 {
-    userDir, err = dbfile.MakeDir( ctx, rootDir, fbid )
+    userDir, err = dbfile.MakeDir( ctx, rootDir, fbid, fbid )
   } else {
     userDir = files[0].Key
   }

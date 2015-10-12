@@ -8,6 +8,7 @@ import (
   "appengine"
   "appengine/user"
   auth "lib/hack/go-http-auth"
+  appauth "lib/auth"
 )
 
 var Output = tool.Output
@@ -28,10 +29,10 @@ func init(){
   http.HandleFunc("/proxy", tool.Proxy)
   // 檔案的viewer
   // 需要認證，保護使用者資料
-  dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
-  http.HandleFunc("/dbfile/", dbfileHandler)
+  dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem2(appauth.User{ Key: "admin" }))
+  http.HandleFunc("/admindbfile/", dbfileHandler)
   //
-  http.HandleFunc("/appdbfile/", tool.WrapFBAuth(dbfile.DBFileSystem))
+  http.HandleFunc("/dbfile/", appauth.WrapFBAuth(dbfile.DBFileSystem2))
   // 檔案的操做管理
   http.HandleFunc("/write", dbfile.WriteFile)
   // 簡易將app的存檔記到個人資料夾
