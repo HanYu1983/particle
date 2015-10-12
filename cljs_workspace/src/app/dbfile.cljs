@@ -66,6 +66,21 @@
       "FBID" fbid
       "AccessToken" accessToken)))
       
+(defn saveToUser [fbid accessToken filename data]
+  (ajax (str @*domain* "fn/saveUser") "POST" "json"
+    (js-obj
+      "Data" data
+      "FileName" filename
+      "FBID" fbid
+      "AccessToken" accessToken)))
+      
+(defn loadFromUser [fbid accessToken filename]
+  (ajax (str @*domain* "fn/loadUser") "POST" "text"
+    (js-obj
+      "FileName" filename
+      "FBID" fbid
+      "AccessToken" accessToken)))
+      
 (defn name->id [dir filename]
   (am/go
     (let [[err content] (a/<! (fileList dir))]

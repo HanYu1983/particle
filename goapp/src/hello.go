@@ -30,9 +30,6 @@ func init(){
   http.HandleFunc("/dbfile/", dbfileHandler)
   // 檔案的操做管理
   http.HandleFunc("/write", dbfile.WriteFile)
-  // 余氏K線圖用的記錄功能。將要改成SaveToUser
-  http.HandleFunc("/simple/save", Save)
-  http.HandleFunc("/simple/load", Load)
   // 簡易將app的存檔記到個人資料夾
   SetUserPosition( UserPosition )
   http.HandleFunc("/fn/saveUser", SaveToUser)
@@ -47,6 +44,9 @@ func init(){
   // 傾聽事件，沒有實作內容
   http.HandleFunc("/_ah/channel/connected/", onChannelConnected)
   http.HandleFunc("/_ah/channel/disconnected/", onChannelDisconnected)
+  // 余氏K線圖用的記錄功能。已修改為SaveToUser
+  //http.HandleFunc("/simple/save", Save)
+  //http.HandleFunc("/simple/load", Load)
   // 測試用
   http.HandleFunc("/welcome/", welcome)
 }

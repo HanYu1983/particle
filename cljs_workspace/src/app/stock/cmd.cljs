@@ -19,14 +19,15 @@
       
 (defn loadUser [ch fbid accessToken request]
   (am/go
-    (let [[err content] (<! (db/load "stock" fbid accessToken))]
+    (let [[err content] (<! (db/loadFromUser fbid accessToken "stock.json"))
+          content (if (= content "") (js-obj "stocks" (array)) (.parse js/JSON content))]
       (a/>! ch ["view" [(or err (.-error content)) content request]]))))
   ;(am/go
   ;  (a/>! ch ["view" [nil (get @save-data (str fbid)) request]])))
     
 (defn saveUser [ch fbid accessToken data request]
   (am/go
-    (let [[err ret] (<! (db/save "stock" fbid accessToken (.stringify js/JSON data)))]
+    (let [[err ret] (<! (db/saveToUser fbid accessToken "stock.json" (.stringify js/JSON data)))]
       (a/>! ch ["view" [(or err (.-error ret)) ret request]]))))
   ;(swap! save-data assoc (str fbid) data)
   ;(am/go

@@ -3,7 +3,7 @@ app.config = app.config || {};
 app.config.fbappid = {
 	local:'679171275511375',
 	online:'425311264344425',
-	which:'online'
+	which:'local'
 }
 app.config.about = [
 	"版本1.0",
