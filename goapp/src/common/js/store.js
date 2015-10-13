@@ -30,7 +30,9 @@ var store = store || {};
   }
   /**
   data: {
-    Detail
+    Detail,
+    Offset: int,
+    Count: int
   }
   */
   function loadParticleList( data, cb ){
@@ -46,6 +48,24 @@ var store = store || {};
         cb( err )
       }
     })
+  }
+  
+  function loadParticle( id, cb ){
+    $.ajax({
+      url: '../dbfile/particle/' + id,
+      type: 'get',
+      dataType: 'json',
+      success: function( ret ){
+        cb( ret.Error, ret.Info )
+      },
+      error: function( xhr, res, err ){
+        cb( err )
+      }
+    })
+  }
+  
+  function getParticleImageUrl( id ){
+    return '../dbfile/particle/' + id + '?Content'
   }
   
   
@@ -100,5 +120,7 @@ var store = store || {};
   module.load = load
   module.saveParticle = saveParticle
   module.loadParticleList = loadParticleList
+  module.getParticleImageUrl = getParticleImageUrl
+  module.loadParticle = loadParticle
   
 }) (store)

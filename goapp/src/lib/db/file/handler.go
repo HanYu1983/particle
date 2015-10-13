@@ -106,12 +106,16 @@ func DBFileSystem2( user IUser ) http.HandlerFunc {
     position, err := strconv.ParseInt( pathToken[len(pathToken)-1], 10, 0 )
     tool.Assert( tool.IfError( err ))
   
-    WriteList := func( id int64, isDetail bool){
+    WriteList := func( id int64, isDetail bool, offset, cnt int){
+      end := offset + cnt
       files, err := FileList( ctx, id )
       tool.Assert( tool.IfError( err ))
   
       paths := []interface{}{}
-      for _, file := range files {
+      for idx, file := range files {
+        if idx < offset || idx >= end {
+          continue
+        }
         if isDetail {
           paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner } )
         } else {
@@ -127,7 +131,17 @@ func DBFileSystem2( user IUser ) http.HandlerFunc {
       if len( r.Form["Detail"] ) > 0 {
         isDetail = true
       }
-      WriteList( position, isDetail )
+      var offset int
+      cnt := 5
+      if len( r.Form["Offset"] ) > 0 {
+        offset, err = strconv.Atoi( r.Form["Offset"][0] )
+        tool.Assert( tool.IfError( err ))
+      }
+      if len( r.Form["Count"] ) > 0 {
+        cnt, err = strconv.Atoi( r.Form["Count"][0] )
+        tool.Assert( tool.IfError( err ))
+      }
+      WriteList( position, isDetail, offset, cnt )
     
     
     } else {
@@ -145,7 +159,17 @@ func DBFileSystem2( user IUser ) http.HandlerFunc {
         if len( r.Form["Detail"] ) > 0 {
           isDetail = true
         }
-        WriteList( position, isDetail )
+        var offset int
+        cnt := 5
+        if len( r.Form["Offset"] ) > 0 {
+          offset, err = strconv.Atoi( r.Form["Offset"][0] )
+          tool.Assert( tool.IfError( err ))
+        }
+        if len( r.Form["Count"] ) > 0 {
+          cnt, err = strconv.Atoi( r.Form["Count"][0] )
+          tool.Assert( tool.IfError( err ))
+        }
+        WriteList( position, isDetail, offset, cnt )
       
       } else {
         r.ParseForm()
@@ -166,7 +190,10 @@ func DBFileSystem2( user IUser ) http.HandlerFunc {
             fmt.Fprintf(w, "%s", string( file.Content ))
             break
       
-          case "jpg", "jpeg":
+          case "jpg":
+            w.Header().Set("Content-Type", "image/jpeg; charset=utf8")
+            img := tool.DecodeBase64ToImage( string( file.Content ) )
+            tool.WriteJpg( w, img )
             break
           }
         
