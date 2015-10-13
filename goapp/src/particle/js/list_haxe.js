@@ -2,7 +2,7 @@
 var CallJs = function() { };
 var Main = function() { };
 Main.main = function() {
-	CallJs.store_loadParticleList({ },Main.handleModel(function(ret) {
+	CallJs.store_loadParticleList({ Offset : 0, Count : 30},Main.handleModel(function(ret) {
 		console.log(ret);
 	}));
 };

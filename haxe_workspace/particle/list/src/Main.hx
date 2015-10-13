@@ -10,7 +10,10 @@ class Main
 	
 	static function main() 
 	{
-		CallJs.store_loadParticleList( { }, handleModel( function( ret ) {
+		CallJs.store_loadParticleList( { 
+			Offset:0,
+			Count:30
+		}, handleModel( function( ret ) {
 			trace( ret );
 		}) );
 	}
