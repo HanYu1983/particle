@@ -5,6 +5,7 @@ import (
   "net/url"
   "net/http"
   . "lib/tool"
+  "lib/db/file"
 )
 
 type User struct {
@@ -12,17 +13,21 @@ type User struct {
   Name string
 }
 
-func (u *User) HasPermission( target string ) bool {
+func (u User) GetID()string{
+  return u.Key
+}
+
+func (u User) HasPermission( file dbfile.DBFile ) bool {
   if u.Key == "admin" {
     return true
   }
-  if target == "" {
+  if file.Owner == "" {
     return true
   }
-  return u.Key == target
+  return u.Key == file.Owner
 }
 
-type BindUserFunc func( user User )http.HandlerFunc
+type BindUserFunc func( user dbfile.IUser )http.HandlerFunc
 
 func WrapFBAuth ( handler BindUserFunc ) http.HandlerFunc {
   return func( w http.ResponseWriter, r *http.Request ){
@@ -39,7 +44,6 @@ func WrapFBAuth ( handler BindUserFunc ) http.HandlerFunc {
       form = r.PostForm
       
     } else {
-      r.ParseForm()
       form = r.Form
       
     }

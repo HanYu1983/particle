@@ -170,6 +170,7 @@ func AssertFBIDIsInvalid ( ctx appengine.Context, fbid, accessToken string ) fun
 }
 
 func Output(w http.ResponseWriter, info, err interface{}){
+  w.Header().Set("Content-Type", "application/json; charset=utf8")
   ret := map[string]interface{}{
     "Info": info,
     "Error": err,

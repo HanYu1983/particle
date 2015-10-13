@@ -9,8 +9,14 @@ import (
   "appengine"
   "net/http"
   "lib/tool"
-  "lib/auth"
 )
+
+
+type IUser interface {
+  GetID()string
+  HasPermission(DBFile)bool
+}
+
 
 func WriteFile(w http.ResponseWriter, r *http.Request){
   t := tool.TemplateWithFile("write", "lib/db/file/write.html")
@@ -19,7 +25,7 @@ func WriteFile(w http.ResponseWriter, r *http.Request){
   } )
 }
 
-func DBFileSystem2( user auth.User ) http.HandlerFunc {
+func DBFileSystem2( user IUser ) http.HandlerFunc {
   return func(w http.ResponseWriter, r *http.Request){
     defer tool.Recover( func(err error){
       tool.Output( w, nil, err.Error() )
@@ -41,12 +47,13 @@ func DBFileSystem2( user auth.User ) http.HandlerFunc {
         file, err := GetFile( ctx, key )
         tool.Assert( tool.IfError( err ) ) 
         
-        if user.HasPermission( file.Owner ) == false {
+        if user.HasPermission( file ) == false {
           panic("you are not owner")
           
         }
         
         DeleteFile( ctx, key )
+        tool.Output( w, nil, nil )
         return
       }
     
@@ -79,17 +86,16 @@ func DBFileSystem2( user auth.User ) http.HandlerFunc {
         } else {
           override = false
         }
-        _, err := MakeFile( ctx, parent, name, []byte(content), override, user.Key )
+        _, err := MakeFile( ctx, parent, name, []byte(content), override, user.GetID() )
         tool.Assert( tool.IfError( err ) ) 
       
       } else {
-        _, err := MakeDir( ctx, parent, name, user.Key )
+        _, err := MakeDir( ctx, parent, name, user.GetID() )
         tool.Assert( tool.IfError( err ) ) 
       
       }
-    
-      w.Header().Set("Content-Type", "application/json; charset=utf8")
-      fmt.Fprintf(w, "{%s}", "")
+      
+      tool.Output( w, nil, nil )
       return
     }
   
@@ -112,9 +118,7 @@ func DBFileSystem2( user auth.User ) http.HandlerFunc {
           paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name } )
         }
       }
-      jsonstr, _ := json.Marshal( paths )
-      w.Header().Set("Content-Type", "application/json; charset=utf8")
-      fmt.Fprintf(w, "%s", jsonstr)
+      tool.Output( w, paths, nil )
     }
   
     if position == 0 {
@@ -131,7 +135,7 @@ func DBFileSystem2( user auth.User ) http.HandlerFunc {
       file, err := GetFile( ctx, position )
       tool.Assert( tool.IfError( err ))
       
-      if user.HasPermission( file.Owner ) == false {
+      if user.HasPermission( file ) == false {
         panic("you are not owner")
       }
       
@@ -153,22 +157,23 @@ func DBFileSystem2( user auth.User ) http.HandlerFunc {
         if isContent {
           filetype := filepath.Ext( file.Name )[1:]  //delete first "."
           switch filetype {
-          case "txt", "json":
+          case "json":
+            w.Header().Set("Content-Type", "application/json; charset=utf8")
+            fmt.Fprintf(w, "%s", string( file.Content ))
+            break
+          case "txt":
             w.Header().Set("Content-Type", "text/plain; charset=utf8")
             fmt.Fprintf(w, "%s", string( file.Content ))
-            break;
+            break
       
           case "jpg", "jpeg":
-            break;
+            break
           }
         
         } else {
-          jsonstr, _ := json.Marshal( map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner }  )
-          w.Header().Set("Content-Type", "application/json; charset=utf8")
-          fmt.Fprintf(w, "%s", jsonstr)
+          tool.Output( w, map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner }, nil )
         
         }
-    
       }
     }
   }
