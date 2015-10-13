@@ -168,3 +168,12 @@ func AssertFBIDIsInvalid ( ctx appengine.Context, fbid, accessToken string ) fun
     }
   }
 }
+
+func Output(w http.ResponseWriter, info, err interface{}){
+  ret := map[string]interface{}{
+    "Info": info,
+    "Error": err,
+  }
+  jsonstr, _ := json.Marshal( ret )
+  fmt.Fprintf(w, "%s", string( jsonstr ))
+}

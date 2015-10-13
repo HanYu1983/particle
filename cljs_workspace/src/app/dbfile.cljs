@@ -16,7 +16,7 @@
       "success"
       (fn [data]
         (am/go
-          (a/>! ret [nil data])
+          (a/>! ret [(.-Error data) (.-Info data)])
           (a/close! ret)))
       "error"
       (fn [xhr _ err]
@@ -63,6 +63,21 @@
   (ajax (str @*domain* "simple/load") "POST" "json"
     (js-obj
       "Target" target
+      "FBID" fbid
+      "AccessToken" accessToken)))
+      
+(defn saveToUser [fbid accessToken filename data]
+  (ajax (str @*domain* "fn/saveUser") "POST" "json"
+    (js-obj
+      "Data" data
+      "FileName" filename
+      "FBID" fbid
+      "AccessToken" accessToken)))
+      
+(defn loadFromUser [fbid accessToken filename]
+  (ajax (str @*domain* "fn/loadUser") "POST" "json"
+    (js-obj
+      "FileName" filename
       "FBID" fbid
       "AccessToken" accessToken)))
       

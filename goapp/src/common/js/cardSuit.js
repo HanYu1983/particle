@@ -305,7 +305,7 @@ var cardSuit = cardSuit || {};
       FileName: 'cardSuit.json',
       Data: JSON.stringify(data)
     }, function( err, ret ){
-      cb( err || ret.Error, ret )
+      cb( err, ret )
     })
   }
   

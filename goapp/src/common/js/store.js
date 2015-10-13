@@ -18,7 +18,7 @@ var store = store || {};
       dataType: 'json',
       data: data,
       success: function( ret ){
-        cb( ret.Error, ret )
+        cb( ret.Error, ret.Info )
       },
       error: function( xhr, res, err ){
         cb( err )
@@ -38,9 +38,10 @@ var store = store || {};
     $.ajax({
       url: '../fn/loadUser',
       type: 'post',
+			dataType: 'json',
       data: data,
       success: function( ret ){
-        cb( null, ret )
+        cb( ret.Error, ret.Info )
       },
       error: function( xhr, res, err ){
         cb( err )

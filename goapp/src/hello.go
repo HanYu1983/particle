@@ -8,7 +8,10 @@ import (
   "appengine"
   "appengine/user"
   auth "lib/hack/go-http-auth"
+  appauth "lib/auth"
 )
+
+var Output = tool.Output
 
 func Secret(user, realm string) string {
   if user == "hanvicadmin" {
@@ -20,27 +23,39 @@ func Secret(user, realm string) string {
 
 func init(){
   authenticator := auth.NewDigestAuthenticator("dbpublic", Secret)
-  dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem)
-  
-  SetUserPosition( UserPosition )
-  
-  http.HandleFunc("/welcome/", welcome)
+  // 歡迎頁面
   http.HandleFunc("/", handler)
+  // 代理伺服器
   http.HandleFunc("/proxy", tool.Proxy)
-  http.HandleFunc("/dbfile/", dbfileHandler)
+  // 檔案的viewer
+  // 需要認證，保護使用者資料
+  dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem2(appauth.User{ Key: "admin" }))
+  http.HandleFunc("/admindbfile/", dbfileHandler)
+  //
+  http.HandleFunc("/dbfile/", appauth.WrapFBAuth(dbfile.DBFileSystem2))
+  // 檔案的操做管理
   http.HandleFunc("/write", dbfile.WriteFile)
-  http.HandleFunc("/simple/save", Save)
-  http.HandleFunc("/simple/load", Load)
-  http.HandleFunc("/fn/saveUser", SaveToUser)
-  http.HandleFunc("/fn/loadUser", LoadFormUser)
+  // 簡易將app的存檔記到個人資料夾
+  SetUserPosition( UserPosition )
+  http.HandleFunc("/fn/saveUser", appauth.WrapFBAuth( SaveToUser ))
+  http.HandleFunc("/fn/loadUser", appauth.WrapFBAuth( LoadFormUser ))
+  //http.HandleFunc("/fn/saveUser", SaveToUser(appauth.User{ Key: "admin" }))
+  //http.HandleFunc("/fn/loadUser", LoadFormUser(appauth.User{ Key: "admin" }))
+  // 格鬥風雲錄卡表
   http.HandleFunc("/fn/cardInfo/addCard", AddCard)
   http.HandleFunc("/fn/cardInfo/deleteCard", DeleteCard)
   http.HandleFunc("/fn/cardInfo/cardList", CardList)
+  // 卡牌風雲
   http.HandleFunc("/fn/createChannel", CreateChannel)
   http.HandleFunc("/fn/sendChannelMessage", SendChannelMessage)
+  // 傾聽事件，沒有實作內容
   http.HandleFunc("/_ah/channel/connected/", onChannelConnected)
   http.HandleFunc("/_ah/channel/disconnected/", onChannelDisconnected)
-  
+  // 余氏K線圖用的記錄功能。已修改為SaveToUser
+  //http.HandleFunc("/simple/save", Save)
+  //http.HandleFunc("/simple/load", Load)
+  // 測試用
+  http.HandleFunc("/welcome/", welcome)
 }
 
 func handler(w http.ResponseWriter, r *http.Request){
@@ -60,5 +75,4 @@ func welcome(w http.ResponseWriter, r *http.Request) {
   }
   fmt.Fprintf(w, `Welcome, admin user %s!`, u)
 }
-
 

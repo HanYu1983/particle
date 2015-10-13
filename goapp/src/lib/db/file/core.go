@@ -16,6 +16,7 @@ type DBFile struct {
   IsDir bool
   Name string
   Content []byte
+  Owner string
 }
 
 func QueryKeys (ctx appengine.Context, position int64, name string) ([]DBFile, []*datastore.Key, error){
@@ -30,7 +31,7 @@ func QueryKeys (ctx appengine.Context, position int64, name string) ([]DBFile, [
   return entities, keys, err
 }
 
-func MakeFile (ctx appengine.Context, position int64, name string, content []byte, override bool) (int64, error) {
+func MakeFile (ctx appengine.Context, position int64, name string, content []byte, override bool, owner string) (int64, error) {
   
   // 0 代表為桌面，不必檢查
   if position != 0 {
@@ -46,6 +47,7 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
     IsDir: false,
     Name: name,
     Content: content,
+    Owner: owner,
   }
   
   _, keys, err := QueryKeys( ctx, position, name )
@@ -74,7 +76,7 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
   return nkey.IntID(), err
 }
 
-func MakeDir (ctx appengine.Context, position int64, name string) (int64, error){
+func MakeDir (ctx appengine.Context, position int64, name string, owner string) (int64, error){
   
   // 0 代表為桌面，不必檢查
   if position != 0 {
@@ -89,6 +91,7 @@ func MakeDir (ctx appengine.Context, position int64, name string) (int64, error)
     IsDir: true,
     Name: name,
     Content: nil,
+    Owner: owner,
   }
   
   _, keys, err := QueryKeys( ctx, position, name )
