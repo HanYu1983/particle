@@ -26,6 +26,7 @@ app.controller = app.controller || {};
 		}
 		
 		view.event.on( 'onImportEvent', function( e, options ){
+			api.clearParticle();
 			var importobj = JSON.parse( options.importstr );
 			var ary_particls = _.map( importobj, function( pobj ){
 				var treeModel = {};
