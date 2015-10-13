@@ -246,7 +246,7 @@
     </div>
 	<div id="m1">
 		<div id="btn_import" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">匯入/匯出</div>
-		<div id="btn_saveToServer" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">儲存至Server</div>
+		<div id="btn_saveToServer" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">儲存至Serverlo</div>
 	</div>
 	<div id="m2">
 		<div id="btn_uploadText" onclick="onHtmlClick(this)" data-options="iconCls:'icon-add'">上傳貼圖</div>
@@ -271,6 +271,7 @@
 			<a id="btn_outputConfirm" class="easyui-linkbutton" onclick="onHtmlClick(this)">確定</a>
 		</div>
     </div>
+	
 </body>
 <script src='../common/js/lib/async.js'></script>
 <script src='../common/js/lib/rxjs/rx.all.min.js'></script>
@@ -279,6 +280,7 @@
 <script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
 <script type="text/javascript" src="../common/js/lib/han/particle.js"></script>
 <script type="text/javascript" src="../common/js/lib/han/particleDrawer.js"></script>
+<script src='../common/js/store.js'></script>
 <script src='js/api.js'></script>
 <script src="js/app.utils.js"></script>
 <script src="js/app.view.js"></script>
@@ -328,11 +330,30 @@ function appLoadImage( src, cb ) {
 	};
 }
 
+function saveToServer( name, content ){
+	store.saveParticle({
+		Name: name,
+		Content: content,
+		Override: "off"
+	}, function(err, ret){
+		console.log( err )
+		console.log( ret )
+	})
+}
+
 
 function onHtmlClick( dom ){
 	switch( dom.id ){
 		case 'btn_saveToServer':
+			var uid = app.utils.getUid();
+			saveToServer( uid + '.json', JSON.stringify( app.controller.renderToOutputString() ) );
+			var base64 = $('#webgl' ).find( 'canvas' )[0].toDataURL().split( ',' )[1];
+			saveToServer( uid + '.jpg', base64 );
 			
+			var img = new Image();
+			img.src = $('#webgl' ).find( 'canvas' )[0].toDataURL();
+			
+			$( 'body' ).append( img );
 			break;
 		case 'btn_uploadText':
 			app.view.openFileBrowser();
@@ -364,6 +385,8 @@ function onHtmlClick( dom ){
 			break;
 	}
 }
+
+
 </script>
 
 </html>
