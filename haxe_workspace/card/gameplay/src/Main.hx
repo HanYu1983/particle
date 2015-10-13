@@ -76,9 +76,11 @@ class Main
 		untyped __js__( 'myapp.facebook.init' )( fbappId, function() {
 			loadCardSuit( 'gundamWar', function() {
 				loadCardSuit( 'fighter', function() {
-					loadCardSuit( 'sangoWar', function(){
-						closeLoading();
-						slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
+					loadCardSuit( 'sangoWar', function() {
+						loadCardSuit( 'magic', function(){
+							closeLoading();
+							slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
+						});
 					});
 				});
 			});
@@ -282,6 +284,9 @@ class Main
 						closeLoading();
 					}));
 				});
+			case 'onBtnLoadMagicClick':
+				currentSelect = 'magic';
+				chooseCardSuit( 'magic' );
 			case 'onBtnLoadFighterClick':
 				currentSelect = 'fighter';
 				chooseCardSuit( 'fighter' );
@@ -407,6 +412,9 @@ class Main
 	
 	public static function createCard( model:Dynamic ) {
 		model.url = getCardImageUrlWithPackage( cardPackage, model.cardId );
+		var ary_url:Array<String> = model.url.split( '/' );
+		ary_url[ary_url.length - 1] = untyped __js__( 'encodeURIComponent' )( ary_url[ary_url.length - 1] );
+		model.url = ary_url.join( '/' );
 		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
 	}
 	

@@ -5,6 +5,11 @@ var cardSuit = cardSuit || {};
   function defaultModel() {
     return {
   "cardSuit":[
+	{
+		"name":"magic",
+		"game":"magic",
+		"cards":["118","117","116","115","113","112"]
+	},
     {
       "name": "sword砍人",
       "game": "gundamWar",

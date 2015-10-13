@@ -324,8 +324,10 @@ var Main = function() {
 		_g.loadCardSuit("gundamWar",function() {
 			_g.loadCardSuit("fighter",function() {
 				_g.loadCardSuit("sangoWar",function() {
-					Main.closeLoading();
-					Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
+					_g.loadCardSuit("magic",function() {
+						Main.closeLoading();
+						Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
+					});
 				});
 			});
 		});
@@ -509,6 +511,9 @@ Main.rotate = function(ary_select,deg) {
 };
 Main.createCard = function(model) {
 	model.url = Main.getCardImageUrlWithPackage(Main.cardPackage,model.cardId);
+	var ary_url = model.url.split("/");
+	ary_url[ary_url.length - 1] = encodeURIComponent(ary_url[ary_url.length - 1]);
+	model.url = ary_url.join("/");
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
 Main.flip = function(ary_select) {
@@ -705,6 +710,10 @@ Main.prototype = {
 					Main.closeLoading();
 				}));
 			});
+			break;
+		case "onBtnLoadMagicClick":
+			Main.currentSelect = "magic";
+			this.chooseCardSuit("magic");
 			break;
 		case "onBtnLoadFighterClick":
 			Main.currentSelect = "fighter";

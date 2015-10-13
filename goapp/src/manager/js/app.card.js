@@ -35,6 +35,7 @@ app.card = app.card || {};
 				return function(){
 					switch( this.id ){
 						case 'btn_fighter':__model.game = 'fighter';break;
+						case 'btn_magic':__model.game = 'magic';break;
 						case 'btn_gundamWar':__model.game = 'gundamWar';break;
 						case 'btn_sangoWar':__model.game = 'sangoWar';break;
 					}
@@ -86,6 +87,9 @@ app.card = app.card || {};
 		switch( _model.game ){
 			case 'fighter':
 				dom.find( '#btn_fighter' ).linkbutton( 'select' );
+				break;
+			case 'magic':
+				dom.find( '#btn_magic' ).linkbutton( 'select' );
 				break;
 			case 'gundamWar':
 				dom.find( '#btn_gundamWar' ).linkbutton( 'select' );
