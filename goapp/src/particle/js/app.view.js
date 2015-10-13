@@ -81,7 +81,6 @@ app.view = app.view || {};
 	});
 	
 	function openFileBrowser(){
-		console.log( input_file );
 		input_file.click();
 	}
 
@@ -520,7 +519,6 @@ app.view = app.view || {};
 		vic.easyui.setTree( tree_particle, nodes );
 		if( selectId != undefined ){
 			setTimeout( function(){
-				console.log( tree_particle,vic.easyui.getTreeNodeById( tree_particle, selectId ) );
 				vic.easyui.selectTreeNode( tree_particle,vic.easyui.getTreeNodeById( tree_particle, selectId ));
 				event.trigger( 'onViewTreeChange' );
 			}, 100 );
