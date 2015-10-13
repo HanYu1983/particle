@@ -351,13 +351,14 @@ function startToSave(){
 				saveToServer( uid + '.jpg', base64, function(err, ret){
 					if( err == null ){
 						vic.easyui.showMessage( '儲存成功!' );
-						vic.easyui.closeLoading();
 					}else{
 						vic.easyui.showAlert( err );
 					}
+					vic.easyui.closeLoading();
 				});
 			}else{
 				vic.easyui.showAlert( err );
+				vic.easyui.closeLoading();
 			}
 		});
 		
