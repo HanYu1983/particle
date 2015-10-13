@@ -17,6 +17,9 @@
 		<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
 		<script src="../common/js/lib/underscore/underscore-min.js"></script>	
 		<script src="../common/js/store.js"></script>
+		<script type="text/javascript" src="../common/js/lib/han/particle.js"></script>
+		<script type="text/javascript" src="../common/js/lib/han/particleDrawer.js"></script>
+		<script src='js/api.js'></script>
 	</head>
 	<style>
 
@@ -51,7 +54,7 @@
 		<div data-options="region:'north',title:'North Title',split:true" style="height:100px;"></div>
 		<div data-options="region:'center',title:'center title'" >
 			<div class="group">
-				
+				<div id="pag_page" class="easyui-pagination" data-options="total:999,pageList:[30],layout:['first','links','last']"></div>
 			</div>
 		</div>
 	</div>
