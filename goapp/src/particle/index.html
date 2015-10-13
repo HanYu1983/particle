@@ -306,6 +306,8 @@ loadImages( [
 				{id:'lead_32_32', path:'../common/images/effect/lead_32_32.png' },
 				{id:'cornerGlow_256_256', path:'../common/images/effect/cornerGlow_256_256.png' }
 			] );
+			
+var app = app || {};
 
 function loadImages( ary_image ){
 	var imgItem = ary_image.shift();
@@ -327,13 +329,21 @@ function checkInitParticle(){
 	if( hashobj.key != undefined ){
 		store.loadParticle( hashobj.key, function( err, ret ){
 			if( err == null ){
+			/*
+				app.uidForKey = ret.Name.split( '.' )[0];
+				if( !checkOverride( app.uidForKey ) ){
+					app.uidForKey = app.utils.getUid();
+				}
+				*/
 				app.controller.appStart( app.view, app.model, JSON.parse( ret.Content ) );
 			}else{
+				//app.uidForKey = app.utils.getUid();
 				vic.easyui.showAlert( err );
 				app.controller.appStart( app.view, app.model );
 			}
 		})
 	}else{
+	//	app.uidForKey = app.utils.getUid();
 		app.controller.appStart( app.view, app.model );
 	}
 }
@@ -348,6 +358,20 @@ function appLoadImage( src, cb ) {
 
 //removeCookie( 'keys' );
 
+
+function checkOverride( key ){
+	if( getCookie( 'keys' ) == undefined ){
+		return false;
+	}else{
+		var ary_keys = JSON.parse( getCookie( 'keys' ) );
+		if( ary_keys.indexOf( key ) == -1 ){
+			return false;
+		}else{
+			return true;
+		}
+	}
+}
+/*
 function needOverride( key ){
 	if( getCookie( 'keys' ) == undefined ){
 		//save new uid
@@ -368,30 +392,26 @@ function needOverride( key ){
 	}
 }
 
-
+*/
 function startToSave(){
+	
 	vic.easyui.showLoading();
 	api.snapshot( 300, 300, 1000, function( err, img ){
-		var hashobj = leo.utils.getHash();
-		var needOver;
-		var uid;
-		if( hashobj.key == undefined ){
-			uid = app.utils.getUid();
-		}else{
-			needOver = needOverride( hashobj.key );
-			if( needOver ){
-				uid = hashobj.key;
-			}else{
-				uid = app.utils.getUid();
-			}
-		}
-		
-		api.saveToServer( uid, img, app.controller.renderToOutputString(), needOver, function( err, ret ){
+	//	var hashobj = leo.utils.getHash();
+	//	var needover = needOverride( app.uidForKey );
+		api.saveToServer( app.utils.getUid(), img, app.controller.renderToOutputString(), false, function( err, ret ){
 			vic.easyui.closeLoading();
 			if( err ){
 				vic.easyui.showAlert( err );
 			} else {
 				vic.easyui.showMessage( '儲存成功!' );
+				/*
+				if( needover ){
+					vic.easyui.showMessage( '覆寫成功!' );
+				}else{
+					vic.easyui.showMessage( '儲存成功!' );
+				}
+				*/
 			}
 		})
 	})
