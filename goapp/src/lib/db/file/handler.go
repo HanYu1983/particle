@@ -117,9 +117,9 @@ func DBFileSystem2( user IUser ) http.HandlerFunc {
           continue
         }
         if isDetail {
-          paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner } )
+          paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner, "Time": file.Time } )
         } else {
-          paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name } )
+          paths = append( paths, map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Time": file.Time } )
         }
       }
       tool.Output( w, paths, nil )
@@ -198,7 +198,7 @@ func DBFileSystem2( user IUser ) http.HandlerFunc {
           }
         
         } else {
-          tool.Output( w, map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner }, nil )
+          tool.Output( w, map[string]interface{}{ "Key":file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner, "Time": file.Time }, nil )
         
         }
       }
