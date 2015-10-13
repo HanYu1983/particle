@@ -70,6 +70,7 @@ var api = api || {};
 		var countElem = $('#count')
 		
 		var useWebgl = true
+		// 設定preserveDrawingBuffer為true是為了要能toDataUrl
 		renderer = useWebgl ? new THREE.WebGLRenderer({preserveDrawingBuffer:true}) : new THREE.CanvasRenderer({preserveDrawingBuffer: true})
 		renderer.setSize( w, h )
 		$(renderer.domElement).appendTo( jdom )
