@@ -361,6 +361,7 @@ function needOverride( key ){
 			setCookie( 'keys', JSON.stringify( ary_keys ) );
 			return false;
 		}else{
+			setCookie( 'keys', JSON.stringify( ary_keys ) );
 			//override
 			return true;
 		}
