@@ -314,7 +314,7 @@ app.controller = app.controller || {};
 					var retobj = { };
 					treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, root.id ), retobj );
 					try{
-						console.log( retobj );
+					//	console.log( retobj );
 						api.editParticle( retobj );
 					}catch( e ){
 						//還不知道錯在哪裡，先catch起來
