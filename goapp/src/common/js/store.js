@@ -2,6 +2,53 @@ var store = store || {};
 
 (function(module){
   
+  var local = true
+  var particleDir = local ? 5910974510923776 : 0
+  
+  /**
+  data: {
+    Name: string,
+    Content: string,
+    Override: bool
+  }
+  */
+  function saveParticle( data, cb ){
+    data.Parent = particleDir
+    
+    $.ajax({
+      url: '../dbfile/particle/',
+      type: 'post',
+      dataType: 'json',
+      data: data,
+      success: function( ret ){
+        cb( ret.Error, ret.Info )
+      },
+      error: function( xhr, res, err ){
+        cb( err )
+      }
+    })
+  }
+  /**
+  data: {
+    Detail
+  }
+  */
+  function loadParticleList( data, cb ){
+    $.ajax({
+      url: '../dbfile/particle/' + particleDir,
+      type: 'get',
+      dataType: 'json',
+      data: data,
+      success: function( ret ){
+        cb( ret.Error, ret.Info )
+      },
+      error: function( xhr, res, err ){
+        cb( err )
+      }
+    })
+  }
+  
+  
   /**
   data: {
     FBID: string,
@@ -38,7 +85,7 @@ var store = store || {};
     $.ajax({
       url: '../fn/loadUser',
       type: 'post',
-			dataType: 'json',
+      dataType: 'json',
       data: data,
       success: function( ret ){
         cb( ret.Error, ret.Info )
@@ -51,5 +98,7 @@ var store = store || {};
   
   module.save = save
   module.load = load
+  module.saveParticle = saveParticle
+  module.loadParticleList = loadParticleList
   
 }) (store)

@@ -27,12 +27,13 @@ func init(){
   http.HandleFunc("/", handler)
   // 代理伺服器
   http.HandleFunc("/proxy", tool.Proxy)
-  // 檔案的viewer
-  // 需要認證，保護使用者資料
+  // 管理者用。需要認證，保護使用者資料
   dbfileHandler := authenticator.JustCheck(dbfile.DBFileSystem2(appauth.User{ Key: "admin" }))
   http.HandleFunc("/admindbfile/", dbfileHandler)
-  //
+  // 使用者用
   http.HandleFunc("/dbfile/", appauth.WrapFBAuth(dbfile.DBFileSystem2))
+  // 各別app用
+  http.HandleFunc("/dbfile/particle/", dbfile.DBFileSystem2(appauth.User{ Key: "particle" }))
   // 檔案的操做管理
   http.HandleFunc("/write", dbfile.WriteFile)
   // 簡易將app的存檔記到個人資料夾

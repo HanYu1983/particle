@@ -1,0 +1,28 @@
+<script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>	
+<script src='../common/js/store.js'></script>
+<script>
+store.saveParticle({
+	Name: "xxx.json",
+	Content: "{}",
+	Override: false
+}, function(err, ret){
+	console.log( err )
+	console.log( ret )
+})
+
+store.saveParticle({
+	Name: "xxx.jpg",
+	Content: "xxx",
+	Override: false
+}, function(err, ret){
+	console.log( err )
+	console.log( ret )
+})
+
+store.loadParticleList({
+	
+}, function( err, ret ){
+	console.log( err )
+	console.log( ret )
+})
+</script>
