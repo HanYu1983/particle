@@ -69,7 +69,7 @@ var api = api || {};
 		var countElem = $('#count')
 		
 		var useWebgl = true
-		var renderer = useWebgl ? new THREE.WebGLRenderer({antialias: false}) : new THREE.CanvasRenderer({antialias: false})
+		var renderer = useWebgl ? new THREE.WebGLRenderer({preserveDrawingBuffer:true}) : new THREE.CanvasRenderer({preserveDrawingBuffer: true})
 		renderer.setSize( w, h )
 		$(renderer.domElement).appendTo( jdom )
 		var scene = new THREE.Scene
