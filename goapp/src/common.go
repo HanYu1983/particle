@@ -6,7 +6,6 @@ import (
   "lib/tool"
   "lib/db/file"
   "appengine"
-  "lib/auth"
 )
 
 var _ = fmt.Printf
@@ -16,7 +15,7 @@ func SetUserPosition(dir int64){
   rootDir = dir
 }
 
-func SaveToUser (user auth.User) http.HandlerFunc {
+func SaveToUser (user dbfile.IUser) http.HandlerFunc {
   return func (w http.ResponseWriter, r *http.Request){
   defer tool.Recover( func(err error){
     Output( w, nil, err.Error() )
@@ -24,17 +23,16 @@ func SaveToUser (user auth.User) http.HandlerFunc {
   
   ctx := appengine.NewContext( r )
   
-  //form, err := tool.ReadAjaxPost( r )
   form := r.PostForm
   tool.Assert( tool.ParameterIsNotExist( form, "FileName" ) ) 
   tool.Assert( tool.ParameterIsNotExist( form, "Data" ) ) 
   
-  files, _, err := dbfile.QueryKeys( ctx, rootDir, user.Key )
+  files, _, err := dbfile.QueryKeys( ctx, rootDir, user.GetID() )
   tool.Assert( tool.IfError( err ) ) 
   
   var userDir int64
   if len( files ) == 0 {
-    userDir, err = dbfile.MakeDir( ctx, rootDir, user.Key, "" )
+    userDir, err = dbfile.MakeDir( ctx, rootDir, user.GetID(), "" )
   } else {
     userDir = files[0].Key
   }
@@ -42,14 +40,14 @@ func SaveToUser (user auth.User) http.HandlerFunc {
   fileName := form["FileName"][0]
   data := form["Data"][0]
   
-  _, err = dbfile.MakeFile( ctx, userDir, fileName, []byte(data), true, user.Key )
+  _, err = dbfile.MakeFile( ctx, userDir, fileName, []byte(data), true, user.GetID() )
   tool.Assert( tool.IfError( err ) ) 
   
   Output( w, nil, nil )
 }
 }
 
-func LoadFormUser (user auth.User) http.HandlerFunc {
+func LoadFormUser (user dbfile.IUser) http.HandlerFunc {
   return func (w http.ResponseWriter, r *http.Request){
   defer tool.Recover( func(err error){
     Output( w, nil, err.Error() )
@@ -57,11 +55,10 @@ func LoadFormUser (user auth.User) http.HandlerFunc {
   
   ctx := appengine.NewContext( r )
   
-  //form, err := tool.ReadAjaxPost( r )
   form := r.PostForm
   tool.Assert( tool.ParameterIsNotExist( form, "FileName" ) ) 
   
-  files, _, err := dbfile.QueryKeys( ctx, rootDir, user.Key )
+  files, _, err := dbfile.QueryKeys( ctx, rootDir, user.GetID() )
   tool.Assert( tool.IfError( err ) ) 
   
   if len( files ) == 0 {
@@ -80,7 +77,7 @@ func LoadFormUser (user auth.User) http.HandlerFunc {
     return
   }
   
-  if user.HasPermission( files[0].Owner ) == false {
+  if user.HasPermission( files[0] ) == false {
     panic( "you are not owner" )
   }
   
