@@ -18,7 +18,7 @@ class Main
 	static var mc_listContainer:Dynamic = untyped __js__( '$("#mc_listContainer")' );
 	static var ary_items:Array<Item>;
 	static var currPage = 0;
-	static var pageSize = 30;
+	static var pageSize = 21;
 	
 	static function main() 
 	{

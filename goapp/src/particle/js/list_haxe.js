@@ -60,7 +60,7 @@ CallJs.api_loadParticleList = api.loadParticleList;
 Main.pag_page = $("#pag_page");
 Main.mc_listContainer = $("#mc_listContainer");
 Main.currPage = 0;
-Main.pageSize = 30;
+Main.pageSize = 21;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
