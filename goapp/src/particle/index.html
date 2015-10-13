@@ -77,8 +77,8 @@
         <div data-options="region:'north'" style="height:35px; overflow:hidden;">
 			<div class="width:90%;">
 				<div style="position:relative; left:5px; top:5px">
-					<a href="#" class="easyui-menubutton" data-options="menu:'#m1'">幽夢仙境</a>
-					<a href="#" class="easyui-menubutton" data-options="menu:'#m2'">本地端功能</a>
+					<a href="#" class="easyui-menubutton" data-options="menu:'#m1'">遊樂場</a>
+					<a href="#" class="easyui-menubutton" data-options="menu:'#m2'">個人</a>
 				</div>
 				<div style="position:absolute; right:5px; top:5px;">
 					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
@@ -245,10 +245,10 @@
         </div>
     </div>
 	<div id="m1">
-		<div id="btn_import" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">匯入/匯出</div>
-		<div id="btn_saveToServer" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">儲存至Serverlo</div>
+		<div id="btn_saveToServer" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">儲存至Server</div>
 	</div>
 	<div id="m2">
+		<div id="btn_import" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">匯入/匯出</div>
 		<div id="btn_uploadText" onclick="onHtmlClick(this)" data-options="iconCls:'icon-add'">上傳貼圖</div>
 	</div>
 	<input type="file" id="file" style="display:none">
@@ -318,6 +318,22 @@ function loadImages( ary_image ){
 		loadImages( ary_image );
 	}else{
 		vic.easyui.closeLoading();
+		checkInitParticle();
+	}
+}
+
+function checkInitParticle(){
+	var hashobj = leo.utils.getHash();
+	if( hashobj.key != undefined ){
+		store.loadParticle( hashobj.key, function( err, ret ){
+			if( err == null ){
+				app.controller.appStart( app.view, app.model, JSON.parse( ret.Content ) );
+			}else{
+				vic.easyui.showAlert( err );
+				app.controller.appStart( app.view, app.model );
+			}
+		})
+	}else{
 		app.controller.appStart( app.view, app.model );
 	}
 }
@@ -329,20 +345,48 @@ function appLoadImage( src, cb ) {
 		cb( img );
 	};
 }
-/*
-function saveToServer( name, content, cb ){
-	store.saveParticle({
-		Name: name,
-		Content: content,
-		Override: "off"
-	}, cb );
+
+//removeCookie( 'keys' );
+
+function needOverride( key ){
+	if( getCookie( 'keys' ) == undefined ){
+		//save new uid
+		setCookie( 'keys', JSON.stringify( [ key ] ) );
+		return false;
+	}else{
+		var ary_keys = JSON.parse( getCookie( 'keys' ) );
+		if( ary_keys.indexOf( key ) == -1 ){
+			//save new uid
+			ary_keys.push( key );
+			setCookie( 'keys', JSON.stringify( ary_keys ) );
+			return false;
+		}else{
+			setCookie( 'keys', JSON.stringify( ary_keys ) );
+			//override
+			return true;
+		}
+	}
 }
-*/
+
+
 function startToSave(){
 	vic.easyui.showLoading();
 	api.snapshot( 300, 300, 1000, function( err, img ){
-		var uid = app.utils.getUid();
-		api.saveToServer( uid, img, app.controller.renderToOutputString(), function( err, ret ){
+		var hashobj = leo.utils.getHash();
+		var needOver;
+		var uid;
+		if( hashobj.key == undefined ){
+			uid = app.utils.getUid();
+		}else{
+			needOver = needOverride( hashobj.key );
+			if( needOver ){
+				uid = hashobj.key;
+			}else{
+				uid = app.utils.getUid();
+			}
+		}
+		
+		api.saveToServer( uid, img, app.controller.renderToOutputString(), needOver, function( err, ret ){
 			vic.easyui.closeLoading();
 			if( err ){
 				vic.easyui.showAlert( err );
@@ -351,32 +395,6 @@ function startToSave(){
 			}
 		})
 	})
-	/*
-	var tid = setTimeout( function(){
-		var secondClip = $( '<canvas width="300" height="300"></canvas>' );
-		secondClip[0].getContext( '2d' ).drawImage( $('#webgl' ).find( 'canvas' )[0], 0, 0 );
-		
-		var uid = app.utils.getUid();
-		saveToServer( uid + '.json', JSON.stringify( app.controller.renderToOutputString() ), function(err, ret){
-			if( err == null ){
-				var base64 = secondClip[0].toDataURL().split( ',' )[1];
-				saveToServer( uid + '.jpg', base64, function(err, ret){
-					if( err == null ){
-						vic.easyui.showMessage( '儲存成功!' );
-					}else{
-						vic.easyui.showAlert( err );
-					}
-					vic.easyui.closeLoading();
-				});
-			}else{
-				vic.easyui.showAlert( err );
-				vic.easyui.closeLoading();
-			}
-		});
-		
-		clearTimeout( tid );
-	}, 1000 );
-	*/
 }
 
 
@@ -417,11 +435,17 @@ function onHtmlClick( dom ){
 	}
 }
 
-api.loadParticleList( 0, 9999, function( err, ret ){
-	console.log( err )
-	console.log( ret )
-} )
+function setCookie( key, value ){
+	$.cookie( key, value, { expires: 7 });
+}
 
+function getCookie( key ){
+	return $.cookie( key );
+}
+
+function removeCookie( key ){
+	$.removeCookie( key );
+}
 
 </script>
 

@@ -2,17 +2,20 @@ var app = app || {};
 app.controller = app.controller || {};
 
 (function( module ){
-	function appStart( view, model ){
+	function appStart( view, model, initParticle ){
 		var webgl = view.webgl;
 		var currentParticle = undefined;
 		
 		api.init( webgl );
 		
-		var particles = model.getParticles();
+		var particles = ( initParticle != undefined ? initParticle : model.getParticles() );
+		var ary_treeModel = _.map( particles, function( _p ){
+			var tm = {};
+			modelToTree( _p, tm );
+			return tm;
+		});
 		
-		var treeModel = {};
-		modelToTree( particles, treeModel );
-		startToSetTree( [ treeModel ] );
+		startToSetTree( ary_treeModel );
 		
 		function startToSetTree( ary_ps ){
 			view.setTree( [ {

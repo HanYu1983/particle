@@ -1,0 +1,93 @@
+<html>
+	<head>
+		<title>幽夢仙境池</title>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		<link rel="stylesheet" media="screen" type="text/css" href="../common/js/lib/colorpicker/css/colorpicker.css" />
+			
+		<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/vic/vic.easyui.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/load-image.all.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+		<script src="../common/js/lib/underscore/underscore-min.js"></script>	
+		<script src="../common/js/store.js"></script>
+		<script type="text/javascript" src="../common/js/lib/han/particle.js"></script>
+		<script type="text/javascript" src="../common/js/lib/han/particleDrawer.js"></script>
+		<script src='js/api.js'></script>
+	</head>
+	<style>
+
+	body{
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		outline: 0;
+		position:absolute;
+		width:100%;
+		height:100%;
+	}
+
+	.hori{
+		display:inline-block;
+	}
+	
+	.group{
+		position:relative; 
+		width:100%;
+		min-width:250px;
+	}
+	
+	.item{
+		width:13.6%;
+		margin-left:5px;
+		margin-top:5px;
+		cursor:pointer;
+	}
+	</style>
+	
+</head>
+<body>
+	<div class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'north',title:'',split:false" style="height:35px;">
+			<div style="margin-top:8px; margin-left:8px;">幽夢仙境池</div>
+			<div style="position:absolute; right:5px; top:5px;">
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
+			</div>
+		</div>
+		<div data-options="region:'center',title:''" >
+			<div class="group">
+				<div id="pag_page" class="easyui-pagination" data-options="pageSize:21,layout:['first','links','last']"></div>
+			</div>
+			<div id="mc_listContainer" class="group">
+				<!-- by script -->
+			</div>
+		</div>
+	</div>
+	<div id="dia_about" class="easyui-dialog" title="幽夢仙境" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
+		<div class="group" style="position:relative; width:100%; text-align:center;">
+			<div class="hori" >
+				上善若水
+				<br/>
+				<img src="../common/images/logo.jpg" width="100" height="100">
+				<br/>
+				上善若水粉絲頁
+				<br/>
+				<a style="color:yellow; font-size:12px;" href="//www.facebook.com/pages/上善若水/1653920964852269" target="_blank">//www.facebook.com/pages/上善若水/1653920964852269</a>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+googleTracking.init( 'UA-55273266-3' );
+</script>
+<script src="js/list_haxe.js"></script>
+</html>
