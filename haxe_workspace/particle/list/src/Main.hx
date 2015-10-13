@@ -49,7 +49,7 @@ class Main
 	}
 	
 	static function showList( mc_listContainer:Dynamic, ary_item:Array<Item> ) {
-		
+		mc_listContainer.empty();
 		ary_item.foreach( function( item ) {
 			var img:Dynamic = untyped __js__( '$("<a><img></img></a>")' );
 			img.attr( 'href', 'index.html?key=' + item.key );

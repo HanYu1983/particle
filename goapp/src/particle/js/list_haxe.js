@@ -36,6 +36,7 @@ Main.getShowAry = function(ary_item,currPage,pageSize) {
 	if(finalCount > ary_item.length) return ary_item.slice(currPage * pageSize,ary_item.length); else return ary_item.slice(currPage * pageSize,currPage * pageSize + pageSize);
 };
 Main.showList = function(mc_listContainer,ary_item) {
+	mc_listContainer.empty();
 	Lambda.foreach(ary_item,function(item) {
 		var img = $("<a><img></img></a>");
 		img.attr("href","index.html?key=" + item.key);
