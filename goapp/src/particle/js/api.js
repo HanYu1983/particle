@@ -278,6 +278,39 @@ var api = api || {};
 		], cb)
 	}
 	
+	function loadParticleList( offset, cnt, cb ){
+		store.loadParticleList({
+			Offset: offset,
+			Count: cnt
+		}, function( err, ret ){
+			if( err ){
+				cb( err )
+			} else {
+				var map = {}
+				for( var i in ret ){
+					var file = ret[i]
+					var key = ret[i].Name.split('.')[0]
+					var ext = ret[i].Name.split('.')[1]
+					if( map[key] == undefined ){
+						map[key] = {}
+					}
+					if( ext == 'jpg' ){
+						map[key].img = store.getParticleImageUrl( file.Key )
+					} else if (ext == 'json'){
+						map[key].key = file.Key
+					}
+				}
+				for( var k in map ){
+					var obj = map[k]
+					if( obj.img == undefined || obj.key == undefined ){
+						delete map[k]
+					}
+				}
+				cb( null, map )
+			}
+		})
+	}
+	
 	
 	pkg.editParticle = editParticle
 	pkg.info = info
@@ -289,5 +322,6 @@ var api = api || {};
 	pkg.init = init
 	pkg.snapshot = snapshot
 	pkg.saveToServer = saveToServer
+	pkg.loadParticleList = loadParticleList
 	
 }) (api)
