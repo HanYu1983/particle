@@ -329,7 +329,7 @@ function appLoadImage( src, cb ) {
 		cb( img );
 	};
 }
-
+/*
 function saveToServer( name, content, cb ){
 	store.saveParticle({
 		Name: name,
@@ -337,9 +337,21 @@ function saveToServer( name, content, cb ){
 		Override: "off"
 	}, cb );
 }
-
+*/
 function startToSave(){
 	vic.easyui.showLoading();
+	api.snapshot( 300, 300, 1000, function( err, img ){
+		var uid = app.utils.getUid();
+		api.saveToServer( uid, img, app.controller.renderToOutputString(), function( err, ret ){
+			vic.easyui.closeLoading();
+			if( err ){
+				vic.easyui.showAlert( err );
+			} else {
+				vic.easyui.showMessage( '儲存成功!' );
+			}
+		})
+	})
+	/*
 	var tid = setTimeout( function(){
 		var secondClip = $( '<canvas width="300" height="300"></canvas>' );
 		secondClip[0].getContext( '2d' ).drawImage( $('#webgl' ).find( 'canvas' )[0], 0, 0 );
@@ -364,6 +376,7 @@ function startToSave(){
 		
 		clearTimeout( tid );
 	}, 1000 );
+	*/
 }
 
 
