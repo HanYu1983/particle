@@ -564,6 +564,7 @@ a{
 	});
 	
 	function moveRootParticles( particles, x, y ){
+		if( particles == undefined ) return;
 		_.each( particles, function( p ){
 			p.pos[0]= x;
 			p.pos[1]= y;
