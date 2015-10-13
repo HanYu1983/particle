@@ -8,7 +8,7 @@ app.controller = app.controller || {};
 		
 		api.init( webgl );
 		
-		var particles = ( initParticle != undefined ? initParticle : model.getParticles() );
+		var particles = ( initParticle != undefined ? initParticle : [ model.getParticles() ] );
 		var ary_treeModel = _.map( particles, function( _p ){
 			var tm = {};
 			modelToTree( _p, tm );
