@@ -29,9 +29,9 @@ func DBFileSystem2( user auth.User ) http.HandlerFunc {
   
     // post的話，執行新增檔案或新增資料夾
     if r.Method == "POST" {
-      form, err := tool.ReadAjaxPost( r )
-      tool.Assert( tool.IfError( err ) ) 
-    
+      r.ParseForm()
+      form := r.PostForm
+      
       // 若有Delete參數，執行刪除
       if len( form["Delete"] ) > 0 {
         tool.Assert( tool.ParameterIsNotExist( form, "Key" ) )

@@ -33,12 +33,9 @@ func WrapFBAuth ( handler BindUserFunc ) http.HandlerFunc {
     ctx := appengine.NewContext( r )
   
     var form url.Values
-    //var err error
     
     r.ParseForm()
-    if r.Method == "POST" { 
-      //form, err = ReadAjaxPost( r )
-      //Assert( IfError( err ) )
+    if r.Method == "POST" {
       form = r.PostForm
       
     } else {
