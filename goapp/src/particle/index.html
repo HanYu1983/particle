@@ -288,6 +288,7 @@
 <script src="js/app.controller.js"></script>
 <script type="text/javascript">
 
+
 googleTracking.init( 'UA-55273266-3' );
 
 document.addEventListener("contextmenu", function(e){
@@ -318,6 +319,22 @@ function loadImages( ary_image ){
 		loadImages( ary_image );
 	}else{
 		vic.easyui.closeLoading();
+		checkInitParticle();
+	}
+}
+
+function checkInitParticle(){
+	var hashobj = leo.utils.getHash();
+	if( hashobj.key != undefined ){
+		store.loadParticle( hashobj.key, function( err, ret ){
+			if( err == null ){
+				app.controller.appStart( app.view, app.model, JSON.parse( ret.Content ) );
+			}else{
+				vic.easyui.showAlert( err );
+				app.controller.appStart( app.view, app.model );
+			}
+		})
+	}else{
 		app.controller.appStart( app.view, app.model );
 	}
 }
