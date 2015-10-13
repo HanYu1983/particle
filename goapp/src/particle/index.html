@@ -246,6 +246,7 @@
     </div>
 	<div id="m1">
 		<div id="btn_import" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">匯入/匯出</div>
+		<div id="btn_saveToServer" onclick="onHtmlClick(this)" data-options="iconCls:'icon-save'">儲存至Server</div>
 	</div>
 	<div id="m2">
 		<div id="btn_uploadText" onclick="onHtmlClick(this)" data-options="iconCls:'icon-add'">上傳貼圖</div>
@@ -330,6 +331,9 @@ function appLoadImage( src, cb ) {
 
 function onHtmlClick( dom ){
 	switch( dom.id ){
+		case 'btn_saveToServer':
+			
+			break;
 		case 'btn_uploadText':
 			app.view.openFileBrowser();
 			break;

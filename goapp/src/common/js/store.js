@@ -3,8 +3,8 @@ var store = store || {};
 (function(module){
   
   var local = true
-  var particleDir = local ? 5910974510923776 : 0
-  
+  //var particleDir = local ? 5910974510923776 : 0
+  var particleDir = local ? 5275456790069248 : 0
   /**
   data: {
     Name: string,
