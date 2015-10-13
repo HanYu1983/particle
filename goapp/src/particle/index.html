@@ -288,7 +288,6 @@
 <script src="js/app.controller.js"></script>
 <script type="text/javascript">
 
-
 googleTracking.init( 'UA-55273266-3' );
 
 document.addEventListener("contextmenu", function(e){
@@ -346,20 +345,47 @@ function appLoadImage( src, cb ) {
 		cb( img );
 	};
 }
-/*
-function saveToServer( name, content, cb ){
-	store.saveParticle({
-		Name: name,
-		Content: content,
-		Override: "off"
-	}, cb );
+
+//removeCookie( 'keys' );
+
+function needOverride( key ){
+	if( getCookie( 'keys' ) == undefined ){
+		//save new uid
+		setCookie( 'keys', JSON.stringify( [ key ] ) );
+		return false;
+	}else{
+		var ary_keys = JSON.parse( getCookie( 'keys' ) );
+		if( ary_keys.indexOf( key ) == -1 ){
+			//save new uid
+			ary_keys.push( key );
+			setCookie( 'keys', JSON.stringify( ary_keys ) );
+			return false;
+		}else{
+			//override
+			return true;
+		}
+	}
 }
-*/
+
+
 function startToSave(){
 	vic.easyui.showLoading();
 	api.snapshot( 300, 300, 1000, function( err, img ){
-		var uid = app.utils.getUid();
-		api.saveToServer( uid, img, app.controller.renderToOutputString(), function( err, ret ){
+		var hashobj = leo.utils.getHash();
+		var needOver;
+		var uid;
+		if( hashobj.key == undefined ){
+			uid = app.utils.getUid();
+		}else{
+			needOver = needOverride( hashobj.key );
+			if( needOver ){
+				uid = hashobj.key;
+			}else{
+				uid = app.utils.getUid();
+			}
+		}
+		
+		api.saveToServer( uid, img, app.controller.renderToOutputString(), needOver, function( err, ret ){
 			vic.easyui.closeLoading();
 			if( err ){
 				vic.easyui.showAlert( err );
@@ -368,32 +394,6 @@ function startToSave(){
 			}
 		})
 	})
-	/*
-	var tid = setTimeout( function(){
-		var secondClip = $( '<canvas width="300" height="300"></canvas>' );
-		secondClip[0].getContext( '2d' ).drawImage( $('#webgl' ).find( 'canvas' )[0], 0, 0 );
-		
-		var uid = app.utils.getUid();
-		saveToServer( uid + '.json', JSON.stringify( app.controller.renderToOutputString() ), function(err, ret){
-			if( err == null ){
-				var base64 = secondClip[0].toDataURL().split( ',' )[1];
-				saveToServer( uid + '.jpg', base64, function(err, ret){
-					if( err == null ){
-						vic.easyui.showMessage( '儲存成功!' );
-					}else{
-						vic.easyui.showAlert( err );
-					}
-					vic.easyui.closeLoading();
-				});
-			}else{
-				vic.easyui.showAlert( err );
-				vic.easyui.closeLoading();
-			}
-		});
-		
-		clearTimeout( tid );
-	}, 1000 );
-	*/
 }
 
 
@@ -432,6 +432,18 @@ function onHtmlClick( dom ){
 			app.view.downMove();
 			break;
 	}
+}
+
+function setCookie( key, value ){
+	$.cookie( key, value, { expires: 7 });
+}
+
+function getCookie( key ){
+	return $.cookie( key );
+}
+
+function removeCookie( key ){
+	$.removeCookie( key );
 }
 
 </script>

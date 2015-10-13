@@ -1,8 +1,0 @@
-{
-"version":3,
-"file":"list_haxe.js",
-"sourceRoot":"file:///",
-"sources":["C:/HaxeToolkit/haxe/std/js/_std/HxOverrides.hx","C:/HaxeToolkit/haxe/std/Lambda.hx","C:/Users/Vic/Documents/Custom/Server/git/particle/haxe_workspace/particle/list/src/Main.hx","C:/Users/Vic/Documents/Custom/Server/git/particle/haxe_workspace/particle/list/src/MacroBuildJs.hx"],
-"names":[],
-"mappings":";;;mBAsHO,PACN;OAAO,DACA,AACA,IACI,CACT;OAAO,JAAe;OAEhB,IACN;OAAO,NAAa;;;;iBCOT,FAAuD;CACpE,UAAU;;;EACT,AAAI,DAAC,AAAE,AACN,MAAO;;CACT,MAAO;;;YCnHD,DAEN;CAA4B,AAAG,AAAK,AAAa,aAAwB;EACxE,CAAY;EACZ,DAAgB;EAChB,DAAU,AAAkB,AAAY,AAAW,AAAU;;;sBAIxD,NACN;CAAqB,OACd,OACO,eAAiC;EAC7C,CAAW,AAAa;EACxB,DAAU,AAAkB,AAAY,AAAW,AAAU;;;kBAKzD,mBAAwE;CAC7D,AAAE,EAAW,AAAM;CACpC,CAAK,CAAa,FACjB,MAAO,NAAgB,EAAW,FAAU,KAE5C,CAAO,NAAgB,EAAW,FAAU,EAAW,AAAW;;gBAI7D,oBAEN;CAAkB,cAAiB;EACR;EAC1B,DAAW,AAAO,AAAC,EAAmB;EACtC,DAAW,AAAU;EACrB,DAAU,AAAa,AAAM;EAC7B,DAAU,AAAiB;EAC3B,DAAU,AAAiB;EAC3B,DAAyB;EACzB,KAAO;;;mBAKF,NACN;OAAO,WACN;EAAK,EAAO,HACX,AAAI,KAEJ,MAAO;;;;;;gCCrDmD;;gBDDvB;wBACQ;gBAExB;gBACA;;;;"
-}

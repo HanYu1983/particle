@@ -263,17 +263,17 @@ var api = api || {};
 	/**
 	記錄到server
 	*/
-	function saveToServer( name, img, part, cb ){
+	function saveToServer( name, img, part, override, cb ){
 		async.parallel([
 			_.partial( store.saveParticle, {
 				Name: name + ".json",
 				Content: JSON.stringify( part ),
-				Override: "off"
+				Override: override == true ? 'on' : 'off'
 			}),
 			_.partial( store.saveParticle, {
 				Name: name + ".jpg",
 				Content: img.toDataURL().split( ',' )[1],
-				Override: "off"
+				Override: override == true ? 'on' : 'off'
 			}),
 		], cb)
 	}

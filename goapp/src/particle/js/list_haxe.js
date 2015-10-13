@@ -63,5 +63,3 @@ Main.currPage = 0;
 Main.pageSize = 21;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=list_haxe.js.map
