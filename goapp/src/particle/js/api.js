@@ -61,6 +61,7 @@ var api = api || {};
 	}
 	
 	var callback
+	var renderer
 	
 	function startParticleStep( dom ){
 		var jdom = $(dom)
@@ -69,7 +70,7 @@ var api = api || {};
 		var countElem = $('#count')
 		
 		var useWebgl = true
-		var renderer = useWebgl ? new THREE.WebGLRenderer({preserveDrawingBuffer:true}) : new THREE.CanvasRenderer({preserveDrawingBuffer: true})
+		renderer = useWebgl ? new THREE.WebGLRenderer({preserveDrawingBuffer:true}) : new THREE.CanvasRenderer({preserveDrawingBuffer: true})
 		renderer.setSize( w, h )
 		$(renderer.domElement).appendTo( jdom )
 		var scene = new THREE.Scene
@@ -245,6 +246,38 @@ var api = api || {};
 	function init( dom ){
 		startParticleStep( dom )
 	}
+
+	/**
+	取得粒子畫面快照
+	*/
+	function snapshot( w, h, delay, cb ){
+		var tid = 0
+		tid = setTimeout( function(){
+			var secondClip = $( '<canvas width="'+w+'" height="'+h+'"></canvas>' );
+			secondClip[0].getContext( '2d' ).drawImage( renderer.domElement, 0, 0 );
+			cb( null, secondClip[0] )
+			clearTimeout( tid );
+		}, delay );
+	}
+	
+	/**
+	記錄到server
+	*/
+	function saveToServer( name, img, part, cb ){
+		async.parallel([
+			_.partial( store.saveParticle, {
+				Name: name + ".json",
+				Content: JSON.stringify( part ),
+				Override: "off"
+			}),
+			_.partial( store.saveParticle, {
+				Name: name + ".jpg",
+				Content: img.toDataURL().split( ',' )[1],
+				Override: "off"
+			}),
+		], cb)
+	}
+	
 	
 	pkg.editParticle = editParticle
 	pkg.info = info
@@ -254,5 +287,7 @@ var api = api || {};
 	pkg.changeBgColor = changeBgColor
 	pkg.clearParticle = clearParticle
 	pkg.init = init
+	pkg.snapshot = snapshot
+	pkg.saveToServer = saveToServer
 	
 }) (api)
