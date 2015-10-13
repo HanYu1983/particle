@@ -5,6 +5,7 @@ import (
   "appengine"
   "appengine/datastore"
   db "lib/db"
+  "time"
 )
 
 // Kind不能使用__xxx__雙底線！！！是保留字。正式機會存取不到db
@@ -17,6 +18,7 @@ type DBFile struct {
   Name string
   Content []byte
   Owner string
+  Time int64
 }
 
 func QueryKeys (ctx appengine.Context, position int64, name string) ([]DBFile, []*datastore.Key, error){
@@ -48,6 +50,7 @@ func MakeFile (ctx appengine.Context, position int64, name string, content []byt
     Name: name,
     Content: content,
     Owner: owner,
+    Time: time.Now().Unix(),
   }
   
   _, keys, err := QueryKeys( ctx, position, name )
@@ -92,6 +95,7 @@ func MakeDir (ctx appengine.Context, position int64, name string, owner string) 
     Name: name,
     Content: nil,
     Owner: owner,
+    Time: time.Now().Unix(),
   }
   
   _, keys, err := QueryKeys( ctx, position, name )

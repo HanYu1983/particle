@@ -289,8 +289,8 @@ var api = api || {};
 				var map = {}
 				for( var i in ret ){
 					var file = ret[i]
-					var key = ret[i].Name.split('.')[0]
-					var ext = ret[i].Name.split('.')[1]
+					var key = file.Name.split('.')[0]
+					var ext = file.Name.split('.')[1]
 					if( map[key] == undefined ){
 						map[key] = {}
 					}
@@ -298,15 +298,19 @@ var api = api || {};
 						map[key].img = store.getParticleImageUrl( file.Key )
 					} else if (ext == 'json'){
 						map[key].key = file.Key
+						map[key].time = file.Time
 					}
 				}
+				var list = []
 				for( var k in map ){
 					var obj = map[k]
 					if( obj.img == undefined || obj.key == undefined ){
-						delete map[k]
+						continue
 					}
+					list.push( obj )
 				}
-				cb( null, map )
+				list.sort(function(a, b){return b.time-a.time});
+				cb( null, list )
 			}
 		})
 	}
