@@ -41,7 +41,7 @@ app.controller = app.controller || {};
 		});
 		
 		view.event.on( 'onViewTreeChange', function( e, options ){
-			updateRender();
+			updateRender( view );
 		});
 		
 		view.event.on( 'onTreeClick', function( e, options ){
@@ -154,20 +154,12 @@ app.controller = app.controller || {};
 		});
 		
 		view.event.on( 'onMouseMove', function( e, options ){
-			var renderRoots = vic.easyui.getTreeNodeById( view.tree_particle, 'root' );
-			if( renderRoots.children.length > 0 ){
-				_.each( renderRoots.children, function( root ){
-					var rootParticle = root.particle;
-					rootParticle.pos[0] = options.targetPos[0];
-					rootParticle.pos[1] = options.targetPos[1];
-				});
-			}
-			updateRender();
+			moveRenderRoots( view, options.targetPos[0], options.targetPos[1] );
 		});
 		
 		view.event.on( 'onImgClick', function( e, options ){
 			currentParticle.tex = options.id;
-			updateRender();
+			updateRender( view );
 		});
 		
 		view.event.on( 'onDgdPropsClick', function( e, options ){
@@ -304,27 +296,8 @@ app.controller = app.controller || {};
 						currentParticle[row.id] = row.v;
 				}
 			}
-			updateRender();
+			updateRender( view );
 		});
-		
-		function updateRender(){
-			var renderRoots = vic.easyui.getTreeNodeById( view.tree_particle, 'root' );
-			if( renderRoots.children.length > 0 ){
-				_.each( renderRoots.children, function( root ){
-					var retobj = { };
-					treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, root.id ), retobj );
-					try{
-					//	console.log( retobj );
-						api.editParticle( retobj );
-					}catch( e ){
-						//還不知道錯在哪裡，先catch起來
-						console.log( e );
-						
-					}
-				});
-			}
-		}
-		
 	}
 	
 	function modelToTree( fields, retobj ) {
@@ -338,6 +311,24 @@ app.controller = app.controller || {};
 				var tobj = {};
 				retobj.children.push( tobj );
 				modelToTree( p, tobj );
+			});
+		}
+	}
+	
+	function updateRender( view ){
+		var renderRoots = vic.easyui.getTreeNodeById( view.tree_particle, 'root' );
+		if( renderRoots.children.length > 0 ){
+			_.each( renderRoots.children, function( root ){
+				var retobj = { };
+				treeToModel( vic.easyui.getTreeNodeById( view.tree_particle, root.id ), retobj );
+				try{
+				//	console.log( retobj );
+					api.editParticle( retobj );
+				}catch( e ){
+					//還不知道錯在哪裡，先catch起來
+					console.log( e );
+					
+				}
 			});
 		}
 	}
@@ -389,6 +380,18 @@ app.controller = app.controller || {};
 		}
 		return ary_forToString;
 	}
+	
+	function moveRenderRoots(view, x, y ){
+		var renderRoots = vic.easyui.getTreeNodeById( view.tree_particle, 'root' );
+		if( renderRoots.children.length > 0 ){
+			_.each( renderRoots.children, function( root ){
+				var rootParticle = root.particle;
+				rootParticle.pos[0] = x;
+				rootParticle.pos[1] = y;
+			});
+		}
+		updateRender( view );
+	}
 
 	function deepCopy( obj ){
 		return JSON.parse( JSON.stringify( obj ));
@@ -406,6 +409,7 @@ app.controller = app.controller || {};
 
 
 	module.renderToOutputString = renderToOutputString;
+	module.moveRenderRoots = moveRenderRoots;
 	module.appStart = appStart;
 
 })( app.controller );

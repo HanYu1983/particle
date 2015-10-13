@@ -330,30 +330,47 @@ function appLoadImage( src, cb ) {
 	};
 }
 
-function saveToServer( name, content ){
+function saveToServer( name, content, cb ){
 	store.saveParticle({
 		Name: name,
 		Content: content,
 		Override: "off"
-	}, function(err, ret){
-		console.log( err )
-		console.log( ret )
-	})
+	}, cb );
+}
+
+function startToSave(){
+	vic.easyui.showLoading();
+	var tid = setTimeout( function(){
+		var secondClip = $( '<canvas width="300" height="300"></canvas>' );
+		secondClip[0].getContext( '2d' ).drawImage( $('#webgl' ).find( 'canvas' )[0], 0, 0 );
+		
+		var uid = app.utils.getUid();
+		saveToServer( uid + '.json', JSON.stringify( app.controller.renderToOutputString() ), function(err, ret){
+			if( err == null ){
+				var base64 = secondClip[0].toDataURL().split( ',' )[1];
+				saveToServer( uid + '.jpg', base64, function(err, ret){
+					if( err == null ){
+						vic.easyui.showMessage( '儲存成功!' );
+						vic.easyui.closeLoading();
+					}else{
+						vic.easyui.showAlert( err );
+					}
+				});
+			}else{
+				vic.easyui.showAlert( err );
+			}
+		});
+		
+		clearTimeout( tid );
+	}, 1000 );
 }
 
 
 function onHtmlClick( dom ){
 	switch( dom.id ){
 		case 'btn_saveToServer':
-			var uid = app.utils.getUid();
-			saveToServer( uid + '.json', JSON.stringify( app.controller.renderToOutputString() ) );
-			var base64 = $('#webgl' ).find( 'canvas' )[0].toDataURL().split( ',' )[1];
-			saveToServer( uid + '.jpg', base64 );
-			
-			var img = new Image();
-			img.src = $('#webgl' ).find( 'canvas' )[0].toDataURL();
-			
-			$( 'body' ).append( img );
+			app.controller.moveRenderRoots( app.view, 150, 150 );
+			startToSave();
 			break;
 		case 'btn_uploadText':
 			app.view.openFileBrowser();
