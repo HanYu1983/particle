@@ -18,11 +18,12 @@ app.controller = app.controller || {};
 		startToSetTree( ary_treeModel );
 		
 		function startToSetTree( ary_ps ){
+			if( ary_ps.length == 0 ) return;
 			view.setTree( [ {
 				id:'root',
 				text:'渲染層',
 				children:ary_ps
-			} ], 1 );
+			} ], ary_ps[0].id );
 		}
 		
 		view.event.on( 'onImportEvent', function( e, options ){
