@@ -226,6 +226,47 @@ var particleDrawer = particleDrawer || {};
 		})
 	}
 	
+	
+	function lwf( lwf_ ){
+		var root = lwf_.rootMovie
+		return basic({
+			onCreate: function( key, ctx ){
+				var obj = root.attachEmptyMovie( key, null )
+				obj.active = false
+				return obj
+			},
+			onUpdate: function( obj, part, ctx ){
+				if( obj.active == false ){
+					obj.active = true
+					obj.detachMovie("texture")
+					obj.attachMovie(part.tex, "texture")
+					switch( part.blending ){
+					case 'normal':
+						obj.blendMode = 'normal';
+						break;
+					case 'add':
+						obj.blendMode = 'add';
+						break;
+					default:
+						obj.blendMode = 'normal';
+					}
+				}
+				obj.x = part.pos[0]
+				obj.y = part.pos[1]
+				obj.rotation = part.pos[2]* -180/3.14
+				obj.scaleX = part.size[0]
+				obj.scaleY = part.size[1]
+				obj.alpha = part.color[3]
+			},
+			onRemove: function( obj, ctx ){
+				obj.active = false
+			},
+			onRender: function( ctx ){
+			
+			}
+		})
+	}
+	
 	/*
 	function three2( w, h, scene, renderer ){	
 		var camera = new THREE.OrthographicCamera( w/-2, w/2, h/2, h/-2, -500, 1000 )
@@ -323,5 +364,6 @@ var particleDrawer = particleDrawer || {};
 	module.three = three
 	module.dom = dom
 	module.canvas = canvas
+	module.lwf = lwf
 	
 }) ( particleDrawer )

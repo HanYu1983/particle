@@ -56,17 +56,21 @@
 				</div>
 			</div>
 			<div data-options="region:'center'" style="overflow:hidden; width:80%;">
-				<div style="position:relative; width:33%; height:100%;" class="hori">
+				<div style="position:relative; width:24%; height:100%;" class="hori">
 					<div id='three' style='position:relative; width: 100%; height: 100%'></div>
 					<div style="position:absolute; top:5px; left:5px; color:yellow;">webgl</div>
 				</div>
-				<div style="position:relative; width:33%; height:100%; vertical-align: top;" class="hori">
+				<div style="position:relative; width:24%; height:100%; vertical-align: top;" class="hori">
 					<div id='canvas' style='position:relative; width: 100%; height: 100%; background-color:gray;'></div>
 					<div style="position:absolute; top:5px; left:5px; color:yellow;">canvas</div>
 				</div>
-				<div style="position:relative; width:33%; height:100%; vertical-align: top;" class="hori">
+				<div style="position:relative; width:24%; height:100%; vertical-align: top;" class="hori">
 					<div id='div' style='position:relative; width: 100%; height: 100%; background-color:gray;'></div>
 					<div style="position:absolute; top:5px; left:5px; color:yellow;">div</div>
+				</div>
+				<div style="position:relative; width:24%; height:100%; vertical-align: top;" class="hori">
+					<div id='lwfdiv' style='position:relative; width: 100%; height: 100%; background-color:gray;'></div>
+					<div style="position:absolute; top:5px; left:5px; color:yellow;">lwf</div>
 				</div>
 			</div>
 		</div>
@@ -98,7 +102,7 @@
 				</div>
 			</div>
 		</div>
-		
+		<script src='../common/js/lib/lwf.js'></script>
 		<script src='../common/js/lib/async.js'></script>
 		<script src='../common/js/lib/rxjs/rx.all.min.js'></script>
 		<script src='../common/js/lib/three.min.js'></script>
@@ -110,6 +114,8 @@
 		
 		
 		function App(){
+		
+			
 			
 			
 			// ------ textures ----------// 
@@ -131,6 +137,29 @@
 				return _.extend( start, obj )
 			}, {})
 			
+			// ---------- lwf --------------//
+			var drawLwf = 0
+			
+			var stage = document.createElement("canvas");
+			LWF.useWebGLRenderer();
+			
+			var lwfcontainer = $('#lwfdiv')
+			stage.width = lwfcontainer.width()
+			stage.height = lwfcontainer.height()
+			$(stage).appendTo(lwfcontainer)
+			
+			cache = LWF.ResourceCache.get();
+			cache.loadLWF({
+				"lwf": "particle.lwf", // *.lwf file name
+				"prefix": "../common/lwfdata/particle.lwfdata/", // * lwf, png folder
+				"stage": stage, // * target stage
+				"onload": function(lwf) {
+					lwf.setFrameRate( 60 )
+					window.lwf = lwf
+					drawLwf = particleDrawer.lwf( lwf )
+				},
+			});
+			
 			// --------- canvas drawer ------------- //
 			var canvas = $('<canvas></canvas>')
 			var ctx2d = canvas[0].getContext('2d')
@@ -139,6 +168,7 @@
 			canvas.attr('width', canvasContainer.width())
 			canvas.attr('height', canvasContainer.height())
 			canvas.appendTo(canvasContainer)
+			
 		
 			var w = canvas.width()
 			var h = canvas.height()
@@ -187,6 +217,15 @@
 				ps.draw( drawDiv )
 				ctx2d.fillRect(0, 0, w, h)
 				ps.draw( drawCanvas )
+				
+				if (window.lwf != null) {
+					window.lwf.exec(1000.0/30);
+					window.lwf.render();        
+				}
+				if( drawLwf ){
+					ps.draw( drawLwf )
+				}
+				
 				setTimeout( arguments.callee, 1000.0/30 )
 			}, 0)
 			
@@ -218,7 +257,8 @@
 			}
 		})
 		
-		txt_input.textbox("setValue", '[{"id":0,"name":"發射器","lifetime":0.081,"vel":[0,0,0],"pos":[261,453,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_png_128_128","blending":"normal","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":4,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[16,16],"tex":"glow_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",2,0,0,0,0],["vy","randAdd",100,0,0,0,0],["vx","randAdd",100,0,0,0,0],["vy","randStartAdd",3000,0,0,0,0],["vx","randStartAdd",3000,0,0,0,0],["scale-x","constMul",0.995,0,0,0,0],["scale-y","constMul",0.995,0,0,0,0],["vx","constMul",0.95,0,0,0,0],["vy","constMul",0.95,0,0,0,0]]}],"count":2,"duration":0.005,"angle":0,"range":0,"force":0}}]')
+		//txt_input.textbox("setValue", '[{"id":0,"name":"發射器","lifetime":0.081,"vel":[0,0,0],"pos":[261,453,0],"mass":1,"color":[1,1,1,0],"size":[40,40],"tex":"glow_png_128_128","blending":"normal","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":4,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[16,16],"tex":"glow_png_128_128","blending":"normal","formulaList":[["lifetime","randStartAdd",2,0,0,0,0],["vy","randAdd",100,0,0,0,0],["vx","randAdd",100,0,0,0,0],["vy","randStartAdd",3000,0,0,0,0],["vx","randStartAdd",3000,0,0,0,0],["scale-x","constMul",0.995,0,0,0,0],["scale-y","constMul",0.995,0,0,0,0],["vx","constMul",0.95,0,0,0,0],["vy","constMul",0.95,0,0,0,0]]}],"count":2,"duration":0.005,"angle":0,"range":0,"force":0}}]')
+		txt_input.textbox("setValue", '[{"id":0,"name":"發射器","lifetime":0,"vel":[0,0,0],"pos":[150,160,0],"mass":1,"color":[1,1,1,1],"size":[0,0],"tex":"glow_128_128","blending":"add","formulaList":[],"emit":{"prototype":[{"id":"1","name":"粒子","lifetime":2,"vel":[0,0,0],"pos":[0,0,0],"mass":1,"color":[1,1,1,1],"size":[40,40],"tex":"fire_128_128","blending":"add","formulaList":[["scale-y","randStartAdd",100,0,0,0,0],["scale-x","randStartAdd",100,0,0,0,0],["vr","randStartAdd",1.7453292519943295,0,0,0,0],["vy","randAdd",100,0,0,0,0],["vx","randAdd",100,0,0,0,0],["a","constMul",0.95,0,0,0,0]]}],"count":1,"duration":0.05,"angle":0,"range":0,"force":0}}]')
 		
 		</script>
 	</body>
