@@ -511,9 +511,6 @@ Main.rotate = function(ary_select,deg) {
 };
 Main.createCard = function(model) {
 	model.url = Main.getCardImageUrlWithPackage(Main.cardPackage,model.cardId);
-	var ary_url = model.url.split("/");
-	ary_url[ary_url.length - 1] = encodeURIComponent(ary_url[ary_url.length - 1]);
-	model.url = ary_url.join("/");
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
 Main.flip = function(ary_select) {
@@ -626,6 +623,7 @@ Main.getCardSuitPackageWithUrl = function(url,cb) {
 	api.getCardSuitPackageWithUrl(url,cb);
 };
 Main.getCardImageUrlWithPackage = function(name,key) {
+	if(key.indexOf("http") != -1) return key;
 	var cpkg = null;
 	var _g = 0;
 	var _g1 = Reflect.fields(Main.cardPackages);

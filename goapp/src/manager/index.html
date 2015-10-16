@@ -570,12 +570,12 @@ a{
 	$( 'body' ).mousemove( function( e ){
 		moveRootParticles( parts, e.pageX, e.pageY );
 	});
-	
+	/*
 	$( 'body' ).click( function( e ){
 		var particles = addParticle( pool, deepCopy( explodeConfig ) );
 		moveRootParticles( particles, e.pageX, e.pageY );
 	});
-	
+	*/
 	function moveRootParticles( particles, x, y ){
 		if( particles == undefined ) return;
 		_.each( particles, function( p ){

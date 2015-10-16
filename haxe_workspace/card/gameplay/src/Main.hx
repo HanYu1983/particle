@@ -412,9 +412,12 @@ class Main
 	
 	public static function createCard( model:Dynamic ) {
 		model.url = getCardImageUrlWithPackage( cardPackage, model.cardId );
-		var ary_url:Array<String> = model.url.split( '/' );
-		ary_url[ary_url.length - 1] = untyped __js__( 'encodeURIComponent' )( ary_url[ary_url.length - 1] );
-		model.url = ary_url.join( '/' );
+		
+		//for empty string
+		//var ary_url:Array<String> = model.url.split( '/' );
+		//ary_url[ary_url.length - 1] = untyped __js__( 'encodeURIComponent' )( ary_url[ary_url.length - 1] );
+		//model.url = ary_url.join( '/' );
+		
 		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
 	}
 	
@@ -558,7 +561,8 @@ class Main
 		untyped __js__('api.getCardSuitPackageWithUrl' )( url, cb );
 	}
 	
-	public static function getCardImageUrlWithPackage( name:Dynamic, key ):String {
+	public static function getCardImageUrlWithPackage( name:Dynamic, key:String ):String {
+		if ( key.indexOf( 'http' ) != -1 ) return key;
 		
 		var cpkg:Dynamic = null;
 		for ( pkg in cardPackages.fields() ) {

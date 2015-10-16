@@ -8,7 +8,28 @@ var cardSuit = cardSuit || {};
 	{
 		"name":"magic",
 		"game":"magic",
-		"cards":["118","117","116","115","113","112"]
+		"cards":[
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card",
+			"http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card","http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=392155&type=card"
+		]
 	},
     {
       "name": "sword砍人",
