@@ -323,10 +323,12 @@ var Main = function() {
 	myapp.facebook.init(fbappId,function() {
 		_g.loadCardSuit("gundamWar",function() {
 			_g.loadCardSuit("fighter",function() {
-				_g.loadCardSuit("sangoWar",function() {
-					_g.loadCardSuit("magic",function() {
-						Main.closeLoading();
-						Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
+				_g.loadCardSuit("army",function() {
+					_g.loadCardSuit("sangoWar",function() {
+						_g.loadCardSuit("magic",function() {
+							Main.closeLoading();
+							Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
+						});
 					});
 				});
 			});
@@ -716,6 +718,10 @@ Main.prototype = {
 		case "onBtnLoadFighterClick":
 			Main.currentSelect = "fighter";
 			this.chooseCardSuit("fighter");
+			break;
+		case "onBtnLoadArmyClick":
+			Main.currentSelect = "army";
+			this.chooseCardSuit("army");
 			break;
 		case "onBtnLoadGundamWarClick":
 			Main.currentSelect = "gundamWar";

@@ -34,6 +34,7 @@ app.card = app.card || {};
 			onClick:(function( __model ){
 				return function(){
 					switch( this.id ){
+						case 'btn_army':__model.game = 'army';break;
 						case 'btn_fighter':__model.game = 'fighter';break;
 						case 'btn_magic':__model.game = 'magic';break;
 						case 'btn_gundamWar':__model.game = 'gundamWar';break;
@@ -85,6 +86,9 @@ app.card = app.card || {};
 			return str;
 		})();
 		switch( _model.game ){
+			case 'army':
+				dom.find( '#btn_army' ).linkbutton( 'select' );
+				break;
 			case 'fighter':
 				dom.find( '#btn_fighter' ).linkbutton( 'select' );
 				break;
