@@ -24,8 +24,9 @@
 		
 		<script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>
 		<script src="js/capi.js"></script>
+		<script src="js/capi2.js"></script>
 		<script>
-		
+		/*
 		capi.addCard({
 			Id: "",
 			WName: "string",
@@ -46,7 +47,19 @@
 		capi.cardList( function(err, ret){
 			console.log( ret )
 		})
+		*/
 		
+		capi2.addCard({
+			Id: "",
+			Params: '["haha", "wowo!"]'
+		}, function(err, info){
+			console.log( err )
+			console.log( info )
+		})
+		
+		capi2.cardList( function(err, ret){
+			console.log( ret )
+		})
 		</script>
 	</body>
 </html>
