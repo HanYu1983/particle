@@ -12,6 +12,8 @@ const (
   CardInfoPosition = 5178081291534336
   
   
+  // vic local
+  CardInfoPosition2 = 5171003185430528
   // han local
-  CardInfoPosition2 = 5629499534213120
+  //CardInfoPosition2 = 5629499534213120
 )
