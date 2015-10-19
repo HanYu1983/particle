@@ -144,43 +144,23 @@ body{
 				</div>
 				<div class="group" ctype="ab1">
 					<div class="hori">能力</div>
-					<div class="hori" style="width:100%;">
-						<select class="easyui-combobox" style="width:80%;">
-							<option>--</option>
-						</select>
-					</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" value="--"></div>
 				</div>
 				<div class="group" ctype="ab2">
 					<div class="hori">能力</div>
-					<div class="hori" style="width:100%;">
-						<select class="easyui-combobox" style="width:80%;">
-							<option>--</option>
-						</select>
-					</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" value="--"></div>
 				</div>
 				<div class="group" ctype="ab3">
 					<div class="hori">能力</div>
-					<div class="hori" style="width:100%;">
-						<select class="easyui-combobox" style="width:80%;">
-							<option>--</option>
-						</select>
-					</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" value="--"></div>
 				</div>
 				<div class="group" ctype="ab4">
 					<div class="hori">能力</div>
-					<div class="hori" style="width:100%;">
-						<select class="easyui-combobox" style="width:80%;">
-							<option>--</option>
-						</select>
-					</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" value="--"></div>
 				</div>
 				<div class="group" ctype="ab5">
 					<div class="hori">能力</div>
-					<div class="hori" style="width:100%;">
-						<select class="easyui-combobox" style="width:80%;">
-							<option>--</option>
-						</select>
-					</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" value="--"></div>
 				</div>
 				<div class="group" ctype="text">
 					<div class="hori">技能內文</div>
@@ -413,11 +393,11 @@ body{
 		setCombobox( getCombo( 'pland' ), data.pland );
 		setCombobox( getCombo( 'psoilder' ), data.psoilder );
 		setCombobox( getCombo( 'pcity' ), data.pcity );
-		setCombobox( getCombo( 'ab1' ), data.ab1 );
-		setCombobox( getCombo( 'ab2' ), data.ab2 );
-		setCombobox( getCombo( 'ab3' ), data.ab3 );
-		setCombobox( getCombo( 'ab4' ), data.ab4 );
-		setCombobox( getCombo( 'ab5' ), data.ab5 );
+		setText( getInput( 'ab1' ), data.ab1 );
+		setText( getInput( 'ab2' ), data.ab2 );
+		setText( getInput( 'ab3' ), data.ab3 );
+		setText( getInput( 'ab4' ), data.ab4 );
+		setText( getInput( 'ab5' ), data.ab5 );
 		setText( getInput( 'text' ), data.text );
 	}
 	
