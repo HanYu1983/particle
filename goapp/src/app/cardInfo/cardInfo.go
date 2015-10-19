@@ -15,7 +15,7 @@ var _ = fmt.Printf
 
 type CardInfo struct {
   Id string
-  Params [30]string
+  Params map[string]string
 }
 
 type CardInfoContext struct{
@@ -118,18 +118,14 @@ func AddCard (w http.ResponseWriter, r *http.Request){
   form := r.PostForm
   //form := r.Form
   
-  card := CardInfo {
-    Params: [30]string{},
-  }
-  
   tool.Assert( tool.ParameterIsNotExist( form, "Params" ) )
   
-  var ps []string
+  var ps map[string]string
   err := json.Unmarshal( []byte(form["Params"][0]), &ps )
   tool.Assert( tool.IfError( err ) )
   
-  for i, v := range ps {
-    card.Params[i] = v
+  card := CardInfo {
+    Params: ps,
   }
   
   var id string
