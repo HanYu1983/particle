@@ -54,7 +54,7 @@ package view
 			var serverUrl = e.data.serverUrl;
 			var packageName = e.data.packageName;
 			
-			cardData.info.forEach( function( card ) {
+			cardData.forEach( function( card ) {
 				var cardView = new template();
 				cardView['txt_weapon_name'].text = card.weapon.name;
 				cardView['txt_weapon_level'].text = card.weapon.level;

@@ -11,7 +11,10 @@
 		<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
 			<s:VGroup horizontalAlign="center">
 				<s:Label>套牌名稱</s:Label>
+				<s:ComboBox  id="combo_game"  dataProvider="{data}" width="150" selectedIndex="0" labelField="text"/>   
+				<!--
 				<s:TextInput id="txt_packeName" text="fighter" width="350"></s:TextInput>
+				-->
 				<s:Label>套牌網址</s:Label>
 				<s:TextInput id="txt_packageUrl" text="http://particle-979.appspot.com/fn/cardInfo/cardList" width="350"></s:TextInput>
 				<s:Label>輸出路徑</s:Label>
@@ -35,6 +38,7 @@
 	<fx:Script>
 		<![CDATA[
 		
+		import adobe.utils.CustomActions;
 		import flash.desktop.NativeApplication;
 		import flash.display.Loader;
 		import flash.display.LoaderInfo;
@@ -47,6 +51,7 @@
 		import flash.net.URLLoader;
 		import flash.net.URLRequest;
 		import flash.system.ApplicationDomain;
+		import mx.collections.ArrayCollection;
 		import mx.controls.Alert;
 		import view.UI;
 		import view.VicEvent;
@@ -54,6 +59,14 @@
 		private var _ui:EventDispatcher;
 		private var _source:ApplicationDomain;
 		private var _template:Class;
+		
+		[Bindable]
+        public var data:ArrayCollection = new ArrayCollection(
+			[   
+				{value:"fighter", text:"格鬥風雲錄"},
+				{value:"army", text:"戰爭"}
+			]                
+        );
 		
 		public function appStart():void {
 			var l:Loader = new Loader();
@@ -77,25 +90,40 @@
 				Alert.show( '套牌網址輸入錯誤!', '錯誤' );
 			});
 			
-			var templateName:String = 'mc_card_' + txt_packeName.text;
-			_template = _source.getDefinition( templateName ) as Class;
+			var packageName:String = combo_game.selectedItem.value;
+			try{
+				var templateName:String = 'mc_card_' + packageName;
+				_template = _source.getDefinition( templateName ) as Class;
+			}catch ( e:Error ) {
+				Alert.show( '沒有這個"' + templateName + '"模版，請檢查!', '錯誤' );
+				return ;
+			}
 			
 			ul.addEventListener(Event.COMPLETE, function( e:Event ):void {
+				var cardData:Object = JSON.parse( e.currentTarget.data );
+				var targetCards:Array = cardData.info.filter( function( item:*, index:int, array:Array ):Boolean {
+					return item.game == packageName;
+				});
+				
+				if ( targetCards.length == 0 ) {
+					Alert.show( '沒有資料哦!', '錯誤' );
+					return; 
+				}
+				
 				_ui.dispatchEvent( new VicEvent( 'appendCard', {
 					template:_template,
-					data: JSON.parse( e.currentTarget.data ),
+					data: targetCards,
 					outputUrl: File.documentsDirectory.url + txt_outputUrl.text,
-					packageName: txt_packeName.text,
+					packageName: packageName,
 					serverUrl: txt_serverUrl.text
 				} ));
+				
 			});
 		}
 		
 		private function onComplete( e:Event ):void {
 			var info:LoaderInfo = e.currentTarget as LoaderInfo;
-			//var templateName:String = 'mc_card_' + txt_packeName.text;
 			_source = info.applicationDomain;
-			//_template = _source.getDefinition( templateName ) as Class;
 			
 			_ui = new UI();
 			_ui.addEventListener( 'startProgress', function( e:Event ):void {
