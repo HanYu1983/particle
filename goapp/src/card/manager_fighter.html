@@ -176,7 +176,11 @@ body{
 			if( err != null ){
 				alert1( err );
 			}else{
-				setRows( _.map( ret.info, modelToView ) );
+				ret = JSON.parse( ret );
+				ret.Info = _.filter( ret.Info, function( card ){
+					return card.Params.Game == 'fighter';
+				});
+				setRows( _.map( ret.Info, modelToView ) );
 			}
 			if( cb ) cb();
 		});
@@ -229,7 +233,6 @@ body{
 		if( currentRow != undefined ){
 			openLoading( '同步中...' );
 			var saveData = viewToModel( currentRow.row );
-			console.log( saveData );
 			capi2.addCard( saveData, function(err, ret){
 				if( err != null ){
 					closeLoading();
@@ -252,6 +255,7 @@ body{
 				var newobj;
 				if( currentRow != undefined ){
 					newobj = {	
+									id: '',
 									ctype: currentRow.row.ctype,
 									name: currentRow.row.name, 
 									type: currentRow.row.type, 
@@ -268,8 +272,6 @@ body{
 				
 				openLoading( '同步中...' );
 				var saveData = viewToModel( newobj );
-				console.log( saveData );
-				
 				capi2.addCard( saveData, function(err, ret){
 					if( err != null ){
 						closeLoading();
@@ -371,24 +373,36 @@ body{
 	
 	function viewToModel( view ){
 		return {
-			Id: 'sasdf',
-			Params:JSON.stringify([])
+			Id: view.id,
+			Params:JSON.stringify({
+				Game: 'fighter',
+				WName: view.name,
+				WLevel: view.level,
+				WWeight: view.weight,
+				WPower: view.power,
+				WType: view.type,
+				SName: view.sname,
+				SType: view.stype,
+				SCost: view.scost,
+				SText: view.stext,
+				Type: view.ctype
+			})
 		}
 	}
 	
 	function modelToView( model ){
 		return {
-			id:model.id,
-			name:model.weapon.name,
-			level:model.weapon.level,
-			weight:model.weapon.weight,
-			power:model.weapon.power,
-			type:model.weapon.type,
-			sname:model.skill.name,
-			stype:model.skill.type,
-			scost:model.skill.cost,
-			stext:model.skill.text,
-			ctype:model.type
+			id:model.Id,
+			name:model.Params.WName,
+			level:model.Params.WLevel,
+			weight:model.Params.WWeight,
+			power:model.Params.WPower,
+			type:model.Params.WType,
+			sname:model.Params.SName,
+			stype:model.Params.SType,
+			scost:model.Params.SCost,
+			stext:model.Params.SText,
+			ctype:model.Params.Type
 		}
 	}
 	
