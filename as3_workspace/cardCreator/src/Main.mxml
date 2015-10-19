@@ -101,8 +101,12 @@
 			
 			ul.addEventListener(Event.COMPLETE, function( e:Event ):void {
 				var cardData:Object = JSON.parse( e.currentTarget.data );
-				var targetCards:Array = cardData.info.filter( function( item:*, index:int, array:Array ):Boolean {
-					return item.game == packageName;
+				//trace( cardData );
+				
+				cardData.Info = JSON.parse( cardData.Info );
+				cardData.Info.Info = [].concat( cardData.Info.Info );
+				var targetCards:Array = cardData.Info.Info.filter( function(item:*, index:int, array:Array ):Boolean {
+					return item.Params.Game == packageName;
 				});
 				
 				if ( targetCards.length == 0 ) {

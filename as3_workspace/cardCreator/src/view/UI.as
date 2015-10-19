@@ -18,6 +18,7 @@ package view
 	import flash.net.FileReferenceList;
 	import flash.utils.ByteArray;
 	import flash.utils.SetIntervalTimer;
+	import flash.utils.setTimeout;
 	import flash.utils.Timer;
 	import mx.graphics.codec.JPEGEncoder;
 	import spark.components.Button;
@@ -56,16 +57,38 @@ package view
 			
 			cardData.forEach( function( card ) {
 				var cardView = new template();
-				cardView['txt_weapon_name'].text = card.weapon.name;
-				cardView['txt_weapon_level'].text = card.weapon.level;
-				cardView['txt_weapon_weight'].text = card.weapon.weight;
-				cardView['txt_weapon_power'].text = card.weapon.power;
-				cardView['txt_weapon_type'].text = card.weapon.type;
-				cardView['txt_skill_name'].text = card.skill.name;
-				cardView['txt_skill_type'].text = card.skill.type;
-				cardView['txt_skill_cost'].text = card.skill.cost;
-				cardView['txt_skill_text'].text = card.skill.text;
-				cardView['txt_id'].text = card.id;
+				switch( packageName ) {
+					case 'fighter':
+						cardView['txt_weapon_name'].text = card.Params.Wname;
+						cardView['txt_weapon_level'].text = card.Params.Wlevel;
+						cardView['txt_weapon_weight'].text = card.Params.Wweight;
+						cardView['txt_weapon_power'].text = card.Params.Wpower;
+						cardView['txt_weapon_type'].text = card.Params.Wtype;
+						cardView['txt_skill_name'].text = card.Params.Sname;
+						cardView['txt_skill_type'].text = card.Params.Stype;
+						cardView['txt_skill_cost'].text = card.Params.Scost;
+						cardView['txt_skill_text'].text = card.Params.Stext;
+						break;
+					case 'army':
+						cardView['txt_v1'].text = card.Params.Ntype;
+						cardView['txt_v2'].text = card.Params.Ctype;
+						cardView['txt_v3'].text = card.Params.Name;
+						cardView['txt_v4'].text = card.Params.Cost;
+						cardView['txt_v5'].text = card.Params.Speed;
+						cardView['txt_v6'].text = card.Params.Psky;
+						cardView['txt_v7'].text = card.Params.Pland;
+						cardView['txt_v8'].text = card.Params.Psoilder;
+						cardView['txt_v9'].text = card.Params.Pcity;
+						cardView['txt_v11'].text = card.Params.Ab1;
+						cardView['txt_v12'].text = card.Params.Ab2;
+						cardView['txt_v13'].text = card.Params.Ab3;
+						cardView['txt_v14'].text = card.Params.Ab4;
+						cardView['txt_v15'].text = card.Params.Ab5;
+						cardView['txt_v10'].text = card.Params.Text;
+						
+						break;
+				}
+				cardView['txt_id'].text = card.Id;
 				cardView['data'] = card;
 				_ary_cardView.push( cardView );
 			} );
@@ -83,9 +106,10 @@ package view
 			var output = {
 				images:{}
 			}
+			
 			_ary_cardView.forEach( function( cardView ) {
 				var data:Object = cardView['data'];
-				output.images[ data.id ] = serverUrl + packageName + '/' + data.id + '.jpg';
+				output.images[ data.Id ] = serverUrl + packageName + '/' + data.Id + '.jpg';
 			});
 			writeString( root, packageName, JSON.stringify( output ));
 		}
@@ -103,7 +127,7 @@ package view
 			bitmap.draw( mc );
 			var jpeg:JPEGEncoder = new JPEGEncoder(80 );
 			var bytes:ByteArray = jpeg.encode( bitmap );
-			saveImage( root, packageName, mc['data'].id, bytes );
+			saveImage( root, packageName, mc['data'].Id, bytes );
 		}
 		
 		function saveImage( root:String, packageName:String, fileName:Object, bytes:ByteArray ) {
