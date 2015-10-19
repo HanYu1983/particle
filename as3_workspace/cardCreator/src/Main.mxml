@@ -56,11 +56,9 @@
 		private var _template:Class;
 		
 		public function appStart():void {
-		
 			var l:Loader = new Loader();
 			l.load( new URLRequest( 'src/source.swf' ));
 			l.contentLoaderInfo.addEventListener( Event.COMPLETE, onComplete );
-			
 		}
 		
 		private function onFlieUpload( e:VicEvent ):void {
@@ -79,6 +77,9 @@
 				Alert.show( '套牌網址輸入錯誤!', '錯誤' );
 			});
 			
+			var templateName:String = 'mc_card_' + txt_packeName.text;
+			_template = _source.getDefinition( templateName ) as Class;
+			
 			ul.addEventListener(Event.COMPLETE, function( e:Event ):void {
 				_ui.dispatchEvent( new VicEvent( 'appendCard', {
 					template:_template,
@@ -92,8 +93,9 @@
 		
 		private function onComplete( e:Event ):void {
 			var info:LoaderInfo = e.currentTarget as LoaderInfo;
+			//var templateName:String = 'mc_card_' + txt_packeName.text;
 			_source = info.applicationDomain;
-			_template = _source.getDefinition( 'TemplateCard' ) as Class;
+			//_template = _source.getDefinition( templateName ) as Class;
 			
 			_ui = new UI();
 			_ui.addEventListener( 'startProgress', function( e:Event ):void {
