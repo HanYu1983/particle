@@ -10,4 +10,8 @@ const (
   //CardInfoPosition = 5733953138851840
   // remote
   CardInfoPosition = 5178081291534336
+  
+  
+  // han local
+  CardInfoPosition2 = 5629499534213120
 )

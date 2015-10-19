@@ -7,6 +7,7 @@ import (
   "lib/db/file"
   "appengine"
   "appengine/user"
+  "app/cardInfo"
   auth "lib/hack/go-http-auth"
   appauth "lib/auth"
 )
@@ -43,9 +44,15 @@ func init(){
   //http.HandleFunc("/fn/saveUser", SaveToUser(appauth.User{ Key: "admin" }))
   //http.HandleFunc("/fn/loadUser", LoadFormUser(appauth.User{ Key: "admin" }))
   // 格鬥風雲錄卡表
+  /*
   http.HandleFunc("/fn/cardInfo/addCard", AddCard)
   http.HandleFunc("/fn/cardInfo/deleteCard", DeleteCard)
   http.HandleFunc("/fn/cardInfo/cardList", CardList)
+  */
+  cardInfo.SetCardInfoPosition( CardInfoPosition2 )
+  http.HandleFunc("/fn/cardInfo/addCard", cardInfo.AddCard)
+  http.HandleFunc("/fn/cardInfo/deleteCard", cardInfo.DeleteCard)
+  http.HandleFunc("/fn/cardInfo/cardList", cardInfo.CardList)
   // 卡牌風雲
   http.HandleFunc("/fn/createChannel", CreateChannel)
   http.HandleFunc("/fn/sendChannelMessage", SendChannelMessage)
