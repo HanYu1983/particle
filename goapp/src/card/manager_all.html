@@ -228,7 +228,9 @@ body{
 	function modify(){
 		if( currentRow != undefined ){
 			openLoading( '同步中...' );
-			capi2.addCard( viewToModel( currentRow.row ), function(err, ret){
+			var saveData = viewToModel( currentRow.row );
+			console.log( saveData );
+			capi2.addCard( saveData, function(err, ret){
 				if( err != null ){
 					closeLoading();
 					alert1( err );
@@ -265,7 +267,10 @@ body{
 				}
 				
 				openLoading( '同步中...' );
-				capi2.addCard( viewToModel( newobj ), function(err, ret){
+				var saveData = viewToModel( newobj );
+				console.log( saveData );
+				
+				capi2.addCard( saveData, function(err, ret){
 					if( err != null ){
 						closeLoading();
 						alert1( err );
@@ -366,17 +371,8 @@ body{
 	
 	function viewToModel( view ){
 		return {
-			Id: view.id,
-			WName: view.name,
-			WLevel: view.level,
-			WWeight: view.weight,
-			WPower: view.power,
-			WType: view.type,
-			SName: view.sname,
-			SType: view.stype,
-			SCost: view.scost,
-			SText: view.stext,
-			Type: view.ctype
+			Id: 'sasdf',
+			Params:JSON.stringify([])
 		}
 	}
 	
