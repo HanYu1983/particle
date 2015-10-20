@@ -86,6 +86,18 @@ package view
 						cardView['txt_v15'].text = card.Params.Ab5;
 						cardView['txt_v10'].text = card.Params.Text;
 						
+						switch( card.Params.Ntype ) {
+							case '資本':cardView['mc_ntype'].gotoAndStop( 1 ); break;
+							case '共產':cardView['mc_ntype'].gotoAndStop( 2 ); break;
+							case '第三世界':cardView['mc_ntype'].gotoAndStop( 3 ); break;
+						}
+						
+						switch( card.Params.Ctype ) {
+							case '部隊':cardView['mc_ctype'].gotoAndStop( 1 ); break;
+							case '建築':cardView['mc_ctype'].gotoAndStop( 2 ); break;
+							case '戰術':cardView['mc_ctype'].gotoAndStop( 3 ); break;
+						}
+						
 						break;
 				}
 				cardView['txt_id'].text = card.Id;
