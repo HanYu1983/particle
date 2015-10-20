@@ -78,10 +78,10 @@ class Main
 				loadCardSuit( 'fighter', function() {
 					loadCardSuit( 'army', function() {
 						loadCardSuit( 'sangoWar', function() {
-							loadCardSuit( 'magic', function(){
+							//loadCardSuit( 'magic', function(){
 								closeLoading();
 								slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
-							});
+							//});
 						});
 					});
 				});
