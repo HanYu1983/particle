@@ -230,6 +230,7 @@ class Card extends Mediator
 		if ( _back ) {
 			getViewComponent().find( '#img_back' ).show();
 		}else {
+			getViewComponent().find( '#img_relate' ).hide();
 			getViewComponent().find( '#img_back' ).hide();
 		}
 		
