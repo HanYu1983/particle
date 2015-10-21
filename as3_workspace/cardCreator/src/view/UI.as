@@ -5,6 +5,7 @@ package view
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
@@ -89,7 +90,8 @@ package view
 						switch( card.Params.Ntype ) {
 							case '資本':cardView['mc_ntype'].gotoAndStop( 1 ); break;
 							case '共產':cardView['mc_ntype'].gotoAndStop( 2 ); break;
-							case '第三世界':cardView['mc_ntype'].gotoAndStop( 3 ); break;
+							case '人民':cardView['mc_ntype'].gotoAndStop( 3 ); break;
+							case '無':cardView['mc_ntype'].gotoAndStop( 4 ); break;
 						}
 						
 						switch( card.Params.Ctype ) {
