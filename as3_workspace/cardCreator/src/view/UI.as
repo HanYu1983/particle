@@ -102,6 +102,7 @@ package view
 						
 						break;
 				}
+				
 				cardView['txt_id'].text = card.Id;
 				cardView['data'] = card;
 				_ary_cardView.push( cardView );
