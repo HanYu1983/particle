@@ -50,6 +50,8 @@ package view
 		function appendCard( e:VicEvent ):void {
 			dispatchEvent( new Event( 'startProgress' ));
 			
+			trace("GGG");
+			
 			var cardData = e.data.data;
 			var template = e.data.template;
 			var outputUrl = e.data.outputUrl;
@@ -95,7 +97,37 @@ package view
 						}
 						
 						switch( card.Params.Ctype ) {
-							case '部隊':cardView['mc_ctype'].gotoAndStop( 1 ); break;
+							case '部隊':
+								if( card.Params.Atype != null ){
+									switch( card.Params.Atype ) {
+										case '戰鬥機':
+											cardView['mc_ctype'].gotoAndStop( 6 ); break;
+										case '攻擊機':
+											cardView['mc_ctype'].gotoAndStop( 6 ); break;
+										case '戰鬥攻擊機':
+											cardView['mc_ctype'].gotoAndStop( 6 ); break;
+										case '戰略轟炸機':
+											cardView['mc_ctype'].gotoAndStop( 6 ); break;
+										case '直升機':
+											cardView['mc_ctype'].gotoAndStop( 4 ); break;
+										case '坦克':
+											cardView['mc_ctype'].gotoAndStop( 5 ); break;
+										case '裝甲車':
+											cardView['mc_ctype'].gotoAndStop( 5 ); break;
+										case '士兵':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '對空炮':
+											cardView['mc_ctype'].gotoAndStop( 5 ); break;
+										case '自走炮':
+											cardView['mc_ctype'].gotoAndStop( 5 ); break;
+										case '戰略火炮':
+											cardView['mc_ctype'].gotoAndStop( 5 ); break;
+										
+									}
+								}else {
+									cardView['mc_ctype'].gotoAndStop( 1 ); break;
+								}
+								break;
 							case '建築':cardView['mc_ctype'].gotoAndStop( 2 ); break;
 							case '戰術':cardView['mc_ctype'].gotoAndStop( 3 ); break;
 						}
@@ -107,7 +139,7 @@ package view
 				cardView['data'] = card;
 				_ary_cardView.push( cardView );
 			} );
-			
+			/*
 			var t:Timer = new Timer( 100 );
 			t.addEventListener( TimerEvent.TIMER, function( e:Event ) {
 				outputMapping( outputUrl, serverUrl, packageName );
@@ -115,6 +147,7 @@ package view
 				t = null;
 			});
 			t.start();
+			*/
 		}
 		
 		function outputMapping( root:String, serverUrl:String, packageName:String ) {
