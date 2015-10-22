@@ -134,12 +134,12 @@ package view
 						
 						break;
 				}
-				
+			
 				cardView['txt_id'].text = card.Id;
 				cardView['data'] = card;
 				_ary_cardView.push( cardView );
 			} );
-			/*
+			
 			var t:Timer = new Timer( 100 );
 			t.addEventListener( TimerEvent.TIMER, function( e:Event ) {
 				outputMapping( outputUrl, serverUrl, packageName );
@@ -147,7 +147,7 @@ package view
 				t = null;
 			});
 			t.start();
-			*/
+			
 		}
 		
 		function outputMapping( root:String, serverUrl:String, packageName:String ) {
