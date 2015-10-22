@@ -57,7 +57,7 @@ body{
 							<th data-options="field:'ab3',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
 							<th data-options="field:'ab4',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
 							<th data-options="field:'ab5',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
-							<th data-options="field:'text',width:'22%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
+							<th data-options="field:'text',width:'20%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
 						</tr>
 					</thead>
 					<tbody></tbody>
@@ -470,7 +470,7 @@ body{
 	
 	function modelToView( model ){
 		return {
-			id:model.Id,
+			id: Math.floor( model.Id ),
 			ntype:model.Params.Ntype,
 			ctype:model.Params.Ctype,
 			atype:model.Params.Atype,
