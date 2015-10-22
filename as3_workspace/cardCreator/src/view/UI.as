@@ -108,6 +108,8 @@ package view
 											cardView['mc_ctype'].gotoAndStop( 6 ); break;
 										case '戰略轟炸機':
 											cardView['mc_ctype'].gotoAndStop( 6 ); break;
+										case '支援機':
+											cardView['mc_ctype'].gotoAndStop( 6 ); break;
 										case '直升機':
 											cardView['mc_ctype'].gotoAndStop( 4 ); break;
 										case '坦克':
