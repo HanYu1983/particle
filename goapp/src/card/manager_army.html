@@ -41,12 +41,11 @@ body{
 				<table id="grid_cards" class="easyui-datagrid" data-options="autoRowHeight:true, remoteSort:false,multiSort:true,fitColumns:true,singleSelect:true" style="width:100%;">
 					<thead>
 						<tr>
-							<!--
 							<th data-options="field:'id',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">ID</th>
-							-->
 							<th data-options="field:'ntype',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">國別</th>
 							<th data-options="field:'ctype',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">類別</th>
-							<th data-options="field:'name',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">名稱</th>
+							<th data-options="field:'atype',width:'7%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">兵器類別</th>
+							<th data-options="field:'name',width:'7%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">名稱</th>
 							<th data-options="field:'cost',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">資源</th>
 							<th data-options="field:'speed',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">速度</th>
 							<th data-options="field:'psky',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">空</th>
@@ -58,7 +57,7 @@ body{
 							<th data-options="field:'ab3',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
 							<th data-options="field:'ab4',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
 							<th data-options="field:'ab5',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
-							<th data-options="field:'text',width:'32%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
+							<th data-options="field:'text',width:'22%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
 						</tr>
 					</thead>
 					<tbody></tbody>
@@ -88,6 +87,25 @@ body{
 							<option>部隊</option>
 							<option>建築</option>
 							<option>戰術</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" ctype="atype">
+					<div class="hori">卡片類別</div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option></option>
+							<option>戰鬥機</option>
+							<option>攻擊機</option>
+							<option>戰鬥攻擊機</option>
+							<option>戰略轟炸機</option>
+							<option>直升機</option>
+							<option>坦克</option>
+							<option>裝甲車</option>
+							<option>士兵</option>
+							<option>對空炮</option>
+							<option>自走炮</option>
+							<option>戰略火炮</option>
 						</select>
 					</div>
 				</div>
@@ -279,6 +297,7 @@ body{
 						id: '',
 						ntype: currentRow.row.ntype,
 						ctype: currentRow.row.ctype,
+						atype: currentRow.row.atype,
 						name: currentRow.row.name,
 						cost: currentRow.row.cost,
 						speed: currentRow.row.speed,
@@ -298,6 +317,7 @@ body{
 						id:'',
 						ntype: '資本',
 						ctype: '部隊',
+						atype: '',
 						name: '',
 						cost: '',
 						speed: '0',
@@ -383,10 +403,10 @@ body{
 	}
 	
 	function showCard( data ){
-		console.log( data );
 		$('#txt_id').html( data.id );
 		setCombobox( getCombo( 'ntype' ), data.ntype );
 		setCombobox( getCombo( 'ctype' ), data.ctype );
+		setCombobox( getCombo( 'atype' ), data.atype );
 		setText( getInput( 'name' ), data.name );
 		setText( getInput( 'cost' ), data.cost );
 		setText( getInput( 'speed' ), data.speed );
@@ -429,6 +449,7 @@ body{
 				Game: 'army',
 				Ntype: view.ntype,
 				Ctype: view.ctype,
+				Atype: view.atype,
 				Name: view.name,
 				Cost: view.cost,
 				Speed: view.speed,
@@ -451,6 +472,7 @@ body{
 			id:model.Id,
 			ntype:model.Params.Ntype,
 			ctype:model.Params.Ctype,
+			atype:model.Params.Atype,
 			name:model.Params.Name,
 			cost:model.Params.Cost,
 			speed:model.Params.Speed,
