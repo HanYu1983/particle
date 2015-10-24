@@ -24,7 +24,7 @@
 				<s:TextInput id="txt_outputUrl" text="/big_workspace/particle/goapp/src/common/cardPackage/" width="350"></s:TextInput>
 				<s:Label>伺服器路徑</s:Label>
 				<s:TextInput id="txt_serverUrl" text="http://particle-979.appspot.com/common/cardPackage/" width="350"></s:TextInput>
-				<s:Button id="btn_upload" click="onBtnClick( event )">執行</s:Button>
+				<s:Button id="btn_upload" click="onBtnClick( event )" enabled="false">執行</s:Button>
 			</s:VGroup>
 		</s:HGroup>
 		<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
@@ -59,6 +59,7 @@
 		private var _ui:EventDispatcher;
 		private var _source:ApplicationDomain;
 		private var _template:Class;
+		private var _ary_imgPool:Object = { };
 		
 		[Bindable]
         public var data:ArrayCollection = new ArrayCollection(
@@ -137,6 +138,27 @@
 				panel_wait.visible = false;
 				NativeApplication.nativeApplication.exit();
 			});
+			
+			var fs:File = File.documentsDirectory.resolvePath( 'army' );
+			var loadTag:int = 0;
+			for ( var i:int = 0; i < fs.getDirectoryListing().length; ++i ) {
+				var f:File = fs.getDirectoryListing()[i];
+				if ( f.name.indexOf( '.png' ) != -1 ) {
+					++loadTag;
+					var id:String = f.name.split('.')[0];
+					var lr:Loader = new Loader();
+					lr.load( new URLRequest( File.documentsDirectory.url + '/army/' + f.name ));
+					lr.contentLoaderInfo.addEventListener( Event.COMPLETE, function( cardId:String, contentLoaderInfo:LoaderInfo ):Function {
+						return function( e:Event ):void {
+							_ary_imgPool[cardId] = contentLoaderInfo.content;
+							if ( --loadTag == 0 ) {
+								btn_upload.enabled = true;
+								_ui.dispatchEvent( new VicEvent( 'setImgPool', _ary_imgPool ));
+							}
+						}
+					}(id, lr.contentLoaderInfo));
+				}
+			}
 		}
 		
 		public function onBtnClick( e:MouseEvent ):void {

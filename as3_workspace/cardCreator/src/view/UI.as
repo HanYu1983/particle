@@ -2,13 +2,16 @@ package view
 {
 	import air.update.utils.FileUtils;
 	import flash.desktop.NativeApplication;
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.filesystem.File;
@@ -17,6 +20,7 @@ package view
 	import flash.net.FileFilter;
 	import flash.net.FileReference;
 	import flash.net.FileReferenceList;
+	import flash.net.URLRequest;
 	import flash.utils.ByteArray;
 	import flash.utils.SetIntervalTimer;
 	import flash.utils.setTimeout;
@@ -31,6 +35,7 @@ package view
 	public class UI extends EventDispatcher 
 	{
 		private var _ary_cardView:Array = [];
+		private var _ary_imgPool:Object = { };
 		
 		public function UI( target:flash.events.IEventDispatcher=null ) 
 		{
@@ -38,6 +43,7 @@ package view
 			
 			addEventListener( 'browseFile', browseFile );
 			addEventListener( 'appendCard', appendCard );
+			addEventListener( 'setImgPool', setImgPool );
 			
 		}
 		
@@ -47,10 +53,12 @@ package view
 			f.browse( [ new FileFilter("*.txt","*.txt;*.json;") ]);
 		}
 		
+		function setImgPool( e:VicEvent):void {
+			_ary_imgPool = e.data;
+		}
+		
 		function appendCard( e:VicEvent ):void {
 			dispatchEvent( new Event( 'startProgress' ));
-			
-			trace("GGG");
 			
 			var cardData = e.data.data;
 			var template = e.data.template;
@@ -136,8 +144,11 @@ package view
 						
 						break;
 				}
-			
+				
 				cardView['txt_id'].text = card.Id;
+				if ( _ary_imgPool[card.Id] != null ) {
+					cardView['mc_img'].addChild( _ary_imgPool[card.Id] );
+				}
 				cardView['data'] = card;
 				_ary_cardView.push( cardView );
 			} );
