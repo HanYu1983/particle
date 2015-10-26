@@ -64,7 +64,7 @@
 		[Bindable]
         public var data:ArrayCollection = new ArrayCollection(
 			[   
-				{value:"fighter", text:"格鬥風雲錄"},
+			/*	{value:"fighter", text:"格鬥風雲錄"},*/
 				{value:"army", text:"戰爭"}
 			]                
         );

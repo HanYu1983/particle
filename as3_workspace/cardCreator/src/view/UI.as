@@ -128,9 +128,9 @@ package view
 						cardView['txt_content'].text = card.Params.Ab1 + ' ' + card.Params.Ab2 + ' ' + card.Params.Ab3 + ' ' + card.Params.Ab4 + ' ' + card.Params.Ab5;
 						cardView['txt_content'].text += '\n';
 						cardView['txt_content'].text += card.Params.Text;
-						
 						cardView['txt_name'].text = card.Params.Name;
 						cardView['txt_cost'].text = card.Params.Cost;
+						
 						
 						if( card.Params.Nation != null ){
 							switch( card.Params.Nation ) {
@@ -207,10 +207,11 @@ package view
 			t.addEventListener( TimerEvent.TIMER, function( e:Event ) {
 				outputMapping( outputUrl, serverUrl, packageName );
 				outputImage( outputUrl, packageName );
+				t.stop();
 				t = null;
 			});
-			t.start();
 			
+			t.start();
 		}
 		
 		function outputMapping( root:String, serverUrl:String, packageName:String ) {
