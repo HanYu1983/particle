@@ -43,6 +43,7 @@ body{
 						<tr>
 							<th data-options="field:'id',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">ID</th>
 							<th data-options="field:'ntype',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">國別</th>
+							<th data-options="field:'nation',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">國旗</th>
 							<th data-options="field:'ctype',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">類別</th>
 							<th data-options="field:'atype',width:'7%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">兵器類別</th>
 							<th data-options="field:'name',width:'7%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">名稱</th>
@@ -57,7 +58,7 @@ body{
 							<th data-options="field:'ab3',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
 							<th data-options="field:'ab4',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
 							<th data-options="field:'ab5',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
-							<th data-options="field:'text',width:'20%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
+							<th data-options="field:'text',width:'16%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
 						</tr>
 					</thead>
 					<tbody></tbody>
@@ -79,6 +80,10 @@ body{
 							<option>無</option>
 						</select>
 					</div>
+				</div>
+				<div class="group" ctype="nation">
+					<div class="hori">國旗</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
 				</div>
 				<div class="group" ctype="ctype">
 					<div class="hori">卡片類別</div>
@@ -297,6 +302,7 @@ body{
 					newobj = {	
 						id: '',
 						ntype: currentRow.row.ntype,
+						nation: currentRow.row.nation,
 						ctype: currentRow.row.ctype,
 						atype: currentRow.row.atype,
 						name: currentRow.row.name,
@@ -317,6 +323,7 @@ body{
 					newobj = {
 						id:'',
 						ntype: '資本',
+						nation: '',
 						ctype: '部隊',
 						atype: '',
 						name: '',
@@ -409,6 +416,7 @@ body{
 		setCombobox( getCombo( 'ctype' ), data.ctype );
 		setCombobox( getCombo( 'atype' ), data.atype );
 		setText( getInput( 'name' ), data.name );
+		setText( getInput( 'nation' ), data.nation );
 		setText( getInput( 'cost' ), data.cost );
 		setText( getInput( 'speed' ), data.speed );
 		setCombobox( getCombo( 'psky' ), data.psky );
@@ -449,6 +457,7 @@ body{
 			Params:JSON.stringify({
 				Game: 'army',
 				Ntype: view.ntype,
+				Nation: view.nation,
 				Ctype: view.ctype,
 				Atype: view.atype,
 				Name: view.name,
@@ -472,6 +481,7 @@ body{
 		return {
 			id: Math.floor( model.Id ),
 			ntype:model.Params.Ntype,
+			nation:model.Params.Nation,
 			ctype:model.Params.Ctype,
 			atype:model.Params.Atype,
 			name:model.Params.Name,

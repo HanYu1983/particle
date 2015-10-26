@@ -81,21 +81,42 @@ package view
 						cardView['txt_skill_text'].text = card.Params.Stext;
 						break;
 					case 'army':
-						cardView['txt_v1'].text = card.Params.Ntype;
-						cardView['txt_v2'].text = card.Params.Ctype;
-						cardView['txt_v3'].text = card.Params.Name;
-						cardView['txt_v4'].text = card.Params.Cost;
-						cardView['txt_v5'].text = card.Params.Speed;
-						cardView['txt_v6'].text = card.Params.Psky;
-						cardView['txt_v7'].text = card.Params.Pland;
-						cardView['txt_v8'].text = card.Params.Psoilder;
-						cardView['txt_v9'].text = card.Params.Pcity;
-						cardView['txt_v11'].text = card.Params.Ab1;
-						cardView['txt_v12'].text = card.Params.Ab2;
-						cardView['txt_v13'].text = card.Params.Ab3;
-						cardView['txt_v14'].text = card.Params.Ab4;
-						cardView['txt_v15'].text = card.Params.Ab5;
-						cardView['txt_v10'].text = card.Params.Text;
+						cardView['txt_type'].text = card.Params.Ctype;
+						if ( card.Params.Atype != null ) {
+							cardView['txt_type'].text += '-' + card.Params.Atype;
+						}
+						
+						switch( card.Params.Speed ) {
+							case '0':cardView['mc_speed'].gotoAndStop( 1 ); break;
+							case '1':cardView['mc_speed'].gotoAndStop( 2 ); break;
+							case '2':cardView['mc_speed'].gotoAndStop( 3 ); break;
+							case '3':cardView['mc_speed'].gotoAndStop( 4 ); break;
+							case '4':cardView['mc_speed'].gotoAndStop( 5 ); break;
+						}
+						
+						switch( card.Params.Psky ) {
+							case '精通': cardView['mc_sky'].gotoAndStop( 1 ); break;
+							case '抵抗': cardView['mc_sky'].gotoAndStop( 2 ); break;
+							case '不可': cardView['mc_sky'].gotoAndStop( 3 ); break;
+						}
+						
+						switch( card.Params.Pland ) {
+							case '精通': cardView['mc_land'].gotoAndStop( 1 ); break;
+							case '抵抗': cardView['mc_land'].gotoAndStop( 2 ); break;
+							case '不可': cardView['mc_land'].gotoAndStop( 3 ); break;
+						}
+						
+						switch( card.Params.Psoilder ) {
+							case '精通': cardView['mc_soilder'].gotoAndStop( 1 ); break;
+							case '抵抗': cardView['mc_soilder'].gotoAndStop( 2 ); break;
+							case '不可': cardView['mc_soilder'].gotoAndStop( 3 ); break;
+						}
+						
+						switch( card.Params.Pcity ) {
+							case '精通': cardView['mc_city'].gotoAndStop( 1 ); break;
+							case '抵抗': cardView['mc_city'].gotoAndStop( 2 ); break;
+							case '不可': cardView['mc_city'].gotoAndStop( 3 ); break;
+						}
 						
 						switch( card.Params.Ntype ) {
 							case '資本':cardView['mc_ntype'].gotoAndStop( 1 ); break;
@@ -104,44 +125,72 @@ package view
 							case '無':cardView['mc_ntype'].gotoAndStop( 4 ); break;
 						}
 						
+						cardView['txt_content'].text = card.Params.Ab1 + ' ' + card.Params.Ab2 + ' ' + card.Params.Ab3 + ' ' + card.Params.Ab4 + ' ' + card.Params.Ab5;
+						cardView['txt_content'].text += '\n';
+						cardView['txt_content'].text += card.Params.Text;
+						
+						cardView['txt_name'].text = card.Params.Name;
+						cardView['txt_cost'].text = card.Params.Cost;
+						
+						if( card.Params.Nation != null ){
+							switch( card.Params.Nation ) {
+								case '中國': cardView['mc_flag'].gotoAndStop( 2 ); break;
+								case '美國': cardView['mc_flag'].gotoAndStop( 3 ); break;
+								case '德國': cardView['mc_flag'].gotoAndStop( 5 ); break;
+								case '英國': cardView['mc_flag'].gotoAndStop( 6 ); break;
+								case '以色列': cardView['mc_flag'].gotoAndStop( 4 ); break;
+								default: cardView['mc_flag'].gotoAndStop( 1 ); break;
+							}
+						}else {
+							cardView['mc_flag'].gotoAndStop( 1 ); break;
+						}
+						
 						switch( card.Params.Ctype ) {
 							case '部隊':
 								if( card.Params.Atype != null ){
 									switch( card.Params.Atype ) {
 										case '戰鬥機':
-											cardView['mc_ctype'].gotoAndStop( 6 ); break;
-										case '攻擊機':
-											cardView['mc_ctype'].gotoAndStop( 6 ); break;
-										case '戰鬥攻擊機':
-											cardView['mc_ctype'].gotoAndStop( 6 ); break;
-										case '戰略轟炸機':
-											cardView['mc_ctype'].gotoAndStop( 6 ); break;
-										case '支援機':
-											cardView['mc_ctype'].gotoAndStop( 6 ); break;
-										case '直升機':
-											cardView['mc_ctype'].gotoAndStop( 4 ); break;
-										case '坦克':
-											cardView['mc_ctype'].gotoAndStop( 5 ); break;
-										case '裝甲車':
-											cardView['mc_ctype'].gotoAndStop( 5 ); break;
-										case '士兵':
 											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '攻擊機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '戰鬥攻擊機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '戰略轟炸機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '支援機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '直升機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '坦克':
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
+										case '裝甲車':
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
+										case '士兵':
+											cardView['mc_ctype'].gotoAndStop( 3 ); break;
 										case '對空炮':
-											cardView['mc_ctype'].gotoAndStop( 5 ); break;
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
 										case '自走炮':
-											cardView['mc_ctype'].gotoAndStop( 5 ); break;
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
 										case '戰略火炮':
-											cardView['mc_ctype'].gotoAndStop( 5 ); break;
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
 										
 									}
 								}else {
 									cardView['mc_ctype'].gotoAndStop( 1 ); break;
 								}
 								break;
-							case '建築':cardView['mc_ctype'].gotoAndStop( 2 ); break;
-							case '戰術':cardView['mc_ctype'].gotoAndStop( 3 ); break;
+							case '建築':
+								cardView['mc_ctype'].gotoAndStop( 4 ); 
+								break;
+							case '戰術':
+								cardView['mc_ctype'].gotoAndStop( 5 ); 
+								cardView['mc_speed'].visible = false;
+								cardView['mc_sky'].visible = false;
+								cardView['mc_land'].visible = false;
+								cardView['mc_soilder'].visible = false;
+								cardView['mc_city'].visible = false;
+								break;
 						}
-						
 						break;
 				}
 				
@@ -151,6 +200,7 @@ package view
 				}
 				cardView['data'] = card;
 				_ary_cardView.push( cardView );
+				
 			} );
 			
 			var t:Timer = new Timer( 100 );
