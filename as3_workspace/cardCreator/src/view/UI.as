@@ -236,7 +236,7 @@ package view
 		function drawCard( root:String, packageName:String, mc:DisplayObject ) {
 			var bitmap:BitmapData = new BitmapData( mc.width, mc.height );
 			bitmap.draw( mc );
-			var jpeg:JPEGEncoder = new JPEGEncoder(80 );
+			var jpeg:JPEGEncoder = new JPEGEncoder( 100 );
 			var bytes:ByteArray = jpeg.encode( bitmap );
 			saveImage( root, packageName, mc['data'].Id, bytes );
 		}
