@@ -82,7 +82,7 @@ package view
 						break;
 					case 'army':
 						cardView['txt_type'].text = card.Params.Ctype;
-						if ( card.Params.Atype != null ) {
+						if ( card.Params.Atype != null && card.Params.Atype.length != 0 ) {
 							cardView['txt_type'].text += '-' + card.Params.Atype;
 						}
 						
@@ -125,12 +125,35 @@ package view
 							case '無':cardView['mc_ntype'].gotoAndStop( 4 ); break;
 						}
 						
-						cardView['txt_content'].text = card.Params.Ab1 + ' ' + card.Params.Ab2 + ' ' + card.Params.Ab3 + ' ' + card.Params.Ab4 + ' ' + card.Params.Ab5;
-						cardView['txt_content'].text += '\n';
+						cardView['txt_content'].text = '';
+						
+						if ( card.Params.Ab1.length != 0 ) {
+							cardView['txt_content'].text += card.Params.Ab1;
+						}
+						
+						if ( card.Params.Ab2.length != 0 ) {
+							cardView['txt_content'].text += ' ' + card.Params.Ab2;
+						}
+						
+						if ( card.Params.Ab3.length != 0 ) {
+							cardView['txt_content'].text += ' ' + card.Params.Ab3;
+						}
+						
+						if ( card.Params.Ab4.length != 0 ) {
+							cardView['txt_content'].text += ' ' + card.Params.Ab4;
+						}
+						
+						if ( card.Params.Ab5.length != 0 ) {
+							cardView['txt_content'].text += ' ' + card.Params.Ab5;
+						}
+						
+						if ( cardView['txt_content'].text.length > 0 ) {
+							cardView['txt_content'].text += '\n';
+						}
+						
 						cardView['txt_content'].text += card.Params.Text;
 						cardView['txt_name'].text = card.Params.Name;
 						cardView['txt_cost'].text = card.Params.Cost;
-						
 						
 						if( card.Params.Nation != null ){
 							switch( card.Params.Nation ) {
