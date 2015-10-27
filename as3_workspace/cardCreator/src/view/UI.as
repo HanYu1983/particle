@@ -86,6 +86,11 @@ package view
 							cardView['txt_type'].text += '-' + card.Params.Atype;
 						}
 						
+						card.Params.Psky = card.Params.Psky.replace( '扺', '抵' );
+						card.Params.Pland = card.Params.Pland.replace( '扺', '抵' );
+						card.Params.Psoilder = card.Params.Psoilder.replace( '扺', '抵' );
+						card.Params.Pcity = card.Params.Pcity.replace( '扺', '抵' );
+						
 						switch( card.Params.Speed ) {
 							case '0':cardView['mc_speed'].gotoAndStop( 1 ); break;
 							case '1':cardView['mc_speed'].gotoAndStop( 2 ); break;
@@ -155,7 +160,7 @@ package view
 						cardView['txt_name'].text = card.Params.Name;
 						cardView['txt_cost'].text = card.Params.Cost;
 						
-						if( card.Params.Nation != null ){
+						if ( card.Params.Nation != null ) {
 							switch( card.Params.Nation ) {
 								case '中國': cardView['mc_flag'].gotoAndStop( 2 ); break;
 								case '美國': cardView['mc_flag'].gotoAndStop( 3 ); break;
@@ -165,7 +170,7 @@ package view
 								default: cardView['mc_flag'].gotoAndStop( 1 ); break;
 							}
 						}else {
-							cardView['mc_flag'].gotoAndStop( 1 ); break;
+							cardView['mc_flag'].gotoAndStop( 1 );
 						}
 						
 						switch( card.Params.Ctype ) {
@@ -214,6 +219,7 @@ package view
 								cardView['mc_city'].visible = false;
 								break;
 						}
+						
 						break;
 				}
 				
