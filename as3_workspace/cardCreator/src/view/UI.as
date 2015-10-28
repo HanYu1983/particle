@@ -166,6 +166,9 @@ package view
 								case '美國': cardView['mc_flag'].gotoAndStop( 3 ); break;
 								case '德國': cardView['mc_flag'].gotoAndStop( 5 ); break;
 								case '英國': cardView['mc_flag'].gotoAndStop( 6 ); break;
+								case '日本': cardView['mc_flag'].gotoAndStop( 8 ); break;
+								case '韓國': cardView['mc_flag'].gotoAndStop( 7 ); break;
+								case '俄羅斯': cardView['mc_flag'].gotoAndStop( 9 ); break;
 								case '以色列': cardView['mc_flag'].gotoAndStop( 4 ); break;
 								default: cardView['mc_flag'].gotoAndStop( 1 ); break;
 							}
