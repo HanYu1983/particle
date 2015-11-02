@@ -76,6 +76,9 @@ var particleDrawer = particleDrawer || {};
 				return obj
 			},
 			onUpdate: function( obj, part, ctx ){
+				if( part.tex == "0" ){
+					part.tex = "glow_128_128";
+				}
 				var tex = ctx.texture( 'three', part.tex )
 				if( tex ){
 					obj.material.map = tex
