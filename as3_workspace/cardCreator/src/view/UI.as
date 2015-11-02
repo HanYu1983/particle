@@ -81,6 +81,57 @@ package view
 						cardView['txt_skill_text'].text = card.Params.Stext;
 						break;
 					case 'army':
+						
+						switch( card.Params.Ctype ) {
+							case '部隊':
+								cardView.gotoAndStop( 1 );
+								if( card.Params.Atype != null ){
+									switch( card.Params.Atype ) {
+										case '戰鬥機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '攻擊機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '戰鬥攻擊機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '戰略轟炸機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '支援機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '直升機':
+											cardView['mc_ctype'].gotoAndStop( 1 ); break;
+										case '坦克':
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
+										case '裝甲車':
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
+										case '士兵':
+											cardView['mc_ctype'].gotoAndStop( 3 ); break;
+										case '對空炮':
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
+										case '自走炮':
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
+										case '戰略火炮':
+											cardView['mc_ctype'].gotoAndStop( 2 ); break;
+										
+									}
+								}else {
+									cardView['mc_ctype'].gotoAndStop( 1 ); break;
+								}
+								break;
+							case '建築':
+								cardView.gotoAndStop( 1 );
+								cardView['mc_ctype'].gotoAndStop( 4 ); 
+								break;
+							case '戰術':
+								cardView.gotoAndStop( 2 );
+								cardView['mc_ctype'].gotoAndStop( 5 ); 
+								cardView['mc_speed'].visible = false;
+								cardView['mc_sky'].visible = false;
+								cardView['mc_land'].visible = false;
+								cardView['mc_soilder'].visible = false;
+								cardView['mc_city'].visible = false;
+								break;
+						}
+						
 						cardView['txt_type'].text = card.Params.Ctype;
 						if ( card.Params.Atype != null && card.Params.Atype.length != 0 ) {
 							cardView['txt_type'].text += '-' + card.Params.Atype;
@@ -176,59 +227,15 @@ package view
 							cardView['mc_flag'].gotoAndStop( 1 );
 						}
 						
-						switch( card.Params.Ctype ) {
-							case '部隊':
-								if( card.Params.Atype != null ){
-									switch( card.Params.Atype ) {
-										case '戰鬥機':
-											cardView['mc_ctype'].gotoAndStop( 1 ); break;
-										case '攻擊機':
-											cardView['mc_ctype'].gotoAndStop( 1 ); break;
-										case '戰鬥攻擊機':
-											cardView['mc_ctype'].gotoAndStop( 1 ); break;
-										case '戰略轟炸機':
-											cardView['mc_ctype'].gotoAndStop( 1 ); break;
-										case '支援機':
-											cardView['mc_ctype'].gotoAndStop( 1 ); break;
-										case '直升機':
-											cardView['mc_ctype'].gotoAndStop( 1 ); break;
-										case '坦克':
-											cardView['mc_ctype'].gotoAndStop( 2 ); break;
-										case '裝甲車':
-											cardView['mc_ctype'].gotoAndStop( 2 ); break;
-										case '士兵':
-											cardView['mc_ctype'].gotoAndStop( 3 ); break;
-										case '對空炮':
-											cardView['mc_ctype'].gotoAndStop( 2 ); break;
-										case '自走炮':
-											cardView['mc_ctype'].gotoAndStop( 2 ); break;
-										case '戰略火炮':
-											cardView['mc_ctype'].gotoAndStop( 2 ); break;
-										
-									}
-								}else {
-									cardView['mc_ctype'].gotoAndStop( 1 ); break;
-								}
-								break;
-							case '建築':
-								cardView['mc_ctype'].gotoAndStop( 4 ); 
-								break;
-							case '戰術':
-								cardView['mc_ctype'].gotoAndStop( 5 ); 
-								cardView['mc_speed'].visible = false;
-								cardView['mc_sky'].visible = false;
-								cardView['mc_land'].visible = false;
-								cardView['mc_soilder'].visible = false;
-								cardView['mc_city'].visible = false;
-								break;
-						}
-						
 						break;
 				}
 				
 				cardView['txt_id'].text = card.Id;
 				if ( _ary_imgPool[card.Id] != null ) {
-					cardView['mc_img'].addChild( _ary_imgPool[card.Id] );
+					var img:DisplayObject = _ary_imgPool[card.Id];
+					img.width = 744;
+					img.height = 1039;
+					cardView['mc_img'].addChild( img );
 				}
 				cardView['data'] = card;
 				_ary_cardView.push( cardView );
