@@ -1294,12 +1294,27 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		if(card == null) return;
 		if(card.showTo == Main.playerId) {
 			var url = Main.getCardImageUrlWithPackage(Main.cardPackage,card.cardId);
+			var div = Main.j("<div></div>");
+			div.css("position","relative");
 			var img = Main.j("<img></img>");
 			img.attr("src",url);
+			img.css("position","relative");
+			img.css("top","0");
+			img.css("left","0");
 			img.load(function() {
 				img.css("width","100%");
 			});
-			this.mc_detailContainer.append(img);
+			div.append(img);
+			var img2 = Main.j("<img></img>");
+			img2.attr("src","images/sampleTxt.png");
+			img2.css("position","absolute");
+			img2.load(function() {
+				img2.css("width","100%");
+				img2.css("top","0");
+				img2.css("left","0");
+			});
+			div.append(img2);
+			this.mc_detailContainer.append(div);
 		}
 	}
 	,__class__: mediator_UI
