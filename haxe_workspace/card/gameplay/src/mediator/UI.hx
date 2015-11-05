@@ -18,6 +18,7 @@ class UI extends Mediator
 	var mc_detailContainer:Dynamic;
 	var combo_deck:Dynamic;
 	var combo_ops:Dynamic;
+	var mc_light:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -26,11 +27,14 @@ class UI extends Mediator
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
+		mc_light = getViewComponent().find( '#mc_light' );
 		combo_ops.combobox( {
 			onChange:function( nv, ov ) {
 				Main.selectOps( nv );
 			}
 		});
+		
+		showOnlineOffline( true );
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -63,6 +67,14 @@ class UI extends Mediator
 				}, 10 );
 			case Main.on_getSuit_success:
 				createComboDeck( notification.getBody().cardSuit );
+		}
+	}
+	
+	function showOnlineOffline( show:Bool ) {
+		if ( show ) {
+			mc_light.css( 'background-color', 'green' );
+		}else {
+			mc_light.css( 'background-color', 'red' );
 		}
 	}
 	

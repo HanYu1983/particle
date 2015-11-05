@@ -90,6 +90,15 @@ body{
 	background-image:url( images/grid.png );
 	opacity:.2;
 }
+
+#mc_light{
+	width:10px;
+	height:10px;
+	background-color:red;
+	vertical-align:middle;
+	outline:1px solid black;
+}
+
 </style>
 <script id="tmpl_card" type="jquery-x-tmpl">
 	<div id=${id} class="card_root elements">
@@ -141,7 +150,7 @@ body{
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:25%;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:320px;" >
+        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:350px;" >
 			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div class="hori">
 					<a id="btn_login" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
@@ -150,15 +159,19 @@ body{
 					<a id="btn_about" href="#" title="關於上善若水&卡牌遊戲規則" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
 				</div>
 			</div>
-			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
+			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:10px;">
 				<div>玩家:</div>
 				<input id="txt_id" class="easyui-textbox" style="width:153px;" />
 				<div>對手:</div>
 				<select id="combo_ops" name="dept" style="width:150px;">
 				</select>
 				<div style="margin-top:10px;">
-					<a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="iconCls:'icon-add',disabled:false">開始連線</a>
+					<div id="mc_light" class="hori"></div>
+					<div class="hori"><a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="iconCls:'icon-add',disabled:false">開始連線</a></div>
 				</div>
+			</div>
+			<div class="group" style="text-align:center; margin-bottom:10px;">
+				<div class="hori"><a href="#" class="easyui-linkbutton" onclick="onHtmlClick('onDiceClick')">擲骰工具</a></div>
 			</div>
 			<div class="group" style="text-align:center; margin-bottom:10px;">
 				<div class="group" style="margin-top:5px; margin-bottom:5px;">

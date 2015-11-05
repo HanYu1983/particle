@@ -311,6 +311,8 @@ class Main
 				//	slide( '沒有登入或者沒有對手時，不能創建卡牌哦' );
 				//}
 				#end
+			case 'onDiceClick':
+				Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
 		}
 		
 	}

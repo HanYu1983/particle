@@ -698,6 +698,9 @@ Main.prototype = {
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
+		case "onDiceClick":
+			window.open("http://www.wasabistudio.ca/scripts/dice.php?account=card&name=" + Main.playerId + "&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub");
+			break;
 		}
 	}
 	,updateGameUI: function(currentSelect) {
@@ -1196,9 +1199,11 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
+	this.mc_light = this.getViewComponent().find("#mc_light");
 	this.combo_ops.combobox({ onChange : function(nv,ov) {
 		Main.selectOps(nv);
 	}});
+	this.showOnlineOffline(true);
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -1233,6 +1238,9 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.createComboDeck(notification.getBody().cardSuit);
 			break;
 		}
+	}
+	,showOnlineOffline: function(show) {
+		if(show) this.mc_light.css("background-color","green"); else this.mc_light.css("background-color","red");
 	}
 	,disabledOpponent: function() {
 		this.combo_ops.combobox("disable");
