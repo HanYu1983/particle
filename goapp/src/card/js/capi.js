@@ -1,3 +1,7 @@
+/**
+這支程式已沒有維護
+*/
+
 var capi = capi || {};
 
 (function (module){

@@ -307,6 +307,100 @@ var api = api || {};
 		return pkg.cardSuit
 	}
 	
+	
+	function createChannel( name, cb ){
+		channel.createChannel( name, function( err, ch ){
+			channel.addEventListenerAndOpenSocket( ch, {
+				onopen: function(){
+					cb.onopen()
+				},
+				onmessage: function( path, option ){
+					var origin = JSON.parse( path.data )
+					var json = JSON.parse( origin )
+					if( handleMessage( json ) == false ){
+						cb.onmessage( json )
+					}
+				},
+				onerror: function(){
+					cb.onerror()
+				},
+				onclose: function(){
+					cb.onclose()
+				}
+			})
+		})
+	}
+	
+	function handleMessage( obj ){
+		switch( obj.type ){
+		case 'heartbeat':
+			replyHeartbeat( obj, function( err ){
+				console.log( err )
+			})
+			return true
+		case 'replyHeartbeat':
+			receiveReplyHeartbeat( obj )
+			return true
+		default:
+			return false
+		}
+	}
+	
+	function replyHeartbeat( obj, cb ){
+		var targetName = obj.msg.from
+		obj.type = 'replyHeartbeat'
+		channel.sendChannelMessage( targetName, JSON.stringify(obj), cb )
+	}
+	
+	function receiveReplyHeartbeat( obj ){
+		var cbSeq = obj.msg.seq
+		if( heartbeatCbPool[ cbSeq ] ){
+			heartbeatCbPool[ cbSeq ]( true )
+			delete heartbeatCbPool[ cbSeq ]
+		}
+	}
+	
+	var heartbeatCbPool = {}
+	var heartbeatSeq = 0
+	
+	function sendHeartbeat( selfName, targetName, delay, cb ){
+		var obj = {
+			type: 'heartbeat',
+			msg: {
+				seq: heartbeatSeq++ + "",
+				from: selfName
+			}
+		}
+		if( cb ){
+			heartbeatCbPool[ obj.msg.seq ] = cb 
+		}
+		
+		var replayFalseIfErrorOccur = (function( cbSeq ){
+			return function( err ){
+				if( err ){
+					if( heartbeatCbPool[ cbSeq ] ){
+						heartbeatCbPool[ cbSeq ]( false )
+						delete heartbeatCbPool[ cbSeq ]
+					}
+				}
+			}
+		}) ( obj.msg.seq )
+		
+		// 如果超時的話，callback pool裡面的函式就會先被刪掉
+		// 一次呼叫sendHeartbeat，就一定會也只會收到一次callback
+		setTimeout( replayFalseIfErrorOccur.bind( false ), delay )
+		channel.sendChannelMessage( targetName, JSON.stringify(obj), replayFalseIfErrorOccur )
+	}
+	
+	function startHeartbeat( selfName, targetName, cb ){
+		sendHeartbeat( selfName, targetName, 3000, function( success ){
+			cb( success )
+			setTimeout( function(){
+				startHeartbeat( selfName, targetName, 3000, cb )
+			}, 10000)
+		})
+	} 
+	
 	module.createUser = createUser
 	module.users = users
 	module.createRoom = createRoom
@@ -321,5 +415,7 @@ var api = api || {};
 	module.getCardImageUrlWithPackage = getCardImageUrlWithPackage
 	module.getCardSuitPackageWithUrl = getCardSuitPackageWithUrl
 	module.getCardSuit = getCardSuit
+	module.createChannel = createChannel
+	module.startHeartbeat = startHeartbeat
 	
 }) (api)
