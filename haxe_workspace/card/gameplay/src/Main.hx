@@ -249,8 +249,6 @@ class Main
 		}
 	}
 	
-	
-	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
 			case 'onBtnStartServer':
