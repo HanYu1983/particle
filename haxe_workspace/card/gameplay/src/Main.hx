@@ -32,7 +32,7 @@ class Main
 	public static var otherPlayerId = '';
 	public static var ary_cards:Array<Dynamic> = [];
 	
-	public static var currentSelect = 'fighter';
+	public static var currentSelect = 'sangoWar';
 	public static var cardPackages:Dynamic = { };
 	public static var cardPackage = null;
 	public static var cardSuits:Dynamic = {};
@@ -230,7 +230,7 @@ class Main
 	}
 	
 	public static function pollAllMessage() {
-		pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
+		CallJs.api_pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
 	
 	function loadCardSuit( suitName, ?cb: Void -> Void ) {
@@ -239,7 +239,7 @@ class Main
 			if ( cb != null ) cb();
 		}else {
 			
-			getCardPackageWithUrl( '../common/cardPackage/' + suitName + '.json', handleResponse( function( ret ) {
+			CallJs.api_getCardPackageWithUrl( '../common/cardPackage/' + suitName + '.json', handleResponse( function( ret ) {
 				cardPackage = ret;
 				Reflect.setField( cardPackages, suitName, cardPackage );
 				
@@ -264,13 +264,13 @@ class Main
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );
 				
-				untyped __js__( 'myapp.facebook.login' )( function( ret ) {
+				CallJs.myapp_facebook_login( function( ret ) {
 					fbid = ret.authResponse.userID;
 					token = ret.authResponse.accessToken;
 					
 					j( '#txt_id' ).textbox( 'setValue', fbid );
 					
-					getCardSuit2( fbid, token, handleResponse( function( ret ) {
+					CallJs.cardSuit_load( fbid, token, handleResponse( function( ret ) {
 						Lambda.foreach( ret.cardSuit, function( cs ) {
 							if ( cardSuits.field( cs.game ) == null ) {
 								cardSuits.setField( cs.game, [] );
@@ -279,6 +279,7 @@ class Main
 							return true;
 						});
 						chooseCardSuit( currentSelect );
+						updateGameUI( currentSelect );
 						
 						j( '#btn_login' ).linkbutton( 'disable' );
 						closeLoading();
@@ -312,6 +313,16 @@ class Main
 				#end
 		}
 		
+	}
+	
+	function updateGameUI( currentSelect ) {
+		switch( currentSelect ) {
+			case 'sangoWar':j( '#btn_sango' ).linkbutton( 'select' );
+			case 'gundamWar':j( '#btn_gundam' ).linkbutton( 'select' );
+			case 'fighter':j( '#btn_fighter' ).linkbutton( 'select' );
+			case 'magic':j( '#btn_magic' ).linkbutton( 'select' );
+			case 'army':j( '#btn_army' ).linkbutton( 'select' );
+		}
 	}
 	
 	function checkCanCreate() {
@@ -523,47 +534,6 @@ class Main
 		}));
 	}
 	
-	
-	public static function getCardSuit2( fbid, token, cb ) {
-		untyped __js__( 'cardSuit.load' )( fbid, token, cb );
-	}
-	
-	public static function createUser( data, cb ) {
-		untyped __js__( 'api.createUser' )( data, cb );
-	}
-	
-	public static function users( cb ) {
-		untyped __js__('api.users' )( cb );
-	}
-	
-	public static function message( data:Dynamic, cb ) {
-		untyped __js__('api.message' )( data, cb );
-	}
-	
-	public static function pollMessage( data:Dynamic, cb ) {
-		untyped __js__('api.pollMessage' )( data, cb );
-	}
-	
-	public static function installPollMessageCallback( data, cb ) {
-		untyped __js__('api.installPollMessageCallback' )(data, cb );
-	}
-	
-	public static function clear( cb ) {
-		untyped __js__('api.clear' )( cb );
-	}
-	
-	public static function getCardPackage( name, cb ) {
-		untyped __js__('api.getCardPackage' )( name, cb );
-	}
-	
-	public static function getCardPackageWithUrl( url, cb ){
-		untyped __js__('api.getCardPackageWithUrl' )( url, cb );
-	}
-	
-	public static function getCardSuitPackageWithUrl( url, cb ) {
-		untyped __js__('api.getCardSuitPackageWithUrl' )( url, cb );
-	}
-	
 	public static function getCardImageUrlWithPackage( name:Dynamic, key:String ):String {
 		if ( key.indexOf( 'http' ) != -1 ) return key;
 		
@@ -580,10 +550,6 @@ class Main
 		}
 		return untyped __js__('api.getCardImageUrlWithPackage' )( cpkg, key );
 	}
-	
-	public static function getCardSuit( pkg ) {
-		return untyped __js__('api.getCardSuit' )( pkg );
-	} 
 	
 	public static function slide( msg, ?time = 2000 ){
 		j.messager.show({

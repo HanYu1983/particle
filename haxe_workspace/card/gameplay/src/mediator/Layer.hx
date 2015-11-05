@@ -44,7 +44,7 @@ class Layer extends Mediator
 		#end
 		_body.mousedown( onBodyMouseDown );
 		
-		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ){
+		CallJs.leo_utils_initRectSelect( function( ary ){
 			sendNotification( on_select_cards, { ary_select:ary } );
 		});
 	}

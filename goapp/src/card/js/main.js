@@ -433,7 +433,7 @@ Main.searchOpponent = function(id,oid) {
 	if(id == Main.otherPlayerId && oid == Main.playerId) Main.pushCmds({ cmd : "confirmConnect", content : { id : Main.playerId, otherPlayerId : Main.otherPlayerId}});
 };
 Main.pollAllMessage = function() {
-	Main.pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
+	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
 };
 Main.applyValue = function(ary_select,self) {
 	Lambda.foreach(ary_select,function(card) {
@@ -592,36 +592,6 @@ Main.messageSocket = function(toId,type,msg) {
 	_channel.sendChannelMessage(toId,JSON.stringify(msg1),Main.handleResponse(function(ret) {
 	}));
 };
-Main.getCardSuit2 = function(fbid,token,cb) {
-	cardSuit.load(fbid,token,cb);
-};
-Main.createUser = function(data,cb) {
-	api.createUser(data,cb);
-};
-Main.users = function(cb) {
-	api.users(cb);
-};
-Main.message = function(data,cb) {
-	api.message(data,cb);
-};
-Main.pollMessage = function(data,cb) {
-	api.pollMessage(data,cb);
-};
-Main.installPollMessageCallback = function(data,cb) {
-	api.installPollMessageCallback(data,cb);
-};
-Main.clear = function(cb) {
-	api.clear(cb);
-};
-Main.getCardPackage = function(name,cb) {
-	api.getCardPackage(name,cb);
-};
-Main.getCardPackageWithUrl = function(url,cb) {
-	api.getCardPackageWithUrl(url,cb);
-};
-Main.getCardSuitPackageWithUrl = function(url,cb) {
-	api.getCardSuitPackageWithUrl(url,cb);
-};
 Main.getCardImageUrlWithPackage = function(name,key) {
 	if(key.indexOf("http") != -1) return key;
 	var cpkg = null;
@@ -640,9 +610,6 @@ Main.getCardImageUrlWithPackage = function(name,key) {
 		return "";
 	}
 	return api.getCardImageUrlWithPackage(cpkg,key);
-};
-Main.getCardSuit = function(pkg) {
-	return api.getCardSuit(pkg);
 };
 Main.slide = function(msg,time) {
 	if(time == null) time = 2000;
@@ -673,7 +640,7 @@ Main.prototype = {
 		if(Reflect.field(Main.cardPackages,suitName) != null) {
 			Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
 			if(cb != null) cb();
-		} else Main.getCardPackageWithUrl("../common/cardPackage/" + suitName + ".json",Main.handleResponse(function(ret) {
+		} else CallJs.api_getCardPackageWithUrl("../common/cardPackage/" + suitName + ".json",Main.handleResponse(function(ret) {
 			Main.cardPackage = ret;
 			Main.cardPackages[suitName] = Main.cardPackage;
 			if(cb != null) cb();
@@ -693,17 +660,18 @@ Main.prototype = {
 			break;
 		case "onBtnLoginClick":
 			Main.openLoading("登入並讀取資料中...");
-			myapp.facebook.login(function(ret) {
+			CallJs.myapp_facebook_login(function(ret) {
 				Main.fbid = ret.authResponse.userID;
 				Main.token = ret.authResponse.accessToken;
 				Main.j("#txt_id").textbox("setValue",Main.fbid);
-				Main.getCardSuit2(Main.fbid,Main.token,Main.handleResponse(function(ret1) {
+				CallJs.cardSuit_load(Main.fbid,Main.token,Main.handleResponse(function(ret1) {
 					Lambda.foreach(ret1.cardSuit,function(cs) {
 						if(Reflect.field(Main.cardSuits,cs.game) == null) Main.cardSuits[cs.game] = [];
 						Reflect.field(Main.cardSuits,cs.game).push(cs);
 						return true;
 					});
 					_g.chooseCardSuit(Main.currentSelect);
+					_g.updateGameUI(Main.currentSelect);
 					Main.j("#btn_login").linkbutton("disable");
 					Main.closeLoading();
 				}));
@@ -731,6 +699,25 @@ Main.prototype = {
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+			break;
+		}
+	}
+	,updateGameUI: function(currentSelect) {
+		switch(currentSelect) {
+		case "sangoWar":
+			Main.j("#btn_sango").linkbutton("select");
+			break;
+		case "gundamWar":
+			Main.j("#btn_gundam").linkbutton("select");
+			break;
+		case "fighter":
+			Main.j("#btn_fighter").linkbutton("select");
+			break;
+		case "magic":
+			Main.j("#btn_magic").linkbutton("select");
+			break;
+		case "army":
+			Main.j("#btn_army").linkbutton("select");
 			break;
 		}
 	}
@@ -1174,7 +1161,7 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 			e.preventDefault();
 		},false);
 		this._body.mousedown($bind(this,this.onBodyMouseDown));
-		leo.utils.initRectSelect(function(ary) {
+		CallJs.leo_utils_initRectSelect(function(ary) {
 			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
 		});
 	}
@@ -1921,6 +1908,19 @@ var Enum = { };
 var __map_reserved = {}
 CallJs.setCookie = setCookie;
 CallJs.getCookie = getCookie;
+CallJs.cardSuit_load = cardSuit.load;
+CallJs.api_createUser = api.createUser;
+CallJs.api_users = api.users;
+CallJs.api_message = api.message;
+CallJs.api_pollMessage = api.pollMessage;
+CallJs.api_installPollMessageCallback = api.installPollMessageCallback;
+CallJs.api_clear = api.clear;
+CallJs.api_getCardPackage = api.getCardPackage;
+CallJs.api_getCardPackageWithUrl = api.getCardPackageWithUrl;
+CallJs.api_getCardSuitPackageWithUrl = api.getCardSuitPackageWithUrl;
+CallJs.api_getCardSuit = api.getCardSuit;
+CallJs.myapp_facebook_login = myapp.facebook.login;
+CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
@@ -1931,7 +1931,7 @@ Main.token = "";
 Main.playerId = "smart";
 Main.otherPlayerId = "";
 Main.ary_cards = [];
-Main.currentSelect = "fighter";
+Main.currentSelect = "sangoWar";
 Main.cardPackages = { };
 Main.cardSuits = { };
 Main.isConntect = false;
