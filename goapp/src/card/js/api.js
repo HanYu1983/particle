@@ -308,6 +308,15 @@ var api = api || {};
 	}
 	
 	
+	/**
+	建立channel
+	cb: {
+		onopen: function,
+		onmessage: function( path, option ),
+		onerror: function,
+		onclose: function
+	}
+	*/
 	function createChannel( name, cb ){
 		channel.createChannel( name, function( err, ch ){
 			channel.addEventListenerAndOpenSocket( ch, {
@@ -398,6 +407,14 @@ var api = api || {};
 		channel.sendChannelMessage( targetName, JSON.stringify(obj), replayFalseIfErrorOccur )
 	}
 	
+	/**
+	開始心跳測試
+	selfName: string
+	targetName: string
+	cb: function( success ){
+		success: bool 是否有心跳
+	}
+	*/
 	function startHeartbeat( selfName, targetName, cb ){
 		sendHeartbeat( selfName, targetName, heartbeatTimeout, function( success ){
 			cb( success )
