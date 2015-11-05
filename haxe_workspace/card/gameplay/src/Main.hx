@@ -99,9 +99,10 @@ class Main
 			if ( ary_ops.length > 10 ) {
 				ary_ops.shift();
 			}
-			CallJs.setCookie( 'otherPlayerId', Json.stringify( ary_ops ) );
 			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
 		}
+		
+		CallJs.setCookie( 'otherPlayerId', Json.stringify( ary_ops ) );
 		
 		j( '#btn_connect' ).linkbutton( 'enable' );
 	}

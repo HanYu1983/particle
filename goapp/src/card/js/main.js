@@ -338,9 +338,9 @@ Main.selectOps = function(ops) {
 	if(HxOverrides.indexOf(Main.ary_ops,Main.otherPlayerId,0) == -1) {
 		Main.ary_ops.push(Main.otherPlayerId);
 		if(Main.ary_ops.length > 10) Main.ary_ops.shift();
-		CallJs.setCookie("otherPlayerId",JSON.stringify(Main.ary_ops));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
 	}
+	CallJs.setCookie("otherPlayerId",JSON.stringify(Main.ary_ops));
 	Main.j("#btn_connect").linkbutton("enable");
 };
 Main.createSelfDeck = function(deckId) {
