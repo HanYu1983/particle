@@ -335,7 +335,9 @@ var api = api || {};
 		switch( obj.type ){
 		case 'heartbeat':
 			replyHeartbeat( obj, function( err ){
-				console.log( err )
+				if( err ){
+					// ignore it
+				}
 			})
 			return true
 		case 'replyHeartbeat':
@@ -363,7 +365,7 @@ var api = api || {};
 	var heartbeatCbPool = {}
 	var heartbeatSeq = 0
 	var heartbeatTimeout = 3000
-	var heartbeatDuration = 5000
+	var heartbeatDuration = 10000
 	
 	function sendHeartbeat( selfName, targetName, delay, cb ){
 		var obj = {
@@ -391,7 +393,6 @@ var api = api || {};
 		// 如果超時的話，callback pool裡面的函式就會先被刪掉
 		// 一次呼叫sendHeartbeat，就一定會也只會收到一次callback
 		setTimeout( function(){
-			console.log("timeout!!")
 			replayFalseIfErrorOccur( "timeout!!" )
 		}, delay )
 		channel.sendChannelMessage( targetName, JSON.stringify(obj), replayFalseIfErrorOccur )
