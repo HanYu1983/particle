@@ -1,4 +1,4 @@
-package;
+package per.vic.ma;
 import haxe.macro.Context;
 import haxe.macro.Expr.Access;
 import haxe.macro.Expr.Field;
@@ -11,7 +11,7 @@ class AutoJs
 {
 	/**
 	 * 
-	 * @param	config : ['console_log', 'app_doA']
+	 * @param	config : ['console.log', 'app_doA']
 	 * @return
 	 */
 	macro static public function build( config:Array<String> ):Array<Field> {
@@ -19,12 +19,12 @@ class AutoJs
 		var pos = Context.currentPos();
 		
 		Lambda.foreach( config, function( str ) {
-			var funstr = StringTools.replace( str, '.', '_' );
+			var funstr = StringTools.replace( str, '_', '.' );
 			fs.push( {
-				kind:FVar(TPath({name:'Dynamic', pack:[]}),macro untyped __js__( $v { str } ) ),
+				kind:FVar(TPath({name:'Dynamic', pack:[]}),macro untyped __js__( $v { funstr } ) ),
 				access:[Access.APublic, Access.AStatic],
 				doc:null,
-				name:funstr,
+				name:str,
 				meta:[],
 				pos:pos
 			});

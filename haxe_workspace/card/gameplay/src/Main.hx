@@ -75,7 +75,7 @@ class Main
 		var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
 		untyped __js__( 'myapp.facebook.init' )( fbappId, function() {
 			loadCardSuit( 'gundamWar', function() {
-				loadCardSuit( 'fighter', function() {
+				//loadCardSuit( 'fighter', function() {
 					loadCardSuit( 'army', function() {
 						loadCardSuit( 'sangoWar', function() {
 							//loadCardSuit( 'magic', function(){
@@ -84,7 +84,7 @@ class Main
 							//});
 						});
 					});
-				});
+				//});
 			});
 		});
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
