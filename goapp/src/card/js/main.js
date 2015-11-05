@@ -423,6 +423,9 @@ Main.confirmConnect = function(id,oid) {
 			Main.searchOpponentTimer = null;
 		}
 		Main.slide("對手配對成功!");
+		CallJs.api_startHeartbeat(Main.playerId,Main.otherPlayerId,function(conn) {
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_heartbeat_event,{ conn : conn});
+		});
 		Main.j("#btn_connect").linkbutton("disable");
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_searchComplete);
 	}
@@ -560,29 +563,20 @@ Main.keepSearchOpponent = function() {
 	},3000);
 };
 Main.createSocket = function(id) {
-	var _channel = channel;
-	_channel.createChannel(id,function(err,ch) {
-		if(err != null) {
-			Main.alert("socket建立失敗!請重新整理");
-			return;
-		}
-		_channel.addEventListenerAndOpenSocket(ch,{ onopen : function() {
-			Main.slide("連線成功");
-			Main.j("#btn_connect").linkbutton("disable");
-		}, onmessage : function(path,option) {
-			var origin = JSON.parse(path.data);
-			var json = JSON.parse(origin);
-			Main.onBackCallback(json);
-		}, onerror : function() {
-			Main.j("#btn_connect").linkbutton("enable");
-			Main.isConntect = false;
-			Main.alert("已斷線，請重新連線");
-		}, onclose : function() {
-			Main.j("#btn_connect").linkbutton("enable");
-			Main.isConntect = false;
-			Main.alert("已斷線，請重新連線");
-		}});
-	});
+	CallJs.api_createChannel(id,{ onopen : function() {
+		Main.slide("連線成功");
+		Main.j("#btn_connect").linkbutton("disable");
+	}, onmessage : function(json) {
+		Main.onBackCallback(json);
+	}, onerror : function() {
+		Main.j("#btn_connect").linkbutton("enable");
+		Main.isConntect = false;
+		Main.alert("已斷線，請重新連線");
+	}, onclose : function() {
+		Main.j("#btn_connect").linkbutton("enable");
+		Main.isConntect = false;
+		Main.alert("已斷線，請重新連線");
+	}});
 };
 Main.messageSocket = function(toId,type,msg) {
 	var _channel = channel;
@@ -1203,18 +1197,20 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.combo_ops.combobox({ onChange : function(nv,ov) {
 		Main.selectOps(nv);
 	}});
-	this.showOnlineOffline(true);
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete];
+		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_heartbeat_event":
+			this.showOnlineOffline(notification.getBody().conn);
+			break;
 		case "on_searchComplete":
 			this.disabledOpponent();
 			break;
@@ -1925,12 +1921,15 @@ CallJs.api_getCardPackage = api.getCardPackage;
 CallJs.api_getCardPackageWithUrl = api.getCardPackageWithUrl;
 CallJs.api_getCardSuitPackageWithUrl = api.getCardSuitPackageWithUrl;
 CallJs.api_getCardSuit = api.getCardSuit;
+CallJs.api_startHeartbeat = api.startHeartbeat;
+CallJs.api_createChannel = api.createChannel;
 CallJs.myapp_facebook_login = myapp.facebook.login;
 CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
 Main.on_searchComplete = "on_searchComplete";
+Main.on_heartbeat_event = "on_heartbeat_event";
 Main.j = $;
 Main.fbid = "";
 Main.token = "";

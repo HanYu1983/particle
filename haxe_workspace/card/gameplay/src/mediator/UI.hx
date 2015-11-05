@@ -33,8 +33,6 @@ class UI extends Mediator
 				Main.selectOps( nv );
 			}
 		});
-		
-		showOnlineOffline( true );
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -43,13 +41,16 @@ class UI extends Mediator
 					Model.on_state_change,
 					Main.on_getSuit_success,
 					Main.on_receiveOps,
-					Main.on_searchComplete
+					Main.on_searchComplete,
+					Main.on_heartbeat_event
 				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case Main.on_heartbeat_event:
+				showOnlineOffline( notification.getBody().conn );
 			case Main.on_searchComplete:
 				disabledOpponent();
 			case Main.on_receiveOps:

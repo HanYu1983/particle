@@ -388,7 +388,10 @@ var api = api || {};
 		
 		// 如果超時的話，callback pool裡面的函式就會先被刪掉
 		// 一次呼叫sendHeartbeat，就一定會也只會收到一次callback
-		setTimeout( replayFalseIfErrorOccur.bind( false ), delay )
+		setTimeout( function(){
+			console.log("timeout!!")
+			replayFalseIfErrorOccur( "timeout!!" )
+		}, delay )
 		channel.sendChannelMessage( targetName, JSON.stringify(obj), replayFalseIfErrorOccur )
 	}
 	
@@ -396,8 +399,8 @@ var api = api || {};
 		sendHeartbeat( selfName, targetName, 3000, function( success ){
 			cb( success )
 			setTimeout( function(){
-				startHeartbeat( selfName, targetName, 3000, cb )
-			}, 10000)
+				startHeartbeat( selfName, targetName, cb )
+			}, 5000)
 		})
 	} 
 	

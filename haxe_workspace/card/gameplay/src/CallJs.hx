@@ -17,6 +17,8 @@ package;
 						'api.getCardPackageWithUrl',
 						'api.getCardSuitPackageWithUrl',
 						'api.getCardSuit',
+						'api.startHeartbeat',
+						'api.createChannel',
 						'myapp.facebook.login',
 						'leo.utils.initRectSelect'
 					]))

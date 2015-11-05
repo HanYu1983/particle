@@ -23,6 +23,7 @@ class Main
 	public static var on_createDeck_click = 'on_createDeck_click';
 	public static var on_receiveOps = 'on_receiveOps';
 	public static var on_searchComplete = 'on_searchComplete';
+	public static var on_heartbeat_event = 'on_heartbeat_event';
 	
 	public static var j:Dynamic = untyped __js__('$');
 	
@@ -217,7 +218,12 @@ class Main
 				searchOpponentTimer.stop();
 				searchOpponentTimer = null;
 			}
+			
 			slide( '對手配對成功!' );
+			
+			CallJs.api_startHeartbeat( playerId, otherPlayerId, function( conn ) {
+				Facade.getInstance().sendNotification( on_heartbeat_event, {conn:conn} );
+			});
 			
 			j( '#btn_connect' ).linkbutton( 'disable' );
 			Facade.getInstance().sendNotification( on_searchComplete );
@@ -494,6 +500,28 @@ class Main
 	}
 	
 	public static function createSocket( id ) {
+		CallJs.api_createChannel( id, {
+			onopen: function() {
+				slide( '連線成功' );
+				j( '#btn_connect' ).linkbutton( 'disable' );
+			},
+			onmessage: function( json ){
+				//var origin = Json.parse(path.data);
+				//var json = Json.parse(origin);
+				onBackCallback( json );
+			},
+			onerror: function() {
+				j( '#btn_connect' ).linkbutton( 'enable' );
+				isConntect = false;
+				alert( '已斷線，請重新連線' );
+			},
+			onclose: function() {
+				j( '#btn_connect' ).linkbutton( 'enable' );	
+				isConntect = false;
+				alert( '已斷線，請重新連線' );
+			}
+		});
+		/*
 		var _channel:Dynamic = untyped __js__( 'channel' );
 		_channel.createChannel( id, function(err, ch) {
 			if ( err != null ) {
@@ -523,6 +551,7 @@ class Main
 			});
 			
 		});
+		*/
 	}
 	
 	public static function messageSocket( toId, type, msg ) {
