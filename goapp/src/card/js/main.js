@@ -1,4 +1,4 @@
-(function (console) { "use strict";
+(function (console, $global) { "use strict";
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
@@ -322,12 +322,10 @@ var Main = function() {
 	var fbappId = config.fbid[config.fbid.which];
 	myapp.facebook.init(fbappId,function() {
 		_g.loadCardSuit("gundamWar",function() {
-			_g.loadCardSuit("fighter",function() {
-				_g.loadCardSuit("army",function() {
-					_g.loadCardSuit("sangoWar",function() {
-						Main.closeLoading();
-						Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
-					});
+			_g.loadCardSuit("army",function() {
+				_g.loadCardSuit("sangoWar",function() {
+					Main.closeLoading();
+					Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
 				});
 			});
 		});
@@ -943,7 +941,7 @@ js_Boot.__isNativeObj = function(o) {
 	return js_Boot.__nativeClassName(o) != null;
 };
 js_Boot.__resolveNativeClass = function(name) {
-	return (Function("return typeof " + name + " != \"undefined\" ? " + name + " : null"))();
+	return $global[name];
 };
 var org_puremvc_haxe_interfaces_INotifier = function() { };
 org_puremvc_haxe_interfaces_INotifier.__name__ = true;
@@ -1955,4 +1953,4 @@ model_Model.on_card_move = "on_card_move";
 model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
-})(typeof console != "undefined" ? console : {log:function(){}});
+})(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

@@ -6,19 +6,19 @@ package;
  */
 @:build(AutoJs.build([	'setCookie', 
 						'getCookie',
-						'cardSuit_load',
-						'api_createUser',
-						'api_users',
-						'api_message',
-						'api_pollMessage',
-						'api_installPollMessageCallback',
-						'api_clear',
-						'api_getCardPackage',
-						'api_getCardPackageWithUrl',
-						'api_getCardSuitPackageWithUrl',
-						'api_getCardSuit',
-						'myapp_facebook_login',
-						'leo_utils_initRectSelect'
+						'cardSuit.load',
+						'api.createUser',
+						'api.users',
+						'api.message',
+						'api.pollMessage',
+						'api.installPollMessageCallback',
+						'api.clear',
+						'api.getCardPackage',
+						'api.getCardPackageWithUrl',
+						'api.getCardSuitPackageWithUrl',
+						'api.getCardSuit',
+						'myapp.facebook.login',
+						'leo.utils.initRectSelect'
 					]))
 
 class CallJs{}

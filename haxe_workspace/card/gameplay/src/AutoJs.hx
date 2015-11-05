@@ -19,12 +19,12 @@ class AutoJs
 		var pos = Context.currentPos();
 		
 		Lambda.foreach( config, function( str ) {
-			var funstr = StringTools.replace( str, '_', '.' );
+			var funstr = StringTools.replace( str, '.', '_' );
 			fs.push( {
-				kind:FVar(TPath({name:'Dynamic', pack:[]}),macro untyped __js__( $v { funstr } ) ),
+				kind:FVar(TPath({name:'Dynamic', pack:[]}),macro untyped __js__( $v { str } ) ),
 				access:[Access.APublic, Access.AStatic],
 				doc:null,
-				name:str,
+				name:funstr,
 				meta:[],
 				pos:pos
 			});
