@@ -10,11 +10,14 @@
 	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
 		
 	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
-	<script type="text/javascript" src="../common/js/lib/underscore/underscore.js"></script>
+	<script type="text/javascript" src="../common/js/lib/underscore/underscore-min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-		
+	
+	<script src="../common/js/lib/csv.js"></script>
+	<script src="../common/js/lib/purl.js"></script>	
+	<script src="../common/js/sangoWar.js"></script>	
 </head>
 <style>
 body{
@@ -290,7 +293,10 @@ body{
 				</div>
 				<div class="group">
 					<div class="hori">
-						<a id="btn" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onSubmitClick()" data-options="iconCls:'icon-search'">搜尋</a>
+						<a id="btn" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onResetClick()" data-options="iconCls:'icon-edit'">重設</a>
+					</div>
+					<div class="hori">
+						<a id="btn_search" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onSearchClick()" data-options="iconCls:'icon-search',disabled:true">搜尋</a>
 					</div>
 				</div>
 				
@@ -319,6 +325,12 @@ body{
 		</div>
 	</div>
 	<script>
+	
+	var cardlist;
+	sangoWar.load( "js/sangoList.txt", function( err, _cardlist ){
+		cardlist = _cardlist;
+		$("#btn_search").linkbutton( 'enable' );
+	})
 	
 	var app = app || {};
 	app.view = app.view || {};
@@ -370,6 +382,7 @@ body{
 			ary_deck.push( card );
 			
 			var cardItem = $("#tmpl_cardItem" ).tmpl( card );
+			
 			cardItem.attr( 'id', card.id );
 			mc_cardContainer.append( cardItem );
 			
@@ -380,16 +393,19 @@ body{
 			});
 		}
 		
-		function onSubmitClick(){
-			console.log($( document.form_value ).serialize() )
-			
+		function onSearchClick(){
+			console.log( $( document.form_value ).serialize()  );
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
 			
-			ary_cards = _.range( Math.floor( Math.random() * 1000 ));
+			ary_cards = searchLib( $( document.form_value ).serialize() );
 			
 			createBigCard( ary_cards );
 			setPagination( ary_cards.length );
+		}
+		
+		function searchLib( str ){
+			return sangoWar.search( str, cardlist );
 		}
 		
 		function setPagination( total ){
@@ -408,7 +424,14 @@ body{
 		
 		}
 		
-		module.onSubmitClick = onSubmitClick;
+		function onResetClick(){
+			$('form').find( 'select' ).val('');
+			$('form').find( 'input[type=checkbox]' ).prop('checked', false);
+			$('form').find( 'input[type=text]' ).val('');
+		}
+		
+		module.onResetClick = onResetClick;
+		module.onSearchClick = onSearchClick;
 		module.onClearClick = onClearClick;
 		module.onSaveClick = onSaveClick;
 	})( app.view );
