@@ -216,6 +216,13 @@ var sangoWar = sangoWar || {};
 		return filter( and( fns ), cardlist )
 	}
 	
+	function formatKey( id ){
+		if( id.indexOf("(") == -1 ){
+			return id
+		}
+		return id.substring( 0, id.indexOf("(") )
+	}
+	
 	module.load = load
 	module.csv2json = csv2json
 	module.filter = filter
@@ -225,5 +232,6 @@ var sangoWar = sangoWar || {};
 	module.attrLe = attrLe
 	module.querystring2fns = querystring2fns
 	module.search = search
+	module.formatKey = formatKey
 	
 }) ( sangoWar )
