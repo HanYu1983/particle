@@ -13,7 +13,6 @@
 	<script type="text/javascript" src="../common/js/lib/underscore/underscore.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
-	<script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.edatagrid.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		
 </head>
@@ -32,228 +31,387 @@ body{
 .hori{
 	display:inline-block;
 }
+
+.card_item_root{
+	position:relative;
+	width:100%;
+	height:60px;
+	border:1px black solid;
+}
+
+.big_card_root{
+	position:relative;
+	display:inline-block;
+	width:300px;
+	height:450px;;
+	cursor:pointer;
+	border:1px black solid;
+}
+
+.big_card_root_focus{
+	border:2px red solid;
+}
 </style>
+<script id="tmpl_bigCard" type="jquery-x-tmpl">
+	<div id=${id} class="big_card_root">
+		<img style="position:relative; top:0; left:0; width:100%; height:100%;" />
+		<div style="position:absolute; top:0; left:0">
+			<div>name</div>
+			<div>cost</div>
+			<div>content</div>
+		</div>
+	</div>
+</script>
+<script id="tmpl_cardItem" type="jquery-x-tmpl">
+	<div class="card_item_root">
+		<div class="hori" style="height:100%;" style="vertical-alien:middle">
+			<a id="btn" href="#" class="easyui-linkbutton" style="width:50px; height:100%;" data-options="iconCls:'icon-remove'"></a>
+		</div>
+		<div class="hori">
+			<img style="height:100%;" />
+		</div>
+		<div class="hori">
+			<div>name</div>
+		</div>
+	</div>
+</script>
 <body>
-	<form name="form_value">
-	  <table cellpadding=2 cellspacing=0 border=1>
-		<tr style="font-size:14pt;line-height:16pt">
-		  <td align="center" valign="top" colspan="4">
-			<b>
-			<font>三國志大戰卡片搜尋引擎</font><br><br>
-			</b>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			勢力<br>
-		  </td>
-		  <td colspan="3">
-			  <select name="ntype">
-				  <option></option>
-				  <option>蜀</option>
-				  <option>魏</option>
-				  <option>呉</option>
-				  <option>漢</option>
-				  <option>群</option>
-				  <option>他</option>
-			  </select>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			卡片種類<br>
-		  </td>
-		  <td colspan="3">
-			  <select name="ctype">
-				  <option></option>
-				  <option>武将</option>
-				  <option>武将/兵隊</option>
-				  <option>計略</option>
-				  <option>キャンペーン</option>
-			  </select>
-		  </td>
-		</tr>
-		<tr>
-		  <td  width="25%">
-			指定國力<br>
-		  </td>
-		  <td width="25%">
-			<select name="cost_1">
-			  <option></option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-			</select>
-			以上
-			<select name="cost_2">
-			  <option></option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-			</select>
-			以下
-			<br>
-		  </td>
-		  <td  width="25%">
-			武力<br>
-		  </td>
-		  <td width="25%">
-			<select name="power_1">
-			  <option value=""></option>
-			  <option value="500">500</option>
-			  <option value="1000">1000</option>
-			  <option value="1500">1500</option>
-			  <option value="2000">2000</option>
-			  <option value="2500">2500</option>
-			  <option value="3000">3000</option>
-			  <option value="3500">3500</option>
-			  <option value="4000">4000</option>
-			  <option value="4500">4500</option>
-			</select>
-			以上
-			<select name="power_2">
-			  <option value=""></option>
-			  <option value="500">500</option>
-			  <option value="1000">1000</option>
-			  <option value="1500">1500</option>
-			  <option value="2000">2000</option>
-			  <option value="2500">2500</option>
-			  <option value="3000">3000</option>
-			  <option value="3500">3500</option>
-			  <option value="4000">4000</option>
-			  <option value="4500">4500</option>
-			</select>
-			以下   
-			<br>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			合計國力<br>
-		  </td>
-		  <td>
-			<select name="costAll_1">
-			  <option value=""></option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-			</select>
-			以上
-			<select name="costAll_2">
-			  <option value=""></option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-			</select>
-			以下
-			<br>
-		  </td>
-		  <td >
-			攻城<br>
-		  </td>
-		  <td>
-			<select name="acity">
-			  <option value=""></option>
-			  <option>1</option>
-			  <option>2</option>
-			</select>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			兵種<br>
-		  </td>
-		  <td colspan="3">
-			<select name="atype">
-				<option></option>
-				<option>槍兵</option>
-				<option>騎兵</option>
-				<option>弓兵</option>
-				<option>歩兵</option>
-				<option>象兵</option>
-			</select>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			特徵<br>
-		  </td>
-		  <td colspan="3">
-			  <select name="symbol">
-				  <option></option>
-				  <option>計略/戦闘</option>
-				  <option>計略/メイン</option>
-				  <option>女性</option>
-				  <option>南蛮・女性</option>
-				  <option>魏五将</option>
-				  <option>五虎将</option>
-				  <option>軍師</option>
-				  <option>黄巾</option>
-				  <option>兵隊</option>
-				  <option>旗本四天王</option>
-				  <option>君主</option>
-				  <option>賢女</option>
-			  </select>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			特殊規則<br>
-		  </td>
-		  <td colspan="3">
-			<input type="checkbox" name="s_rule[1]">戦象
-			<input type="checkbox" name="s_rule[2]">走射
-			<input type="checkbox" name="s_rule[3]">決起
-			<input type="checkbox" name="s_rule[4]">奇襲
-			<input type="checkbox" name="s_rule[5]">長槍
-			<input type="checkbox" name="s_rule[6]">外交
-			<input type="checkbox" name="s_rule[7]">伏兵
-			<input type="checkbox" name="s_rule[8]">乱舞
-			<input type="checkbox" name="s_rule[9]">憂国
-			<input type="checkbox" name="s_rule[10]">支援
-			<input type="checkbox" name="s_rule[11]">募兵
-			<input type="checkbox" name="s_rule[12]">貫通
-			<input type="checkbox" name="s_rule[13]">援軍
-			<input type="checkbox" name="s_rule[14]">回避
-			<input type="checkbox" name="s_rule[15]">防柵
-			<input type="checkbox" name="s_rule[16]">補佐
-			<input type="checkbox" name="s_rule[17]">連弩
-			<input type="checkbox" name="s_rule[18]">舞闘
-			<input type="checkbox" name="s_rule[19]">強進
-			<input type="checkbox" name="s_rule[20]">先駆
-			<input type="checkbox" name="s_rule[21]">覚醒
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			卡片名稱檢索<br>
-		  </td>
-		  <td colspan="3">
-			<input type="text" name="card_name" size=32>
-			<br>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			卡片規則檢索<br>
-		  </td>
-		  <td colspan="3">
-			<input type="text" name="rule" size=32>
-			<br>
-		  </td>
-		</tr>
-	  </table>
-	</form>
-	<button onclick="onSubmitClick()">搜尋</button>
+	<div id="cc" class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'north',title:'條件',split:true" style="height:310px;">
+			<div class="group" style="text-align:center; margin-top:10px;">
+				<div class="group">
+					<form name="form_value" class="hori">
+					  <table cellpadding=2 cellspacing=0 border=1>
+						<tr>
+						  <td >
+							勢力<br>
+						  </td>
+						  <td colspan="3">
+							  <select name="ntype">
+								  <option></option>
+								  <option>蜀</option>
+								  <option>魏</option>
+								  <option>呉</option>
+								  <option>漢</option>
+								  <option>群</option>
+								  <option>他</option>
+							  </select>
+						  </td>
+						</tr>
+						<tr>
+						  <td >
+							卡片種類<br>
+						  </td>
+						  <td colspan="3">
+							  <select name="ctype">
+								  <option></option>
+								  <option>武将</option>
+								  <option>武将/兵隊</option>
+								  <option>計略</option>
+								  <option>キャンペーン</option>
+							  </select>
+						  </td>
+						</tr>
+						<tr>
+						  <td  width="25%">
+							指定國力<br>
+						  </td>
+						  <td width="25%">
+							<select name="cost_1">
+							  <option></option>
+							  <option>1</option>
+							  <option>2</option>
+							  <option>3</option>
+							  <option>4</option>
+							</select>
+							以上
+							<select name="cost_2">
+							  <option></option>
+							  <option>1</option>
+							  <option>2</option>
+							  <option>3</option>
+							  <option>4</option>
+							</select>
+							以下
+							<br>
+						  </td>
+						  <td  width="25%">
+							武力<br>
+						  </td>
+						  <td width="25%">
+							<select name="power_1">
+							  <option value=""></option>
+							  <option value="500">500</option>
+							  <option value="1000">1000</option>
+							  <option value="1500">1500</option>
+							  <option value="2000">2000</option>
+							  <option value="2500">2500</option>
+							  <option value="3000">3000</option>
+							  <option value="3500">3500</option>
+							  <option value="4000">4000</option>
+							  <option value="4500">4500</option>
+							</select>
+							以上
+							<select name="power_2">
+							  <option value=""></option>
+							  <option value="500">500</option>
+							  <option value="1000">1000</option>
+							  <option value="1500">1500</option>
+							  <option value="2000">2000</option>
+							  <option value="2500">2500</option>
+							  <option value="3000">3000</option>
+							  <option value="3500">3500</option>
+							  <option value="4000">4000</option>
+							  <option value="4500">4500</option>
+							</select>
+							以下   
+							<br>
+						  </td>
+						</tr>
+						<tr>
+						  <td >
+							合計國力<br>
+						  </td>
+						  <td>
+							<select name="costAll_1">
+							  <option value=""></option>
+							  <option>1</option>
+							  <option>2</option>
+							  <option>3</option>
+							  <option>4</option>
+							</select>
+							以上
+							<select name="costAll_2">
+							  <option value=""></option>
+							  <option>1</option>
+							  <option>2</option>
+							  <option>3</option>
+							  <option>4</option>
+							</select>
+							以下
+							<br>
+						  </td>
+						  <td >
+							攻城<br>
+						  </td>
+						  <td>
+							<select name="acity">
+							  <option value=""></option>
+							  <option>1</option>
+							  <option>2</option>
+							</select>
+						  </td>
+						</tr>
+						<tr>
+						  <td >
+							兵種<br>
+						  </td>
+						  <td colspan="3">
+							<select name="atype">
+								<option></option>
+								<option>槍兵</option>
+								<option>騎兵</option>
+								<option>弓兵</option>
+								<option>歩兵</option>
+								<option>象兵</option>
+							</select>
+						  </td>
+						</tr>
+						<tr>
+						  <td >
+							特徵<br>
+						  </td>
+						  <td colspan="3">
+							  <select name="symbol">
+								  <option></option>
+								  <option>計略/戦闘</option>
+								  <option>計略/メイン</option>
+								  <option>女性</option>
+								  <option>南蛮・女性</option>
+								  <option>魏五将</option>
+								  <option>五虎将</option>
+								  <option>軍師</option>
+								  <option>黄巾</option>
+								  <option>兵隊</option>
+								  <option>旗本四天王</option>
+								  <option>君主</option>
+								  <option>賢女</option>
+							  </select>
+						  </td>
+						</tr>
+						<tr>
+						  <td >
+							特殊規則<br>
+						  </td>
+						  <td colspan="3">
+							<input type="checkbox" name="戦象">戦象
+							<input type="checkbox" name="走射">走射
+							<input type="checkbox" name="決起">決起
+							<input type="checkbox" name="奇襲">奇襲
+							<input type="checkbox" name="長槍">長槍
+							<input type="checkbox" name="外交">外交
+							<input type="checkbox" name="伏兵">伏兵
+							<input type="checkbox" name="乱舞">乱舞
+							<input type="checkbox" name="憂国">憂国
+							<input type="checkbox" name="支援">支援
+							<input type="checkbox" name="募兵">募兵
+							<input type="checkbox" name="貫通">貫通
+							<input type="checkbox" name="援軍">援軍
+							<input type="checkbox" name="回避">回避
+							<input type="checkbox" name="防柵">防柵
+							<input type="checkbox" name="補佐">補佐
+							<input type="checkbox" name="連弩">連弩
+							<input type="checkbox" name="舞闘">舞闘
+							<input type="checkbox" name="強進">強進
+							<input type="checkbox" name="先駆">先駆
+							<input type="checkbox" name="覚醒">覚醒
+						  </td>
+						</tr>
+						<tr>
+						  <td >
+							卡片名稱檢索<br>
+						  </td>
+						  <td colspan="3">
+							<input type="text" name="card_name" size=32>
+							<br>
+						  </td>
+						</tr>
+						<tr>
+						  <td >
+							卡片規則檢索<br>
+						  </td>
+						  <td colspan="3">
+							<input type="text" name="rule" size=32>
+							<br>
+						  </td>
+						</tr>
+					  </table>
+					</form>
+				</div>
+				<div class="group">
+					<div class="hori">
+						<a id="btn" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onSubmitClick()" data-options="iconCls:'icon-search'">搜尋</a>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		<div data-options="region:'center',title:'結果'">
+			<div id="pag_bigCard" class="easyui-pagination" data-options="pageSize:50,layout:['first','links','last']"></div>
+			<div id="mc_bigCardContainer" >
+				
+			</div>
+		</div>
+		<div data-options="region:'east',title:'組牌'" style="width:300px;">
+			<div class="group" style="text-align:center; margin-top:10px;">
+				<div class="hori">
+					<div class="hori">
+						<a id="btn" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onClearClick()" data-options="iconCls:'icon-remove'">清空</a>
+					</div>
+					<div class="hori">
+						<a id="btn" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onSaveClick()" data-options="iconCls:'icon-save'">匯入/匯出</a>
+					</div>
+				</div>
+			</div>
+			<div id="mc_cardContainer" class="group" style="margin-top:10px;">
+				
+			</div>
+		</div>
+	</div>
 	<script>
-	function onSubmitClick(){
-		console.log($( document.form_value ).serialize() )
-	}
 	
+	var app = app || {};
+	app.view = app.view || {};
+	
+	(function( module ){
+		var mc_bigCardContainer = $('#mc_bigCardContainer' );
+		var mc_cardContainer = $('#mc_cardContainer' );
+		var pag_bigCard = $('#pag_bigCard' );
+		var currentPage = 0;
+		var ary_cards;
+		var ary_deck = [];
+		
+		function createBigCard(){
+			if( ary_cards == undefined ) return; 
+			mc_bigCardContainer.empty();
+			
+			var sid = currentPage * 50;
+			var eid = currentPage * 50 + 50;
+			
+			if( eid > ary_cards.length ){
+				eid = ary_cards.length - 1;
+			}
+			
+			var showCards = ary_cards.slice( sid, eid );
+			_.each( showCards, function( card ){
+				var cardobj =  {id:card + ""} ;
+				var div = $("#tmpl_bigCard").tmpl( cardobj );
+				div.attr( 'data', JSON.stringify( cardobj ));
+				div.click( function(){
+					var thisDom = $(this);
+					if( thisDom.hasClass( 'big_card_root_focus' ) ){
+						//push card 
+						pushToDeck( thisDom.attr( 'data' ));
+					}else{
+						outFocusAll();
+						thisDom.addClass( 'big_card_root_focus' );
+					}
+				});
+				mc_bigCardContainer.append( div );
+			});
+			
+			function outFocusAll(){
+				mc_bigCardContainer.find( 'div' ).removeClass( 'big_card_root_focus' );
+			}
+		}
+		
+		function pushToDeck( card ){
+			console.log( card );
+			ary_deck.push( card );
+			
+			var cardItem = $("#tmpl_cardItem" ).tmpl( card );
+			cardItem.attr( 'id', card.id );
+			mc_cardContainer.append( cardItem );
+			
+			cardItem.find( '.easyui-linkbutton' ).linkbutton( {
+				onClick:function(){
+					console.log( $(this ).parent() );
+				}
+			});
+		}
+		
+		function onSubmitClick(){
+			console.log($( document.form_value ).serialize() )
+			
+			currentPage = 0;
+			pag_bigCard.pagination( 'select', 1 );
+			
+			ary_cards = _.range( Math.floor( Math.random() * 1000 ));
+			
+			createBigCard( ary_cards );
+			setPagination( ary_cards.length );
+		}
+		
+		function setPagination( total ){
+			pag_bigCard.pagination({ total : total, onSelectPage : function(pageNumber,pageSize) {
+				currentPage = pageNumber - 1;
+				createBigCard();
+			}});
+		}
+		
+		function onClearClick(){
+			ary_deck = [];
+			mc_cardContainer.empty();
+		}
+		
+		function onSaveClick(){
+		
+		}
+		
+		module.onSubmitClick = onSubmitClick;
+		module.onClearClick = onClearClick;
+		module.onSaveClick = onSaveClick;
+	})( app.view );
 	</script>
 </body>
 </html>
