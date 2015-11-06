@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/csv.js"></script>
+	</head>
+	<body>
+		<script>
+		$.get("js/sangoList.txt")
+			.pipe( CSV.parse )
+			.done( function(rows) {
+				var cardlist = {};
+				for( var i =0; i < rows.length; i++){
+					switch( rows[i][0] ){
+						case 'CP':
+						case 'UC':
+						case 'PT':
+						case 'C':
+						case 'SR':
+						case 'R':
+						case 'PT/超TR':
+						case 'R/TR':
+						case 'SR/TR':
+						case 'UC/TR':
+						case 'UC/EXF':
+						case 'C/EXF':
+						case 'R/EXF':
+						case 'SR/EXF':
+						case 'ST限定R':
+						case '転生':
+							var rare = rows[i];
+							var id = rows[i+1][0];
+							var ntype = rows[i+2][0];//勢力
+							var ctype = rows[i+3][0];//卡片種類
+							var cname = rows[i+4][0];//名稱
+							var atype = rows[i+8][0];//種別
+							var atype2 = rows[i+9][0];//兵種
+							var cost = rows[i+10][0];//cost
+							var acity = rows[i+11][0];//攻城
+							var power = rows[i+12][0];//武力
+							var ability = rows[i+13][0];//能力
+							var content = rows[i+14][0];//內文
+							var counter;
+							if( rows[i+15] != undefined ){
+								counter = rows[i+15][0];//解說&反擊技略
+							}
+							//用這個檢查他是不是少打-
+							//console.log( ability );
+							
+							cardlist[id] = {
+								id:id,
+								rare:rare,
+								ntype:ntype,
+								ctype:ctype,
+								cname:cname,
+								atype:atype,
+								atype2:atype2,
+								cost:cost,
+								acity:acity,
+								power:power,
+								ability:ability,
+								content:content
+							//	content2:content2
+							};
+					}
+				}
+				
+		 });
+		</script>
+	</body>
+</html>

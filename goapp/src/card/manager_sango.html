@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>card</title>
+	<meta name="description" content="" />
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script type="text/javascript" src="../common/js/lib/underscore/underscore.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.edatagrid.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		
+</head>
+<style>
+body{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+.group{
+	position:relative;
+	width:100%;
+}
+.hori{
+	display:inline-block;
+}
+</style>
+<body>
+	<form name="form_value">
+	  <table cellpadding=2 cellspacing=0 border=1>
+		<tr style="font-size:14pt;line-height:16pt">
+		  <td align="center" valign="top" colspan="4">
+			<b>
+			<font>三國志大戰卡片搜尋引擎</font><br><br>
+			</b>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			勢力<br>
+		  </td>
+		  <td colspan="3">
+			  <select name="ntype">
+				  <option></option>
+				  <option>蜀</option>
+				  <option>魏</option>
+				  <option>呉</option>
+				  <option>漢</option>
+				  <option>群</option>
+				  <option>他</option>
+			  </select>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片種類<br>
+		  </td>
+		  <td colspan="3">
+			  <select name="ctype">
+				  <option></option>
+				  <option>武将</option>
+				  <option>武将/兵隊</option>
+				  <option>計略</option>
+				  <option>キャンペーン</option>
+			  </select>
+		  </td>
+		</tr>
+		<tr>
+		  <td  width="25%">
+			指定國力<br>
+		  </td>
+		  <td width="25%">
+			<select name="cost_1">
+			  <option></option>
+			  <option>1</option>
+			  <option>2</option>
+			  <option>3</option>
+			  <option>4</option>
+			</select>
+			以上
+			<select name="cost_2">
+			  <option></option>
+			  <option>1</option>
+			  <option>2</option>
+			  <option>3</option>
+			  <option>4</option>
+			</select>
+			以下
+			<br>
+		  </td>
+		  <td  width="25%">
+			武力<br>
+		  </td>
+		  <td width="25%">
+			<select name="power_1">
+			  <option value=""></option>
+			  <option value="500">500</option>
+			  <option value="1000">1000</option>
+			  <option value="1500">1500</option>
+			  <option value="2000">2000</option>
+			  <option value="2500">2500</option>
+			  <option value="3000">3000</option>
+			  <option value="3500">3500</option>
+			  <option value="4000">4000</option>
+			  <option value="4500">4500</option>
+			</select>
+			以上
+			<select name="power_2">
+			  <option value=""></option>
+			  <option value="500">500</option>
+			  <option value="1000">1000</option>
+			  <option value="1500">1500</option>
+			  <option value="2000">2000</option>
+			  <option value="2500">2500</option>
+			  <option value="3000">3000</option>
+			  <option value="3500">3500</option>
+			  <option value="4000">4000</option>
+			  <option value="4500">4500</option>
+			</select>
+			以下   
+			<br>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			合計國力<br>
+		  </td>
+		  <td>
+			<select name="costAll_1">
+			  <option value=""></option>
+			  <option>1</option>
+			  <option>2</option>
+			  <option>3</option>
+			  <option>4</option>
+			</select>
+			以上
+			<select name="costAll_2">
+			  <option value=""></option>
+			  <option>1</option>
+			  <option>2</option>
+			  <option>3</option>
+			  <option>4</option>
+			</select>
+			以下
+			<br>
+		  </td>
+		  <td >
+			攻城<br>
+		  </td>
+		  <td>
+			<select name="acity">
+			  <option value=""></option>
+			  <option>1</option>
+			  <option>2</option>
+			</select>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			兵種<br>
+		  </td>
+		  <td colspan="3">
+			<select name="atype">
+				<option></option>
+				<option>槍兵</option>
+				<option>騎兵</option>
+				<option>弓兵</option>
+				<option>歩兵</option>
+				<option>象兵</option>
+			</select>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			特徵<br>
+		  </td>
+		  <td colspan="3">
+			  <select name="symbol">
+				  <option></option>
+				  <option>計略/戦闘</option>
+				  <option>計略/メイン</option>
+				  <option>女性</option>
+				  <option>南蛮・女性</option>
+				  <option>魏五将</option>
+				  <option>五虎将</option>
+				  <option>軍師</option>
+				  <option>黄巾</option>
+				  <option>兵隊</option>
+				  <option>旗本四天王</option>
+				  <option>君主</option>
+				  <option>賢女</option>
+			  </select>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			特殊規則<br>
+		  </td>
+		  <td colspan="3">
+			<input type="checkbox" name="s_rule[1]">戦象
+			<input type="checkbox" name="s_rule[2]">走射
+			<input type="checkbox" name="s_rule[3]">決起
+			<input type="checkbox" name="s_rule[4]">奇襲
+			<input type="checkbox" name="s_rule[5]">長槍
+			<input type="checkbox" name="s_rule[6]">外交
+			<input type="checkbox" name="s_rule[7]">伏兵
+			<input type="checkbox" name="s_rule[8]">乱舞
+			<input type="checkbox" name="s_rule[9]">憂国
+			<input type="checkbox" name="s_rule[10]">支援
+			<input type="checkbox" name="s_rule[11]">募兵
+			<input type="checkbox" name="s_rule[12]">貫通
+			<input type="checkbox" name="s_rule[13]">援軍
+			<input type="checkbox" name="s_rule[14]">回避
+			<input type="checkbox" name="s_rule[15]">防柵
+			<input type="checkbox" name="s_rule[16]">補佐
+			<input type="checkbox" name="s_rule[17]">連弩
+			<input type="checkbox" name="s_rule[18]">舞闘
+			<input type="checkbox" name="s_rule[19]">強進
+			<input type="checkbox" name="s_rule[20]">先駆
+			<input type="checkbox" name="s_rule[21]">覚醒
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片名稱檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="card_name" size=32>
+			<br>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片規則檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="rule" size=32>
+			<br>
+		  </td>
+		</tr>
+	  </table>
+	</form>
+	<button onclick="onSubmitClick()">搜尋</button>
+	<script>
+	function onSubmitClick(){
+		console.log($( document.form_value ).serialize() )
+	}
+	
+	</script>
+</body>
+</html>
