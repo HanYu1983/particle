@@ -53,26 +53,26 @@ body{
 }
 
 .big_card_root_focus{
-	border:2px red solid;
+	border:1px red solid;
 }
 </style>
 <script id="tmpl_bigCard" type="jquery-x-tmpl">
 	<div cid=${id} class="big_card_root">
 		<img src=${url} style="position:relative; top:0; left:0; width:100%; height:100%;" />
-		<div style="position:absolute; top:0; left:0">
-			<div>${cname}</div>
-			<div>${power}</div>
+		<div style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
+		<div style="position:absolute; top:0; left:0; padding:20px">
+			<div>${ability}</div>
 			<div>${content}</div>
 		</div>
 	</div>
 </script>
 <script id="tmpl_cardItem" type="jquery-x-tmpl">
-	<div class="card_item_root">
+	<div cid=${id} class="card_item_root">
 		<div class="hori" style="height:100%;" style="vertical-alien:middle">
 			<a id="btn" href="#" class="easyui-linkbutton" style="width:50px; height:100%;" data-options="iconCls:'icon-remove'"></a>
 		</div>
-		<div class="hori">
-			<img style="height:100%;" />
+		<div class="hori" style="height:100%;">
+			<img src=${url} style="height:100%;" />
 		</div>
 		<div class="hori">
 			<div>name</div>
@@ -364,6 +364,8 @@ body{
 			if( ary_cards == undefined ) return; 
 			mc_bigCardContainer.empty();
 			
+			console.log( ary_cards.length );
+			
 			var sid = currentPage * 50;
 			var eid = currentPage * 50 + 50;
 			
@@ -373,9 +375,11 @@ body{
 			
 			var showCards = ary_cards.slice( sid, eid );
 			_.each( showCards, function( card ){
-				card.url = api.getCardImageUrlWithPackage( cardPackage, card.id );
+				card.url = api.getCardImageUrlWithPackage( cardPackage, sangoWar.formatKey( card.id ) );
+				if( card.url == undefined ) return;
 				
-				console.log( card.url );
+				console.log( card );
+				
 				var div = $("#tmpl_bigCard").tmpl( card );
 				div.attr( 'data', JSON.stringify( card ));
 				div.click( function(){
@@ -416,12 +420,12 @@ body{
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
 			
-			ary_cards = searchLib( $( document.form_value ).serialize() );
+			ary_cards = searchLib( $( document.form_value ).serialize() ).slice();
 			
 			//
 			//console.log( ary_cards );
 			
-			createBigCard( ary_cards );
+			createBigCard();
 			setPagination( ary_cards.length );
 		}
 		
