@@ -197,14 +197,14 @@ var sangoWar = sangoWar || {};
 				fns.push( attrGe( "power", parseInt(v) ))
 				break
 			case "rule":
-				fns.push( attrGe( "content", parseInt(v) ))
+				fns.push( attrEq( "content", v ))
 				break
 			case "symbol":
 				fns.push( attrEq( "atype", v ) )
 				break
 			default:
 				if( v == "on" ){
-					fns.push( attrEq( "content", k ))
+					fns.push( attrEq( "ability", k ))
 				}
 			}
 		}
