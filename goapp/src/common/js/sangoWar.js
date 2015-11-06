@@ -204,7 +204,7 @@ var sangoWar = sangoWar || {};
 				break
 			default:
 				if( v == "on" ){
-					fns.push( attrEq( "content", k ))
+					fns.push( attrEq( "ability", k ))
 				}
 			}
 		}
