@@ -60,7 +60,7 @@ body{
 	<div cid=${id} class="big_card_root">
 		<img src=${url} style="position:relative; top:0; left:0; width:100%; height:100%;" />
 		<div style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
-		<div style="position:absolute; top:0; left:0; padding:20px">
+		<div style="position:absolute; top:0; left:0; padding-left:50px; padding-right:10px; padding-top:10px; ">
 			<div>${ability}</div>
 			<div>${content}</div>
 		</div>
@@ -88,6 +88,14 @@ body{
 				<div class="group">
 					<form name="form_value" class="hori">
 					  <table cellpadding=2 cellspacing=0 border=1>
+						<tr>
+						  <td >
+							id<br>
+						  </td>
+						  <td colspan="3">
+							  <input type="text" name="id" size=32>
+						  </td>
+						</tr>
 						<tr>
 						  <td >
 							勢力<br>
@@ -401,12 +409,9 @@ body{
 				div.attr( 'data', JSON.stringify( card ));
 				div.click( function(){
 					var thisDom = $(this);
-					if( thisDom.hasClass( 'big_card_root_focus' ) ){
-						pushToDeck( JSON.parse( thisDom.attr( 'data' ) ));
-					}else{
-						outFocusAll();
-						thisDom.addClass( 'big_card_root_focus' );
-					}
+					outFocusAll();
+					thisDom.addClass( 'big_card_root_focus' );
+					pushToDeck( JSON.parse( thisDom.attr( 'data' ) ));
 				});
 				mc_bigCardContainer.append( div );
 			});
