@@ -88,18 +88,16 @@ var sangoWar = sangoWar || {};
 	
 	function attrEq( key, value ){
 		return function( obj ){
-			switch( typeof obj[key] ){
-			case "string":
-				return obj[ key ].indexOf( value ) != -1
-			case "number":
-				return obj[ key ] == value
-			case "object":
-				{
-					if( key == "cost" ){
-						return obj[ key ][0] == value
-					} else if( key == "costA" ){
-						return obj[ key ][1] == value
-					}
+			if( key == "cost" ){
+				return obj[ "cost" ][0] == value
+			} else if( key == "costA" ){
+				return obj[ "cost" ][1] == value
+			} else {
+				switch( typeof obj[key] ){
+				case "string":
+					return obj[ key ].indexOf( value ) != -1
+				case "number":
+					return obj[ key ] == value
 				}
 			}
 			return false
@@ -108,18 +106,16 @@ var sangoWar = sangoWar || {};
 	
 	function attrGe( key, value ){
 		return function( obj ){
-			switch( typeof obj[key] ){
-			case "string":
-				return obj[ key ].indexOf( value ) != -1
-			case "number":
-				return obj[ key ] >= value
-			case "object":
-				{
-					if( key == "cost" ){
-						return obj[ key ][0] >= value
-					} else if( key == "costA" ){
-						return obj[ key ][1] >= value
-					}
+			if( key == "cost" ){
+				return obj[ "cost" ][0] >= value
+			} else if( key == "costA" ){
+				return obj[ "cost" ][1] >= value
+			} else {
+				switch( typeof obj[key] ){
+				case "string":
+					return obj[ key ].indexOf( value ) != -1
+				case "number":
+					return obj[ key ] >= value
 				}
 			}
 			return false
@@ -128,18 +124,16 @@ var sangoWar = sangoWar || {};
 	
 	function attrLe( key, value ){
 		return function( obj ){
-			switch( typeof obj[key] ){
-			case "string":
-				return obj[ key ].indexOf( value ) != -1
-			case "number":
-				return obj[ key ] <= value
-			case "object":
-				{
-					if( key == "cost" ){
-						return obj[ key ][0] <= value
-					} else if( key == "costA" ){
-						return obj[ key ][1] <= value
-					}
+			if( key == "cost" ){
+				return obj[ "cost" ][0] <= value
+			} else if( key == "costA" ){
+				return obj[ "cost" ][1] <= value
+			} else {
+				switch( typeof obj[key] ){
+				case "string":
+					return obj[ key ].indexOf( value ) != -1
+				case "number":
+					return obj[ key ] <= value
 				}
 			}
 			return false
@@ -162,10 +156,12 @@ var sangoWar = sangoWar || {};
 	function querystring2fns( qstr ){
 		var url = $.url("?" + qstr)
 		var query = url.data.param.query
-		console.log( query )
 		var fns = []
 		for( var k in query ){
 			var v = query[k]
+			if( v == "" ){
+				continue
+			}
 			switch( k ){
 			case "acity":
 				fns.push( attrEq( "acity", parseInt(v) ) )
@@ -176,16 +172,16 @@ var sangoWar = sangoWar || {};
 			case "card_name":
 				fns.push( attrEq( "cname", v ) )
 				break
-			case "costAll_1":
+			case "costAll_2":
 				fns.push( attrLe( "costA", parseInt(v) ))
 				break
-			case "costAll_2":
+			case "costAll_1":
 				fns.push( attrGe( "costA", parseInt(v) ))
 				break
-			case "cost_1":
+			case "cost_2":
 				fns.push( attrLe( "cost", parseInt(v) ))
 				break
-			case "cost_2":
+			case "cost_1":
 				fns.push( attrGe( "cost", parseInt(v) ))
 				break
 			case "ctype":
@@ -194,10 +190,10 @@ var sangoWar = sangoWar || {};
 			case "ntype":
 				fns.push( attrEq( "ntype", v ) )
 				break
-			case "power_1":
+			case "power_2":
 				fns.push( attrLe( "power", parseInt(v) ))
 				break
-			case "power_2":
+			case "power_1":
 				fns.push( attrGe( "power", parseInt(v) ))
 				break
 			case "rule":
