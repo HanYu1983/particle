@@ -18,6 +18,7 @@
 	<script src="../common/js/lib/csv.js"></script>
 	<script src="../common/js/lib/purl.js"></script>	
 	<script src="../common/js/sangoWar.js"></script>	
+	<script src='js/api.js'></script>
 </head>
 <style>
 body{
@@ -56,12 +57,12 @@ body{
 }
 </style>
 <script id="tmpl_bigCard" type="jquery-x-tmpl">
-	<div id=${id} class="big_card_root">
-		<img style="position:relative; top:0; left:0; width:100%; height:100%;" />
+	<div cid=${id} class="big_card_root">
+		<img src=${url} style="position:relative; top:0; left:0; width:100%; height:100%;" />
 		<div style="position:absolute; top:0; left:0">
-			<div>name</div>
-			<div>cost</div>
-			<div>content</div>
+			<div>${cname}</div>
+			<div>${power}</div>
+			<div>${content}</div>
 		</div>
 	</div>
 </script>
@@ -327,10 +328,26 @@ body{
 	<script>
 	
 	var cardlist;
-	sangoWar.load( "js/sangoList.txt", function( err, _cardlist ){
-		cardlist = _cardlist;
-		$("#btn_search").linkbutton( 'enable' );
-	})
+	var cardPackage;
+	
+	api.getCardPackageWithUrl( '../common/cardPackage/sangoWar.json', handleResponse( function( ret ) {
+		cardPackage = ret;
+		
+		sangoWar.load( "js/sangoList.txt", function( err, _cardlist ){
+			cardlist = _cardlist;
+			$("#btn_search").linkbutton( 'enable' );
+		})
+	}));
+	
+	function handleResponse( cb ) {
+		return function ( err, ret ) {
+			if ( err != null ) {
+				alert( '錯誤:' + err );
+			}else {
+				cb( ret );
+			}
+		}
+	}
 	
 	var app = app || {};
 	app.view = app.view || {};
@@ -356,14 +373,15 @@ body{
 			
 			var showCards = ary_cards.slice( sid, eid );
 			_.each( showCards, function( card ){
-				var cardobj =  {id:card + ""} ;
-				var div = $("#tmpl_bigCard").tmpl( cardobj );
-				div.attr( 'data', JSON.stringify( cardobj ));
+				card.url = api.getCardImageUrlWithPackage( cardPackage, card.id );
+				
+				console.log( card.url );
+				var div = $("#tmpl_bigCard").tmpl( card );
+				div.attr( 'data', JSON.stringify( card ));
 				div.click( function(){
 					var thisDom = $(this);
 					if( thisDom.hasClass( 'big_card_root_focus' ) ){
-						//push card 
-						pushToDeck( thisDom.attr( 'data' ));
+						pushToDeck( JSON.parse( thisDom.attr( 'data' ) ));
 					}else{
 						outFocusAll();
 						thisDom.addClass( 'big_card_root_focus' );
@@ -399,6 +417,9 @@ body{
 			pag_bigCard.pagination( 'select', 1 );
 			
 			ary_cards = searchLib( $( document.form_value ).serialize() );
+			
+			//
+			//console.log( ary_cards );
 			
 			createBigCard( ary_cards );
 			setPagination( ary_cards.length );
