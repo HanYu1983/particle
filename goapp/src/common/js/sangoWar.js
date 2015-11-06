@@ -163,6 +163,9 @@ var sangoWar = sangoWar || {};
 				continue
 			}
 			switch( k ){
+			case "id":
+				fns.push( attrEq( "id", v ) )
+				break
 			case "acity":
 				fns.push( attrEq( "acity", parseInt(v) ) )
 				break
