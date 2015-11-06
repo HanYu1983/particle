@@ -18,7 +18,8 @@ var sangoWarCardSuit = sangoWarCardSuit || {};
 		<script>
 		
 		sangoWar.load( "js/sangoList.txt", function( err, cardlist ){
-			var ret = sangoWar.search( "ntype=&ctype=&cost_1=3&cost_2=&power_1=&power_2=&costAll_1=&costAll_2=1&acity=&atype=&symbol=&card_name=&rule=", cardlist )
+			console.log( cardlist[0] )
+			var ret = sangoWar.search( "ntype=&ctype=&cost_1=&cost_2=&power_1=&power_2=&costAll_1=&costAll_2=&acity=&atype=&symbol=&card_name=&rule=%E9%95%B7%E6%A7%8D", cardlist )
 			console.log( ret )
 		})
 
