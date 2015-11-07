@@ -13,7 +13,7 @@ var sangoWar = sangoWar || {};
 	
 	function parseCost( text ){
 		//var map1 = "緑黒赤紫青"
-		var map2 = "①②③④"
+		var map2 = "①②③④⑤"
 		var ret = [0, 0]
 		for( var k in text ){
 			var c = text[k]
@@ -91,10 +91,11 @@ var sangoWar = sangoWar || {};
 			if( key == "cost" ){
 				return obj[ "cost" ][0] == value
 			} else if( key == "costA" ){
-				return obj[ "cost" ][1] == value
+				return obj[ "cost" ][0] + obj[ "cost" ][1] == value
 			} else {
 				switch( typeof obj[key] ){
 				case "string":
+					//console.log( obj[key], value, obj[ key ].indexOf( value ) )
 					return obj[ key ].indexOf( value ) != -1
 				case "number":
 					return obj[ key ] == value
@@ -109,7 +110,7 @@ var sangoWar = sangoWar || {};
 			if( key == "cost" ){
 				return obj[ "cost" ][0] >= value
 			} else if( key == "costA" ){
-				return obj[ "cost" ][1] >= value
+				return obj[ "cost" ][0] + obj[ "cost" ][1] >= value
 			} else {
 				switch( typeof obj[key] ){
 				case "string":
@@ -127,7 +128,7 @@ var sangoWar = sangoWar || {};
 			if( key == "cost" ){
 				return obj[ "cost" ][0] <= value
 			} else if( key == "costA" ){
-				return obj[ "cost" ][1] <= value
+				return obj[ "cost" ][0] + obj[ "cost" ][1] <= value
 			} else {
 				switch( typeof obj[key] ){
 				case "string":
