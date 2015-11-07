@@ -302,7 +302,7 @@ body{
 							id檢索<br>
 						  </td>
 						  <td colspan="3">
-							  <input type="text" name="id" size=16>
+							  <input id="txt_id" type="text" name="id" size=16>
 						  </td>
 						</tr>
 					  </table>
@@ -457,6 +457,11 @@ body{
 						coptyCardFromDeck( addId );
 					}
 				});
+				
+				cardItem.click( function(){
+					var showId = $( this ).attr( 'id' );
+					searchCardFromDeck( showId );
+				});
 			});
 		}
 		
@@ -477,6 +482,14 @@ body{
 			
 			ary_deck.push( copyItem );
 			setDeck();
+		}
+		
+		function searchCardFromDeck( itemId ){
+			var searchCard = _.find( ary_deck, function( cardItem ){
+				return cardItem.itemId == itemId;
+			});
+			$('#txt_id' ).val( searchCard.id );
+			onSearchClick();
 		}
 		
 		function pushToDeck( card ){
