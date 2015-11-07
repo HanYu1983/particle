@@ -45,6 +45,7 @@ var sangoWar = sangoWar || {};
 				case 'R/EXF':
 				case 'SR/EXF':
 				case 'ST限定R':
+				case 'ST限定SR':
 				case '転生':
 					var rare = rows[i];
 					var id = rows[i+1][0];
