@@ -505,8 +505,7 @@ body{
 			var searchCard = _.find( ary_deck, function( cardItem ){
 				return cardItem.itemId == itemId;
 			});
-			$('#txt_id' ).val( searchCard.id );
-			onSearchClick();
+			searchCards( 'id=' + searchCard.id );
 		}
 		
 		function pushToDeck( card ){
@@ -517,10 +516,14 @@ body{
 		}
 		
 		function onSearchClick(){
+			searchCards( $( document.form_value ).serialize() );
+		}
+		
+		function searchCards( searchstr ){
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
 			
-			ary_cards = searchLib( $( document.form_value ).serialize() ).slice();
+			ary_cards = searchLib( searchstr ).slice();
 			
 			createBigCard();
 			setPagination( ary_cards.length );
