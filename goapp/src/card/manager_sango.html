@@ -14,7 +14,7 @@
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-	
+	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
 	<script src="../common/js/lib/csv.js"></script>
 	<script src="../common/js/lib/purl.js"></script>	
 	<script src="../common/js/sangoWar.js"></script>	
@@ -69,7 +69,10 @@ body{
 <script id="tmpl_cardItem" type="jquery-x-tmpl">
 	<div id=${itemId} cid=${id} class="card_item_root">
 		<div class="hori" style="position:relative; top:0; left:0; height:100%; vertical-align:top;">
-			<a id="btn" href="#" class="easyui-linkbutton" style="width:50px; height:100%;" data-options="iconCls:'icon-remove'"></a>
+			<a id="btn_remove" href="#" class="easyui-linkbutton" style="width:30px; height:100%;" data-options="iconCls:'icon-remove'"></a>
+		</div>
+		<div class="hori" style="position:relative; top:0; left:0; height:100%; vertical-align:top;">
+			<a id="btn_copy" href="#" class="easyui-linkbutton" style="width:30px; height:100%;" data-options="iconCls:'icon-add'"></a>
 		</div>
 		<div class="hori" style="height:100%;">
 			<img src=${url}  style="height:100%;" />
@@ -121,7 +124,7 @@ body{
 						</tr>
 						<tr>
 						  <td  width="25%">
-							指定國力<br>
+							指定cost<br>
 						  </td>
 						  <td width="25%">
 							<select name="cost_1">
@@ -176,8 +179,8 @@ body{
 						  </td>
 						</tr>
 						<tr>
-						  <td >
-							合計國力<br>
+						  <td>
+							非指定cost<br>
 						  </td>
 						  <td>
 							<select name="costAll_1">
@@ -294,7 +297,7 @@ body{
 						</tr>
 						 <tr>
 						  <td >
-							id<br>
+							id檢索<br>
 						  </td>
 						  <td colspan="3">
 							  <input type="text" name="id" size=16>
@@ -348,6 +351,7 @@ body{
 		</div>
 	</div>
 	<script>
+	googleTracking.init( 'UA-55273266-3' );
 	
 	var cardlist;
 	var cardPackage;
@@ -404,7 +408,9 @@ body{
 			var showCards = ary_cards.slice( sid, eid );
 			_.each( showCards, function( card ){
 				card.url = api.getCardImageUrlWithPackage( cardPackage, sangoWar.formatKey( card.id ) );
-				if( card.url == undefined ) return;
+				if( card.url == undefined ) {
+					card.url = 'images/cardback.png';
+				}
 				
 				var div = $("#tmpl_bigCard").tmpl( card );
 				div.attr( 'data', JSON.stringify( card ));
@@ -435,11 +441,18 @@ body{
 				var cardItem = $("#tmpl_cardItem" ).tmpl( card );
 				mc_cardContainer.append( cardItem );
 				
-				cardItem.find( '.easyui-linkbutton' ).linkbutton( {
+				cardItem.find( '#btn_remove' ).linkbutton( {
 					onClick:function(){
 						var removeId = $(this ).parent().parent().attr( 'id' );
 						removeCardFromDeck( removeId );	
 						setDeck();
+					}
+				});
+				
+				cardItem.find( '#btn_copy' ).linkbutton( {
+					onClick:function(){
+						var addId = $(this ).parent().parent().attr( 'id' );
+						coptyCardFromDeck( addId );
 					}
 				});
 			});
@@ -450,6 +463,18 @@ body{
 				return cardItem.itemId == itemId;
 			});
 			ary_deck.splice( ary_deck.indexOf( removeItem ), 1 );
+		}
+		
+		function coptyCardFromDeck( itemId ){
+			var beCopyItem = _.find( ary_deck, function( cardItem ){
+				return cardItem.itemId == itemId;
+			});
+			
+			var copyItem = JSON.parse( JSON.stringify( beCopyItem ) );
+			copyItem.itemId = getId();
+			
+			ary_deck.push( copyItem );
+			setDeck();
 		}
 		
 		function pushToDeck( card ){
@@ -502,20 +527,20 @@ body{
 			str = '[' + str + ']';
 			try{
 				var inputobj = JSON.parse( str );
+				win_output.window('close' );
+				ary_deck = _.map( inputobj, function( incard ){
+					return _.find( cardlist, function( oricard ){
+						return oricard.id.indexOf( incard.replace( '.jpg', '' ) ) != -1;
+					});
+				});
+				_.each( ary_deck, function( card ){
+					card.itemId = getId();
+					card.url = api.getCardImageUrlWithPackage( cardPackage, sangoWar.formatKey( card.id ) );
+				});
+				setDeck();
 			}catch( e ){
 				$.messager.alert('提示','格式錯誤哦');
 			}
-			win_output.window('close' );
-			ary_deck = _.map( inputobj, function( incard ){
-				return _.find( cardlist, function( oricard ){
-					return oricard.id.indexOf( incard.replace( '.jpg', '' ) ) != -1;
-				});
-			});
-			_.each( ary_deck, function( card ){
-				card.itemId = getId();
-				card.url = api.getCardImageUrlWithPackage( cardPackage, sangoWar.formatKey( card.id ) );
-			});
-			setDeck();
 		}
 		
 		function onResetClick(){
