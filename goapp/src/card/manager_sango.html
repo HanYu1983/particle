@@ -569,7 +569,7 @@ body{
 				win_output.window('close' );
 				ary_deck = _.map( inputobj, function( incard ){
 					return _.find( cardlist, function( oricard ){
-						return oricard.id.indexOf( incard.replace( '.jpg', '' ) ) != -1;
+						return oricard.id.indexOf( incard.replace( '.jpg', '' ) ) == 0;
 					});
 				});
 				_.each( ary_deck, function( card ){
