@@ -346,7 +346,7 @@ body{
 				
 			</div>
 		</div>
-		<div data-options="region:'east',title:'組牌'" style="width:300px;">
+		<div data-options="region:'east',title:'組牌'" style="width:300px; overflow-x:hidden;">
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="hori">
 					<span id="txt_count" style="color:yellow">0</span>張
@@ -369,7 +369,7 @@ body{
 		<div class="group" style="text-align:center;">
 			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 			<div class="hori" style="margin-top:10px;">
-				<a id="btn" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入/匯出</a>
+				<a id="btn" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
 			</div>
 		</div>
 	</div>
@@ -578,19 +578,50 @@ body{
 			try{
 				var inputobj = JSON.parse( str );
 				win_output.window('close' );
+				
+				var lostCards = [];
 				ary_deck = _.map( inputobj, function( incard ){
-					return _.find( cardlist, function( oricard ){
+					var retobj = _.find( cardlist, function( oricard ){
 						return oricard.id.indexOf( incard.replace( '.jpg', '' ) ) == 0;
 					});
+					if( retobj == undefined ){
+						lostCards.push( incard );
+					}
+					return retobj;
 				});
-				_.each( ary_deck, function( card ){
-					card.itemId = getId();
-					card.url = api.getCardImageUrlWithPackage( cardPackage, sangoWar.formatKey( card.id ) );
+				
+				ary_deck = _.filter( ary_deck, function( cardItem ){
+					return cardItem != undefined;
 				});
-				setDeck();
+				
+				if( ary_deck.length == 0 ){
+					showMessage( '系統中沒有任何您所輸入的卡片哦' );
+				}else{
+					if( lostCards.length > 0 ){
+						showMessage( '系統中找不到這些卡片哦! 代碼: ' + JSON.stringify( lostCards ) );
+					}
+					
+					_.each( ary_deck, function( card ){
+						card.itemId = getId();
+						card.url = api.getCardImageUrlWithPackage( cardPackage, sangoWar.formatKey( card.id ) );
+						if( card.url == undefined ) {
+							card.url = 'images/cardback.png';
+						}
+					});
+					setDeck();
+				}
 			}catch( e ){
 				$.messager.alert('提示','格式錯誤哦');
 			}
+		}
+		
+		function showMessage( msg ){
+			$.messager.show({
+				title:'提示',
+				msg: msg,
+				timeout:5000,
+				showType:'slide'
+			});
 		}
 		
 		function onResetClick(){
