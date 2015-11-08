@@ -527,6 +527,7 @@ body{
 		}
 		
 		function onSearchClick(){
+			googleTracking.click( 'onSearchClick' );
 			searchCards( $( document.form_value ).serialize() );
 		}
 		
@@ -553,12 +554,14 @@ body{
 		}
 		
 		function onClearClick(){
+			googleTracking.click( 'onClearClick' );
 			ary_deck = [];
 			mc_cardContainer.empty();
 			setDeck();
 		}
 		
 		function onSaveClick(){
+			googleTracking.click( 'onSaveClick' );
 			win_output.window('open' );
 			var ary_new = _.map( ary_deck, function( card ){
 				return sangoWar.formatKey( card.id );
@@ -569,6 +572,7 @@ body{
 		}
 		
 		function onLoadClick(){
+			googleTracking.click( 'onLoadClick' );
 			var str = win_output.find( '.easyui-textbox' ).textbox( 'getText');
 			str = '[' + str + ']';
 			try{
@@ -590,6 +594,7 @@ body{
 		}
 		
 		function onResetClick(){
+			googleTracking.click( 'onResetClick' );
 			$('form').find( 'select' ).val('');
 			$('form').find( 'input[type=checkbox]' ).prop('checked', false);
 			$('form').find( 'input[type=text]' ).val('');
