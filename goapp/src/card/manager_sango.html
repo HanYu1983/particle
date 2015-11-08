@@ -452,6 +452,8 @@ body{
 		}
 		
 		function setDeck(){
+			
+			var oldtop = mc_cardContainer.parent().scrollTop();
 			mc_cardContainer.empty();
 			
 			ary_deck.sort( function( aobj, bobj ){
@@ -484,6 +486,11 @@ body{
 					searchCardFromDeck( showId );
 				});
 			});
+			
+			if( oldtop != 0 ){
+				mc_cardContainer.parent().scrollTop( oldtop );
+			}
+			
 		}
 		
 		function removeCardFromDeck( itemId ){
