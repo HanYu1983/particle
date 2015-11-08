@@ -341,7 +341,7 @@ body{
 			</div>
 		</div>
 		<div data-options="region:'center',title:'結果'">
-			<div id="pag_bigCard" class="easyui-pagination" data-options="pageSize:50,layout:['first','links','last']"></div>
+			<div id="pag_bigCard" class="easyui-pagination" data-options="pageSize:20,layout:['first','links','last']"></div>
 			<div id="mc_bigCardContainer" >
 				
 			</div>
@@ -421,8 +421,8 @@ body{
 			if( ary_cards == undefined ) return; 
 			mc_bigCardContainer.empty();
 			
-			var sid = currentPage * 50;
-			var eid = currentPage * 50 + 50;
+			var sid = currentPage * 20;
+			var eid = currentPage * 20 + 20;
 			
 			if( eid > ary_cards.length ){
 				eid = ary_cards.length;
