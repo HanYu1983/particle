@@ -32,6 +32,7 @@ html, body, div{
 #btn_team,
 #btn_login,
 #btn_stock,
+#btn_deck,
 #btn_particle,
 #btn_particleClojure,
 #btn_card
@@ -44,6 +45,7 @@ html, body, div{
 #btn_particleClojureLink,
 #btn_stockLink,
 #btn_particleLink,
+#btn_deckLink,
 #btn_cardLink{
 	width:100%; 
 	//height:40px;
@@ -126,7 +128,14 @@ a{
 					<div class="hori" style="width:83%">
 						<a id="btn_card" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true" >卡牌風雲</a>
 					</div>
-					
+				</div>
+				<div class="group">
+					<div class="hori" style="width:15%">
+						<a id="btn_deckLink" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+					</div>
+					<div class="hori" style="width:83%">
+						<a id="btn_deck" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true" >余氏組牌機</a>
+					</div>
 				</div>
 				<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
 				<div class="group">
@@ -263,6 +272,21 @@ a{
 				</div>
 				
 			</div>
+			<div id="mc_deck" style="position:relative; width:100%; height:100%; ">
+				<div class="group" style="text-align:center; margin-top:60px;">
+					<h1>開發環境</h1>
+					google app engine<br>
+					javascript<br>
+					jquery easy ui<br>
+					<h1>產品描述</h1>
+					余氏組牌機是一款通用的集換式卡牌搜尋組牌機，目前尚只有三國志大戰。可以讓玩家輸入、輸出來組織自己的牌組。
+					<br/>
+					由它所輸出的格式，可以用來作為卡牌風雲所用的組牌格式。直接連入卡牌風雲做遊玩
+					<br/>
+					目前收錄有：<span style="color:yellow">三國志大戰</span>
+				</div>
+				
+			</div>
 			<div id="mc_team" style="position:relative; width:100%; height:100%; display:none;">
 				<div class="group" style="text-align:center; margin-top:60px;">
 					<span style="font-size:20px;">余漢君 HanYu</span>
@@ -367,6 +391,7 @@ a{
 		$('#mc_particle_clojure' ).hide();
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
+		$('#mc_deck' ).hide();
 	}
 	
 	function openParticleClojure(){
@@ -375,6 +400,7 @@ a{
 		$('#mc_particle_clojure' ).show();
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
+		$('#mc_deck' ).hide();
 	}
 	
 	function openParticle(){
@@ -383,6 +409,7 @@ a{
 		$('#mc_particle_clojure' ).hide();
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
+		$('#mc_deck' ).hide();
 	}
 	
 	function openCard(){
@@ -391,6 +418,16 @@ a{
 		$('#mc_particle_clojure' ).hide();
 		$('#mc_card' ).show();
 		$('#mc_team' ).hide();
+		$('#mc_deck' ).hide();
+	}
+	
+	function openDeck(){
+		$('#mc_stock' ).hide();
+		$('#mc_particle' ).hide();
+		$('#mc_particle_clojure' ).hide();
+		$('#mc_card' ).hide();
+		$('#mc_team' ).hide();
+		$('#mc_deck' ).show();
 	}
 	
 	function openTeam(){
@@ -399,6 +436,7 @@ a{
 		$('#mc_particle_clojure' ).hide();
 		$('#mc_card' ).hide();
 		$('#mc_team' ).show();
+		$('#mc_deck' ).hide();
 	}
 	
 	function showMessage( msg ){
@@ -483,6 +521,9 @@ a{
 			case 'btn_cardLink':
 				window.open( '//particle-979.appspot.com/card/index.html#' );
 				break;
+			case 'btn_deckLink':
+				window.open( '//particle-979.appspot.com/card/manager_sango.html#' );
+				break;
 			case 'btn_particleClojureLink':
 				window.open( '//particle-979.appspot.com/particle/index_clojure.html#' );
 				break;
@@ -497,6 +538,9 @@ a{
 				break;
 			case 'btn_card':
 				openCard();
+				break;
+			case 'btn_deck':
+				openDeck();
 				break;
 			case 'btn_team':
 				openTeam();
