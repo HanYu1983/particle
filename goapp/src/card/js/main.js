@@ -356,6 +356,7 @@ Main.createSelfDeck = function(deckId) {
 	});
 };
 Main.pushCmds = function(content) {
+	if(!Main.isCanSendMessage) return;
 	var toId = Main.otherPlayerId;
 	if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
 };
@@ -564,6 +565,7 @@ Main.keepSearchOpponent = function() {
 };
 Main.createSocket = function(id) {
 	CallJs.api_createChannel(id,{ onopen : function() {
+		Main.isCanSendMessage = true;
 		Main.slide("連線成功");
 		Main.j("#btn_connect").linkbutton("disable");
 	}, onmessage : function(json) {
@@ -571,10 +573,12 @@ Main.createSocket = function(id) {
 	}, onerror : function() {
 		Main.j("#btn_connect").linkbutton("enable");
 		Main.isConntect = false;
+		Main.isCanSendMessage = false;
 		Main.alert("已斷線，請重新連線");
 	}, onclose : function() {
 		Main.j("#btn_connect").linkbutton("enable");
 		Main.isConntect = false;
+		Main.isCanSendMessage = false;
 		Main.alert("已斷線，請重新連線");
 	}});
 };
@@ -1940,6 +1944,7 @@ Main.currentSelect = "sangoWar";
 Main.cardPackages = { };
 Main.cardSuits = { };
 Main.isConntect = false;
+Main.isCanSendMessage = false;
 Main.tmpl_card = Main.j("#tmpl_card");
 Main.longPolling = config.longPolling;
 Main.cardPackageUrlMapping = { };

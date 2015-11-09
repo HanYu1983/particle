@@ -39,6 +39,7 @@ class Main
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
 	public static var isConntect = false;
+	public static var isCanSendMessage = false;
 	
 	static var keepOnlineTimer:Timer;
 	static var tmpl_card:Dynamic = j( '#tmpl_card' );
@@ -131,25 +132,13 @@ class Main
 	}
 	
 	public static function pushCmds( content:Dynamic ) {
+		if ( !isCanSendMessage ) return;
+		
 		var toId = otherPlayerId;
 		if ( toId.length != 0 ) {
 			messageSocket( toId, content.cmd, content );
 		}
 		
-		/*
-		if ( keepOnlineTimer != null ) {
-			keepOnlineTimer.stop();
-			keepOnlineTimer = null;
-		}
-		
-		keepOnlineTimer = Timer.delay( function() {
-			alert( '連線超時，請重新整理!' );
-		#if debug
-		}, 1000 * 60 * 10 );
-		#else
-		}, 1000 * 60 * 10 );
-		#end
-		*/
 	}
 	
 	static function onBackCallback( ret:Dynamic ) {
@@ -503,6 +492,7 @@ class Main
 	public static function createSocket( id ) {
 		CallJs.api_createChannel( id, {
 			onopen: function() {
+				isCanSendMessage = true;
 				slide( '連線成功' );
 				j( '#btn_connect' ).linkbutton( 'disable' );
 			},
@@ -514,45 +504,16 @@ class Main
 			onerror: function() {
 				j( '#btn_connect' ).linkbutton( 'enable' );
 				isConntect = false;
+				isCanSendMessage = false;
 				alert( '已斷線，請重新連線' );
 			},
 			onclose: function() {
 				j( '#btn_connect' ).linkbutton( 'enable' );	
 				isConntect = false;
+				isCanSendMessage = false;
 				alert( '已斷線，請重新連線' );
 			}
 		});
-		/*
-		var _channel:Dynamic = untyped __js__( 'channel' );
-		_channel.createChannel( id, function(err, ch) {
-			if ( err != null ) {
-				alert( 'socket建立失敗!請重新整理' );
-				return;
-			}	
-			_channel.addEventListenerAndOpenSocket( ch, {
-				onopen: function() {
-					slide( '連線成功' );
-					j( '#btn_connect' ).linkbutton( 'disable' );
-				},
-				onmessage: function(path, option){
-					var origin = Json.parse(path.data);
-					var json = Json.parse(origin);
-					onBackCallback( json );
-				},
-				onerror: function() {
-					j( '#btn_connect' ).linkbutton( 'enable' );
-					isConntect = false;
-					alert( '已斷線，請重新連線' );
-				},
-				onclose: function() {
-					j( '#btn_connect' ).linkbutton( 'enable' );	
-					isConntect = false;
-					alert( '已斷線，請重新連線' );
-				}
-			});
-			
-		});
-		*/
 	}
 	
 	public static function messageSocket( toId, type, msg ) {
