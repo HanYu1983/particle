@@ -9,9 +9,6 @@
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
 	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
 		
-	<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
-	<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
-		
 	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
@@ -23,10 +20,12 @@
 		
 </head>
 <style>
-/*
-html, body, div{
-	cursor:none;
-}*/
+
+html, body{
+	position:absolute;
+	width:100%;
+	height:100%;
+}
 
 #btn_about,
 #btn_team,
@@ -65,6 +64,11 @@ html, body, div{
 	display:inline-block;
 }
 
+.showcase{
+	width:600px;
+	outline:1px black solid;
+}
+
 a{
 	color:yellow;
 	font-size:16px;
@@ -90,19 +94,6 @@ a{
 </script>
 <body>
 	<div class="easyui-layout" style="width:100%;height:100%;">
-		<!--
-		<div data-options="region:'north',split:false" style="height:35px;">
-			<div style="position:absolute; right:5px; top:5px;">
-				<div class="hori">
-					<a href="#" id="btn_login" class="easyui-linkbutton" data-options="iconCls:'icon-fb-login',disabled:true" onclick="onBtnClick(this)" >登入</a>
-				</div>
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
-				</div>
-			</div>
-			
-		</div>
-		-->
 		<div data-options="region:'west',title:'選單',split:false,collapsible:false" style="width:200px; min-width:200px;">
 			<div class="group">
 				<div class="group">
@@ -169,6 +160,11 @@ a{
 					<br/>
 					不用安裝、有網路即可觀看
 				</div>
+				<div class="group" style="overflow:auto; margin-top:30px; ">
+					<div class="group" style="text-align:center;">
+						<img src="images/007.jpg" class="hori showcase" />
+					</div>
+				</div>
 				<div class="group" style="text-align:center; margin-top:60px;">
 					<h1>余氏k線圖教學</h1>
 					<div><a href="https://www.youtube.com/embed/HLbJIh-3siU?list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">基本操作說明</a></div>
@@ -192,6 +188,12 @@ a{
 					傻瓜也能用的粒子系統！好用！<br>
 					<span style="color:yellow;">效能已優化、功能強大</span><br>
 					<span style="color:yellow;">本網站粒子特效均由幽夢仙境製作而來! 有拖拉效果、全螢幕效果</span>
+				</div>
+				<div class="group" style="overflow:auto; margin-top:30px; ">
+					<div class="group" style="text-align:center;">
+						<img src="images/008.jpg" class="hori showcase" />
+						<img src="images/009.jpg" class="hori showcase" />
+					</div>
 				</div>
 				<div class="group" style="text-align:center; margin-top:60px;">
 					<h1>幽夢仙境教學</h1>
@@ -230,6 +232,11 @@ a{
 					卡牌風雲是一款基於網際網路的卡牌遊玩平台，透過line, facebook manager等等的通話功能，可以很容易實現線上遊戲卡牌的功能，它不限於玩哪一種類型的牌類遊戲，可以說，只要能有圖片的話，牌類遊戲都可以玩。
 					<br/>
 					目前收錄有：<span style="color:yellow">格鬥風雲錄、軍事牌(暫定)、魔法風雲會、鋼彈大戰、三國志大戰</span>
+				</div>
+				<div class="group" style="overflow:auto; margin-top:30px; ">
+					<div class="group" style="text-align:center;">
+						<img src="images/010.jpg" class="hori showcase" />
+					</div>
 				</div>
 				<div class="group" style="text-align:center; margin-top:60px;">
 					<h1>牌組管理器</h1>
@@ -279,13 +286,17 @@ a{
 					javascript<br>
 					jquery easy ui<br>
 					<h1>產品描述</h1>
-					余氏組牌機是一款通用的集換式卡牌搜尋組牌機，目前尚只有三國志大戰。可以讓玩家輸入、輸出來組織自己的牌組。
+					余氏組牌機是一款通用的集換式卡牌搜尋組牌機。可以讓玩家輸入、輸出來組織自己的牌組。
 					<br/>
 					由它所輸出的格式，可以用來作為卡牌風雲所用的組牌格式。直接連入卡牌風雲做遊玩
 					<br/>
 					目前收錄有：<span style="color:yellow">三國志大戰</span>
 				</div>
-				
+				<div class="group" style="overflow:auto; margin-top:30px; ">
+					<div class="group" style="text-align:center;">
+						<img src="images/011.jpg" class="hori showcase" />
+					</div>
+				</div>
 			</div>
 			<div id="mc_team" style="position:relative; width:100%; height:100%; display:none;">
 				<div class="group" style="text-align:center; margin-top:60px;">
@@ -319,7 +330,6 @@ a{
 					</div>
 				</div>
 				-->
-				<!--
 				<div class="group" style="text-align:center; margin-top:40px;">
 					<span style="font-size:20px;">林竹君 Xiao Za</span>
 					<br/>
@@ -332,15 +342,12 @@ a{
 					<br/>
 					<a href="//www.facebook.com/xiao.sa.5076">//www.facebook.com/xiao.sa.5076</a>
 				</div>
-				-->
 			</div>
 		</div>
 		<div id="dia_about" class="easyui-dialog" title="上善若水" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 			<div class="group" style="position:relative; width:100%; text-align:center;">
 				<div class="hori" >
-					上善若水
-					<br/>
-					<img src="../common/images/logo.jpg" width="100" height="100">
+					<img src="../common/images/logo.jpg" style="width:150px;">
 					<br/>
 					上善若水粉絲頁
 					<br/>
@@ -482,7 +489,7 @@ a{
 		closeLoading();
 	});
 	
-	openCard();
+	openDeck();
 	
 	function onBtnClick( target ){
 		switch( target.id ){
