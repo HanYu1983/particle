@@ -1,4 +1,5 @@
 (ns test.getMagicCard)
+; 這個程式可以使用，但所用的網站會阻擋IP，所以目前這個程式沒有作用
 
 (def async (js/require "async"))
 (def request (js/require "request"))

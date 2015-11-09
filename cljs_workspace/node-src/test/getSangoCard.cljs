@@ -7,28 +7,33 @@
 
 (def outputDir "output/")
 (def host "http://sangokushi-taisen-tcg.segataiwan.com.tw/")
+
+; 定義要找的包名稱和頁碼，包名稱可以指定多個
 (def packages 
   ["PR卡片：PR"])
 (def page 1)
+
+; 若有定義指定包（那包的所在網址），則忽略上面的設定
+; 若specPackage設為nil的話，則使用上面的設定
 (def specPackage
   [
-    ["cardinfo.php?id=120&page=2" "2"]
-    ["cardinfo.php?id=120&page=3" "2"]
-    ["cardinfo.php?id=120&page=4" "2"]
-    ["cardinfo.php?id=120&page=5" "2"]
+    ["cardinfo.php?id=120&page=2" ""]
+    ["cardinfo.php?id=120&page=3" ""]
+    ["cardinfo.php?id=120&page=4" ""]
+    ["cardinfo.php?id=120&page=5" ""]
     
-    ["cardinfo.php?id=28&page=1" "2"]
-    ["cardinfo.php?id=22&page=1" "2"]
-    ["cardinfo.php?id=29&page=1" "2"]
-    ["cardinfo.php?id=24&page=1" "2"]
-    ["cardinfo.php?id=30&page=1" "2"]
-    ["cardinfo.php?id=27&page=1" "2"]
+    ["cardinfo.php?id=28&page=1" ""]
+    ["cardinfo.php?id=22&page=1" ""]
+    ["cardinfo.php?id=29&page=1" ""]
+    ["cardinfo.php?id=24&page=1" ""]
+    ["cardinfo.php?id=30&page=1" ""]
+    ["cardinfo.php?id=27&page=1" ""]
     
-    ["cardinfo.php?id=95&page=1" "2"]
-    ["cardinfo.php?id=96&page=1" "2"]
-    ["cardinfo.php?id=97&page=1" "2"]
-    ["cardinfo.php?id=98&page=1" "2"]
-    ["cardinfo.php?id=99&page=1" "2"]
+    ["cardinfo.php?id=95&page=1" ""]
+    ["cardinfo.php?id=96&page=1" ""]
+    ["cardinfo.php?id=97&page=1" ""]
+    ["cardinfo.php?id=98&page=1" ""]
+    ["cardinfo.php?id=99&page=1" ""]
   ])
 
 (defn parseGroup [content]
