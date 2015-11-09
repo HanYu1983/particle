@@ -109,6 +109,14 @@ a{
 		<div class="hori"><input id="txt_back" class="easyui-textbox" style="width:40px" value=${backId}></div>
 	</div>
 </script>
+<script id="tmpl_back" type="jquery-x-tmpl">
+	<div class="hori cardback">
+		<img style="position:relative; width:100%; height:100%;" src=${url}>
+		<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
+		<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
+		<div style="position:relative; background-color:black; opacity:.5;">${id}</div>
+	</div>
+</script>
 <body>
 	<div class="easyui-layout" style="width:100%;height:100%;">
 		<div data-options="region:'west',title:'選單',split:false,collapsible:false" style="width:200px; min-width:200px;">
@@ -258,53 +266,11 @@ a{
 				
 				<div class="group" style="text-align:center; margin-top:60px;">
 					<h1>牌背列表</h1>
-					<div>
+					<div id="mc_backContainer" class="group">
 						<div class="hori cardback">
 							<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_0.png"/>
 							<div style="position:absolute; width:100%; height:100%; top:0; left:0; "></div>
 							<div style="position:relative; background-color:black; opacity:.5;">0</div>
-						</div>
-						<div class="hori cardback">
-							<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_1.png"/>
-							<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
-							<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
-							<div style="position:relative; background-color:black; opacity:.5;">1</div>
-						</div>
-						<div class="hori cardback">
-							<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_2.png"/>
-							<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
-							<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
-							<div style="position:relative; background-color:black; opacity:.5;">2</div>
-						</div>
-						<div class="hori cardback">
-							<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_3.png"/>
-							<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
-							<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
-							<div style="position:relative; background-color:black; opacity:.5;">3</div>
-						</div>
-						<div class="hori cardback">
-							<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_4.png"/>
-							<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
-							<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
-							<div style="position:relative; background-color:black; opacity:.5;">4</div>
-						</div>
-						<div class="hori cardback">
-							<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_5.png"/>
-							<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
-							<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
-							<div style="position:relative; background-color:black; opacity:.5;">5</div>
-						</div>
-						<div class="hori cardback">
-							<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_6.png"/>
-							<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
-							<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
-							<div style="position:relative; background-color:black; opacity:.5;">6</div>
-						</div>
-						<div class="hori cardback">
-							<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_7.png"/>
-							<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
-							<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
-							<div style="position:relative; background-color:black; opacity:.5;">7</div>
 						</div>
 					</div>
 				</div>
@@ -446,6 +412,14 @@ a{
 	<script>
 	
 	/* utils function */
+	
+	var mc_backContainer = $('#mc_backContainer' );
+	_.each( _.range( 18 ), function( bid ){
+		var useId = bid+1;
+		var url = '../common/images/card/cardback_' + useId + '.png';
+		var div = $("#tmpl_back").tmpl({id:useId, url:url });
+		mc_backContainer.append( div );
+	});
 	
 	function handleModel( func ){
 		return function( err, ret ){
