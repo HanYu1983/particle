@@ -410,7 +410,9 @@ var cardSuit = cardSuit || {};
       if( params.game ){
         target.game = params.game
       }
-      
+	  if( params.backId ){
+        target.backId = params.backId
+      }
       if( params.cards ){
         target.cards = params.cards.slice()
       }
