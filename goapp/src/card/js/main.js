@@ -347,7 +347,14 @@ Main.createSelfDeck = function(deckId) {
 	if(Main.cardSuit == null) return;
 	var deck = Main.cardSuit[deckId];
 	if(deck == null) return;
-	if(deck.backId == null) deck.backId = "0";
+	var _g = deck.backId;
+	if(_g == null) deck.backId = "0"; else switch(_g) {
+	case "1":case "2":
+		deck.backId = deck.backId;
+		break;
+	default:
+		deck.backId = "0";
+	}
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
 		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};
 	}));

@@ -112,7 +112,11 @@ class Main
 		if ( cardSuit == null ) return;
 		var deck = cardSuit[deckId];
 		if ( deck == null ) return;
-		if ( deck.backId == null ) deck.backId = "0";
+		deck.backId = switch( deck.backId ) {
+			case null:"0";
+			case "1", "2":deck.backId;
+			case _:"0";
+		}
 		var toDeck = Lambda.array( Lambda.map( deck.cards, function( cardId ) {
 			return { 	
 					id:getId(), 
