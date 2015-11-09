@@ -5,6 +5,9 @@ app.card = app.card || {};
 		$("#mc_deckContainer").empty();
 		_.each( retModel.cardSuit, function( deck ){
 			var copyDeck = JSON.parse( JSON.stringify( deck ) );
+			if( copyDeck.backId == undefined ){
+				copyDeck.backId = "0";
+			}
 			addDeck( copyDeck );
 		});
 	}
@@ -62,18 +65,13 @@ app.card = app.card || {};
 							}catch( e ){
 								showAlert("格式輸入錯誤，請檢查");
 							}
-							//auto add .jpg
-							/*
-							__model.cards = _.map( __model.cards, function( str ){
-								if( str.indexOf( '.jpg' ) == -1 ){
-									return str + '.jpg';
-								}
-								return str;
-							});
-							*/
 							cardSuit.editCardSuit( loadModel, __model );
 							editAndShow();
 							break;
+						case 'txt_back':
+							__model.backId = nv + "";
+							cardSuit.editCardSuit( loadModel, __model );
+							editAndShow();
 					}
 					
 				}

@@ -112,9 +112,11 @@ class Main
 		if ( cardSuit == null ) return;
 		var deck = cardSuit[deckId];
 		if ( deck == null ) return;
+		if ( deck.backId == null ) deck.backId = "0";
 		var toDeck = Lambda.array( Lambda.map( deck.cards, function( cardId ) {
 			return { 	
 					id:getId(), 
+					backId:deck.backId,
 					cardId:cardId,
 					owner:playerId, 
 					relate:'', 
@@ -424,6 +426,7 @@ class Main
 	
 	public static function createCard( model:Dynamic ) {
 		model.url = getCardImageUrlWithPackage( cardPackage, model.cardId );
+		model.backurl = '../common/images/card/cardback_' + model.backId + '.png';
 		
 		//for empty string
 		//var ary_url:Array<String> = model.url.split( '/' );
