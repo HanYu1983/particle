@@ -114,7 +114,7 @@ class Main
 		if ( deck == null ) return;
 		deck.backId = switch( deck.backId ) {
 			case null:"0";
-			case bid if( Std.parseInt( bid ) < 8 ) :bid;
+			case bid if( Std.parseInt( bid ) <= 8 ) :bid;
 			case _:"0";
 		}
 		var toDeck = Lambda.array( Lambda.map( deck.cards, function( cardId ) {
