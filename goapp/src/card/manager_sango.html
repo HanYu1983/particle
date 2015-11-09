@@ -369,7 +369,9 @@ body{
 		<div class="group" style="text-align:center;">
 			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 			<div class="hori" style="margin-top:10px;">
-				<a id="btn" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
+				<a id="btn" href="#" class="easyui-linkbutton" style="width:80px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
+				<a id="btn" href="#" class="easyui-linkbutton" style="width:120px; height:40px;" onclick="window.open('https://particle-979.appspot.com/manager/index.html#');" data-options="iconCls:'icon-back'">去輸入牌組</a>
+				<a id="btn" href="#" class="easyui-linkbutton" style="width:140px; height:40px;" onclick="window.open('https://particle-979.appspot.com/card/index.html#');" data-options="iconCls:'icon-redo'">去玩三國志大戰</a>
 			</div>
 		</div>
 	</div>
@@ -630,6 +632,7 @@ body{
 			$('form').find( 'input[type=checkbox]' ).prop('checked', false);
 			$('form').find( 'input[type=text]' ).val('');
 		}
+		
 		
 		module.onResetClick = onResetClick;
 		module.onSearchClick = onSearchClick;
