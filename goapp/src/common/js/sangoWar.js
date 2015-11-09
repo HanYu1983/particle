@@ -48,6 +48,7 @@ var sangoWar = sangoWar || {};
 				case 'ST限定SR':
 				case 'SR/TR/超TR':
 				case '転生':
+				case 'SR/伝説TR':
 					var rare = rows[i];
 					var id = rows[i+1][0];
 					var ntype = rows[i+2][0];//勢力
