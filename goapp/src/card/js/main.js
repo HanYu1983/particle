@@ -142,22 +142,6 @@ Animate.sameTogetherSeperate = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
-Animate.searchOpponent = function(id,otherPlayerId) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.searchOpponent(id,otherPlayerId);
-		d.resolve();
-		return d;
-	};
-};
-Animate.confirmConnect = function(id,otherPlayerId) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.confirmConnect(id,otherPlayerId);
-		d.resolve();
-		return d;
-	};
-};
 var CallJs = function() { };
 CallJs.__name__ = true;
 var HxOverrides = function() { };
@@ -308,7 +292,7 @@ _$List_ListIterator.prototype = {
 var Main = function() {
 	var _g = this;
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
 		Main.playerId = nv;
 	}});
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
@@ -335,14 +319,18 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.selectOps = function(ops) {
+	Main.otherPlayerIds = ops.split(",");
 	Main.otherPlayerId = ops;
-	if(HxOverrides.indexOf(Main.ary_ops,Main.otherPlayerId,0) == -1) {
-		Main.ary_ops.push(Main.otherPlayerId);
+	Main.saveOpponentToCookie(Main.otherPlayerId);
+	Main.j("#btn_connect").linkbutton("enable");
+};
+Main.saveOpponentToCookie = function(otherPlayerId) {
+	if(HxOverrides.indexOf(Main.ary_ops,otherPlayerId,0) == -1) {
+		Main.ary_ops.push(otherPlayerId);
 		if(Main.ary_ops.length > 10) Main.ary_ops.shift();
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
 	}
 	CallJs.setCookie("otherPlayerId",JSON.stringify(Main.ary_ops));
-	Main.j("#btn_connect").linkbutton("enable");
 };
 Main.createSelfDeck = function(deckId) {
 	if(Main.cardSuit == null) return;
@@ -366,9 +354,10 @@ Main.createCards = function(deck) {
 	});
 };
 Main.pushCmds = function(content) {
-	if(!Main.isCanSendMessage) return;
-	var toId = Main.otherPlayerId;
-	if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
+	Lambda.foreach(Main.otherPlayerIds,function(toId) {
+		if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
+		return true;
+	});
 };
 Main.onBackCallback = function(ret) {
 	(Main.callAction(ret.msg))();
@@ -388,10 +377,6 @@ Main.callAction = function(content) {
 	},[]);
 	var _g = content.cmd;
 	switch(_g) {
-	case "confirmConnect":
-		return Animate.confirmConnect(content.content.id,content.content.otherPlayerId);
-	case "searchOpponent":
-		return Animate.searchOpponent(content.content.id,content.content.otherPlayerId);
 	case "seperateCardSameTogether":
 		return Animate.sameTogetherSeperate(content.content.ary_select,content.content.pos_mouse);
 	case "changeIndex":
@@ -427,22 +412,6 @@ Main.callAction = function(content) {
 	}
 };
 Main.confirmConnect = function(id,oid) {
-	if(id == Main.otherPlayerId && oid == Main.playerId) {
-		Main.isConntect = true;
-		if(Main.searchOpponentTimer != null) {
-			Main.searchOpponentTimer.stop();
-			Main.searchOpponentTimer = null;
-		}
-		Main.slide("對手配對成功!");
-		CallJs.api_startHeartbeat(Main.playerId,Main.otherPlayerId,function(conn) {
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_heartbeat_event,{ conn : conn});
-		});
-		Main.j("#btn_connect").linkbutton("disable");
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_searchComplete);
-	}
-};
-Main.searchOpponent = function(id,oid) {
-	if(id == Main.otherPlayerId && oid == Main.playerId) Main.pushCmds({ cmd : "confirmConnect", content : { id : Main.playerId, otherPlayerId : Main.otherPlayerId}});
 };
 Main.pollAllMessage = function() {
 	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
@@ -451,7 +420,12 @@ Main.applyValue = function(ary_select,self) {
 	Lambda.foreach(ary_select,function(card) {
 		var showWho = (function() {
 			if(card.relate == card.owner) {
-				if(card.relate == Main.playerId) return ""; else if(card.relate == Main.otherPlayerId) return "red";
+				if(card.relate == Main.playerId) return ""; else if((function($this) {
+					var $r;
+					var x = card.relate;
+					$r = HxOverrides.indexOf(Main.otherPlayerIds,x,0);
+					return $r;
+				}(this)) != -1) return "red";
 			}
 			return "";
 		})();
@@ -557,7 +531,7 @@ Main.changeIndex = function(cardId) {
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		if( js_Boot.__instanceof(e,String) ) {
-			console.log(e);
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 550, className : "Main", methodName : "changeIndex"});
 		} else throw(e);
 	}
 };
@@ -568,17 +542,27 @@ Main.removeCards = function(ary_select) {
 		return true;
 	});
 };
-Main.keepSearchOpponent = function() {
-	Main.searchOpponentTimer = haxe_Timer.delay(function() {
-		Main.pushCmds({ cmd : "searchOpponent", content : { id : Main.playerId, otherPlayerId : Main.otherPlayerId}});
-		if(!Main.isConntect) Main.keepSearchOpponent();
-	},3000);
-};
 Main.createSocket = function(id) {
 	CallJs.api_createChannel(id,{ onopen : function() {
 		Main.isCanSendMessage = true;
 		Main.slide("連線成功");
 		Main.j("#btn_connect").linkbutton("disable");
+		var _g1 = 0;
+		var _g = Main.otherPlayerIds.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var fn = (function(_i) {
+				return function(conn) {
+					Main.otherPlayerIdsForCheck[_i] = conn;
+					haxe_Log.trace("oid",{ fileName : "Main.hx", lineNumber : 586, className : "Main", methodName : "createSocket", customParams : [Main.otherPlayerIds[_i],conn]});
+					Main.isConntect = Lambda.fold(Main.otherPlayerIdsForCheck,function(curr,first) {
+						return first && curr;
+					},true);
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_heartbeat_event,{ conn : Main.isConntect});
+				};
+			})(i);
+			CallJs.api_startHeartbeat(Main.playerId,Main.otherPlayerIds[i],fn);
+		}
 	}, onmessage : function(json) {
 		Main.onBackCallback(json);
 	}, onerror : function() {
@@ -633,7 +617,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -663,7 +647,6 @@ Main.prototype = {
 			}
 			Main.slide("正在等待對手...");
 			Main.createSocket(Main.playerId);
-			Main.keepSearchOpponent();
 			break;
 		case "onBtnLoginClick":
 			Main.openLoading("登入並讀取資料中...");
@@ -825,6 +808,11 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -905,6 +893,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -1249,9 +1256,6 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
 		this._body.keyup($bind(this,this.onBodyKeyUp));
 		this._body.mousemove($bind(this,this.onBodyMouseMove));
-		window.document.addEventListener("contextmenu",function(e) {
-			e.preventDefault();
-		},false);
 		this._body.mousedown($bind(this,this.onBodyMouseDown));
 		CallJs.leo_utils_initRectSelect(function(ary) {
 			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
@@ -2032,6 +2036,8 @@ Main.fbid = "";
 Main.token = "";
 Main.playerId = "smart";
 Main.otherPlayerId = "";
+Main.otherPlayerIds = [];
+Main.otherPlayerIdsForCheck = [];
 Main.ary_cards = [];
 Main.currentSelect = "sangoWar";
 Main.cardPackages = { };
@@ -2059,3 +2065,5 @@ model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=main.js.map

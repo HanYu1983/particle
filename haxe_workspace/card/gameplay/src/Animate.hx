@@ -159,7 +159,7 @@ class Animate
 			return d;
 		}
 	}
-	
+	/*
 	public static function searchOpponent( id, otherPlayerId ) {
 		return function() {
 			var d:Dynamic = Main.j.Deferred();
@@ -177,4 +177,5 @@ class Animate
 			return d;
 		}
 	}
+	*/
 }

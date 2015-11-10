@@ -3,6 +3,7 @@ package;
 import haxe.Json;
 import haxe.Timer;
 import js.Browser;
+import js.html.BarProp;
 import js.html.NotifyPaintEvent;
 import mediator.Card;
 import js.Lib;
@@ -31,6 +32,8 @@ class Main
 	public static var token = '';
 	public static var playerId = 'smart';
 	public static var otherPlayerId = '';
+	public static var otherPlayerIds:Array<String> = [];
+	public static var otherPlayerIdsForCheck:Array<Bool> = [];
 	public static var ary_cards:Array<Dynamic> = [];
 	
 	public static var currentSelect = 'sangoWar';
@@ -93,8 +96,15 @@ class Main
 	}
 	
 	public static function selectOps( ops:String ) {
+		otherPlayerIds = ops.split(',');
+		//otherPlayerIdsForCheck = otherPlayerIds.slice(0);
 		otherPlayerId = ops;
+		saveOpponentToCookie( otherPlayerId );
 		
+		j( '#btn_connect' ).linkbutton( 'enable' );
+	}
+	
+	public static function saveOpponentToCookie( otherPlayerId ) {
 		if ( ary_ops.indexOf( otherPlayerId ) == -1 ) {
 			ary_ops.push( otherPlayerId );
 			if ( ary_ops.length > 10 ) {
@@ -102,10 +112,7 @@ class Main
 			}
 			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
 		}
-		
 		CallJs.setCookie( 'otherPlayerId', Json.stringify( ary_ops ) );
-		
-		j( '#btn_connect' ).linkbutton( 'enable' );
 	}
 	
 	public static function createSelfDeck( deckId:Int ) {
@@ -142,16 +149,22 @@ class Main
 	}
 	
 	public static function pushCmds( content:Dynamic ) {
+		#if debug
+		//debug 時不要擋
+		#else
 		if ( !isCanSendMessage ) return;
+		#end
 		
-		var toId = otherPlayerId;
-		if ( toId.length != 0 ) {
-			messageSocket( toId, content.cmd, content );
-		}
-		
+		Lambda.foreach( otherPlayerIds, function( toId ) {
+			if ( toId.length != 0 ) {
+				messageSocket( toId, content.cmd, content );
+			}
+			return true;
+		});
 	}
 	
 	static function onBackCallback( ret:Dynamic ) {
+		//trace( ret.type, ret.msg.cmd );
 		callAction( ret.msg )();
 	}
 	
@@ -172,10 +185,10 @@ class Main
 		}
 		
 		switch( content.cmd ) {
-			case 'confirmConnect':
-				return Animate.confirmConnect( content.content.id, content.content.otherPlayerId );
-			case 'searchOpponent':
-				return Animate.searchOpponent( content.content.id, content.content.otherPlayerId );
+			//case 'confirmConnect':
+			//	return Animate.confirmConnect( content.content.id, content.content.otherPlayerId );
+			//case 'searchOpponent':
+			//	return Animate.searchOpponent( content.content.id, content.content.otherPlayerId );
 			case 'seperateCardSameTogether':
 				return Animate.sameTogetherSeperate( content.content.ary_select, content.content.pos_mouse );
 			case 'changeIndex':
@@ -212,6 +225,38 @@ class Main
 	}
 	
 	public static function confirmConnect( id, oid ) {
+		//trace( id, oid );
+		//trace( otherPlayerIdsForCheck );
+		//if ( Lambda.has( otherPlayerIdsForCheck, id ) && oid == playerId ) {
+		//	trace( 'has', id );
+		//	otherPlayerIdsForCheck.remove( id );
+		//	trace( otherPlayerIdsForCheck );
+			//if ( otherPlayerIdsForCheck.length == 0 ) {
+				
+				//Timer.delay( function(){
+					//isConntect = true;
+					
+					/*
+					if ( searchOpponentTimer != null ) {
+						searchOpponentTimer.stop();
+						searchOpponentTimer = null;
+					}
+					
+					slide( '對手配對成功!' );
+					
+					CallJs.api_startHeartbeat( playerId, otherPlayerId, function( conn ) {
+						isConntect = conn;
+						Facade.getInstance().sendNotification( on_heartbeat_event, {conn:conn} );
+					});
+					
+					j( '#btn_connect' ).linkbutton( 'disable' );
+					Facade.getInstance().sendNotification( on_searchComplete );
+					*/
+					
+				//}, 1000 );
+		//	}
+		//}
+		/*
 		if ( id == otherPlayerId && oid == playerId ) {
 			isConntect = true;
 			if ( searchOpponentTimer != null ) {
@@ -228,13 +273,20 @@ class Main
 			j( '#btn_connect' ).linkbutton( 'disable' );
 			Facade.getInstance().sendNotification( on_searchComplete );
 		}
+		*/
 	}
-	
+	/*
 	public static function searchOpponent( id, oid ) {
+		if ( Lambda.has( otherPlayerIdsForCheck, id ) && oid == playerId ) {
+			pushCmds( { cmd:'confirmConnect', content: { id:playerId, otherPlayerId:id }} );
+			//otherPlayerIdsForCheck.remove( id );
+		}
+		
 		if ( id == otherPlayerId && oid == playerId )
 			pushCmds( {cmd:'confirmConnect', content:{id:playerId, otherPlayerId:otherPlayerId}} );
+			
 	}
-	
+	*/
 	public static function pollAllMessage() {
 		CallJs.api_pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
@@ -266,7 +318,7 @@ class Main
 				slide( '正在等待對手...' );
 				
 				createSocket( playerId );
-				keepSearchOpponent();
+			//	keepSearchOpponent();
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );
 				
@@ -361,9 +413,16 @@ class Main
 				if ( card.relate == card.owner ) {
 					if ( card.relate == Main.playerId ) {
 						return '';
+					}else if( otherPlayerIds.indexOf( card.relate ) != -1 ){
+						return 'red';
+					}
+					/*
+					if ( card.relate == Main.playerId ) {
+						return '';
 					}else if( card.relate == Main.otherPlayerId ){
 						return 'red';
 					}
+					*/
 				}
 				return '';
 			})();
@@ -500,21 +559,48 @@ class Main
 		});
 	}
 	
-	public static var searchOpponentTimer:Timer = null;
-	
+	//public static var searchOpponentTimer:Timer = null;
+	/*
 	public static function keepSearchOpponent() {
 		searchOpponentTimer = Timer.delay( function() {
-			pushCmds( { cmd:'searchOpponent', content: { id:playerId, otherPlayerId:otherPlayerId } } );
+			Lambda.foreach( otherPlayerIds, function( oid ) {
+				pushCmds( { cmd:'searchOpponent', content: { id:playerId, otherPlayerId:oid } } );
+				return true;
+			});
+			//pushCmds( { cmd:'searchOpponent', content: { id:playerId, otherPlayerId:otherPlayerId } } );
 			if ( !isConntect ) keepSearchOpponent();
 		}, 3000 );
 	}
-	
+	*/
 	public static function createSocket( id ) {
 		CallJs.api_createChannel( id, {
 			onopen: function() {
 				isCanSendMessage = true;
 				slide( '連線成功' );
 				j( '#btn_connect' ).linkbutton( 'disable' );
+				
+				for ( i in 0...otherPlayerIds.length ) {
+					var fn = (function( _i: Int ):Bool -> Void {
+						return function( conn: Bool ) {
+							otherPlayerIdsForCheck[_i] = conn;
+							isConntect = Lambda.fold( otherPlayerIdsForCheck, function( curr, first ) {
+								return first && curr;
+							}, true );
+							
+							Facade.getInstance().sendNotification( on_heartbeat_event, {conn:isConntect} );
+						}
+					})( i );
+					CallJs.api_startHeartbeat( playerId, otherPlayerIds[i], fn );
+				}
+				/*
+				CallJs.api_startHeartbeat( playerId, otherPlayerId, function( conn ) {
+					isConntect = conn;
+					Facade.getInstance().sendNotification( on_heartbeat_event, {conn:conn} );
+				});
+				*/
+				//Facade.getInstance().sendNotification( on_searchComplete );
+				//j( '#btn_connect' ).linkbutton( 'disable' );
+				
 			},
 			onmessage: function( json ){
 				//var origin = Json.parse(path.data);
@@ -537,6 +623,7 @@ class Main
 	}
 	
 	public static function messageSocket( toId, type, msg ) {
+//		trace( 'send to:', toId, 'type', type );
 		var _channel:Dynamic = untyped __js__( 'channel' );
 		var msg = {
 			type:type,
