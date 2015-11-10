@@ -1,6 +1,8 @@
 (ns app.main
   (:require
-    [test.getSangoCard]))
+    [test.getSangoCard]
+    [test.getMagicCard]
+    [test.getGundamCard]))
 
 (def yargs (js/require "yargs"))
   
@@ -18,6 +20,8 @@
       "getMagicCard"
       (test.getMagicCard/main 110 10 1000)
       
+      "getGundamCard"
+      (test.getGundamCard/getInfo)
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動
 (enable-console-print!)

@@ -1,4 +1,6 @@
-(ns test.getMagicCard)
+(ns test.getMagicCard
+  (:require
+    [lib.tool :as t]))
 ; 這個程式可以使用，但所用的網站會阻擋IP，所以目前這個程式沒有作用
 
 (def async (js/require "async"))
@@ -21,15 +23,6 @@
             (cb err {"images" {}})))
         (cb nil (js->clj (.parse js/JSON data)))))))
         
-        
-(defn getUrl [url cb]
-  (request 
-    url
-    (fn [err res body]
-      (if err
-        (cb err)
-        (cb nil body)))))
-        
 (defn parseImageSrc [content]
   (let [tags
         (re-seq
@@ -43,7 +36,7 @@
       first)))
       
 (defn getKeyAndImageSrc [id cb]
-  (getUrl 
+  (t/getUrl 
     (cardPath id)
     (fn [err data]
       (if err
