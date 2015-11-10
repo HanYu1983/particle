@@ -35,6 +35,7 @@ var sangoWar = sangoWar || {};
 				case 'PT':
 				case 'C':
 				case 'SR':
+				case 'TR':
 				case 'R':
 				case 'PT/超TR':
 				case 'R/TR':
