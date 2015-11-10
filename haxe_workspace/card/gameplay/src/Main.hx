@@ -559,19 +559,6 @@ class Main
 		});
 	}
 	
-	//public static var searchOpponentTimer:Timer = null;
-	/*
-	public static function keepSearchOpponent() {
-		searchOpponentTimer = Timer.delay( function() {
-			Lambda.foreach( otherPlayerIds, function( oid ) {
-				pushCmds( { cmd:'searchOpponent', content: { id:playerId, otherPlayerId:oid } } );
-				return true;
-			});
-			//pushCmds( { cmd:'searchOpponent', content: { id:playerId, otherPlayerId:otherPlayerId } } );
-			if ( !isConntect ) keepSearchOpponent();
-		}, 3000 );
-	}
-	*/
 	public static function createSocket( id ) {
 		CallJs.api_createChannel( id, {
 			onopen: function() {
@@ -586,25 +573,17 @@ class Main
 							isConntect = Lambda.fold( otherPlayerIdsForCheck, function( curr, first ) {
 								return first && curr;
 							}, true );
-							
+							if ( isConntect ) {
+								Facade.getInstance().sendNotification( on_searchComplete );
+							}
 							Facade.getInstance().sendNotification( on_heartbeat_event, {conn:isConntect} );
 						}
 					})( i );
 					CallJs.api_startHeartbeat( playerId, otherPlayerIds[i], fn );
 				}
-				/*
-				CallJs.api_startHeartbeat( playerId, otherPlayerId, function( conn ) {
-					isConntect = conn;
-					Facade.getInstance().sendNotification( on_heartbeat_event, {conn:conn} );
-				});
-				*/
-				//Facade.getInstance().sendNotification( on_searchComplete );
-				//j( '#btn_connect' ).linkbutton( 'disable' );
 				
 			},
 			onmessage: function( json ){
-				//var origin = Json.parse(path.data);
-				//var json = Json.parse(origin);
 				onBackCallback( json );
 			},
 			onerror: function() {
@@ -623,7 +602,6 @@ class Main
 	}
 	
 	public static function messageSocket( toId, type, msg ) {
-//		trace( 'send to:', toId, 'type', type );
 		var _channel:Dynamic = untyped __js__( 'channel' );
 		var msg = {
 			type:type,

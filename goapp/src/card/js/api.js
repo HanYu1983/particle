@@ -374,7 +374,7 @@ var api = api || {};
 	var heartbeatCbPool = {}
 	var heartbeatSeq = 0
 	var heartbeatTimeout = 3000
-	var heartbeatDuration = 4000
+	var heartbeatDuration = 10000
 	
 	function sendHeartbeat( selfName, targetName, delay, cb ){
 		var obj = {
