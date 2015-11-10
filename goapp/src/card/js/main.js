@@ -324,6 +324,7 @@ var Main = function() {
 		_g.loadCardSuit("gundamWar",function() {
 			_g.loadCardSuit("army",function() {
 				_g.loadCardSuit("sangoWar",function() {
+					_g.updateGameUI(Main.currentSelect);
 					Main.closeLoading();
 					Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
 				});
@@ -347,6 +348,9 @@ Main.createSelfDeck = function(deckId) {
 	if(Main.cardSuit == null) return;
 	var deck = Main.cardSuit[deckId];
 	if(deck == null) return;
+	Main.createCards(deck);
+};
+Main.createCards = function(deck) {
 	var _g = deck.backId;
 	var bid = _g;
 	if(_g == null) deck.backId = "0"; else switch(_g) {
@@ -702,6 +706,17 @@ Main.prototype = {
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
+			break;
+		case "onBtnCustomDeck":
+			var str = Main.j("#txt_custom").textbox("getValue");
+			str = "[" + str + "]";
+			try {
+				var createobj = JSON.parse(str);
+				Main.createCards({ backId : "0", cards : createobj});
+			} catch( e ) {
+				if (e instanceof js__$Boot_HaxeError) e = e.val;
+				Main.alert("輸入格式錯誤哦，請檢查!");
+			}
 			break;
 		case "onDiceClick":
 			window.open("http://www.wasabistudio.ca/scripts/dice.php?account=card&name=" + Main.playerId + "&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub");

@@ -72,7 +72,6 @@ class Main
 			ary_ops = [];
 		}
 		
-		
 		openLoading( '準備中...請稍等' );
 		var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
 		untyped __js__( 'myapp.facebook.init' )( fbappId, function() {
@@ -81,6 +80,7 @@ class Main
 					loadCardSuit( 'army', function() {
 						loadCardSuit( 'sangoWar', function() {
 							//loadCardSuit( 'magic', function(){
+								updateGameUI( currentSelect );
 								closeLoading();
 								slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
 							//});
@@ -112,6 +112,10 @@ class Main
 		if ( cardSuit == null ) return;
 		var deck = cardSuit[deckId];
 		if ( deck == null ) return;
+		createCards( deck );
+	}
+	
+	public static function createCards( deck:Dynamic ) {
 		deck.backId = switch( deck.backId ) {
 			case null:"0";
 			case bid if( Std.parseInt( bid ) <= 18 ) :bid;
@@ -134,7 +138,7 @@ class Main
 		slide( '創建卡片完成' );
 		Animate.addCardAndPrepare( toDeck )().done( function() {
 			pushCmds( { cmd:'addCards', content:toDeck } );
-		});
+		});	
 	}
 	
 	public static function pushCmds( content:Dynamic ) {
@@ -313,6 +317,15 @@ class Main
 				//	slide( '沒有登入或者沒有對手時，不能創建卡牌哦' );
 				//}
 				#end
+			case 'onBtnCustomDeck':
+				var str:String = j( "#txt_custom" ).textbox( 'getValue' );
+				str = '[' + str + ']';
+				try {
+					var createobj:Dynamic = Json.parse( str );
+					createCards( {backId:"0", cards:createobj} );
+				}catch ( e:Dynamic ) {
+					alert( '輸入格式錯誤哦，請檢查!' );
+				}
 			case 'onDiceClick':
 				Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
 		}
