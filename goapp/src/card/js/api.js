@@ -213,6 +213,23 @@ var api = api || {};
 	}
 	
 	/**
+	取得圖片路徑
+	pkgName: 'sangoWar' | 'gundamWar' | 'yukiou' | 'army'
+	*/
+	function getCardImageWithPackageName( pkgName, id ){
+		switch( pkgName ){
+		case 'sangoWar':
+			return '//particle-979.appspot.com/common/cardPackage/sangoWar/'+id
+		case 'gundamWar':
+			return '//particle-979.appspot.com/common/cardPackage/gundamWar/'+id
+		case 'yukiou':
+			return '//ocg.xpg.tw/card_img/' + id.replace('EN', 'JP') + '.jpg'
+		case 'army':
+			return '//particle-979.appspot.com/common/cardPackage/army/'+id+'.jpg'
+		}
+	}
+	
+	/**
 	取得卡包
 	name: "gundamWar"
 	cb: function( err, data ){
@@ -440,5 +457,6 @@ var api = api || {};
 	module.getCardSuit = getCardSuit
 	module.createChannel = createChannel
 	module.startHeartbeat = startHeartbeat
+	module.getCardImageWithPackageName = getCardImageWithPackageName
 	
 }) (api)
