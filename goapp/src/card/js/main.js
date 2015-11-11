@@ -412,8 +412,6 @@ Main.callAction = function(content) {
 		return null;
 	}
 };
-Main.confirmConnect = function(id,oid) {
-};
 Main.pollAllMessage = function() {
 	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
 };

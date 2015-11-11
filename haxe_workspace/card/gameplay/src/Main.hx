@@ -224,69 +224,6 @@ class Main
 		}
 	}
 	
-	public static function confirmConnect( id, oid ) {
-		//trace( id, oid );
-		//trace( otherPlayerIdsForCheck );
-		//if ( Lambda.has( otherPlayerIdsForCheck, id ) && oid == playerId ) {
-		//	trace( 'has', id );
-		//	otherPlayerIdsForCheck.remove( id );
-		//	trace( otherPlayerIdsForCheck );
-			//if ( otherPlayerIdsForCheck.length == 0 ) {
-				
-				//Timer.delay( function(){
-					//isConntect = true;
-					
-					/*
-					if ( searchOpponentTimer != null ) {
-						searchOpponentTimer.stop();
-						searchOpponentTimer = null;
-					}
-					
-					slide( '對手配對成功!' );
-					
-					CallJs.api_startHeartbeat( playerId, otherPlayerId, function( conn ) {
-						isConntect = conn;
-						Facade.getInstance().sendNotification( on_heartbeat_event, {conn:conn} );
-					});
-					
-					j( '#btn_connect' ).linkbutton( 'disable' );
-					Facade.getInstance().sendNotification( on_searchComplete );
-					*/
-					
-				//}, 1000 );
-		//	}
-		//}
-		/*
-		if ( id == otherPlayerId && oid == playerId ) {
-			isConntect = true;
-			if ( searchOpponentTimer != null ) {
-				searchOpponentTimer.stop();
-				searchOpponentTimer = null;
-			}
-			
-			slide( '對手配對成功!' );
-			
-			CallJs.api_startHeartbeat( playerId, otherPlayerId, function( conn ) {
-				Facade.getInstance().sendNotification( on_heartbeat_event, {conn:conn} );
-			});
-			
-			j( '#btn_connect' ).linkbutton( 'disable' );
-			Facade.getInstance().sendNotification( on_searchComplete );
-		}
-		*/
-	}
-	/*
-	public static function searchOpponent( id, oid ) {
-		if ( Lambda.has( otherPlayerIdsForCheck, id ) && oid == playerId ) {
-			pushCmds( { cmd:'confirmConnect', content: { id:playerId, otherPlayerId:id }} );
-			//otherPlayerIdsForCheck.remove( id );
-		}
-		
-		if ( id == otherPlayerId && oid == playerId )
-			pushCmds( {cmd:'confirmConnect', content:{id:playerId, otherPlayerId:otherPlayerId}} );
-			
-	}
-	*/
 	public static function pollAllMessage() {
 		CallJs.api_pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
