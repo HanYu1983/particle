@@ -3,7 +3,9 @@
   "dependencies":{
     "async":"*",
     "request": "*",
-    "yargs": "3.26.0"
+    "yargs": "3.26.0",
+    "constant-db": "2.0.3",
+    "sqlite3":"*"
   },
   "main": "main.js"
 }
