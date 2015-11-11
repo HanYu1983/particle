@@ -214,7 +214,7 @@ var api = api || {};
 	
 	/**
 	取得圖片路徑
-	pkgName: 'sangoWar' | 'gundamWar' | 'yukiou' | 'army'
+	pkgName: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
 		switch( pkgName ){
@@ -222,7 +222,7 @@ var api = api || {};
 			return '//particle-979.appspot.com/common/cardPackage/sangoWar/'+id
 		case 'gundamWar':
 			return '//particle-979.appspot.com/common/cardPackage/gundamWar/'+id
-		case 'yukiou':
+		case 'yugioh':
 			return '//ocg.xpg.tw/card_img/' + id.replace('EN', 'JP') + '.jpg'
 		case 'army':
 			return '//particle-979.appspot.com/common/cardPackage/army/'+id+'.jpg'
