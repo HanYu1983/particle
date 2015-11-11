@@ -16,10 +16,12 @@ package;
 						'api.getCardPackage',
 						'api.getCardPackageWithUrl',
 						'api.getCardSuitPackageWithUrl',
+						'api.getCardImageWithPackageName',
 						'api.getCardSuit',
 						'api.startHeartbeat',
 						'api.createChannel',
 						'myapp.facebook.login',
+						'myapp.facebook.init',
 						'leo.utils.initRectSelect'
 					]))
 

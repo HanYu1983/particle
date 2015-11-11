@@ -126,7 +126,7 @@ class UI extends Mediator
 	function showCard( card ) {
 		if ( card == null ) return;
 		if ( card.showTo == Main.playerId ) {
-			var url = Main.getCardImageUrlWithPackage( Main.cardPackage, card.cardId );
+			var url = Main.getCardImageUrlWithPackage( card.game, card.cardId );
 			var div = Main.j( '<div></div>' );
 			div.css( 'position', 'relative' );
 			

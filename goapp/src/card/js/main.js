@@ -304,16 +304,10 @@ var Main = function() {
 	} else Main.ary_ops = [];
 	Main.openLoading("準備中...請稍等");
 	var fbappId = config.fbid[config.fbid.which];
-	myapp.facebook.init(fbappId,function() {
-		_g.loadCardSuit("gundamWar",function() {
-			_g.loadCardSuit("army",function() {
-				_g.loadCardSuit("sangoWar",function() {
-					_g.updateGameUI(Main.currentSelect);
-					Main.closeLoading();
-					Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
-				});
-			});
-		});
+	CallJs.myapp_facebook_init(fbappId,function() {
+		_g.updateGameUI(Main.currentSelect);
+		Main.closeLoading();
+		Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
@@ -346,7 +340,7 @@ Main.createCards = function(deck) {
 		if(Std.parseInt(bid) <= 18) deck.backId = bid; else deck.backId = "0";
 	}
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
-		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};
+		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};
 	}));
 	Main.slide("創建卡片完成");
 	(Animate.addCardAndPrepare(toDeck))().done(function() {
@@ -495,7 +489,7 @@ Main.rotate = function(ary_select,deg) {
 	Main.applyValue(ary_select,true);
 };
 Main.createCard = function(model) {
-	model.url = Main.getCardImageUrlWithPackage(Main.cardPackage,model.cardId);
+	model.url = CallJs.api_getCardImageWithPackageName(Main.currentSelect,model.cardId);
 	model.backurl = "../common/images/card/cardback_" + Std.string(model.backId) + ".png";
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
@@ -582,24 +576,8 @@ Main.messageSocket = function(toId,type,msg) {
 	_channel.sendChannelMessage(toId,JSON.stringify(msg1),Main.handleResponse(function(ret) {
 	}));
 };
-Main.getCardImageUrlWithPackage = function(name,key) {
-	if(key.indexOf("http") != -1) return key;
-	var cpkg = null;
-	var _g = 0;
-	var _g1 = Reflect.fields(Main.cardPackages);
-	while(_g < _g1.length) {
-		var pkg = _g1[_g];
-		++_g;
-		if(Reflect.field(Reflect.field(Main.cardPackages,pkg).images,key) != null) {
-			cpkg = Reflect.field(Main.cardPackages,pkg);
-			break;
-		}
-	}
-	if(cpkg == null) {
-		Main.slide("缺了這張牌的圖哦! id是: " + key,30000);
-		return "";
-	}
-	return api.getCardImageUrlWithPackage(cpkg,key);
+Main.getCardImageUrlWithPackage = function(select,key) {
+	return CallJs.api_getCardImageWithPackageName(select,key);
 };
 Main.slide = function(msg,time) {
 	if(time == null) time = 2000;
@@ -626,17 +604,7 @@ Main.getId = function() {
 	return leo.utils.generateUUID();
 };
 Main.prototype = {
-	loadCardSuit: function(suitName,cb) {
-		if(Reflect.field(Main.cardPackages,suitName) != null) {
-			Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
-			if(cb != null) cb();
-		} else CallJs.api_getCardPackageWithUrl("../common/cardPackage/" + suitName + ".json",Main.handleResponse(function(ret) {
-			Main.cardPackage = ret;
-			Main.cardPackages[suitName] = Main.cardPackage;
-			if(cb != null) cb();
-		}));
-	}
-	,onHtmlClick: function(type,params) {
+	onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
 		case "onBtnStartServer":
@@ -728,7 +696,6 @@ Main.prototype = {
 		return Main.playerId != "" && Main.otherPlayerId != "";
 	}
 	,chooseCardSuit: function(suitName) {
-		Main.cardPackage = Reflect.field(Main.cardPackages,suitName);
 		Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
 		var _g = Main.cardSuit;
 		if(_g == null) Main.cardSuit = []; else switch(_g.length) {
@@ -1361,7 +1328,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 	,showCard: function(card) {
 		if(card == null) return;
 		if(card.showTo == Main.playerId) {
-			var url = Main.getCardImageUrlWithPackage(Main.cardPackage,card.cardId);
+			var url = Main.getCardImageUrlWithPackage(card.game,card.cardId);
 			var div = Main.j("<div></div>");
 			div.css("position","relative");
 			var img = Main.j("<img></img>");
@@ -1999,10 +1966,12 @@ CallJs.api_clear = api.clear;
 CallJs.api_getCardPackage = api.getCardPackage;
 CallJs.api_getCardPackageWithUrl = api.getCardPackageWithUrl;
 CallJs.api_getCardSuitPackageWithUrl = api.getCardSuitPackageWithUrl;
+CallJs.api_getCardImageWithPackageName = api.getCardImageWithPackageName;
 CallJs.api_getCardSuit = api.getCardSuit;
 CallJs.api_startHeartbeat = api.startHeartbeat;
 CallJs.api_createChannel = api.createChannel;
 CallJs.myapp_facebook_login = myapp.facebook.login;
+CallJs.myapp_facebook_init = myapp.facebook.init;
 CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
@@ -2018,7 +1987,6 @@ Main.otherPlayerIds = [];
 Main.otherPlayerIdsForCheck = [];
 Main.ary_cards = [];
 Main.currentSelect = "sangoWar";
-Main.cardPackages = { };
 Main.cardSuits = { };
 Main.isConntect = false;
 Main.isCanSendMessage = false;

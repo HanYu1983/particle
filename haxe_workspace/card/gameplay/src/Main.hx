@@ -37,8 +37,6 @@ class Main
 	public static var ary_cards:Array<Dynamic> = [];
 	
 	public static var currentSelect = 'sangoWar';
-	public static var cardPackages:Dynamic = { };
-	public static var cardPackage = null;
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
 	public static var isConntect = false;
@@ -77,27 +75,16 @@ class Main
 		
 		openLoading( '準備中...請稍等' );
 		var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
-		untyped __js__( 'myapp.facebook.init' )( fbappId, function() {
-			loadCardSuit( 'gundamWar', function() {
-				//loadCardSuit( 'fighter', function() {
-					loadCardSuit( 'army', function() {
-						loadCardSuit( 'sangoWar', function() {
-							//loadCardSuit( 'magic', function(){
-								updateGameUI( currentSelect );
-								closeLoading();
-								slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
-							//});
-						});
-					});
-				//});
-			});
+		CallJs.myapp_facebook_init( fbappId, function() {
+			updateGameUI( currentSelect );
+			closeLoading();
+			slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
 		});
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 	}
 	
 	public static function selectOps( ops:String ) {
 		otherPlayerIds = ops.split(',');
-		//otherPlayerIdsForCheck = otherPlayerIds.slice(0);
 		otherPlayerId = ops;
 		saveOpponentToCookie( otherPlayerId );
 		
@@ -134,6 +121,7 @@ class Main
 					backId:deck.backId,
 					cardId:cardId,
 					owner:playerId, 
+					game:currentSelect,
 					relate:'', 
 					deg:0, 
 					pos:[0, 0], 
@@ -228,22 +216,6 @@ class Main
 		CallJs.api_pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
 	
-	function loadCardSuit( suitName, ?cb: Void -> Void ) {
-		if ( Reflect.field( cardPackages, suitName ) != null ) {
-			cardPackage = Reflect.field( cardPackages, suitName );
-			if ( cb != null ) cb();
-		}else {
-			
-			CallJs.api_getCardPackageWithUrl( '../common/cardPackage/' + suitName + '.json', handleResponse( function( ret ) {
-				cardPackage = ret;
-				Reflect.setField( cardPackages, suitName, cardPackage );
-				
-				if ( cb != null ) cb();
-			}));
-			
-		}
-	}
-	
 	function onHtmlClick( type, ?params ) {
 		switch( type ) {
 			case 'onBtnStartServer':
@@ -336,7 +308,7 @@ class Main
 	}
 	
 	function chooseCardSuit( suitName ) {
-		cardPackage = Reflect.field( cardPackages, suitName );
+		//cardPackage = Reflect.field( cardPackages, suitName );
 		cardSuit = Reflect.field( cardSuits, suitName ) ;
 		switch( cardSuit ) {
 			case null:cardSuit = [];
@@ -438,7 +410,7 @@ class Main
 	}
 	
 	public static function createCard( model:Dynamic ) {
-		model.url = getCardImageUrlWithPackage( cardPackage, model.cardId );
+		model.url = CallJs.api_getCardImageWithPackageName( currentSelect, model.cardId );
 		model.backurl = '../common/images/card/cardback_' + model.backId + '.png';
 		
 		//for empty string
@@ -549,21 +521,9 @@ class Main
 		}));
 	}
 	
-	public static function getCardImageUrlWithPackage( name:Dynamic, key:String ):String {
-		if ( key.indexOf( 'http' ) != -1 ) return key;
+	public static function getCardImageUrlWithPackage( select:String, key:String ):String {
+		return CallJs.api_getCardImageWithPackageName( select, key );
 		
-		var cpkg:Dynamic = null;
-		for ( pkg in cardPackages.fields() ) {
-			if ( cardPackages.field( pkg ).images.field( key ) != null ) {
-				cpkg = cardPackages.field( pkg );
-				break;
-			}
-		}
-		if ( cpkg == null ) {
-			slide( '缺了這張牌的圖哦! id是: ' + key, 1000 * 30 );
-			return '';
-		}
-		return untyped __js__('api.getCardImageUrlWithPackage' )( cpkg, key );
 	}
 	
 	public static function slide( msg, ?time = 2000 ){
