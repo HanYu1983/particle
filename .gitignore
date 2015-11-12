@@ -16,10 +16,7 @@ go_workspace/root/src/golang.org
 go_workspace/root/src/gopkg.in
 node_modules/
 output/
-goapp/src/common/cardPackage/gundamWar/
-goapp/src/common/cardPackage/sangoWar/
-goapp/src/common/cardPackage/army/
-goapp/src/common/cardPackage/fighter/
+cardPackage/
 pkg/
 github.com/
 node_workspace/genCard/gundamWar/
