@@ -267,6 +267,9 @@ class Main
 			case 'onBtnLoadSangoWarClick':
 				currentSelect = 'sangoWar';
 				chooseCardSuit( 'sangoWar' );
+			case 'onBtnLoadYugiohClick':
+				currentSelect = 'yugioh';
+				chooseCardSuit( 'yugioh' );	
 			case 'onBtnCreateDeck':
 				#if debug
 				Facade.getInstance().sendNotification( on_createDeck_click );
@@ -300,6 +303,7 @@ class Main
 			case 'fighter':j( '#btn_fighter' ).linkbutton( 'select' );
 			case 'magic':j( '#btn_magic' ).linkbutton( 'select' );
 			case 'army':j( '#btn_army' ).linkbutton( 'select' );
+			case 'yugioh':j( '#btn_yugioh' ).linkbutton( 'select' );
 		}
 	}
 	

@@ -654,6 +654,10 @@ Main.prototype = {
 			Main.currentSelect = "sangoWar";
 			this.chooseCardSuit("sangoWar");
 			break;
+		case "onBtnLoadYugiohClick":
+			Main.currentSelect = "yugioh";
+			this.chooseCardSuit("yugioh");
+			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
@@ -689,6 +693,9 @@ Main.prototype = {
 			break;
 		case "army":
 			Main.j("#btn_army").linkbutton("select");
+			break;
+		case "yugioh":
+			Main.j("#btn_yugioh").linkbutton("select");
 			break;
 		}
 	}

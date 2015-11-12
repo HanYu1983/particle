@@ -37,6 +37,7 @@ var sangoWar = sangoWar || {};
 				case 'SR':
 				case 'TR':
 				case 'R':
+				case 'LE':
 				case 'PT/超TR':
 				case 'R/TR':
 				case 'SR/TR':
@@ -44,6 +45,7 @@ var sangoWar = sangoWar || {};
 				case 'UC/EXF':
 				case 'C/EXF':
 				case 'R/EXF':
+				case 'R/TR/超TR':
 				case 'SR/EXF':
 				case 'ST限定R':
 				case 'ST限定SR':
