@@ -2,7 +2,8 @@
   (:require
     [test.getSangoCard]
     [test.getMagicCard]
-    [test.getGundamCard]))
+    [test.getGundamCard]
+    [test.yugioh]))
 
 (def yargs (js/require "yargs"))
   
@@ -14,6 +15,9 @@
           (.demand (array "c"))
           (aget "argv"))]
     (condp = (.-c argv)
+      "parseYugiohCDB"
+      (test.yugioh/parseCDB)
+    
       "getSangoCard"
       (test.getSangoCard/testGetAll)
       
