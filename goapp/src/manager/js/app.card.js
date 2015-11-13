@@ -42,6 +42,7 @@ app.card = app.card || {};
 						case 'btn_magic':__model.game = 'magic';break;
 						case 'btn_gundamWar':__model.game = 'gundamWar';break;
 						case 'btn_sangoWar':__model.game = 'sangoWar';break;
+						case 'btn_yugioh':__model.game = 'yugioh';break;
 					}
 					cardSuit.editCardSuit( loadModel, __model );
 					editAndShow();
@@ -98,6 +99,9 @@ app.card = app.card || {};
 				break;
 			case 'sangoWar':
 				dom.find( '#btn_sangoWar' ).linkbutton( 'select' );
+				break;
+			case 'yugioh':
+				dom.find( '#btn_yugioh' ).linkbutton( 'select' );
 		}
 		
 		dom.find( '#txt_cards' ).textbox( {
