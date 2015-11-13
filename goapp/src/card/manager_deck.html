@@ -70,6 +70,7 @@ body{
 </style>
 <script id="tmpl_bigCard" type="jquery-x-tmpl">
 	<div cid=${id} class="big_card_root">
+		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="../common/images/card/cardback_0.png"/>
 		<img src=${url} style="position:relative; top:0; left:0; width:100%; height:100%;" />
 		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
 		<div style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
@@ -97,8 +98,9 @@ body{
 		<div class="hori" style="position:relative; top:0; left:0; height:100%; vertical-align:top;">
 			<a id="btn_copy" href="#" class="easyui-linkbutton" style="width:30px; height:100%;" data-options="iconCls:'icon-add'"></a>
 		</div>
-		<div class="hori" style="height:100%;">
-			<img src=${url}  style="height:100%;" />
+		<div class="hori" style="position:relative; height:100%;">
+			<img style="position:relative; left:0; top:0; height:100%;" src="../common/images/card/cardback_0.png"/>
+			<img style="position:absolute; left:0; top:0; height:100%;" src=${url}  style="height:100%;" />
 		</div>
 		<div class="hori" style=" vertical-align:top;">
 			<div>${id}</div>
