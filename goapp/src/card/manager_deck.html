@@ -75,11 +75,15 @@ body{
 		<div style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
 		<div style="position:absolute; top:0; left:0; padding-left:50px; padding-right:10px; padding-top:10px; ">
 			<div>${id}</div>
-			<div>${cname}</div>
-			<div>${ability}</div>
-			<div>${content}</div>
+			<div game="sangoWar">${cname}</div>
+			<div game="sangoWar">${ability}</div>
+			<div game="sangoWar">${content}</div>
 			<br/>
-			<div>${counter}</div>
+			<div game="sangoWar">${counter}</div>
+			
+			<div game="yugioh">${name}</div>
+			<div game="yugioh">${race}</div>
+			<div game="yugioh">${text}</div>
 		</div>
 	</div>
 </script>
@@ -96,8 +100,8 @@ body{
 		</div>
 		<div class="hori" style=" vertical-align:top;">
 			<div>${id}</div>
-			<div>${cname}</div>
-			<div>${ctype}</div>
+			<div game="sangoWar">${cname}</div>
+			<div game="sangoWar">${ctype}</div>
 		</div>
 	</div>
 </script>
@@ -191,6 +195,7 @@ body{
 				</select>
 			</td>
 		</tr>
+		
 		<tr>
 			<td>卡片類型</td>
 			<td>
@@ -199,6 +204,29 @@ body{
 					<option>Monster</option>
 					<option>Spell</option>
 					<option>Trap</option>
+				</select>
+				<select name="ctype2">
+					<option></option>
+					<option>Normal</option>
+					<option>Effect</option>
+					<option>Fusion</option>
+					<option>Ritual</option>
+					<option>Trap Monsters</option>
+					<option>Spirit</option>
+					<option>Union</option>
+					<option>Gemini</option>
+					<option>Tuner</option>
+					<option>Synchro</option>
+					<option>Token</option>
+					<option>Quick-Play</option>
+					<option>Continuous</option>
+					<option>Equip</option>
+					<option>Field</option>
+					<option>Counter</option>
+					<option>Flip</option>
+					<option>Toon</option>
+					<option>Xyz</option>
+					<option>Pendulum</option>
 				</select>
 			</td>
 		</tr>
@@ -950,6 +978,9 @@ body{
 				case "ctype":
 					fns.push( cardsearch.attrEq( "type", v ) )
 					break
+				case "ctype2":
+					fns.push( cardsearch.attrEq( "type", v ) )
+					break	
 				case 'lscale_1':
 					fns.push( cardsearch.attrGe( "lscale", v ) )
 					break;
