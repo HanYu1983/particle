@@ -58,8 +58,8 @@ body{
 .big_card_root{
 	position:relative;
 	display:inline-block;
-	width:300px;
-	height:450px;;
+	width:260px;
+	height:390px;;
 	cursor:pointer;
 	border:1px black solid;
 }
@@ -82,6 +82,8 @@ body{
 			<div game="sangoWar">${counter}</div>
 			
 			<div game="yugioh">${name}</div>
+			<div game="yugioh">level ${level}</div>
+			<div game="yugioh">${type}</div>
 			<div game="yugioh">${race}</div>
 			<div game="yugioh">${text}</div>
 		</div>
@@ -102,6 +104,10 @@ body{
 			<div>${id}</div>
 			<div game="sangoWar">${cname}</div>
 			<div game="sangoWar">${ctype}</div>
+			
+			<div game="yugioh">${name}</div>
+			<div game="yugioh">level ${level}</div>
+			<div game="yugioh">${type}</div>
 		</div>
 	</div>
 </script>
@@ -650,7 +656,7 @@ body{
 				
 			</div>
 		</div>
-		<div data-options="region:'east',title:'組牌'" style="width:300px; overflow-x:hidden;">
+		<div data-options="region:'east',title:'組牌'" style="width:350px; overflow-x:hidden;">
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="hori">
 					<span id="txt_count" style="color:yellow">0</span>張
@@ -788,7 +794,12 @@ body{
 			mc_cardContainer.empty();
 			
 			ary_deck.sort( function( aobj, bobj ){
-				return aobj.id.localeCompare( bobj.id );
+				switch( game ){
+					case 'sangoWar':
+						return aobj.cname.localeCompare( bobj.cname );
+					default:
+						return aobj.id.localeCompare( bobj.id );
+				}
 			});
 			
 			txt_count.html( ary_deck.length );
