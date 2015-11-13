@@ -102,22 +102,6 @@ body{
 	</div>
 </script>
 			<!--
-			id: coldata[0],
-			name: coldata[1],
-			
-			combobox:
-			attribute: coldata[3],
-			race: coldata[4],
-			type: coldata[5],
-			
-			twocombobox:
-			level: parseInt(coldata[2]),
-			lscale: parseInt(coldata[6]),
-			rscale: parseInt(coldata[7]),
-			attack: parseInt(coldata[8]),
-			defence: parseInt(coldata[9]),
-			
-			text: decoded,
 			alias: coldata[11],
 			setcode: coldata[12]
 			-->
@@ -178,7 +162,7 @@ body{
 		<tr>
 			<td>種族</td>
 			<td>
-				<select name="type">
+				<select name="race">
 					<option></option>
 					<option>Warrior</option>
 					<option>Spellcaster</option>
@@ -210,7 +194,7 @@ body{
 		<tr>
 			<td>卡片類型</td>
 			<td>
-				<select>
+				<select name="ctype">
 					<option></option>
 					<option>Monster</option>
 					<option>Spell</option>
@@ -283,6 +267,98 @@ body{
 				</select>
 				以下
 			</td>
+		</tr>
+		<tr>
+			<td>左擺蕩</td>
+			<td>
+				<select name="lscale_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以上
+				<select name="lscale_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>右擺蕩</td>
+			<td>
+				<select name="rscale_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以上
+				<select name="rscale_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+		  <td >
+			卡片名稱檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="card_name" size=32>
+			<br>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片規則檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="rule" size=32>
+			<br>
+		  </td>
+		</tr>
+		 <tr>
+		  <td >
+			id檢索<br>
+		  </td>
+		  <td colspan="3">
+			  <input id="txt_id" type="text" name="id" size=16>
+		  </td>
 		</tr>
 	</table>
 </script>
@@ -833,11 +909,35 @@ body{
 					continue
 				}
 				switch( k ){
+				case "card_name":
+					fns.push( cardsearch.attrEq( "name", v ) )
+					break;
+				case "rule":
+					fns.push( cardsearch.attrEq( "text", v ))
+					break
 				case "id":
 					fns.push( cardsearch.attrEq( "id", v ) )
 					break
-				case 'type':
+				case "attr":
+					fns.push( cardsearch.attrEq( "attribute", v ) )
+					break
+				case 'race':
+					fns.push( cardsearch.attrEq( "race", v ) )
+					break
+				case "ctype":
 					fns.push( cardsearch.attrEq( "type", v ) )
+					break
+				case 'lscale_1':
+					fns.push( cardsearch.attrGe( "lscale", v ) )
+					break;
+				case 'lscale_2':
+					fns.push( cardsearch.attrLe( "lscale", v ) )
+					break;
+				case 'rscale_1':
+					fns.push( cardsearch.attrGe( "rscale", v ) )
+					break;
+				case 'rscale_2':
+					fns.push( cardsearch.attrLe( "rscale", v ) )
 					break;
 				case 'level_1':
 					fns.push( cardsearch.attrGe( "level", v ) )
