@@ -58,8 +58,8 @@ body{
 .big_card_root{
 	position:relative;
 	display:inline-block;
-	width:220px;
-	height:330px;;
+	width:260px;
+	height:390px;;
 	cursor:pointer;
 	border:1px black solid;
 }
@@ -1062,7 +1062,12 @@ body{
 			googleTracking.click( 'onSaveClick' );
 			win_output.window('open' );
 			var ary_new = _.map( ary_deck, function( card ){
-				return sangoWar.formatKey( card.id );
+				switch( game ){
+				default:
+					return card.id
+				case 'sangoWar':
+					return sangoWar.formatKey( card.id );
+				}
 			});
 			var outputstr = JSON.stringify( ary_new );
 			outputstr = outputstr.substr( 1, outputstr.length - 2 );

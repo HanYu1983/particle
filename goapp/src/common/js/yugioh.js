@@ -65,6 +65,14 @@ var yugioh = yugioh || {};
 		})
 	}
 	
+	function formatKey( id ){
+		if( id.indexOf("(") == -1 ){
+			return id + ".jpg"
+		}
+		return id.substring( 0, id.indexOf("(") ) + ".jpg"
+	}
+	
 	module.load = load
+	module.formatKey = formatKey
 	
 }) ( yugioh )
