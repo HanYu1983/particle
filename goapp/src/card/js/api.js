@@ -223,7 +223,7 @@ var api = api || {};
 		case 'gundamWar':
 			return '//particle-979.appspot.com/common/cardPackage/gundamWar/'+id
 		case 'yugioh':
-			return '//ocg.xpg.tw/card_img/' + id.replace('EN', 'JP') + '.jpg'
+			return '//fast-drake-630.appspot.com/common/cardPackage/yugioh/'+id+'.jpg'
 		case 'army':
 			return '//particle-979.appspot.com/common/cardPackage/army/'+id+'.jpg'
 		}

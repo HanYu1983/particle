@@ -28,6 +28,7 @@
 	<script src="../common/js/lib/csv.js"></script>
 	<script src="../common/js/lib/purl.js"></script>	
 	<script src="../common/js/sangoWar.js"></script>	
+	<script src="../common/js/cardsearch.js"></script>	
 	<script src='js/api.js'></script>
 </head>
 <style>
@@ -555,8 +556,100 @@ body{
 			setPagination( ary_cards.length );
 		}
 		
+		// 三國尋找方法實做
+		function sangoWarQuerystring2fns( qstr ){
+			var url = $.url("?" + qstr)
+			var query = url.data.param.query
+			var fns = []
+			for( var k in query ){
+				var v = query[k]
+				if( v == "" ){
+					continue
+				}
+				switch( k ){
+				case "id":
+					fns.push( cardsearch.attrEq( "id", v ) )
+					break
+				case "acity":
+					fns.push( cardsearch.attrEq( "acity", parseInt(v) ) )
+					break
+				case "atype":
+					fns.push( cardsearch.attrEq( "atype2", v ) )
+					break
+				case "card_name":
+					fns.push( cardsearch.attrEq( "cname", v ) )
+					break
+				case "costAll_2":
+					fns.push( cardsearch.attrLe( "costA", parseInt(v) ))
+					break
+				case "costAll_1":
+					fns.push( cardsearch.attrGe( "costA", parseInt(v) ))
+					break
+				case "cost_2":
+					fns.push( cardsearch.attrLe( "cost", parseInt(v) ))
+					break
+				case "cost_1":
+					fns.push( cardsearch.attrGe( "cost", parseInt(v) ))
+					break
+				case "ctype":
+					fns.push( cardsearch.attrEq( "ctype", v ) )
+					break
+				case "ntype":
+					fns.push( cardsearch.attrEq( "ntype", v ) )
+					break
+				case "power_2":
+					fns.push( cardsearch.attrLe( "power", parseInt(v) ))
+					break
+				case "power_1":
+					fns.push( cardsearch.attrGe( "power", parseInt(v) ))
+					break
+				case "rule":
+					fns.push( cardsearch.attrEq( "content", v ))
+					break
+				case "symbol":
+					fns.push( cardsearch.attrEq( "atype", v ) )
+					break
+				default:
+					if( v == "on" ){
+						fns.push( cardsearch.attrEq( "ability", k ))
+					}
+				}
+			}
+			return fns
+		}
+		
+		// 遊戲王尋找方法實做
+		/*
+						id: coldata[0],
+						name: coldata[1],
+						level: parseInt(coldata[2]),
+						attribute: coldata[3],
+						race: coldata[4],
+						type: coldata[5],
+						lscale: parseInt(coldata[6]),
+						rscale: parseInt(coldata[7]),
+						attack: parseInt(coldata[8]),
+						defence: parseInt(coldata[9]),
+						text: decoded,
+						alias: coldata[11],
+						setcode: coldata[12]
+		*/
+		function yugiohQuerystring2fns( qstr ){
+			var url = $.url("?" + qstr)
+			var query = url.data.param.query
+			var fns = []
+			for( var k in query ){
+				var v = query[k]
+				if( v == "" ){
+					continue
+				}
+			}
+			return fns
+		}
+		
 		function searchLib( str ){
-			return sangoWar.search( str, cardlist );
+			var fns = sangoWarQuerystring2fns(str)
+			return cardsearch.search( fns, cardlist );
 		}
 		
 		function setPagination( total ){
