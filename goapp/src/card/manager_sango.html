@@ -28,6 +28,7 @@
 	<script src="../common/js/lib/csv.js"></script>
 	<script src="../common/js/lib/purl.js"></script>	
 	<script src="../common/js/sangoWar.js"></script>	
+	<script src="../common/js/yugioh.js"></script>	
 	<script src="../common/js/cardsearch.js"></script>	
 	<script src='js/api.js'></script>
 </head>
@@ -99,6 +100,191 @@ body{
 			<div>${ctype}</div>
 		</div>
 	</div>
+</script>
+			<!--
+			id: coldata[0],
+			name: coldata[1],
+			
+			combobox:
+			attribute: coldata[3],
+			race: coldata[4],
+			type: coldata[5],
+			
+			twocombobox:
+			level: parseInt(coldata[2]),
+			lscale: parseInt(coldata[6]),
+			rscale: parseInt(coldata[7]),
+			attack: parseInt(coldata[8]),
+			defence: parseInt(coldata[9]),
+			
+			text: decoded,
+			alias: coldata[11],
+			setcode: coldata[12]
+			-->
+<script id="tmpl_yugiohForm" type="jquery-x-tmpl">
+	<table border=1>	
+		<tr>
+			<td>星級</td>
+			<td>
+				<select name="level_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				以上
+				<select name="level_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>屬性</td>
+			<td>
+				<select name="attr">
+					<option></option>
+					<option>Earth</option>
+					<option>Water</option>
+					<option>Fire</option>
+					<option>Wind</option>
+					<option>Light</option>
+					<option>Dark</option>
+					<option>Divine</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>種族</td>
+			<td>
+				<select name="type">
+					<option></option>
+					<option>Warrior</option>
+					<option>Spellcaster</option>
+					<option>Fairy</option>
+					<option>Fiend</option>
+					<option>Zombie</option>
+					<option>Machine</option>
+					<option>Aqua</option>
+					<option>Pyro</option>
+					<option>Rock</option>
+					<option>Winged Beast</option>
+					<option>Plant</option>
+					<option>Insect</option>
+					<option>Thunder</option>
+					<option>Dragon</option>
+					<option>Beast</option>
+					<option>Beast-Warrior</option>
+					<option>Dinosaur</option>
+					<option>Fish</option>
+					<option>Sea Serpent</option>
+					<option>Reptile</option>
+					<option>Psychic</option>
+					<option>Divine-Beast</option>
+					<option>Creator God</option>
+					<option>Wyrm</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>卡片類型</td>
+			<td>
+				<select>
+					<option></option>
+					<option>Monster</option>
+					<option>Spell</option>
+					<option>Trap</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>攻擊力</td>
+			<td>
+				<select name="atk_1">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以上
+				<select name="atk_2">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>防守力</td>
+			<td>
+				<select name="def_1">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以上
+				<select name="def_2">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以下
+			</td>
+		</tr>
+	</table>
 </script>
 <script id="tmpl_sangoWarForm" type="jquery-x-tmpl">
 	<table cellpadding=2 cellspacing=0 border=1>	
@@ -395,11 +581,13 @@ body{
 	var cardlist;
 	var itemId = 0;
 	var form_container = $('#form_container' );
-	var tmpl_sangoWarForm = $('#tmpl_sangoWarForm' );
+	//var tmpl_sangoWarForm = $('#tmpl_sangoWarForm' );
+	var tmpl_sangoWarForm = $('#tmpl_yugiohForm' );
 	
 	form_container.append( tmpl_sangoWarForm.tmpl() );
 
-	sangoWar.load( "js/sangoList.txt", function( err, _cardlist ){
+	//sangoWar.load( "js/sangoList.txt", function( err, _cardlist ){
+	yugioh.load( "js/yugiohList.txt", function( err, _cardlist ){
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
@@ -445,7 +633,8 @@ body{
 			
 			var showCards = ary_cards.slice( sid, eid );
 			_.each( showCards, function( card ){
-				card.url = api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
+				//card.url = api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
+				card.url = api.getCardImageWithPackageName( 'yugioh', card.id );
 				if( card.url == undefined ) {
 					card.url = 'images/cardback.png';
 				}
@@ -643,12 +832,43 @@ body{
 				if( v == "" ){
 					continue
 				}
+				switch( k ){
+				case "id":
+					fns.push( cardsearch.attrEq( "id", v ) )
+					break
+				case 'type':
+					fns.push( cardsearch.attrEq( "type", v ) )
+					break;
+				case 'level_1':
+					fns.push( cardsearch.attrGe( "level", v ) )
+					break;
+				case 'level_2':
+					fns.push( cardsearch.attrLe( "level", v ) )
+					break;
+				case 'atk_1':
+					fns.push( cardsearch.attrGe( "attack", v ) )
+					break;
+				case 'atk_2':
+					fns.push( cardsearch.attrLe( "attack", v ) )
+					break;
+				case 'def_1':
+					fns.push( cardsearch.attrGe( "defence", v ) )
+					break;
+				case 'def_2':
+					fns.push( cardsearch.attrLe( "defence", v ) )
+					break;
+				default:
+					if( v == "on" ){
+						fns.push( cardsearch.attrEq( "ability", k ))
+					}
+				}
 			}
 			return fns
 		}
 		
 		function searchLib( str ){
-			var fns = sangoWarQuerystring2fns(str)
+			//var fns = sangoWarQuerystring2fns(str)
+			var fns = yugiohQuerystring2fns(str)
 			return cardsearch.search( fns, cardlist );
 		}
 		
@@ -710,7 +930,8 @@ body{
 					
 					_.each( ary_deck, function( card ){
 						card.itemId = getId();
-						card.url = api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
+						//card.url = api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
+						card.url = api.getCardImageWithPackageName( 'yugioh', card.id );
 						if( card.url == undefined ) {
 							card.url = 'images/cardback.png';
 						}
