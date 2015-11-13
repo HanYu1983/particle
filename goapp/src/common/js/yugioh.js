@@ -7,6 +7,7 @@ var yugioh = yugioh || {};
 			url: path,
 			dataType: 'text',
 			success: function( data ){
+				data = data.replace(/\uCR/gi, '')
 				var rows = data.split('\n')
 				var ary = []
 				
