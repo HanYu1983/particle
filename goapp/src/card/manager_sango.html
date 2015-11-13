@@ -654,20 +654,37 @@ body{
 	<script>
 	googleTracking.init( 'UA-55273266-3' );
 	
+	var game = (function( hashobj ){
+		if( hashobj.game == undefined ) return 'sangoWar';
+		switch( hashobj.game ){
+			case 'sangoWar':
+			case 'yugioh':
+				return hashobj.game;
+			default:
+				return 'sangoWar';
+		}
+	})( leo.utils.getHash() );
+	
 	var cardlist;
 	var itemId = 0;
 	var form_container = $('#form_container' );
-	//var tmpl_sangoWarForm = $('#tmpl_sangoWarForm' );
-	var tmpl_sangoWarForm = $('#tmpl_yugiohForm' );
+	var tmpl_form = $('#tmpl_' + game + 'Form' );
 	
-	form_container.append( tmpl_sangoWarForm.tmpl() );
-
-	//sangoWar.load( "js/sangoList.txt", function( err, _cardlist ){
-	yugioh.load( "js/yugiohList.txt", function( err, _cardlist ){
+	form_container.append( tmpl_form.tmpl() );
+	
+	switch( game ){
+		case 'yugioh':
+			yugioh.load( "js/yugiohList.txt", onLoadGameCallback)
+			break;
+		case 'sangoWar':
+			sangoWar.load( "js/sangoList.txt", onLoadGameCallback);
+	}
+	
+	function onLoadGameCallback( err, _cardlist ){
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
-	})
+	}
 	
 	function getId(){
 		return itemId++;
@@ -709,8 +726,14 @@ body{
 			
 			var showCards = ary_cards.slice( sid, eid );
 			_.each( showCards, function( card ){
-				//card.url = api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
-				card.url = api.getCardImageWithPackageName( 'yugioh', card.id );
+				switch( game ){
+					case 'yugioh':
+						card.url = api.getCardImageWithPackageName( 'yugioh', card.id );
+						break;
+					case 'sangoWar':
+						card.url = api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
+				}
+				
 				if( card.url == undefined ) {
 					card.url = 'images/cardback.png';
 				}
@@ -967,8 +990,14 @@ body{
 		}
 		
 		function searchLib( str ){
-			//var fns = sangoWarQuerystring2fns(str)
-			var fns = yugiohQuerystring2fns(str)
+			var fns = (function(){
+				switch( game ){
+					case 'yugioh':
+						return yugiohQuerystring2fns(str)
+					case 'sangoWar':
+						return sangoWarQuerystring2fns(str);
+				}
+			})();
 			return cardsearch.search( fns, cardlist );
 		}
 		
@@ -1030,8 +1059,13 @@ body{
 					
 					_.each( ary_deck, function( card ){
 						card.itemId = getId();
-						//card.url = api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
-						card.url = api.getCardImageWithPackageName( 'yugioh', card.id );
+						switch( game ){
+							case 'yugioh':
+								card.url = api.getCardImageWithPackageName( 'yugioh', card.id );
+								break;
+							case 'sangoWar':
+								card.url = api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
+						}
 						if( card.url == undefined ) {
 							card.url = 'images/cardback.png';
 						}
