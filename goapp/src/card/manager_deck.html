@@ -649,7 +649,10 @@ body{
 						<a id="btn_search" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onSearchClick()" data-options="iconCls:'icon-search',disabled:true">搜尋</a>
 					</div>
 				</div>
-				
+				<div style="position:absolute; right:5px; top:0px; ">
+					<a id="btn_about" href="#" title="其它遊戲的組牌機，目前有三國志大戰、遊戲王、魔法風雲會" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
+					<a id="btn_about" href="#" title="關於上善若水" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
+				</div>
 			</div>
 		</div>
 		<div data-options="region:'center',title:'結果'">
@@ -684,6 +687,29 @@ body{
 				<a id="btn" href="#" class="easyui-linkbutton" style="width:80px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
 				<a id="btn" href="#" class="easyui-linkbutton" style="width:120px; height:40px;" onclick="window.open('https://particle-979.appspot.com/manager/index.html#');" data-options="iconCls:'icon-back'">去輸入牌組</a>
 				<a id="btn" href="#" class="easyui-linkbutton" style="width:140px; height:40px;" onclick="window.open('https://particle-979.appspot.com/card/index.html#');" data-options="iconCls:'icon-redo'">去玩三國志大戰</a>
+			</div>
+		</div>
+	</div>
+	<div id="dia_about" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
+		<div class="group" style="position:relative; width:100%; text-align:center;">
+			<div class="hori" >
+				上善若水APP
+				<br/>
+				<img src="../common/images/logo.jpg" width="100" height="100">
+				<br/>
+				<a style="color:yellow" href="//www.facebook.com/pages/上善若水/1653920964852269" target="_blank">上善若水粉絲頁</a>
+				<br/><br/>
+				<a style="color:yellow" href="//particle-979.appspot.com/manager/index.html#" target="_blank">上善若水官網&牌組管理器</a>
+				<br/><br/>
+			</div>
+		</div>
+	</div>
+	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="padding:10px">
+		<div class="group" style="position:relative; width:100%; text-align:center;">
+			<div class="hori" >
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('//particle-979.appspot.com/card/manager_deck.html?game=sangoWar')" data-options="iconCls:'icon-redo'">三國志大戰</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('//particle-979.appspot.com/card/manager_deck.html?game=yugioh')" data-options="iconCls:'icon-redo'">遊戲王</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('//particle-979.appspot.com/card/manager_deck.html?game=magic')" data-options="iconCls:'icon-redo'">魔法風雲會</a>
 			</div>
 		</div>
 	</div>
