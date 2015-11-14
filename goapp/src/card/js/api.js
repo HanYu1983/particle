@@ -226,6 +226,8 @@ var api = api || {};
 			return '//fast-drake-630.appspot.com/common/cardPackage/yugioh/'+id+'.jpg'
 		case 'army':
 			return '//particle-979.appspot.com/common/cardPackage/army/'+id+'.jpg'
+		case 'magic':
+			return '../common/cardPackage/magic/'+id+'.jpg'
 		}
 	}
 	

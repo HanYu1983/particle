@@ -29,6 +29,7 @@
 	<script src="../common/js/lib/purl.js"></script>	
 	<script src="../common/js/sangoWar.js"></script>	
 	<script src="../common/js/yugioh.js"></script>	
+	<script src="../common/js/magic.js"></script>	
 	<script src="../common/js/cardsearch.js"></script>	
 	<script src='js/api.js'></script>
 </head>
@@ -1054,6 +1055,31 @@ body{
 					if( v == "on" ){
 						fns.push( cardsearch.attrEq( "ability", k ))
 					}
+				}
+			}
+			return fns
+		}
+		
+		/*
+						id: card.find('name').html(),
+						name: card.find('name').html(),
+						color: "UB",
+						manacost: [W, B, R, U, G, 5],
+						cmc: card.find('cmc').html(),
+						type: card.find('type').html(),
+						tablerow: card.find('tablerow').html(),
+						text: card.find('text').html(),
+						atk: atk,
+						def: def
+		*/
+		function magicQuerystring2fns( qstr ){
+			var url = $.url("?" + qstr)
+			var query = url.data.param.query
+			var fns = []
+			for( var k in query ){
+				var v = query[k]
+				if( v == "" ){
+					continue
 				}
 			}
 			return fns

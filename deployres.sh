@@ -1,1 +1,1 @@
-../go_appengine/appcfg.py --no_cookies --email=hanyushome@gmail.com update goappres/src
+../go_appengine/appcfg.py --email=hanyushome@gmail.com update goappres/src
