@@ -39,6 +39,7 @@ class Main
 	public static var currentSelect = 'sangoWar';
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
+	public static var cardSuitsDetails:Dynamic = {};
 	public static var isConntect = false;
 	public static var isCanSendMessage = false;
 	
@@ -130,10 +131,34 @@ class Main
 			}
 		}));
 		
+		if( cardSuitsDetails.field( currentSelect ) == null ){
+			switch( currentSelect ) {
+				case 'yugioh':
+					CallJs.yugioh_load( '../common/cardPackage/yugiohList.txt', onLoadGameCallback( currentSelect ) );
+				case 'sangoWar':
+					CallJs.sangoWar_load( "../common/cardPackage/sangoList.txt", onLoadGameCallback( currentSelect ) );
+			}
+		}
+		
 		slide( '創建卡片完成' );
 		Animate.addCardAndPrepare( toDeck )().done( function() {
 			pushCmds( { cmd:'addCards', content:toDeck } );
 		});	
+	}
+	
+	public static function onLoadGameCallback ( game:String ) {
+		return function( err, _cardlist ) {
+			Reflect.setField( cardSuitsDetails, game, _cardlist );
+		}
+	}
+	
+	public static function getCardDetailById( game:String, cid:String ):Dynamic {
+		
+		cid = StringTools.replace( cid, '.jpg', '' );
+		if ( cardSuitsDetails.field( game ) == null ) return null;
+		return Lambda.find( cardSuitsDetails.field( game ), function( cardDetail ) {
+			return cardDetail.id == cid;
+		});
 	}
 	
 	public static function pushCmds( content:Dynamic ) {

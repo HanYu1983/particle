@@ -342,9 +342,32 @@ Main.createCards = function(deck) {
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
 		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};
 	}));
+	if(Reflect.field(Main.cardSuitsDetails,Main.currentSelect) == null) {
+		var _g1 = Main.currentSelect;
+		switch(_g1) {
+		case "yugioh":
+			CallJs.yugioh_load("../common/cardPackage/yugiohList.txt",Main.onLoadGameCallback(Main.currentSelect));
+			break;
+		case "sangoWar":
+			CallJs.sangoWar_load("../common/cardPackage/sangoList.txt",Main.onLoadGameCallback(Main.currentSelect));
+			break;
+		}
+	}
 	Main.slide("創建卡片完成");
 	(Animate.addCardAndPrepare(toDeck))().done(function() {
 		Main.pushCmds({ cmd : "addCards", content : toDeck});
+	});
+};
+Main.onLoadGameCallback = function(game) {
+	return function(err,_cardlist) {
+		Main.cardSuitsDetails[game] = _cardlist;
+	};
+};
+Main.getCardDetailById = function(game,cid) {
+	cid = StringTools.replace(cid,".jpg","");
+	if(Reflect.field(Main.cardSuitsDetails,game) == null) return null;
+	return Lambda.find(Reflect.field(Main.cardSuitsDetails,game),function(cardDetail) {
+		return cardDetail.id == cid;
 	});
 };
 Main.pushCmds = function(content) {
@@ -1356,6 +1379,28 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				img2.css("left","0");
 			});
 			div.append(img2);
+			var detail = Main.getCardDetailById(card.game,card.cardId);
+			if(detail != null) {
+				var detaildiv = Main.j("<div></div>");
+				detaildiv.css("position","relative");
+				detaildiv.css("width","100%");
+				detaildiv.css("top","0");
+				detaildiv.css("left","0");
+				var str = "";
+				var _g = card.game;
+				switch(_g) {
+				case "sangoWar":
+					str += detail.content;
+					str += "<br/>";
+					str += detail.counter;
+					break;
+				case "yugioh":
+					str += detail.text;
+					break;
+				}
+				detaildiv.html(str);
+				div.append(detaildiv);
+			}
 			this.mc_detailContainer.append(div);
 		}
 	}
@@ -1980,6 +2025,8 @@ CallJs.api_createChannel = api.createChannel;
 CallJs.myapp_facebook_login = myapp.facebook.login;
 CallJs.myapp_facebook_init = myapp.facebook.init;
 CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
+CallJs.yugioh_load = yugioh.load;
+CallJs.sangoWar_load = sangoWar.load;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
@@ -1995,6 +2042,7 @@ Main.otherPlayerIdsForCheck = [];
 Main.ary_cards = [];
 Main.currentSelect = "sangoWar";
 Main.cardSuits = { };
+Main.cardSuitsDetails = { };
 Main.isConntect = false;
 Main.isCanSendMessage = false;
 Main.tmpl_card = Main.j("#tmpl_card");

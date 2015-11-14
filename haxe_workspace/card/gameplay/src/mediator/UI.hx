@@ -140,6 +140,7 @@ class UI extends Mediator
 			});
 			div.append( img );
 			
+			
 			var img2 = Main.j( '<img></img>' );
 			img2.attr( 'src', 'images/sampleTxt.png' );
 			img2.css( 'position', 'absolute' );
@@ -149,6 +150,27 @@ class UI extends Mediator
 				img2.css( 'left', '0' );
 			});
 			div.append( img2 );
+			
+			var detail = Main.getCardDetailById( card.game, card.cardId );
+			if ( detail != null ) {
+				var detaildiv:Dynamic = Main.j( '<div></div>' );
+				detaildiv.css( 'position', 'relative' );
+				detaildiv.css( 'width', '100%' );
+				detaildiv.css( 'top', '0' );
+				detaildiv.css( 'left', '0' );
+				var str:String = '';
+				switch( card.game ) {
+					case 'sangoWar': 
+						str += detail.content;
+						str += '<br/>';
+						str += detail.counter;
+					case 'yugioh': 
+						str += detail.text;
+				}
+				detaildiv.html( str );
+				div.append( detaildiv );
+			}
+			
 			mc_detailContainer.append( div );
 			/*
 			var img = Main.j( '<img></img>' );

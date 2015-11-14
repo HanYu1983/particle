@@ -22,7 +22,9 @@ package;
 						'api.createChannel',
 						'myapp.facebook.login',
 						'myapp.facebook.init',
-						'leo.utils.initRectSelect'
+						'leo.utils.initRectSelect',
+						'yugioh.load',
+						'sangoWar.load'
 					]))
 
 class CallJs{}
