@@ -90,6 +90,7 @@ body{
 			<div game="yugioh">${race}</div>
 			<div game="yugioh">${text}</div>
 			
+			<div game="magic">${type}</div>
 			<div game="magic">${text}</div>
 		</div>
 	</div>
@@ -132,29 +133,177 @@ def: def
 <script id="tmpl_magicForm" type="jquery-x-tmpl">
 	<table border="1">
 		<tr>
-			<td></td>
-		</tr>
-		<tr>
-		  <td >
-			卡片名稱檢索<br>
-		  </td>
-		  <td colspan="3">
-			<input type="text" name="card_name" size=32>
-			<br>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			卡片規則檢索<br>
-		  </td>
-		  <td colspan="3">
-			<input type="text" name="rule" size=32>
-			<br>
-		  </td>
-		</tr>
-		<tr>
-			<td>攻擊力</td>
+			<td>白</td>
 			<td>
+				<select name="white_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以上
+				<select name="white_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>綠</td>
+			<td>
+				<select name="green_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以上
+				<select name="green_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>藍</td>
+			<td>
+				<select name="blue_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以上
+				<select name="blue_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>紅</td>
+			<td>
+				<select name="red_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以上
+				<select name="red_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>黑</td>
+			<td>
+				<select name="black_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以上
+				<select name="black_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>總cost</td>
+			<td>
+				<select name="all_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以上
+				<select name="all_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>卡片類型</td>
+			<td>
+				<select name="ctype">
+					<option></option>
+					<option>Land</option>
+					<option>Instant</option>
+					<option>Sorcery</option>
+					<option>Enchantment</option>
+					<option>Enchantment — Aura</option>
+					<option>Artifact</option>
+					<option>Artifact Creature</option>
+					<option>Legendary Enchantment</option>
+					<option>Legendary Creature</option>
+					<option>Legendary Artifact</option>
+					<option>Creature</option>
+					<option>Creature — Advisor</option><option>Creature — Ally</option><option>Creature — Angel</option><option>Creature — Antelope</option><option>Creature — Ape</option><option>Creature — Archer</option><option>Creature — Archon</option><option>Creature — Artificer</option><option>Creature — Assassin</option><option>Creature — Assembly-Worker</option><option>Creature — Atog</option><option>Creature — Aurochs</option><option>Creature — Avatar</option><option>Creature — Badger</option><option>Creature — Barbarian</option><option>Creature — Basilisk</option><option>Creature — Bat</option><option>Creature — Bear</option><option>Creature — Beast</option><option>Creature — Beeble</option><option>Creature — Berserker</option><option>Creature — Bird</option><option>Creature — Blinkmoth</option><option>Creature — Boar</option><option>Creature — Bringer</option><option>Creature — Brushwagg</option><option>Creature — Camarid</option><option>Creature — Camel</option><option>Creature — Caribou</option><option>Creature — Carrier</option><option>Creature — Cat</option><option>Creature — Centaur</option><option>Creature — Cephalid</option><option>Creature — Chimera</option><option>Creature — Citizen</option><option>Creature — Cleric</option><option>Creature — Cockatrice</option><option>Creature — Construct</option><option>Creature — Coward</option><option>Creature — Crab</option><option>Creature — Crocodile</option><option>Creature — Cyclops</option><option>Creature — Dauthi</option><option>Creature — Demon</option><option>Creature — Deserter</option><option>Creature — Devil</option><option>Creature — Djinn</option><option>Creature — Dragon</option><option>Creature — Drake</option><option>Creature — Dreadnought</option><option>Creature — Drone</option><option>Creature — Druid</option><option>Creature — Dryad</option><option>Creature — Dwarf</option><option>Creature — Efreet</option><option>Creature — Elder</option><option>Creature — Eldrazi</option><option>Creature — Elemental</option><option>Creature — Elephant</option><option>Creature — Elf</option><option>Creature — Elk</option><option>Creature — Eye</option><option>Creature — Faerie</option><option>Creature — Ferret</option><option>Creature — Fish</option><option>Creature — Flagbearer</option><option>Creature — Fox</option><option>Creature — Frog</option><option>Creature — Fungus</option><option>Creature — Gargoyle</option><option>Creature — Germ</option><option>Creature — Giant</option><option>Creature — Gnome</option><option>Creature — Goat</option><option>Creature — Goblin</option><option>Creature — God</option><option>Creature — Golem</option><option>Creature — Gorgon</option><option>Creature — Graveborn</option><option>Creature — Gremlin</option><option>Creature — Griffin</option><option>Creature — Hag</option><option>Creature — Harpy</option><option>Creature — Hellion</option><option>Creature — Hippo</option><option>Creature — Hippogriff</option><option>Creature — Homarid</option><option>Creature — Homunculus</option><option>Creature — Horror</option><option>Creature — Horse</option><option>Creature — Hound</option><option>Creature — Human</option><option>Creature — Hydra</option><option>Creature — Hyena</option><option>Creature — Illusion</option><option>Creature — Imp</option><option>Creature — Incarnation</option><option>Creature — Insect</option><option>Creature — Jellyfish</option><option>Creature — Juggernaut</option><option>Creature — Kavu</option><option>Creature — Kirin</option><option>Creature — Kithkin</option><option>Creature — Knight</option><option>Creature — Kobold</option><option>Creature — Kor</option><option>Creature — Kraken</option><option>Creature — Lamia</option><option>Creature — Lammasu</option><option>Creature — Leech</option><option>Creature — Leviathan</option><option>Creature — Lhurgoyf</option><option>Creature — Licid</option><option>Creature — Lizard</option><option>Creature — Manticore</option><option>Creature — Masticore</option><option>Creature — Mercenary</option><option>Creature — Merfolk</option><option>Creature — Metathran</option><option>Creature — Minion</option><option>Creature — Minotaur</option><option>Creature — Monger</option><option>Creature — Mongoose</option><option>Creature — Monk</option><option>Creature — Moonfolk</option><option>Creature — Mutant</option><option>Creature — Myr</option><option>Creature — Mystic</option><option>Creature — Naga</option><option>Creature — Nautilus</option><option>Creature — Nephilim</option><option>Creature — Nightmare</option><option>Creature — Nightstalker</option><option>Creature — Ninja</option><option>Creature — Noggle</option><option>Creature — Nomad</option><option>Creature — Nymph</option><option>Creature — Octopus</option><option>Creature — Ogre</option><option>Creature — Ooze</option><option>Creature — Orb</option><option>Creature — Orc</option><option>Creature — Orgg</option><option>Creature — Ouphe</option><option>Creature — Ox</option><option>Creature — Oyster</option><option>Creature — Pegasus</option><option>Creature — Pentavite</option><option>Creature — Pest</option><option>Creature — Phelddagrif</option><option>Creature — Phoenix</option><option>Creature — Pincher</option><option>Creature — Pirate</option><option>Creature — Plant</option><option>Creature — Praetor</option><option>Creature — Prism</option><option>Creature — Processor</option><option>Creature — Rabbit</option><option>Creature — Rat</option><option>Creature — Rebel</option><option>Creature — Reflection</option><option>Creature — Rhino</option><option>Creature — Rigger</option><option>Creature — Rogue</option><option>Creature — Sable</option><option>Creature — Salamander</option><option>Creature — Samurai</option><option>Creature — Sand</option><option>Creature — Saproling</option><option>Creature — Satyr</option><option>Creature — Scarecrow</option><option>Creature — Scion</option><option>Creature — Scorpion</option><option>Creature — Scout</option><option>Creature — Serf</option><option>Creature — Serpent</option><option>Creature — Shade</option><option>Creature — Shaman</option><option>Creature — Shapeshifter</option><option>Creature — Sheep</option><option>Creature — Siren</option><option>Creature — Skeleton</option><option>Creature — Slith</option><option>Creature — Sliver</option><option>Creature — Slug</option><option>Creature — Snake</option><option>Creature — Soldier</option><option>Creature — Soltari</option><option>Creature — Spawn</option><option>Creature — Specter</option><option>Creature — Spellshaper</option><option>Creature — Sphinx</option><option>Creature — Spider</option><option>Creature — Spike</option><option>Creature — Spirit</option><option>Creature — Splinter</option><option>Creature — Sponge</option><option>Creature — Squid</option><option>Creature — Squirrel</option><option>Creature — Starfish</option><option>Creature — Surrakar</option><option>Creature — Survivor</option><option>Creature — Tetravite</option><option>Creature — Thalakos</option><option>Creature — Thopter</option><option>Creature — Thrull</option><option>Creature — Treefolk</option><option>Creature — Triskelavite</option><option>Creature — Troll</option><option>Creature — Turtle</option><option>Creature — Unicorn</option><option>Creature — Vampire</option><option>Creature — Vedalken</option><option>Creature — Viashino</option><option>Creature — Volver</option><option>Creature — Wall</option><option>Creature — Warrior</option><option>Creature — Weird</option><option>Creature — Werewolf</option><option>Creature — Whale</option><option>Creature — Wizard</option><option>Creature — Wolf</option><option>Creature — Wolverine</option><option>Creature — Wombat</option><option>Creature — Worm</option><option>Creature — Wraith</option><option>Creature — Wurm</option><option>Creature — Yeti</option><option>Creature — Zombie</option><option>Creature — Zubera</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>攻擊力&防守力</td>
+			<td>
+				攻擊力
 				<select name="atk_1">
 					<option></option>
 					<option>1</option>
@@ -182,8 +331,77 @@ def: def
 					<option>9</option>
 					<option>10</option>
 				</select>
+				以下 || 防守力
+				<select name="def_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以上
+				<select name="def_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
 				以下
 			</td>
+		</tr>
+		<tr>
+		  <td >
+			特殊規則<br>
+		  </td>
+		  <td colspan="3">
+			<input type="checkbox" name="Deathtouch">Deathtouch
+			<input type="checkbox" name="Defender">Defender
+			<input type="checkbox" name="First strike">First strike
+			<input type="checkbox" name="Double strike">Double strike
+			<input type="checkbox" name="Flash">Flash
+			<input type="checkbox" name="Flying">Flying
+			<input type="checkbox" name="Haste">Haste
+			<input type="checkbox" name="Hexproof">Hexproof
+			<input type="checkbox" name="Protection from white">Protection from white
+			<input type="checkbox" name="Protection from blue">Protection from blue
+			<input type="checkbox" name="Protection from black">Protection from black
+			<input type="checkbox" name="Protection from red">Protection from red
+			<input type="checkbox" name="Protection from green">Protection from green
+			<input type="checkbox" name="Reach">Reach
+			<input type="checkbox" name="Trample">Trample
+			<input type="checkbox" name="Vigilance">Vigilance
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片名稱檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="card_name" size=32>
+			<br>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片規則檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="rule" size=32>
+			<br>
+		  </td>
 		</tr>
 	</table>
 </script>
@@ -1173,6 +1391,9 @@ def: def
 					case "card_name":
 						fns.push( cardsearch.attrEq( "name", v ) )
 						break
+					case 'ctype':
+						fns.push( cardsearch.attrEq( "type", v ) )
+						break
 					case 'atk_1':
 						fns.push( cardsearch.attrGe( "atk", v ) )
 						break;
@@ -1185,6 +1406,49 @@ def: def
 					case 'def_2':
 						fns.push( cardsearch.attrLe( "def", v ) )
 						break;
+					case 'white_1':
+						fns.push( cardsearch.attrGe( "", v ) )
+						break;
+					case 'white_2':
+						fns.push( cardsearch.attrLe( "", v ) )
+						break;
+					case 'blue_1':
+						fns.push( cardsearch.attrGe( "", v ) )
+						break;
+					case 'blue_2':
+						fns.push( cardsearch.attrLe( "", v ) )
+						break;
+					case 'red_1':
+						fns.push( cardsearch.attrGe( "", v ) )
+						break;
+					case 'red_2':
+						fns.push( cardsearch.attrLe( "", v ) )
+						break;
+					case 'green_1':
+						fns.push( cardsearch.attrGe( "", v ) )
+						break;
+					case 'green_2':
+						fns.push( cardsearch.attrLe( "", v ) )
+						break;
+					case 'black_1':
+						fns.push( cardsearch.attrGe( "", v ) )
+						break;
+					case 'black_2':
+						fns.push( cardsearch.attrLe( "", v ) )
+						break;
+					case 'all_1':
+						fns.push( cardsearch.attrGe( "cmc", v ) )
+						break;
+					case 'all_2':
+						fns.push( cardsearch.attrLe( "cmc", v ) )
+						break;
+					case "rule":
+						fns.push( cardsearch.attrEq( "text", v ))
+						break
+					default:
+						if( v == "on" ){
+							fns.push( cardsearch.attrEq( "text", k ))
+						}
 				}
 			}
 			return fns
