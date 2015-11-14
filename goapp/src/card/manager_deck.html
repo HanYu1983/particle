@@ -710,10 +710,10 @@ body{
 	
 	switch( game ){
 		case 'yugioh':
-			yugioh.load( "js/yugiohList.txt", onLoadGameCallback)
+			yugioh.load( "../common/txt/yugiohList.txt", onLoadGameCallback)
 			break;
 		case 'sangoWar':
-			sangoWar.load( "js/sangoList.txt", onLoadGameCallback);
+			sangoWar.load( "../common/txt/sangoList.txt", onLoadGameCallback);
 	}
 	
 	function onLoadGameCallback( err, _cardlist ){

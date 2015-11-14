@@ -346,10 +346,10 @@ Main.createCards = function(deck) {
 		var _g1 = Main.currentSelect;
 		switch(_g1) {
 		case "yugioh":
-			CallJs.yugioh_load("../common/cardPackage/yugiohList.txt",Main.onLoadGameCallback(Main.currentSelect));
+			CallJs.yugioh_load("../common/txt/yugiohList.txt",Main.onLoadGameCallback(Main.currentSelect));
 			break;
 		case "sangoWar":
-			CallJs.sangoWar_load("../common/cardPackage/sangoList.txt",Main.onLoadGameCallback(Main.currentSelect));
+			CallJs.sangoWar_load("../common/txt/sangoList.txt",Main.onLoadGameCallback(Main.currentSelect));
 			break;
 		}
 	}

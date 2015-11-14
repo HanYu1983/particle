@@ -134,9 +134,9 @@ class Main
 		if( cardSuitsDetails.field( currentSelect ) == null ){
 			switch( currentSelect ) {
 				case 'yugioh':
-					CallJs.yugioh_load( '../common/cardPackage/yugiohList.txt', onLoadGameCallback( currentSelect ) );
+					CallJs.yugioh_load( '../common/txt/yugiohList.txt', onLoadGameCallback( currentSelect ) );
 				case 'sangoWar':
-					CallJs.sangoWar_load( "../common/cardPackage/sangoList.txt", onLoadGameCallback( currentSelect ) );
+					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( currentSelect ) );
 			}
 		}
 		
