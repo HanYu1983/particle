@@ -217,6 +217,7 @@ var api = api || {};
 	pkgName: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
+		id = encodeURIComponent( id )
 		switch( pkgName ){
 		case 'sangoWar':
 			return '//particle-979.appspot.com/common/cardPackage/sangoWar/'+id
