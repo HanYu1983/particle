@@ -228,7 +228,7 @@ var api = api || {};
 		case 'army':
 			return '//particle-979.appspot.com/common/cardPackage/army/'+id+'.jpg'
 		case 'magic':
-			return '../common/cardPackage/magic/'+id+'.jpg'
+			return '//storage.googleapis.com/particle-resources/cardPackage/magic/' +id+ '.jpg'
 		}
 	}
 	
