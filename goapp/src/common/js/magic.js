@@ -46,7 +46,7 @@ var magic = magic || {};
 						name: card.find('name').html(),
 						color: colorsary,
 						manacost: parseCost(card.find('manacost').html()),
-						cmc: card.find('cmc').html(),
+						cmc: parseInt(card.find('cmc').html()),
 						type: card.find('type').html(),
 						tablerow: card.find('tablerow').html(),
 						text: card.find('text').html(),
