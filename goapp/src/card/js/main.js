@@ -1386,6 +1386,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				detaildiv.css("width","100%");
 				detaildiv.css("top","0");
 				detaildiv.css("left","0");
+				detaildiv.css("font-size","20px");
 				var str = "";
 				var _g = card.game;
 				switch(_g) {
