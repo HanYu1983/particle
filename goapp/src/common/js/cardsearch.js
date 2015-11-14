@@ -15,6 +15,12 @@ var cardsearch = cardsearch || {};
 					return obj[ key ].indexOf( value ) != -1
 				case "number":
 					return obj[ key ] == value
+				case "array":
+					{
+						var idx = value[0]
+						var value = value[1]
+						return obj[key][idx] == value
+					}
 				}
 			}
 			return false
@@ -33,6 +39,12 @@ var cardsearch = cardsearch || {};
 					return obj[ key ].indexOf( value ) != -1
 				case "number":
 					return obj[ key ] >= value
+				case "array":
+					{
+						var idx = value[0]
+						var value = value[1]
+						return obj[key][idx] >= value
+					}
 				}
 			}
 			return false
@@ -51,6 +63,12 @@ var cardsearch = cardsearch || {};
 					return obj[ key ].indexOf( value ) != -1
 				case "number":
 					return obj[ key ] <= value
+				case "array":
+					{
+						var idx = value[0]
+						var value = value[1]
+						return obj[key][idx] <= value
+					}
 				}
 			}
 			return false
