@@ -198,6 +198,25 @@ var gameController = {};
 					atk: atk,
 					def: def
 	*/
+	
+	function manacostGe( idx, value ){
+		return function( obj ){
+			return obj['manacost'][idx] >= value
+		}
+	}
+	
+	function manacostLe( idx, value ){
+		return function( obj ){
+			return obj['manacost'][idx] <= value
+		}
+	}
+	
+	function manacostEq( idx, value ){
+		return function( obj ){
+			return obj['manacost'][idx] == value
+		}
+	}
+	
 	function magicQuerystring2fns( qstr ){
 		var url = $.url("?" + qstr)
 		var query = url.data.param.query
@@ -227,34 +246,34 @@ var gameController = {};
 					fns.push( cardsearch.attrLe( "def", v ) )
 					break;
 				case 'white_1':
-					fns.push( cardsearch.attrGe( "", v ) )
+					fns.push( manacostGe( 0, v ) )
 					break;
 				case 'white_2':
-					fns.push( cardsearch.attrLe( "", v ) )
+					fns.push( manacostLe( 0, v ) )
 					break;
 				case 'blue_1':
-					fns.push( cardsearch.attrGe( "", v ) )
+					fns.push( manacostGe( 3, v ) )
 					break;
 				case 'blue_2':
-					fns.push( cardsearch.attrLe( "", v ) )
+					fns.push( manacostLe( 3, v ) )
 					break;
 				case 'red_1':
-					fns.push( cardsearch.attrGe( "", v ) )
+					fns.push( manacostGe( 2, v ) )
 					break;
 				case 'red_2':
-					fns.push( cardsearch.attrLe( "", v ) )
+					fns.push( manacostLe( 2, v ) )
 					break;
 				case 'green_1':
-					fns.push( cardsearch.attrGe( "", v ) )
+					fns.push( manacostGe( 4, v ) )
 					break;
 				case 'green_2':
-					fns.push( cardsearch.attrLe( "", v ) )
+					fns.push( manacostLe( 4, v ) )
 					break;
 				case 'black_1':
-					fns.push( cardsearch.attrGe( "", v ) )
+					fns.push( manacostGe( 1, v ) )
 					break;
 				case 'black_2':
-					fns.push( cardsearch.attrLe( "", v ) )
+					fns.push( manacostLe( 1, v ) )
 					break;
 				case 'all_1':
 					fns.push( cardsearch.attrGe( "cmc", v ) )
