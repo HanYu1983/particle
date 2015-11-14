@@ -219,11 +219,10 @@ var api = api || {};
 	function getCardImageWithPackageName( pkgName, id ){
 		switch( pkgName ){
 		case 'sangoWar':
-			return '//particle-979.appspot.com/common/cardPackage/sangoWar/'+id
+			return '//storage.googleapis.com/particle-resources/cardPackage/sangoWar/' +id
 		case 'gundamWar':
-			return '//particle-979.appspot.com/common/cardPackage/gundamWar/'+id
+			return '//storage.googleapis.com/particle-resources/cardPackage/gundamWar/'+id
 		case 'yugioh':
-			console.log( id )
 			return '//storage.googleapis.com/particle-resources/cardPackage/yugioh/' +id+ '.jpg'
 		case 'army':
 			return '//particle-979.appspot.com/common/cardPackage/army/'+id+'.jpg'

@@ -14,6 +14,10 @@ var yugioh = yugioh || {};
 				for( var i in rows ){
 					var col = rows[i]
 					var coldata = col.split('\t')
+					if( coldata[0] == undefined || coldata[0] == "" ){
+						continue
+					}
+					
 					var decode = ""
 					if( typeof coldata[10] == 'string' ){
 						var text = coldata[10]
