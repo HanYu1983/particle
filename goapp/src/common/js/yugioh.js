@@ -56,7 +56,7 @@ var yugioh = yugioh || {};
 					})
 				}
 				
-				ary.unshift()
+				ary.shift()
 				cb( null, ary )
 			},
 			error: function( xhr, res, err ){

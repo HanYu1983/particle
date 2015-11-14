@@ -217,18 +217,18 @@ var api = api || {};
 	pkgName: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
-		id = encodeURIComponent( id )
 		switch( pkgName ){
 		case 'sangoWar':
 			return '//particle-979.appspot.com/common/cardPackage/sangoWar/'+id
 		case 'gundamWar':
 			return '//particle-979.appspot.com/common/cardPackage/gundamWar/'+id
 		case 'yugioh':
-			return '//fast-drake-630.appspot.com/common/cardPackage/yugioh/'+id+'.jpg'
+			console.log( id )
+			return '//storage.googleapis.com/particle-resources/cardPackage/yugioh/' +id+ '.jpg'
 		case 'army':
 			return '//particle-979.appspot.com/common/cardPackage/army/'+id+'.jpg'
 		case 'magic':
-			return '//storage.googleapis.com/particle-resources/cardPackage/magic/' +id+ '.jpg'
+			return '//storage.googleapis.com/particle-resources/cardPackage/magic/' +encodeURIComponent( id )+ '.jpg'
 		}
 	}
 	
