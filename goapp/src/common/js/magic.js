@@ -41,10 +41,16 @@ var magic = magic || {};
 						return $(color).html()
 					}).join("")
 					
+					var sets = card.find('set')
+					var setary = _.map( sets, function( set ){
+						return $(set).html()
+					}).join(",")
+					
 					return {
 						id: card.find('name').html(),
 						name: card.find('name').html(),
 						color: colorsary,
+						set: setary,
 						manacost: parseCost(card.find('manacost').html()),
 						cmc: parseInt(card.find('cmc').html()),
 						type: card.find('type').html(),
