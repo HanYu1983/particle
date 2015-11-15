@@ -158,8 +158,6 @@ def: def
 				</select>
 				以下
 			</td>
-		</tr>
-		<tr>
 			<td>綠</td>
 			<td>
 				<select name="green_1">
@@ -208,8 +206,6 @@ def: def
 				</select>
 				以下
 			</td>
-		</tr>
-		<tr>
 			<td>紅</td>
 			<td>
 				<select name="red_1">
@@ -258,8 +254,6 @@ def: def
 				</select>
 				以下
 			</td>
-		</tr>
-		<tr>
 			<td>總cost</td>
 			<td>
 				<select name="all_1">
@@ -295,8 +289,26 @@ def: def
 			</td>
 		</tr>
 		<tr>
+			<td>系列</td>
+			<td colspan=3>
+				<select name="set">
+					<option></option>
+					<option value="2ED">2ED</option>
+					<option value="3ED">3ED</option>
+					<option value="4ED">4ED</option>
+					<option value="5DN">5DN</option>
+					<option value="5ED">5ED</option>
+					<option value="6ED">6ED</option>
+					<option value="7ED">7ED</option>
+					<option value="8ED">8ED</option>
+					<option value="9ED">9ED</option>
+					
+				</select>
+			</td>
+		</tr>
+		<tr>
 			<td>卡片類型</td>
-			<td>
+			<td colspan=3>
 				<select name="ctype">
 					<option></option>
 					<option>Land</option>
@@ -316,7 +328,7 @@ def: def
 		</tr>
 		<tr>
 			<td>攻擊力&防守力</td>
-			<td>
+			<td colspan=3>
 				攻擊力
 				<select name="atk_1">
 					<option></option>
@@ -1201,7 +1213,6 @@ def: def
 		}
 		
 		function searchCards( searchstr ){
-			console.log( searchstr );
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
 			

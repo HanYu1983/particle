@@ -227,6 +227,12 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+				case 'set':
+					fns.push( cardsearch.attrEq( "set", v ) )
+					break
+				case 'id':
+					fns.push( cardsearch.attrEq( "name", v ) )
+					break
 				case "card_name":
 					fns.push( cardsearch.attrEq( "name", v ) )
 					break
