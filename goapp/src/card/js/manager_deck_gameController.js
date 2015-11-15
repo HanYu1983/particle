@@ -290,6 +290,9 @@ var gameController = {};
 				case "rule":
 					fns.push( cardsearch.attrEq( "text", v ))
 					break
+				case "set":
+					fns.push( cardsearch.attrEq( "set", v ))
+					break
 				default:
 					if( v == "on" ){
 						fns.push( cardsearch.attrEq( "text", k ))
