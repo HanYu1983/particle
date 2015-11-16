@@ -1129,8 +1129,8 @@ def: def
 			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 			<div class="hori" style="margin-top:10px;">
 				<a id="btn" href="#" class="easyui-linkbutton" style="width:80px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
-				<a id="btn" href="#" class="easyui-linkbutton" style="width:120px; height:40px;" onclick="window.open('https://particle-979.appspot.com/manager/index.html#');" data-options="iconCls:'icon-back'">去輸入牌組</a>
-				<a id="btn" href="#" class="easyui-linkbutton" style="width:140px; height:40px;" onclick="window.open('https://particle-979.appspot.com/card/index.html#');" data-options="iconCls:'icon-redo'">線上打牌去</a>
+				<a id="btn" href="#" class="easyui-linkbutton" style="width:120px; height:40px;" onclick="app.view.onSetDeckClick()" data-options="iconCls:'icon-back'">去輸入牌組</a>
+				<a id="btn" href="#" class="easyui-linkbutton" style="width:140px; height:40px;" onclick="app.view.onGotoGameClick()" data-options="iconCls:'icon-redo'">線上打牌去</a>
 			</div>
 		</div>
 	</div>
@@ -1449,12 +1449,24 @@ def: def
 			$('form').find( 'input[type=text]' ).val('');
 		}
 		
+		function onSetDeckClick(){
+			googleTracking.click( 'onSetDeckClick' );
+			window.open('https://particle-979.appspot.com/manager/index.html#');
+		}
+		
+		function onGotoGameClick(){
+			googleTracking.click( 'onGotoGameClick' );
+			window.open('https://particle-979.appspot.com/card/index.html#');
+		}
 		
 		module.onResetClick = onResetClick;
 		module.onSearchClick = onSearchClick;
 		module.onClearClick = onClearClick;
 		module.onSaveClick = onSaveClick;
 		module.onLoadClick = onLoadClick;
+		module.onSetDeckClick = onSetDeckClick;
+		module.onGotoGameClick = onGotoGameClick;
+		
 	})( app.view );
 	</script>
 </body>
