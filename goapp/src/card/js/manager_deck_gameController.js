@@ -239,6 +239,12 @@ var gameController = {};
 				case 'ctype':
 					fns.push( cardsearch.attrEq( "type", v ) )
 					break
+				case 'ctype2':
+					fns.push( cardsearch.attrEq( "type", v ) )
+					break;
+				case 'ctype3':
+					fns.push( cardsearch.attrEq( "type", v ) )
+					break	
 				case 'atk_1':
 					fns.push( cardsearch.attrGe( "atk", v ) )
 					break;
