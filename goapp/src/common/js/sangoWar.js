@@ -42,11 +42,12 @@ var sangoWar = sangoWar || {};
 				case 'R/TR':
 				case 'SR/TR':
 				case 'UC/TR':
+				case 'SR/TR/EXF':
 				case 'UC/EXF':
 				case 'C/EXF':
 				case 'R/EXF':
-				case 'R/TR/超TR':
 				case 'SR/EXF':
+				case 'R/TR/超TR':
 				case 'ST限定R':
 				case 'ST限定SR':
 				case 'SR/伝説TR':
