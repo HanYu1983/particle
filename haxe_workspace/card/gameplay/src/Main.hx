@@ -242,6 +242,7 @@ class Main
 	}
 	
 	function onHtmlClick( type, ?params ) {
+		
 		switch( type ) {
 			case 'onBtnStartServer':
 				if ( playerId == 'smart' || otherPlayerId == '' ) {
@@ -250,9 +251,7 @@ class Main
 				}
 				
 				slide( '正在等待對手...' );
-				
 				createSocket( playerId );
-			//	keepSearchOpponent();
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );
 				
@@ -318,7 +317,7 @@ class Main
 			case 'onDiceClick':
 				Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
 		}
-		
+		CallJs.googleTracking_click( type );
 	}
 	
 	function updateGameUI( currentSelect ) {

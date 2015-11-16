@@ -24,7 +24,8 @@ package;
 						'myapp.facebook.init',
 						'leo.utils.initRectSelect',
 						'yugioh.load',
-						'sangoWar.load'
+						'sangoWar.load',
+						'googleTracking.click'
 					]))
 
 class CallJs{}

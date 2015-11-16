@@ -699,6 +699,7 @@ Main.prototype = {
 			window.open("http://www.wasabistudio.ca/scripts/dice.php?account=card&name=" + Main.playerId + "&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub");
 			break;
 		}
+		CallJs.googleTracking_click(type);
 	}
 	,updateGameUI: function(currentSelect) {
 		switch(currentSelect) {
@@ -2028,6 +2029,7 @@ CallJs.myapp_facebook_init = myapp.facebook.init;
 CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
 CallJs.yugioh_load = yugioh.load;
 CallJs.sangoWar_load = sangoWar.load;
+CallJs.googleTracking_click = googleTracking.click;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
