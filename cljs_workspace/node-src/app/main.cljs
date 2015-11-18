@@ -16,7 +16,7 @@
           (aget "argv"))]
     (condp = (.-c argv)
       "parseYugiohCDB"
-      (test.yugioh/parseCDB)
+      (test.yugioh/parseFile)
     
       "getSangoCard"
       (test.getSangoCard/testGetAll)
