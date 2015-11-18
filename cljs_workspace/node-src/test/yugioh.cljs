@@ -74,21 +74,46 @@
             cards (aget rets 1)
             formatObj
             (fn [obj]
+              (set!
+                (.-id obj)
+                (->
+                  (.-id obj)
+                  (.toString)))
+              (set!
+                (.-lscale obj)
+                (->
+                  (.-level obj)
+                  (bit-shift-right 24)
+                  (bit-and 0xff)))
+              (set!
+                (.-rscale obj)
+                (->
+                  (.-level obj)
+                  (bit-shift-right 16)
+                  (bit-and 0xff)))
+              (set!
+                (.-level obj)
+                (->
+                  (.-level obj)
+                  (bit-and 0xff)))
               (set! 
                 (.-attribute obj) 
                 (->
                   (formatAttribute strs (.-attribute obj))
-                  (clj->js)))
+                  (clj->js)
+                  (.join "|")))
               (set! 
                 (.-type obj) 
                 (->
                   (formatType strs (.-type obj))
-                  (clj->js)))
+                  (clj->js)
+                  (.join "|")))
               (set! 
                 (.-race obj) 
                 (->
                   (formatRace strs (.-race obj))
-                  (clj->js)))
+                  (clj->js)
+                  (.join "|")))
               obj)
             formatCards (map formatObj cards)]
         (.writeFile fs

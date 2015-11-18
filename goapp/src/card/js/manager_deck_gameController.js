@@ -1,9 +1,31 @@
 var gameController = {};
 (function( module ){
-	function loadCardData( game, onLoadGameCallback ){
+	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
 			case 'yugioh':
-				yugioh.load( "../common/txt/yugiohList.txt", onLoadGameCallback)
+				if( lang == 'jp' ){
+					$.ajax({
+						url: "../common/txt/yugiohListJp.json",
+						dataType: 'json',
+						success: function( ret ){
+							onLoadGameCallback( null, ret )
+						},
+						error: function(xhr, res, err){
+							onLoadGameCallback( err )
+						}
+					})
+				} else {
+					$.ajax({
+						url: "../common/txt/yugiohListEn.json",
+						dataType: 'json',
+						success: function( ret ){
+							onLoadGameCallback( null, ret )
+						},
+						error: function(xhr, res, err){
+							onLoadGameCallback( err )
+						}
+					})
+				}
 				break;
 			case 'sangoWar':
 				sangoWar.load( "../common/txt/sangoList.txt", onLoadGameCallback);
@@ -130,7 +152,7 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "name", v ) )
 				break;
 			case "rule":
-				fns.push( cardsearch.attrEq( "text", v ))
+				fns.push( cardsearch.attrEq( "desc", v ))
 				break
 			case "id":
 				fns.push( cardsearch.attrEq( "id", v ) )
@@ -166,21 +188,17 @@ var gameController = {};
 				fns.push( cardsearch.attrLe( "level", v ) )
 				break;
 			case 'atk_1':
-				fns.push( cardsearch.attrGe( "attack", v ) )
+				fns.push( cardsearch.attrGe( "atk", v ) )
 				break;
 			case 'atk_2':
-				fns.push( cardsearch.attrLe( "attack", v ) )
+				fns.push( cardsearch.attrLe( "atk", v ) )
 				break;
 			case 'def_1':
-				fns.push( cardsearch.attrGe( "defence", v ) )
+				fns.push( cardsearch.attrGe( "def", v ) )
 				break;
 			case 'def_2':
-				fns.push( cardsearch.attrLe( "defence", v ) )
+				fns.push( cardsearch.attrLe( "def", v ) )
 				break;
-			default:
-				if( v == "on" ){
-					fns.push( cardsearch.attrEq( "ability", k ))
-				}
 			}
 		}
 		return fns

@@ -9,7 +9,7 @@ test.yugioh.SqliteDB = require("sqlite3").verbose().Database;
 test.yugioh.db = (new test.yugioh.SqliteDB("yugiohDoc/cards_jp.cdb"));
 test.yugioh.stringsPath = "yugiohDoc/strings_jp.conf";
 test.yugioh.outputFile = "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListJp.json";
-test.yugioh.parseStrings = (function parseStrings(cb){return test.yugioh.fs.readFile(test.yugioh.stringsPath,"utf8",(function (err,data){var parseRow = (function (row){var vec__5061 = cljs.core.js__GT_clj.call(null,row.split(" "));var _ = cljs.core.nth.call(null,vec__5061,(0),null);var value = cljs.core.nth.call(null,vec__5061,(1),null);var text = cljs.core.nth.call(null,vec__5061,(2),null);return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [value,text], null);
+test.yugioh.parseStrings = (function parseStrings(cb){return test.yugioh.fs.readFile(test.yugioh.stringsPath,"utf8",(function (err,data){var parseRow = (function (row){var vec__5091 = cljs.core.js__GT_clj.call(null,row.split(" "));var _ = cljs.core.nth.call(null,vec__5091,(0),null);var value = cljs.core.nth.call(null,vec__5091,(1),null);var text = cljs.core.nth.call(null,vec__5091,(2),null);return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [value,text], null);
 });var rows = data.split("\n");var formated = cljs.core.reduce.call(null,((function (parseRow,rows){
 return (function (all,row){if((row.lastIndexOf("#",(0)) === (0)))
 {return all;
@@ -46,9 +46,13 @@ return null;
 }));
 });
 test.yugioh.parseFile = (function parseFile(){return test.yugioh.async.parallel([test.yugioh.parseStrings,test.yugioh.parseCDB],(function (err,rets){var strs = (rets[(0)]);var cards = (rets[(1)]);var formatObj = ((function (strs,cards){
-return (function (obj){obj.attribute = cljs.core.clj__GT_js.call(null,test.yugioh.formatAttribute.call(null,strs,obj.attribute));
-obj.type = cljs.core.clj__GT_js.call(null,test.yugioh.formatType.call(null,strs,obj.type));
-obj.race = cljs.core.clj__GT_js.call(null,test.yugioh.formatRace.call(null,strs,obj.race));
+return (function (obj){obj.id = obj.id.toString();
+obj.lscale = ((obj.level >> (24)) & (255));
+obj.rscale = ((obj.level >> (16)) & (255));
+obj.level = (obj.level & (255));
+obj.attribute = cljs.core.clj__GT_js.call(null,test.yugioh.formatAttribute.call(null,strs,obj.attribute)).join("|");
+obj.type = cljs.core.clj__GT_js.call(null,test.yugioh.formatType.call(null,strs,obj.type)).join("|");
+obj.race = cljs.core.clj__GT_js.call(null,test.yugioh.formatRace.call(null,strs,obj.race)).join("|");
 return obj;
 });})(strs,cards))
 ;var formatCards = cljs.core.map.call(null,formatObj,cards);return test.yugioh.fs.writeFile(test.yugioh.outputFile,JSON.stringify(cljs.core.clj__GT_js.call(null,formatCards)),((function (strs,cards,formatObj,formatCards){

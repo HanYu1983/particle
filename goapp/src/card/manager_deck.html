@@ -88,7 +88,7 @@ body{
 			<div game="yugioh">level ${level}</div>
 			<div game="yugioh">${type}</div>
 			<div game="yugioh">${race}</div>
-			<div game="yugioh">${text}</div>
+			<div game="yugioh">${desc}</div>
 			
 			<div game="magic">${type}</div>
 			<div game="magic">${text}</div>
@@ -841,6 +841,286 @@ def: def
 		</tr>
 	</table>
 </script>
+<script id="tmpl_yugioh_jpForm" type="jquery-x-tmpl">
+	<table border=1>	
+		<tr>
+			<td>星級</td>
+			<td>
+				<select name="level_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				以上
+				<select name="level_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>屬性</td>
+			<td>
+				<select name="attr">
+					<option></option>
+					<option>地</option>
+					<option>水</option>
+					<option>炎</option>
+					<option>風</option>
+					<option>光</option>
+					<option>闇</option>
+					<option>神</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>種族</td>
+			<td>
+				<select name="race">
+					<option></option>
+					<option>戦士族</option>
+					<option>魔法使い族</option>
+					<option>天使族</option>
+					<option>悪魔族</option>
+					<option>アンデット族</option>
+					<option>機械族</option>
+					<option>水族</option>
+					<option>炎族</option>
+					<option>岩石族</option>
+					<option>鳥獣族</option>
+					<option>植物族</option>
+					<option>昆虫族</option>
+					<option>雷族</option>
+					<option>ドラゴン族</option>
+					<option>獣族</option>
+					<option>獣戦士族</option>
+					<option>恐竜族</option>
+					<option>魚族</option>
+					<option>海竜族</option>
+					<option>爬虫類族</option>
+					<option>サイキック族</option>
+					<option>幻神獣族</option>
+					<option>創造神族</option>
+					<option>幻竜族</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>卡片類型</td>
+			<td>
+				<select name="ctype">
+					<option></option>
+					<option>モンスター</option>
+					<option>魔法</option>
+					<option>罠</option>
+				</select>
+				<select name="ctype2">
+					<option></option>
+					<option>通常</option>
+					<option>効果</option>
+					<option>融合</option>
+					<option>儀式</option>
+					<option>罠モンスター</option>
+					<option>スピリット</option>
+					<option>ユニオン</option>
+					<option>デュアル</option>
+					<option>チューナー</option>
+					<option>シンクロ</option>
+					<option>トークン</option>
+					<option>速攻</option>
+					<option>永続</option>
+					<option>装備</option>
+					<option>フィールド</option>
+					<option>カウンター</option>
+					<option>リバース</option>
+					<option>トゥーン</option>
+					<option>エクシーズ</option>
+					<option>ペンデュラム</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>攻擊力</td>
+			<td>
+				<select name="atk_1">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以上
+				<select name="atk_2">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>防守力</td>
+			<td>
+				<select name="def_1">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以上
+				<select name="def_2">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>左擺蕩</td>
+			<td>
+				<select name="lscale_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以上
+				<select name="lscale_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>右擺蕩</td>
+			<td>
+				<select name="rscale_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以上
+				<select name="rscale_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+		  <td >
+			卡片名稱檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="card_name" size=32>
+			<br>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片規則檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="rule" size=32>
+			<br>
+		  </td>
+		</tr>
+		 <tr>
+		  <td >
+			id檢索<br>
+		  </td>
+		  <td colspan="3">
+			  <input id="txt_id" type="text" name="id" size=16>
+		  </td>
+		</tr>
+	</table>
+</script>
 <script id="tmpl_sangoWarForm" type="jquery-x-tmpl">
 	<table cellpadding=2 cellspacing=0 border=1>	
 		<tr>
@@ -1178,13 +1458,20 @@ def: def
 		}
 	})( leo.utils.getHash() );
 	
+	var lang = leo.utils.getHash().lang
+	
+	var tmplName = game
+	if( lang ){
+		tmplName = [tmplName, lang].join('_')
+	}
+	
 	var cardlist;
 	var itemId = 0;
 	var form_container = $('#form_container' );
-	var tmpl_form = $('#tmpl_' + game + 'Form' );
+	var tmpl_form = $('#tmpl_' + tmplName + 'Form' );
 	
 	form_container.append( tmpl_form.tmpl() );
-	gameController.loadCardData( game, onLoadGameCallback );
+	gameController.loadCardData( game, lang, onLoadGameCallback );
 	
 	$.messager.progress({text:'讀取資料中…'}); 
 	
