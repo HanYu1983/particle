@@ -7,10 +7,10 @@ var yugioh = yugioh || {};
 			url: path,
 			dataType: 'json',
 			success: function( ret ){
-				onLoadGameCallback( null, ret )
+				cb( null, ret )
 			},
 			error: function(xhr, res, err){
-				onLoadGameCallback( err )
+				cb( err )
 			}
 		})
 	}
