@@ -134,7 +134,7 @@ class Main
 		if( cardSuitsDetails.field( currentSelect ) == null ){
 			switch( currentSelect ) {
 				case 'yugioh':
-					CallJs.yugioh_load( '../common/txt/yugiohList.txt', onLoadGameCallback( currentSelect ) );
+					CallJs.yugioh_load("../common/txt/yugiohListEn.json", onLoadGameCallback( currentSelect ) );
 				case 'sangoWar':
 					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( currentSelect ) );
 			}
