@@ -7,6 +7,8 @@ var gameController = {};
 					yugioh.load("../common/txt/yugiohListJp.json", onLoadGameCallback)
 				} else if ( lang == 'en' ){
 					yugioh.load("../common/txt/yugiohListEn.json", onLoadGameCallback)
+				} else if ( lang == 'ch' ){
+					yugioh.load("../common/txt/yugiohListCh.json", onLoadGameCallback)
 				}
 				break;
 			case 'sangoWar':

@@ -6,10 +6,10 @@ goog.require('clojure.string');
 test.yugioh.async = require("async");
 test.yugioh.fs = require("fs");
 test.yugioh.SqliteDB = require("sqlite3").verbose().Database;
-test.yugioh.db = (new test.yugioh.SqliteDB("yugiohDoc/cards_jp.cdb"));
-test.yugioh.stringsPath = "yugiohDoc/strings_jp.conf";
-test.yugioh.outputFile = "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListJp.json";
-test.yugioh.parseStrings = (function parseStrings(cb){return test.yugioh.fs.readFile(test.yugioh.stringsPath,"utf8",(function (err,data){var parseRow = (function (row){var vec__5091 = cljs.core.js__GT_clj.call(null,row.split(" "));var _ = cljs.core.nth.call(null,vec__5091,(0),null);var value = cljs.core.nth.call(null,vec__5091,(1),null);var text = cljs.core.nth.call(null,vec__5091,(2),null);return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [value,text], null);
+test.yugioh.db = (new test.yugioh.SqliteDB("yugiohDoc/cards_ch.cdb"));
+test.yugioh.stringsPath = "yugiohDoc/strings_ch.conf";
+test.yugioh.outputFile = "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListCh.json";
+test.yugioh.parseStrings = (function parseStrings(cb){return test.yugioh.fs.readFile(test.yugioh.stringsPath,"utf8",(function (err,data){var parseRow = (function (row){var vec__5064 = cljs.core.js__GT_clj.call(null,row.split(" "));var _ = cljs.core.nth.call(null,vec__5064,(0),null);var value = cljs.core.nth.call(null,vec__5064,(1),null);var text = cljs.core.nth.call(null,vec__5064,(2),null);return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [value,text], null);
 });var rows = data.split("\n");var formated = cljs.core.reduce.call(null,((function (parseRow,rows){
 return (function (all,row){if((row.lastIndexOf("#",(0)) === (0)))
 {return all;

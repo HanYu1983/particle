@@ -1121,6 +1121,286 @@ def: def
 		</tr>
 	</table>
 </script>
+<script id="tmpl_yugioh_chForm" type="jquery-x-tmpl">
+	<table border=1>	
+		<tr>
+			<td>星級</td>
+			<td>
+				<select name="level_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				以上
+				<select name="level_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>屬性</td>
+			<td>
+				<select name="attr">
+					<option></option>
+					<option>地</option>
+					<option>水</option>
+					<option>炎</option>
+					<option>風</option>
+					<option>光</option>
+					<option>闇</option>
+					<option>神</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>種族</td>
+			<td>
+				<select name="race">
+					<option></option>
+					<option>戰士</option>
+					<option>魔法使</option>
+					<option>天使</option>
+					<option>惡魔</option>
+					<option>不死</option>
+					<option>機械</option>
+					<option>水</option>
+					<option>炎</option>
+					<option>岩石</option>
+					<option>鳥獸</option>
+					<option>植物</option>
+					<option>昆蟲</option>
+					<option>雷</option>
+					<option>龍</option>
+					<option>獸</option>
+					<option>獸戰士</option>
+					<option>恐龍</option>
+					<option>魚</option>
+					<option>海龍</option>
+					<option>爬蟲類</option>
+					<option>超能</option>
+					<option>幻神獸</option>
+					<option>創造神</option>
+					<option>幻龍</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>卡片類型</td>
+			<td>
+				<select name="ctype">
+					<option></option>
+					<option>怪獸</option>
+					<option>魔法</option>
+					<option>陷阱</option>
+				</select>
+				<select name="ctype2">
+					<option></option>
+					<option>通常</option>
+					<option>效果</option>
+					<option>融合</option>
+					<option>儀式</option>
+					<option>陷阱怪獸</option>
+					<option>靈魂</option>
+					<option>聯合</option>
+					<option>二重</option>
+					<option>協調</option>
+					<option>同步</option>
+					<option>代幣</option>
+					<option>速攻</option>
+					<option>永續</option>
+					<option>裝備</option>
+					<option>場地</option>
+					<option>反擊</option>
+					<option>反轉</option>
+					<option>卡通</option>
+					<option>超量</option>
+					<option>靈擺</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>攻擊力</td>
+			<td>
+				<select name="atk_1">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以上
+				<select name="atk_2">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>防守力</td>
+			<td>
+				<select name="def_1">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以上
+				<select name="def_2">
+					<option></option>
+					<option>500</option>
+					<option>1000</option>
+					<option>1500</option>
+					<option>2000</option>
+					<option>2500</option>
+					<option>3000</option>
+					<option>3500</option>
+					<option>4000</option>
+					<option>4500</option>
+					<option>5000</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>左擺蕩</td>
+			<td>
+				<select name="lscale_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以上
+				<select name="lscale_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>右擺蕩</td>
+			<td>
+				<select name="rscale_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以上
+				<select name="rscale_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+		  <td >
+			卡片名稱檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="card_name" size=32>
+			<br>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片規則檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="rule" size=32>
+			<br>
+		  </td>
+		</tr>
+		 <tr>
+		  <td >
+			id檢索<br>
+		  </td>
+		  <td colspan="3">
+			  <input id="txt_id" type="text" name="id" size=16>
+		  </td>
+		</tr>
+	</table>
+</script>
 <script id="tmpl_sangoWarForm" type="jquery-x-tmpl">
 	<table cellpadding=2 cellspacing=0 border=1>	
 		<tr>
@@ -1437,7 +1717,8 @@ def: def
 		<div class="group" style="position:relative; width:100%; text-align:center;">
 			<div class="hori" >
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=sangoWar')" data-options="iconCls:'icon-redo'">三國志大戰</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=en')" data-options="iconCls:'icon-redo'">遊戲王</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=ch')" data-options="iconCls:'icon-redo'">遊戲王</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=en')" data-options="iconCls:'icon-redo'">遊戲王(英)</a>
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=jp')" data-options="iconCls:'icon-redo'">遊戲王(日)</a>
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=magic')" data-options="iconCls:'icon-redo'">魔法風雲會</a>
 			</div>
