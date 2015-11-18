@@ -4,27 +4,9 @@ var gameController = {};
 		switch( game ){
 			case 'yugioh':
 				if( lang == 'jp' ){
-					$.ajax({
-						url: "../common/txt/yugiohListJp.json",
-						dataType: 'json',
-						success: function( ret ){
-							onLoadGameCallback( null, ret )
-						},
-						error: function(xhr, res, err){
-							onLoadGameCallback( err )
-						}
-					})
-				} else {
-					$.ajax({
-						url: "../common/txt/yugiohListEn.json",
-						dataType: 'json',
-						success: function( ret ){
-							onLoadGameCallback( null, ret )
-						},
-						error: function(xhr, res, err){
-							onLoadGameCallback( err )
-						}
-					})
+					yugioh.load("../common/txt/yugiohListJp.json", onLoadGameCallback)
+				} else if ( lang == 'en' ){
+					yugioh.load("../common/txt/yugiohListEn.json", onLoadGameCallback)
 				}
 				break;
 			case 'sangoWar':
