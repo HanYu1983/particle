@@ -166,7 +166,7 @@ class UI extends Mediator
 						str += '<br/>';
 						str += detail.counter;
 					case 'yugioh': 
-						str += detail.text;
+						str += detail.desc;
 				}
 				detaildiv.html( str );
 				div.append( detaildiv );

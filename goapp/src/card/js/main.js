@@ -1397,7 +1397,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 					str += detail.counter;
 					break;
 				case "yugioh":
-					str += detail.text;
+					str += detail.desc;
 					break;
 				}
 				detaildiv.html(str);
