@@ -438,7 +438,7 @@ class Main
 	}
 	
 	public static function createCard( model:Dynamic ) {
-		model.url = CallJs.api_getCardImageWithPackageName( currentSelect, model.cardId );
+		model.url = CallJs.api_getCardImageWithPackageName( model.game, model.cardId );
 		model.backurl = '../common/images/card/cardback_' + model.backId + '.png';
 		
 		//for empty string
