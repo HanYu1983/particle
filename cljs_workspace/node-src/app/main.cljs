@@ -3,7 +3,8 @@
     [test.getSangoCard]
     [test.getMagicCard]
     [test.getGundamCard]
-    [test.yugioh]))
+    [test.yugioh]
+    [test.gundamWar]))
 
 (def yargs (js/require "yargs"))
   
@@ -26,6 +27,13 @@
       
       "getGundamCard"
       (test.getGundamCard/getInfo)
+      
+      "downloadGundamPage"
+      (test.gundamWar.downloadPages 213 1)
+      
+      "gundamWar.parseInfo"
+      (test.gundamWar.parseInfo 213 1)
+      
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動
 (enable-console-print!)

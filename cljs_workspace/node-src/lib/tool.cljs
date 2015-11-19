@@ -1,6 +1,9 @@
-(ns lib.tool)
+(ns lib.tool
+  (:require
+    [clojure.string :as str]))
 
 (def request (js/require "request"))
+(def fs (js/require "fs"))
 
 (defn getUrl [url cb]
   (request 
@@ -21,3 +24,13 @@
         (if err
           (cb err)
           (cb nil body))))))
+          
+          
+(defn getFile [filename cb]
+  (.readFile fs
+    filename
+    "utf8"
+    (fn [err data]
+      (if err
+        (cb err)
+        (cb nil (str/replace data #"\r" ""))))))
