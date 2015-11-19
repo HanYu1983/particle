@@ -105,7 +105,6 @@ var gameController = {};
 						fns.push( cardsearch.not( cardsearch.attrEq( "area", '宇宙' ) ))
 						break
 					}
-					
 				}
 			}
 			
