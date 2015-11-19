@@ -13,7 +13,9 @@ const (
   
   
   // vic local
-  CardInfoPosition2 = 5171003185430528
+  //CardInfoPosition2 = 5171003185430528
   // han local
   //CardInfoPosition2 = 5629499534213120
+  // remote
+  CardInfoPosition2 = 4839624983707648
 )

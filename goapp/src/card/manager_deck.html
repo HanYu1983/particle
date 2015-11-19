@@ -24,14 +24,7 @@
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
-	<script src="../common/js/lib/csv.js"></script>
-	<script src="../common/js/lib/purl.js"></script>	
-	<script src="../common/js/sangoWar.js"></script>	
-	<script src="../common/js/yugioh.js"></script>	
-	<script src="../common/js/magic.js"></script>	
-	<script src="../common/js/cardsearch.js"></script>	
-	<script src='js/api.js'></script>
+	
 </head>
 <style>
 body{
@@ -1727,20 +1720,22 @@ def: def
 			</div>
 		</div>
 	</div>
+	<script src="../common/js/lib/google/ga.js"></script>
+	<script src="../common/js/lib/csv.js"></script>
+	<script src="../common/js/lib/purl.js"></script>	
+	<script src="../common/js/sangoWar.js"></script>	
+	<script src="../common/js/yugioh.js"></script>	
+	<script src="../common/js/magic.js"></script>	
+	<script src="../common/js/gundamWar.js"></script>	
+	<script src="../common/js/cardsearch.js"></script>	
+	<script src='js/api.js'></script>
 	<script src="js/manager_deck_gameController.js"></script>
 	<script>
 	googleTracking.init( 'UA-55273266-3' );
 	
 	var game = (function( hashobj ){
 		if( hashobj.game == undefined ) return 'sangoWar';
-		switch( hashobj.game ){
-			case 'sangoWar':
-			case 'yugioh':
-			case 'magic':
-				return hashobj.game;
-			default:
-				return 'sangoWar';
-		}
+		return hashobj.game
 	})( leo.utils.getHash() );
 	
 	var lang = leo.utils.getHash().lang

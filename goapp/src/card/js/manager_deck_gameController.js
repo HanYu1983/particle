@@ -2,6 +2,9 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'gundamWar':
+				gundamWar.load("../common/txt/gundamWarList.json", onLoadGameCallback)
+				break;
 			case 'yugioh':
 				if( lang == 'jp' ){
 					yugioh.load("../common/txt/yugiohListJp.json", onLoadGameCallback)
@@ -22,25 +25,46 @@ var gameController = {};
 	
 	function getCardUrl( game, card ){
 		switch( game ){
-			case 'yugioh':
-				return api.getCardImageWithPackageName( 'yugioh', card.id );
-				break;
 			case 'sangoWar':
 				return api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
-				break;
-			case 'magic':
-				return api.getCardImageWithPackageName( 'magic', card.id );
+			default:
+				return api.getCardImageWithPackageName( game, card.id );
 		}
 	}
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'gundamWar':
+				return gundamWarQuerystring2fns(str)
 			case 'yugioh':
 				return yugiohQuerystring2fns(str)
 			case 'sangoWar':
 				return sangoWarQuerystring2fns(str);
 			case 'magic':
 				return magicQuerystring2fns(str);
+		}
+	}
+	
+	/*
+            "id" string
+            "color" "茶"|"藍"|"紫"|"白"|"綠"|"紅"|"黑"
+            "name" string
+            "pkg" string
+            "cost" "1-1-1"
+            "atk" ["1/3", "1/3", "1/3"]
+            "area" "宇宙/地球"
+            "card-id" string
+            "context" string
+	*/
+	function gundamWarQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
 		}
 	}
 	

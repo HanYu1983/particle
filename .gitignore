@@ -17,6 +17,7 @@ go_workspace/root/src/gopkg.in
 node_modules/
 output/
 cardPackage/
+downloadPages/
 pkg/
 github.com/
 node_workspace/genCard/gundamWar/
