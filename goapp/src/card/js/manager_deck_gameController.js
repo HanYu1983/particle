@@ -81,7 +81,14 @@ var gameController = {};
 				break;
 			default:
 				if( v == "on" ){
-					fns.push( cardsearch.attrEq( "area", k ))
+					switch( k ){
+						case 'ability':
+							fns.push( cardsearch.attrEq( "ability", k ))
+						case 'area':
+							fns.push( cardsearch.attrEq( "area", k ))
+							break;
+					}
+					
 				}
 			}
 			
