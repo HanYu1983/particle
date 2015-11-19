@@ -81,7 +81,15 @@ var gameController = {};
 				break;
 			default:
 				if( v == "on" ){
-					fns.push( cardsearch.attrEq( "area", k ))
+					switch( k ){
+					case '宇宙':
+						fns.push( cardsearch.not( cardsearch.attrEq( "area", '地球' ) ))
+						break
+					case '地球':
+						fns.push( cardsearch.not( cardsearch.attrEq( "area", '宇宙' ) ))
+						break
+					}
+					
 				}
 			}
 			

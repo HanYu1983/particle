@@ -11,7 +11,6 @@ var cardsearch = cardsearch || {};
 			} else {
 				switch( typeof obj[key] ){
 				case "string":
-					//console.log( obj[key], value, obj[ key ].indexOf( value ) )
 					return obj[ key ].indexOf( value ) != -1
 				case "number":
 					return obj[ key ] == value
@@ -57,6 +56,12 @@ var cardsearch = cardsearch || {};
 		}
 	}
 	
+	function not( fn ){
+		return function( obj ){
+			return !fn( obj )
+		}
+	}
+	
 	function and( fns ){
 		return function( obj ){
 			return _.reduce( fns, function( ret, fn ){
@@ -79,6 +84,7 @@ var cardsearch = cardsearch || {};
 	module.attrEq = attrEq
 	module.attrGe = attrGe
 	module.attrLe = attrLe
+	module.not = not
 	module.search = search
 	
 }) ( cardsearch )
