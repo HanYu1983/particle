@@ -512,7 +512,7 @@ Main.rotate = function(ary_select,deg) {
 	Main.applyValue(ary_select,true);
 };
 Main.createCard = function(model) {
-	model.url = CallJs.api_getCardImageWithPackageName(Main.currentSelect,model.cardId);
+	model.url = CallJs.api_getCardImageWithPackageName(model.game,model.cardId);
 	model.backurl = "../common/images/card/cardback_" + Std.string(model.backId) + ".png";
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };

@@ -73,7 +73,7 @@ var gameController = {};
 			case 'ctype':
 				switch( v ){
 				case 'G':
-					fns.push( cardsearch.attrEq( "card-id", "G" ) )
+					fns.push( cardsearch.attrEq( "type", "G" ) )
 					break
 				case 'unit':
 					fns.push( cardsearch.attrEq( "card-id", "U" ) )
@@ -98,16 +98,12 @@ var gameController = {};
 			case 'text':
 				fns.push( cardsearch.attrEq( "context", v ) )
 				break;
+			case 'area':
+				fns.push( cardsearch.attrEq( "area", v ) )
+				break;
 			default:
 				if( v == "on" ){
-					switch( k ){
-					case '宇宙':
-						fns.push( cardsearch.not( cardsearch.attrEq( "area", '地球' ) ))
-						break
-					case '地球':
-						fns.push( cardsearch.not( cardsearch.attrEq( "area", '宇宙' ) ))
-						break
-					}
+					fns.push( cardsearch.attrEq( "context", k ))
 				}
 			}
 			
