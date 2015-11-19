@@ -57,6 +57,7 @@ var gameController = {};
             "context" string
 	*/
 	function gundamWarQuerystring2fns( qstr ){
+		console.log( qstr );
 		var url = $.url("?" + qstr)
 		var query = url.data.param.query
 		var fns = []
@@ -65,7 +66,27 @@ var gameController = {};
 			if( v == "" ){
 				continue
 			}
+			switch( k ){
+			case 'card_name':
+				fns.push( cardsearch.attrEq( "name", v ) )
+				break;
+			case 'ntype':
+				fns.push( cardsearch.attrEq( "color", v ) )
+				break;
+			case "id":
+				fns.push( cardsearch.attrEq( "card-id", v ) )
+				break
+			case 'text':
+				fns.push( cardsearch.attrEq( "context", v ) )
+				break;
+			default:
+				if( v == "on" ){
+					fns.push( cardsearch.attrEq( "area", k ))
+				}
+			}
+			
 		}
+		return fns
 	}
 	
 	// 三國尋找方法實做

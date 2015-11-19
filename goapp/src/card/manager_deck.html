@@ -85,6 +85,10 @@ body{
 			
 			<div game="magic">${type}</div>
 			<div game="magic">${text}</div>
+			
+			<div game="gundamWar">${pkg}</div>
+			<div game="gundamWar">${area}</div>
+			<div game="gundamWar">${context}</div>
 		</div>
 	</div>
 </script>
@@ -110,8 +114,230 @@ body{
 			<div game="yugioh">${type}</div>
 
 			<div game="magic">${type}</div>
+			
+			<div game="gundamWar">${area}</div>
 		</div>
 	</div>
+</script>
+<!--
+"id" string
+"color" "茶"|"藍"|"紫"|"白"|"綠"|"紅"|"黑"
+"name" string
+"pkg" string
+"cost" "1-1-1"
+"atk" ["1/3", "1/3", "1/3"]
+"area" "宇宙/地球"
+"card-id" string
+"context" string
+-->
+<script id="tmpl_gundamWarForm" type="jquery-x-tmpl">
+	<table border="1">
+		<tr>
+			<td>
+				顏色
+			</td>
+			<td>
+				<select name="ntype">
+					<option></option>
+					<option>茶</option>
+					<option>藍</option>
+					<option>紫</option>
+					<option>白</option>
+					<option>綠</option>
+					<option>紅</option>
+					<option>黑</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>指定國力</td>
+			<td>
+				<select name="cost_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+				</select>
+				以上
+				<select name="cost_2">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>合計國力</td>
+			<td>
+				<select name="costAll_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+				以上
+				<select name="costAll_2">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>格鬥力</td>
+			<td>
+				<select name="atk_1">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+				以上
+				<select name="atk_2">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>射擊力</td>
+			<td>
+				<select name="atk2_1">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+				以上
+				<select name="atk2_2">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>防守力</td>
+			<td>
+				<select name="def_1">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+				以上
+				<select name="def_2">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>
+				區域
+			</td>
+			<td>
+				<input type="checkbox" name="宇宙">宇宙
+				<input type="checkbox" name="地球">地球
+			</td>
+		</tr>
+		<tr>
+		  <td >
+			卡片名稱檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="card_name" size=32>
+			<br>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片規則檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="rule" size=32>
+			<br>
+		  </td>
+		</tr>
+		 <tr>
+		  <td >
+			id檢索<br>
+		  </td>
+		  <td colspan="3">
+			  <input id="txt_id" type="text" name="id" size=16>
+		  </td>
+		</tr>
+	</table>
 </script>
 <!--
 id: card.find('name').html(),
@@ -1658,7 +1884,7 @@ def: def
 			</div>
 		</div>
 		<div data-options="region:'center',title:'結果'">
-			<div id="pag_bigCard" class="easyui-pagination" data-options="pageSize:20,layout:['first','links','last']"></div>
+			<div id="pag_bigCard" class="easyui-pagination" data-options="pageSize:15,layout:['first','links','last']"></div>
 			<div id="mc_bigCardContainer" >
 				
 			</div>
@@ -1711,12 +1937,28 @@ def: def
 	</div>
 	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="padding:10px">
 		<div class="group" style="position:relative; width:100%; text-align:center;">
-			<div class="hori" >
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=sangoWar')" data-options="iconCls:'icon-redo'">三國志大戰</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=ch')" data-options="iconCls:'icon-redo'">遊戲王</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=en')" data-options="iconCls:'icon-redo'">遊戲王(英)</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=jp')" data-options="iconCls:'icon-redo'">遊戲王(日)</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=magic')" data-options="iconCls:'icon-redo'">魔法風雲會</a>
+			
+			<div class="group">
+				<div class="hori">
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=sangoWar')" data-options="iconCls:'icon-redo'">三國志大戰</a>
+				</div>
+			</div>
+			<div class="group">
+				<div class="hori">
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=gundamWar')" data-options="iconCls:'icon-redo'">鋼彈大戰</a>
+				</div>
+			</div>
+			<div class="group">
+				<div class="hori">
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=magic')" data-options="iconCls:'icon-redo'">魔法風雲會</a>
+				</div>
+			</div>
+			<div class="group">
+				<div class="hori">
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=ch')" data-options="iconCls:'icon-redo'">遊戲王</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=en')" data-options="iconCls:'icon-redo'">遊戲王(英)</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=jp')" data-options="iconCls:'icon-redo'">遊戲王(日)</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -1794,8 +2036,8 @@ def: def
 			if( ary_cards == undefined ) return; 
 			mc_bigCardContainer.empty();
 			
-			var sid = currentPage * 20;
-			var eid = currentPage * 20 + 20;
+			var sid = currentPage * 15;
+			var eid = currentPage * 15 + 15;
 			
 			if( eid > ary_cards.length ){
 				eid = ary_cards.length;
