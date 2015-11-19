@@ -58,7 +58,7 @@ var cardsearch = cardsearch || {};
 	
 	function not( fn ){
 		return function( obj ){
-			return !fn( obj )
+			return fn( obj ) == false
 		}
 	}
 	

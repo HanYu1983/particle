@@ -70,6 +70,22 @@ var gameController = {};
 			case 'card_name':
 				fns.push( cardsearch.attrEq( "name", v ) )
 				break;
+			case 'ctype':
+				switch( v ){
+				case 'G':
+					cardsearch.attrEq( "card-id", "G" ) 
+					break
+				case 'unit':
+					fns.push( cardsearch.attrEq( "card-id", "U" ) )
+					break
+				case 'command':
+					fns.push( cardsearch.attrEq( "card-id", "C" ) )
+					break
+				case 'operation':
+					fns.push( cardsearch.attrEq( "card-id", "O" ) )
+					break
+				}
+				break
 			case 'ntype':
 				fns.push( cardsearch.attrEq( "color", v ) )
 				break;
