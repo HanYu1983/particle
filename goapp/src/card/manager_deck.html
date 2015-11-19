@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8"/>
-	<title>余氏組牌機</title>
+	<title>組牌風雲</title>
 	<!--page information for search engine-->
-	<meta name="title" content="余氏組牌機" />
-	<meta name="keyword" content="余氏組牌機,卡牌風雲,三國志大戰,集換式卡牌,線上卡牌,虛擬桌面,組牌機" />
-	<meta name="description" content="余氏組牌機" />
+	<meta name="title" content="組牌風雲" />
+	<meta name="keyword" content="組牌風雲,卡牌風雲,三國志大戰,集換式卡牌,線上卡牌,虛擬桌面,組牌機" />
+	<meta name="description" content="組牌風雲" />
 	<link rel="image_src" href=""/>
 	
 	<!--share information for fb-->
-	<meta property="og:description" content="余氏組牌機" />
-	<meta property="og:title" content="余氏組牌機" />
+	<meta property="og:description" content="組牌風雲" />
+	<meta property="og:title" content="組牌風雲" />
 	<meta property="og:url" content="http://particle-979.appspot.com/card/manager_sango.html#"/>
 	<meta name="description" content="" />
 	
@@ -1693,9 +1693,10 @@ def: def
 		<div class="group" style="text-align:center;">
 			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 			<div class="hori" style="margin-top:10px;">
-				<a id="btn" href="#" class="easyui-linkbutton" style="width:80px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
-				<a id="btn" href="#" class="easyui-linkbutton" style="width:120px; height:40px;" onclick="app.view.onSetDeckClick()" data-options="iconCls:'icon-back'">去輸入牌組</a>
-				<a id="btn" href="#" class="easyui-linkbutton" style="width:140px; height:40px;" onclick="app.view.onGotoGameClick()" data-options="iconCls:'icon-redo'">線上打牌去</a>
+				<a id="btn" href="#" title="用卡牌風雲進行線上對戰的社團，歡迎大家加入" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" onclick="app.view.onGoToClubClick();">加入社團找牌咖</a>
+				<a id="btn" href="#" title="匯入由此組牌機所輸出的文字來產生牌組" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
+				<a id="btn" href="#" title="去上善若水app的首頁，登入並輸入由此組牌機所產生的文字，來新增自己的套牌" class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" onclick="app.view.onSetDeckClick()" data-options="iconCls:'icon-back'">去輸入牌組</a>
+				<a id="btn" href="#" title="去卡牌風雲頁面使用臨時創建的功能，來測試由此組牌機所組出來的套牌" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onGotoGameClick()" data-options="iconCls:'icon-redo'">線上打牌去</a>
 			</div>
 		</div>
 	</div>
@@ -1709,6 +1710,8 @@ def: def
 				<a style="color:yellow" href="//www.facebook.com/pages/上善若水/1653920964852269" target="_blank">上善若水粉絲頁</a>
 				<br/><br/>
 				<a style="color:yellow" href="//particle-979.appspot.com/manager/index.html#" target="_blank">上善若水官網&牌組管理器</a>
+				<br/><br/>
+				<a style="color:yellow" href="//www.facebook.com/groups/1521526761495948/" target="_blank">線上卡牌遊戲社</a>
 				<br/><br/>
 			</div>
 		</div>
@@ -2033,6 +2036,11 @@ def: def
 			window.open('https://particle-979.appspot.com/card/index.html#');
 		}
 		
+		function onGoToClubClick(){
+			googleTracking.click( 'onGoToClubClick' );
+			window.open('//www.facebook.com/groups/1521526761495948/');
+		}
+		
 		module.onResetClick = onResetClick;
 		module.onSearchClick = onSearchClick;
 		module.onClearClick = onClearClick;
@@ -2040,6 +2048,7 @@ def: def
 		module.onLoadClick = onLoadClick;
 		module.onSetDeckClick = onSetDeckClick;
 		module.onGotoGameClick = onGotoGameClick;
+		module.onGoToClubClick = onGoToClubClick;
 		
 	})( app.view );
 	</script>
