@@ -79,16 +79,12 @@ var gameController = {};
 			case 'text':
 				fns.push( cardsearch.attrEq( "context", v ) )
 				break;
+			case 'area':
+				fns.push( cardsearch.attrEq( "area", v ) )
+				break;
 			default:
 				if( v == "on" ){
-					switch( k ){
-						case 'ability':
-							fns.push( cardsearch.attrEq( "ability", k ))
-						case 'area':
-							fns.push( cardsearch.attrEq( "area", k ))
-							break;
-					}
-					
+					fns.push( cardsearch.attrEq( "context", k ))
 				}
 			}
 			
