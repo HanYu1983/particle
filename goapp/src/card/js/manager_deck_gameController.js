@@ -76,18 +76,36 @@ var gameController = {};
 					fns.push( cardsearch.attrEq( "type", "G" ) )
 					break
 				case 'unit':
-					fns.push( cardsearch.attrEq( "card-id", "U" ) )
+					fns.push( cardsearch.attrEq( "type", "U" ) )
 					break
 				case 'command':
-					fns.push( cardsearch.attrEq( "card-id", "C" ) )
+					fns.push( cardsearch.attrEq( "type", "C" ) )
 					break
 				case 'operation':
-					fns.push( cardsearch.attrEq( "card-id", "O" ) )
+					fns.push( cardsearch.attrEq( "type", "O" ) )
 					break
 				case 'character':
-					fns.push( cardsearch.attrEq( "card-id", "CH" ) )
+					fns.push( cardsearch.attrEq( "type", "CH" ) )
 					break
 				}
+				break
+			case 'atk_1':
+				fns.push( cardsearch.indexGe( "atk", 0, v ) )
+				break
+			case 'atk_2':
+				fns.push( cardsearch.indexLe( "atk", 0, v ) )
+				break
+			case 'atk2_1':
+				fns.push( cardsearch.indexGe( "atk", 1, v ) )
+				break
+			case 'atk2_2':
+				fns.push( cardsearch.indexLe( "atk", 1, v ) )
+				break
+			case 'def_1':
+				fns.push( cardsearch.indexGe( "atk", 2, v ) )
+				break
+			case 'def_2':
+				fns.push( cardsearch.indexLe( "atk", 2, v ) )
 				break
 			case 'ntype':
 				fns.push( cardsearch.attrEq( "color", v ) )

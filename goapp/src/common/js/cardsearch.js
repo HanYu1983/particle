@@ -56,6 +56,33 @@ var cardsearch = cardsearch || {};
 		}
 	}
 	
+	function indexGe( key, idx, value ){
+		return function( obj ){
+			if( obj[key] ){
+				return obj[key][idx] >= value
+			}
+			return false
+		}
+	}
+	
+	function indexLe( key, idx, value ){
+		return function( obj ){
+			if( obj[key] ){
+				return obj[key][idx] <= value
+			}
+			return false
+		}
+	}
+	
+	function indexEq( key, idx, value ){
+		return function( obj ){
+			if( obj[key] ){
+				return obj[key][idx] == value
+			}
+			return false
+		}
+	}
+	
 	function not( fn ){
 		return function( obj ){
 			return fn( obj ) == false
@@ -85,6 +112,9 @@ var cardsearch = cardsearch || {};
 	module.attrGe = attrGe
 	module.attrLe = attrLe
 	module.not = not
+	module.indexGe = indexGe
+	module.indexLe = indexLe
+	module.indexEq = indexEq
 	module.search = search
 	
 }) ( cardsearch )
