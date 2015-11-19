@@ -73,7 +73,7 @@ var gameController = {};
 			case 'ctype':
 				switch( v ){
 				case 'G':
-					cardsearch.attrEq( "card-id", "G" ) 
+					fns.push( cardsearch.attrEq( "card-id", "G" ) )
 					break
 				case 'unit':
 					fns.push( cardsearch.attrEq( "card-id", "U" ) )
@@ -83,6 +83,9 @@ var gameController = {};
 					break
 				case 'operation':
 					fns.push( cardsearch.attrEq( "card-id", "O" ) )
+					break
+				case 'character':
+					fns.push( cardsearch.attrEq( "card-id", "CH" ) )
 					break
 				}
 				break
