@@ -8,7 +8,7 @@
 
 (def gundamUrl "http://www.shiner96500.com/cards/gundamwar/search2.php")
 (def downloadDir "downloadPages/")
-(def output "gundamWarList.json")
+(def output "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/gundamWarList.json")
 
 (defn downloadPage [delayTime pageNum cb]
   (t/postUrl
@@ -115,7 +115,12 @@
             "color" (get colorMap color)
             "name" (str/trim (str/replace name #"&nbsp;" ""))
             "pkg" (str/trim pkg)
-            "cost" (when cost (str/replace cost #" " ""))
+            "cost" 
+            (when cost 
+              (->
+                (str/replace cost #" " "")
+                (str/split #"-")
+                (clj->js)))
             "atk" (or atk atkadj)
             "area" (when area (str/replace area #"・" "/"))
             "card-id" id

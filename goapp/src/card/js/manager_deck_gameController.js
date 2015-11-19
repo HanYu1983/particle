@@ -45,6 +45,38 @@ var gameController = {};
 		}
 	}
 	
+	function costGe( idx, value ){
+		return function( obj ){
+			if( obj.cost ){
+				return obj.cost[idx].replace(/\W/g, "") >= value
+			}
+			return false
+		}
+	}
+	
+	function costLe( idx, value ){
+		return function( obj ){
+			if( obj.cost ){
+				return obj.cost[idx].replace(/\W/g, "") <= value
+			}
+			return false
+		}
+	}
+	
+	function areaEq( value ){
+		return function( obj ){
+			if( obj.area ){
+				return obj.area == value
+			}
+			return false
+		}
+	}
+	
+	function typeEq( value ){
+		return function( obj ){
+			return obj['card-id'].split('-')[0] == value
+		}
+	}
 	/*
             "id" string
             "color" "茶"|"藍"|"紫"|"白"|"綠"|"紅"|"黑"
@@ -57,7 +89,6 @@ var gameController = {};
             "context" string
 	*/
 	function gundamWarQuerystring2fns( qstr ){
-		console.log( qstr );
 		var url = $.url("?" + qstr)
 		var query = url.data.param.query
 		var fns = []
@@ -73,21 +104,33 @@ var gameController = {};
 			case 'ctype':
 				switch( v ){
 				case 'G':
-					fns.push( cardsearch.attrEq( "type", "G" ) )
+					fns.push( typeEq( "G" ) )
 					break
 				case 'unit':
-					fns.push( cardsearch.attrEq( "type", "U" ) )
+					fns.push( typeEq( "U" ) )
 					break
 				case 'command':
-					fns.push( cardsearch.attrEq( "type", "C" ) )
+					fns.push( typeEq( "C" ) )
 					break
 				case 'operation':
-					fns.push( cardsearch.attrEq( "type", "O" ) )
+					fns.push( typeEq( "O" ) )
 					break
 				case 'character':
-					fns.push( cardsearch.attrEq( "type", "CH" ) )
+					fns.push( typeEq( "CH" ) )
 					break
 				}
+				break
+			case 'cost_1':
+				fns.push( costGe( 0, v ) )
+				break
+			case 'cost_2':
+				fns.push( costLe( 0, v ) )
+				break
+			case 'costAll_1':
+				fns.push( costGe( 1, v ) )
+				break
+			case 'costAll_2':
+				fns.push( costLe( 1, v ) )
 				break
 			case 'atk_1':
 				fns.push( cardsearch.indexGe( "atk", 0, v ) )
@@ -117,7 +160,7 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "context", v ) )
 				break;
 			case 'area':
-				fns.push( cardsearch.attrEq( "area", v ) )
+				fns.push( areaEq( v ) )
 				break;
 			default:
 				if( v == "on" ){
