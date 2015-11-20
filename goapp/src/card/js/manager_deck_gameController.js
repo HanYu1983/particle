@@ -67,6 +67,9 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+			case "id":
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
 			case 'card_name':
 				fns.push( cardsearch.attrEq( "name", v ) )
 				break;
