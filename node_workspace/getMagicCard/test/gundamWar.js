@@ -9,7 +9,7 @@ test.gundamWar.async = require("async");
 test.gundamWar.fs = require("fs");
 test.gundamWar.gundamUrl = "http://www.shiner96500.com/cards/gundamwar/search2.php";
 test.gundamWar.downloadDir = "downloadPages/";
-test.gundamWar.output = "gundamWarList.json";
+test.gundamWar.output = "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/gundamWarList.json";
 test.gundamWar.downloadPage = (function downloadPage(delayTime,pageNum,cb){return lib.tool.postUrl.call(null,test.gundamWar.gundamUrl,new cljs.core.PersistentArrayMap(null, 2, ["page",pageNum,"rr2","where true"], null),(function (err,ret){if(cljs.core.truth_(err))
 {return cb.call(null,err);
 } else
@@ -41,18 +41,18 @@ test.gundamWar.parseGroup = (function parseGroup(group){var ids = cljs.core.map.
 {throw "data lost!!";
 }
 return cljs.core.map.call(null,((function (ids,images,names,pkgs,context){
-return (function (p__5610,image,name,pkg,context__$1){var vec__5611 = p__5610;var color = cljs.core.nth.call(null,vec__5611,(0),null);var id = cljs.core.nth.call(null,vec__5611,(1),null);var cost = cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.second,cljs.core.re_seq.call(null,test.gundamWar.regex_cost,context__$1)));var atkadj = cljs.core.clj__GT_js.call(null,cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.rest,cljs.core.re_seq.call(null,test.gundamWar.regex_atkadj,context__$1))));var atk = cljs.core.clj__GT_js.call(null,cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.rest,cljs.core.re_seq.call(null,test.gundamWar.regex_atk,context__$1))));var area = cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.second,cljs.core.re_seq.call(null,test.gundamWar.regex_area,context__$1)));var colorMap = new cljs.core.PersistentArrayMap(null, 7, ["#FAEBD7","\u8336","#B1E3FE","\u85CD","#E7C0FE","\u7D2B","#F5F5F5","\u767D","#BCF3C4","\u7DA0","#FFC1C1","\u7D05","#C4C4C4","\u9ED1"], null);return cljs.core.PersistentHashMap.fromArrays(["area","id","pkg","card-id","atk","cost","name","context","color"],[(cljs.core.truth_(area)?clojure.string.replace.call(null,area,/・/,"/"):null),image,clojure.string.trim.call(null,pkg),id,(function (){var or__3551__auto__ = atk;if(cljs.core.truth_(or__3551__auto__))
+return (function (p__5085,image,name,pkg,context__$1){var vec__5086 = p__5085;var color = cljs.core.nth.call(null,vec__5086,(0),null);var id = cljs.core.nth.call(null,vec__5086,(1),null);var cost = cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.second,cljs.core.re_seq.call(null,test.gundamWar.regex_cost,context__$1)));var atkadj = cljs.core.clj__GT_js.call(null,cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.rest,cljs.core.re_seq.call(null,test.gundamWar.regex_atkadj,context__$1))));var atk = cljs.core.clj__GT_js.call(null,cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.rest,cljs.core.re_seq.call(null,test.gundamWar.regex_atk,context__$1))));var area = cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.second,cljs.core.re_seq.call(null,test.gundamWar.regex_area,context__$1)));var colorMap = new cljs.core.PersistentArrayMap(null, 7, ["#FAEBD7","\u8336","#B1E3FE","\u85CD","#E7C0FE","\u7D2B","#F5F5F5","\u767D","#BCF3C4","\u7DA0","#FFC1C1","\u7D05","#C4C4C4","\u9ED1"], null);return cljs.core.PersistentHashMap.fromArrays(["area","id","pkg","card-id","atk","cost","name","context","color"],[(cljs.core.truth_(area)?clojure.string.replace.call(null,area,/・/,"/"):null),image,clojure.string.trim.call(null,pkg),id,(function (){var or__3551__auto__ = atk;if(cljs.core.truth_(or__3551__auto__))
 {return or__3551__auto__;
 } else
 {return atkadj;
 }
-})(),(cljs.core.truth_(cost)?clojure.string.replace.call(null,cost,/ /,""):null),clojure.string.trim.call(null,clojure.string.replace.call(null,name,/&nbsp;/,"")),context__$1,cljs.core.get.call(null,colorMap,color)]);
+})(),(cljs.core.truth_(cost)?cljs.core.clj__GT_js.call(null,clojure.string.split.call(null,clojure.string.replace.call(null,cost,/ /,""),/-/)):null),clojure.string.trim.call(null,clojure.string.replace.call(null,name,/&nbsp;/,"")),context__$1,cljs.core.get.call(null,colorMap,color)]);
 });})(ids,images,names,pkgs,context))
 ,ids,images,names,pkgs,context);
 });
 test.gundamWar.parsePage = (function parsePage(content){var ret = cljs.core.map.call(null,cljs.core.comp.call(null,test.gundamWar.parseGroup,cljs.core.second),cljs.core.re_seq.call(null,test.gundamWar.regex_g,content));return cljs.core.flatten.call(null,ret);
 });
-test.gundamWar.parseInfo = (function parseInfo(){return test.gundamWar.async.waterfall([(function (cb){return test.gundamWar.async.parallel(cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__5612_SHARP_){return cljs.core.partial.call(null,lib.tool.getFile,("downloadPages/"+cljs.core.str.cljs$core$IFn$_invoke$arity$1(p1__5612_SHARP_)+".html"));
+test.gundamWar.parseInfo = (function parseInfo(){return test.gundamWar.async.waterfall([(function (cb){return test.gundamWar.async.parallel(cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__5087_SHARP_){return cljs.core.partial.call(null,lib.tool.getFile,("downloadPages/"+cljs.core.str.cljs$core$IFn$_invoke$arity$1(p1__5087_SHARP_)+".html"));
 }),cljs.core.range.call(null,(1),(214)))),cb);
 }),(function (pages,cb){return cb.call(null,null,cljs.core.clj__GT_js.call(null,cljs.core.reduce.call(null,(function (all,curr){return cljs.core.concat.call(null,all,test.gundamWar.parsePage.call(null,curr));
 }),cljs.core.List.EMPTY,pages)));

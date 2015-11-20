@@ -2050,6 +2050,7 @@ def: def
 	$.messager.progress({text:'讀取資料中…'}); 
 	
 	function onLoadGameCallback( err, _cardlist ){
+		console.log(_cardlist)
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
@@ -2212,6 +2213,7 @@ def: def
 			pag_bigCard.pagination( 'select', 1 );
 			
 			ary_cards = searchLib( searchstr ).slice();
+			console.log( ary_cards )
 			
 			createBigCard();
 			setPagination( ary_cards.length );
