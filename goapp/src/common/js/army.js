@@ -19,6 +19,7 @@ var army = army || {};
 						param.id = id
 						param.Abs = [param.Ab1, param.Ab2, param.Ab3, param.Ab4, param.Ab5].join(",")
 						param.CostAry = param.Cost.split("-")
+						param.text = param.Text // Text是dom物件的關鍵字，最好不要用
 						list.push(param)
 					}
 				}
