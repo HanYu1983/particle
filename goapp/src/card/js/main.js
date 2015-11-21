@@ -337,7 +337,7 @@ Main.createCards = function(deck) {
 	var bid = _g;
 	if(_g == null) deck.backId = "0"; else switch(_g) {
 	default:
-		if(Std.parseInt(bid) <= 18) deck.backId = bid; else deck.backId = "0";
+		if(Std.parseInt(bid) <= 22) deck.backId = bid; else deck.backId = "0";
 	}
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
 		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};
