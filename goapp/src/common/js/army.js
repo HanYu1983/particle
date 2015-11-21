@@ -17,6 +17,8 @@ var army = army || {};
 						var id = obj.Id
 						var param = obj.Params
 						param.id = id
+						param.Abs = [param.Ab1, param.Ab2, param.Ab3, param.Ab4, param.Ab5].join(",")
+						param.CostAry = param.Cost.split("-")
 						list.push(param)
 					}
 				}

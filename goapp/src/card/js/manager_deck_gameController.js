@@ -2,6 +2,9 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'army':
+				army.load(onLoadGameCallback)
+				break;
 			case 'gundamWar':
 				gundamWar.load("../common/txt/gundamWarList.json", onLoadGameCallback)
 				break;
@@ -34,6 +37,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'army':
+				return armyQuerystring2fns( str );
 			case 'gundamWar':
 				return gundamWarQuerystring2fns(str)
 			case 'yugioh':
@@ -76,6 +81,79 @@ var gameController = {};
 		return function( obj ){
 			return obj['card-id'].split('-')[0] == value
 		}
+	}
+	
+	function armyQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+			case 'tech_1':
+				fns.push( cardsearch.indexGe( "CostAry", 0, v ) )
+				break
+			case 'tech_2':
+				fns.push( cardsearch.indexLe( "CostAry", 0, v ) )
+				break
+			case 'cost_1':
+				fns.push( cardsearch.indexGe( "CostAry", 1, v ) )
+				break
+			case 'cost_2':
+				fns.push( cardsearch.indexLe( "CostAry", 1, v ) )
+				break
+			case 'build_1':
+				fns.push( cardsearch.indexGe( "CostAry", 2, v ) )
+				break
+			case 'build_2':
+				fns.push( cardsearch.indexLe( "CostAry", 2, v ) )
+				break
+			case 'nation':
+				fns.push( cardsearch.attrEq( "Nation", v ) )
+				break
+			case 'ntype':
+				fns.push( cardsearch.attrEq( "Ntype", v ) )
+				break
+			case 'ctype':
+				fns.push( cardsearch.attrEq( "Ctype", v ) )
+				break
+			case 'atype':
+				fns.push( cardsearch.attrEq( "Atype", v ) )
+				break
+			case 'pland':
+				fns.push( cardsearch.attrEq( "Pland", v ) )
+				break;
+			case 'psky':
+				fns.push( cardsearch.attrEq( "Psky", v ) )
+				break;
+			case 'psoilder':
+				fns.push( cardsearch.attrEq( "Psoilder", v ) )
+				break;
+			case 'pcity':
+				fns.push( cardsearch.attrEq( "Pcity", v ) )
+				break;
+			case 'speed':
+				fns.push( cardsearch.attrEq( "Speed", v ) )
+				break;
+			case "id":
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
+			case 'card_name':
+				fns.push( cardsearch.attrEq( "Name", v ) )
+				break;
+			case 'rule':
+				fns.push( cardsearch.attrEq( "Text", v ) )
+				break;
+			default:
+				if( v == 'on' ){
+					fns.push( cardsearch.attrEq( "Abs", k ) )
+				}
+				break;
+		}}
+		return fns;
 	}
 	/*
             "id" string

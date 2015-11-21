@@ -121,6 +121,234 @@ body{
 		</div>
 	</div>
 </script>
+			
+<script id="tmpl_armyForm" type="jquery-x-tmpl">
+	<table border="1">
+		<tr>
+			<td>勢力/國家</td>
+			<td>
+				勢力
+				<select name="ntype">
+					<option></option>
+					<option>資本</option>
+					<option>共產</option>
+					<option>人民</option>
+				</select>
+				國家
+				<select name="nation">
+					<option></option>
+					<option>中國</option>
+					<option>美國</option>
+					<option>英國</option>
+					<option>德國</option>
+					<option>日本</option>
+					<option>韓國</option>
+					<option>俄羅斯</option>
+					<option>以色列</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>卡片類型</td>
+			<td>
+				卡片
+				<select name="ctype">
+					<option></option>
+					<option>部隊</option>
+					<option>建築</option>
+					<option>戰術</option>
+				</select>
+				兵器
+				<select name="atype">
+					<option></option>
+					<option>戰鬥機</option>
+					<option>攻擊機</option>
+					<option>戰鬥攻擊機</option>
+					<option>戰略轟炸機</option>
+					<option>支援機</option>
+					<option>直升機</option>
+					<option>坦克</option>
+					<option>裝甲車</option>
+					<option>士兵</option>
+					<option>對空炮</option>
+					<option>自走炮</option>
+					<option>戰略火炮</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>科技力</td>
+			<td>
+				<select name="tech_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+				</select>
+				以上
+				<select name="tech_2">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>資源cost</td>
+			<td>
+				<select name="cost_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+				</select>
+				以上
+				<select name="cost_2">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>生產速度</td>
+			<td>
+				<select name="build_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+				</select>
+				以上
+				<select name="build_2">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+				</select>
+				以下
+			</td>
+		</tr>
+		<tr>
+			<td>攻擊力</td>
+			<td>
+				陸
+				<select name="pland">
+					<option></option>
+					<option>不可</option>
+					<option>扺抗</option>
+					<option>精通</option>
+				</select>
+				空
+				<select name="psky">
+					<option></option>
+					<option>不可</option>
+					<option>扺抗</option>
+					<option>精通</option>
+				</select>
+				兵
+				<select name="psoilder">
+					<option></option>
+					<option>不可</option>
+					<option>扺抗</option>
+					<option>精通</option>
+				</select>
+				城
+				<select name="pcity">
+					<option></option>
+					<option>不可</option>
+					<option>扺抗</option>
+					<option>精通</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>速度</td>
+			<td>
+				<select name="speed">
+					<option></option>
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>能力</td>
+			<td>
+				<input type="checkbox" name="遠距" />遠距
+				<input type="checkbox" name="軍力減損" />軍力減損
+				<input type="checkbox" name="進駐" />進駐
+				<input type="checkbox" name="掃蕩" />掃蕩
+				<input type="checkbox" name="防塔" />防塔
+				<input type="checkbox" name="煙霧彈" />煙霧彈
+				<input type="checkbox" name="偵察" />偵察
+				<input type="checkbox" name="警戒" />警戒
+				<input type="checkbox" name="全偵" />全偵
+				<input type="checkbox" name="遠距" />遠距
+				<input type="checkbox" name="區域攻擊" />區域攻擊
+				<input type="checkbox" name="維修" />維修
+				<input type="checkbox" name="複合式裝甲" />複合式裝甲
+				<input type="checkbox" name="突襲" />突襲
+				<input type="checkbox" name="回收" />回收
+				<input type="checkbox" name="暱蹤" />暱蹤
+				<input type="checkbox" name="超高速" />超高速
+				
+				<input type="checkbox" name="核子引擎" />核子引擎
+				<input type="checkbox" name="雷射護盾" />雷射護盾
+				<input type="checkbox" name="火焰兵器" />火焰兵器
+				<input type="checkbox" name="生化兵器" />生化兵器
+				<input type="checkbox" name="ECM兵器" />ECM兵器
+				
+				<input type="checkbox" name="重點建物" />重點建物
+			</td>
+		</tr>
+		<tr>
+		  <td >
+			卡片名稱檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="card_name" size=32>
+			<br>
+		  </td>
+		</tr>
+		<tr>
+		  <td >
+			卡片規則檢索<br>
+		  </td>
+		  <td colspan="3">
+			<input type="text" name="rule" size=32>
+			<br>
+		  </td>
+		</tr>
+		 <tr>
+		  <td >
+			id檢索<br>
+		  </td>
+		  <td colspan="3">
+			  <input id="txt_id" type="text" name="id" size=16>
+		  </td>
+		</tr>
+	</table>
+</script>
 <!--
 "id" string
 "color" "茶"|"藍"|"紫"|"白"|"綠"|"紅"|"黑"
@@ -2021,6 +2249,7 @@ def: def
 	<script src="../common/js/yugioh.js"></script>	
 	<script src="../common/js/magic.js"></script>	
 	<script src="../common/js/gundamWar.js"></script>	
+	<script src="../common/js/army.js"></script>	
 	<script src="../common/js/cardsearch.js"></script>	
 	<script src='js/api.js'></script>
 	<script src="js/manager_deck_gameController.js"></script>
@@ -2031,6 +2260,16 @@ def: def
 		if( hashobj.game == undefined ) return 'sangoWar';
 		return hashobj.game
 	})( leo.utils.getHash() );
+	
+	var titlemapping = {
+		sangoWar:'三國志大戰',
+		army:'軍武gogogo',
+		yugioh:'遊戲王',
+		magic:'魔法風雲會',
+		gundamWar:'鋼彈大戰',
+	}
+	$('title').html(titlemapping[game] + '-組牌風雲' );
+	
 	
 	var lang = leo.utils.getHash().lang
 	
