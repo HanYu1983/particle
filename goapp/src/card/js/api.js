@@ -225,7 +225,7 @@ var api = api || {};
 		case 'yugioh':
 			return '//storage.googleapis.com/particle-resources/cardPackage/yugioh/' +id+ '.jpg'
 		case 'army':
-			return '//particle-979.appspot.com/common/cardPackage/army/'+id+'.jpg'
+			return '//storage.googleapis.com/particle-resources/cardPackage/army/'+id+'.jpg'
 		case 'magic':
 			return '//storage.googleapis.com/particle-resources/cardPackage/magic/' +encodeURIComponent( id )+ '.jpg'
 		}
@@ -392,8 +392,8 @@ var api = api || {};
 	
 	var heartbeatCbPool = {}
 	var heartbeatSeq = 0
-	var heartbeatTimeout = 3000
-	var heartbeatDuration = 10000
+	var heartbeatTimeout = 2000
+	var heartbeatDuration = 3000
 	
 	function sendHeartbeat( selfName, targetName, delay, cb ){
 		var obj = {
