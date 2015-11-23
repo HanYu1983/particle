@@ -346,7 +346,7 @@ Main.createCards = function(deck) {
 		var _g1 = Main.currentSelect;
 		switch(_g1) {
 		case "yugioh":
-			CallJs.yugioh_load("../common/txt/yugiohListEn.json",Main.onLoadGameCallback(Main.currentSelect));
+			CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(Main.currentSelect));
 			break;
 		case "sangoWar":
 			CallJs.sangoWar_load("../common/txt/sangoList.txt",Main.onLoadGameCallback(Main.currentSelect));
@@ -367,7 +367,7 @@ Main.getCardDetailById = function(game,cid) {
 	cid = StringTools.replace(cid,".jpg","");
 	if(Reflect.field(Main.cardSuitsDetails,game) == null) return null;
 	return Lambda.find(Reflect.field(Main.cardSuitsDetails,game),function(cardDetail) {
-		return cardDetail.id == cid;
+		return cardDetail.id.indexOf(cid) == 0;
 	});
 };
 Main.pushCmds = function(content) {

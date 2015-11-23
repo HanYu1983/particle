@@ -134,7 +134,7 @@ class Main
 		if( cardSuitsDetails.field( currentSelect ) == null ){
 			switch( currentSelect ) {
 				case 'yugioh':
-					CallJs.yugioh_load("../common/txt/yugiohListEn.json", onLoadGameCallback( currentSelect ) );
+					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( currentSelect ) );
 				case 'sangoWar':
 					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( currentSelect ) );
 			}
@@ -157,7 +157,7 @@ class Main
 		cid = StringTools.replace( cid, '.jpg', '' );
 		if ( cardSuitsDetails.field( game ) == null ) return null;
 		return Lambda.find( cardSuitsDetails.field( game ), function( cardDetail ) {
-			return cardDetail.id == cid;
+			return cardDetail.id.indexOf( cid ) == 0;
 		});
 	}
 	
