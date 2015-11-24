@@ -176,9 +176,6 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
-			case "id":
-				fns.push( cardsearch.attrEq( "id", v ) )
-				break
 			case 'card_name':
 				fns.push( cardsearch.attrEq( "name", v ) )
 				break;
@@ -237,7 +234,7 @@ var gameController = {};
 			case "id":
 				fns.push( cardsearch.attrEq( "card-id", v ) )
 				break
-			case 'text':
+			case 'rule':
 				fns.push( cardsearch.attrEq( "context", v ) )
 				break;
 			case 'area':
