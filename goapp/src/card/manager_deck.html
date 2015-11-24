@@ -72,6 +72,7 @@ body{
 		<div style="position:absolute; top:0; left:0; padding-left:50px; padding-right:10px; padding-top:10px; ">
 			<div>${id}</div>
 			<div game="sangoWar">${cname}</div>
+			<div game="sangoWar">${atype}</div>
 			<div game="sangoWar">${ability}</div>
 			<div game="sangoWar">${content}</div>
 			<br/>
@@ -112,18 +113,21 @@ body{
 			<img style="position:absolute; left:0; top:0; height:100%;" src=${url}  style="height:100%;" />
 		</div>
 		<div class="hori" style=" vertical-align:top;">
-			<div>${id}</div>
-			<div game="sangoWar">${cname}</div>
+			
+			<div game="sangoWar" style="width:230px;">${cname}</div>
+			<div game="sangoWar">${atype}</div>
 			<div game="sangoWar">${ctype}</div>
 			
-			<div game="yugioh">${name}</div>
+			<div game="yugioh" style="width:230px;">${name}</div>
 			<div game="yugioh">level ${level}</div>
 			<div game="yugioh">${type}</div>
 
+			<div game="magic" style="width:230px;">${id}</div>
 			<div game="magic">${type}</div>
 			
-			<div game="gundamWar">${name}</div>
+			<div game="gundamWar" style="width:230px;">${name}</div>
 			<div game="gundamWar">${ctype}</div>
+			<div game="gundamWar">${area}</div>
 			
 			<div game="army">${Name}</div>
 			<div game="army">${Ctype}</div>
