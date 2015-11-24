@@ -136,233 +136,6 @@ body{
 	</div>
 </script>
 			
-<script id="tmpl_armyForm" type="jquery-x-tmpl">
-	<table border="1">
-		<tr>
-			<td>勢力/國家</td>
-			<td>
-				勢力
-				<select name="ntype">
-					<option></option>
-					<option>資本</option>
-					<option>共產</option>
-					<option>人民</option>
-				</select>
-				國家
-				<select name="nation">
-					<option></option>
-					<option>中國</option>
-					<option>美國</option>
-					<option>英國</option>
-					<option>德國</option>
-					<option>日本</option>
-					<option>韓國</option>
-					<option>俄羅斯</option>
-					<option>以色列</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>卡片類型</td>
-			<td>
-				卡片
-				<select name="ctype">
-					<option></option>
-					<option>部隊</option>
-					<option>建築</option>
-					<option>戰術</option>
-				</select>
-				兵器
-				<select name="atype">
-					<option></option>
-					<option>戰鬥機</option>
-					<option>攻擊機</option>
-					<option>戰鬥攻擊機</option>
-					<option>戰略轟炸機</option>
-					<option>支援機</option>
-					<option>直升機</option>
-					<option>坦克</option>
-					<option>裝甲車</option>
-					<option>士兵</option>
-					<option>對空炮</option>
-					<option>自走炮</option>
-					<option>戰略火炮</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>科技力</td>
-			<td>
-				<select name="tech_1">
-					<option></option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-					<option>4</option>
-				</select>
-				以上
-				<select name="tech_2">
-					<option></option>
-					<option>0</option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-					<option>4</option>
-				</select>
-				以下
-			</td>
-		</tr>
-		<tr>
-			<td>資源cost</td>
-			<td>
-				<select name="cost_1">
-					<option></option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-					<option>4</option>
-					<option>5</option>
-					<option>6</option>
-				</select>
-				以上
-				<select name="cost_2">
-					<option></option>
-					<option>0</option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-					<option>4</option>
-					<option>5</option>
-					<option>6</option>
-				</select>
-				以下
-			</td>
-		</tr>
-		<tr>
-			<td>生產速度</td>
-			<td>
-				<select name="build_1">
-					<option></option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-					<option>4</option>
-				</select>
-				以上
-				<select name="build_2">
-					<option></option>
-					<option>0</option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-					<option>4</option>
-				</select>
-				以下
-			</td>
-		</tr>
-		<tr>
-			<td>攻擊力</td>
-			<td>
-				陸
-				<select name="pland">
-					<option></option>
-					<option>不可</option>
-					<option>扺抗</option>
-					<option>精通</option>
-				</select>
-				空
-				<select name="psky">
-					<option></option>
-					<option>不可</option>
-					<option>扺抗</option>
-					<option>精通</option>
-				</select>
-				兵
-				<select name="psoilder">
-					<option></option>
-					<option>不可</option>
-					<option>扺抗</option>
-					<option>精通</option>
-				</select>
-				城
-				<select name="pcity">
-					<option></option>
-					<option>不可</option>
-					<option>扺抗</option>
-					<option>精通</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>速度</td>
-			<td>
-				<select name="speed">
-					<option></option>
-					<option>0</option>
-					<option>1</option>
-					<option>2</option>
-					<option>3</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>能力</td>
-			<td>
-				<input type="checkbox" name="遠距" />遠距
-				<input type="checkbox" name="軍力減損" />軍力減損
-				<input type="checkbox" name="進駐" />進駐
-				<input type="checkbox" name="掃蕩" />掃蕩
-				<input type="checkbox" name="防塔" />防塔
-				<input type="checkbox" name="煙霧彈" />煙霧彈
-				<input type="checkbox" name="偵察" />偵察
-				<input type="checkbox" name="警戒" />警戒
-				<input type="checkbox" name="全偵" />全偵
-				<input type="checkbox" name="遠距" />遠距
-				<input type="checkbox" name="區域攻擊" />區域攻擊
-				<input type="checkbox" name="維修" />維修
-				<input type="checkbox" name="複合式裝甲" />複合式裝甲
-				<input type="checkbox" name="突襲" />突襲
-				<input type="checkbox" name="回收" />回收
-				<input type="checkbox" name="暱蹤" />暱蹤
-				<input type="checkbox" name="超高速" />超高速
-				
-				<input type="checkbox" name="核子引擎" />核子引擎
-				<input type="checkbox" name="雷射護盾" />雷射護盾
-				<input type="checkbox" name="火焰兵器" />火焰兵器
-				<input type="checkbox" name="生化兵器" />生化兵器
-				<input type="checkbox" name="ECM兵器" />ECM兵器
-				
-				<input type="checkbox" name="重點建物" />重點建物
-			</td>
-		</tr>
-		<tr>
-		  <td >
-			卡片名稱檢索<br>
-		  </td>
-		  <td colspan="3">
-			<input type="text" name="card_name" size=32>
-			<br>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			卡片規則檢索<br>
-		  </td>
-		  <td colspan="3">
-			<input type="text" name="rule" size=32>
-			<br>
-		  </td>
-		</tr>
-		 <tr>
-		  <td >
-			id檢索<br>
-		  </td>
-		  <td colspan="3">
-			  <input id="txt_id" type="text" name="id" size=16>
-		  </td>
-		</tr>
-	</table>
-</script>
 <!--
 "id" string
 "color" "茶"|"藍"|"紫"|"白"|"綠"|"紅"|"黑"
@@ -1914,246 +1687,6 @@ def: def
 		</tr>
 	</table>
 </script>
-<script id="tmpl_sangoWarForm" type="jquery-x-tmpl">
-	<table cellpadding=2 cellspacing=0 border=1>	
-		<tr>
-		  <td >
-			勢力<br>
-		  </td>
-		  <td colspan="3">
-			  <select name="ntype">
-				  <option></option>
-				  <option>蜀</option>
-				  <option>魏</option>
-				  <option>呉</option>
-				  <option>漢</option>
-				  <option>群</option>
-				  <option>他</option>
-			  </select>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			卡片種類<br>
-		  </td>
-		  <td colspan="3">
-			  <select name="ctype">
-				  <option></option>
-				  <option>武将</option>
-				  <option>武将/兵隊</option>
-				  <option>計略</option>
-				  <option>キャンペーン</option>
-			  </select>
-			</td>
-		</tr>
-		<tr>
-		  <td  width="25%">
-			指定cost<br>
-		  </td>
-		  <td width="25%">
-			<select name="cost_1">
-			  <option></option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-				<option>5</option>
-			</select>
-			以上
-			<select name="cost_2">
-			  <option></option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-				<option>5</option>
-			</select>
-			以下
-			<br>
-		  </td>
-		  <td  width="25%">
-			武力<br>
-		  </td>
-		  <td width="25%">
-			<select name="power_1">
-			  <option value=""></option>
-			  <option value="500">500</option>
-			  <option value="1000">1000</option>
-			  <option value="1500">1500</option>
-			  <option value="2000">2000</option>
-			  <option value="2500">2500</option>
-			  <option value="3000">3000</option>
-			  <option value="3500">3500</option>
-			  <option value="4000">4000</option>
-			  <option value="4500">4500</option>
-			</select>
-			以上
-			<select name="power_2">
-			  <option value=""></option>
-			  <option value="500">500</option>
-			  <option value="1000">1000</option>
-			  <option value="1500">1500</option>
-			  <option value="2000">2000</option>
-			  <option value="2500">2500</option>
-			  <option value="3000">3000</option>
-			  <option value="3500">3500</option>
-			  <option value="4000">4000</option>
-			  <option value="4500">4500</option>
-			</select>
-			以下   
-			<br>
-		  </td>
-		</tr>
-		<tr>
-		  <td>
-			合計cost<br>
-		  </td>
-		  <td>
-			<select name="costAll_1">
-			  <option value=""></option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-				<option>5</option>
-				<option>6</option>
-				<option>7</option>
-				<option>8</option>
-				<option>9</option>
-				<option>10</option>
-			</select>
-			以上
-			<select name="costAll_2">
-			  <option value=""></option>
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-				<option>5</option>
-				<option>6</option>
-				<option>7</option>
-				<option>8</option>
-				<option>9</option>
-				<option>10</option>
-			</select>
-			以下
-			<br>
-		  </td>
-		  <td >
-			攻城<br>
-		  </td>
-		  <td>
-			<select name="acity">
-			  <option value=""></option>
-			  <option>1</option>
-			  <option>2</option>
-			</select>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			兵種<br>
-		  </td>
-		  <td colspan="3">
-			<select name="atype">
-				<option></option>
-				<option>槍兵</option>
-				<option>騎兵</option>
-				<option>弓兵</option>
-				<option>歩兵</option>
-				<option>象兵</option>
-			</select>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			特徵<br>
-		  </td>
-		  <td colspan="3">
-			  <select name="symbol">
-				  <option></option>
-				  <option>計略/戦闘</option>
-				  <option>計略/メイン</option>
-				  <option>女性</option>
-				  <option>南蛮・女性</option>
-				  <option>魏五将</option>
-				  <option>五虎将</option>
-				  <option>軍師</option>
-				  <option>黄巾</option>
-				  <option>兵隊</option>
-				  <option>旗本四天王</option>
-				  <option>君主</option>
-				  <option>賢女</option>
-				  <option>西園八校尉</option>
-				  <option>十常侍</option>
-			  </select>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			特殊規則<br>
-		  </td>
-		  <td colspan="3">
-				<input type="checkbox" name="長槍">長槍
-				<input type="checkbox" name="貫通">貫通
-				<input type="checkbox" name="乱舞">乱舞
-				
-				<input type="checkbox" name="奇襲">奇襲
-				<input type="checkbox" name="回避">回避
-				<input type="checkbox" name="先駆">先駆
-				
-				<input type="checkbox" name="走射">走射
-				<input type="checkbox" name="支援">支援
-				<input type="checkbox" name="連弩">連弩
-				
-				<input type="checkbox" name="戦象">戦象
-				<input type="checkbox" name="強進">強進
-				<input type="checkbox" name="突撃">突撃
-				<input type="checkbox" name="威圧">威圧
-			
-				<input type="checkbox" name="決起">決起
-				<input type="checkbox" name="憂国">憂国
-				<input type="checkbox" name="国防">国防
-				
-				<input type="checkbox" name="募兵">募兵
-				<input type="checkbox" name="外交">外交
-				<input type="checkbox" name="伏兵">伏兵
-				<input type="checkbox" name="援軍">援軍
-				<input type="checkbox" name="防柵">防柵
-				<input type="checkbox" name="補佐">補佐
-				<input type="checkbox" name="舞闘">舞闘
-				<input type="checkbox" name="覚醒">覚醒
-				<input type="checkbox" name="同盟">同盟
-			</td>
-		</tr>
-		<tr>
-		  <td >
-			卡片名稱檢索<br>
-		  </td>
-		  <td colspan="3">
-			<input type="text" name="card_name" size=32>
-			<br>
-		  </td>
-		</tr>
-		<tr>
-		  <td >
-			卡片規則檢索<br>
-		  </td>
-		  <td colspan="3">
-			<input type="text" name="rule" size=32>
-			<br>
-		  </td>
-		</tr>
-		 <tr>
-		  <td >
-			id檢索<br>
-		  </td>
-		  <td colspan="3">
-			  <input id="txt_id" type="text" name="id" size=16>
-		  </td>
-		</tr>
-	  </table>
-</script>
 <body>
 	<div id="cc" class="easyui-layout" style="width:100%;height:100%;">
 		<div data-options="region:'north',title:'條件',split:true" style="height:330px;">
@@ -2270,6 +1803,115 @@ def: def
 	<script>
 	googleTracking.init( 'UA-55273266-3' );
 	
+	
+	var tmplAry = {
+		army:{
+			'default':[
+				[{type:'label', val:'勢力'},{type:'select', span:3, val:{name:'ntype', items:['資本','共產','人民']}},{type:'label',val:'國家'},{type:'select',span:3,val:{name:'nation', items:['中國','美國','英國','德國','日本','韓國','俄羅斯','以色列']}}],
+				[{type:'label', val:'卡片'},{type:'select', span:3,val:{name:'ctype', items:['部隊','建築','戰術']}},{type:'label',val:'兵器'},{type:'select', span:3, val:{name:'atype', items:['戰鬥機','攻擊機','戰鬥攻擊機','戰略轟炸機','支援機','直升機','坦克','裝甲車','士兵','對空炮','自走炮','戰略火炮']}}],
+				[{type:'label', val:'科技力以上'},{type:'select', span:3,val:{name:'tech_1', items:['1','2','3','4']}},{type:'label',val:'科技力以下'},{type:'select', span:3, val:{name:'tech_2', items:['1','2','3','4']}}],
+				[{type:'label', val:'cost以上'},{type:'select', span:3,val:{name:'cost_1', items:['1','2','3','4','5','6']}},{type:'label',val:'cost以下'},{type:'select', span:3, val:{name:'cost_2', items:['1','2','3','4','5','6']}}],
+				[{type:'label', val:'生產速度以上'},{type:'select', span:3,val:{name:'build_1', items:['1','2','3']}},{type:'label',val:'生產速度以下'},{type:'select', span:3, val:{name:'build_2', items:['1','2','3']}}],
+				[{type:'label', val:'陸'},{type:'select',val:{name:'pland', items:['不可','扺抗','精通']}},{type:'label',val:'空'},{type:'select', val:{name:'psky', items:['不可','扺抗','精通']}},{type:'label', val:'兵'},{type:'select',val:{name:'psoilder', items:['不可','扺抗','精通']}},{type:'label',val:'城'},{type:'select', val:{name:'pcity', items:['不可','扺抗','精通']}}],
+				[{type:'label', val:'速度'},{type:'select',span:7,val:{name:'speed', items:['0','1','2','3']}}],
+				[{type:'label', val:'能力'},{type:'checkbox', span:7,val:{name:'', items:['遠距','軍力減損','進駐','掃蕩','防塔','煙霧彈','偵察','警戒','全偵','遠距','區域攻擊','維修','複合式裝甲','突襲','回收','暱蹤','超高速','核子引擎','雷射護盾','火焰兵器','生化兵器','ECM兵器','重點建物']}}],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:7,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:7,val:{name:'rule'}}],
+				[{type:'label', val:'id檢索'},{type:'textbox', span:7,val:{name:'id'}}]
+			]
+		},
+		gundamWar:{
+			'default':[
+				
+			]
+		},
+		sangoWar:{
+			'default':[
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:1, val:{name:'ntype', items:['蜀','魏','呉','漢','群','他']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:1,val:{name:'ctype', items:['武将','武将/兵隊','計略','キャンペーン']}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5']}}],
+				[	{type:'label', val:'合計cost以上'},
+					{type:'select', span:1,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:1, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9','10']}}],
+				[	{type:'label', val:'武力以上'},
+					{type:'select', span:1,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}},
+					{type:'label',val:'武力以下'},
+					{type:'select', span:1, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}}],
+				[	{type:'label', val:'攻城'},
+					{type:'select', span:1,val:{name:'acity', items:['1','2']}},
+					{type:'label',val:'兵種'},
+					{type:'select', span:1, val:{name:'atype', items:['槍兵','騎兵','弓兵','歩兵','象兵']}}],
+				[	{type:'label', val:'特徵'},
+					{type:'select',span:3,val:{name:'symbol', items:['計略/戦闘','計略/メイン','女性','南蛮・女性','魏五将','五虎将','軍師','黄巾','兵隊','旗本四天王','君主','賢女','西園八校尉','十常侍']}}],
+				[	{type:'label', val:'特殊規則'},
+					{type:'checkbox', span:3,val:{name:'', items:["長槍","貫通","乱舞","奇襲","回避","先駆","走射","支援","連弩","戦象","強進","突撃","威圧","決起","憂国","国防","募兵","外交","伏兵","援軍","防柵","補佐","舞闘","覚醒","同盟"]}}],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:3,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:3,val:{name:'rule'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:3,val:{name:'id'}}]
+			]
+		}
+	}
+	
+	function parseToTable( data ){
+		var table = $('<table border="1"></table>' );
+		_.each( data, function( items ){
+			var trdiv = $('<tr></tr>');
+			_.each( items, function( item ){
+				var tddiv = $('<td></td>' );
+				tddiv.css('text-align', 'center' );
+				var type = item.type;
+				var val = item.val;
+				var span = item.span;
+				if( span != undefined ){
+					tddiv.attr( 'colspan', span );
+				}
+				
+				switch( type ){
+					case 'label': 
+						tddiv.html( val ); 
+						tddiv.css( 'width', '150px' );
+						break;
+					case 'select':
+						var selname = val.name;
+						var items = val.items;
+						var seldiv = $('<select name="' + selname + '"></select>');
+						seldiv.css('width', '100%' );
+						seldiv.append( '<option></option>');
+						_.each( items, function( s ){
+							seldiv.append( '<option>' + s + '</option>');
+						});
+						tddiv.append( seldiv );
+						break;
+					case 'checkbox':
+						var items = val.items;
+						_.each( items, function( s ){
+							var chkdiv = '<input type="checkbox" name="' + s + '" />' + s;
+							tddiv.append( chkdiv );
+						});
+						break;
+					case 'textbox':
+						var textname = val.name;
+						var textdiv = $('<input type="text" name="' + textname + '"/>');
+						textdiv.css('width', '100%' );
+						tddiv.append( textdiv );
+				}
+				
+				trdiv.append( tddiv );
+			});
+			table.append( trdiv );
+		});
+		return table;
+	}
+	
 	var game = (function( hashobj ){
 		if( hashobj.game == undefined ) return 'sangoWar';
 		return hashobj.game
@@ -2286,10 +1928,11 @@ def: def
 	
 	
 	var lang = leo.utils.getHash().lang
-	
 	var tmplName = game
 	if( lang ){
 		tmplName = [tmplName, lang].join('_')
+	}else{
+		lang = 'default';
 	}
 	
 	var cardlist;
@@ -2297,7 +1940,10 @@ def: def
 	var form_container = $('#form_container' );
 	var tmpl_form = $('#tmpl_' + tmplName + 'Form' );
 	
-	form_container.append( tmpl_form.tmpl() );
+	console.log( game, lang );
+	console.log( tmplAry[game][lang] );
+	//form_container.append( tmpl_form.tmpl() );
+	form_container.append( parseToTable( tmplAry[game][lang] ) );
 	gameController.loadCardData( game, lang, onLoadGameCallback );
 	
 	$.messager.progress({text:'讀取資料中…'}); 
@@ -2458,6 +2104,8 @@ def: def
 		
 		function onSearchClick(){
 			googleTracking.click( 'onSearchClick' );
+			
+			console.log( $( document.form_value ).serialize() );
 			searchCards( $( document.form_value ).serialize() );
 		}
 		
