@@ -158,14 +158,20 @@ class UI extends Mediator
 				detaildiv.css( 'width', '100%' );
 				detaildiv.css( 'top', '0' );
 				detaildiv.css( 'left', '0' );
-				detaildiv.css( 'font-size', '20px' );
+				detaildiv.css( 'font-size', '16px' );
 				var str:String = '';
 				switch( card.game ) {
 					case 'sangoWar': 
+						str += detail.cname + ' ' + detail.atype;
+						str += '<br/>';
 						str += detail.content;
 						str += '<br/>';
 						str += detail.counter;
 					case 'yugioh': 
+						str += detail.name;
+						str += '<br/>';
+						str += detail.type;
+						str += '<br/>';
 						str += detail.desc;
 				}
 				detaildiv.html( str );

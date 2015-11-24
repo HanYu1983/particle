@@ -335,9 +335,10 @@ Main.createSelfDeck = function(deckId) {
 Main.createCards = function(deck) {
 	var _g = deck.backId;
 	var bid = _g;
+	var bid1 = _g;
 	if(_g == null) deck.backId = "0"; else switch(_g) {
 	default:
-		if(Std.parseInt(bid) <= 22) deck.backId = bid; else deck.backId = "0";
+		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 22) deck.backId = bid1; else deck.backId = "0";
 	}
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
 		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};
@@ -1387,16 +1388,22 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				detaildiv.css("width","100%");
 				detaildiv.css("top","0");
 				detaildiv.css("left","0");
-				detaildiv.css("font-size","20px");
+				detaildiv.css("font-size","16px");
 				var str = "";
 				var _g = card.game;
 				switch(_g) {
 				case "sangoWar":
+					str += detail.cname + " " + detail.atype;
+					str += "<br/>";
 					str += detail.content;
 					str += "<br/>";
 					str += detail.counter;
 					break;
 				case "yugioh":
+					str += detail.name;
+					str += "<br/>";
+					str += detail.type;
+					str += "<br/>";
 					str += detail.desc;
 					break;
 				}
