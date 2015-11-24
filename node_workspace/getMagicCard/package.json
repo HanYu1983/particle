@@ -1,6 +1,7 @@
 {
   "name":"getMagicCard",
   "dependencies":{
+    "underscore":"*",
     "async":"*",
     "request": "*",
     "yargs": "3.26.0",
