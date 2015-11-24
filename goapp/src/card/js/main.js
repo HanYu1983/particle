@@ -346,6 +346,12 @@ Main.createCards = function(deck) {
 	if(Reflect.field(Main.cardSuitsDetails,Main.currentSelect) == null) {
 		var _g1 = Main.currentSelect;
 		switch(_g1) {
+		case "magic":
+			CallJs.magic_load("../common/txt/magicList.xml",Main.onLoadGameCallback(Main.currentSelect));
+			break;
+		case "gundamWar":
+			CallJs.gundamWar_load("../common/txt/gundamWarList.json",Main.onLoadGameCallback(Main.currentSelect));
+			break;
 		case "yugioh":
 			CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(Main.currentSelect));
 			break;
@@ -2036,6 +2042,8 @@ CallJs.myapp_facebook_init = myapp.facebook.init;
 CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
 CallJs.yugioh_load = yugioh.load;
 CallJs.sangoWar_load = sangoWar.load;
+CallJs.gundamWar_load = gundamWar.load;
+CallJs.magic_load = magic.load;
 CallJs.googleTracking_click = googleTracking.click;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";

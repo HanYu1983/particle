@@ -134,6 +134,10 @@ class Main
 		
 		if( cardSuitsDetails.field( currentSelect ) == null ){
 			switch( currentSelect ) {
+				case 'magic':
+					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( currentSelect ) );
+				case 'gundamWar':
+					CallJs.gundamWar_load( "../common/txt/gundamWarList.json", onLoadGameCallback( currentSelect ) );
 				case 'yugioh':
 					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( currentSelect ) );
 				case 'sangoWar':
