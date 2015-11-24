@@ -4,7 +4,8 @@
     [test.getMagicCard]
     [test.getGundamCard]
     [test.yugioh]
-    [test.gundamWar]))
+    [test.gundamWar]
+    [test.gundamWarN]))
 
 (def yargs (js/require "yargs"))
   
@@ -33,6 +34,12 @@
       
       "gundamWar.parseInfo"
       (test.gundamWar.parseInfo 213 1)
+      
+      "bs.test"
+      (test.battleSpirits/test-base)
+      
+      "gundamWarN.test"
+      (test.gundamWarN/test-base)
       
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動
