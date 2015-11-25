@@ -166,7 +166,7 @@ body{
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:370px;" >
+        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:390px;" >
 			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div class="hori">
 					<a id="btn_login" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
@@ -199,6 +199,7 @@ body{
 					<a href="#" id="btn_gundam" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarClick')" data-options="toggle:true,group:'g1',selected:false">鋼彈大戰</a>
 					<a href="#" id="btn_sango" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSangoWarClick')" data-options="toggle:true,group:'g1',selected:false">三國志大戰</a>
 					<a href="#" id="btn_yugioh" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadYugiohClick')" data-options="toggle:true,group:'g1',selected:false">遊戲王</a>
+					<a href="#" id="btn_spirit" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSpiritClick')" data-options="toggle:true,group:'g1',selected:false">BattleSpirit</a>
 				</div>
 			</div>
 			<div class="group" style="text-align:center;">
@@ -230,24 +231,56 @@ body{
 					<br/>
 					<img src="../common/images/logo.jpg" width="100" height="100">
 					<br/>
+				</div>
+			</div>
+			<div class="group" style="text-align:center;">
+				<div class="hori">
 					<a style="color:yellow" href="//www.facebook.com/pages/上善若水/1653920964852269" target="_blank">上善若水粉絲頁</a>
-					<br/><br/>
+				</div>
+				<div class="hori">
 					<a style="color:yellow" href="//particle-979.appspot.com/manager/index.html#" target="_blank">上善若水官網&牌組管理器</a>
-					<br/><br/>
+				</div>
+			</div>
+			<br/>
+			<div class="group" style="text-align:center;">
+				<div class="hori">
 					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=sangoWar" target="_blank">三國志大戰組牌機</a>
-					<br/><br/>
+				</div>
+				<div class="hori">
+					<a style="color:white" href="//forum.gamer.com.tw/C.php?bsn=10095&snA=9647&tnum=605" target="_blank">三國志大戰規則</a>	
+				</div>
+				<div class="hori">
+					<a style="color:white" href="//sangokushi-taisen-tcg.segataiwan.com.tw/cardlist.php" target="_blank">三國志大戰卡表</a>
+				</div>
+			</div>
+			<br/>
+			<div class="group" style="text-align:center;">
+				<div class="hori">
+					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=gundamWar" target="_blank">鋼彈大戰組牌機</a>
+				</div>
+				<div class="hori">
+					<a style="color:white" href="//www11.atwiki.jp/gundamwar/pages/4159.html" target="_blank">鋼彈大戰規則</a>
+				</div>
+				<div class="hori">
+					<a style="color:white" href="//www.shiner96500.com/cards/gundamwar/main.php" target="_blank">鋼彈大戰卡表</a>
+				</div>
+			</div>
+			<br/>
+			<div class="group" style="text-align:center;">
+				<div class="hori">
 					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=yugioh&lang=ch" target="_blank">遊戲王組牌機</a>
-					<br/><br/>
+				</div>
+				<div class="hori">
+					<a style="color:white" href="//zh.wikipedia.org/wiki/%E9%81%8A%E6%88%B2%E7%8E%8B%E9%9B%86%E6%8F%9B%E7%B4%99%E7%89%8C%E9%81%8A%E6%88%B2" target="_blank">遊戲王規則</a>
+				</div>
+			</div>
+			<br/>
+			<div class="group" style="text-align:center;">
+				<div class="hori">
 					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=magic" target="_blank">魔法風雲會組牌機</a>
-					<br/><br/>
-					<a style="color:yellow" href="//forum.gamer.com.tw/C.php?bsn=10095&snA=9647&tnum=605" target="_blank">三國志大戰規則</a>	
-					<br/><br/>
-					<a style="color:yellow" href="//sangokushi-taisen-tcg.segataiwan.com.tw/cardlist.php" target="_blank">三國志大戰卡表</a>
-					<br/><br/>
-					<a style="color:yellow" href="//www11.atwiki.jp/gundamwar/pages/4159.html" target="_blank">鋼彈大戰規則</a>
-					<br/><br/>
-					<a style="color:yellow" href="//www.shiner96500.com/cards/gundamwar/main.php" target="_blank">鋼彈大戰卡表</a>
-					<br/><br/>
+				</div>
+				<div class="hori">
+					<a style="color:white" href="//zh.wikipedia.org/zh-tw/%E9%AD%94%E6%B3%95%E9%A2%A8%E9%9B%B2%E6%9C%83%E8%A6%8F%E5%89%87" target="_blank">魔法風雲會規則</a>
 				</div>
 			</div>
 		</div>
