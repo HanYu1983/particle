@@ -107,14 +107,6 @@ a{
 			<option value="magic">魔法風雲會</option>
 			<option value="spirit">BattleSpirit</option>
 		</select>
-<!--
-		<div class="hori"><a id="btn_army" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:true" >軍</a></div>
-		<div class="hori"><a id="btn_fighter" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:false" >格</a></div>
-		<div class="hori"><a id="btn_magic" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:false" >魔</a></div>
-		<div class="hori"><a id="btn_gundamWar" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:false" >鋼</a></div>
-		<div class="hori"><a id="btn_sangoWar" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:false" >三</a></div>
-		<div class="hori"><a id="btn_yugioh" href="#" class="easyui-linkbutton" data-options="toggle:true,selected:false" >遊</a></div>
-	-->
 		<div class="hori"><input id="txt_name" class="easyui-textbox" style="width:100px" value=${name}></div>
 		<div class="hori"><input id="txt_cards" class="easyui-textbox" style="width:500px"></div>
 		<div class="hori"><input id="txt_back" class="easyui-textbox" style="width:40px" value=${backId}></div>
@@ -564,7 +556,7 @@ a{
 	var loadModel;
 	
 	showLoading( '準備中...' );
-	myapp.facebook.init( '679171275511375', function(){
+	myapp.facebook.init( '425311264344425', function(){
 		$('#btn_login' ).linkbutton( 'enable' );
 		closeLoading();
 	});
