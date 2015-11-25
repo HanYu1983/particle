@@ -2,6 +2,9 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'battleSpirits':
+				battleSpirits.load( "../common/txt/battleSpiritsList/", onLoadGameCallback)
+				break;
 			case 'army':
 				army.load(onLoadGameCallback)
 				break;
@@ -37,6 +40,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'battleSpirits':
+				return battleSpiritsQuerystring2fns( str )
 			case 'army':
 				return armyQuerystring2fns( str );
 			case 'gundamWar':
@@ -47,6 +52,18 @@ var gameController = {};
 				return sangoWarQuerystring2fns(str);
 			case 'magic':
 				return magicQuerystring2fns(str);
+		}
+	}
+	
+	function battleSpiritsQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
 		}
 	}
 	

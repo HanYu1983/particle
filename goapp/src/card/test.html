@@ -1,7 +1,10 @@
 <script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>
+<script src="../common/js/lib/underscore/underscore-min.js"></script>
+<script src="../common/js/lib/async/async.js"></script>
 <script src='../common/js/army.js'></script>
+<script src='../common/js/battleSpirits.js'></script>
 <script>
-army.load( function( err, ret ){
+battleSpirits.load( "../common/txt/battleSpiritsList/", function( err, ret ){
 	console.log( ret )
 })
 </script>

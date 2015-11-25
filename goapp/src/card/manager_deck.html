@@ -1509,6 +1509,8 @@ def: def
 			</div>
 		</div>
 	</div>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>
+	<script src="../common/js/lib/async/async.js"></script>
 	<script src="../common/js/lib/google/ga.js"></script>
 	<script src="../common/js/lib/csv.js"></script>
 	<script src="../common/js/lib/purl.js"></script>	
@@ -1517,6 +1519,7 @@ def: def
 	<script src="../common/js/magic.js"></script>	
 	<script src="../common/js/gundamWar.js"></script>	
 	<script src="../common/js/army.js"></script>	
+	<script src="../common/js/battleSpirits.js"></script>	
 	<script src="../common/js/cardsearch.js"></script>	
 	<script src='js/api.js'></script>
 	<script src="js/manager_deck_gameController.js"></script>
@@ -1765,6 +1768,9 @@ def: def
 				[	{type:'label', val:'id檢索'},
 					{type:'textbox', span:3,val:{name:'id'}}]
 			]
+		},
+		battleSpirits:{
+		default:[]
 		}
 	}
 	
@@ -1830,6 +1836,7 @@ def: def
 		yugioh:'遊戲王',
 		magic:'魔法風雲會',
 		gundamWar:'鋼彈大戰',
+		battleSpirits: '戰魂'
 	}
 	$('title').html(titlemapping[game] + '-組牌風雲' );
 	
