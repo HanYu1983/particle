@@ -1821,7 +1821,91 @@ def: def
 					<option value="BE">BE</option>
 					-->
 		*/
+		
+		/*
+		<tr>
+			<td>星級</td>
+			<td>
+				<select name="level_1">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				以上
+				<select name="level_2">
+					<option></option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				以下
+			</td>
+		  
+		  */
 	var tmplAry = {
+		yugioh:{
+			ch:[
+				[
+					{type:'label', val:'星級以上'},
+					{type:'select', span:3, val:{name:'level_1', items:['1','2','3','4','5','6','7','8','9','10','11','12']}},
+					{type:'label', val:'星級以下'},
+					{type:'select', span:3, val:{name:'level_2', items:['1','2','3','4','5','6','7','8','9','10','11','12']}}
+				],
+				[
+					{type:'label', val:'基本種類'},
+					{type:'select', span:1, val:{name:'attr', items:['地','水','炎','風','光','闇','神']}},
+					{type:'label', val:'種類'},
+					{type:'select', span:1, val:{name:'race', items:['戰士','魔法使','天使','惡魔','不死','機械','水','炎','岩石','鳥獸','植物','昆蟲','雷','龍','獸','獸戰士','恐龍','魚','海龍','爬蟲類','超能','幻神獸','創造神','幻龍']}},
+					{type:'label', val:'基本種類'},
+					{type:'select', span:1, val:{name:'ctype', items:['怪獸','魔法','陷阱']}},
+					{type:'label', val:'種類'},
+					{type:'select', span:1, val:{name:'ctype2', items:['通常','效果','融合','儀式','陷阱怪獸','靈魂','聯合','二重','協調','同步','代幣','速攻','永續','裝備','場地','反擊','反轉','卡通','超量','靈擺']}}
+				],
+				[
+					{type:'label', val:'攻擊力以上'},{type:'select', val:{name:'atk_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'攻擊力以下'},{type:'select', val:{name:'atk_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'防守力以上'},{type:'select', val:{name:'def_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'防守力以下'},{type:'select', val:{name:'def_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}}
+				],
+				[	{type:'label', val:'左擺蕩以上'},{type:'select', val:{name:'lscale_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'左擺蕩以下'},{type:'select', val:{name:'lscale_2', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'右擺蕩以上'},{type:'select', val:{name:'rscale_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'右擺蕩以下'},{type:'select', val:{name:'rscale_2', items:['1','2','3','4','5','6','7','8','9','10']}}],
+				[{type:'label', val:'能力'},{type:'checkbox', span:11,val:{name:'', items:["Deathtouch","Defender","First strike","Double strike","Flash","Flying","Haste","Hexproof","Protection from white","Protection from blue","Protection from black","Protection from red","Protection from green","Reach","Trample","Vigilance"]}}],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'id檢索'},{type:'textbox', span:7,val:{name:'id'}}]
+			],
+			jp:[
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'id檢索'},{type:'textbox', span:7,val:{name:'id'}}]
+			],
+			en:[
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'id檢索'},{type:'textbox', span:7,val:{name:'id'}}]
+			]
+		},
 		magic:{
 			'default':[
 				[
