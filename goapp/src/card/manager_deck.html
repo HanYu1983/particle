@@ -61,6 +61,20 @@ body{
 .big_card_root_focus{
 	border:1px red solid;
 }
+
+#mc_lefttop{
+	position:absolute; 
+	right:5px; 
+	top:0px;
+}
+
+@media screen and ( max-width:1280px ){
+	#mc_lefttop{
+		top:auto;
+		bottom:0px;
+	}
+}
+
 </style>
 
 <script id="tmpl_bigCard" type="jquery-x-tmpl">
@@ -167,7 +181,7 @@ body{
 						<a id="btn_search" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onSearchClick()" data-options="iconCls:'icon-search',disabled:true">搜尋</a>
 					</div>
 				</div>
-				<div style="position:absolute; right:5px; top:0px; ">
+				<div id="mc_lefttop" >
 					<a id="btn_about" href="#" title="其它遊戲的組牌機，目前有三國志大戰、遊戲王、魔法風雲會" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
 					<a id="btn_about" href="#" title="關於上善若水" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
 				</div>
@@ -227,7 +241,6 @@ body{
 	</div>
 	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="padding:10px">
 		<div class="group" style="position:relative; width:100%; text-align:center;">
-			
 			<div class="group">
 				<div class="hori">
 					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=sangoWar')" data-options="iconCls:'icon-redo'">三國志大戰</a>
@@ -248,6 +261,11 @@ body{
 					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=ch')" data-options="iconCls:'icon-redo'">遊戲王</a>
 					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=en')" data-options="iconCls:'icon-redo'">遊戲王(英)</a>
 					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=jp')" data-options="iconCls:'icon-redo'">遊戲王(日)</a>
+				</div>
+			</div>
+			<div class="group">
+				<div class="hori">
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=battleSpirits')" data-options="iconCls:'icon-redo'">戰魂</a>
 				</div>
 			</div>
 		</div>
@@ -332,18 +350,22 @@ body{
 				],
 				[
 					{type:'label', val:'属性'},
-					{type:'select', span:3, val:{name:'attr', items:['赤','緑','紫','白','黄','青']}},
+					{type:'select', span:1, val:{name:'attr', items:['赤','緑','紫','白','黄','青']}},
+					{type:'label', val:'需求以上'},
+					{type:'select', span:1, val:{name:'cost_1', items:['1','2','3','4','5','6']}},
+					{type:'label', val:'需求以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5','6']}},
 					{type:'label', val:'種類'},
-					{type:'select', span:3, val:{name:'ctype', items:['スピリット','ブレイヴ','ネクサス','マジック','アルティメット']}},
+					{type:'select', span:1, val:{name:'ctype', items:['スピリット','ブレイヴ','ネクサス','マジック','アルティメット']}},
 					{type:'label', val:'系統'},
-					{type:'select', span:3, val:{name:'ctype2', items:['道化','漂精','戦騎','龍帝','竜騎','虚神','神将','翼竜','皇獣','地竜','空牙','竜人','古竜','爬獣','溶魚','機竜','星竜','魔神','幽魔','妖蛇','魔影','霊獣','夜族','無魔','呪鬼','冥主','爪鳥','樹魔','歌鳥','遊精','怪虫','剣獣','殻虫','殻人','光虫','甲獣','巨獣','空魚','氷姫','甲竜','機獣','動器','機人','武装','魔人','天霊','楽族','四道','想獣','動玩','戯狩','小玩','闘神','勇傑','創手','獣頭','異合','造兵','戦獣','光導','神星','星魂','導魔','道玩','戦竜','雄将','覇皇','海首','華兵','放浪者','絶晶神','交渉人','星文学者','菓族','剣使','剣刃','滅龍','竜騎士','六楯帝','新生','刃虫','詩姫','翼船','護将','調査員','次代','私服','衣装','三龍神','星将','極竜','先導者','極女王','武竜','戦極','主君','家臣','忍風','機巧','妖戒','戦姫','起導者','天魔王']}},
+					{type:'select', span:1, val:{name:'ctype2', items:['道化','漂精','戦騎','龍帝','竜騎','虚神','神将','翼竜','皇獣','地竜','空牙','竜人','古竜','爬獣','溶魚','機竜','星竜','魔神','幽魔','妖蛇','魔影','霊獣','夜族','無魔','呪鬼','冥主','爪鳥','樹魔','歌鳥','遊精','怪虫','剣獣','殻虫','殻人','光虫','甲獣','巨獣','空魚','氷姫','甲竜','機獣','動器','機人','武装','魔人','天霊','楽族','四道','想獣','動玩','戯狩','小玩','闘神','勇傑','創手','獣頭','異合','造兵','戦獣','光導','神星','星魂','導魔','道玩','戦竜','雄将','覇皇','海首','華兵','放浪者','絶晶神','交渉人','星文学者','菓族','剣使','剣刃','滅龍','竜騎士','六楯帝','新生','刃虫','詩姫','翼船','護将','調査員','次代','私服','衣装','三龍神','星将','極竜','先導者','極女王','武竜','戦極','主君','家臣','忍風','機巧','妖戒','戦姫','起導者','天魔王']}},
 					{type:'label', val:'稀有度'},
-					{type:'select', span:3, val:{name:'rare', items:['C','U','R','M','X','XX','P','PX','EX','SJ','KA','KF','PB','CP','LM']}}
+					{type:'select', span:1, val:{name:'rare', items:['C','U','R','M','X','XX','P','PX','EX','SJ','KA','KF','PB','CP','LM']}}
 					
 				],
 				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
 				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}],
-				[{type:'label', val:'id檢索'},{type:'textbox', span:7,val:{name:'id'}}]
+				[{type:'label', val:'id檢索'},{type:'textbox', span:11,val:{name:'id'}}]
 			]
 		},
 		yugioh:{
@@ -612,7 +634,7 @@ body{
 					case 'textbox':
 						var textname = val.name;
 						var textdiv = $('<input type="text" name="' + textname + '"/>');
-						textdiv.css('width', '100%' );
+						textdiv.css('width', '99%' );
 						tddiv.append( textdiv );
 				}
 				
@@ -652,16 +674,12 @@ body{
 	var form_container = $('#form_container' );
 	var tmpl_form = $('#tmpl_' + tmplName + 'Form' );
 	
-	console.log( game, lang );
-	console.log( tmplAry[game][lang] );
-	//form_container.append( tmpl_form.tmpl() );
 	form_container.append( parseToTable( tmplAry[game][lang] ) );
 	gameController.loadCardData( game, lang, onLoadGameCallback );
 	
 	$.messager.progress({text:'讀取資料中…'}); 
 	
 	function onLoadGameCallback( err, _cardlist ){
-		console.log(_cardlist)
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
@@ -817,7 +835,6 @@ body{
 		function onSearchClick(){
 			googleTracking.click( 'onSearchClick' );
 			
-			console.log( $( document.form_value ).serialize() );
 			searchCards( $( document.form_value ).serialize() );
 		}
 		
@@ -826,7 +843,6 @@ body{
 			pag_bigCard.pagination( 'select', 1 );
 			
 			ary_cards = searchLib( searchstr ).slice();
-			console.log( ary_cards )
 			
 			createBigCard();
 			setPagination( ary_cards.length );

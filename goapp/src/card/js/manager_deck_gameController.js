@@ -68,6 +68,12 @@ var gameController = {};
 			case 'rare':
 				fns.push( cardsearch.attrEq( "info_13", v ) )
 				break
+			case 'cost_1':
+				fns.push( cardsearch.attrGe( "info_5", v ) )
+				break
+			case 'cost_2':
+				fns.push( cardsearch.attrLe( "info_5", v ) )
+				break
 			case 'ctype':
 				fns.push( cardsearch.attrEq( "info_3", v ) )
 				break
