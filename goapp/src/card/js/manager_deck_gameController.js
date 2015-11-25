@@ -126,10 +126,10 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "id", v ) )
 				break
 			case 'card_name':
-				fns.push( cardsearch.attrEq( "info_41", v ) )
+				fns.push( cardsearch.attrEq( "info_2", v ) )
 				break;
 			case 'rule':
-				fns.push( cardsearch.attrEq( "info_42", v ) )
+				fns.push( cardsearch.attrEq( "info_14", v ) )
 				break;
 			default:
 				if( v == 'on' ){

@@ -111,8 +111,8 @@ body{
 			<div game="army">${Ctype}</div>
 			<div game="army">${Atype}</div>
 			<div game="army">${text}</div>
-			
-			<div game="battleSpirits">${info_41}</div>
+			 
+			<div game="battleSpirits">${info_2}/${info_41}</div>
 			<div game="battleSpirits">系統: ${info_25}</div>
 			<div game="battleSpirits">卡片種類: ${info_3}</div>
 			<div game="battleSpirits">属性: ${info_4}${info_5}</div>
@@ -120,8 +120,8 @@ body{
 			<div game="battleSpirits">LV1 core: ${info_7} hp: ${info_8}</div>
 			<div game="battleSpirits">LV2 core: ${info_9} hp: ${info_10}</div>
 			<div game="battleSpirits">LV3 core: ${info_11} hp: ${info_12}</div>
-			<div game="battleSpirits">中: ${info_42}</div>
-			<div game="battleSpirits">日: ${info_14}</div>
+			<div game="battleSpirits">中: {{html info_42}}</div>
+			<div game="battleSpirits">日: {{html info_14}}</div>
 			<div game="battleSpirits">稀有度: ${info_13}</div>
 		</div>
 	</div>
@@ -138,20 +138,20 @@ body{
 			<img style="position:relative; left:0; top:0; height:100%;" src="../common/images/card/cardback_0.png"/>
 			<img style="position:absolute; left:0; top:0; height:100%;" src=${url}  style="height:100%;" />
 		</div>
-		<div class="hori" style=" vertical-align:top;">
+		<div class="hori" style="overflow:hidden; width:150px; height:100%; vertical-align:top;">
 			
-			<div game="sangoWar" style="width:230px;">${cname}</div>
+			<div game="sangoWar">${cname}</div>
 			<div game="sangoWar">${atype}</div>
 			<div game="sangoWar">${ctype}</div>
 			
-			<div game="yugioh" style="width:230px;">${name}</div>
+			<div game="yugioh">${name}</div>
 			<div game="yugioh">level ${level}</div>
 			<div game="yugioh">${type}</div>
 
-			<div game="magic" style="width:230px;">${id}</div>
+			<div game="magic">${id}</div>
 			<div game="magic">${type}</div>
 			
-			<div game="gundamWar" style="width:230px;">${name}</div>
+			<div game="gundamWar">${name}</div>
 			<div game="gundamWar">${ctype}</div>
 			<div game="gundamWar">${area}</div>
 			
@@ -159,7 +159,7 @@ body{
 			<div game="army">${Ctype}</div>
 			<div game="army">${Atype}</div>
 			
-			<div game="battleSpirits">${info_41}</div>
+			<div game="battleSpirits">${info_2}</div>
 			<div game="battleSpirits">${info_25}</div>
 			<div game="battleSpirits">${info_3}</div>
 		</div>
@@ -167,7 +167,7 @@ body{
 </script>
 <body>
 	<div id="cc" class="easyui-layout" style="width:100%;height:100%;">
-		<div data-options="region:'north',title:'條件',split:true" style="height:330px;">
+		<div data-options="region:'north',title:'條件',split:true" style="height:300px;">
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="group">
 					<form id="form_container" name="form_value" class="hori">
@@ -194,7 +194,7 @@ body{
 				
 			</div>
 		</div>
-		<div data-options="region:'east',title:'組牌'" style="width:350px; overflow-x:hidden;">
+		<div data-options="region:'east',title:'組牌'" style="width:300px; overflow-x:hidden;">
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="hori">
 					<span id="txt_count" style="color:yellow">0</span>張
@@ -769,6 +769,7 @@ body{
 	$.messager.progress({text:'讀取資料中…'}); 
 	
 	function onLoadGameCallback( err, _cardlist ){
+		console.log( _cardlist );
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
