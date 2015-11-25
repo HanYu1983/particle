@@ -120,7 +120,8 @@ body{
 			<div game="battleSpirits">LV1 core: ${info_7} hp: ${info_8}</div>
 			<div game="battleSpirits">LV2 core: ${info_9} hp: ${info_10}</div>
 			<div game="battleSpirits">LV3 core: ${info_11} hp: ${info_12}</div>
-			<div game="battleSpirits">${info_42}</div>
+			<div game="battleSpirits">中: ${info_42}</div>
+			<div game="battleSpirits">日: ${info_14}</div>
 			<div game="battleSpirits">稀有度: ${info_13}</div>
 		</div>
 	</div>
@@ -317,9 +318,86 @@ body{
 			<div game="battleSpirits">${info_42}</div>
 			<div game="battleSpirits">稀有度: ${info_13}</div>
 			*/
+			
 	var tmplAry = {
 		battleSpirits:{
 			default:[
+				[
+					{type:'label', val:'系列'},
+					{type:'select2', span:11, val:{name:'set', items:[
+						['62003','BS01'],
+						['62007','BS02【激翔】'],
+						['62008','BS03【覇闘】'],
+						['62009','BS04【龍帝】'],
+						['62010','BS05【皇騎】'],
+						['62012','BS06【爆神】'],
+						['62014','BS07【天醒】'],
+						['62015','BS08【戦嵐】'],
+						['62017','BS09【超星】'],
+						['62020','BS10 星座編 第1弾 【八星龍降臨】'],
+						['62021','BS11 星座編 第2弾 【灼熱の太陽】'],
+						['62022','BS12 星座編 第3弾 【月の咆哮】'],
+						['62023','BS13 星座編 第4弾 【星空の王者】'],
+						['62025','BS14 覇王編 第1弾 【英雄龍の伝説】'],
+						['62026','BS15 覇王編 第2弾 【黄金の大地】'],
+						['62027','BS16 覇王編 第3弾 【爆烈の覇道】'],
+						['62028','BS17 覇王編 第4弾 【剣舞う世界】'],
+						['62029','BS18 覇王編 第5弾 【覇王大決戦】'],
+						['62032','BS19 剣刃編 第1弾【聖剣時代】'],
+						['62037','BS20 剣刃編 第2弾【乱剣戦記】'],
+						['62038','BS21 剣刃編 第3弾【光輝剣武】'],
+						['62040','BS22 剣刃編 第4弾【暗黒刃翼】'],
+						['62041','BS23 剣刃編 第5弾【剣刃神話】'],
+						['62045','BS24 アルティメットバトル01'],
+						['62049','BS25 アルティメットバトル02'],
+						['62051','BS26 アルティメットバトル03'],
+						['62055','BS27 アルティメットバトル04'],
+						['62057','BS28 アルティメットバトル05'],
+						['62060','BS29 アルティメットバトル06'],
+						['62063','BS30 アルティメットバトル07'],
+						['62068','BS31 烈火伝 第1章'],
+						['62071','BS32 烈火伝 第2章'],
+						['62073','BS33 烈火伝 第3章'],
+						['62019','BSC05'],
+						['62046','BSC15 バーストインパクト'],
+						['62050','BSC16 女神達の調べ'],
+						['62056','BSC17 眩き究極の王者'],
+						['62064','BSC18 詩姫の交響曲'],
+						['62065','BSC19 東宝怪獣大決戦'],
+						['62069','BSC20 激闘！戦国15ノ陣'],
+						['62072','BSC21 オールキラブースター 名刀コレクション'],
+						['62011','SD01'],
+						['62013','SD02'],
+						['62018','SD03'],
+						['62024','SD06'],
+						['62030','SD10'],
+						['62031','SD11'],
+						['62033','SD13'],
+						['62034','SD14'],
+						['62035','SD15'],
+						['62036','SD16'],
+						['62039','SD17'],
+						['62043','SD19'],
+						['62044','SD20'],
+						['62047','SD22'],
+						['62048','SD23'],
+						['62053','SD24'],
+						['62054','SD25'],
+						['62059','SD26'],
+						['62061','SD27'],
+						['62062','SD28'],
+						['62066','SD29'],
+						['62067','SD30'],
+						['62070','SD31'],
+						['62075','SD32'],
+						['62016','EXカード'],
+						['62074','リミテッドパック烈火伝'],
+						['62058','リミテッドパック三龍神エディション'],
+						['62052','リミテッドパック2014'],
+						['62042','リミテッドパックMAX2013'],
+						['62901','プロモーションカード'],
+					]}},
+				],
 				[
 					{type:'label', val:'lv1核以上'},
 					{type:'select', span:1, val:{name:'lv1_core_1', items:['1','2']}},
@@ -352,9 +430,9 @@ body{
 					{type:'label', val:'属性'},
 					{type:'select', span:1, val:{name:'attr', items:['赤','緑','紫','白','黄','青']}},
 					{type:'label', val:'需求以上'},
-					{type:'select', span:1, val:{name:'cost_1', items:['1','2','3','4','5','6']}},
+					{type:'select', span:1, val:{name:'cost_1', items:['1','2','3','4','5','6','7','8','9','10','11','12']}},
 					{type:'label', val:'需求以下'},
-					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5','6']}},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5','6','7','8','9','10','11','12']}},
 					{type:'label', val:'種類'},
 					{type:'select', span:1, val:{name:'ctype', items:['スピリット','ブレイヴ','ネクサス','マジック','アルティメット']}},
 					{type:'label', val:'系統'},
@@ -624,6 +702,17 @@ body{
 						});
 						tddiv.append( seldiv );
 						break;
+					case 'select2':
+						var selname = val.name;
+						var items = val.items;
+						var seldiv = $('<select name="' + selname + '"></select>');
+						seldiv.css('width', '100%' );
+						seldiv.append( '<option></option>');
+						_.each( items, function( ary_s ){
+							seldiv.append( '<option value="' + ary_s[0] + '">' + ary_s[1] + '</option>');
+						});
+						tddiv.append( seldiv );
+						break;
 					case 'checkbox':
 						var items = val.items;
 						_.each( items, function( s ){
@@ -822,6 +911,7 @@ body{
 			var searchCard = _.find( ary_deck, function( cardItem ){
 				return cardItem.itemId == itemId;
 			});
+			
 			searchCards( 'id=' + searchCard.id );
 		}
 		

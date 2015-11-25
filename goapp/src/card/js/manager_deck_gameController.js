@@ -65,6 +65,9 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+			case 'set':
+				fns.push( cardsearch.attrEq( "prodid", v ) )
+				break
 			case 'rare':
 				fns.push( cardsearch.attrEq( "info_13", v ) )
 				break
