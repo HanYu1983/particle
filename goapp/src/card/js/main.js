@@ -346,7 +346,7 @@ Main.createCards = function(deck) {
 	if(Reflect.field(Main.cardSuitsDetails,Main.currentSelect) == null) {
 		var _g1 = Main.currentSelect;
 		switch(_g1) {
-		case "spirit":
+		case "battleSpirits":
 			break;
 		case "magic":
 			CallJs.magic_load("../common/txt/magicList.xml",Main.onLoadGameCallback(Main.currentSelect));
@@ -690,9 +690,9 @@ Main.prototype = {
 			Main.currentSelect = "yugioh";
 			this.chooseCardSuit("yugioh");
 			break;
-		case "onBtnLoadSpiritClick":
-			Main.currentSelect = "spirit";
-			this.chooseCardSuit("spirit");
+		case "onBtnLoadBattleSpiritsClick":
+			Main.currentSelect = "battleSpirits";
+			this.chooseCardSuit("battleSpirits");
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
@@ -734,8 +734,8 @@ Main.prototype = {
 		case "yugioh":
 			Main.j("#btn_yugioh").linkbutton("select");
 			break;
-		case "spirit":
-			Main.j("#btn_spirit").linkbutton("select");
+		case "battleSpirits":
+			Main.j("#btn_battleSpirits").linkbutton("select");
 			break;
 		}
 	}
