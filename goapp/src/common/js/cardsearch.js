@@ -4,6 +4,7 @@ var cardsearch = cardsearch || {};
 	
 	function attrEq( key, value ){
 		return function( obj ){
+			// 這邊為cost做特殊處理只是暫時為三國志大戰用的，之後要改回來
 			if( key == "cost" ){
 				return obj[ "cost" ][0] == value
 			} else if( key == "costA" ){
@@ -11,7 +12,7 @@ var cardsearch = cardsearch || {};
 			} else {
 				switch( typeof obj[key] ){
 				case "string":
-					return obj[ key ].indexOf( value ) != -1
+					return obj[ key ].toUpperCase().indexOf( value.toUpperCase() ) != -1
 				case "number":
 					return obj[ key ] == value
 				}
@@ -22,6 +23,7 @@ var cardsearch = cardsearch || {};
 	
 	function attrGe( key, value ){
 		return function( obj ){
+			// 這邊為cost做特殊處理只是暫時為三國志大戰用的，之後要改回來
 			if( key == "cost" ){
 				return obj[ "cost" ][0] >= value
 			} else if( key == "costA" ){
@@ -40,6 +42,7 @@ var cardsearch = cardsearch || {};
 	
 	function attrLe( key, value ){
 		return function( obj ){
+			// 這邊為cost做特殊處理只是暫時為三國志大戰用的，之後要改回來
 			if( key == "cost" ){
 				return obj[ "cost" ][0] <= value
 			} else if( key == "costA" ){
