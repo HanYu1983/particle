@@ -102,7 +102,19 @@ var battleSpirits = battleSpirits || {};
 				for( var i in list ){
 					var obj = list[i]
 					obj.cardId = obj.id
-					obj.id = obj.info_27
+					obj.id = obj.info_1
+					var shouldInt = [5, 7, 8, 9, 10, 11, 12]
+					for( var i in shouldInt ){
+						var idx = shouldInt[i]
+						try{
+							obj['info_'+idx] = parseInt(obj['info_'+idx])
+							if( isNaN( obj['info_'+idx] ) ){
+								obj['info_'+idx] = 0
+							}
+						} catch (e){
+							obj['info_'+idx] = 0
+						}
+					}
 				}
 				cb( null, list )
 			}
