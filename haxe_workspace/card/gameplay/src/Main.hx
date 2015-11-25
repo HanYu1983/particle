@@ -134,6 +134,8 @@ class Main
 		
 		if( cardSuitsDetails.field( currentSelect ) == null ){
 			switch( currentSelect ) {
+				case 'spirit':
+					
 				case 'magic':
 					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( currentSelect ) );
 				case 'gundamWar':
@@ -299,6 +301,9 @@ class Main
 			case 'onBtnLoadYugiohClick':
 				currentSelect = 'yugioh';
 				chooseCardSuit( 'yugioh' );	
+			case 'onBtnLoadSpiritClick':
+				currentSelect = 'spirit';
+				chooseCardSuit( 'spirit' );	
 			case 'onBtnCreateDeck':
 				#if debug
 				Facade.getInstance().sendNotification( on_createDeck_click );
@@ -333,6 +338,7 @@ class Main
 			case 'magic':j( '#btn_magic' ).linkbutton( 'select' );
 			case 'army':j( '#btn_army' ).linkbutton( 'select' );
 			case 'yugioh':j( '#btn_yugioh' ).linkbutton( 'select' );
+			case 'spirit':j( '#btn_spirit' ).linkbutton( 'select' );
 		}
 	}
 	
