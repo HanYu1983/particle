@@ -2,6 +2,7 @@ var app = app || {};
 app.card = app.card || {};
 (function( module ){
 	function showDeckList( retModel ){
+		
 		$("#mc_deckContainer").empty();
 		_.each( retModel.cardSuit, function( deck ){
 			var copyDeck = JSON.parse( JSON.stringify( deck ) );
@@ -32,6 +33,18 @@ app.card = app.card || {};
 	function addDeck( _model ){
 		var dom = $("#tmpl_deck" ).tmpl( _model );
 		$('#mc_deckContainer').append( dom );
+		dom.find( '.easyui-combobox' ).combobox({
+			onSelect:(function( __model ){
+				return function( record ){
+					console.log( record.value );
+					console.log( __model );
+					//__model.game = record.value;
+					//cardSuit.editCardSuit( loadModel, __model );
+					editAndShow();
+				}
+			})( _model )
+		});
+		/*
 		dom.find( '.easyui-linkbutton' ).linkbutton({
 			group:_model.name,
 			onClick:(function( __model ){
@@ -49,6 +62,7 @@ app.card = app.card || {};
 				}
 			})( _model )
 		});
+		*/
 		dom.find( '.easyui-textbox' ).textbox();
 		dom.find( '.easyui-textbox' ).textbox({
 			onChange:(function( __model ){
@@ -84,6 +98,8 @@ app.card = app.card || {};
 			str = str.substr( 1, str.length - 2 );
 			return str;
 		})();
+		dom.find( '.easyui-combobox' ).combobox('setValue', _model.game);
+		/*
 		switch( _model.game ){
 			case 'army':
 				dom.find( '#btn_army' ).linkbutton( 'select' );
@@ -103,11 +119,12 @@ app.card = app.card || {};
 			case 'yugioh':
 				dom.find( '#btn_yugioh' ).linkbutton( 'select' );
 		}
-		
+		*/
 		dom.find( '#txt_cards' ).textbox( {
 			value:cardstr
 		});
 		
+		dom.find( '#btn_remove' ).linkbutton();
 		dom.find( '#btn_remove' ).click( function(){
 			cardSuit.removeCardSuit( loadModel, $(this).attr( 'group' ) );
 			editAndShow();
