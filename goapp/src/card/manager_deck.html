@@ -98,23 +98,16 @@ body{
 			<div game="army">${Atype}</div>
 			<div game="army">${text}</div>
 			
-			<div game="battleSpirits">info_2: ${info_2}</div>
-			<div game="battleSpirits">info_3: ${info_3}</div>
-			<div game="battleSpirits">info_4: ${info_4}</div>
-			<div game="battleSpirits">info_5: ${info_5}</div>
-			<div game="battleSpirits">info_6: ${info_6}</div>
-			<div game="battleSpirits">info_7: ${info_7}</div>
-			<div game="battleSpirits">info_8: ${info_8}</div>
-			<div game="battleSpirits">info_9: ${info_9}</div>
-			<div game="battleSpirits">info_10: ${info_10}</div>
-			<div game="battleSpirits">info_11: ${info_11}</div>
-			<div game="battleSpirits">info_12: ${info_12}</div>
-			<div game="battleSpirits">info_13: ${info_13}</div>
-			<div game="battleSpirits">info_14: ${info_14}</div>
-			<div game="battleSpirits">info_17: ${info_17}</div>
-			<div game="battleSpirits">info_25: ${info_25}</div>
-			<div game="battleSpirits">info_41: ${info_41}</div>
-			<div game="battleSpirits" info="text">${info_42}</div>
+			<div game="battleSpirits">${info_41} / ${info_2}</div>
+			<div game="battleSpirits">系統: ${info_25}</div>
+			<div game="battleSpirits">卡片種類: ${info_3}</div>
+			<div game="battleSpirits">属性: ${info_4}${info_5}</div>
+			<div game="battleSpirits">減輕需求: ${info_6}</div>
+			<div game="battleSpirits">LV1 core: ${info_7} hp: ${info_8}</div>
+			<div game="battleSpirits">LV2 core: ${info_9} hp: ${info_10}</div>
+			<div game="battleSpirits">LV3 core: ${info_11} hp: ${info_12}</div>
+			<div game="battleSpirits">${info_42}</div>
+			<div game="battleSpirits">稀有度: ${info_13}</div>
 		</div>
 	</div>
 </script>
@@ -151,7 +144,9 @@ body{
 			<div game="army">${Ctype}</div>
 			<div game="army">${Atype}</div>
 			
-			<div game="battleSpirits">${cardId}</div>
+			<div game="battleSpirits">${info_41} / ${info_2}</div>
+			<div game="battleSpirits">${info_25}</div>
+			<div game="battleSpirits">${info_3}</div>
 		</div>
 	</div>
 </script>
@@ -293,7 +288,64 @@ body{
 					-->
 		*/
 		
+		/*
+			<div game="battleSpirits">系統: ${info_25}</div>
+			<div game="battleSpirits">卡片種類: ${info_3}</div>
+			<div game="battleSpirits">属性: ${info_4}${info_5}</div>
+			<div game="battleSpirits">減輕需求: ${info_6}</div>
+			<div game="battleSpirits">LV1 core: ${info_7} hp: ${info_8}</div>
+			<div game="battleSpirits">LV2 core: ${info_9} hp: ${info_10}</div>
+			<div game="battleSpirits">LV3 core: ${info_11} hp: ${info_12}</div>
+			<div game="battleSpirits">${info_42}</div>
+			<div game="battleSpirits">稀有度: ${info_13}</div>
+			*/
 	var tmplAry = {
+		battleSpirits:{
+			default:[
+				[
+					{type:'label', val:'lv1核以上'},
+					{type:'select', span:1, val:{name:'lv1_core_1', items:['1','2']}},
+					{type:'label', val:'lv1核以下'},
+					{type:'select', span:1, val:{name:'lv1_core_2', items:['1','2']}},
+					{type:'label', val:'lv2核以上'},
+					{type:'select', span:1, val:{name:'lv2_core_1', items:['1','2','3','4','5','6','7','8']}},
+					{type:'label', val:'lv2核以下'},
+					{type:'select', span:1, val:{name:'lv2_core_2', items:['1','2','3','4','5','6','7','8']}},
+					{type:'label', val:'lv3核以上'},
+					{type:'select', span:1, val:{name:'lv3_core_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'lv3核以下'},
+					{type:'select', span:1, val:{name:'lv3_core_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[
+					{type:'label', val:'lv1血以上'},
+					{type:'select', span:1, val:{name:'lv1_hp_1', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000']}},
+					{type:'label', val:'lv1血以下'},
+					{type:'select', span:1, val:{name:'lv1_hp_2', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000']}},
+					{type:'label', val:'lv2血以上'},
+					{type:'select', span:1, val:{name:'lv2_hp_1', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000','11000','12000','13000','14000','15000']}},
+					{type:'label', val:'lv2血以下'},
+					{type:'select', span:1, val:{name:'lv2_hp_2', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000','11000','12000','13000','14000','15000']}},
+					{type:'label', val:'lv3血以上'},
+					{type:'select', span:1, val:{name:'lv3_hp_1', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000','11000','12000','13000','14000','15000','16000','17000','18000','19000','20000']}},
+					{type:'label', val:'lv3血以下'},
+					{type:'select', span:1, val:{name:'lv3_hp_2', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000','11000','12000','13000','14000','15000','16000','17000','18000','19000','20000']}},
+				],
+				[
+					{type:'label', val:'属性'},
+					{type:'select', span:3, val:{name:'attr', items:['赤','緑','紫','白','黄','青']}},
+					{type:'label', val:'種類'},
+					{type:'select', span:3, val:{name:'ctype', items:['スピリット','ブレイヴ','ネクサス','マジック','アルティメット']}},
+					{type:'label', val:'系統'},
+					{type:'select', span:3, val:{name:'ctype2', items:['道化','漂精','戦騎','龍帝','竜騎','虚神','神将','翼竜','皇獣','地竜','空牙','竜人','古竜','爬獣','溶魚','機竜','星竜','魔神','幽魔','妖蛇','魔影','霊獣','夜族','無魔','呪鬼','冥主','爪鳥','樹魔','歌鳥','遊精','怪虫','剣獣','殻虫','殻人','光虫','甲獣','巨獣','空魚','氷姫','甲竜','機獣','動器','機人','武装','魔人','天霊','楽族','四道','想獣','動玩','戯狩','小玩','闘神','勇傑','創手','獣頭','異合','造兵','戦獣','光導','神星','星魂','導魔','道玩','戦竜','雄将','覇皇','海首','華兵','放浪者','絶晶神','交渉人','星文学者','菓族','剣使','剣刃','滅龍','竜騎士','六楯帝','新生','刃虫','詩姫','翼船','護将','調査員','次代','私服','衣装','三龍神','星将','極竜','先導者','極女王','武竜','戦極','主君','家臣','忍風','機巧','妖戒','戦姫','起導者','天魔王']}},
+					{type:'label', val:'稀有度'},
+					{type:'select', span:3, val:{name:'rare', items:['C','U','R','M','X','XX','P','PX','EX','SJ','KA','KF','PB','CP','LM']}}
+					
+				],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'id檢索'},{type:'textbox', span:7,val:{name:'id'}}]
+			]
+		},
 		yugioh:{
 			ch:[
 				[
@@ -516,10 +568,8 @@ body{
 				[	{type:'label', val:'id檢索'},
 					{type:'textbox', span:3,val:{name:'id'}}]
 			]
-		},
-		battleSpirits:{
-		default:[]
 		}
+		
 	}
 	
 	function parseToTable( data ){

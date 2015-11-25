@@ -64,7 +64,72 @@ var gameController = {};
 			if( v == "" ){
 				continue
 			}
+			switch( k ){
+			case 'rare':
+				fns.push( cardsearch.attrEq( "info_13", v ) )
+				break
+			case 'ctype':
+				fns.push( cardsearch.attrEq( "info_3", v ) )
+				break
+			case 'ctype2':
+				fns.push( cardsearch.attrEq( "info_25", v ) )
+				break
+			case 'attr':
+				fns.push( cardsearch.attrEq( "info_4", v ) )
+				break
+			case 'lv1_core_1':
+				fns.push( cardsearch.attrGe( "info_7", v ) )
+				break
+			case 'lv1_core_2':
+				fns.push( cardsearch.attrLe( "info_7", v ) )
+				break
+			case 'lv2_core_1':
+				fns.push( cardsearch.attrGe( "info_9", v ) )
+				break
+			case 'lv2_core_2':
+				fns.push( cardsearch.attrLe( "info_9", v ) )
+				break
+			case 'lv3_core_1':
+				fns.push( cardsearch.attrGe( "info_11", v ) )
+				break
+			case 'lv3_core_2':
+				fns.push( cardsearch.attrLe( "info_11", v ) )
+				break
+			case 'lv1_hp_1':
+				fns.push( cardsearch.attrGe( "info_8", v ) )
+				break
+			case 'lv1_hp_2':
+				fns.push( cardsearch.attrLe( "info_8", v ) )
+				break
+			case 'lv2_hp_1':
+				fns.push( cardsearch.attrGe( "info_10", v ) )
+				break
+			case 'lv2_hp_2':
+				fns.push( cardsearch.attrLe( "info_10", v ) )
+				break
+			case 'lv3_hp_1':
+				fns.push( cardsearch.attrGe( "info_12", v ) )
+				break
+			case 'lv3_hp_2':
+				fns.push( cardsearch.attrLe( "info_12", v ) )
+				break
+			case "id":
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
+			case 'card_name':
+				fns.push( cardsearch.attrEq( "info_41", v ) )
+				break;
+			case 'rule':
+				fns.push( cardsearch.attrEq( "info_42", v ) )
+				break;
+			default:
+				if( v == 'on' ){
+					fns.push( cardsearch.attrEq( "Abs", k ) )
+				}
+				break;
+			}
 		}
+		return fns;
 	}
 	
 	function costGe( idx, value ){
