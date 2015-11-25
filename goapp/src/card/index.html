@@ -28,8 +28,11 @@
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
 	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>
+	<script src="../common/js/lib/async/async.js"></script>
 	<script src="../common/js/sangoWar.js"></script>	
 	<script src="../common/js/yugioh.js"></script>	
+	<script src="../common/js/battleSpirits.js"></script>	
 	<script src="../common/js/magic.js"></script>	
 	<script src="../common/js/gundamWar.js"></script>	
 	<script src="../common/js/army.js"></script>	
@@ -141,7 +144,7 @@ body{
 	</div>
 </script>
 <body>
-	<div style="position:relative; width:100%; height:4000px; left:0; top:0; ">
+	<div style="position:relative; width:100%; height:3000px; left:0; top:0; ">
 		<div class="background"></div>
 		<div style="position:absolute; top:0; left:0; color:white; opacity:.5;">
 			<div>當持有者和觀察者是同一個人的時候，即使牌面向下，觀察者依然可以看見牌</div>
@@ -160,7 +163,7 @@ body{
 			<div>H-移除</div>
 		</div>
 	</div>
-	<div style="position:absolute; top:0; left:0; width:100%; height:200%;" id="grid">
+	<div style="position:absolute; top:0; left:0; width:100%; height:3000px;" id="grid">
 		<div class="ghost-select"><span></span></div>
 	</div>
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
@@ -194,12 +197,12 @@ body{
 					<!--
 					<a href="#" id="btn_fighter" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadFighterClick')" data-options="toggle:true,group:'g1',selected:true">格鬥風雲錄</a>
 					-->
-					<a href="#" id="btn_army" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadArmyClick')" data-options="toggle:true,group:'g1',selected:false">軍武gogogo</a>
-					<a href="#" id="btn_magic" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadMagicClick')" data-options="toggle:true,group:'g1',selected:false">魔法風雲會</a>
-					<a href="#" id="btn_gundam" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarClick')" data-options="toggle:true,group:'g1',selected:false">鋼彈大戰</a>
-					<a href="#" id="btn_sango" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSangoWarClick')" data-options="toggle:true,group:'g1',selected:false">三國志大戰</a>
-					<a href="#" id="btn_yugioh" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadYugiohClick')" data-options="toggle:true,group:'g1',selected:false">遊戲王</a>
-					<a href="#" id="btn_battleSpirits" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSpiritClick')" data-options="toggle:true,group:'g1',selected:false">BattleSpirit</a>
+					<a href="#" id="btn_army" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadArmyClick')" style="width:80px;" data-options="toggle:true,group:'g1',selected:false">軍武gogogo</a>
+					<a href="#" id="btn_magic" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadMagicClick')" style="width:80px;"  data-options="toggle:true,group:'g1',selected:false">魔法風雲會</a>
+					<a href="#" id="btn_gundam" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarClick')" style="width:80px;"  data-options="toggle:true,group:'g1',selected:false">鋼彈大戰</a>
+					<a href="#" id="btn_sango" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSangoWarClick')" style="width:80px;"  data-options="toggle:true,group:'g1',selected:false">三國志大戰</a>
+					<a href="#" id="btn_yugioh" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadYugiohClick')" style="width:80px;"  data-options="toggle:true,group:'g1',selected:false">遊戲王</a>
+					<a href="#" id="btn_battleSpirits" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadBattleSpiritsClick')" style="width:80px;"  data-options="toggle:true,group:'g1',selected:false">戰魂</a>
 				</div>
 			</div>
 			<div class="group" style="text-align:center;">

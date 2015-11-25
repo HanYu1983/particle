@@ -135,7 +135,7 @@ class Main
 		if( cardSuitsDetails.field( currentSelect ) == null ){
 			switch( currentSelect ) {
 				case 'battleSpirits':
-					
+					CallJs.battleSpirits_load( "../common/txt/battleSpiritsList/", onLoadGameCallback( currentSelect ) );
 				case 'magic':
 					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( currentSelect ) );
 				case 'gundamWar':
@@ -318,12 +318,12 @@ class Main
 			case 'onBtnCustomDeck':
 				var str:String = j( "#txt_custom" ).textbox( 'getValue' );
 				str = '[' + str + ']';
-				try {
+				//try {
 					var createobj:Dynamic = Json.parse( str );
 					createCards( {backId:"0", cards:createobj} );
-				}catch ( e:Dynamic ) {
-					alert( '輸入格式錯誤哦，請檢查!' );
-				}
+				//}catch ( e:Dynamic ) {
+				//	alert( '輸入格式錯誤哦，請檢查!' );
+				//}
 			case 'onDiceClick':
 				Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
 		}
