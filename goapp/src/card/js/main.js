@@ -347,6 +347,7 @@ Main.createCards = function(deck) {
 		var _g1 = Main.currentSelect;
 		switch(_g1) {
 		case "battleSpirits":
+			CallJs.battleSpirits_load("../common/txt/battleSpiritsList/",Main.onLoadGameCallback(Main.currentSelect));
 			break;
 		case "magic":
 			CallJs.magic_load("../common/txt/magicList.xml",Main.onLoadGameCallback(Main.currentSelect));
@@ -700,13 +701,8 @@ Main.prototype = {
 		case "onBtnCustomDeck":
 			var str = Main.j("#txt_custom").textbox("getValue");
 			str = "[" + str + "]";
-			try {
-				var createobj = JSON.parse(str);
-				Main.createCards({ backId : "0", cards : createobj});
-			} catch( e ) {
-				if (e instanceof js__$Boot_HaxeError) e = e.val;
-				Main.alert("輸入格式錯誤哦，請檢查!");
-			}
+			var createobj = JSON.parse(str);
+			Main.createCards({ backId : "0", cards : createobj});
 			break;
 		case "onDiceClick":
 			window.open("http://www.wasabistudio.ca/scripts/dice.php?account=card&name=" + Main.playerId + "&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub");
@@ -1407,6 +1403,29 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				var str = "";
 				var _g = card.game;
 				switch(_g) {
+				case "gundamWar":
+					str += detail.name;
+					str += "<br/>";
+					str += detail.context;
+					break;
+				case "magic":
+					str += detail.id;
+					str += "<br/>";
+					str += detail.text;
+					break;
+				case "battleSpirits":
+					str += detail.info_41 + " " + detail.info_2;
+					str += "<br/>";
+					str += detail.info_5 + " " + detail.info_25 + " " + detail.info_3;
+					str += "<br/>";
+					str += detail.info_7 + " " + detail.info_8;
+					str += "<br/>";
+					str += detail.info_9 + " " + detail.info_10;
+					str += "<br/>";
+					str += detail.info_11 + " " + detail.info_12;
+					str += "<br/>";
+					str += detail.info_42;
+					break;
 				case "sangoWar":
 					str += detail.cname + " " + detail.atype;
 					str += "<br/>";
@@ -2052,6 +2071,7 @@ CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
 CallJs.yugioh_load = yugioh.load;
 CallJs.sangoWar_load = sangoWar.load;
 CallJs.gundamWar_load = gundamWar.load;
+CallJs.battleSpirits_load = battleSpirits.load;
 CallJs.magic_load = magic.load;
 CallJs.googleTracking_click = googleTracking.click;
 Main.on_getSuit_success = "on_getSuit_success";

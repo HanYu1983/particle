@@ -161,6 +161,26 @@ class UI extends Mediator
 				detaildiv.css( 'font-size', '16px' );
 				var str:String = '';
 				switch( card.game ) {
+					case 'gundamWar':
+						str += detail.name;
+						str += '<br/>';
+						str += detail.context;
+					case 'magic':
+						str += detail.id;
+						str += '<br/>';
+						str += detail.text;
+					case 'battleSpirits':
+						str += detail.info_41 + ' ' + detail.info_2;
+						str += '<br/>';
+						str += detail.info_5 + ' ' + detail.info_25 + ' ' + detail.info_3;
+						str += '<br/>';
+						str += detail.info_7 + ' ' + detail.info_8;
+						str += '<br/>';
+						str += detail.info_9 + ' ' + detail.info_10;
+						str += '<br/>';
+						str += detail.info_11 + ' ' + detail.info_12;
+						str += '<br/>';
+						str += detail.info_42;
 					case 'sangoWar': 
 						str += detail.cname + ' ' + detail.atype;
 						str += '<br/>';

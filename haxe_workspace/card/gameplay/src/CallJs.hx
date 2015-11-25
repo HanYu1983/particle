@@ -26,6 +26,7 @@ package;
 						'yugioh.load',
 						'sangoWar.load',
 						'gundamWar.load',
+						'battleSpirits.load',
 						'magic.load',
 						'googleTracking.click'
 					]))
