@@ -35,8 +35,11 @@
       "gundamWar.parseInfo"
       (test.gundamWar.parseInfo 213 1)
       
-      "bs.test"
-      (test.battleSpirits/test-base)
+      "bs.fetch"
+      (test.battleSpirits/fetchAll)
+      
+      "bs.fetchImage"
+      (test.battleSpirits/fetchAllImage)
       
       "gundamWarN.test"
       (test.gundamWarN/test-base)
