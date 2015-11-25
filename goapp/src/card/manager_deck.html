@@ -1803,8 +1803,66 @@ def: def
 	<script>
 	googleTracking.init( 'UA-55273266-3' );
 	
-	
+		  /*
+		  <!--
+					<option value="ZDK">ZDK</option>
+					<option value="CFX">CFX</option>
+					<option value="LW">LW</option>
+					<option value="CSTD">CSTD</option>
+					<option value="FD">FD</option>
+					<option value="PS">PS</option>
+					<option value="NE">NE</option>
+					<option value="P3K">P3K</option>
+					<option value="WL">WL</option>
+					<option value="HL">HL</option>
+					<option value="IA">IA</option>
+					<option value="RV">RV</option>
+					<option value="AQ">AQ</option>
+					<option value="BE">BE</option>
+					-->
+		*/
 	var tmplAry = {
+		magic:{
+			'default':[
+				[
+					{type:'label', val:'白以上'},{type:'select', val:{name:'white_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'白以下'},{type:'select', val:{name:'white_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'藍以上'},{type:'select', val:{name:'blue_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'藍以下'},{type:'select', val:{name:'blue_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'綠以上'},{type:'select', val:{name:'green_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'綠以下'},{type:'select', val:{name:'green_2', items:['0','1','2','3','4','5']}}
+				],
+				[
+					{type:'label', val:'紅以上'},{type:'select', val:{name:'red_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'紅以下'},{type:'select', val:{name:'red_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'黑以上'},{type:'select', val:{name:'black_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'黑以下'},{type:'select', val:{name:'black_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'總cost以上'},{type:'select', val:{name:'all_1', items:['0','1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'總cost以下'},{type:'select', val:{name:'all_2', items:['0','1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[
+					{type:'label', val:'系列'},
+					{type:'select', span:2, val:{name:'set', items:["4E","5E","6E","7E","8E","9E","10E","ALA","ALP","AVR","ARB","AP","AL","AN","BNG","BFZ","BOK","C13","C14","C15","CNS","CMD","CS","CHK","CHR","DTK","DGM","DKA","DI","DS","DK","KTK","JU","JOU","MR","MOR","MBS","MI","MM","MM2","MMA","M10","M11","M12","M13","M14","M15","EXP","EVE","EX","FRF","FE","FUT","ORI","ON","OD","GTC","GP","THS","TS","TO","TP","PC","PC2","PTK","PO","PO2","PR","NPH","ISD","IN","SHM","SOM","SOK","SC","SH","S99","RTR","ROE","RAV","WWK","LE","UN","UD","UL","US","VI","LG"]}},
+					{type:'label', val:'基本種類'},
+					{type:'select', span:2, val:{name:'ctype', items:['Basic','Legendary']}},
+					{type:'label', val:'種類'},
+					{type:'select', span:2, val:{name:'ctype2', items:['Land','Creature','Instant','Sorcery','Enchantment','Artifact','Artifact Creature']}},
+					{type:'label', val:'子種類'},
+					{type:'select', span:2, val:{name:'ctype3', items:['Advisor','Ally','Angel','Antelope','Ape','Archer','Archon','Artificer','Assassin','Assembly - Worker','Atog','Aurochs','Avatar','Badger','Barbarian','Basilisk','Bat','Bear','Beast','Beeble','Berserker','Bird','Blinkmoth','Boar','Bringer','Brushwagg','Camarid','Camel','Caribou','Carrier','Cat','Centaur','Cephalid','Chimera','Citizen','Cleric','Cockatrice','Construct','Coward','Crab','Crocodile','Cyclops','Dauthi','Demon','Deserter','Devil','Djinn','Dragon','Drake','Dreadnought','Drone','Druid','Dryad','Dwarf','Efreet','Elder','Eldrazi','Elemental','Elephant','Elf','Elk','Eye','Faerie','Ferret','Fish','Flagbearer','Fox','Frog','Fungus','Gargoyle','Germ','Giant','Gnome','Goat','Goblin','God','Golem','Gorgon','Graveborn','Gremlin','Griffin','Hag','Harpy','Hellion','Hippo','Hippogriff','Homarid','Homunculus','Horror','Horse','Hound','Human','Hydra','Hyena','Illusion','Imp','Incarnation','Insect','Jellyfish','Juggernaut','Kavu','Kirin','Kithkin','Knight','Kobold','Kor','Kraken','Lamia','Lammasu','Leech','Leviathan','Lhurgoyf','Licid','Lizard','Manticore','Masticore','Mercenary','Merfolk','Metathran','Minion','Minotaur','Monger','Mongoose','Monk','Moonfolk','Mutant','Myr','Mystic','Naga','Nautilus','Nephilim','Nightmare','Nightstalker','Ninja','Noggle','Nomad','Nymph','Octopus','Ogre','Ooze','Orb','Orc','Orgg','Ouphe','Ox','Oyster','Pegasus','Pentavite','Pest','Phelddagrif','Phoenix','Pincher','Pirate','Plant','Praetor','Prism','Processor','Rabbit','Rat','Rebel','Reflection','Rhino','Rigger','Rogue','Sable','Salamander','Samurai','Sand','Saproling','Satyr','Scarecrow','Scion','Scorpion','Scout','Serf','Serpent','Shade','Shaman','Shapeshifter','Sheep','Siren','Skeleton','Slith','Sliver','Slug','Snake','Soldier','Soltari','Spawn','Specter','Spellshaper','Sphinx','Spider','Spike','Spirit','Splinter','Sponge','Squid','Squirrel','Starfish','Surrakar','Survivor','Tetravite','Thalakos','Thopter','Thrull','Treefolk','Triskelavite','Troll','Turtle','Unicorn','Vampire','Vedalken','Viashino','Volver','Wall','Warrior','Weird','Werewolf','Whale','Wizard','Wolf','Wolverine','Wombat','Worm','Wraith','Wurm','Yeti','Zombie','Zubera']}}
+				],
+				[	{type:'label', val:'攻擊力以上'},
+					{type:'select', span:2, val:{name:'atk_1', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'攻擊力以下'},
+					{type:'select', span:2, val:{name:'atk_2', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'防守力以上'},
+					{type:'select', span:2, val:{name:'def_1', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'防守力以下'},
+					{type:'select', span:2, val:{name:'def_2', items:['0','1','2','3','4','5','6','7','8','9']}}],
+				[{type:'label', val:'能力'},{type:'checkbox', span:11,val:{name:'', items:["Deathtouch","Defender","First strike","Double strike","Flash","Flying","Haste","Hexproof","Protection from white","Protection from blue","Protection from black","Protection from red","Protection from green","Reach","Trample","Vigilance"]}}],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}]
+			]
+		},
 		army:{
 			'default':[
 				[{type:'label', val:'勢力'},{type:'select', span:3, val:{name:'ntype', items:['資本','共產','人民']}},{type:'label',val:'國家'},{type:'select',span:3,val:{name:'nation', items:['中國','美國','英國','德國','日本','韓國','俄羅斯','以色列']}}],
