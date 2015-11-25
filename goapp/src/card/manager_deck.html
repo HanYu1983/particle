@@ -770,7 +770,6 @@ body{
 	
 	function onLoadGameCallback( err, _cardlist ){
 		cardlist = _cardlist;
-		console.log( _cardlist );
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
 		
@@ -913,7 +912,6 @@ body{
 				return cardItem.itemId == itemId;
 			});
 			
-			console.log( searchCard );
 			searchCards( 'id=' + searchCard.id );
 		}
 		
