@@ -25,6 +25,8 @@ package;
 						'leo.utils.initRectSelect',
 						'yugioh.load',
 						'sangoWar.load',
+						'gundamWar.load',
+						'magic.load',
 						'googleTracking.click'
 					]))
 

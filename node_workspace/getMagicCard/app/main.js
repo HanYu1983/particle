@@ -8,31 +8,35 @@ goog.require('test.getGundamCard');
 goog.require('test.getMagicCard');
 goog.require('test.getSangoCard');
 app.main.yargs = require("yargs");
-app.main._main = (function _main(){var argv = (app.main.yargs.usage("Usage: $0 -c [cmd]").demand(["c"])["argv"]);var pred__5111 = cljs.core._EQ_;var expr__5112 = argv.c;if(cljs.core.truth_(pred__5111.call(null,"parseYugiohCDB",expr__5112)))
+app.main._main = (function _main(){var argv = (app.main.yargs.usage("Usage: $0 -c [cmd]").demand(["c"])["argv"]);var pred__5087 = cljs.core._EQ_;var expr__5088 = argv.c;if(cljs.core.truth_(pred__5087.call(null,"parseYugiohCDB",expr__5088)))
 {return test.yugioh.parseFile.call(null);
 } else
-{if(cljs.core.truth_(pred__5111.call(null,"getSangoCard",expr__5112)))
+{if(cljs.core.truth_(pred__5087.call(null,"getSangoCard",expr__5088)))
 {return test.getSangoCard.testGetAll.call(null);
 } else
-{if(cljs.core.truth_(pred__5111.call(null,"getMagicCard",expr__5112)))
+{if(cljs.core.truth_(pred__5087.call(null,"getMagicCard",expr__5088)))
 {return test.getMagicCard.main.call(null,(110),(10),(1000));
 } else
-{if(cljs.core.truth_(pred__5111.call(null,"getGundamCard",expr__5112)))
+{if(cljs.core.truth_(pred__5087.call(null,"getGundamCard",expr__5088)))
 {return test.getGundamCard.getInfo.call(null);
 } else
-{if(cljs.core.truth_(pred__5111.call(null,"downloadGundamPage",expr__5112)))
+{if(cljs.core.truth_(pred__5087.call(null,"downloadGundamPage",expr__5088)))
 {return test.gundamWar.downloadPages.call(null,(213),(1));
 } else
-{if(cljs.core.truth_(pred__5111.call(null,"gundamWar.parseInfo",expr__5112)))
+{if(cljs.core.truth_(pred__5087.call(null,"gundamWar.parseInfo",expr__5088)))
 {return test.gundamWar.parseInfo.call(null,(213),(1));
 } else
-{if(cljs.core.truth_(pred__5111.call(null,"bs.test",expr__5112)))
-{return test.battleSpirits.test_base.call(null);
+{if(cljs.core.truth_(pred__5087.call(null,"bs.fetch",expr__5088)))
+{return test.battleSpirits.fetchAll.call(null);
 } else
-{if(cljs.core.truth_(pred__5111.call(null,"gundamWarN.test",expr__5112)))
+{if(cljs.core.truth_(pred__5087.call(null,"bs.fetchImage",expr__5088)))
+{return test.battleSpirits.fetchAllImage.call(null);
+} else
+{if(cljs.core.truth_(pred__5087.call(null,"gundamWarN.test",expr__5088)))
 {return test.gundamWarN.test_base.call(null);
 } else
 {return cljs.core.println.call(null,"no cmd");
+}
 }
 }
 }
