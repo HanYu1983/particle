@@ -24,7 +24,10 @@ class UI extends Mediator
 	{
 		super(mediatorName, viewComponent);
 		
+		getViewComponent().layout();
+		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
+		
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		mc_light = getViewComponent().find( '#mc_light' );
@@ -42,13 +45,16 @@ class UI extends Mediator
 					Main.on_getSuit_success,
 					Main.on_receiveOps,
 					Main.on_searchComplete,
-					Main.on_heartbeat_event
+					Main.on_heartbeat_event,
+					Main.on_createDeck_click
 				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case Main.on_createDeck_click:
+				closeNorthPanel();
 			case Main.on_heartbeat_event:
 				showOnlineOffline( notification.getBody().conn );
 			case Main.on_searchComplete:
@@ -121,6 +127,10 @@ class UI extends Mediator
 			showCard( card );
 			return true;
 		});
+	}
+	
+	function closeNorthPanel() {
+		getViewComponent().layout( 'collapse', 'north' );
 	}
 	
 	function showCard( card ) {

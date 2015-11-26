@@ -1284,6 +1284,7 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 });
 var mediator_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+	this.getViewComponent().layout();
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
@@ -1296,12 +1297,15 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event];
+		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_createDeck_click":
+			this.closeNorthPanel();
+			break;
 		case "on_heartbeat_event":
 			this.showOnlineOffline(notification.getBody().conn);
 			break;
@@ -1372,6 +1376,9 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			_g.showCard(card);
 			return true;
 		});
+	}
+	,closeNorthPanel: function() {
+		this.getViewComponent().layout("collapse","north");
 	}
 	,showCard: function(card) {
 		if(card == null) return;
