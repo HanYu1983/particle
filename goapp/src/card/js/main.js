@@ -315,7 +315,6 @@ Main.__name__ = true;
 Main.selectOps = function(ops) {
 	Main.otherPlayerIds = ops.split(",");
 	Main.otherPlayerId = ops;
-	Main.saveOpponentToCookie(Main.otherPlayerId);
 	Main.j("#btn_connect").linkbutton("enable");
 };
 Main.saveOpponentToCookie = function(otherPlayerId) {
@@ -647,6 +646,7 @@ Main.prototype = {
 			}
 			Main.slide("正在等待對手...");
 			Main.createSocket(Main.playerId);
+			Main.saveOpponentToCookie(Main.otherPlayerId);
 			break;
 		case "onBtnLoginClick":
 			Main.openLoading("登入並讀取資料中...");

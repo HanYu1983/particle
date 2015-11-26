@@ -87,8 +87,6 @@ class Main
 	public static function selectOps( ops:String ) {
 		otherPlayerIds = ops.split(',');
 		otherPlayerId = ops;
-		saveOpponentToCookie( otherPlayerId );
-		
 		j( '#btn_connect' ).linkbutton( 'enable' );
 	}
 	
@@ -259,6 +257,7 @@ class Main
 				
 				slide( '正在等待對手...' );
 				createSocket( playerId );
+				saveOpponentToCookie( otherPlayerId );
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );
 				
