@@ -305,25 +305,16 @@ class Main
 				currentSelect = 'battleSpirits';
 				chooseCardSuit( 'battleSpirits' );	
 			case 'onBtnCreateDeck':
-				#if debug
 				Facade.getInstance().sendNotification( on_createDeck_click );
-				#else
-				//if( checkCanCreate() ){
-					Facade.getInstance().sendNotification( on_createDeck_click );
-					//slide( '創建卡片完成' );
-				//}else{
-				//	slide( '沒有登入或者沒有對手時，不能創建卡牌哦' );
-				//}
-				#end
 			case 'onBtnCustomDeck':
 				var str:String = j( "#txt_custom" ).textbox( 'getValue' );
 				str = '[' + str + ']';
-				//try {
+				try {
 					var createobj:Dynamic = Json.parse( str );
 					createCards( {backId:"0", cards:createobj} );
-				//}catch ( e:Dynamic ) {
-				//	alert( '輸入格式錯誤哦，請檢查!' );
-				//}
+				}catch ( e:Dynamic ) {
+					alert( '輸入格式錯誤哦，請檢查!' );
+				}
 			case 'onDiceClick':
 				Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
 		}

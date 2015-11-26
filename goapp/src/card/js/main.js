@@ -701,8 +701,13 @@ Main.prototype = {
 		case "onBtnCustomDeck":
 			var str = Main.j("#txt_custom").textbox("getValue");
 			str = "[" + str + "]";
-			var createobj = JSON.parse(str);
-			Main.createCards({ backId : "0", cards : createobj});
+			try {
+				var createobj = JSON.parse(str);
+				Main.createCards({ backId : "0", cards : createobj});
+			} catch( e ) {
+				if (e instanceof js__$Boot_HaxeError) e = e.val;
+				Main.alert("輸入格式錯誤哦，請檢查!");
+			}
 			break;
 		case "onDiceClick":
 			window.open("http://www.wasabistudio.ca/scripts/dice.php?account=card&name=" + Main.playerId + "&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub");
