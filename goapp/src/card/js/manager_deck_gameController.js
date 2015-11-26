@@ -322,6 +322,9 @@ var gameController = {};
 			case 'ntype':
 				fns.push( cardsearch.attrEq( "color", v ) )
 				break;
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
 			case "id":
 				fns.push( cardsearch.attrEq( "card-id", v ) )
 				break

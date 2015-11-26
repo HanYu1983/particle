@@ -912,8 +912,7 @@ body{
 			var searchCard = _.find( ary_deck, function( cardItem ){
 				return cardItem.itemId == itemId;
 			});
-			
-			searchCards( 'id=' + searchCard.id );
+			searchCards( 'cid=' + searchCard.id );
 		}
 		
 		function pushToDeck( card ){
