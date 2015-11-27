@@ -382,7 +382,7 @@ Main.getCardDetailById = function(game,cid) {
 Main.pushCmds = function(content) {
 	if(!Main.isCanSendMessage) return;
 	Lambda.foreach(Main.otherPlayerIds,function(toId) {
-		if(toId.length != 0) Main.messageSocket(toId,content.cmd,content);
+		if(toId.length != 0 && toId != Main.playerId) Main.messageSocket(toId,content.cmd,content);
 		return true;
 	});
 };

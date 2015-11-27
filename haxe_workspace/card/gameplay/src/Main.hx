@@ -174,7 +174,7 @@ class Main
 		#end
 		
 		Lambda.foreach( otherPlayerIds, function( toId ) {
-			if ( toId.length != 0 ) {
+			if ( toId.length != 0 && toId != playerId ) {
 				messageSocket( toId, content.cmd, content );
 			}
 			return true;
