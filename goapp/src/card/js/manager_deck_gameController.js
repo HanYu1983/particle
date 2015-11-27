@@ -65,6 +65,9 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
 			case 'set':
 				fns.push( cardsearch.attrEq( "prodid", v ) )
 				break
@@ -184,6 +187,9 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
 			case 'tech_1':
 				fns.push( cardsearch.indexGe( "CostAry", 0, v ) )
 				break
@@ -355,6 +361,9 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
 			case "id":
 				fns.push( cardsearch.attrEq( "id", v ) )
 				break
@@ -432,6 +441,9 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
 			case "card_name":
 				fns.push( cardsearch.attrEq( "name", v ) )
 				break;
@@ -529,6 +541,9 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+				case 'cid':
+					fns.push( cardsearch.attrEq( "id", v ) )
+					break
 				case 'set':
 					fns.push( cardsearch.attrEq( "set", v ) )
 					break
