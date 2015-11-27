@@ -5,7 +5,7 @@
 	<title>上善若水app</title>
 	<!--page information for search engine-->
 	<meta name="title" content="上善若水app" />
-	<meta name="keyword" content="上善若水app,余氏k線圖,卡牌風雲,幽夢仙夢" />
+	<meta name="keyword" content="上善若水app,余氏k線圖,幽夢仙夢" />
 	<meta name="description" content="上善若水app" />
 	<link rel="image_src" href="../common/images/logo.jpg"/>
 	
@@ -257,10 +257,9 @@ a{
 					javascript<br>
 					jquery easy ui<br>
 					<h1>產品描述</h1>
-					卡牌風雲是基於成為台灣甚至於全球的第一個集換式卡牌遊戲的入口平台而創設的網站、
-					卡牌風雲是一款基於網際網路的卡牌遊玩平台，透過line, facebook manager等等的通話功能，可以很容易實現線上遊戲卡牌的功能，它不限於玩哪一種類型的牌類遊戲，可以說，只要能有圖片的話，牌類遊戲都可以玩。
+					卡牌風雲是一款基於網際網路的卡牌遊玩平台，透過line, facebook manager等等的通話功能，可以很容易實現線上遊戲卡牌的功能
 					<br/>
-					目前收錄有：<span style="color:yellow">戰魂、三國志大戰、遊戲王、鋼彈大戰、魔法風雲會、軍武gogogo</span>
+					目前收錄有：<span style="color:yellow">軍武gogogo</span>
 				</div>
 				<div class="group" style="overflow:auto; margin-top:30px; ">
 					<div class="group" style="text-align:center;">
@@ -327,9 +326,6 @@ a{
 					jquery easy ui<br>
 					<h1>產品描述</h1>
 					組牌風雲是一款通用的集換式卡牌搜尋組牌機。可以讓玩家輸入、輸出來組織自己的牌組。
-					<br/>
-					由它所輸出的格式，可以用來作為卡牌風雲所用的組牌格式。直接連入卡牌風雲做遊玩
-					<br/>
 					目前收錄有：<span style="color:yellow">戰魂、三國志大戰、遊戲王、鋼彈大戰、魔法風雲會、軍武gogogo</span>
 				</div>
 				<div class="group" style="overflow:auto; margin-top:30px; ">
@@ -445,6 +441,7 @@ a{
 	<script src="../common/js/lib/underscore/underscore-min.js"></script>	
 	<script src="../common/js/store.js"></script>	
 	<script src="../common/js/cardSuit.js"></script>	
+	<script src="../common/js/admin.js"></script>	
 	<script>
 	
 	/* utils function */
@@ -560,6 +557,8 @@ a{
 	local:'679171275511375',
 	*/
 	
+	
+	
 	var fbid, token;
 	var loadModel;
 	
@@ -570,7 +569,6 @@ a{
 	});
 	
 	openCard();
-	//openDeck();
 	
 	function onBtnClick( target ){
 		switch( target.id ){

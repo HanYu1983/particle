@@ -36,7 +36,7 @@ class Main
 	public static var otherPlayerIdsForCheck:Array<Bool> = [];
 	public static var ary_cards:Array<Dynamic> = [];
 	
-	public static var currentSelect = 'sangoWar';
+	public static var currentSelect = 'army';
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
 	public static var cardSuitsDetails:Dynamic = {};
