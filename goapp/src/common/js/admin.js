@@ -1,1 +1,1 @@
-var _admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == '9128' );
+var _admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
