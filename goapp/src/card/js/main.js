@@ -142,6 +142,16 @@ Animate.sameTogetherSeperate = function(ary_select,pos_mouse) {
 		return d;
 	};
 };
+Animate.onDiceAction = function(playerId,dice) {
+	return function() {
+		var d = Main.j.Deferred();
+		Main.showDiceMessage(playerId,dice);
+		haxe_Timer.delay(function() {
+			d.resolve();
+		},10);
+		return d;
+	};
+};
 var CallJs = function() { };
 CallJs.__name__ = true;
 var HxOverrides = function() { };
@@ -404,6 +414,8 @@ Main.callAction = function(content) {
 	},[]);
 	var _g = content.cmd;
 	switch(_g) {
+	case "onDiceAction":
+		return Animate.onDiceAction(content.content.playerId,content.content.dice);
 	case "seperateCardSameTogether":
 		return Animate.sameTogetherSeperate(content.content.ary_select,content.content.pos_mouse);
 	case "changeIndex":
@@ -440,6 +452,14 @@ Main.callAction = function(content) {
 };
 Main.pollAllMessage = function() {
 	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
+};
+Main.dice = function() {
+	var dice = Math.floor(Math.random() * 100);
+	Main.pushCmds({ cmd : "onDiceAction", content : { playerId : Main.playerId, dice : dice}});
+	Main.showDiceMessage(Main.playerId,dice);
+};
+Main.showDiceMessage = function(id,dice) {
+	Main.slide("玩家 " + id + " 擲了 " + dice + " 點",4000);
 };
 Main.applyValue = function(ary_select,self) {
 	Lambda.foreach(ary_select,function(card) {
@@ -710,7 +730,7 @@ Main.prototype = {
 			}
 			break;
 		case "onDiceClick":
-			window.open("http://www.wasabistudio.ca/scripts/dice.php?account=card&name=" + Main.playerId + "&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub");
+			Main.dice();
 			break;
 		case "onTokenClick":
 			var oldselect = Main.currentSelect;
@@ -1519,11 +1539,16 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			switch(_g1) {
 			case 68:
 				break;
+			case 84:
+				break;
 			default:
 				if(this.ary_select.length == 0) return;
 			}
 			var _g11 = Std.parseInt(notification.getType());
 			if(_g11 != null) switch(_g11) {
+			case 84:
+				Main.dice();
+				break;
 			case 71:
 				break;
 			case 72:

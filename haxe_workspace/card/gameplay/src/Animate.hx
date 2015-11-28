@@ -159,6 +159,19 @@ class Animate
 			return d;
 		}
 	}
+	
+	public static function onDiceAction( playerId:String, dice:Int ) {
+		return function(){
+			var d:Dynamic = Main.j.Deferred();
+			Main.showDiceMessage( playerId, dice );
+			Timer.delay( function() {
+				d.resolve();
+			}, 10 );
+			return d;
+		}
+	}
+	
+	
 	/*
 	public static function searchOpponent( id, otherPlayerId ) {
 		return function() {

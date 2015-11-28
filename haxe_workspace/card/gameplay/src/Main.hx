@@ -206,6 +206,8 @@ class Main
 			//	return Animate.confirmConnect( content.content.id, content.content.otherPlayerId );
 			//case 'searchOpponent':
 			//	return Animate.searchOpponent( content.content.id, content.content.otherPlayerId );
+			case 'onDiceAction':
+				return Animate.onDiceAction( content.content.playerId, content.content.dice );
 			case 'seperateCardSameTogether':
 				return Animate.sameTogetherSeperate( content.content.ary_select, content.content.pos_mouse );
 			case 'changeIndex':
@@ -314,7 +316,7 @@ class Main
 					alert( '輸入格式錯誤哦，請檢查!' );
 				}
 			case 'onDiceClick':
-				Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
+				dice();
 			case 'onTokenClick':
 				var oldselect = currentSelect;
 				currentSelect = 'other';
@@ -327,6 +329,8 @@ class Main
 		}
 		CallJs.googleTracking_click( type );
 	}
+	
+	
 	
 	function updateGameUI( currentSelect ) {
 		switch( currentSelect ) {
@@ -351,6 +355,19 @@ class Main
 			case null:cardSuit = [];
 		}
 		Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
+	}
+	
+	public static function dice() {
+		var dice:Int = Math.floor( Math.random() * 100 );
+		Main.pushCmds( { cmd:'onDiceAction', content: { playerId:playerId, dice:dice } } );
+		
+		showDiceMessage( playerId, dice );
+		
+		//Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
+	}
+	
+	public static function showDiceMessage( id:String, dice:Int ) {
+		slide( '玩家 ' + id + ' 擲了 ' + dice + ' 點', 4000 );
 	}
 	
 	public static function applyValue( ary_select:Array<Dynamic>, self:Bool ) {

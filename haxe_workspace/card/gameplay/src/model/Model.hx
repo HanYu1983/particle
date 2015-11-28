@@ -89,13 +89,15 @@ class Model extends Mediator
 				
 				switch( notification.getType() ) {
 					case KeyboardEvent.DOM_VK_D:
+					case KeyboardEvent.DOM_VK_T:
 						// continue
 					case _:
 						if ( ary_select.length == 0 ) return;
 				}
 				
 				switch( Std.parseInt( notification.getType() ) ) {
-					
+					case KeyboardEvent.DOM_VK_T:
+						Main.dice();
 					case KeyboardEvent.DOM_VK_G:
 						//Main.sendAllMessage();
 					case KeyboardEvent.DOM_VK_H:
