@@ -66,7 +66,6 @@ class Main
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
 		
-		
 		if ( CallJs.getCookie( 'otherPlayerId' ) != null ) {
 			ary_ops = Json.parse( CallJs.getCookie( 'otherPlayerId' ));
 			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
@@ -125,7 +124,7 @@ class Main
 					relate:'', 
 					deg:0, 
 					pos:[0, 0], 
-					back:true,
+					back:currentSelect != 'other',
 					showTo:''
 			}
 		}));
@@ -316,6 +315,15 @@ class Main
 				}
 			case 'onDiceClick':
 				Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
+			case 'onTokenClick':
+				var oldselect = currentSelect;
+				currentSelect = 'other';
+				createCards( { backId:"0", cards:[
+													'token_0', 'token_0', 'token_0',
+													'token_0', 'token_0', 'token_0',
+													'token_0', 'token_0', 'token_0'
+													] } );
+				currentSelect = oldselect;
 		}
 		CallJs.googleTracking_click( type );
 	}
@@ -359,7 +367,7 @@ class Main
 						return '';
 					}else if( card.relate == Main.otherPlayerId ){
 						return 'red';
-					}
+					
 					*/
 				}
 				return '';

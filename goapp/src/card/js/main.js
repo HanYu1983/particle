@@ -340,7 +340,7 @@ Main.createCards = function(deck) {
 		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 26) deck.backId = bid1; else deck.backId = "0";
 	}
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
-		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : true, showTo : ""};
+		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : Main.currentSelect != "other", showTo : ""};
 	}));
 	if(Reflect.field(Main.cardSuitsDetails,Main.currentSelect) == null) {
 		var _g1 = Main.currentSelect;
@@ -711,6 +711,12 @@ Main.prototype = {
 			break;
 		case "onDiceClick":
 			window.open("http://www.wasabistudio.ca/scripts/dice.php?account=card&name=" + Main.playerId + "&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub");
+			break;
+		case "onTokenClick":
+			var oldselect = Main.currentSelect;
+			Main.currentSelect = "other";
+			Main.createCards({ backId : "0", cards : ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0"]});
+			Main.currentSelect = oldselect;
 			break;
 		}
 		CallJs.googleTracking_click(type);

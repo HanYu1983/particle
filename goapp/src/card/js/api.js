@@ -218,6 +218,8 @@ var api = api || {};
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
 		switch( pkgName ){
+		case 'other':
+			return '../common/images/card/' +id + '.jpg'
 		case 'battleSpirits':
 			return '//storage.googleapis.com/particle-resources/cardPackage/battleSpirits/' +id + '.jpg'
 		case 'sangoWar':
