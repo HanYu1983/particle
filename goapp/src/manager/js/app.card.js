@@ -86,7 +86,8 @@ app.card = app.card || {};
 		});
 		dom.find( '#btn_remove' ).linkbutton();
 		dom.find( '#btn_remove' ).click( function(){
-			cardSuit.removeCardSuit( loadModel, $(this).attr( 'group' ) );
+			var deckName = $(this).parent().find( '#txt_name' ).textbox( 'getValue' );
+			cardSuit.removeCardSuit( loadModel, deckName );
 			editAndShow();
 		});
 	}
