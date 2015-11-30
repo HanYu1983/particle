@@ -2,8 +2,9 @@ var app = app || {};
 app.card = app.card || {};
 (function( module ){
 	function showDeckList( retModel ){
-		
-		$("#mc_deckContainer").empty();
+		var mc_deckContainer = $("#mc_deckContainer");
+		var oldtop = mc_deckContainer.parent().parent().scrollTop();
+		mc_deckContainer.empty();
 		_.each( retModel.cardSuit, function( deck ){
 			var copyDeck = JSON.parse( JSON.stringify( deck ) );
 			if( copyDeck.backId == undefined ){
@@ -11,6 +12,7 @@ app.card = app.card || {};
 			}
 			addDeck( copyDeck );
 		});
+		mc_deckContainer.parent().parent().scrollTop( oldtop );
 	}
 	
 	$('#btn_saveDeck' ).linkbutton( {
