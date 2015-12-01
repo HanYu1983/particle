@@ -119,7 +119,7 @@ class Main
 					id:getId(), 
 					backId:deck.backId,
 					cardId:cardId,
-					owner:playerId, 
+					owner:currentSelect != 'other' ? playerId : '', 
 					game:currentSelect,
 					relate:'', 
 					deg:0, 
@@ -321,9 +321,11 @@ class Main
 				var oldselect = currentSelect;
 				currentSelect = 'other';
 				createCards( { backId:"0", cards:[
-													'token_0', 'token_0', 'token_0',
-													'token_0', 'token_0', 'token_0',
-													'token_0', 'token_0', 'token_0'
+													'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
+													'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
+													'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
+													'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
+													'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0'
 													] } );
 				currentSelect = oldselect;
 		}
