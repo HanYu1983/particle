@@ -193,7 +193,7 @@ body{
 					</div>
 				</div>
 				<div id="mc_lefttop" >
-					<a id="btn_about" href="#" title="其它遊戲的組牌機，目前有三國志大戰、遊戲王、魔法風雲會" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
+					<a id="btn_about" href="#" title="其它遊戲的組牌機，目前有三國志大戰、遊戲王、魔法風雲會、Crusade、戰魂、軍武gogogo" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
 					<a id="btn_about" href="#" title="關於上善若水" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
 				</div>
 			</div>
@@ -254,29 +254,39 @@ body{
 		<div class="group" style="position:relative; width:100%; text-align:center;">
 			<div class="group">
 				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=sangoWar')" data-options="iconCls:'icon-redo'">三國志大戰</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=army')" style="width:100px;" data-options="iconCls:'icon-redo'">軍武gogogo</a>
 				</div>
 			</div>
 			<div class="group">
 				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=gundamWar')" data-options="iconCls:'icon-redo'">鋼彈大戰</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=sangoWar')" style="width:100px;" data-options="iconCls:'icon-redo'">三國志大戰</a>
 				</div>
 			</div>
 			<div class="group">
 				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=magic')" data-options="iconCls:'icon-redo'">魔法風雲會</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=gundamWar')" style="width:100px;" data-options="iconCls:'icon-redo'">鋼彈大戰</a>
 				</div>
 			</div>
 			<div class="group">
 				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=ch')" data-options="iconCls:'icon-redo'">遊戲王</a>
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=en')" data-options="iconCls:'icon-redo'">遊戲王(英)</a>
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=jp')" data-options="iconCls:'icon-redo'">遊戲王(日)</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=magic')" style="width:100px;" data-options="iconCls:'icon-redo'">魔法風雲會</a>
 				</div>
 			</div>
 			<div class="group">
 				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=battleSpirits')" data-options="iconCls:'icon-redo'">戰魂</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=ch')" style="width:100px;" data-options="iconCls:'icon-redo'">遊戲王</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=en')" style="width:100px;" data-options="iconCls:'icon-redo'">遊戲王(英)</a>
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=jp')" style="width:100px;" data-options="iconCls:'icon-redo'">遊戲王(日)</a>
+				</div>
+			</div>
+			<div class="group">
+				<div class="hori">
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=battleSpirits')" style="width:100px;" data-options="iconCls:'icon-redo'">戰魂</a>
+				</div>
+			</div>
+			<div class="group">
+				<div class="hori">
+					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=crusade')" style="width:100px;" data-options="iconCls:'icon-redo'">Crusade</a>
 				</div>
 			</div>
 		</div>
@@ -334,8 +344,32 @@ body{
 	var tmplAry = {
 		crusade:{
 			default:[
+				[
+					{type:'label', val:'系列'},
+					{type:'select2', span:11, val:{name:'set', items:[
+					//	['22','サンライズクルセイド'],
+					//	['77','マクロスクルセイド'],
+					//	['150','ボンズクルセイド'],
+						['123','ダイナミッククルセイド'],
+						['86','OGクルセイド'],
+						['193','聖闘士星矢'],
+					//	['198','アクエリオンシリーズ'],
+					//	['206','聖闘士星矢Ω'],
+					//	['209','非公認戦隊アキバレンジャー'],
+						['221','るろうに剣心-明治剣客浪漫譚-'],
+					//	['222','ガイナックスシリーズ'],
+					//	['225','ジョジョの奇妙な冒険'],
+					//	['227','マギ'],
+						['235','幽☆遊☆白書'],
+						['240','クルセイドジーベック'],
+					//	['251','銀河機攻隊マジェスティックプリンス'],
+					//	['254','フルメタル・パニック！'],
+					//	['262','モーレツ宇宙海賊'],
+					//	['279','魔法騎士レイアース']
+					]}}
+				],
 				[	{type:'label', val:'勢力'},
-					{type:'select', span:5, val:{name:'ntype', items:['茶','藍','紫','白','綠','紅','黒']}},
+					{type:'select', span:5, val:{name:'ntype', items:['茶','青','紫','白','緑','赤','黒']}},
 					{type:'label',val:'卡片種類'},
 					{type:'select',span:5,val:{name:'ctype', items:['ユニット','キャラクター','コマンド']}}],
 				[	{type:'label', val:'指定cost以上'},
@@ -359,7 +393,7 @@ body{
 					{type:'label', val:'防守以下'},
 					{type:'select', span:1,val:{name:'def_2', items:["0","1","2","3","4","5","6","7","8","9"]}}],
 				[	{type:'label', val:'特殊規則'},
-					{type:'checkbox', span:11,val:{name:'', items:["１張限制","預防","快速","PS裝甲","強襲","速攻","回收","宙間戰鬥","大氣圈突入","範圍兵器","感應式兵器","高機動","砂漠","水","輪胎","變形","特殊盾","支援","據點","殖民地","艦船","補給","配置/X","家名","艦船用修正","解體","複數","換裝","變化","共有"]}}],
+					{type:'checkbox', span:11,val:{name:'', items:["エース","高機動","強襲","速攻","戦闘配備","クイック","装填","鉄壁","武装変更","連動","ブースト","ペイン","リンク","専用機のセット","別名","高速戦闘","激励","サウンドフォース","改造","精神コマンド"]}}],
 				[	{type:'label', val:'卡片名稱檢索'},
 					{type:'textbox', span:11,val:{name:'card_name'}}],
 				[	{type:'label', val:'卡片規則檢索'},

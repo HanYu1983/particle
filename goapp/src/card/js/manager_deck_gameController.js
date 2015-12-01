@@ -70,6 +70,9 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+			case 'set':
+				fns.push( cardsearch.attrEq( "prodid", v ) )
+				break;
 			case 'card_name':
 				fns.push( cardsearch.attrEq( "info_2", v ) )
 				break;
