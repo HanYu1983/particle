@@ -1,6 +1,7 @@
 {
   "name":"getMagicCard",
   "dependencies":{
+    "mkdirp":"*",
     "underscore":"*",
     "async":"*",
     "request": "*",

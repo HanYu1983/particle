@@ -3,6 +3,7 @@
     [test.getSangoCard]
     [test.getMagicCard]
     [test.getGundamCard]
+    [test.crusade]
     [test.yugioh]
     [test.gundamWar]
     [test.gundamWarN]))
@@ -40,6 +41,9 @@
       
       "bs.fetchImage"
       (test.battleSpirits/fetchAllImage)
+      
+      "crusade.fetchImage"
+      (test.crusade/fetchAllImage)
       
       "gundamWarN.test"
       (test.gundamWarN/test-base)
