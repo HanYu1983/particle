@@ -171,6 +171,12 @@ class UI extends Mediator
 				detaildiv.css( 'font-size', '16px' );
 				var str:String = '';
 				switch( card.game ) {
+					case 'crusade':
+						str += detail.info_2;
+						str += '<br/>';
+						str += detail.info_4;
+						str += '<br/>';
+						str += detail.info_16;
 					case 'gundamWar':
 						str += detail.name;
 						str += '<br/>';

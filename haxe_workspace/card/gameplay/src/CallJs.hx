@@ -27,6 +27,7 @@ package;
 						'sangoWar.load',
 						'gundamWar.load',
 						'battleSpirits.load',
+						'crusade.load',
 						'magic.load',
 						'googleTracking.click'
 					]))

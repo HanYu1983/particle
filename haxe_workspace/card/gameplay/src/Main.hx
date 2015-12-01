@@ -129,8 +129,11 @@ class Main
 			}
 		}));
 		
+		trace( currentSelect );
 		if( cardSuitsDetails.field( currentSelect ) == null ){
 			switch( currentSelect ) {
+				case 'crusade':
+					CallJs.crusade_load( "../common/txt/crusadeList/", onLoadGameCallback( currentSelect ) );
 				case 'battleSpirits':
 					CallJs.battleSpirits_load( "../common/txt/battleSpiritsList/", onLoadGameCallback( currentSelect ) );
 				case 'magic':
@@ -284,6 +287,9 @@ class Main
 			case 'onBtnLoadBattleSpiritsClick':
 				currentSelect = 'battleSpirits';
 				chooseCardSuit( 'battleSpirits' );	
+			case 'onBtnLoadCrusadeClick':
+				currentSelect = 'crusade';
+				chooseCardSuit( 'crusade' );	
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
 			case 'onBtnCustomDeck':
@@ -324,6 +330,7 @@ class Main
 			case 'army':j( '#btn_army' ).linkbutton( 'select' );
 			case 'yugioh':j( '#btn_yugioh' ).linkbutton( 'select' );
 			case 'battleSpirits':j( '#btn_battleSpirits' ).linkbutton( 'select' );
+			case 'crusade':j( '#btn_crusade' ).linkbutton( 'select' );
 		}
 	}
 	

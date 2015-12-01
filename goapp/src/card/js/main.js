@@ -210,14 +210,18 @@ Main.createCards = function(deck) {
 	var bid1 = _g;
 	if(_g == null) deck.backId = "0"; else switch(_g) {
 	default:
-		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 26) deck.backId = bid1; else deck.backId = "0";
+		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 33) deck.backId = bid1; else deck.backId = "0";
 	}
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
 		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.currentSelect != "other"?Main.playerId:"", game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : Main.currentSelect != "other", showTo : ""};
 	}));
+	console.log(Main.currentSelect);
 	if(Reflect.field(Main.cardSuitsDetails,Main.currentSelect) == null) {
 		var _g1 = Main.currentSelect;
 		switch(_g1) {
+		case "crusade":
+			CallJs.crusade_load("../common/txt/crusadeList/",Main.onLoadGameCallback(Main.currentSelect));
+			break;
 		case "battleSpirits":
 			CallJs.battleSpirits_load("../common/txt/battleSpiritsList/",Main.onLoadGameCallback(Main.currentSelect));
 			break;
@@ -593,6 +597,10 @@ Main.prototype = {
 			Main.currentSelect = "battleSpirits";
 			this.chooseCardSuit("battleSpirits");
 			break;
+		case "onBtnLoadCrusadeClick":
+			Main.currentSelect = "crusade";
+			this.chooseCardSuit("crusade");
+			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
@@ -641,6 +649,9 @@ Main.prototype = {
 			break;
 		case "battleSpirits":
 			Main.j("#btn_battleSpirits").linkbutton("select");
+			break;
+		case "crusade":
+			Main.j("#btn_crusade").linkbutton("select");
 			break;
 		}
 	}
@@ -1319,6 +1330,13 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				var str = "";
 				var _g = card.game;
 				switch(_g) {
+				case "crusade":
+					str += detail.info_2;
+					str += "<br/>";
+					str += detail.info_4;
+					str += "<br/>";
+					str += detail.info_16;
+					break;
 				case "gundamWar":
 					str += detail.name;
 					str += "<br/>";
@@ -1993,6 +2011,7 @@ CallJs.yugioh_load = yugioh.load;
 CallJs.sangoWar_load = sangoWar.load;
 CallJs.gundamWar_load = gundamWar.load;
 CallJs.battleSpirits_load = battleSpirits.load;
+CallJs.crusade_load = crusade.load;
 CallJs.magic_load = magic.load;
 CallJs.googleTracking_click = googleTracking.click;
 Main.on_getSuit_success = "on_getSuit_success";
