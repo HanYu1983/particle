@@ -77,34 +77,34 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "info_3", v ) );
 				break
 			case 'cost_1':
-				fns.push( cardsearch.indexGe( "info_5", 1, v ) )
+				fns.push( cardsearch.attrGe( "info_5", v ) )
 				break
 			case 'cost_2':
-				fns.push( cardsearch.indexLe( "info_5", 1, v ) )
+				fns.push( cardsearch.attrLe( "info_5", v ) )
 				break
 			case 'costAll_1':
-				fns.push( cardsearch.indexGe( "info_6", 1, v ) )
+				fns.push( cardsearch.attrGe( "info_6", v ) )
 				break
 			case 'costAll_2':
-				fns.push( cardsearch.indexLe( "info_6", 1, v ) )
+				fns.push( cardsearch.attrLe( "info_6", v ) )
 				break
 			case 'atk_1':
-				fns.push( cardsearch.indexGe( "info_8", 1, v ) )
+				fns.push( cardsearch.attrGe( "info_8", v ) )
 				break
 			case 'atk_2':
-				fns.push( cardsearch.indexLe( "info_8", 1, v ) )
+				fns.push( cardsearch.attrLe( "info_8", v ) )
 				break
 			case 'atk2_1':
-				fns.push( cardsearch.indexGe( "info_7", 1, v ) )
+				fns.push( cardsearch.attrGe( "info_9", v ) )
 				break
 			case 'atk2_2':
-				fns.push( cardsearch.indexLe( "info_7", 1, v ) )
+				fns.push( cardsearch.attrLe( "info_9", v ) )
 				break
 			case 'def_1':
-				fns.push( cardsearch.indexGe( "info_8", 2, v ) )
+				fns.push( cardsearch.attrGe( "info_10", v ) )
 				break
 			case 'def_2':
-				fns.push( cardsearch.indexLe( "info_8", 2, v ) )
+				fns.push( cardsearch.attrLe( "info_10", v ) )
 				break
 			case 'ntype':
 				fns.push( cardsearch.attrEq( "info_4", v ) )
