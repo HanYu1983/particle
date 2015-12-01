@@ -613,7 +613,7 @@ Main.prototype = {
 		case "onTokenClick":
 			var oldselect = Main.currentSelect;
 			Main.currentSelect = "other";
-			Main.createCards({ backId : "0", cards : ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0"]});
+			Main.createCards({ backId : "0", cards : ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2"]});
 			Main.currentSelect = oldselect;
 			break;
 		}
