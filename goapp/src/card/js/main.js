@@ -8,149 +8,12 @@ function $extend(from, fields) {
 var Animate = function() { };
 Animate.__name__ = true;
 Animate.addCardAndPrepare = function(cards) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.ary_cards = Main.ary_cards.concat(cards);
-		Lambda.foreach(Main.ary_cards,function(card) {
-			Main.createCard(card);
-			return true;
-		});
-		Main.applyValue(cards,false);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},0);
-		return d;
-	};
-};
-Animate.setOwner = function(ary_select) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.applyValue(ary_select,false);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},200);
-		return d;
-	};
-};
-Animate.setRelate = function(ary_select) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.applyValue(ary_select,false);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},200);
-		return d;
-	};
-};
-Animate.flip = function(ary_select) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.applyValue(ary_select,false);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},200);
-		return d;
-	};
-};
-Animate.rotate = function(ary_select,d) {
-	return function() {
-		var d1 = Main.j.Deferred();
-		Main.applyValue(ary_select,false);
-		haxe_Timer.delay(function() {
-			d1.resolve();
-		},300);
-		return d1;
-	};
-};
-Animate.list = function(ary_select,pos_mouse) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.moveCards(ary_select,pos_mouse,true);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},1000);
-		return d;
-	};
-};
-Animate.listSeparate = function(ary_select,pos_mouse) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.moveCards(ary_select,pos_mouse,false);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},1000);
-		return d;
-	};
-};
-Animate.moveCards = function(ary_select,pos_mouse) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.moveCards(ary_select,pos_mouse,false);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},1000);
-		return d;
-	};
-};
-Animate.changeIndex = function(cardId) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.changeIndex(cardId);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},10);
-		return d;
-	};
-};
-Animate.removeCards = function(ary_select) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.removeCards(ary_select);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},10);
-		return d;
-	};
-};
-Animate.shuffle = function(ary_select,pos_mouse) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.moveCards(ary_select,pos_mouse,true);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},1000);
-		return d;
-	};
-};
-Animate.shuffleSeperate = function(ary_select,pos_mouse) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.moveCards(ary_select,pos_mouse,false);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},1000);
-		return d;
-	};
-};
-Animate.sameTogetherSeperate = function(ary_select,pos_mouse) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.moveCards(ary_select,pos_mouse,false);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},1000);
-		return d;
-	};
-};
-Animate.onDiceAction = function(playerId,dice) {
-	return function() {
-		var d = Main.j.Deferred();
-		Main.showDiceMessage(playerId,dice);
-		haxe_Timer.delay(function() {
-			d.resolve();
-		},10);
-		return d;
-	};
+	Main.ary_cards = Main.ary_cards.concat(cards);
+	Lambda.foreach(Main.ary_cards,function(card) {
+		Main.createCard(card);
+		return true;
+	});
+	Main.applyValue(cards,false);
 };
 var CallJs = function() { };
 CallJs.__name__ = true;
@@ -350,7 +213,7 @@ Main.createCards = function(deck) {
 		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 26) deck.backId = bid1; else deck.backId = "0";
 	}
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
-		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : Main.currentSelect != "other", showTo : ""};
+		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.currentSelect != "other"?Main.playerId:"", game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : Main.currentSelect != "other", showTo : ""};
 	}));
 	if(Reflect.field(Main.cardSuitsDetails,Main.currentSelect) == null) {
 		var _g1 = Main.currentSelect;
@@ -373,9 +236,8 @@ Main.createCards = function(deck) {
 		}
 	}
 	Main.slide("創建卡片完成");
-	(Animate.addCardAndPrepare(toDeck))().done(function() {
-		Main.pushCmds({ cmd : "addCards", content : toDeck});
-	});
+	Animate.addCardAndPrepare(toDeck);
+	Main.pushCmds({ cmd : "addCards", content : toDeck});
 };
 Main.onLoadGameCallback = function(game) {
 	return function(err,_cardlist) {
@@ -397,7 +259,7 @@ Main.pushCmds = function(content) {
 	});
 };
 Main.onBackCallback = function(ret) {
-	(Main.callAction(ret.msg))();
+	Main.callAction(ret.msg);
 };
 Main.callAction = function(content) {
 	if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
@@ -415,37 +277,53 @@ Main.callAction = function(content) {
 	var _g = content.cmd;
 	switch(_g) {
 	case "onDiceAction":
-		return Animate.onDiceAction(content.content.playerId,content.content.dice);
+		Main.showDiceMessage(content.content.playerId,content.content.dice);
+		break;
 	case "seperateCardSameTogether":
-		return Animate.sameTogetherSeperate(content.content.ary_select,content.content.pos_mouse);
+		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
+		break;
 	case "changeIndex":
-		return Animate.changeIndex(content.content.cardId);
+		Main.changeIndex(content.content.cardId);
+		break;
 	case "removeCards":
-		return Animate.removeCards(content.content.ary_select);
+		Main.removeCards(content.content.ary_select);
+		break;
 	case "addCards":
-		return Animate.addCardAndPrepare(content.content);
+		Animate.addCardAndPrepare(content.content);
+		break;
 	case "listCard":
-		return Animate.list(content.content.ary_select,content.content.pos_mouse);
+		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
+		break;
 	case "listSeparate":
-		return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
+		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
+		break;
 	case "flip":
-		return Animate.flip(content.content.ary_select);
+		Main.applyValue(content.content.ary_select,false);
+		break;
 	case "setOwner":
-		return Animate.setOwner(content.content.ary_select);
+		Main.applyValue(content.content.ary_select,false);
+		break;
 	case "setRelate":
-		return Animate.setRelate(content.content.ary_select);
+		Main.applyValue(content.content.ary_select,false);
+		break;
 	case "shuffle":
-		return Animate.shuffle(content.content.ary_select,content.content.pos_mouse);
+		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
+		break;
 	case "shuffleSeparate":
-		return Animate.shuffleSeperate(content.content.ary_select,content.content.pos_mouse);
+		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
+		break;
 	case "rotate":
-		return Animate.rotate(content.content.ary_select,content.content.deg);
+		Main.applyValue(content.content.ary_select,false);
+		break;
 	case "listCardReverse":
-		return Animate.list(content.content.ary_select,content.content.pos_mouse);
+		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
+		break;
 	case "listSeparateReverse":
-		return Animate.listSeparate(content.content.ary_select,content.content.pos_mouse);
+		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
+		break;
 	case "moveCards":
-		return Animate.moveCards(content.content.ary_select,content.content.pos_mouse);
+		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
+		break;
 	default:
 		return null;
 	}
@@ -735,7 +613,7 @@ Main.prototype = {
 		case "onTokenClick":
 			var oldselect = Main.currentSelect;
 			Main.currentSelect = "other";
-			Main.createCards({ backId : "0", cards : ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0"]});
+			Main.createCards({ backId : "0", cards : ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2"]});
 			Main.currentSelect = oldselect;
 			break;
 		}
