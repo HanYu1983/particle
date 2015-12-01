@@ -145,9 +145,8 @@ class Main
 		}
 		
 		slide( '創建卡片完成' );
-		Animate.addCardAndPrepare( toDeck )().done( function() {
-			pushCmds( { cmd:'addCards', content:toDeck } );
-		});	
+		Animate.addCardAndPrepare( toDeck );
+		pushCmds( { cmd:'addCards', content:toDeck } );
 	}
 	
 	public static function onLoadGameCallback ( game:String ) {
@@ -182,10 +181,11 @@ class Main
 	
 	static function onBackCallback( ret:Dynamic ) {
 		//trace( ret.type, ret.msg.cmd );
-		callAction( ret.msg )();
+		//callAction( ret.msg )();
+		callAction( ret.msg );
 	}
 	
-	static function callAction( content:Dynamic ) {
+	static function callAction( content:Dynamic ):Void {
 		if ( content.content.ary_select != null ) {
 			content.content.ary_select = Lambda.fold( content.content.ary_select, function( remoteCard, curr ) {
 				var localCard = getCardsById( remoteCard.id );
@@ -202,42 +202,22 @@ class Main
 		}
 		
 		switch( content.cmd ) {
-			//case 'confirmConnect':
-			//	return Animate.confirmConnect( content.content.id, content.content.otherPlayerId );
-			//case 'searchOpponent':
-			//	return Animate.searchOpponent( content.content.id, content.content.otherPlayerId );
-			case 'onDiceAction':
-				return Animate.onDiceAction( content.content.playerId, content.content.dice );
-			case 'seperateCardSameTogether':
-				return Animate.sameTogetherSeperate( content.content.ary_select, content.content.pos_mouse );
-			case 'changeIndex':
-				return Animate.changeIndex( content.content.cardId );
-			case 'removeCards':
-				return Animate.removeCards( content.content.ary_select );
-			case 'addCards':
-				return Animate.addCardAndPrepare( content.content );
-			case 'listCard':
-				return Animate.list( content.content.ary_select, content.content.pos_mouse );
-			case 'listSeparate':
-				return Animate.listSeparate( content.content.ary_select, content.content.pos_mouse );
-			case 'flip':
-				return Animate.flip( content.content.ary_select );
-			case 'setOwner':
-				return Animate.setOwner( content.content.ary_select );
-			case 'setRelate':
-				return Animate.setRelate( content.content.ary_select );
-			case 'shuffle':
-				return Animate.shuffle( content.content.ary_select, content.content.pos_mouse );
-			case 'shuffleSeparate':
-				return Animate.shuffleSeperate( content.content.ary_select, content.content.pos_mouse );
-			case 'rotate':
-				return Animate.rotate( content.content.ary_select, content.content.deg );
-			case 'listCardReverse':
-				return Animate.list( content.content.ary_select, content.content.pos_mouse );
-			case 'listSeparateReverse':
-				return Animate.listSeparate( content.content.ary_select, content.content.pos_mouse );
-			case 'moveCards':
-				return Animate.moveCards( content.content.ary_select, content.content.pos_mouse );
+			case 'onDiceAction':Main.showDiceMessage( content.content.playerId, content.content.dice );
+			case 'seperateCardSameTogether':Main.moveCards( content.content.ary_select, content.content.pos_mouse, false );
+			case 'changeIndex':Main.changeIndex( content.content.cardId );
+			case 'removeCards':Main.removeCards( content.content.ary_select );
+			case 'addCards':Animate.addCardAndPrepare( content.content );
+			case 'listCard':Main.moveCards( content.content.ary_select, content.content.pos_mouse, true );
+			case 'listSeparate':Main.moveCards( content.content.ary_select, content.content.pos_mouse, false );
+			case 'flip':Main.applyValue( content.content.ary_select, false );
+			case 'setOwner':Main.applyValue( content.content.ary_select, false );
+			case 'setRelate':Main.applyValue( content.content.ary_select, false );
+			case 'shuffle':Main.moveCards( content.content.ary_select, content.content.pos_mouse, true );
+			case 'shuffleSeparate':Main.moveCards( content.content.ary_select, content.content.pos_mouse, false );
+			case 'rotate':Main.applyValue( content.content.ary_select, false );
+			case 'listCardReverse':Main.moveCards( content.content.ary_select, content.content.pos_mouse, true );
+			case 'listSeparateReverse':Main.moveCards( content.content.ary_select, content.content.pos_mouse, false );
+			case 'moveCards':Main.moveCards( content.content.ary_select, content.content.pos_mouse, false );
 			case _:
 				return null;
 		}
