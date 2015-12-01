@@ -2,6 +2,9 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'crusade':
+				crusade.load( "../common/txt/crusadeList/", onLoadGameCallback)
+				break;
 			case 'battleSpirits':
 				battleSpirits.load( "../common/txt/battleSpiritsList/", onLoadGameCallback)
 				break;

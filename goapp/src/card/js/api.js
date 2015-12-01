@@ -220,6 +220,8 @@ var api = api || {};
 		switch( pkgName ){
 		case 'other':
 			return '../common/images/card/' +id + '.jpg'
+		case 'crusade':
+			return '//storage.googleapis.com/particle-resources/cardPackage/crusade/' +id + '.jpg'
 		case 'battleSpirits':
 			return '//storage.googleapis.com/particle-resources/cardPackage/battleSpirits/' +id + '.jpg'
 		case 'sangoWar':
