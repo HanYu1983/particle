@@ -43,6 +43,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'crusade':
+				return crusadeQuerystring2fns( str );
 			case 'battleSpirits':
 				return battleSpiritsQuerystring2fns( str )
 			case 'army':
@@ -56,6 +58,77 @@ var gameController = {};
 			case 'magic':
 				return magicQuerystring2fns(str);
 		}
+	}
+	
+	function crusadeQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+			case 'card_name':
+				fns.push( cardsearch.attrEq( "info_2", v ) )
+				break;
+			case 'ctype':
+				fns.push( cardsearch.attrEq( "info_3", v ) );
+				break
+			case 'cost_1':
+				fns.push( cardsearch.indexGe( "info_5", 1, v ) )
+				break
+			case 'cost_2':
+				fns.push( cardsearch.indexLe( "info_5", 1, v ) )
+				break
+			case 'costAll_1':
+				fns.push( cardsearch.indexGe( "info_6", 1, v ) )
+				break
+			case 'costAll_2':
+				fns.push( cardsearch.indexLe( "info_6", 1, v ) )
+				break
+			case 'atk_1':
+				fns.push( cardsearch.indexGe( "info_8", 1, v ) )
+				break
+			case 'atk_2':
+				fns.push( cardsearch.indexLe( "info_8", 1, v ) )
+				break
+			case 'atk2_1':
+				fns.push( cardsearch.indexGe( "info_7", 1, v ) )
+				break
+			case 'atk2_2':
+				fns.push( cardsearch.indexLe( "info_7", 1, v ) )
+				break
+			case 'def_1':
+				fns.push( cardsearch.indexGe( "info_8", 2, v ) )
+				break
+			case 'def_2':
+				fns.push( cardsearch.indexLe( "info_8", 2, v ) )
+				break
+			case 'ntype':
+				fns.push( cardsearch.attrEq( "info_4", v ) )
+				break;
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
+			case "id":
+				fns.push( cardsearch.attrEq( "cardId", v ) )
+				break
+			case 'rule':
+				fns.push( cardsearch.attrEq( "info_16", v ) )
+				break;
+			case 'area':
+				fns.push( areaEq( v ) )
+				break;
+			default:
+				if( v == "on" ){
+					fns.push( cardsearch.attrEq( "info_16", k ))
+				}
+			}
+			
+		}
+		return fns
 	}
 	
 	function battleSpiritsQuerystring2fns( qstr ){
@@ -305,10 +378,10 @@ var gameController = {};
 				fns.push( costLe( 0, v ) )
 				break
 			case 'costAll_1':
-				fns.push( costGe( 1, v ) )
+				fns.push( cardsearch.indexGe( "info_6", 1, v ) )
 				break
 			case 'costAll_2':
-				fns.push( costLe( 1, v ) )
+				fns.push( cardsearch.indexLe( "info_6", 1, v ) )
 				break
 			case 'atk_1':
 				fns.push( cardsearch.indexGe( "atk", 0, v ) )
