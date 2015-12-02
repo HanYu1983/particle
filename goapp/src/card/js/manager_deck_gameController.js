@@ -384,10 +384,10 @@ var gameController = {};
 				fns.push( costLe( 0, v ) )
 				break
 			case 'costAll_1':
-				fns.push( cardsearch.indexGe( "info_6", 1, v ) )
+				fns.push( cardsearch.indexGe( "cost", 1, v ) )
 				break
 			case 'costAll_2':
-				fns.push( cardsearch.indexLe( "info_6", 1, v ) )
+				fns.push( cardsearch.indexLe( "cost", 1, v ) )
 				break
 			case 'atk_1':
 				fns.push( cardsearch.indexGe( "atk", 0, v ) )
