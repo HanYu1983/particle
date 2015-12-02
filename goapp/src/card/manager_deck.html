@@ -1033,9 +1033,9 @@ body{
 		
 		function showHideDetail(){
 			if( showTip ){
-				mc_bigCardContainer.find('#mc_detail > div').show()
+				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').show()
 			}else{
-				mc_bigCardContainer.find('#mc_detail > div').hide()
+				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').hide()
 			}
 		}
 		
