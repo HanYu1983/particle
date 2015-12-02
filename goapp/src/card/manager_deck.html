@@ -82,9 +82,9 @@ body{
 		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="../common/images/card/cardback_0.png"/>
 		<img src=${url} style="position:relative; top:0; left:0; width:100%; height:100%;" />
 		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
-		<div style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
+		<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
 		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:50px; padding-right:10px; padding-top:10px; ">
-			<div>${id}</div>
+			<div game="sangoWar">${id}</div>
 			<div game="sangoWar">${cname}</div>
 			<div game="sangoWar">${atype}/${atype2}</div>
 			<div game="sangoWar">${ability}</div>
@@ -92,26 +92,31 @@ body{
 			<br/>
 			<div game="sangoWar">${counter}</div>
 			
+			<div game="yugioh">${id}</div>
 			<div game="yugioh">${name}</div>
 			<div game="yugioh">level ${level}</div>
 			<div game="yugioh">${type}</div>
 			<div game="yugioh">${race}</div>
 			<div game="yugioh">${desc}</div>
 			
+			<div game="magic">${id}</div>
 			<div game="magic">${type}</div>
 			<div game="magic">${text}</div>
 			
+			<div game="gundamWar">${id}</div>
 			<div game="gundamWar">${name}</div>
 			<div game="gundamWar">${ctype}</div>
 			<div game="gundamWar">${area}</div>
 			<div game="gundamWar">{{html context}}</div>
 			
+			<div game="army">${id}</div>
 			<div game="army">${Name}</div>
 			<div game="army">${Nation}</div>
 			<div game="army">${Ctype}</div>
 			<div game="army">${Atype}</div>
 			<div game="army">${text}</div>
 			 
+			<div game="battleSpirits">${id}</div>
 			<div game="battleSpirits">${info_2}/${info_41}</div>
 			<div game="battleSpirits">系統: ${info_25}</div>
 			<div game="battleSpirits">卡片種類: ${info_3}</div>
@@ -124,6 +129,7 @@ body{
 			<div game="battleSpirits">日: {{html info_14}}</div>
 			<div game="battleSpirits">稀有度: ${info_13}</div>
 			
+			<div game="crusade">${id}</div>
 			<div game="crusade">${info_2}</div>
 			<div game="crusade">${info_4}</div>
 			<div game="crusade">${info_3}</div>
@@ -1033,9 +1039,11 @@ body{
 		
 		function showHideDetail(){
 			if( showTip ){
-				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').show()
+				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').show();
+				mc_bigCardContainer.find('.big_card_root > #mc_black').show();
 			}else{
-				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').hide()
+				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').hide();
+				mc_bigCardContainer.find('.big_card_root > #mc_black').hide();
 			}
 		}
 		
