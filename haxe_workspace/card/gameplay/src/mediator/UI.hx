@@ -31,11 +31,14 @@ class UI extends Mediator
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		mc_light = getViewComponent().find( '#mc_light' );
+		
+		/*
 		combo_ops.combobox( {
 			onChange:function( nv, ov ) {
 				Main.selectOps( nv );
 			}
 		});
+		*/
 	}
 	
 	override public function listNotificationInterests():Array<String> 

@@ -185,11 +185,6 @@ var Main = function() {
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
-Main.selectOps = function(ops) {
-	Main.otherPlayerIds = ops.split(",");
-	Main.otherPlayerId = ops;
-	Main.j("#btn_connect").linkbutton("enable");
-};
 Main.saveOpponentToCookie = function(otherPlayerId) {
 	if(HxOverrides.indexOf(Main.ary_ops,otherPlayerId,0) == -1) {
 		Main.ary_ops.push(otherPlayerId);
@@ -1204,9 +1199,6 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.mc_light = this.getViewComponent().find("#mc_light");
-	this.combo_ops.combobox({ onChange : function(nv,ov) {
-		Main.selectOps(nv);
-	}});
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
