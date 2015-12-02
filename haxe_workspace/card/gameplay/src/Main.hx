@@ -83,13 +83,18 @@ class Main
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
 	}
 	
-	/*
+	
 	public static function selectOps( ops:String ) {
-		otherPlayerIds = ops.split(',');
-		otherPlayerId = ops;
+		try{
+			otherPlayerIds = ops.split(',');
+			otherPlayerId = ops;
+		}catch ( e:String ) {
+			otherPlayerId = ops;
+		}
+		
 		j( '#btn_connect' ).linkbutton( 'enable' );
 	}
-	*/
+	
 	
 	public static function saveOpponentToCookie( otherPlayerId ) {
 		if ( ary_ops.indexOf( otherPlayerId ) == -1 ) {
