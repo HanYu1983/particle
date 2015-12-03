@@ -371,10 +371,16 @@ body{
 	var tmplAry = {
 		dragonZ:{
 			default: [
-				[{type:'label', val:'id'}, {type:'textbox',val:{name:'id'}}],
-				[{type:'label', val:'name'}, {type:'textbox',val:{name:'name'}}],
-				[{type:'label', val:'type'}, {type:'select',val:{name:'type', items:['Ally','Dragon Ball','Drill','Energy','Event','Mastery','MP','Physical','Setup']}}],
-				[{type:'label', val:'description'}, {type:'textbox',val:{name:'description'}}]
+				[{type:'label', val:'id'}, {type:'textbox', span:3,val:{name:'id'}}],
+				[{type:'label', val:'name'}, {type:'textbox', span:3,val:{name:'name'}}],
+				[{type:'label', val:'type'}, {type:'select', span:3,val:{name:'type', items:['Ally','Dragon Ball','Drill','Energy','Event','Mastery','MP','Physical','Setup']}}],
+				[
+					{type:'label', val:'Energy'},{type:'select',val:{name:'cost', items:['1','2','3','4']}}
+				],
+				[
+					{type:'label', val:'DAMAGE'},{type:'select',val:{name:'damage', items:['1','2','3','4','5','6','7']}}
+				],
+				[{type:'label', val:'description'}, {type:'textbox', span:3,val:{name:'description'}}]
 			]
 		},
 		crusade:{
@@ -1079,7 +1085,7 @@ body{
 			
 			ary_cards = searchLib( searchstr ).slice();
 			
-			console.log( ary_cards )
+			//console.log( ary_cards )
 			
 			createBigCard();
 			setPagination( ary_cards.length );

@@ -74,7 +74,14 @@ var gameController = {};
 			if( v == "" ){
 				continue
 			}
+			
 			switch( k ){
+			case 'cost':
+				fns.push( cardsearch.attrEq( "descrition", 'costing ' + v + ' stages' ) )
+				break;
+			case 'damage':
+				fns.push( cardsearch.attrEq( "descrition", 'Damage: ' + v + ' life cards' ) )
+				break;
 			case 'id':
 				fns.push( cardsearch.attrEq( "id", v ) )
 				break;
