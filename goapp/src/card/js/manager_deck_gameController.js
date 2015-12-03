@@ -84,7 +84,7 @@ var gameController = {};
 							var and = cardsearch.and
 							var not = cardsearch.not
 							var attrEq = cardsearch.attrEq
-							fns.push( or( [ attrEq("name", "Black") ] ) )
+							fns.push( not( or( [ attrEq("name", "Black"), attrEq("name", "Blue"), attrEq("name", "Orange"), attrEq("name", "Red"), attrEq("name", "Namek"), attrEq("name", "Saiyan") ] ) ) )
 						}
 						break;
 					default:
