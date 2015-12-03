@@ -78,6 +78,9 @@ var gameController = {};
 			case 'id':
 				fns.push( cardsearch.attrEq( "id", v ) )
 				break;
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break;
 			case 'name':
 				fns.push( cardsearch.attrEq( "name", v ) )
 				break;
