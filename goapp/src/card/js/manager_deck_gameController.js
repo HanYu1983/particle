@@ -76,6 +76,22 @@ var gameController = {};
 			}
 			
 			switch( k ){
+			case 'color':
+				switch( v ){
+					case 'Freestyle':
+						{
+							var or = cardsearch.or
+							var and = cardsearch.and
+							var not = cardsearch.not
+							var attrEq = cardsearch.attrEq
+							fns.push( or( [ attrEq("name", "Black") ] ) )
+						}
+						break;
+					default:
+						fns.push( cardsearch.attrEq( "name", v ) )
+				}
+				
+				break;
 			case 'cost':
 				fns.push( cardsearch.attrEq( "descrition", 'costing ' + v + ' stages' ) )
 				break;

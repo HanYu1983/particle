@@ -100,6 +100,14 @@ var cardsearch = cardsearch || {};
 		}
 	}
 	
+	function or( fns ){
+		return function( obj ){
+			return _.reduce( fns, function( ret, fn ){
+				return ret || fn( obj )
+			}, true)
+		}
+	}
+	
 	function filter( fn, list ){
 		var ret = _.filter( list, fn )
 		return ret
@@ -115,6 +123,7 @@ var cardsearch = cardsearch || {};
 	module.attrGe = attrGe
 	module.attrLe = attrLe
 	module.not = not
+	module.or = or
 	module.indexGe = indexGe
 	module.indexLe = indexLe
 	module.indexEq = indexEq
