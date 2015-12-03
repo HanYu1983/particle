@@ -909,6 +909,8 @@ body{
 		$("#btn_output").linkbutton( 'enable' );
 		
 		$.messager.progress( 'close' ); 
+		
+		app.view.searchCards();
 	}
 	
 	function getId(){
@@ -1213,6 +1215,8 @@ body{
 		module.onSetDeckClick = onSetDeckClick;
 		module.onGotoGameClick = onGotoGameClick;
 		module.onGoToClubClick = onGoToClubClick;
+		
+		module.searchCards = searchCards;
 		
 	})( app.view );
 	</script>
