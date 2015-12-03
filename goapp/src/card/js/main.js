@@ -226,6 +226,9 @@ Main.createCards = function(deck) {
 	if(Reflect.field(Main.cardSuitsDetails,Main.currentSelect) == null) {
 		var _g1 = Main.currentSelect;
 		switch(_g1) {
+		case "dragonZ":
+			CallJs.dragonZ_load("../common/txt/dragonZList.json",Main.onLoadGameCallback(Main.currentSelect));
+			break;
 		case "crusade":
 			CallJs.crusade_load("../common/txt/crusadeList/",Main.onLoadGameCallback(Main.currentSelect));
 			break;
@@ -608,6 +611,10 @@ Main.prototype = {
 			Main.currentSelect = "crusade";
 			this.chooseCardSuit("crusade");
 			break;
+		case "onBtnLoadDragonZClick":
+			Main.currentSelect = "dragonZ";
+			this.chooseCardSuit("dragonZ");
+			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
@@ -659,6 +666,9 @@ Main.prototype = {
 			break;
 		case "crusade":
 			Main.j("#btn_crusade").linkbutton("select");
+			break;
+		case "dragonZ":
+			Main.j("#btn_dragonZ").linkbutton("select");
 			break;
 		}
 	}
@@ -1337,6 +1347,15 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				var str = "";
 				var _g = card.game;
 				switch(_g) {
+				case "dragonZ":
+					str += detail.id;
+					str += "<br/>";
+					str += detail.name;
+					str += "<br/>";
+					str += detail.type;
+					str += "<br/>";
+					str += detail.descrition;
+					break;
 				case "crusade":
 					str += detail.info_2;
 					str += "<br/>";
@@ -2018,6 +2037,7 @@ CallJs.yugioh_load = yugioh.load;
 CallJs.sangoWar_load = sangoWar.load;
 CallJs.gundamWar_load = gundamWar.load;
 CallJs.battleSpirits_load = battleSpirits.load;
+CallJs.dragonZ_load = dragonZ.load;
 CallJs.crusade_load = crusade.load;
 CallJs.magic_load = magic.load;
 CallJs.googleTracking_click = googleTracking.click;
