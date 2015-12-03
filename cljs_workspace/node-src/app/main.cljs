@@ -6,7 +6,8 @@
     [test.crusade]
     [test.yugioh]
     [test.gundamWar]
-    [test.gundamWarN]))
+    [test.gundamWarN]
+    [test.dragonZ]))
 
 (def yargs (js/require "yargs"))
   
@@ -47,6 +48,15 @@
       
       "gundamWarN.test"
       (test.gundamWarN/test-base)
+      
+      "dragonZ.test"
+      (test.dragonZ/test-base)
+      
+      "dragonZ.fetchImage"
+      (test.dragonZ/fetchAllImage)
+      
+      "dragonZ.makeJson"
+      (test.dragonZ/makeJson)
       
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動

@@ -2,6 +2,9 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'dragonZ':
+				dragonZ.load( "../common/txt/dragonZList.json", onLoadGameCallback)
+				break;
 			case 'crusade':
 				crusade.load( "../common/txt/crusadeList/", onLoadGameCallback)
 				break;
@@ -43,6 +46,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'dragonZ':
+				return dragonZQuerystring2fns( str );
 			case 'crusade':
 				return crusadeQuerystring2fns( str );
 			case 'battleSpirits':
@@ -58,6 +63,33 @@ var gameController = {};
 			case 'magic':
 				return magicQuerystring2fns(str);
 		}
+	}
+	
+	function dragonZQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+			case 'id':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break;
+			case 'name':
+				fns.push( cardsearch.attrEq( "name", v ) )
+				break;
+			case 'type':
+				fns.push( cardsearch.attrEq( "type", v ) )
+				break;
+			case 'descrition':
+				fns.push( cardsearch.attrEq( "descrition", v ) );
+				break
+			}
+		}
+		return fns
 	}
 	
 	function crusadeQuerystring2fns( qstr ){

@@ -313,6 +313,7 @@ body{
 	<script src="../common/js/army.js"></script>	
 	<script src="../common/js/battleSpirits.js"></script>	
 	<script src='../common/js/crusade.js'></script>
+	<script src='../common/js/dragonZ.js'></script>
 	<script src="../common/js/cardsearch.js"></script>	
 	<script src="../common/js/admin.js"></script>	
 	<script src='js/api.js'></script>
@@ -352,6 +353,14 @@ body{
 			*/
 			
 	var tmplAry = {
+		dragonZ:{
+			default: [
+				[{type:'label', val:'id'}, {type:'textbox',val:{name:'id'}}],
+				[{type:'label', val:'name'}, {type:'textbox',val:{name:'name'}}],
+				[{type:'label', val:'type'}, {type:'select',val:{name:'type', items:['Ally','Dragon Ball','Drill','Energy','Event','Mastery','MP','Physical','Setup']}}],
+				[{type:'label', val:'description'}, {type:'textbox',val:{name:'description'}}]
+			]
+		},
 		crusade:{
 			default:[
 				[
@@ -847,7 +856,8 @@ body{
 		magic:'魔法風雲會',
 		gundamWar:'鋼彈大戰',
 		battleSpirits: '戰魂',
-		crusade: 'Crusade'
+		crusade: 'Crusade',
+		dragonZ: '七龍珠TCG'
 	}
 	$('title').html(titlemapping[game] + '-組牌風雲' );
 	
@@ -1052,6 +1062,8 @@ body{
 			pag_bigCard.pagination( 'select', 1 );
 			
 			ary_cards = searchLib( searchstr ).slice();
+			
+			console.log( ary_cards )
 			
 			createBigCard();
 			setPagination( ary_cards.length );
