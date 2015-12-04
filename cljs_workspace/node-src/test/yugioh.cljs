@@ -10,8 +10,8 @@
     (.verbose)
     (.-Database)))
 
-(def db (SqliteDB. "yugiohDoc/cards_ch.cdb"))
-(def stringsPath "yugiohDoc/strings_ch.conf")
+(def db (SqliteDB. "yugiohDoc/ch/cards.cdb"))
+(def stringsPath "yugiohDoc/ch/strings.conf")
 (def outputFile "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListCh.json")
 
 (defn parseStrings [cb]

@@ -7,7 +7,8 @@
     [test.yugioh]
     [test.gundamWar]
     [test.gundamWarN]
-    [test.dragonZ]))
+    [test.dragonZ]
+    [test.sanguosha]))
 
 (def yargs (js/require "yargs"))
   
@@ -57,6 +58,9 @@
       
       "dragonZ.makeJson"
       (test.dragonZ/makeJson)
+      
+      "sgs.test"
+      (test.sanguosha/test-base)
       
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動
