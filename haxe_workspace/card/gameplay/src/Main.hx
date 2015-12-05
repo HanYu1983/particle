@@ -173,7 +173,10 @@ class Main
 	public static function getCardDetailById( game:String, cid:String ):Dynamic {
 		
 		cid = StringTools.replace( cid, '.jpg', '' );
-		if ( cardSuitsDetails.field( game ) == null ) return null;
+		if ( cardSuitsDetails.field( game ) == null ) {
+			loadDetail( game );
+			return null;
+		}
 		return Lambda.find( cardSuitsDetails.field( game ), function( cardDetail ) {
 			return cardDetail.id.indexOf( cid ) == 0;
 		});
@@ -472,8 +475,6 @@ class Main
 	public static function createCard( model:Dynamic ) {
 		model.url = CallJs.api_getCardImageWithPackageName( model.game, model.cardId );
 		model.backurl = '../common/images/card/cardback_' + model.backId + '.png';
-		
-		loadDetail( model.game );
 		
 		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
 	}

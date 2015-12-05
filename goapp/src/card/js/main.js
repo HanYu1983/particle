@@ -259,7 +259,10 @@ Main.onLoadGameCallback = function(game) {
 };
 Main.getCardDetailById = function(game,cid) {
 	cid = StringTools.replace(cid,".jpg","");
-	if(Reflect.field(Main.cardSuitsDetails,game) == null) return null;
+	if(Reflect.field(Main.cardSuitsDetails,game) == null) {
+		Main.loadDetail(game);
+		return null;
+	}
 	return Lambda.find(Reflect.field(Main.cardSuitsDetails,game),function(cardDetail) {
 		return cardDetail.id.indexOf(cid) == 0;
 	});
@@ -434,7 +437,6 @@ Main.rotate = function(ary_select,deg) {
 Main.createCard = function(model) {
 	model.url = CallJs.api_getCardImageWithPackageName(model.game,model.cardId);
 	model.backurl = "../common/images/card/cardback_" + Std.string(model.backId) + ".png";
-	Main.loadDetail(model.game);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
 };
 Main.flip = function(ary_select) {
