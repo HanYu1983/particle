@@ -163,14 +163,15 @@ class UI extends Mediator
 			div.append( img2 );
 			
 			var detail = Main.getCardDetailById( card.game, card.cardId );
+			var detaildiv:Dynamic = Main.j( '<div></div>' );
+			detaildiv.css( 'position', 'relative' );
+			detaildiv.css( 'width', '95%' );
+			detaildiv.css( 'top', '0' );
+			detaildiv.css( 'left', '0' );
+			detaildiv.css( 'font-size', '16px' );
+			var str:String = '資料還沒準備好，請稍後再點!';
 			if ( detail != null ) {
-				var detaildiv:Dynamic = Main.j( '<div></div>' );
-				detaildiv.css( 'position', 'relative' );
-				detaildiv.css( 'width', '100%' );
-				detaildiv.css( 'top', '0' );
-				detaildiv.css( 'left', '0' );
-				detaildiv.css( 'font-size', '16px' );
-				var str:String = '';
+				str = '';
 				switch( card.game ) {
 					case 'dragonZ':
 						str += detail.id;
@@ -215,15 +216,15 @@ class UI extends Mediator
 					case 'yugioh': 
 						str += detail.name;
 						str += '<br/>';
-						str += detail.level;
+						str += 'level ' + detail.level;
 						str += '<br/>';
 						str += detail.type;
 						str += '<br/>';
 						str += detail.desc;
 				}
-				detaildiv.html( str );
-				div.append( detaildiv );
 			}
+			detaildiv.html( str );
+			div.append( detaildiv );
 			
 			mc_detailContainer.append( div );
 			/*

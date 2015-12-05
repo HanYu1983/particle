@@ -1337,14 +1337,15 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			});
 			div.append(img2);
 			var detail = Main.getCardDetailById(card.game,card.cardId);
+			var detaildiv = Main.j("<div></div>");
+			detaildiv.css("position","relative");
+			detaildiv.css("width","95%");
+			detaildiv.css("top","0");
+			detaildiv.css("left","0");
+			detaildiv.css("font-size","16px");
+			var str = "資料還沒準備好，請稍後再點!";
 			if(detail != null) {
-				var detaildiv = Main.j("<div></div>");
-				detaildiv.css("position","relative");
-				detaildiv.css("width","100%");
-				detaildiv.css("top","0");
-				detaildiv.css("left","0");
-				detaildiv.css("font-size","16px");
-				var str = "";
+				str = "";
 				var _g = card.game;
 				switch(_g) {
 				case "dragonZ":
@@ -1396,16 +1397,16 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				case "yugioh":
 					str += detail.name;
 					str += "<br/>";
-					str += detail.level;
+					str += "level " + detail.level;
 					str += "<br/>";
 					str += detail.type;
 					str += "<br/>";
 					str += detail.desc;
 					break;
 				}
-				detaildiv.html(str);
-				div.append(detaildiv);
 			}
+			detaildiv.html(str);
+			div.append(detaildiv);
 			this.mc_detailContainer.append(div);
 		}
 	}
