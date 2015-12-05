@@ -104,7 +104,7 @@ var cardsearch = cardsearch || {};
 		return function( obj ){
 			return _.reduce( fns, function( ret, fn ){
 				return ret || fn( obj )
-			}, true)
+			}, false)
 		}
 	}
 	

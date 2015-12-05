@@ -4,6 +4,7 @@
 
 (def request (js/require "request"))
 (def fs (js/require "fs"))
+(def async (js/require "async"))
 
 (defn getUrl [url cb]
   (request 
@@ -34,3 +35,11 @@
       (if err
         (cb err)
         (cb nil (str/replace data #"\r" ""))))))
+        
+        
+(defn delayFn [t f cb]
+  (f 
+    (fn [err data]
+      (if err
+        (cb err)
+        (js/setTimeout #(cb nil data) t)))))
