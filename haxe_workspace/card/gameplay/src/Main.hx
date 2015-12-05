@@ -136,9 +136,16 @@ class Main
 			}
 		}));
 		
-		trace( currentSelect );
-		if( cardSuitsDetails.field( currentSelect ) == null ){
-			switch( currentSelect ) {
+		loadDetail( currentSelect );
+		
+		slide( '創建卡片完成' );
+		Animate.addCardAndPrepare( toDeck );
+		pushCmds( { cmd:'addCards', content:toDeck } );
+	}
+	
+	public static function loadDetail( game:String ) {
+		if( cardSuitsDetails.field( game ) == null ){
+			switch( game ) {
 				case 'dragonZ':
 					CallJs.dragonZ_load( "../common/txt/dragonZList.json", onLoadGameCallback( currentSelect ) );
 				case 'crusade':
@@ -155,10 +162,6 @@ class Main
 					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( currentSelect ) );
 			}
 		}
-		
-		slide( '創建卡片完成' );
-		Animate.addCardAndPrepare( toDeck );
-		pushCmds( { cmd:'addCards', content:toDeck } );
 	}
 	
 	public static function onLoadGameCallback ( game:String ) {
@@ -470,10 +473,7 @@ class Main
 		model.url = CallJs.api_getCardImageWithPackageName( model.game, model.cardId );
 		model.backurl = '../common/images/card/cardback_' + model.backId + '.png';
 		
-		//for empty string
-		//var ary_url:Array<String> = model.url.split( '/' );
-		//ary_url[ary_url.length - 1] = untyped __js__( 'encodeURIComponent' )( ary_url[ary_url.length - 1] );
-		//model.url = ary_url.join( '/' );
+		loadDetail( model.game );
 		
 		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
 	}

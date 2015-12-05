@@ -215,6 +215,8 @@ class UI extends Mediator
 					case 'yugioh': 
 						str += detail.name;
 						str += '<br/>';
+						str += detail.level;
+						str += '<br/>';
 						str += detail.type;
 						str += '<br/>';
 						str += detail.desc;
