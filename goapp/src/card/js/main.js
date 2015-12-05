@@ -1343,7 +1343,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			detaildiv.css("top","0");
 			detaildiv.css("left","0");
 			detaildiv.css("font-size","16px");
-			var str = "資料還沒準備好，請稍後再點!";
+			var str = "目前沒有資料或者資料還沒準備好哦，請稍後再點!";
 			if(detail != null) {
 				str = "";
 				var _g = card.game;
