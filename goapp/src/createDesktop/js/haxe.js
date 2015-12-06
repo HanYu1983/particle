@@ -1021,5 +1021,3 @@ js_Boot.__toStr = {}.toString;
 view_BasicItem.on_item_click = "on_item_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=haxe.js.map
