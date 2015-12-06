@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>卡牌風雲</title>
+	<!--page information for search engine-->
+	<meta name="title" content="卡牌風雲" />
+	<meta name="keyword" content="卡牌風雲,三國志大戰,集換式卡牌,線上卡牌,虛擬桌面" />
+	<meta name="description" content="卡牌風雲" />
+	<link rel="image_src" href=""/>
+	
+	<!--share information for fb-->
+	<meta property="og:description" content="卡牌風雲" />
+	<meta property="og:title" content="卡牌風雲" />
+	<meta property="og:url" content="http://particle-979.appspot.com/card/index.html#"/>
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		
+	<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
+		
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
+	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>
+	<script src="../common/js/lib/async/async.js"></script>
+</head>
+<style>
+body{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	outline: 0;
+}
+
+body{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:#333333;
+}
+
+.card_root{
+	position:absolute;
+	width:50px;
+	height:75px;
+	cursor:pointer;
+	border:1px black solid;
+}
+.card{
+	position:relative;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:white;
+}
+.card_back{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:black;
+}
+.focus{
+	border:1px yellow solid;
+}
+
+.card_icons{
+	width:20px;
+	height:20px;
+	display:none;
+}
+
+.map_root{
+	position:absolute;
+	background-color:blue;
+	cursor:pointer;
+}
+
+.group{
+	position:relative;
+	width:100%;
+}
+.hori{
+	display:inline-block;
+}
+</style>
+<script id="tmpl_card" type="jquery-x-tmpl">
+	<div id=${id} class="card_root elements">
+		<div class="card">
+			<img style="position:relative; left:0; top:0; width:100%; height:100%;" src=${url}>
+			<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="../common/images/card/sampleTxt.png"/>
+		</div>
+		<div class="card_back">
+			<img style="width:100%; height:100%;" src=${backurl} >
+		</div style="position:relative; width:100%; height:100%; ">
+			<img id="img_relate" style="position:absolute; top:0; right:0; width:25px;" src="../common/images/card/Eye.png"/>
+			<img id="img_owner" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
+		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
+	</div>
+</script>
+<script id="tmpl_map" type="jquery-x-tmpl">
+	<div id=${id} class="map_root elements" style=width:${width}px;height:${height}px>
+		map
+	</div>
+</script>
+<body>
+	<div style="position:absolute; top:0; left:0; width:100%; height:3000px;" id="grid">
+		<div class="ghost-select"><span></span></div>
+	</div>
+	
+	<script>
+	//googleTracking.init( 'UA-55273266-3' );
+	
+	function setCookie( key, value ){
+		$.cookie( key, value, { expires: 7 });
+	}
+	
+	function getCookie( key ){
+		return $.cookie( key );
+	}
+	
+	function removeCookie( key ){
+		$.removeCookie( key );
+	}
+	
+	</script>
+	<script src="js/haxe.js"></script>
+	
+</body>
+</html>
