@@ -4,6 +4,8 @@ runtime: go
 api_version: go1
 default_expiration: "7d"
 handlers:
+- url: /createDesktop
+  static_dir: createDesktop
 - url: /manager
   static_dir: manager
 - url: /test
