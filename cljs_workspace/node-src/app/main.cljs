@@ -8,9 +8,13 @@
     [test.gundamWar]
     [test.gundamWarN]
     [test.dragonZ]
-    [test.sanguosha]))
+    [test.sanguosha]
+    [lib.tool :as t]
+    [clojure.string :as str]))
 
 (def yargs (js/require "yargs"))
+(def async (js/require "async"))
+(def fs (js/require "fs"))
   
 (defn -main []
   (let [argv
@@ -20,6 +24,42 @@
           (.demand (array "c"))
           (aget "argv"))]
     (condp = (.-c argv)
+      "downloadUrl"
+      (.waterfall async
+        (array
+          (partial t/getFile "config/sgs.json")
+          (fn [file cb]
+            (let [config (.parse js/JSON file)
+                  urls (t/parseDownloadConfig config)
+                  t (.-delay config)]
+              (.eachSeries async
+                (clj->js urls)
+                (fn [url cb]
+                  (.log js/console url)
+                  (.waterfall async
+                    (array
+                      (partial t/getUrl url)
+                      (fn [data cb]
+                        (.log js/console "write")
+                        (.writeFile fs
+                          (str 
+                            (.-dir config)
+                            (->
+                              url
+                              (str/split #"/")
+                              last)
+                            ".html")
+                          data
+                          (cb))))
+                    (fn [err]
+                      (if err
+                        (cb err)
+                        (js/setTimeout cb t))))
+                    (comment "end fn"))
+                cb))))
+        (fn [err]
+          (.log js/console err)))
+    
       "parseYugiohCDB"
       (test.yugioh/parseFile)
     
