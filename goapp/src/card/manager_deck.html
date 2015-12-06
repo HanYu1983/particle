@@ -728,7 +728,7 @@ body{
 				[	{type:'label', val:'勢力'},
 					{type:'select', span:5, val:{name:'ntype', items:['茶','藍','紫','白','綠','紅','黑']}},
 					{type:'label',val:'卡片種類'},
-					{type:'select',span:5,val:{name:'ctype', items:['G','unit','character','command','operation']}}],
+					{type:'select',span:5,val:{name:'ctype', items:['G','unit','character','command','operation', 'ACE']}}],
 				[	{type:'label', val:'指定cost以上'},
 					{type:'select', span:2,val:{name:'cost_1', items:['1','2','3','4']}},
 					{type:'label',val:'指定cost以下'},
@@ -1083,12 +1083,14 @@ body{
 		}
 		
 		function searchCards( searchstr ){
+		
+			
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
 			
 			ary_cards = searchLib( searchstr ).slice();
 			
-			//console.log( ary_cards )
+			//console.log( ary_cards );
 			
 			createBigCard();
 			setPagination( ary_cards.length );

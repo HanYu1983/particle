@@ -433,6 +433,9 @@ var gameController = {};
 				case 'character':
 					fns.push( typeEq( "CH" ) )
 					break
+				case 'ACE':
+					fns.push( typeEq( "A" ) )
+					break
 				}
 				break
 			case 'cost_1':
