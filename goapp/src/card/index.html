@@ -121,6 +121,9 @@ body{
 	outline:1px solid black;
 }
 
+.hide{
+	display:none;
+}
 </style>
 <script id="tmpl_card" type="jquery-x-tmpl">
 	<div id=${id} class="card_root elements">
@@ -197,10 +200,7 @@ body{
 				<div class="hori"><a href="#" class="easyui-linkbutton" onclick="onHtmlClick('onTokenClick')">創建指示物</a></div>
 			</div>
 			<div class="group" style="text-align:center; margin-bottom:10px;">
-				<div class="group" style="margin-top:5px; margin-bottom:5px;">
-					<!--
-					<a href="#" id="btn_fighter" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadFighterClick')" data-options="toggle:true,group:'g1',selected:true">格鬥風雲錄</a>
-					-->
+				<div id="mc_btnGame" class="group" style="margin-top:5px; margin-bottom:5px;">
 					<a href="#" id="btn_army" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadArmyClick')" style="width:100px;" data-options="toggle:true,group:'g1',selected:false">軍武gogogo</a>
 					<a href="#" id="btn_gundam" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">鋼彈大戰</a>
 					<a href="#" id="btn_gundamN" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarNClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false">鋼彈大戰NexA</a>
@@ -298,14 +298,13 @@ body{
 	<script src="../common/js/admin.js"></script>	
 	<script>
 	
+	
 	if( !_admin ){
-		$('#btn_magic' ).hide();
-		$('#btn_gundam' ).hide();
-		$('#btn_sango' ).hide();
-		$('#btn_yugioh' ).hide();
-		$('#btn_battleSpirits' ).hide();
-		$('#btn_crusade' ).hide();
-		$('#btn_dragonZ' ).hide();
+		console.log( $('#mc_btnGame').children()  );
+		$('#mc_btnGame').children().each( function( id, dom ){
+			if( id == 0 ) return;
+			$( dom ).hide();
+		});
 	}
 	
 	googleTracking.init( 'UA-55273266-3' );
