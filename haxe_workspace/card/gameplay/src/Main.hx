@@ -156,6 +156,8 @@ class Main
 					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( currentSelect ) );
 				case 'gundamWar':
 					CallJs.gundamWar_load( "../common/txt/gundamWarList.json", onLoadGameCallback( currentSelect ) );
+				case 'gundamWarN':
+					CallJs.gundamWarN_load( "../common/txt/gundamWarNexAList/", onLoadGameCallback( currentSelect ) );
 				case 'yugioh':
 					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( currentSelect ) );
 				case 'sangoWar':
@@ -293,6 +295,9 @@ class Main
 			case 'onBtnLoadGundamWarClick':
 				currentSelect = 'gundamWar';
 				chooseCardSuit( 'gundamWar' );
+			case 'onBtnLoadGundamWarNClick':
+				currentSelect = 'gundamWarN';
+				chooseCardSuit( 'gundamWarN' );
 			case 'onBtnLoadSangoWarClick':
 				currentSelect = 'sangoWar';
 				chooseCardSuit( 'sangoWar' );
@@ -343,6 +348,7 @@ class Main
 		switch( currentSelect ) {
 			case 'sangoWar':j( '#btn_sango' ).linkbutton( 'select' );
 			case 'gundamWar':j( '#btn_gundam' ).linkbutton( 'select' );
+			case 'gundamWarN':j( '#btn_gundamN' ).linkbutton( 'select' );
 			case 'fighter':j( '#btn_fighter' ).linkbutton( 'select' );
 			case 'magic':j( '#btn_magic' ).linkbutton( 'select' );
 			case 'army':j( '#btn_army' ).linkbutton( 'select' );
