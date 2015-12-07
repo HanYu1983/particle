@@ -12,17 +12,14 @@ class CardItem extends BasicItem
 		
 	}
 	
-	override public function flip( ?f:Bool ):Void 
+	override function showItemForMe() 
 	{
-		if ( f != null ) {
-			if ( f ) {
-				viewComponent.find( '.card_back' ).hide();
-			}else {
-				viewComponent.find( '.card_back' ).show();
-			}
-		}else {
-			
-		}
+		viewComponent.find( '.card_back' ).hide();
+	}
+	
+	override function hideItemForMe() 
+	{
+		viewComponent.find( '.card_back' ).show();
 	}
 	
 	override public function rotateForward( sd:Int, ed:Int ):Void 

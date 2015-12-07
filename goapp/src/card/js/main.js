@@ -244,6 +244,9 @@ Main.loadDetail = function(game) {
 	case "gundamWar":
 		CallJs.gundamWar_load("../common/txt/gundamWarList.json",Main.onLoadGameCallback(Main.currentSelect));
 		break;
+	case "gundamWarN":
+		CallJs.gundamWarN_load("../common/txt/gundamWarNexAList/",Main.onLoadGameCallback(Main.currentSelect));
+		break;
 	case "yugioh":
 		CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(Main.currentSelect));
 		break;
@@ -597,6 +600,10 @@ Main.prototype = {
 			Main.currentSelect = "gundamWar";
 			this.chooseCardSuit("gundamWar");
 			break;
+		case "onBtnLoadGundamWarNClick":
+			Main.currentSelect = "gundamWarN";
+			this.chooseCardSuit("gundamWarN");
+			break;
 		case "onBtnLoadSangoWarClick":
 			Main.currentSelect = "sangoWar";
 			this.chooseCardSuit("sangoWar");
@@ -650,6 +657,9 @@ Main.prototype = {
 			break;
 		case "gundamWar":
 			Main.j("#btn_gundam").linkbutton("select");
+			break;
+		case "gundamWarN":
+			Main.j("#btn_gundamN").linkbutton("select");
 			break;
 		case "fighter":
 			Main.j("#btn_fighter").linkbutton("select");
@@ -1371,6 +1381,11 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 					str += "<br/>";
 					str += detail.context;
 					break;
+				case "gundamWarN":
+					str += detail.info_2;
+					str += "<br/>";
+					str += detail.info_12;
+					break;
 				case "magic":
 					str += detail.id;
 					str += "<br/>";
@@ -2041,6 +2056,7 @@ CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
 CallJs.yugioh_load = yugioh.load;
 CallJs.sangoWar_load = sangoWar.load;
 CallJs.gundamWar_load = gundamWar.load;
+CallJs.gundamWarN_load = gundamWarN.load;
 CallJs.battleSpirits_load = battleSpirits.load;
 CallJs.dragonZ_load = dragonZ.load;
 CallJs.crusade_load = crusade.load;

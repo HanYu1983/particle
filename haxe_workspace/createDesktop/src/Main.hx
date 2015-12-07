@@ -17,6 +17,8 @@ class Main
 {
 	public static var j:Dynamic = untyped __js__( '$' );
 	
+	public static var playerId:String = 'vic';
+	
 	static function main() 
 	{
 		Browser.document.addEventListener("contextmenu", function(e){
@@ -31,13 +33,23 @@ class Main
 	public static function doAction( methodName:String, ary_item:Array<Dynamic>, ?extra:Array<Int> ) {
 		for ( i in 0...ary_item.length ) {
 			var itemModel:Dynamic = ary_item[i];
-			
-			if ( methodName != 'lock' ) {
-				if ( itemModel.lock ) return;
-			}
-			
 			var item:IItem = cast( Facade.getInstance().retrieveMediator( itemModel.id ), IItem );
 			switch( methodName ) {
+				case 'setViewer':
+					if ( itemModel.viewer == playerId ) {
+						itemModel.viewer = '';
+					}else {
+						itemModel.viewer = playerId;
+					}
+					item.setViewer( itemModel.viewer == playerId );
+				case 'setOwner':
+					trace( itemModel.owner );
+					if ( itemModel.owner == playerId ) {
+						itemModel.owner = '';
+					}else {
+						itemModel.owner = playerId;
+					}
+					item.setOwner( itemModel.owner == playerId );
 				case 'move':
 					item.move( itemModel.pos[0], itemModel.pos[1] );
 				case 'flip': 

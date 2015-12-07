@@ -26,6 +26,7 @@ package;
 						'yugioh.load',
 						'sangoWar.load',
 						'gundamWar.load',
+						'gundamWarN.load',
 						'battleSpirits.load',
 						'dragonZ.load',
 						'crusade.load',

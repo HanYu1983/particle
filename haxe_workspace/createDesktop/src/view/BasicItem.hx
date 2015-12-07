@@ -14,8 +14,9 @@ class BasicItem extends Mediator implements IItem
 {
 	public static var on_item_click = 'on_item_click';
 	
-	var _owner:Dynamic;
-	var _viewer:Dynamic;
+	var _filp:Bool = true;
+	var _viewer:Bool = false;
+	var _owner:Bool = false;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -28,12 +29,17 @@ class BasicItem extends Mediator implements IItem
 	}
 	
 	public function lock( l:Bool ):Void {
-		trace( l );
+		if ( l ) {
+			viewComponent.find( '#img_lock' ).show();
+		}else {
+			viewComponent.find( '#img_lock' ).hide();
+		}
 	}
 	
 	public function flip( ?f:Bool ):Void 
 	{
-		
+		_filp = f;
+		checkViewerAndShowCard();
 	}
 	
 	public function focus( f:Bool ):Void {
@@ -59,14 +65,26 @@ class BasicItem extends Mediator implements IItem
 		
 	}
 	
-	public function setViewer(player:Dynamic):Void 
+	public function setViewer( v:Bool ):Void 
 	{
-		_viewer = player;
+		_viewer = v;
+		if ( _viewer ) {
+			viewComponent.find( '#txt_viewer' ).show();
+		}else {
+			viewComponent.find( '#txt_viewer' ).hide();
+		}
+		checkViewerAndShowCard();
 	}
 	
-	public function setOwner(player:Dynamic):Void 
+	public function setOwner( o:Bool ):Void 
 	{
-		_owner = player;
+		_owner = o;
+		if ( _owner ) {
+			viewComponent.find( '#txt_owner' ).show();
+		}else {
+			viewComponent.find( '#txt_owner' ).hide();
+		}
+		checkViewerAndShowCard();
 	}
 	
 	public function getViewer():Dynamic 
@@ -91,6 +109,26 @@ class BasicItem extends Mediator implements IItem
 			case MainController.on_select_cards:
 				onSelect( notification.getBody().field( 'ary_select' ) );
 		}
+	}
+	
+	function checkViewerAndShowCard() {
+	//	trace( '-----------------------' );
+	//	trace( '_filp', _filp );
+	//	trace( '_viewer', _viewer );
+	//	trace( '_owner', _owner );
+		if ( !_filp ) showItemForMe();
+		else {
+			if ( _viewer && _owner ) showItemForMe();
+			else hideItemForMe();
+		}
+	}
+	
+	function showItemForMe() {
+		//for children
+	}
+	
+	function hideItemForMe() {
+		//for children
 	}
 	
 	function onSelect( ary_select:Array<Dynamic> ) {
