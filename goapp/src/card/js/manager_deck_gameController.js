@@ -471,7 +471,11 @@ var gameController = {};
 				break;
 			default:
 				if( v == "on" ){
-					fns.push( cardsearch.attrEq( "info_12", k ))
+					if( k == "一枚制限" ){
+						fns.push( cardsearch.attrEq( "info_2", "［†］" ))
+					} else {
+						fns.push( cardsearch.attrEq( "info_12", k) )
+					}
 				}
 			}
 			
