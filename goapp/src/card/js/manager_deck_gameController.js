@@ -2,6 +2,9 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'gundamWarN':
+				gundamWarN.load( "../common/txt/gundamWarNexAList/", onLoadGameCallback)
+				break;
 			case 'dragonZ':
 				dragonZ.load( "../common/txt/dragonZList.json", onLoadGameCallback)
 				break;
@@ -62,6 +65,8 @@ var gameController = {};
 				return sangoWarQuerystring2fns(str);
 			case 'magic':
 				return magicQuerystring2fns(str);
+			default:
+				return gundamWarNQuerystring2fns(str)
 		}
 	}
 	
@@ -391,6 +396,87 @@ var gameController = {};
 				break;
 		}}
 		return fns;
+	}
+	
+	function gundamWarNQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+			case 'card_name':
+				fns.push( cardsearch.attrEq( "info_2", v ) )
+				break;
+			case 'ctype':
+				fns.push( cardsearch.attrEq( "info_3", v ) )
+				break
+			case 'cost_1':
+				fns.push( cardsearch.attrGe( "info_4", v ) )
+				break
+			case 'cost_2':
+				fns.push( cardsearch.attrLe( "info_4", v ) )
+				break
+			case 'costAll_1':
+				fns.push( cardsearch.attrGe( "info_5", v ) )
+				break
+			case 'costAll_2':
+				fns.push( cardsearch.attrLe( "info_5", v ) )
+				break
+			case 'atk_1':
+				fns.push( cardsearch.attrGe( "info_7", v ) )
+				break
+			case 'atk_2':
+				fns.push( cardsearch.attrLe( "info_7", v ) )
+				break
+			case 'atk2_1':
+				fns.push( cardsearch.attrGe( "info_8", v ) )
+				break
+			case 'atk2_2':
+				fns.push( cardsearch.attrLe( "info_8", v ) )
+				break
+			case 'def_1':
+				fns.push( cardsearch.attrGe( "info_9", v ) )
+				break
+			case 'def_2':
+				fns.push( cardsearch.attrLe( "info_9", v ) )
+				break
+			case 'ntype':
+				fns.push( cardsearch.attrEq( "info_18", v ) )
+				break;
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
+			case "id":
+				fns.push( cardsearch.attrEq( "card-id", v ) )
+				break
+			case 'rule':
+				fns.push( cardsearch.attrEq( "info_12", v ) )
+				break;
+			case 'area':
+				switch( v ){
+				case '宇宙':
+					fns.push( cardsearch.attrEq( "info_10", '宇' ) )
+					break
+				case '地球':
+					fns.push( cardsearch.attrEq( "info_10", '地' ) )
+					break
+				case '宇宙/地球':
+					fns.push( cardsearch.attrEq( "info_10", '宇、地' ) )
+					break
+				}
+				break;
+			default:
+				if( v == "on" ){
+					fns.push( cardsearch.attrEq( "info_12", k ))
+				}
+			}
+			
+		}
+		return fns
 	}
 	/*
             "id" string

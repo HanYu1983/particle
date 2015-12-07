@@ -4,11 +4,13 @@
     
 (def fs (js/require "fs"))
 (def async (js/require "async"))
+(def request (js/require "request"))
 
 (def cardInfoUrl "http://www.carddass.com/cdmasters/nexa/cardlist/controller/request.php")
 (defn imageUrl [prod name]
   (str "http://www.carddass.com/cdmasters/nexa/images/cardlist/" prod "/" name ".png"))
-  
+(def output "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/gundamWarNexAList/")
+(def outputImageDir "output/gundamWarNexA/")
 (def clusadeUrl "http://www.carddass.com/crusade/cardlist/request.php")
 
 (def prods 
@@ -59,7 +61,48 @@
         (js/JSON.stringify (.parse js/JSON ret))
         (fn [err]
           (cb err))))))
+          
 
+(defn fetchImage [[prod id] cb]
+  (.log js/console (str "fetchImage " (imageUrl prod id)))
+  (->
+    (imageUrl prod id)
+    (request)
+    (.pipe (.createWriteStream fs (str outputImageDir prod "_" id ".jpg")))
+    (.on "close" 
+      (fn [] 
+        (.log js/console "ok for fetchImage" id)
+        (js/setTimeout cb 3000)))))
+      
+(defn fetchAllImage []
+  (.waterfall async
+    (array
+      (fn [cb]
+        (.map async (clj->js (map #(str output % ".json") prods)) t/getFile cb))
+      (fn [datas cb]
+        (let [alls
+              (->>
+                (js->clj datas)
+                (map #(.parse js/JSON %))
+                (map #(.-data %))
+                (reduce #(concat %1 %2) '()))]
+          (.log js/console "start fetch image length:" (count alls))
+          (cb nil alls)))
+      (fn [datas cb]
+        (let [pids 
+              (->>
+                (map 
+                  (fn [data]
+                    (vector (.-prodid data) (.-info_25 data)))
+                  datas)
+                (clj->js))]
+          (.eachSeries async pids fetchImage
+            (cb nil))
+            
+            )))
+    (fn [err rets]
+      (.log js/console "fetchAllImage done!"))))
+      
 (defn test-base []
   (fetchInfo "179030"
     (fn [err]

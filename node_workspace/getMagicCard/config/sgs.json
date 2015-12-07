@@ -1,7 +1,7 @@
 {
   "type": "range",
-  "value": [18, 75],
+  "value": [20, 75],
   "pattern": "http://tcg.sanguosha.com/card/list?page=%d",
   "dir": "output/sgs/html/",
-  "delay": 30000
+  "delay": 120000
 }
