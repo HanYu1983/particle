@@ -90,6 +90,9 @@
       "gundamWarN.test"
       (test.gundamWarN/test-base)
       
+      "gundamWarN.fetchImage"
+      (test.gundamWarN/fetchAllImage)
+      
       "dragonZ.test"
       (test.dragonZ/test-base)
       
