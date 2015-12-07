@@ -1,6 +1,8 @@
 (ns lib.tool
   (:require
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [goog.string :as gstring]
+    [goog.string.format]))
 
 (def request (js/require "request"))
 (def fs (js/require "fs"))
@@ -43,3 +45,13 @@
       (if err
         (cb err)
         (js/setTimeout #(cb nil data) t)))))
+
+
+(defn parseDownloadConfig [json]
+  (condp = (.-type json)
+    "range"
+    (let [values (js->clj (.-value json))
+          pattern (.-pattern json)]
+      (for [v (apply range values)]
+        (gstring/format pattern v)))
+    []))
