@@ -12,8 +12,8 @@ interface IItem
 	function move(x:Int, y:Int):Void;
 	function rotateForward( sd:Int, ed:Int ):Void;
 	function rotateBackward( sd:Int, ed:Int ):Void;
-	function setViewer( player:Dynamic ):Void;
-	function setOwner( player:Dynamic ):Void;
+	function setViewer( v:Bool ):Void;
+	function setOwner( o:Bool ):Void;
 	
 	function getViewer():Dynamic;
 	function getOwner():Dynamic;

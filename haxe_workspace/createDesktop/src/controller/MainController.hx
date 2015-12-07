@@ -8,6 +8,8 @@ import view.CardItem;
 import view.IItem;
 import view.MapItem;
 
+using Lambda;
+using Reflect;
 /**
  * ...
  * @author vic
@@ -44,7 +46,9 @@ class MainController extends Mediator
 	{
 		switch( notification.getName() ) {
 			case BasicItem.on_item_click:
-				onSelectItems( notification.getBody() );
+				var div:Dynamic = notification.getBody();
+				viewComponent.append( div );
+				onSelectItems( div, true );
 			case 'create_item':
 				var item:Mediator;
 				var uniqId:String = Main.createDivId();
@@ -52,7 +56,9 @@ class MainController extends Mediator
 					pos:[ Math.floor( Math.random() * 600 ), Math.floor( Math.random() * 600 ) ],
 					back:false,
 					deg:0,
-					lock:false
+					lock:false,
+					owner:'desktop',
+					viewer:''
 				};
 				model.id = uniqId;
 				switch( notification.getType() ) {
@@ -82,6 +88,10 @@ class MainController extends Mediator
 		sendNotification( on_press, null, e.which );
 		
 		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_C:
+				Main.doAction( 'setOwner', ary_select );
+			case KeyboardEvent.DOM_VK_V:
+				Main.doAction( 'setViewer', ary_select );
 			case KeyboardEvent.DOM_VK_A:
 				doMoveItem();
 			case KeyboardEvent.DOM_VK_F:
@@ -95,11 +105,21 @@ class MainController extends Mediator
 		}
 	}
 	
-	function onSelectItems( ary:Array<Dynamic> ) {
+	function onSelectItems( ary:Array<Dynamic>, selectLock:Bool = false ) {
 		ary_select = ary.map( function( model:Dynamic ) {
 			return getItemFromPool( model.id )[0];
 		});
+		if( !selectLock )
+			ary_select = filterLock( ary_select );
 		sendNotification( on_select_cards, { ary_select:ary_select } );
+	}
+	
+	function filterLock( ary:Array<Dynamic> ):Array<Dynamic> {
+		var nary = ary.fold( function( curr, first:Array<Dynamic> ) {
+			if ( !curr.lock ) first.push( curr );
+			return first;
+		}, [] );
+		return nary;
 	}
 	
 	function onBodyMouseMove( e ) {

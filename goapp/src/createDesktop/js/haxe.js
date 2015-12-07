@@ -24,6 +24,14 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
+Lambda.fold = function(it,f,first) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		first = f(x,first);
+	}
+	return first;
+};
 var List = function() {
 	this.length = 0;
 };
@@ -87,12 +95,18 @@ Main.doAction = function(methodName,ary_item,extra) {
 	while(_g1 < _g) {
 		var i = _g1++;
 		var itemModel = ary_item[i];
-		if(methodName != "lock") {
-			if(itemModel.lock) return;
-		}
 		var item;
 		item = js_Boot.__cast(org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(itemModel.id) , view_IItem);
 		switch(methodName) {
+		case "setViewer":
+			if(itemModel.viewer == Main.playerId) itemModel.viewer = ""; else itemModel.viewer = Main.playerId;
+			item.setViewer(itemModel.viewer == Main.playerId);
+			break;
+		case "setOwner":
+			console.log(itemModel.owner);
+			if(itemModel.owner == Main.playerId) itemModel.owner = ""; else itemModel.owner = Main.playerId;
+			item.setOwner(itemModel.owner == Main.playerId);
+			break;
 		case "move":
 			item.move(itemModel.pos[0],itemModel.pos[1]);
 			break;
@@ -240,12 +254,14 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_item_click":
-			this.onSelectItems(notification.getBody());
+			var div = notification.getBody();
+			this.viewComponent.append(div);
+			this.onSelectItems(div,true);
 			break;
 		case "create_item":
 			var item;
 			var uniqId = Main.createDivId();
-			var model = { pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : false, deg : 0, lock : false};
+			var model = { pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : false, deg : 0, lock : false, owner : "desktop", viewer : ""};
 			model.id = uniqId;
 			var _g1 = notification.getType();
 			switch(_g1) {
@@ -272,6 +288,12 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		this.sendNotification(controller_MainController.on_press,null,e.which);
 		var _g = e.which;
 		switch(_g) {
+		case 67:
+			Main.doAction("setOwner",this.ary_select);
+			break;
+		case 86:
+			Main.doAction("setViewer",this.ary_select);
+			break;
 		case 65:
 			this.doMoveItem();
 			break;
@@ -289,12 +311,21 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			break;
 		}
 	}
-	,onSelectItems: function(ary) {
+	,onSelectItems: function(ary,selectLock) {
+		if(selectLock == null) selectLock = false;
 		var _g = this;
 		this.ary_select = ary.map(function(model) {
 			return _g.getItemFromPool(model.id)[0];
 		});
+		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.sendNotification(controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+	}
+	,filterLock: function(ary) {
+		var nary = Lambda.fold(ary,function(curr,first) {
+			if(!curr.lock) first.push(curr);
+			return first;
+		},[]);
+		return nary;
 	}
 	,onBodyMouseMove: function(e) {
 		this.pos_mouse[0] = e.pageX;
@@ -861,6 +892,9 @@ view_IItem.prototype = {
 	__class__: view_IItem
 };
 var view_BasicItem = function(mediatorName,viewComponent) {
+	this._owner = false;
+	this._viewer = false;
+	this._filp = true;
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	viewComponent.click(function(e) {
@@ -873,9 +907,11 @@ view_BasicItem.__interfaces__ = [view_IItem];
 view_BasicItem.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	lock: function(l) {
-		console.log(l);
+		if(l) this.viewComponent.find("#img_lock").show(); else this.viewComponent.find("#img_lock").hide();
 	}
 	,flip: function(f) {
+		this._filp = f;
+		this.checkViewerAndShowCard();
 	}
 	,focus: function(f) {
 		if(f) this.viewComponent.addClass("focus"); else this.viewComponent.removeClass("focus");
@@ -887,11 +923,15 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 	}
 	,rotateBackward: function(sd,ed) {
 	}
-	,setViewer: function(player) {
-		this._viewer = player;
+	,setViewer: function(v) {
+		this._viewer = v;
+		if(this._viewer) this.viewComponent.find("#txt_viewer").show(); else this.viewComponent.find("#txt_viewer").hide();
+		this.checkViewerAndShowCard();
 	}
-	,setOwner: function(player) {
-		this._owner = player;
+	,setOwner: function(o) {
+		this._owner = o;
+		if(this._owner) this.viewComponent.find("#txt_owner").show(); else this.viewComponent.find("#txt_owner").hide();
+		this.checkViewerAndShowCard();
 	}
 	,getViewer: function() {
 		return this._viewer;
@@ -909,6 +949,13 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 			this.onSelect(Reflect.field(notification.getBody(),"ary_select"));
 			break;
 		}
+	}
+	,checkViewerAndShowCard: function() {
+		if(!this._filp) this.showItemForMe(); else if(this._viewer && this._owner) this.showItemForMe(); else this.hideItemForMe();
+	}
+	,showItemForMe: function() {
+	}
+	,hideItemForMe: function() {
 	}
 	,onSelect: function(ary_select) {
 		this.focus(false);
@@ -947,11 +994,11 @@ var view_CardItem = function(mediatorName,viewComponent) {
 view_CardItem.__name__ = true;
 view_CardItem.__super__ = view_BasicItem;
 view_CardItem.prototype = $extend(view_BasicItem.prototype,{
-	flip: function(f) {
-		if(f != null) {
-			if(f) this.viewComponent.find(".card_back").hide(); else this.viewComponent.find(".card_back").show();
-		} else {
-		}
+	showItemForMe: function() {
+		this.viewComponent.find(".card_back").hide();
+	}
+	,hideItemForMe: function() {
+		this.viewComponent.find(".card_back").show();
 	}
 	,rotateForward: function(sd,ed) {
 		this.rotateAnimation(sd,ed);
@@ -1013,6 +1060,7 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 };
 var __map_reserved = {}
 Main.j = $;
+Main.playerId = "vic";
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 controller_MainController.create_item = "create_item";
 controller_MainController.on_select_cards = "on_select_cards";
@@ -1021,3 +1069,5 @@ js_Boot.__toStr = {}.toString;
 view_BasicItem.on_item_click = "on_item_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=haxe.js.map
