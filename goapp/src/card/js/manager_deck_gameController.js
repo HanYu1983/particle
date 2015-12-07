@@ -415,16 +415,16 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "info_3", v ) )
 				break
 			case 'cost_1':
-				fns.push( cardsearch.attrGe( "info_4", v ) )
-				break
-			case 'cost_2':
-				fns.push( cardsearch.attrLe( "info_4", v ) )
-				break
-			case 'costAll_1':
 				fns.push( cardsearch.attrGe( "info_5", v ) )
 				break
-			case 'costAll_2':
+			case 'cost_2':
 				fns.push( cardsearch.attrLe( "info_5", v ) )
+				break
+			case 'costAll_1':
+				fns.push( cardsearch.attrGe( "info_4", v ) )
+				break
+			case 'costAll_2':
+				fns.push( cardsearch.attrLe( "info_4", v ) )
 				break
 			case 'atk_1':
 				fns.push( cardsearch.attrGe( "info_7", v ) )
@@ -455,6 +455,9 @@ var gameController = {};
 				break
 			case 'rule':
 				fns.push( cardsearch.attrEq( "info_12", v ) )
+				break;
+			case 'symbol':
+				fns.push( cardsearch.attrEq( "info_11", v ) )
 				break;
 			case 'area':
 				switch( v ){
