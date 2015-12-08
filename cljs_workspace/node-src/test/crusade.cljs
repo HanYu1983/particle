@@ -15,51 +15,53 @@
 
 (def prods
   [
-  "123901"
-  "123001"
-  "221901"
-  "240201"
-  "86004"
-  "86011"
-  "86901"
-  "123002"
-  "193001"
-  "235001"
-  "240202"
-  "86005"
-  "86012"
-  "123003"
-  "193002"
-  "235002"
-  "240203"
-  "86006"
-  "86013"
-  "123004"
-  "193003"
-  "235901"
-  "240901"
-  "86007"
-  "86014"
-  "123005"
-  "193004"
-  "240001"
-  "86001"
-  "86008"
-  "86015"
-  "123006"
-  "193901"
-  "240002"
-  "86002"
-  "86009"
-  "86016"
-  "123101"
-  "221001"
-  "240101"
-  "86003"
-  "86010"
-  "86017"
+  "22001.json"
+  "22002.json"
+  "22003.json"
+  "22004.json"
+  "22005.json"
+  "22006.json"
+  "22007.json"
+  "22008.json"
+  "22009.json"
+  "22010.json"
+  "22011.json"
+  "22012.json"
+  "22013.json"
+  "22014.json"
+  "22015.json"
+  "22016.json"
+  "22017.json"
+  "22018.json"
+  "22019.json"
+  "22020.json"
+  "22021.json"
+  "22022.json"
+  "22023.json"
+  "22024.json"
+  "22025.json"
+  "22026.json"
+  "22027.json"
+  "22028.json"
+  "22029.json"
+  "22034.json"
+  "22035.json"
+  "22036.json"
+  "22037.json"
+  "22038.json"
+  "22039.json"
+  "22040.json"
+  "22041.json"
+  "22042.json"
+  "22043.json"
+  "22044.json"
+  "22045.json"
+  "22901.json"
   ])
-  
+(defn printFileList []
+  (.readdir fs output
+    (fn [err files]
+      (.log js/console files))))
             
 (defn fetchImage [[prod id] cb]
   (.log js/console (str "fetchImage" prod "_" id ".jpg"))
@@ -76,7 +78,7 @@
   (.waterfall async
     (array
       (fn [cb]
-        (.map async (clj->js (map #(str output % ".json") prods)) t/getFile cb))
+        (.map async (clj->js (map #(str output %) prods)) t/getFile cb))
       (fn [datas cb]
         (let [alls
               (->>
