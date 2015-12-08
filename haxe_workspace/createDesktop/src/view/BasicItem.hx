@@ -13,6 +13,7 @@ using Reflect;
 class BasicItem extends Mediator implements IItem
 {
 	public static var on_item_click = 'on_item_click';
+	public static var on_item_lock = 'on_item_lock';
 	
 	var _filp:Bool = true;
 	var _viewer:Bool = false;
@@ -34,6 +35,7 @@ class BasicItem extends Mediator implements IItem
 		}else {
 			viewComponent.find( '#img_lock' ).hide();
 		}
+		sendNotification( on_item_lock, {view:viewComponent, lock:l} );
 	}
 	
 	public function flip( ?f:Bool ):Void 

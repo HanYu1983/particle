@@ -222,7 +222,6 @@ Main.createCards = function(deck) {
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
 		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.currentSelect != "other"?Main.playerId:"", game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : Main.currentSelect != "other", showTo : ""};
 	}));
-	Main.loadDetail(Main.currentSelect);
 	Main.slide("創建卡片完成");
 	Animate.addCardAndPrepare(toDeck);
 	Main.pushCmds({ cmd : "addCards", content : toDeck});
@@ -262,10 +261,7 @@ Main.onLoadGameCallback = function(game) {
 };
 Main.getCardDetailById = function(game,cid) {
 	cid = StringTools.replace(cid,".jpg","");
-	if(Reflect.field(Main.cardSuitsDetails,game) == null) {
-		Main.loadDetail(game);
-		return null;
-	}
+	Main.loadDetail(game);
 	return Lambda.find(Reflect.field(Main.cardSuitsDetails,game),function(cardDetail) {
 		return cardDetail.id.indexOf(cid) == 0;
 	});
@@ -438,6 +434,7 @@ Main.rotate = function(ary_select,deg) {
 	Main.applyValue(ary_select,true);
 };
 Main.createCard = function(model) {
+	Main.loadDetail(model.game);
 	model.url = CallJs.api_getCardImageWithPackageName(model.game,model.cardId);
 	model.backurl = "../common/images/card/cardback_" + Std.string(model.backId) + ".png";
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
