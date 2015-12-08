@@ -1,1 +1,1 @@
-../gsutil/gsutil -m cp node_workspace/getMagicCard/output/sgs/*.jpg gs://particle-resources/cardPackage/sgs/
+../gsutil/gsutil -m cp node_workspace/getMagicCard/output/crusade/*.jpg gs://particle-resources/cardPackage/crusade/
