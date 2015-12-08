@@ -367,7 +367,28 @@ body{
 	var tmplAry = {
 		sgs:{
 			default:[
-			
+				[
+					{type:'label', val:'系列'},
+					{type:'select', span:1, val:{name:'set', items:['初阵','群星','缔盟','权倾']}},
+					{type:'label', val:'勢力'},
+					{type:'select', span:1, val:{name:'color', items:['魏','蜀','吴','群','中立']}},
+					{type:'label', val:'卡片種類'},
+					{type:'select', span:1, val:{name:'ctype', items:['领土','单位','锦囊','阵略','战器']}}
+				],
+				[
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:2,val:{name:'costAll_1', items:['1','2','3','4','5']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:2, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9']}}
+				],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:11,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:11,val:{name:'rule'}}],
+				[	{type:'label', val:'特徵'},
+					{type:'textbox', span:11, val:{name:'symbol'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:11,val:{name:'cid'}}]
 			]
 		},
 		gundamWarN:{
@@ -957,7 +978,7 @@ body{
 	$.messager.progress({text:'讀取資料中…'}); 
 	
 	function onLoadGameCallback( err, _cardlist ){
-		//console.log( _cardlist );
+		console.log( _cardlist );
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
@@ -1136,7 +1157,7 @@ body{
 		}
 		
 		function searchCards( searchstr ){
-		
+			console.log( searchstr );
 			
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
