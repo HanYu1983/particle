@@ -228,6 +228,9 @@ Main.createCards = function(deck) {
 };
 Main.loadDetail = function(game) {
 	if(Reflect.field(Main.cardSuitsDetails,game) == null) switch(game) {
+	case "sgs":
+		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(Main.currentSelect));
+		break;
 	case "dragonZ":
 		CallJs.dragonZ_load("../common/txt/dragonZList.json",Main.onLoadGameCallback(Main.currentSelect));
 		break;
@@ -621,6 +624,10 @@ Main.prototype = {
 			Main.currentSelect = "dragonZ";
 			this.chooseCardSuit("dragonZ");
 			break;
+		case "onBtnLoadSgsClick":
+			Main.currentSelect = "sgs";
+			this.chooseCardSuit("sgs");
+			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
@@ -678,6 +685,9 @@ Main.prototype = {
 			break;
 		case "dragonZ":
 			Main.j("#btn_dragonZ").linkbutton("select");
+			break;
+		case "sgs":
+			Main.j("#btn_sgs").linkbutton("select");
 			break;
 		}
 	}
@@ -1357,6 +1367,13 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				str = "";
 				var _g = card.game;
 				switch(_g) {
+				case "sgs":
+					str += detail.name;
+					str += "<br/>";
+					str += detail.type;
+					str += "<br/>";
+					str += detail.text;
+					break;
 				case "dragonZ":
 					str += detail.id;
 					str += "<br/>";
@@ -2055,6 +2072,7 @@ CallJs.sangoWar_load = sangoWar.load;
 CallJs.gundamWar_load = gundamWar.load;
 CallJs.gundamWarN_load = gundamWarN.load;
 CallJs.battleSpirits_load = battleSpirits.load;
+CallJs.sgs_load = sgs.load;
 CallJs.dragonZ_load = dragonZ.load;
 CallJs.crusade_load = crusade.load;
 CallJs.magic_load = magic.load;

@@ -104,6 +104,7 @@ a{
 			<option value="crusade">Crusade</option>
 			<option value="yugioh">遊戲王</option>
 			<option value="sangoWar">三國志大戰</option>
+			<option value="sgs">陣面對決</option>
 			<option value="gundamWar">鋼彈大戰</option>
 			<option value="gundamWarN">鋼彈大戰NexA</option>
 			<option value="magic">魔法風雲會</option>
@@ -340,6 +341,7 @@ a{
 					<div class="group">
 						<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('../card/manager_deck.html?game=army')" style="width:130px;" data-options="">軍武gogogo</a>
 						<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('../card/manager_deck.html?game=sangoWar')" style="width:130px;" data-options="iconCls:'icon-fire2'">三國志大戰</a>
+						<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('../card/manager_deck.html?game=sgs')" style="width:130px;" data-options="">三國殺陣面對決</a>
 						<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('../card/manager_deck.html?game=gundamWar')" style="width:130px;" data-options="iconCls:'icon-fire2'">鋼彈大戰</a>
 						<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('../card/manager_deck.html?game=gundamWarN')" style="width:130px;" data-options="">鋼彈大戰NexA</a>
 						<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('../card/manager_deck.html?game=magic')" style="width:130px;" data-options="">魔法風雲會</a>
@@ -579,7 +581,7 @@ a{
 			case 'btn_addDeck':
 				cardSuit.editCardSuit( loadModel, {
 					name: 'default',
-					game: "sangoWar",
+					game: "army",
 					cards:[]
 				})
 				app.card.showDeckList( loadModel );

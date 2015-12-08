@@ -144,6 +144,8 @@ class Main
 	public static function loadDetail( game:String ) {
 		if( cardSuitsDetails.field( game ) == null ){
 			switch( game ) {
+				case 'sgs':
+					CallJs.sgs_load( "../common/txt/sgsList.json", onLoadGameCallback( currentSelect ) );
 				case 'dragonZ':
 					CallJs.dragonZ_load( "../common/txt/dragonZList.json", onLoadGameCallback( currentSelect ) );
 				case 'crusade':
@@ -307,7 +309,10 @@ class Main
 				chooseCardSuit( 'crusade' );	
 			case 'onBtnLoadDragonZClick':
 				currentSelect = 'dragonZ';
-				chooseCardSuit( 'dragonZ' );	
+				chooseCardSuit( 'dragonZ' );
+			case 'onBtnLoadSgsClick':
+				currentSelect = 'sgs';
+				chooseCardSuit( 'sgs' );
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
 			case 'onBtnCustomDeck':
@@ -351,6 +356,7 @@ class Main
 			case 'battleSpirits':j( '#btn_battleSpirits' ).linkbutton( 'select' );
 			case 'crusade':j( '#btn_crusade' ).linkbutton( 'select' );
 			case 'dragonZ':j( '#btn_dragonZ' ).linkbutton( 'select' );
+			case 'sgs':j( '#btn_sgs' ).linkbutton( 'select' );
 		}
 	}
 	
