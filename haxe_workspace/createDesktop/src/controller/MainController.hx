@@ -24,12 +24,14 @@ class MainController extends Mediator
 	var ary_select:Array<Dynamic> = [];
 	var ary_allItem:Array<Dynamic> = [];
 	var pos_mouse = [0, 0];
+	var isList = false;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
 		super(mediatorName, viewComponent);
 		
 		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ) {
+			trace( ary );
 			onSelectItems( ary );
 		});
 		
@@ -39,12 +41,20 @@ class MainController extends Mediator
 	
 	override public function listNotificationInterests():Array<String> 
 	{
-		return [ create_item, on_select_cards, BasicItem.on_item_click ];
+		return [ 	create_item, 
+					on_select_cards, 
+					BasicItem.on_item_click,
+					BasicItem.on_item_lock
+					];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case BasicItem.on_item_lock:
+				var div:Dynamic = notification.getBody().view;
+				var lock = notification.getBody().lock;
+				if ( lock ) viewComponent.prepend( div );
 			case BasicItem.on_item_click:
 				var div:Dynamic = notification.getBody();
 				viewComponent.append( div );
@@ -54,7 +64,7 @@ class MainController extends Mediator
 				var uniqId:String = Main.createDivId();
 				var model:Dynamic = { 
 					pos:[ Math.floor( Math.random() * 600 ), Math.floor( Math.random() * 600 ) ],
-					back:false,
+					back:true,
 					deg:0,
 					lock:false,
 					owner:'desktop',
@@ -63,13 +73,13 @@ class MainController extends Mediator
 				model.id = uniqId;
 				switch( notification.getType() ) {
 					case 'card':
+						model.width = 100;
+						model.height = 150;
 						item = new CardItem( uniqId, Main.createItemDiv( notification.getType(), model ) );
 					case 'map':
 						model.width = 300;
 						model.height = 300;
 						item = new MapItem( uniqId, Main.createItemDiv( notification.getType(), model ) );
-					//case 'token':
-					//	item = new BasicItem( uniqId, Main.createItemDiv( notification.getType(), model ) );
 					default:
 						item = new BasicItem( uniqId, Main.createItemDiv( notification.getType(), model ) );
 				}
@@ -88,6 +98,15 @@ class MainController extends Mediator
 		sendNotification( on_press, null, e.which );
 		
 		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_D:
+				selectMyItem();
+			case KeyboardEvent.DOM_VK_S:
+				if ( isList ) {
+					Main.doAction( 'together', ary_select, {pos_mouse:pos_mouse} );
+				}else {
+					Main.doAction( 'list', ary_select, {pos_mouse:pos_mouse} );
+				}
+				isList = !isList;
 			case KeyboardEvent.DOM_VK_C:
 				Main.doAction( 'setOwner', ary_select );
 			case KeyboardEvent.DOM_VK_V:
@@ -114,6 +133,11 @@ class MainController extends Mediator
 		sendNotification( on_select_cards, { ary_select:ary_select } );
 	}
 	
+	function selectMyItem() {
+		ary_select = filterLock( getMyItemFromPool() );
+		sendNotification( on_select_cards, { ary_select:ary_select } );
+	}
+	
 	function filterLock( ary:Array<Dynamic> ):Array<Dynamic> {
 		var nary = ary.fold( function( curr, first:Array<Dynamic> ) {
 			if ( !curr.lock ) first.push( curr );
@@ -133,7 +157,15 @@ class MainController extends Mediator
 		});
 	}
 	
+	function getMyItemFromPool() {
+		return ary_allItem.filter( function( model ) {
+			return Main.playerId == model.owner;
+		});
+	}
+	
 	function doMoveItem() {
+		if ( ary_select.length == 0 ) return;
+		
 		var moveTarget:Dynamic = { };
 		var copySelect = ary_select.slice( 0 );
 		
