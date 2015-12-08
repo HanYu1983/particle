@@ -32,6 +32,7 @@
 	<script src="../common/js/lib/async/async.js"></script>
 	<script src="../common/js/sangoWar.js"></script>	
 	<script src="../common/js/yugioh.js"></script>	
+	<script src='../common/js/sgs.js'></script>
 	<script src="../common/js/battleSpirits.js"></script>	
 	<script src="../common/js/magic.js"></script>	
 	<script src="../common/js/gundamWar.js"></script>	
@@ -176,7 +177,7 @@ body{
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:420px;" >
+        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:440px;" >
 			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div class="hori">
 					<a id="btn_login" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
@@ -206,6 +207,7 @@ body{
 					<a href="#" id="btn_gundamN" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarNClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false">鋼彈大戰NexA</a>
 					<a href="#" id="btn_magic" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadMagicClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false">魔法風雲會</a>
 					<a href="#" id="btn_sango" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSangoWarClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">三國志大戰</a>
+					<a href="#" id="btn_sgs" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSgsClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false">三國殺陣面對決</a>
 					<a href="#" id="btn_yugioh" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadYugiohClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">遊戲王</a>
 					<a href="#" id="btn_battleSpirits" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadBattleSpiritsClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false">戰魂</a>
 					<a href="#" id="btn_crusade" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadCrusadeClick')" style="width:100px;"  data-options="toggle:true,group:'g1',selected:false">Crusade</a>

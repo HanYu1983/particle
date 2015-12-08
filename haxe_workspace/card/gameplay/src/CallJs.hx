@@ -28,6 +28,7 @@ package;
 						'gundamWar.load',
 						'gundamWarN.load',
 						'battleSpirits.load',
+						'sgs.load',
 						'dragonZ.load',
 						'crusade.load',
 						'magic.load',

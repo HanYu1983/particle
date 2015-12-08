@@ -83,7 +83,7 @@ body{
 		<img src=${url} style="position:relative; top:0; left:0; width:100%; height:100%;" />
 		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
 		<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
-		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:50px; padding-right:10px; padding-top:10px; ">
+		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:10px; padding-right:10px; padding-top:10px; ">
 			<div game="sangoWar">${id}</div>
 			<div game="sangoWar">${cname}</div>
 			<div game="sangoWar">${atype}/${atype2}</div>
@@ -236,7 +236,7 @@ body{
 					</div>
 				</div>
 				<div id="mc_lefttop" >
-					<a id="btn_about" href="#" title="其它遊戲的組牌機，目前有三國志大戰、遊戲王、魔法風雲會、Crusade、戰魂、軍武gogogo" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
+					<a id="btn_about" href="#" title="我們有收錄很多遊戲哦!" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
 					<a id="btn_about" href="#" title="關於上善若水" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
 				</div>
 			</div>
@@ -293,60 +293,21 @@ body{
 			</div>
 		</div>
 	</div>
-	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="padding:10px">
+	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="width:480px; padding:10px">
 		<div class="group" style="position:relative; width:100%; text-align:center;">
-			
 			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=sangoWar')" style="width:150px;" data-options="iconCls:'icon-redo'">三國志大戰</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=sgs')" style="width:150px;" data-options="iconCls:'icon-redo'">三國殺陣面對決</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=gundamWar')" style="width:150px;" data-options="iconCls:'icon-redo'">鋼彈大戰</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=gundamWarN')" style="width:150px;" data-options="iconCls:'icon-redo'">鋼彈大戰NexA</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=crusade')" style="width:150px;" data-options="iconCls:'icon-redo'">Crusade</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=magic')" style="width:150px;" data-options="iconCls:'icon-redo'">魔法風雲會</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=battleSpirits')" style="width:150px;" data-options="iconCls:'icon-redo'">戰魂</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=ch')" style="width:150px;" data-options="iconCls:'icon-redo'">遊戲王</a>
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=en')" style="width:150px;" data-options="iconCls:'icon-redo'">遊戲王(英)</a>
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=yugioh&lang=jp')" style="width:150px;" data-options="iconCls:'icon-redo'">遊戲王(日)</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=dragonZ')" style="width:150px;" data-options="iconCls:'icon-redo'">七龍珠TCG</a>
-				</div>
-			</div>
-			<div class="group">
-				<div class="hori">
-					<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.open('manager_deck.html?game=army')" style="width:150px;" data-options="iconCls:'icon-redo'">軍武gogogo</a>
-				</div>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=army'" style="width:130px;" data-options="">軍武gogogo</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWar'" style="width:130px;" data-options="iconCls:'icon-fire2'">鋼彈大戰</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWarN'" style="width:130px;" data-options="">鋼彈大戰NexA</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar'" style="width:130px;" data-options="iconCls:'icon-fire2'">三國志大戰</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sgs'" style="width:130px;" data-options="">三國殺陣面對決</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=battleSpirits'" style="width:130px;" data-options="">戰魂</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=crusade'" style="width:130px;" data-options="">Crusade</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=dragonZ'" style="width:130px;" data-options="">七龍珠TCG</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=ch'" style="width:130px;" data-options="iconCls:'icon-fire2'">遊戲王</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=en'" style="width:130px;" data-options="">遊戲王(英)</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=jp'" style="width:130px;" data-options="">遊戲王(日)</a>
 			</div>
 		</div>
 	</div>
@@ -406,7 +367,28 @@ body{
 	var tmplAry = {
 		sgs:{
 			default:[
-			
+				[
+					{type:'label', val:'系列'},
+					{type:'select', span:1, val:{name:'set', items:['初阵','群星','缔盟','权倾']}},
+					{type:'label', val:'勢力'},
+					{type:'select', span:1, val:{name:'color', items:['魏','蜀','吴','群','中立']}},
+					{type:'label', val:'卡片種類'},
+					{type:'select', span:1, val:{name:'ctype', items:['领土','单位','锦囊','阵略','战器']}}
+				],
+				[
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:2,val:{name:'costAll_1', items:['1','2','3','4','5']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:2, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9']}}
+				],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:11,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:11,val:{name:'rule'}}],
+				[	{type:'label', val:'特徵'},
+					{type:'textbox', span:11, val:{name:'symbol'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:11,val:{name:'cid'}}]
 			]
 		},
 		gundamWarN:{
@@ -996,7 +978,7 @@ body{
 	$.messager.progress({text:'讀取資料中…'}); 
 	
 	function onLoadGameCallback( err, _cardlist ){
-		//console.log( _cardlist );
+		console.log( _cardlist );
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
@@ -1175,7 +1157,7 @@ body{
 		}
 		
 		function searchCards( searchstr ){
-		
+			console.log( searchstr );
 			
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );

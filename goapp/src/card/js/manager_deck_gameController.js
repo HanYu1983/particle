@@ -52,6 +52,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'sgs':
+				return sgsQuerystring2fns( str );
 			case 'dragonZ':
 				return dragonZQuerystring2fns( str );
 			case 'crusade':
@@ -71,6 +73,53 @@ var gameController = {};
 			default:
 				return gundamWarNQuerystring2fns(str)
 		}
+	}
+	
+	function sgsQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			
+			switch( k ){
+			case 'card_name':
+				fns.push( cardsearch.attrEq( "name", v ) )
+				break;
+			case 'rule':
+				fns.push( cardsearch.attrEq( "text", v ) )
+				break;
+			case 'symbol':
+				fns.push( cardsearch.attrEq( "type", v ) )
+				break;
+			case 'id':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break;
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break;
+			case "costAll_2":
+				fns.push( cardsearch.attrLe( "cost", parseInt(v) ))
+				break
+			case "costAll_1":
+				fns.push( cardsearch.attrGe( "cost", parseInt(v) ))
+				break
+			case 'set':
+				fns.push( cardsearch.attrEq( "pkg", v ) )
+				break;
+			case 'color':
+				if( v == '中立' ) v = '-';
+				fns.push( cardsearch.attrEq( "color", v ) )
+				break;
+			case 'ctype':
+				fns.push( cardsearch.attrEq( "type", v ) )
+				break;
+			}
+		}
+		return fns;
 	}
 	
 	function dragonZQuerystring2fns( qstr ){
