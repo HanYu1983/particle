@@ -135,6 +135,9 @@
       "crusade.fetchImage"
       (test.crusade/fetchAllImage)
       
+      "crusade.printFileList"
+      (test.crusade/printFileList)
+      
       "gundamWarN.test"
       (test.gundamWarN/test-base)
       
