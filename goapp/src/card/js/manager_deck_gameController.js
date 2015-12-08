@@ -638,6 +638,28 @@ var gameController = {};
 		return fns
 	}
 	
+	function sangoCostLe( key, value ){
+		return function( obj ){
+			if( key == "cost" ){
+				return obj[ "cost" ][0] <= value
+			} else if( key == "costA" ){
+				return obj[ "cost" ][0] + obj[ "cost" ][1] <= value
+			}
+			return false
+		}
+	}
+	
+	function sangoCostGe( key, value ){
+		return function( obj ){
+			if( key == "cost" ){
+				return obj[ "cost" ][0] >= value
+			} else if( key == "costA" ){
+				return obj[ "cost" ][0] + obj[ "cost" ][1] >= value
+			}
+			return false
+		}
+	}
+	
 	// 三國尋找方法實做
 	function sangoWarQuerystring2fns( qstr ){
 		var url = $.url("?" + qstr)
@@ -665,16 +687,16 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "cname", v ) )
 				break
 			case "costAll_2":
-				fns.push( cardsearch.attrLe( "costA", parseInt(v) ))
+				fns.push( sangoCostLe( "costA", parseInt(v) ))
 				break
 			case "costAll_1":
-				fns.push( cardsearch.attrGe( "costA", parseInt(v) ))
+				fns.push( sangoCostGe( "costA", parseInt(v) ))
 				break
 			case "cost_2":
-				fns.push( cardsearch.attrLe( "cost", parseInt(v) ))
+				fns.push( sangoCostLe( "cost", parseInt(v) ))
 				break
 			case "cost_1":
-				fns.push( cardsearch.attrGe( "cost", parseInt(v) ))
+				fns.push( sangoCostGe( "cost", parseInt(v) ))
 				break
 			case "ctype":
 				fns.push( cardsearch.attrEq( "ctype", v ) )
