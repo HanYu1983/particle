@@ -173,7 +173,6 @@ class Main
 	}
 	
 	public static function getCardDetailById( game:String, cid:String ):Dynamic {
-		
 		cid = StringTools.replace( cid, '.jpg', '' );
 		loadDetail( game );
 		return Lambda.find( cardSuitsDetails.field( game ), function( cardDetail ) {

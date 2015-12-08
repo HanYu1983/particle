@@ -162,79 +162,81 @@ class UI extends Mediator
 			});
 			div.append( img2 );
 			
-			var detail = Main.getCardDetailById( card.game, card.cardId );
-			var detaildiv:Dynamic = Main.j( '<div></div>' );
-			detaildiv.css( 'position', 'relative' );
-			detaildiv.css( 'width', '95%' );
-			detaildiv.css( 'top', '0' );
-			detaildiv.css( 'left', '0' );
-			detaildiv.css( 'font-size', '16px' );
-			var str:String = '目前沒有資料或者資料還沒準備好哦，請稍後再點!';
-			if ( detail != null ) {
-				str = '';
-				switch( card.game ) {
-					case 'sgs':
-						str += detail.name;
-						str += '<br/>';
-						str += detail.type;
-						str += '<br/>';
-						str += detail.text;
-					case 'dragonZ':
-						str += detail.id;
-						str += '<br/>';
-						str += detail.name;
-						str += '<br/>';
-						str += detail.type;
-						str += '<br/>';
-						str += detail.descrition;
-					case 'crusade':
-						str += detail.info_2;
-						str += '<br/>';
-						str += detail.info_4;
-						str += '<br/>';
-						str += detail.info_16;
-					case 'gundamWar':
-						str += detail.name;
-						str += '<br/>';
-						str += detail.context;
-					case 'gundamWarN':
-						str += detail.info_2;
-						str += '<br/>';
-						str += detail.info_12;
-					case 'magic':
-						str += detail.id;
-						str += '<br/>';
-						str += detail.text;
-					case 'battleSpirits':
-						str += detail.info_41 + ' ' + detail.info_2;
-						str += '<br/>';
-						str += detail.info_5 + ' ' + detail.info_25 + ' ' + detail.info_3;
-						str += '<br/>';
-						str += detail.info_7 + ' ' + detail.info_8;
-						str += '<br/>';
-						str += detail.info_9 + ' ' + detail.info_10;
-						str += '<br/>';
-						str += detail.info_11 + ' ' + detail.info_12;
-						str += '<br/>';
-						str += detail.info_42;
-					case 'sangoWar': 
-						str += detail.cname + ' ' + detail.atype;
-						str += '<br/>';
-						str += detail.content;
-						str += '<br/>';
-						str += detail.counter;
-					case 'yugioh': 
-						str += detail.name;
-						str += '<br/>';
-						str += 'level ' + detail.level;
-						str += '<br/>';
-						str += detail.type;
-						str += '<br/>';
-						str += detail.desc;
+			if ( card.game != 'other' ) {
+				var detail = Main.getCardDetailById( card.game, card.cardId );
+				var detaildiv:Dynamic = Main.j( '<div></div>' );
+				detaildiv.css( 'position', 'relative' );
+				detaildiv.css( 'width', '95%' );
+				detaildiv.css( 'top', '0' );
+				detaildiv.css( 'left', '0' );
+				detaildiv.css( 'font-size', '16px' );
+				var str:String = '目前沒有資料或者資料還沒準備好哦，請稍後再點!';
+				if ( detail != null ) {
+					str = '';
+					switch( card.game ) {
+						case 'sgs':
+							str += detail.name;
+							str += '<br/>';
+							str += detail.type;
+							str += '<br/>';
+							str += detail.text;
+						case 'dragonZ':
+							str += detail.id;
+							str += '<br/>';
+							str += detail.name;
+							str += '<br/>';
+							str += detail.type;
+							str += '<br/>';
+							str += detail.descrition;
+						case 'crusade':
+							str += detail.info_2;
+							str += '<br/>';
+							str += detail.info_4;
+							str += '<br/>';
+							str += detail.info_16;
+						case 'gundamWar':
+							str += detail.name;
+							str += '<br/>';
+							str += detail.context;
+						case 'gundamWarN':
+							str += detail.info_2;
+							str += '<br/>';
+							str += detail.info_12;
+						case 'magic':
+							str += detail.id;
+							str += '<br/>';
+							str += detail.text;
+						case 'battleSpirits':
+							str += detail.info_41 + ' ' + detail.info_2;
+							str += '<br/>';
+							str += detail.info_5 + ' ' + detail.info_25 + ' ' + detail.info_3;
+							str += '<br/>';
+							str += detail.info_7 + ' ' + detail.info_8;
+							str += '<br/>';
+							str += detail.info_9 + ' ' + detail.info_10;
+							str += '<br/>';
+							str += detail.info_11 + ' ' + detail.info_12;
+							str += '<br/>';
+							str += detail.info_42;
+						case 'sangoWar': 
+							str += detail.cname + ' ' + detail.atype;
+							str += '<br/>';
+							str += detail.content;
+							str += '<br/>';
+							str += detail.counter;
+						case 'yugioh': 
+							str += detail.name;
+							str += '<br/>';
+							str += 'level ' + detail.level;
+							str += '<br/>';
+							str += detail.type;
+							str += '<br/>';
+							str += detail.desc;
+					}
 				}
+				detaildiv.html( str );
+				div.append( detaildiv );
 			}
-			detaildiv.html( str );
-			div.append( detaildiv );
 			
 			mc_detailContainer.append( div );
 			/*
