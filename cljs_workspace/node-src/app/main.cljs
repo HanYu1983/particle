@@ -24,12 +24,60 @@
           (.demand (array "c"))
           (aget "argv"))]
     (condp = (.-c argv)
+      "downloadUrl2"
+      (.waterfall async
+        (array
+          (partial t/getFile "config/crusade.json")
+          (fn [file cb]
+            (let [configJson (.parse js/JSON file)
+                  {
+                    type :type
+                    datas :data
+                    p :path
+                    :as config
+                  } 
+                  (t/parseDownloadConfig2 configJson)]
+              (.log js/console (pr-str config))
+              (.eachSeries async
+                (clj->js datas)
+                (fn [data cb]
+                  (.log js/console data)
+                  (.waterfall async
+                    (array
+                      (partial 
+                        t/postUrl p data)
+                      (fn [res cb]
+                        (.log js/console "return")
+                        (.log js/console res)
+                        ;(.log js/console "write")
+                        ;(.writeFile fs
+                        ;  (str 
+                        ;    (.-dir config)
+                        ;    (->
+                        ;      url
+                        ;      (str/split #"/")
+                        ;      last)
+                        ;  ".html")
+                        ;  res
+                        ;  (cb))
+                        (cb)))
+                    (fn [err]
+                      (if err
+                        (cb err)
+                        (js/setTimeout cb 3000))))
+                    (comment "end fn"))
+                  cb)
+              (comment "end let"))))
+        (fn [err]
+          (.log js/console "end")))
+    
       "downloadUrl"
       (.waterfall async
         (array
-          (partial t/getFile "config/sgs.json")
+          (partial t/getFile "config/crusade.json")
           (fn [file cb]
             (let [config (.parse js/JSON file)
+                  type (.-type config)
                   urls (t/parseDownloadConfig config)
                   t (.-delay config)]
               (.eachSeries async

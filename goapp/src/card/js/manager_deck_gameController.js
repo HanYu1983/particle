@@ -2,6 +2,9 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'sgs':
+				sgs.load( "../common/txt/sgsList.json", onLoadGameCallback)
+				break;
 			case 'gundamWarN':
 				gundamWarN.load( "../common/txt/gundamWarNexAList/", onLoadGameCallback)
 				break;

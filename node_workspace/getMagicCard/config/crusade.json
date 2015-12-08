@@ -1,0 +1,12 @@
+{
+  "type": "post",
+  "seq": {
+    "type": "ary",
+    "values": [
+      [22, 22019],
+      [22, 22020]
+    ]
+  },
+  "option": "{\"character_id\": %d, \"prod\": %d, \"cmdno\": 1, \"free\":\"\", \"info_14\":\"\", \"info_3\":\"\", \"source\":\"\"}",
+  "path":"http://tcg.sanguosha.com/card/list"
+}

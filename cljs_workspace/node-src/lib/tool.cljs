@@ -55,3 +55,25 @@
       (for [v (apply range values)]
         (gstring/format pattern v)))
     []))
+    
+(defn parseDownloadConfig2 [json]
+  {
+    :type (.-type json)
+    :data
+    (let [seqs (.-seq json)
+          seqvs (.-values seqs)
+          option (.-option json)]
+      (->>
+        (condp = (.-type seqs)
+          "ary"
+          (map
+            (partial apply gstring/format option)
+            (js->clj seqvs))
+          "range"
+          (map
+            (partial apply gstring/format option)
+            (range (aget seqvs 0) (aget seqvs 1)))
+          {})
+        (map #(.parse js/JSON %))))
+    :path (.-path json)
+  })

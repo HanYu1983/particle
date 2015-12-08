@@ -1,0 +1,61 @@
+<div class="card-detail">
+    <div class="close"></div>
+    <div class="left">
+        <div class="pic-url">
+            <img src="/upload/cards/02/02099.jpg" class="pic" />
+        </div>
+    </div>
+    <div class="right">
+        <div class="name">魔仕献策</div>
+        <div class="card-detail-wrapper">
+            <div id="scroller">
+                <div class="attributes">
+                    <table>
+                        <tr>
+                            <td class="key">费用：</td>
+                            <td class="value">1</td>
+                            <td class="key">势力需求：</td>
+                            <td class="value">
+                                                                <ul class="faction-require">
+                                                                                                                                                                                    <li class="qun"></li>
+                                                                    </ul>
+                                                            </td>
+                            <td class="key">武/体：</td>
+                            <td class="value">-</td>
+                        </tr>
+                        <tr>
+                            <td class="key">势力：</td>
+                            <td class="value">群</td>
+                            <td class="key">类别：</td>
+                            <td class="value" colspan="3">{通常}锦囊</td>
+                        </tr>
+                        <tr>
+                            <td class="key">插画作者：</td>
+                            <td class="value">XXX</td>
+                            <td class="key">系列名称：</td>
+                            <td class="value">群星</td>
+                            <td class="key">卡牌编号：</td>
+                            <td class="value">99</td>
+                        </tr>
+                    </table>
+                    <div class="section">
+                        <div class="title"><span class="mask"></span>技能描述</div>
+                        <div class="content">
+                            <p>你进行一次判定，若判定牌的打出费用大于或等于3，则目标玩家随机弃一张牌；若否，则该玩家弃一张牌。</p>
+                            <p class="description">李儒告董卓：“鬼狼，西凉野人尔，得其术可驭其众。”</p>
+                        </div>
+                    </div>
+                                                        </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.card-detail').delegate('.close', 'click', function(e) {
+        e.preventDefault();
+        $.fancybox.close();
+    });
+});
+</script>
