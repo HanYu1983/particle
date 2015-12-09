@@ -1,1 +1,1 @@
-../gsutil/gsutil -m acl set -R -a public-read gs://particle-resources/cardPackage/sgs
+../gsutil/gsutil -m acl set -R -a public-read gs://particle-resources/cardPackage/crusade
