@@ -114,23 +114,29 @@ class Main
 		createCards( deck );
 	}
 	
-	public static function createCards( deck:Dynamic ) {
+	public static function createCards( deck:Dynamic, ?extra:Dynamic ) {
 		deck.backId = switch( deck.backId ) {
 			case null:"0";
 			case bid if( bid.length > 2 ): "0";
 			case bid if( Std.parseInt( bid ) <= 33 ) :bid;
 			case _:"0";
 		}
+		
+		var newpos = null;
+		if ( extra != null && extra.field( 'pos_mouse' ) != null ) {
+			newpos = extra.field( 'pos_mouse' );
+		}
+		
 		var toDeck = Lambda.array( Lambda.map( deck.cards, function( cardId ) {
 			return { 	
 					id:getId(), 
 					backId:deck.backId,
 					cardId:cardId,
-					owner:currentSelect != 'other' ? playerId : '', 
+					owner:playerId, 
 					game:currentSelect,
 					relate:'', 
 					deg:0, 
-					pos:[0, 0], 
+					pos:newpos != null ? newpos.slice() : [100, 100], 
 					back:currentSelect != 'other',
 					showTo:''
 			}
@@ -145,23 +151,23 @@ class Main
 		if( cardSuitsDetails.field( game ) == null ){
 			switch( game ) {
 				case 'sgs':
-					CallJs.sgs_load( "../common/txt/sgsList.json", onLoadGameCallback( currentSelect ) );
+					CallJs.sgs_load( "../common/txt/sgsList.json", onLoadGameCallback( game ) );
 				case 'dragonZ':
-					CallJs.dragonZ_load( "../common/txt/dragonZList.json", onLoadGameCallback( currentSelect ) );
+					CallJs.dragonZ_load( "../common/txt/dragonZList.json", onLoadGameCallback( game ) );
 				case 'crusade':
-					CallJs.crusade_load( "../common/txt/crusadeList/", onLoadGameCallback( currentSelect ) );
+					CallJs.crusade_load( "../common/txt/crusadeList/", onLoadGameCallback( game ) );
 				case 'battleSpirits':
-					CallJs.battleSpirits_load( "../common/txt/battleSpiritsList/", onLoadGameCallback( currentSelect ) );
+					CallJs.battleSpirits_load( "../common/txt/battleSpiritsList/", onLoadGameCallback( game ) );
 				case 'magic':
-					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( currentSelect ) );
+					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( game ) );
 				case 'gundamWar':
-					CallJs.gundamWar_load( "../common/txt/gundamWarList.json", onLoadGameCallback( currentSelect ) );
+					CallJs.gundamWar_load( "../common/txt/gundamWarList.json", onLoadGameCallback( game ) );
 				case 'gundamWarN':
-					CallJs.gundamWarN_load( "../common/txt/gundamWarNexAList/", onLoadGameCallback( currentSelect ) );
+					CallJs.gundamWarN_load( "../common/txt/gundamWarNexAList/", onLoadGameCallback( game ) );
 				case 'yugioh':
-					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( currentSelect ) );
+					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( game ) );
 				case 'sangoWar':
-					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( currentSelect ) );
+					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( game ) );
 			}
 		}
 	}
@@ -173,8 +179,10 @@ class Main
 	}
 	
 	public static function getCardDetailById( game:String, cid:String ):Dynamic {
+		
 		cid = StringTools.replace( cid, '.jpg', '' );
 		loadDetail( game );
+		if ( cardSuitsDetails.field( game ) == null ) return null;
 		return Lambda.find( cardSuitsDetails.field( game ), function( cardDetail ) {
 			return cardDetail.id.indexOf( cid ) == 0;
 		});
@@ -196,8 +204,6 @@ class Main
 	}
 	
 	static function onBackCallback( ret:Dynamic ) {
-		//trace( ret.type, ret.msg.cmd );
-		//callAction( ret.msg )();
 		callAction( ret.msg );
 	}
 	
@@ -372,6 +378,17 @@ class Main
 		Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
 	}
 	
+	public static function createSingleToken( type:String, pos_mouse ) {
+		var oldselect = currentSelect;
+		currentSelect = 'other';
+		switch( type ) {
+			case '0':createCards( { backId:"0", cards:[ 'token_0' ] }, { pos_mouse:pos_mouse } );
+			case '1':createCards( { backId:"1", cards:[ 'token_1' ] }, { pos_mouse:pos_mouse } );
+			case '2':createCards( { backId:"2", cards:[ 'token_2' ] }, { pos_mouse:pos_mouse } );
+		}
+		currentSelect = oldselect;
+	}
+	
 	public static function dice() {
 		var dice:Int = Math.floor( Math.random() * 100 );
 		Main.pushCmds( { cmd:'onDiceAction', content: { playerId:playerId, dice:dice } } );
@@ -484,7 +501,13 @@ class Main
 		model.url = CallJs.api_getCardImageWithPackageName( model.game, model.cardId );
 		model.backurl = '../common/images/card/cardback_' + model.backId + '.png';
 		
-		Facade.getInstance().registerMediator( new Card( model.id, tmpl_card.tmpl( model ) ));
+		var cardMediator = new Card( model.id, tmpl_card.tmpl( model ) );
+		Facade.getInstance().registerMediator( cardMediator );
+		
+		cardMediator.getViewComponent().animate( {
+			left:model.pos[0],
+			top:model.pos[1]
+		});
 	}
 	
 	public static function flip( ary_select:Dynamic ) {

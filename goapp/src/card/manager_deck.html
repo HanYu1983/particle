@@ -226,7 +226,7 @@ body{
 				</div>
 				<div class="group">
 					<div class="hori">
-						<a id="btn_detail" href="#" class="easyui-linkbutton" style="width:60px; height:40px;" onclick="app.view.onTipClick()" data-options="iconCls:'icon-tip',toggle:true,selected:true">內文</a>
+						<a id="btn_detail" href="#" class="easyui-linkbutton" style="width:60px; height:40px;" onclick="app.view.onTipClick()" data-options="iconCls:'icon-tip',toggle:true,selected:false">內文</a>
 					</div>
 					<div class="hori">
 						<a id="btn" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onResetClick()" data-options="iconCls:'icon-edit'">重設</a>
@@ -1139,7 +1139,7 @@ body{
 			searchCards( $( document.form_value ).serialize() );
 		}
 		
-		var showTip = true;
+		var showTip = false;
 		function onTipClick(){
 			googleTracking.click( 'onTipClick' );
 			showTip = !showTip;
@@ -1151,9 +1151,28 @@ body{
 				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').show();
 				mc_bigCardContainer.find('.big_card_root > #mc_black').show();
 			}else{
-				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').hide();
-				mc_bigCardContainer.find('.big_card_root > #mc_black').hide();
+				hideAllDetail();
 			}
+			overListener( !showTip );
+		}
+		
+		function overListener( add ){
+			mc_bigCardContainer.find('.big_card_root').off( 'mouseover' );
+			mc_bigCardContainer.find('.big_card_root').off( 'mouseout' );
+			if( add ){
+				mc_bigCardContainer.find('.big_card_root').mouseover( function( e ){
+					$(this).find('#mc_detail > div[game=' + game + ']').show();
+					$(this).find('#mc_black').show();
+				});
+				mc_bigCardContainer.find('.big_card_root').mouseout( function( e ){
+					hideAllDetail();
+				});
+			}
+		}
+		
+		function hideAllDetail(){
+			mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').hide();
+			mc_bigCardContainer.find('.big_card_root > #mc_black').hide();
 		}
 		
 		function searchCards( searchstr ){

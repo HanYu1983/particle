@@ -211,7 +211,7 @@ Main.createSelfDeck = function(deckId) {
 	if(deck == null) return;
 	Main.createCards(deck);
 };
-Main.createCards = function(deck) {
+Main.createCards = function(deck,extra) {
 	var _g = deck.backId;
 	var bid = _g;
 	var bid1 = _g;
@@ -219,8 +219,10 @@ Main.createCards = function(deck) {
 	default:
 		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 33) deck.backId = bid1; else deck.backId = "0";
 	}
+	var newpos = null;
+	if(extra != null && Reflect.field(extra,"pos_mouse") != null) newpos = Reflect.field(extra,"pos_mouse");
 	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
-		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.currentSelect != "other"?Main.playerId:"", game : Main.currentSelect, relate : "", deg : 0, pos : [0,0], back : Main.currentSelect != "other", showTo : ""};
+		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : newpos != null?newpos.slice():[100,100], back : Main.currentSelect != "other", showTo : ""};
 	}));
 	Main.slide("創建卡片完成");
 	Animate.addCardAndPrepare(toDeck);
@@ -229,31 +231,31 @@ Main.createCards = function(deck) {
 Main.loadDetail = function(game) {
 	if(Reflect.field(Main.cardSuitsDetails,game) == null) switch(game) {
 	case "sgs":
-		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(game));
 		break;
 	case "dragonZ":
-		CallJs.dragonZ_load("../common/txt/dragonZList.json",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.dragonZ_load("../common/txt/dragonZList.json",Main.onLoadGameCallback(game));
 		break;
 	case "crusade":
-		CallJs.crusade_load("../common/txt/crusadeList/",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.crusade_load("../common/txt/crusadeList/",Main.onLoadGameCallback(game));
 		break;
 	case "battleSpirits":
-		CallJs.battleSpirits_load("../common/txt/battleSpiritsList/",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.battleSpirits_load("../common/txt/battleSpiritsList/",Main.onLoadGameCallback(game));
 		break;
 	case "magic":
-		CallJs.magic_load("../common/txt/magicList.xml",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.magic_load("../common/txt/magicList.xml",Main.onLoadGameCallback(game));
 		break;
 	case "gundamWar":
-		CallJs.gundamWar_load("../common/txt/gundamWarList.json",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.gundamWar_load("../common/txt/gundamWarList.json",Main.onLoadGameCallback(game));
 		break;
 	case "gundamWarN":
-		CallJs.gundamWarN_load("../common/txt/gundamWarNexAList/",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.gundamWarN_load("../common/txt/gundamWarNexAList/",Main.onLoadGameCallback(game));
 		break;
 	case "yugioh":
-		CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(game));
 		break;
 	case "sangoWar":
-		CallJs.sangoWar_load("../common/txt/sangoList.txt",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.sangoWar_load("../common/txt/sangoList.txt",Main.onLoadGameCallback(game));
 		break;
 	}
 };
@@ -265,6 +267,7 @@ Main.onLoadGameCallback = function(game) {
 Main.getCardDetailById = function(game,cid) {
 	cid = StringTools.replace(cid,".jpg","");
 	Main.loadDetail(game);
+	if(Reflect.field(Main.cardSuitsDetails,game) == null) return null;
 	return Lambda.find(Reflect.field(Main.cardSuitsDetails,game),function(cardDetail) {
 		return cardDetail.id.indexOf(cid) == 0;
 	});
@@ -348,6 +351,22 @@ Main.callAction = function(content) {
 };
 Main.pollAllMessage = function() {
 	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
+};
+Main.createSingleToken = function(type,pos_mouse) {
+	var oldselect = Main.currentSelect;
+	Main.currentSelect = "other";
+	switch(type) {
+	case "0":
+		Main.createCards({ backId : "0", cards : ["token_0"]},{ pos_mouse : pos_mouse});
+		break;
+	case "1":
+		Main.createCards({ backId : "1", cards : ["token_1"]},{ pos_mouse : pos_mouse});
+		break;
+	case "2":
+		Main.createCards({ backId : "2", cards : ["token_2"]},{ pos_mouse : pos_mouse});
+		break;
+	}
+	Main.currentSelect = oldselect;
 };
 Main.dice = function() {
 	var dice = Math.floor(Math.random() * 100);
@@ -440,7 +459,9 @@ Main.createCard = function(model) {
 	Main.loadDetail(model.game);
 	model.url = CallJs.api_getCardImageWithPackageName(model.game,model.cardId);
 	model.backurl = "../common/images/card/cardback_" + Std.string(model.backId) + ".png";
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Card(model.id,Main.tmpl_card.tmpl(model)));
+	var cardMediator = new mediator_Card(model.id,Main.tmpl_card.tmpl(model));
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(cardMediator);
+	cardMediator.getViewComponent().animate({ left : model.pos[0], top : model.pos[1]});
 };
 Main.flip = function(ary_select) {
 	var send = false;
@@ -1046,8 +1067,6 @@ mediator_Card.__name__ = true;
 mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
-		this.getViewComponent().css("top","100px");
-		this.getViewComponent().css("left","100px");
 		this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
 		this.getViewComponent().click($bind(this,this.onCardClick));
 		this.getViewComponent().mousedown($bind(this,this.onCardMouseDown));
@@ -1499,11 +1518,26 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				break;
 			case 84:
 				break;
+			case 73:
+				break;
+			case 79:
+				break;
+			case 80:
+				break;
 			default:
 				if(this.ary_select.length == 0) return;
 			}
 			var _g11 = Std.parseInt(notification.getType());
 			if(_g11 != null) switch(_g11) {
+			case 80:
+				Main.createSingleToken("2",this.pos_mouse);
+				break;
+			case 79:
+				Main.createSingleToken("1",this.pos_mouse);
+				break;
+			case 73:
+				Main.createSingleToken("0",this.pos_mouse);
+				break;
 			case 84:
 				Main.dice();
 				break;

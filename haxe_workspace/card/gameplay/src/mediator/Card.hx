@@ -28,8 +28,8 @@ class Card extends Mediator
 	
 	override public function onRegister():Void 
 	{
-		getViewComponent().css( 'top', '100px' );
-		getViewComponent().css( 'left', '100px' );
+		//getViewComponent().css( 'top', '100px' );
+		//getViewComponent().css( 'left', '100px' );
 		
 		sendNotification( card_enter, getViewComponent() );
 		

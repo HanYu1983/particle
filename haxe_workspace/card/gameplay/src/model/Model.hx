@@ -90,12 +90,18 @@ class Model extends Mediator
 				switch( notification.getType() ) {
 					case KeyboardEvent.DOM_VK_D:
 					case KeyboardEvent.DOM_VK_T:
+					case KeyboardEvent.DOM_VK_I:
+					case KeyboardEvent.DOM_VK_O:
+					case KeyboardEvent.DOM_VK_P:
 						// continue
 					case _:
 						if ( ary_select.length == 0 ) return;
 				}
 				
 				switch( Std.parseInt( notification.getType() ) ) {
+					case KeyboardEvent.DOM_VK_P: Main.createSingleToken( '2', pos_mouse );
+					case KeyboardEvent.DOM_VK_O: Main.createSingleToken( '1', pos_mouse );
+					case KeyboardEvent.DOM_VK_I: Main.createSingleToken( '0', pos_mouse );
 					case KeyboardEvent.DOM_VK_T:
 						Main.dice();
 					case KeyboardEvent.DOM_VK_G:
