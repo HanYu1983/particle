@@ -151,23 +151,23 @@ class Main
 		if( cardSuitsDetails.field( game ) == null ){
 			switch( game ) {
 				case 'sgs':
-					CallJs.sgs_load( "../common/txt/sgsList.json", onLoadGameCallback( currentSelect ) );
+					CallJs.sgs_load( "../common/txt/sgsList.json", onLoadGameCallback( game ) );
 				case 'dragonZ':
-					CallJs.dragonZ_load( "../common/txt/dragonZList.json", onLoadGameCallback( currentSelect ) );
+					CallJs.dragonZ_load( "../common/txt/dragonZList.json", onLoadGameCallback( game ) );
 				case 'crusade':
-					CallJs.crusade_load( "../common/txt/crusadeList/", onLoadGameCallback( currentSelect ) );
+					CallJs.crusade_load( "../common/txt/crusadeList/", onLoadGameCallback( game ) );
 				case 'battleSpirits':
-					CallJs.battleSpirits_load( "../common/txt/battleSpiritsList/", onLoadGameCallback( currentSelect ) );
+					CallJs.battleSpirits_load( "../common/txt/battleSpiritsList/", onLoadGameCallback( game ) );
 				case 'magic':
-					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( currentSelect ) );
+					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( game ) );
 				case 'gundamWar':
-					CallJs.gundamWar_load( "../common/txt/gundamWarList.json", onLoadGameCallback( currentSelect ) );
+					CallJs.gundamWar_load( "../common/txt/gundamWarList.json", onLoadGameCallback( game ) );
 				case 'gundamWarN':
-					CallJs.gundamWarN_load( "../common/txt/gundamWarNexAList/", onLoadGameCallback( currentSelect ) );
+					CallJs.gundamWarN_load( "../common/txt/gundamWarNexAList/", onLoadGameCallback( game ) );
 				case 'yugioh':
-					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( currentSelect ) );
+					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( game ) );
 				case 'sangoWar':
-					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( currentSelect ) );
+					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( game ) );
 			}
 		}
 	}
@@ -179,8 +179,10 @@ class Main
 	}
 	
 	public static function getCardDetailById( game:String, cid:String ):Dynamic {
+		
 		cid = StringTools.replace( cid, '.jpg', '' );
 		loadDetail( game );
+		if ( cardSuitsDetails.field( game ) == null ) return null;
 		return Lambda.find( cardSuitsDetails.field( game ), function( cardDetail ) {
 			return cardDetail.id.indexOf( cid ) == 0;
 		});

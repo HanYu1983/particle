@@ -231,31 +231,31 @@ Main.createCards = function(deck,extra) {
 Main.loadDetail = function(game) {
 	if(Reflect.field(Main.cardSuitsDetails,game) == null) switch(game) {
 	case "sgs":
-		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(game));
 		break;
 	case "dragonZ":
-		CallJs.dragonZ_load("../common/txt/dragonZList.json",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.dragonZ_load("../common/txt/dragonZList.json",Main.onLoadGameCallback(game));
 		break;
 	case "crusade":
-		CallJs.crusade_load("../common/txt/crusadeList/",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.crusade_load("../common/txt/crusadeList/",Main.onLoadGameCallback(game));
 		break;
 	case "battleSpirits":
-		CallJs.battleSpirits_load("../common/txt/battleSpiritsList/",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.battleSpirits_load("../common/txt/battleSpiritsList/",Main.onLoadGameCallback(game));
 		break;
 	case "magic":
-		CallJs.magic_load("../common/txt/magicList.xml",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.magic_load("../common/txt/magicList.xml",Main.onLoadGameCallback(game));
 		break;
 	case "gundamWar":
-		CallJs.gundamWar_load("../common/txt/gundamWarList.json",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.gundamWar_load("../common/txt/gundamWarList.json",Main.onLoadGameCallback(game));
 		break;
 	case "gundamWarN":
-		CallJs.gundamWarN_load("../common/txt/gundamWarNexAList/",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.gundamWarN_load("../common/txt/gundamWarNexAList/",Main.onLoadGameCallback(game));
 		break;
 	case "yugioh":
-		CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(game));
 		break;
 	case "sangoWar":
-		CallJs.sangoWar_load("../common/txt/sangoList.txt",Main.onLoadGameCallback(Main.currentSelect));
+		CallJs.sangoWar_load("../common/txt/sangoList.txt",Main.onLoadGameCallback(game));
 		break;
 	}
 };
@@ -267,6 +267,7 @@ Main.onLoadGameCallback = function(game) {
 Main.getCardDetailById = function(game,cid) {
 	cid = StringTools.replace(cid,".jpg","");
 	Main.loadDetail(game);
+	if(Reflect.field(Main.cardSuitsDetails,game) == null) return null;
 	return Lambda.find(Reflect.field(Main.cardSuitsDetails,game),function(cardDetail) {
 		return cardDetail.id.indexOf(cid) == 0;
 	});
