@@ -677,7 +677,7 @@ Main.prototype = {
 		case "onPokerClick":
 			var oldselect1 = Main.currentSelect;
 			Main.currentSelect = "poker";
-			Main.createCards({ backId : "34", cards : ["poker_41","poker_42","poker_43","poker_44","poker_45","poker_46","poker_47","poker_48","poker_49","poker_50","poker_51","poker_52","poker_01","poker_02","poker_03","poker_04","poker_05","poker_06","poker_07","poker_08","poker_09","poker_10","poker_11","poker_12","poker_13","poker_14","poker_15","poker_16","poker_17","poker_18","poker_19","poker_20","poker_21","poker_22","poker_23","poker_24","poker_25","poker_26","poker_27","poker_28","poker_29","poker_30","poker_31","poker_32","poker_33","poker_34","poker_35","poker_36","poker_37","poker_38","poker_39","poker_40","poker_53","poker_53"]});
+			Main.createCards({ backId : "34", cards : ["00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","52"]});
 			Main.currentSelect = oldselect1;
 			break;
 		}
