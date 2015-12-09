@@ -217,7 +217,7 @@ Main.createCards = function(deck,extra) {
 	var bid1 = _g;
 	if(_g == null) deck.backId = "0"; else switch(_g) {
 	default:
-		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 33) deck.backId = bid1; else deck.backId = "0";
+		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 34) deck.backId = bid1; else deck.backId = "0";
 	}
 	var newpos = null;
 	if(extra != null && Reflect.field(extra,"pos_mouse") != null) newpos = Reflect.field(extra,"pos_mouse");
@@ -673,6 +673,12 @@ Main.prototype = {
 			Main.currentSelect = "other";
 			Main.createCards({ backId : "0", cards : ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2"]});
 			Main.currentSelect = oldselect;
+			break;
+		case "onPokerClick":
+			var oldselect1 = Main.currentSelect;
+			Main.currentSelect = "poker";
+			Main.createCards({ backId : "34", cards : ["poker_41","poker_42","poker_43","poker_44","poker_45","poker_46","poker_47","poker_48","poker_49","poker_50","poker_51","poker_52","poker_01","poker_02","poker_03","poker_04","poker_05","poker_06","poker_07","poker_08","poker_09","poker_10","poker_11","poker_12","poker_13","poker_14","poker_15","poker_16","poker_17","poker_18","poker_19","poker_20","poker_21","poker_22","poker_23","poker_24","poker_25","poker_26","poker_27","poker_28","poker_29","poker_30","poker_31","poker_32","poker_33","poker_34","poker_35","poker_36","poker_37","poker_38","poker_39","poker_40","poker_53","poker_53"]});
+			Main.currentSelect = oldselect1;
 			break;
 		}
 		CallJs.googleTracking_click(type);
@@ -1376,7 +1382,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				img2.css("left","0");
 			});
 			div.append(img2);
-			if(card.game != "other") {
+			if(card.game != "other" && card.game != "poker") {
 				var detail = Main.getCardDetailById(card.game,card.cardId);
 				var detaildiv = Main.j("<div></div>");
 				detaildiv.css("position","relative");

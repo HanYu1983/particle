@@ -163,7 +163,7 @@ class UI extends Mediator
 			});
 			div.append( img2 );
 			
-			if ( card.game != 'other' ) {
+			if ( card.game != 'other' && card.game != 'poker' ) {
 				var detail = Main.getCardDetailById( card.game, card.cardId );
 				var detaildiv:Dynamic = Main.j( '<div></div>' );
 				detaildiv.css( 'position', 'relative' );

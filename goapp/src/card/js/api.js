@@ -218,6 +218,8 @@ var api = api || {};
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
 		switch( pkgName ){
+		case 'poker':
+			return '../common/images/poker/' +id + '.jpg'
 		case 'other':
 			return '../common/images/card/' +id + '.jpg'
 		case 'sgs':
