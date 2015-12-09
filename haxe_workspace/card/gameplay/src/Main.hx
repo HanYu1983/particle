@@ -40,6 +40,7 @@ class Main
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
 	public static var cardSuitsDetails:Dynamic = {};
+	public static var cardSuitsDetailsIsLoading:Dynamic = {};
 	public static var isConntect = false;
 	public static var isCanSendMessage = false;
 	
@@ -148,6 +149,8 @@ class Main
 	}
 	
 	public static function loadDetail( game:String ) {
+		if ( cardSuitsDetailsIsLoading.field( game ) != null ) return;
+		cardSuitsDetailsIsLoading.setField( game, true );
 		if( cardSuitsDetails.field( game ) == null ){
 			switch( game ) {
 				case 'sgs':

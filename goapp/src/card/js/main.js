@@ -229,6 +229,8 @@ Main.createCards = function(deck,extra) {
 	Main.pushCmds({ cmd : "addCards", content : toDeck});
 };
 Main.loadDetail = function(game) {
+	if(Reflect.field(Main.cardSuitsDetailsIsLoading,game) != null) return;
+	Main.cardSuitsDetailsIsLoading[game] = true;
 	if(Reflect.field(Main.cardSuitsDetails,game) == null) switch(game) {
 	case "sgs":
 		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(game));
@@ -2129,6 +2131,7 @@ Main.ary_cards = [];
 Main.currentSelect = "army";
 Main.cardSuits = { };
 Main.cardSuitsDetails = { };
+Main.cardSuitsDetailsIsLoading = { };
 Main.isConntect = false;
 Main.isCanSendMessage = false;
 Main.tmpl_card = Main.j("#tmpl_card");
