@@ -98,6 +98,13 @@ class MainController extends Mediator
 		sendNotification( on_press, null, e.which );
 		
 		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_E:
+				doSortingItem();
+				Main.doAction( 'list', ary_select, {pos_mouse:pos_mouse} );
+			case KeyboardEvent.DOM_VK_W:
+				Main.doAction( 'reverse', ary_select, {pos_mouse:pos_mouse} );
+			case KeyboardEvent.DOM_VK_Q:
+				Main.doAction( 'shuffle', ary_select, {pos_mouse:pos_mouse} );
 			case KeyboardEvent.DOM_VK_D:
 				selectMyItem();
 			case KeyboardEvent.DOM_VK_S:
@@ -136,6 +143,23 @@ class MainController extends Mediator
 	function selectMyItem() {
 		ary_select = filterLock( getMyItemFromPool() );
 		sendNotification( on_select_cards, { ary_select:ary_select } );
+	}
+	
+	function doSortingItem() {
+		var collectobj:Dynamic = { };
+		ary_select.foreach( function( card ) {
+			if ( collectobj.field( card.cardId ) == null ) {
+				collectobj.setField( card.cardId, [] );
+			}
+			collectobj.field( card.cardId ).push( card );
+			return true;
+		});
+		
+		var newary = [];
+		for ( c in collectobj.fields() ) {
+			newary = newary.concat( collectobj.field( c ) );
+		}
+		ary_select = newary;
 	}
 	
 	function filterLock( ary:Array<Dynamic> ):Array<Dynamic> {

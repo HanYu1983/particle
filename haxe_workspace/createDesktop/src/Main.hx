@@ -3,7 +3,9 @@ package;
 import controller.MainController;
 import js.Browser;
 import js.Lib;
+import org.puremvc.haxe.interfaces.IMediator;
 import org.puremvc.haxe.patterns.facade.Facade;
+import org.puremvc.haxe.patterns.mediator.Mediator;
 import view.CardItem;
 import view.IItem;
 
@@ -39,37 +41,37 @@ class Main
 	
 	public static function doAction( methodName:String, ary_item:Array<Dynamic>, ?extra:Dynamic ) {
 		
-		var info = switch( methodName ) {
+		var info:Dynamic = switch( methodName ) {
 			case 'list','together':
-				var mw = 0.0;
-				var mh = 0.0;
-				var firstPos = [];
-				for ( i in 0...ary_item.length ) {
-					if ( i == 0 ) firstPos = ary_item[i].pos.slice();
-					mw = Math.max( mw, ary_item[i].width );
-					mh = Math.max( mw, ary_item[i].height );
-				}
-				{ mw:mw, mh:mh, firstPos:firstPos }
+				collectInfo( ary_item );
+			case 'shuffle':
+				doShuffleModel( ary_item );
+				{}
+			case 'reverse':
+				doReverseModel( ary_item );
+				{}
 			default:
 				{}
 		}
 		trace( info );
+		trace( ary_item );
 		for ( i in 0...ary_item.length ) {
 			var itemModel:Dynamic = ary_item[i];
-			var item:IItem = cast( Facade.getInstance().retrieveMediator( itemModel.id ), IItem );
+			var itemMediator:IMediator = Facade.getInstance().retrieveMediator( itemModel.id );
+			var item:IItem = cast( itemMediator, IItem );
+			
 			if ( methodName != 'lock' ) {
 				if ( itemModel.lock ) continue;
 			}
 			switch( methodName ) {
-				case 'together':
+				case 'shuffle','together','reverse':
 					var pos_mouse = extra.field('pos_mouse' );
-					itemModel.pos[0] = i * 2 + pos_mouse[0];
-					itemModel.pos[1] = i * 2 + pos_mouse[1];
+					doTogetherModel( itemModel, i, pos_mouse );
 					item.move( itemModel.pos[0], itemModel.pos[1] );
+					doZSort( itemMediator.getViewComponent() );
 				case 'list':
 					var pos_mouse = extra.field('pos_mouse' );
-					itemModel.pos[0] = i % 10 * ( info.field( 'mw' ) + 4 ) + pos_mouse[0];
-					itemModel.pos[1] = Math.floor( i / 10 ) * ( info.field( 'mh' ) + 4 ) + pos_mouse[1];
+					doListModel( itemModel, i, pos_mouse, info );
 					item.move( itemModel.pos[0], itemModel.pos[1] );
 				case 'setViewer':
 					if ( itemModel.viewer == playerId ) {
@@ -105,6 +107,42 @@ class Main
 			}
 			
 		}
+	}
+	
+	public static function collectInfo( ary_item:Array<Dynamic> ) {
+		var mw = 0.0;
+		var mh = 0.0;
+		var firstPos = [];
+		for ( i in 0...ary_item.length ) {
+			if ( i == 0 ) firstPos = ary_item[i].pos.slice();
+			mw = Math.max( mw, ary_item[i].width );
+			mh = Math.max( mw, ary_item[i].height );
+		}
+		return { mw:mw, mh:mh, firstPos:firstPos };
+	}
+	
+	public static function doZSort( dom:Dynamic ) {
+		dom.appendTo( dom.parent() );
+	}
+	
+	public static function doTogetherdModel( itemModel:Dynamic, i:Int, pos_mouse:Array<Int> ) {
+		itemModel.pos[0] = i * 2 + pos_mouse[0];
+		itemModel.pos[1] = i * 2 + pos_mouse[1];
+	}
+	
+	public static function doListModel( itemModel:Dynamic, i:Int, pos_mouse:Array<Int>, info:Dynamic ) {
+		itemModel.pos[0] = i % 10 * ( info.field( 'mw' ) + 4 ) + pos_mouse[0];
+		itemModel.pos[1] = Math.floor( i / 10 ) * ( info.field( 'mh' ) + 4 ) + pos_mouse[1];
+	}
+	
+	public static function doShuffleModel( ary_item:Array<Dynamic> ) {
+		ary_item.sort( function ( a, b ) {
+			return Math.random() > .5 ? 1 : -1;
+		});
+	}
+	
+	public static function doReverseModel( ary_item:Array<Dynamic> ) {
+		ary_item.reverse();
 	}
 	
 	public static function createItemDiv( type:String, model:Dynamic ) {

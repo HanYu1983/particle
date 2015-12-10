@@ -100,44 +100,42 @@ Main.doAction = function(methodName,ary_item,extra) {
 	var info;
 	switch(methodName) {
 	case "list":case "together":
-		var mw = 0.0;
-		var mh = 0.0;
-		var firstPos = [];
-		var _g1 = 0;
-		var _g = ary_item.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			if(i == 0) firstPos = ary_item[i].pos.slice();
-			mw = Math.max(mw,ary_item[i].width);
-			mh = Math.max(mw,ary_item[i].height);
-		}
-		info = { mw : mw, mh : mh, firstPos : firstPos};
+		info = Main.collectInfo(ary_item);
+		break;
+	case "shuffle":
+		Main.doShuffleModel(ary_item);
+		info = { };
+		break;
+	case "reverse":
+		Main.doReverseModel(ary_item);
+		info = { };
 		break;
 	default:
 		info = { };
 	}
 	console.log(info);
-	var _g11 = 0;
-	var _g2 = ary_item.length;
-	while(_g11 < _g2) {
-		var i1 = _g11++;
-		var itemModel = ary_item[i1];
+	console.log(ary_item);
+	var _g1 = 0;
+	var _g = ary_item.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var itemModel = ary_item[i];
+		var itemMediator = org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(itemModel.id);
 		var item;
-		item = js_Boot.__cast(org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(itemModel.id) , view_IItem);
+		item = js_Boot.__cast(itemMediator , view_IItem);
 		if(methodName != "lock") {
 			if(itemModel.lock) continue;
 		}
 		switch(methodName) {
-		case "together":
+		case "shuffle":case "together":case "reverse":
 			var pos_mouse = Reflect.field(extra,"pos_mouse");
-			itemModel.pos[0] = i1 * 2 + pos_mouse[0];
-			itemModel.pos[1] = i1 * 2 + pos_mouse[1];
+			Main.doTogetherModel(itemModel,i,pos_mouse);
 			item.move(itemModel.pos[0],itemModel.pos[1]);
+			Main.doZSort(itemMediator.getViewComponent());
 			break;
 		case "list":
 			var pos_mouse1 = Reflect.field(extra,"pos_mouse");
-			itemModel.pos[0] = i1 % 10 * (Reflect.field(info,"mw") + 4) + pos_mouse1[0];
-			itemModel.pos[1] = Math.floor(i1 / 10) * (Reflect.field(info,"mh") + 4) + pos_mouse1[1];
+			Main.doListModel(itemModel,i,pos_mouse1,info);
 			item.move(itemModel.pos[0],itemModel.pos[1]);
 			break;
 		case "setViewer":
@@ -173,6 +171,39 @@ Main.doAction = function(methodName,ary_item,extra) {
 		}
 	}
 };
+Main.collectInfo = function(ary_item) {
+	var mw = 0.0;
+	var mh = 0.0;
+	var firstPos = [];
+	var _g1 = 0;
+	var _g = ary_item.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(i == 0) firstPos = ary_item[i].pos.slice();
+		mw = Math.max(mw,ary_item[i].width);
+		mh = Math.max(mw,ary_item[i].height);
+	}
+	return { mw : mw, mh : mh, firstPos : firstPos};
+};
+Main.doZSort = function(dom) {
+	dom.appendTo(dom.parent());
+};
+Main.doTogetherModel = function(itemModel,i,pos_mouse) {
+	itemModel.pos[0] = i * 2 + pos_mouse[0];
+	itemModel.pos[1] = i * 2 + pos_mouse[1];
+};
+Main.doListModel = function(itemModel,i,pos_mouse,info) {
+	itemModel.pos[0] = i % 10 * (Reflect.field(info,"mw") + 4) + pos_mouse[0];
+	itemModel.pos[1] = Math.floor(i / 10) * (Reflect.field(info,"mh") + 4) + pos_mouse[1];
+};
+Main.doShuffleModel = function(ary_item) {
+	ary_item.sort(function(a,b) {
+		if(Math.random() > .5) return 1; else return -1;
+	});
+};
+Main.doReverseModel = function(ary_item) {
+	ary_item.reverse();
+};
 Main.createItemDiv = function(type,model) {
 	var div = Main.j("#tmpl_" + type).tmpl(model);
 	return div;
@@ -190,6 +221,16 @@ Reflect.field = function(o,field) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
+};
+Reflect.fields = function(o) {
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(f != "__id__" && f != "hx__closures__" && hasOwnProperty.call(o,f)) a.push(f);
+		}
+	}
+	return a;
 };
 var Std = function() { };
 Std.__name__ = true;
@@ -339,6 +380,16 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		this.sendNotification(controller_MainController.on_press,null,e.which);
 		var _g = e.which;
 		switch(_g) {
+		case 69:
+			this.doSortingItem();
+			Main.doAction("list",this.ary_select,{ pos_mouse : this.pos_mouse});
+			break;
+		case 87:
+			Main.doAction("reverse",this.ary_select,{ pos_mouse : this.pos_mouse});
+			break;
+		case 81:
+			Main.doAction("shuffle",this.ary_select,{ pos_mouse : this.pos_mouse});
+			break;
 		case 68:
 			this.selectMyItem();
 			break;
@@ -381,6 +432,23 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 	,selectMyItem: function() {
 		this.ary_select = this.filterLock(this.getMyItemFromPool());
 		this.sendNotification(controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+	}
+	,doSortingItem: function() {
+		var collectobj = { };
+		Lambda.foreach(this.ary_select,function(card) {
+			if(Reflect.field(collectobj,card.cardId) == null) collectobj[card.cardId] = [];
+			Reflect.field(collectobj,card.cardId).push(card);
+			return true;
+		});
+		var newary = [];
+		var _g = 0;
+		var _g1 = Reflect.fields(collectobj);
+		while(_g < _g1.length) {
+			var c = _g1[_g];
+			++_g;
+			newary = newary.concat(Reflect.field(collectobj,c));
+		}
+		this.ary_select = newary;
 	}
 	,filterLock: function(ary) {
 		var nary = Lambda.fold(ary,function(curr,first) {
