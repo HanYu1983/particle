@@ -125,7 +125,7 @@ class Main
 		dom.appendTo( dom.parent() );
 	}
 	
-	public static function doTogetherdModel( itemModel:Dynamic, i:Int, pos_mouse:Array<Int> ) {
+	public static function doTogetherModel( itemModel:Dynamic, i:Int, pos_mouse:Array<Int> ) {
 		itemModel.pos[0] = i * 2 + pos_mouse[0];
 		itemModel.pos[1] = i * 2 + pos_mouse[1];
 	}
