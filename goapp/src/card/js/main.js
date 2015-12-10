@@ -217,7 +217,7 @@ Main.createCards = function(deck,extra) {
 	var bid1 = _g;
 	if(_g == null) deck.backId = "0"; else switch(_g) {
 	default:
-		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 34) deck.backId = bid1; else deck.backId = "0";
+		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 48) deck.backId = bid1; else deck.backId = "0";
 	}
 	var newpos = null;
 	if(extra != null && Reflect.field(extra,"pos_mouse") != null) newpos = Reflect.field(extra,"pos_mouse");

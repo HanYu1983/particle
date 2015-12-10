@@ -119,7 +119,7 @@ class Main
 		deck.backId = switch( deck.backId ) {
 			case null:"0";
 			case bid if( bid.length > 2 ): "0";
-			case bid if( Std.parseInt( bid ) <= 34 ) :bid;
+			case bid if( Std.parseInt( bid ) <= 48 ) :bid;
 			case _:"0";
 		}
 		

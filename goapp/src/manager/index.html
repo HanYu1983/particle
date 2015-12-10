@@ -435,10 +435,11 @@ a{
 	/* utils function */
 	
 	var mc_backContainer = $('#mc_backContainer' );
-	_.each( _.range( 34 ), function( bid ){
+	_.each( _.range( 48 ), function( bid ){
 		var useId = bid+1;
 		var url = '../common/images/card/cardback_' + useId + '.png';
 		var div = $("#tmpl_back").tmpl({id:useId, url:url });
+		div.hide();
 		mc_backContainer.append( div );
 	});
 	
@@ -545,8 +546,6 @@ a{
 	local:'679171275511375',
 	*/
 	
-	
-	
 	var fbid, token;
 	var loadModel;
 	
@@ -574,6 +573,8 @@ a{
 						app.card.showDeckList( loadModel );
 						
 						$('#btn_addDeck').linkbutton( 'enable' );
+						
+						mc_backContainer.find( '.cardback' ).show();
 						closeLoading();
 					}));
 				});
