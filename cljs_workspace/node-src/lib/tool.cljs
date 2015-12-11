@@ -7,6 +7,7 @@
 (def request (js/require "request"))
 (def fs (js/require "fs"))
 (def async (js/require "async"))
+(def rx (js/require "rx"))
 
 (defn getUrl [url cb]
   (request 
