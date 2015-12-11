@@ -1,6 +1,7 @@
 package;
 
 import controller.MainController;
+import haxe.Json;
 import js.Browser;
 import js.Lib;
 import org.puremvc.haxe.interfaces.IMediator;
@@ -28,15 +29,16 @@ class Main
 		}, false);
 		
 		Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'card' );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'card' );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'card' );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'card' );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'card' );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'card' );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'card' );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'card' );
-		Facade.getInstance().sendNotification( MainController.create_item, { }, 'map' );
+		
+		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
+		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
+		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
+		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
+		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
+		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 700, 700 ));
+		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 300, 400 ));
+		
+		//createSocket( playerId );
 	}
 	
 	public static function doAction( methodName:String, ary_item:Array<Dynamic>, ?extra:Dynamic ) {
@@ -109,6 +111,125 @@ class Main
 		}
 	}
 	
+	public static function messageSocket( toId, type, msg ) {
+		var _channel:Dynamic = untyped __js__( 'channel' );
+		var msg = {
+			type:type,
+			msg:msg
+		};
+		
+		_channel.sendChannelMessage( toId, Json.stringify( msg ), handleResponse( function( ret ) {
+			trace( ret );
+		}));
+	}
+	
+	public static function createItem( pos:Array<Int>, ?type:String = 'card', ?width:Int = 100, ?height:Int = 100, ?back = true, ?lock = false, ?owner = 'desktop', ?viewer = '' ) {
+		return { 
+			type:type,
+			width:width,
+			height:height,
+			pos:[ Math.floor( Math.random() * 600 ), Math.floor( Math.random() * 600 ) ],
+			back:true,
+			deg:0,
+			lock:false,
+			owner:'desktop',
+			viewer:'',
+			id:createDivId()
+		}
+	}
+	
+	static var tempItem = { 
+		type:'card',
+		width:200,
+		height:200,
+		pos:[ Math.floor( Math.random() * 600 ), Math.floor( Math.random() * 600 ) ],
+		back:true,
+		deg:0,
+		lock:false,
+		owner:'desktop',
+		viewer:'',
+		id:createDivId()
+	}
+	
+	public static function createSocket( id ) {
+		untyped __js__( 'api.createChannel' )( id, {
+			onopen: function() {
+				
+				messageSocket( playerId, 'addItems', [ tempItem ] );
+				
+				tempItem.pos[0] = 100;
+				tempItem.pos[1] = 0;
+				messageSocket( playerId, 'applyTransform', [ tempItem ] );
+				
+				messageSocket( playerId, 'applyRotateForward', [ tempItem ] );
+				
+				/*
+				isCanSendMessage = true;
+				slide( '連線成功' );
+				j( '#btn_connect' ).linkbutton( 'disable' );
+				
+				for ( i in 0...otherPlayerIds.length ) {
+					var fn = (function( _i: Int ):Bool -> Void {
+						return function( conn: Bool ) {
+							otherPlayerIdsForCheck[_i] = conn;
+							isConntect = Lambda.fold( otherPlayerIdsForCheck, function( curr, first ) {
+								return first && curr;
+							}, true );
+							if ( isConntect ) {
+								Facade.getInstance().sendNotification( on_searchComplete );
+							}
+							Facade.getInstance().sendNotification( on_heartbeat_event, {conn:isConntect} );
+						}
+					})( i );
+					CallJs.api_startHeartbeat( playerId, otherPlayerIds[i], fn );
+				}
+				*/
+			},
+			onmessage: function( json ){
+				trace( json.type );
+				switch( json.type ) {
+					case 'addItems':
+						var item:Dynamic = json.msg[0];
+						Facade.getInstance().sendNotification( MainController.on_receiveMessage, item, json.type );
+					case 'applyTransform':
+						var item:Dynamic = json.msg[0];
+						Facade.getInstance().sendNotification( MainController.on_receiveMessage, item, json.type );
+						/*
+						var item:Dynamic = json.msg[0];
+						var m:IItem = getMediatorFromId( item.id );
+						m.move( item.pos[0], item.pos[1] );
+						trace( m );*/
+					case 'applyRotateForward':
+						/*
+						var item:Dynamic = json.msg[0];
+						var m:IItem = getMediatorFromId( item.id );
+						m.rotateForward();
+						*/
+				}
+			},
+			onerror: function() {
+				/*
+				j( '#btn_connect' ).linkbutton( 'enable' );
+				isConntect = false;
+				isCanSendMessage = false;
+				alert( '已斷線，請重新連線' );
+				*/
+			},
+			onclose: function() {
+				/*
+				j( '#btn_connect' ).linkbutton( 'enable' );	
+				isConntect = false;
+				isCanSendMessage = false;
+				alert( '已斷線，請重新連線' );
+				*/
+			}
+		});
+	}
+	
+	public static function getMediatorFromId( id:String ):IItem {
+		return cast( Facade.getInstance().retrieveMediator( id ), IItem );
+	}
+	
 	public static function collectInfo( ary_item:Array<Dynamic> ) {
 		var mw = 0.0;
 		var mh = 0.0;
@@ -152,5 +273,32 @@ class Main
 	
 	public static function createDivId() {
 		return untyped __js__('leo.utils.generateUUID')();
+	}
+	
+	public static function slide( msg, ?time = 2000 ){
+		j.messager.show({
+			title:'提示',
+			msg: msg,
+			timeout:time,
+			showType:'slide'
+		});
+	}
+	
+	public static function alert( msg ) {
+        j.messager.alert('錯誤', msg );
+	}
+	
+	static function handleResponse( cb ) {
+		return function ( err, ret ) {
+			if ( err != null ) {
+				#if debug
+				alert( err );
+				#else
+				alert( '錯誤:' + err );
+				#end
+			}else {
+				cb( ret );
+			}
+		}
 	}
 }

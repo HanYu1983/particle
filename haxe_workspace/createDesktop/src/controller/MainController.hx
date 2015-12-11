@@ -17,6 +17,7 @@ using Reflect;
 class MainController extends Mediator
 {
 	public static var create_item = 'create_item';
+	public static var on_receiveMessage = 'on_receiveMessage';
 	
 	public static var on_select_cards = 'on_select_cards';
 	public static var on_press = 'on_press';
@@ -43,6 +44,7 @@ class MainController extends Mediator
 	{
 		return [ 	create_item, 
 					on_select_cards, 
+					on_receiveMessage,
 					BasicItem.on_item_click,
 					BasicItem.on_item_lock
 					];
@@ -50,7 +52,9 @@ class MainController extends Mediator
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
+		trace( notification );
 		switch( notification.getName() ) {
+			
 			case BasicItem.on_item_lock:
 				var div:Dynamic = notification.getBody().view;
 				var lock = notification.getBody().lock;
@@ -60,38 +64,35 @@ class MainController extends Mediator
 				viewComponent.append( div );
 				onSelectItems( div, true );
 			case 'create_item':
-				var item:Mediator;
-				var uniqId:String = Main.createDivId();
-				var model:Dynamic = { 
-					pos:[ Math.floor( Math.random() * 600 ), Math.floor( Math.random() * 600 ) ],
-					back:true,
-					deg:0,
-					lock:false,
-					owner:'desktop',
-					viewer:''
-				};
-				model.id = uniqId;
+				createItem( notification.getBody() );
+			case on_receiveMessage:
 				switch( notification.getType() ) {
-					case 'card':
-						model.width = 100;
-						model.height = 150;
-						item = new CardItem( uniqId, Main.createItemDiv( notification.getType(), model ) );
-					case 'map':
-						model.width = 300;
-						model.height = 300;
-						item = new MapItem( uniqId, Main.createItemDiv( notification.getType(), model ) );
-					default:
-						item = new BasicItem( uniqId, Main.createItemDiv( notification.getType(), model ) );
+					case 'addItems':
+						createItem( notification.getBody() );
+					case 'applyTransform':
+						var tempItem:Dynamic = notification.getBody();
+						var model:Dynamic = getItemFromPoolById( tempItem );
+						
 				}
-				
-				item.viewComponent.css( 'left', model.pos[0] + 'px' );
-				item.viewComponent.css( 'top', model.pos[1] + 'px' );
-				facade.registerMediator( item );
-				viewComponent.append( item.viewComponent );
-				
-				ary_allItem.push( model );
-			
 		}
+	}
+	
+	function createItem( model:Dynamic ) {
+		var item:Mediator;
+		switch( model.type ) {
+			case 'card':
+				item = new CardItem( model.id, Main.createItemDiv( model.type, model ) );
+			case 'map':
+				item = new MapItem( model.id, Main.createItemDiv( model.type, model ) );
+			default:
+				item = new BasicItem( model.id, Main.createItemDiv( model.type, model ) );
+		}
+		item.viewComponent.css( 'left', model.pos[0] + 'px' );
+		item.viewComponent.css( 'top', model.pos[1] + 'px' );
+		facade.registerMediator( item );
+		viewComponent.append( item.viewComponent );
+		
+		ary_allItem.push( model );
 	}
 	
 	function onBodyKeyUp( e ) {
@@ -133,7 +134,7 @@ class MainController extends Mediator
 	
 	function onSelectItems( ary:Array<Dynamic>, selectLock:Bool = false ) {
 		ary_select = ary.map( function( model:Dynamic ) {
-			return getItemFromPool( model.id )[0];
+			return getItemFromPoolById( model.id )[0];
 		});
 		if( !selectLock )
 			ary_select = filterLock( ary_select );
@@ -175,7 +176,7 @@ class MainController extends Mediator
 		pos_mouse[1] = e.pageY;
 	}
 	
-	function getItemFromPool( id:String ) {
+	function getItemFromPoolById( id:String ) {
 		return ary_allItem.filter( function( model ) {
 			return id == model.id;
 		});
