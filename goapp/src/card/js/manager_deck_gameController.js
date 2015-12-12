@@ -2,6 +2,25 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'ws':
+				$.ajax({
+					url: '../common/txt/wsList.json',
+					dataType: 'json',
+					success: function( ret ){
+						var list = _.filter( ret, function( obj ){
+							return obj.id != null
+						})
+						for( var i in list ){
+							list[i]['card-id'] = list[i].id
+							list[i].id = list[i].img
+						}
+						onLoadGameCallback( null, list )
+					},
+					error: function(xhr, res, err){
+						onLoadGameCallback( err )
+					}
+				})
+				break;
 			case 'sgs':
 				sgs.load( "../common/txt/sgsList.json", onLoadGameCallback)
 				break;

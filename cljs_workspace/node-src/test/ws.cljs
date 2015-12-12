@@ -41,7 +41,8 @@
           (str/split #"/")
           last)
         [_ id na] (re-find #"\n([\w\d]+/[\w\d-]+)([\s\S].+?)<[/pbr]+>" data)
-        chars (map second (re-seq #"《(.+?)》" data))]
+        chars (map second (re-seq #"《(.+?)》" data))
+        [_ text] (re-find #"<a href.+?</a>[\s\S].+?\n([\s\S]+)" data)]
     (js-obj
       "img" img
       "id" id
@@ -50,7 +51,7 @@
       (->
         (apply array chars)
         (.join ","))
-      "text" data)))
+      "text" text)))
       
 (defn parseHtml [data]
   (.create rx.Observable 

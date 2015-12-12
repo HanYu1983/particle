@@ -152,6 +152,8 @@ body{
 			<div game="sgs">{{html name}}</div>
 			<div game="sgs">{{html type}}</div>
 			<div game="sgs">{{html text}}</div>
+
+			<div game="ws">{{html text}}</div>
 		</div>
 	</div>
 </script>
@@ -365,6 +367,11 @@ body{
 			*/
 			
 	var tmplAry = {
+		ws:{
+			default:[
+			
+			]
+		},
 		sgs:{
 			default:[
 				[
@@ -954,7 +961,8 @@ body{
 		battleSpirits: '戰魂',
 		crusade: 'Crusade',
 		dragonZ: '七龍珠TCG',
-		sgs: '三國殺陣面對決'
+		sgs: '三國殺陣面對決',
+		ws: 'WS'
 	}
 	$('title').html(titlemapping[game] + '-組牌風雲' );
 	
