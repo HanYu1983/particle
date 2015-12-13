@@ -530,6 +530,13 @@ var gameController = {};
 			case 'symbol':
 				fns.push( cardsearch.attrEq( "info_11", v ) )
 				break;
+			case 'gsign':
+				fns.push( (function( v ){
+					return function( obj ){
+						return obj["info_23"] == v
+					}
+				})( v ))
+				break;
 			case 'area':
 				switch( v ){
 				case '宇宙':
