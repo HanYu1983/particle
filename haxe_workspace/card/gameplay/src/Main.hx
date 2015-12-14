@@ -268,6 +268,7 @@ class Main
 				saveOpponentToCookie( otherPlayerId );
 			case 'onBtnNotLoginClick':
 				j( '#txt_id' ).textbox( 'setValue', getId() );
+				prepareCardsuit( CallJs.cardSuit_defaultModel().cardSuit );
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );
 				
@@ -278,17 +279,9 @@ class Main
 					j( '#txt_id' ).textbox( 'setValue', fbid );
 					
 					CallJs.cardSuit_load( fbid, token, handleResponse( function( ret ) {
-						Lambda.foreach( ret.cardSuit, function( cs ) {
-							if ( cardSuits.field( cs.game ) == null ) {
-								cardSuits.setField( cs.game, [] );
-							}
-							cardSuits.field( cs.game ).push( cs );
-							return true;
-						});
-						chooseCardSuit( currentSelect );
-						updateGameUI( currentSelect );
-						
+						prepareCardsuit( ret.cardSuit );
 						j( '#btn_login' ).linkbutton( 'disable' );
+						j( '#btn_notLogin' ).linkbutton( 'disable' );
 						closeLoading();
 					}));
 				});
@@ -377,7 +370,18 @@ class Main
 		CallJs.googleTracking_click( type );
 	}
 	
-	
+	function prepareCardsuit( inputCardsuit:Array<Dynamic> ) {
+		cardSuits = { };
+		Lambda.foreach( inputCardsuit, function( cs ) {
+			if ( cardSuits.field( cs.game ) == null ) {
+				cardSuits.setField( cs.game, [] );
+			}
+			cardSuits.field( cs.game ).push( cs );
+			return true;
+		});
+		chooseCardSuit( currentSelect );
+		updateGameUI( currentSelect );
+	}
 	
 	function updateGameUI( currentSelect ) {
 		switch( currentSelect ) {
@@ -594,6 +598,8 @@ class Main
 				isCanSendMessage = true;
 				slide( '連線成功' );
 				j( '#btn_connect' ).linkbutton( 'disable' );
+				j( '#btn_login' ).linkbutton( 'disable' );
+				j( '#btn_notLogin' ).linkbutton( 'disable' );
 				
 				for ( i in 0...otherPlayerIds.length ) {
 					var fn = (function( _i: Int ):Bool -> Void {

@@ -7,6 +7,7 @@ package;
 @:build(AutoJs.build([	'setCookie', 
 						'getCookie',
 						'cardSuit.load',
+						'cardSuit.defaultModel',
 						'api.createUser',
 						'api.users',
 						'api.message',

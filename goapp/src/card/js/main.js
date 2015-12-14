@@ -515,6 +515,8 @@ Main.createSocket = function(id) {
 		Main.isCanSendMessage = true;
 		Main.slide("連線成功");
 		Main.j("#btn_connect").linkbutton("disable");
+		Main.j("#btn_login").linkbutton("disable");
+		Main.j("#btn_notLogin").linkbutton("disable");
 		var _g1 = 0;
 		var _g = Main.otherPlayerIds.length;
 		while(_g1 < _g) {
@@ -593,6 +595,7 @@ Main.prototype = {
 			break;
 		case "onBtnNotLoginClick":
 			Main.j("#txt_id").textbox("setValue",Main.getId());
+			this.prepareCardsuit(CallJs.cardSuit_defaultModel().cardSuit);
 			break;
 		case "onBtnLoginClick":
 			Main.openLoading("登入並讀取資料中...");
@@ -601,14 +604,9 @@ Main.prototype = {
 				Main.token = ret.authResponse.accessToken;
 				Main.j("#txt_id").textbox("setValue",Main.fbid);
 				CallJs.cardSuit_load(Main.fbid,Main.token,Main.handleResponse(function(ret1) {
-					Lambda.foreach(ret1.cardSuit,function(cs) {
-						if(Reflect.field(Main.cardSuits,cs.game) == null) Main.cardSuits[cs.game] = [];
-						Reflect.field(Main.cardSuits,cs.game).push(cs);
-						return true;
-					});
-					_g.chooseCardSuit(Main.currentSelect);
-					_g.updateGameUI(Main.currentSelect);
+					_g.prepareCardsuit(ret1.cardSuit);
 					Main.j("#btn_login").linkbutton("disable");
+					Main.j("#btn_notLogin").linkbutton("disable");
 					Main.closeLoading();
 				}));
 			});
@@ -692,6 +690,16 @@ Main.prototype = {
 			break;
 		}
 		CallJs.googleTracking_click(type);
+	}
+	,prepareCardsuit: function(inputCardsuit) {
+		Main.cardSuits = { };
+		Lambda.foreach(inputCardsuit,function(cs) {
+			if(Reflect.field(Main.cardSuits,cs.game) == null) Main.cardSuits[cs.game] = [];
+			Reflect.field(Main.cardSuits,cs.game).push(cs);
+			return true;
+		});
+		this.chooseCardSuit(Main.currentSelect);
+		this.updateGameUI(Main.currentSelect);
 	}
 	,updateGameUI: function(currentSelect) {
 		switch(currentSelect) {
@@ -2113,6 +2121,7 @@ var __map_reserved = {}
 CallJs.setCookie = setCookie;
 CallJs.getCookie = getCookie;
 CallJs.cardSuit_load = cardSuit.load;
+CallJs.cardSuit_defaultModel = cardSuit.defaultModel;
 CallJs.api_createUser = api.createUser;
 CallJs.api_users = api.users;
 CallJs.api_message = api.message;
