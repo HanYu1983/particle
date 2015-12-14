@@ -303,18 +303,29 @@ body{
 				</div>
 			</div>
 		</div>
+		<div id="dia_alert" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="font-size:20px; padding:10px">
+			此網址僅供私下交流用，請勿公開分享!
+		</div>
     </div>
 	<script src="../common/js/admin.js"></script>	
 	<script>
 	
 	
 	if( !_admin ){
-	//	console.log( $('#mc_btnGame').children()  );
 		$('#mc_btnGame').children().each( function( id, dom ){
 			if( id == 0 ) return;
 			$( dom ).hide();
 		});
 	}
+	
+	$( document ).ready(function() {
+		if( _admin ){
+			$('#dia_alert').panel( 'open' );
+			setTimeout( function(){
+				$('#dia_alert').panel( 'close' );
+			}, 4000 );
+		}
+	});
 	
 	googleTracking.init( 'UA-55273266-3' );
 	
