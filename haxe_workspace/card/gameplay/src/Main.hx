@@ -79,6 +79,7 @@ class Main
 		CallJs.myapp_facebook_init( fbappId, function() {
 			updateGameUI( currentSelect );
 			closeLoading();
+			prepareCardsuit( CallJs.cardSuit_defaultModel().cardSuit );
 			slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
 		});
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
@@ -268,7 +269,6 @@ class Main
 				saveOpponentToCookie( otherPlayerId );
 			case 'onBtnNotLoginClick':
 				j( '#txt_id' ).textbox( 'setValue', getId() );
-				prepareCardsuit( CallJs.cardSuit_defaultModel().cardSuit );
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );
 				
