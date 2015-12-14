@@ -591,6 +591,9 @@ Main.prototype = {
 			Main.createSocket(Main.playerId);
 			Main.saveOpponentToCookie(Main.otherPlayerId);
 			break;
+		case "onBtnNotLoginClick":
+			Main.j("#txt_id").textbox("setValue",Main.getId());
+			break;
 		case "onBtnLoginClick":
 			Main.openLoading("登入並讀取資料中...");
 			CallJs.myapp_facebook_login(function(ret) {

@@ -266,6 +266,8 @@ class Main
 				slide( '正在等待對手...' );
 				createSocket( playerId );
 				saveOpponentToCookie( otherPlayerId );
+			case 'onBtnNotLoginClick':
+				j( '#txt_id' ).textbox( 'setValue', getId() );
 			case 'onBtnLoginClick':
 				openLoading( '登入並讀取資料中...' );
 				
