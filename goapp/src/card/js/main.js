@@ -232,6 +232,9 @@ Main.loadDetail = function(game) {
 	if(Reflect.field(Main.cardSuitsDetailsIsLoading,game) != null) return;
 	Main.cardSuitsDetailsIsLoading[game] = true;
 	if(Reflect.field(Main.cardSuitsDetails,game) == null) switch(game) {
+	case "ws":
+		CallJs.ws_load("../common/txt/wsList.json",Main.onLoadGameCallback(game));
+		break;
 	case "sgs":
 		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(game));
 		break;
@@ -647,6 +650,10 @@ Main.prototype = {
 			Main.currentSelect = "dragonZ";
 			this.chooseCardSuit("dragonZ");
 			break;
+		case "onBtnLoadWsClick":
+			Main.currentSelect = "ws";
+			this.chooseCardSuit("ws");
+			break;
 		case "onBtnLoadSgsClick":
 			Main.currentSelect = "sgs";
 			this.chooseCardSuit("sgs");
@@ -717,6 +724,9 @@ Main.prototype = {
 			break;
 		case "sgs":
 			Main.j("#btn_sgs").linkbutton("select");
+			break;
+		case "ws":
+			Main.j("#btn_ws").linkbutton("select");
 			break;
 		}
 	}
@@ -1395,6 +1405,11 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 					str = "";
 					var _g = card.game;
 					switch(_g) {
+					case "ws":
+						str += detail.id;
+						str += "<br/>";
+						str += detail.text;
+						break;
 					case "sgs":
 						str += detail.name;
 						str += "<br/>";
@@ -2119,6 +2134,7 @@ CallJs.battleSpirits_load = battleSpirits.load;
 CallJs.sgs_load = sgs.load;
 CallJs.dragonZ_load = dragonZ.load;
 CallJs.crusade_load = crusade.load;
+CallJs.ws_load = ws.load;
 CallJs.magic_load = magic.load;
 CallJs.googleTracking_click = googleTracking.click;
 Main.on_getSuit_success = "on_getSuit_success";

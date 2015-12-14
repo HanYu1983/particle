@@ -175,6 +175,10 @@ class UI extends Mediator
 				if ( detail != null ) {
 					str = '';
 					switch( card.game ) {
+						case 'ws':
+							str += detail.id;
+							str += '<br/>';
+							str += detail.text;
 						case 'sgs':
 							str += detail.name;
 							str += '<br/>';

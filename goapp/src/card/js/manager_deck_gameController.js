@@ -3,6 +3,8 @@ var gameController = {};
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
 			case 'ws':
+				ws.load( "../common/txt/wsList.json", onLoadGameCallback)
+				/*
 				$.ajax({
 					url: '../common/txt/wsList.json',
 					dataType: 'json',
@@ -20,6 +22,7 @@ var gameController = {};
 						onLoadGameCallback( err )
 					}
 				})
+				*/
 				break;
 			case 'sgs':
 				sgs.load( "../common/txt/sgsList.json", onLoadGameCallback)

@@ -31,6 +31,7 @@ package;
 						'sgs.load',
 						'dragonZ.load',
 						'crusade.load',
+						'ws.load',
 						'magic.load',
 						'googleTracking.click'
 					]))

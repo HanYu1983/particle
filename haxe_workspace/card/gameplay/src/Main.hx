@@ -153,6 +153,8 @@ class Main
 		cardSuitsDetailsIsLoading.setField( game, true );
 		if( cardSuitsDetails.field( game ) == null ){
 			switch( game ) {
+				case 'ws':
+					CallJs.ws_load( "../common/txt/wsList.json", onLoadGameCallback( game ) );
 				case 'sgs':
 					CallJs.sgs_load( "../common/txt/sgsList.json", onLoadGameCallback( game ) );
 				case 'dragonZ':
@@ -318,6 +320,9 @@ class Main
 			case 'onBtnLoadDragonZClick':
 				currentSelect = 'dragonZ';
 				chooseCardSuit( 'dragonZ' );
+			case 'onBtnLoadWsClick':
+				currentSelect = 'ws';
+				chooseCardSuit( 'ws' );
 			case 'onBtnLoadSgsClick':
 				currentSelect = 'sgs';
 				chooseCardSuit( 'sgs' );
@@ -385,6 +390,7 @@ class Main
 			case 'crusade':j( '#btn_crusade' ).linkbutton( 'select' );
 			case 'dragonZ':j( '#btn_dragonZ' ).linkbutton( 'select' );
 			case 'sgs':j( '#btn_sgs' ).linkbutton( 'select' );
+			case 'ws':j( '#btn_ws' ).linkbutton( 'select' );
 		}
 	}
 	
