@@ -41,40 +41,35 @@ var cardSuit = cardSuit || {};
 			]
 		},
 		{
-			"name":"資本",
+			"name":"中國99",
 			"game":"army",
 			"cards":[
-				"2","2","2",
-				"2","2","2",
-				"9","9","9",
-				"13","13","13",
-				"25","25","25",
-				"24","24","24",
-				"20","20","20",
-				"3","3","3",
-				"26","26","26",
-				"27","27","27",
-				"30","30","30",
-				"24","24","24",
-				"16","16","16"
+				"124","35","35","35","35","35","35","0","0","0","94","94","94","86","86","78","78","78","83","85","85","1","1","1","41","41","41","43","43","43","6","6","6","92","92","92","4","4","54","54","54","71","71","113","113","115","115","162","162","161","161"
 			]
 		},
-	{
-		"name":"貪吃老鼠",
-		"game":"magic",
-		"cards":[
-			"Abduction","Abyssal Specter","Abyssal Specter","Abyssal Specter","Abyssal Specter","Counterspell","Counterspell","Counterspell","Counterspell","Dark Ritual","Dark Ritual","Dark Ritual","Dark Ritual","Daze","Duress","Duress","Duress","Hinder","Hinder","Hinder","Island","Island","Island","Island","Island","Island","Island","Island","Island","Island","Island","Island","Masticore","Probe","Probe","Ravenous Rats","Ravenous Rats","Ravenous Rats","Ravenous Rats","Recoil","Recoil","Recoil","Recoil","Repulse","Repulse","Repulse","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Thieving Magpie","Thieving Magpie","Words of Wisdom"
+		{
+			"name":"美國大兵",
+			"game":"army",
+			"cards":[
+				"123","19","21","19","21","40","44","3","14","30","30","42","25","32","30","2","16","19","21","50","21","40","44","3","14","13","13","42","25","32","13","2","16","50","21","50","21","40","44","3","14","13","13","42","25","32","13","2","16","26","26"
 			]
-	},
-    {
-      "name": "阿姆羅",
-      "game": "gundamWar",
-      "cards":["38211.jpg","38211.jpg","38211.jpg","60025.jpg","60025.jpg","60025.jpg","21006.jpg","21006.jpg","21006.jpg","26009.jpg","26009.jpg","26009.jpg","32023.jpg","32023.jpg","32023.jpg","42031.jpg","42031.jpg","42031.jpg","42037.jpg","42037.jpg","42037.jpg","55024.jpg","55024.jpg","55024.jpg","53027.jpg","53027.jpg","53027.jpg","1189.jpg","1189.jpg","1189.jpg","52025.jpg","52025.jpg","52025.jpg","53025.jpg","53025.jpg","53025.jpg","1195.jpg","1195.jpg","1195.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg"]
-    },
-   {
-	  "name": "初始魏",
-     "game": "sangoWar",
-	  "cards":[
+		},
+		{
+			"name":"貪吃老鼠",
+			"game":"magic",
+			"cards":[
+				"Abduction","Abyssal Specter","Abyssal Specter","Abyssal Specter","Abyssal Specter","Counterspell","Counterspell","Counterspell","Counterspell","Dark Ritual","Dark Ritual","Dark Ritual","Dark Ritual","Daze","Duress","Duress","Duress","Hinder","Hinder","Hinder","Island","Island","Island","Island","Island","Island","Island","Island","Island","Island","Island","Island","Masticore","Probe","Probe","Ravenous Rats","Ravenous Rats","Ravenous Rats","Ravenous Rats","Recoil","Recoil","Recoil","Recoil","Repulse","Repulse","Repulse","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Swamp","Thieving Magpie","Thieving Magpie","Words of Wisdom"
+			]
+		},
+		{
+			"name": "阿姆羅",
+			"game": "gundamWar",
+			"cards":["38211.jpg","38211.jpg","38211.jpg","60025.jpg","60025.jpg","60025.jpg","21006.jpg","21006.jpg","21006.jpg","26009.jpg","26009.jpg","26009.jpg","32023.jpg","32023.jpg","32023.jpg","42031.jpg","42031.jpg","42031.jpg","42037.jpg","42037.jpg","42037.jpg","55024.jpg","55024.jpg","55024.jpg","53027.jpg","53027.jpg","53027.jpg","1189.jpg","1189.jpg","1189.jpg","52025.jpg","52025.jpg","52025.jpg","53025.jpg","53025.jpg","53025.jpg","1195.jpg","1195.jpg","1195.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg","1046.jpg"]
+		},
+		{
+			"name": "初始魏",
+			"game": "sangoWar",
+			"cards":[
 			"1-002.jpg",
 			"1-002.jpg",
 			
