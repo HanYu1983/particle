@@ -6,6 +6,13 @@ var cardSuit = cardSuit || {};
     return {
   "cardSuit":[
 		{
+			"name":"神龍",
+			"game":"gundamWarN",
+			"cards":[
+				"179003_01A_C_WT001U_white","179003_01A_C_WT001U_white","179003_01A_C_WT001U_white","179003_01A_C_WT002U_white","179003_01A_C_WT002U_white","179003_01A_C_WT002U_white","179003_01A_C_WT003R_white","179003_01A_O_WT001C_white","179003_01A_O_WT001C_white","179003_01A_O_WT001C_white","179004_01A_C_WT010C_white","179004_01A_C_WT010C_white","179004_01A_C_WT010C_white","179007_02A_C_WT013C_white","179009_03B_CH_WT020R_white","179009_03B_CH_WT020R_white","179009_03B_O_WT004U_white","179016_04B_C_WT036C_white","179016_04B_C_WT036C_white","179016_04B_C_WT036C_white","179016_04B_U_WT068R_white_haku","179016_04B_U_WT068R_white_haku","179016_04B_U_WT068R_white_haku","179019_02A_U_WT028R_white","179019_02A_U_WT028R_white","179019_02A_U_WT028R_white","179024_03B_U_WT057U_white","179024_04B_U_WT074C_white","179024_04B_U_WT074C_white","179024_04B_U_WT074C_white","179025_07D_G_VT016C_purple","179025_07D_G_VT016C_purple","179025_07D_G_VT016C_purple","179025_07D_O_WT011C_white","179025_07D_U_WT138C_white","179025_07D_U_WT138C_white","179025_07D_U_WT138C_white","179027_09D_O_WT014N_white","179028_10D_O_WT015N_white","179028_10D_O_WT015N_white","179028_10D_O_WT015N_white","179028_10D_U_WT181N_white","179028_10D_U_WT181N_white","179028_10D_U_WT181N_white","179030_11E_G_VT020N_purple","179030_11E_G_VT020N_purple","179030_11E_G_VT020N_purple","179901_00_A_WT002P_white","179901_00_C_WT002P_white","179901_00_C_WT009P_white"
+			]
+		},
+		{
 			"name":"貝吉塔",
 			"game":"dragonZ",
 			"cards":[
