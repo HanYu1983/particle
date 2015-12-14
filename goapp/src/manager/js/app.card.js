@@ -33,8 +33,10 @@ app.card = app.card || {};
 	}
 	
 	function addDeck( _model ){
-	
 		var dom = $("#tmpl_deck" ).tmpl( _model );
+		dom.find( '#txt_name' ).textbox( {
+			value:_model.name
+		});
 		$('#mc_deckContainer').append( dom );
 		dom.find( '.easyui-combobox' ).combobox({
 			value: _model.game,
