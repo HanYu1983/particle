@@ -29,7 +29,7 @@ class Main
 		}, false);
 		
 		Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
-		
+		/*
 		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
 		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
 		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
@@ -37,8 +37,8 @@ class Main
 		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
 		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 700, 700 ));
 		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 300, 400 ));
-		
-		//createSocket( playerId );
+		*/
+		createSocket( playerId );
 	}
 	
 	public static function doAction( methodName:String, ary_item:Array<Dynamic>, ?extra:Dynamic ) {
@@ -55,8 +55,8 @@ class Main
 			default:
 				{}
 		}
-		trace( info );
-		trace( ary_item );
+		//trace( info );
+		//trace( ary_item );
 		for ( i in 0...ary_item.length ) {
 			var itemModel:Dynamic = ary_item[i];
 			var itemMediator:IMediator = Facade.getInstance().retrieveMediator( itemModel.id );
@@ -111,7 +111,39 @@ class Main
 		}
 	}
 	
+	static var ary_sendMessage:Array<Dynamic> = [];
+	static var isSending = false;
+	
 	public static function messageSocket( toId, type, msg ) {
+		trace( 'pushMessage', type );
+		
+		ary_sendMessage.push( {
+			toId: toId,
+			msg:{ type:type, msg:Json.parse( Json.stringify( msg )) },
+			channel:untyped __js__( 'channel' )
+		} );
+		
+		
+		
+		function doNextChannel() {
+			if ( ary_sendMessage.length > 0 ) {
+				isSending = true;
+				var m:Dynamic = ary_sendMessage.shift();
+				
+				trace( 'messageSocket', m.msg.type );
+				m.channel.sendChannelMessage( m.toId, Json.stringify( m.msg ), handleResponse( function( ret ) {
+					isSending = false;
+					doNextChannel();
+				}));
+			}
+		}
+		
+		if ( isSending ) return;
+		doNextChannel();
+		
+		
+		
+		/*
 		var _channel:Dynamic = untyped __js__( 'channel' );
 		var msg = {
 			type:type,
@@ -119,8 +151,9 @@ class Main
 		};
 		
 		_channel.sendChannelMessage( toId, Json.stringify( msg ), handleResponse( function( ret ) {
-			trace( ret );
+		//	trace( ret );
 		}));
+		*/
 	}
 	
 	public static function createItem( pos:Array<Int>, ?type:String = 'card', ?width:Int = 100, ?height:Int = 100, ?back = true, ?lock = false, ?owner = 'desktop', ?viewer = '' ) {
@@ -162,6 +195,21 @@ class Main
 				messageSocket( playerId, 'applyTransform', [ tempItem ] );
 				
 				messageSocket( playerId, 'applyRotateForward', [ tempItem ] );
+				messageSocket( playerId, 'applyRotateForward', [ tempItem ] );
+				messageSocket( playerId, 'applyRotateForward', [ tempItem ] );
+				
+				messageSocket( playerId, 'applyRotateBackward', [ tempItem ] );
+				
+				tempItem.pos[0] = 130;
+				tempItem.pos[1] = 200;
+				messageSocket( playerId, 'applyTransform', [ tempItem ] );
+				
+				messageSocket( playerId, 'applyFlip', [ tempItem ] );
+				messageSocket( playerId, 'applyFlip', [ tempItem ] );
+				
+				tempItem.viewer = playerId;
+				tempItem.owner = playerId;
+				messageSocket( playerId, 'applyViewerOwner', [ tempItem ] );
 				
 				/*
 				isCanSendMessage = true;
@@ -186,25 +234,25 @@ class Main
 				*/
 			},
 			onmessage: function( json ){
-				trace( json.type );
 				switch( json.type ) {
 					case 'addItems':
 						var item:Dynamic = json.msg[0];
 						Facade.getInstance().sendNotification( MainController.on_receiveMessage, item, json.type );
 					case 'applyTransform':
-						var item:Dynamic = json.msg[0];
-						Facade.getInstance().sendNotification( MainController.on_receiveMessage, item, json.type );
-						/*
-						var item:Dynamic = json.msg[0];
-						var m:IItem = getMediatorFromId( item.id );
-						m.move( item.pos[0], item.pos[1] );
-						trace( m );*/
+						var items:Array<Dynamic> = json.msg;
+						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
 					case 'applyRotateForward':
-						/*
-						var item:Dynamic = json.msg[0];
-						var m:IItem = getMediatorFromId( item.id );
-						m.rotateForward();
-						*/
+						var items:Array<Dynamic> = json.msg;
+						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
+					case 'applyRotateBackward':
+						var items:Array<Dynamic> = json.msg;
+						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
+					case 'applyViewerOwner':
+						var items:Array<Dynamic> = json.msg;
+						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
+					case 'applyFlip':
+						var items:Array<Dynamic> = json.msg;
+						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
 				}
 			},
 			onerror: function() {

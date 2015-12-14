@@ -126,11 +126,11 @@ class BasicItem extends Mediator implements IItem
 	}
 	
 	function showItemForMe() {
-		//for children
+		viewComponent.find( '.card_back' ).hide();
 	}
 	
 	function hideItemForMe() {
-		//for children
+		viewComponent.find( '.card_back' ).show();
 	}
 	
 	function onSelect( ary_select:Array<Dynamic> ) {

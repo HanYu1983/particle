@@ -52,7 +52,7 @@ class MainController extends Mediator
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
-		trace( notification );
+		//trace( notification );
 		switch( notification.getName() ) {
 			
 			case BasicItem.on_item_lock:
@@ -67,14 +67,38 @@ class MainController extends Mediator
 				createItem( notification.getBody() );
 			case on_receiveMessage:
 				switch( notification.getType() ) {
+					
 					case 'addItems':
 						createItem( notification.getBody() );
 					case 'applyTransform':
-						var tempItem:Dynamic = notification.getBody();
-						var model:Dynamic = getItemFromPoolById( tempItem );
-						
+						var tempItems:Array<Dynamic>= notification.getBody();
+						var ary_items = tempItems.map( function( tempItem:Dynamic ) {
+							var model:Dynamic = getItemFromPoolById( tempItem.id );
+							model.pos = tempItem.pos.slice();
+							return model;
+						});
+						doMoveItem( ary_items );
+					case 'applyRotateForward':
+						var ary_items = receiveItemToLocalModel( notification.getBody() );
+						Main.doAction( 'rotateForward', ary_items );
+					case 'applyRotateBackward':
+						var ary_items = receiveItemToLocalModel( notification.getBody() );
+						Main.doAction( 'rotateBackward', ary_items );
+					case 'applyViewerOwner':
+						var ary_items = receiveItemToLocalModel( notification.getBody() );
+						Main.doAction( 'setOwner', ary_items );
+						Main.doAction( 'setViewer', ary_items );
+					case 'applyFlip':
+						var ary_items = receiveItemToLocalModel( notification.getBody() );
+						Main.doAction( 'flip', ary_items );
 				}
 		}
+	}
+	
+	function receiveItemToLocalModel( ary_receive:Array<Dynamic> ) {
+		return ary_receive.map( function( tempItem:Dynamic ) {
+			return getItemFromPoolById( tempItem.id );
+		});
 	}
 	
 	function createItem( model:Dynamic ) {
@@ -83,7 +107,7 @@ class MainController extends Mediator
 			case 'card':
 				item = new CardItem( model.id, Main.createItemDiv( model.type, model ) );
 			case 'map':
-				item = new MapItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new CardItem( model.id, Main.createItemDiv( model.type, model ) );
 			default:
 				item = new BasicItem( model.id, Main.createItemDiv( model.type, model ) );
 		}
@@ -120,7 +144,7 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_V:
 				Main.doAction( 'setViewer', ary_select );
 			case KeyboardEvent.DOM_VK_A:
-				doMoveItem();
+				doMoveItem( ary_select.slice( 0 ) );
 			case KeyboardEvent.DOM_VK_F:
 				Main.doAction( 'flip', ary_select );
 			case KeyboardEvent.DOM_VK_X:
@@ -134,7 +158,7 @@ class MainController extends Mediator
 	
 	function onSelectItems( ary:Array<Dynamic>, selectLock:Bool = false ) {
 		ary_select = ary.map( function( model:Dynamic ) {
-			return getItemFromPoolById( model.id )[0];
+			return getItemFromPoolById( model.id );
 		});
 		if( !selectLock )
 			ary_select = filterLock( ary_select );
@@ -179,7 +203,7 @@ class MainController extends Mediator
 	function getItemFromPoolById( id:String ) {
 		return ary_allItem.filter( function( model ) {
 			return id == model.id;
-		});
+		})[0];
 	}
 	
 	function getMyItemFromPool() {
@@ -188,22 +212,25 @@ class MainController extends Mediator
 		});
 	}
 	
-	function doMoveItem() {
+	function doMoveItem( ary_items:Array<Dynamic> ) {
+		/*
 		if ( ary_select.length == 0 ) return;
 		
 		var moveTarget:Dynamic = { };
-		var copySelect = ary_select.slice( 0 );
+		var ary_items = ary_select.slice( 0 );
+		*/
 		
-		copySelect.sort( function( ac, bc ) {
+		var moveTarget:Dynamic = { };
+		ary_items.sort( function( ac, bc ) {
 			if ( ac.pos[0] < bc.pos[0] ) return -1;
 			return 1;
 		});
-		moveTarget.x = copySelect[0].pos[0];
-		copySelect.sort( function( ac, bc ) {
+		moveTarget.x = ary_items[0].pos[0];
+		ary_items.sort( function( ac, bc ) {
 			if ( ac.pos[1] < bc.pos[1] ) return -1;
 			return 1;
 		});
-		moveTarget.y = copySelect[0].pos[1];
+		moveTarget.y = ary_items[0].pos[1];
 		
 		
 		var offset = [
@@ -216,6 +243,7 @@ class MainController extends Mediator
 			return true;
 		});
 		
-		Main.doAction( 'move', copySelect );
+		Main.doAction( 'move', ary_items );
 	}
+	
 }

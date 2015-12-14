@@ -87,13 +87,7 @@ Main.main = function() {
 		e.preventDefault();
 	},false);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_MainController("",Main.j("#container_cards")));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",700,700));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",300,400));
+	Main.createSocket(Main.playerId);
 };
 Main.doAction = function(methodName,ary_item,extra) {
 	var info;
@@ -112,8 +106,6 @@ Main.doAction = function(methodName,ary_item,extra) {
 	default:
 		info = { };
 	}
-	console.log(info);
-	console.log(ary_item);
 	var _g1 = 0;
 	var _g = ary_item.length;
 	while(_g1 < _g) {
@@ -142,7 +134,7 @@ Main.doAction = function(methodName,ary_item,extra) {
 			item.setViewer(itemModel.viewer == Main.playerId);
 			break;
 		case "setOwner":
-			console.log(itemModel.owner);
+			haxe_Log.trace(itemModel.owner,{ fileName : "Main.hx", lineNumber : 86, className : "Main", methodName : "doAction"});
 			if(itemModel.owner == Main.playerId) itemModel.owner = ""; else itemModel.owner = Main.playerId;
 			item.setOwner(itemModel.owner == Main.playerId);
 			break;
@@ -171,11 +163,24 @@ Main.doAction = function(methodName,ary_item,extra) {
 	}
 };
 Main.messageSocket = function(toId,type,msg) {
-	var _channel = channel;
-	var msg1 = { type : type, msg : msg};
-	_channel.sendChannelMessage(toId,JSON.stringify(msg1),Main.handleResponse(function(ret) {
-		console.log(ret);
-	}));
+	haxe_Log.trace("pushMessage",{ fileName : "Main.hx", lineNumber : 118, className : "Main", methodName : "messageSocket", customParams : [type]});
+	Main.ary_sendMessage.push({ toId : toId, msg : { type : type, msg : JSON.parse(JSON.stringify(msg))}, channel : channel});
+	var doNextChannel;
+	var doNextChannel1 = null;
+	doNextChannel1 = function() {
+		if(Main.ary_sendMessage.length > 0) {
+			Main.isSending = true;
+			var m = Main.ary_sendMessage.shift();
+			haxe_Log.trace("messageSocket",{ fileName : "Main.hx", lineNumber : 133, className : "Main", methodName : "messageSocket", customParams : [m.msg.type]});
+			m.channel.sendChannelMessage(m.toId,JSON.stringify(m.msg),Main.handleResponse(function(ret) {
+				Main.isSending = false;
+				doNextChannel1();
+			}));
+		}
+	};
+	doNextChannel = doNextChannel1;
+	if(Main.isSending) return;
+	doNextChannel();
 };
 Main.createItem = function(pos,type,width,height,back,lock,owner,viewer) {
 	if(viewer == null) viewer = "";
@@ -194,8 +199,18 @@ Main.createSocket = function(id) {
 		Main.tempItem.pos[1] = 0;
 		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
 		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
+		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
+		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
+		Main.messageSocket(Main.playerId,"applyRotateBackward",[Main.tempItem]);
+		Main.tempItem.pos[0] = 130;
+		Main.tempItem.pos[1] = 200;
+		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
+		Main.messageSocket(Main.playerId,"applyFlip",[Main.tempItem]);
+		Main.messageSocket(Main.playerId,"applyFlip",[Main.tempItem]);
+		Main.tempItem.viewer = Main.playerId;
+		Main.tempItem.owner = Main.playerId;
+		Main.messageSocket(Main.playerId,"applyViewerOwner",[Main.tempItem]);
 	}, onmessage : function(json) {
-		console.log(json.type);
 		var _g = json.type;
 		switch(_g) {
 		case "addItems":
@@ -203,10 +218,24 @@ Main.createSocket = function(id) {
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,item,json.type);
 			break;
 		case "applyTransform":
-			var item1 = json.msg[0];
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,item1,json.type);
+			var items = json.msg;
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items,json.type);
 			break;
 		case "applyRotateForward":
+			var items1 = json.msg;
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items1,json.type);
+			break;
+		case "applyRotateBackward":
+			var items2 = json.msg;
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items2,json.type);
+			break;
+		case "applyViewerOwner":
+			var items3 = json.msg;
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items3,json.type);
+			break;
+		case "applyFlip":
+			var items4 = json.msg;
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items4,json.type);
 			break;
 		}
 	}, onerror : function() {
@@ -379,7 +408,7 @@ var controller_MainController = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	leo.utils.initRectSelect(function(ary) {
-		console.log(ary);
+		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 35, className : "controller.MainController", methodName : "new"});
 		_g.onSelectItems(ary);
 	});
 	Main.j("body").mousemove($bind(this,this.onBodyMouseMove));
@@ -392,7 +421,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		return [controller_MainController.create_item,controller_MainController.on_select_cards,controller_MainController.on_receiveMessage,view_BasicItem.on_item_click,view_BasicItem.on_item_lock];
 	}
 	,handleNotification: function(notification) {
-		console.log(notification);
+		var _g2 = this;
 		var _g = notification.getName();
 		var on_receiveMessage = _g;
 		switch(_g) {
@@ -416,11 +445,39 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 				this.createItem(notification.getBody());
 				break;
 			case "applyTransform":
-				var tempItem = notification.getBody();
-				var model = this.getItemFromPoolById(tempItem);
+				var tempItems = notification.getBody();
+				var ary_items = tempItems.map(function(tempItem) {
+					var model = _g2.getItemFromPoolById(tempItem.id);
+					model.pos = tempItem.pos.slice();
+					return model;
+				});
+				this.doMoveItem(ary_items);
+				break;
+			case "applyRotateForward":
+				var ary_items1 = this.receiveItemToLocalModel(notification.getBody());
+				Main.doAction("rotateForward",ary_items1);
+				break;
+			case "applyRotateBackward":
+				var ary_items2 = this.receiveItemToLocalModel(notification.getBody());
+				Main.doAction("rotateBackward",ary_items2);
+				break;
+			case "applyViewerOwner":
+				var ary_items3 = this.receiveItemToLocalModel(notification.getBody());
+				Main.doAction("setOwner",ary_items3);
+				Main.doAction("setViewer",ary_items3);
+				break;
+			case "applyFlip":
+				var ary_items4 = this.receiveItemToLocalModel(notification.getBody());
+				Main.doAction("flip",ary_items4);
 				break;
 			}
 		}
+	}
+	,receiveItemToLocalModel: function(ary_receive) {
+		var _g = this;
+		return ary_receive.map(function(tempItem) {
+			return _g.getItemFromPoolById(tempItem.id);
+		});
 	}
 	,createItem: function(model) {
 		var item;
@@ -430,7 +487,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			item = new view_CardItem(model.id,Main.createItemDiv(model.type,model));
 			break;
 		case "map":
-			item = new view_MapItem(model.id,Main.createItemDiv(model.type,model));
+			item = new view_CardItem(model.id,Main.createItemDiv(model.type,model));
 			break;
 		default:
 			item = new view_BasicItem(model.id,Main.createItemDiv(model.type,model));
@@ -469,7 +526,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			Main.doAction("setViewer",this.ary_select);
 			break;
 		case 65:
-			this.doMoveItem();
+			this.doMoveItem(this.ary_select.slice(0));
 			break;
 		case 70:
 			Main.doAction("flip",this.ary_select);
@@ -489,7 +546,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		if(selectLock == null) selectLock = false;
 		var _g = this;
 		this.ary_select = ary.map(function(model) {
-			return _g.getItemFromPoolById(model.id)[0];
+			return _g.getItemFromPoolById(model.id);
 		});
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.sendNotification(controller_MainController.on_select_cards,{ ary_select : this.ary_select});
@@ -529,27 +586,25 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 	,getItemFromPoolById: function(id) {
 		return this.ary_allItem.filter(function(model) {
 			return id == model.id;
-		});
+		})[0];
 	}
 	,getMyItemFromPool: function() {
 		return this.ary_allItem.filter(function(model) {
 			return Main.playerId == model.owner;
 		});
 	}
-	,doMoveItem: function() {
-		if(this.ary_select.length == 0) return;
+	,doMoveItem: function(ary_items) {
 		var moveTarget = { };
-		var copySelect = this.ary_select.slice(0);
-		copySelect.sort(function(ac,bc) {
+		ary_items.sort(function(ac,bc) {
 			if(ac.pos[0] < bc.pos[0]) return -1;
 			return 1;
 		});
-		moveTarget.x = copySelect[0].pos[0];
-		copySelect.sort(function(ac1,bc1) {
+		moveTarget.x = ary_items[0].pos[0];
+		ary_items.sort(function(ac1,bc1) {
 			if(ac1.pos[1] < bc1.pos[1]) return -1;
 			return 1;
 		});
-		moveTarget.y = copySelect[0].pos[1];
+		moveTarget.y = ary_items[0].pos[1];
 		var offset_0 = this.pos_mouse[0] - moveTarget.x;
 		var offset_1 = this.pos_mouse[1] - moveTarget.y;
 		Lambda.foreach(this.ary_select,function(select) {
@@ -557,12 +612,17 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			select.pos[1] += offset_1;
 			return true;
 		});
-		Main.doAction("move",copySelect);
+		Main.doAction("move",ary_items);
 	}
 	,__class__: controller_MainController
 });
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -618,6 +678,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -1156,8 +1235,10 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		if(!this._filp) this.showItemForMe(); else if(this._viewer && this._owner) this.showItemForMe(); else this.hideItemForMe();
 	}
 	,showItemForMe: function() {
+		this.viewComponent.find(".card_back").hide();
 	}
 	,hideItemForMe: function() {
+		this.viewComponent.find(".card_back").show();
 	}
 	,onSelect: function(ary_select) {
 		this.focus(false);
@@ -1196,13 +1277,7 @@ var view_CardItem = function(mediatorName,viewComponent) {
 view_CardItem.__name__ = true;
 view_CardItem.__super__ = view_BasicItem;
 view_CardItem.prototype = $extend(view_BasicItem.prototype,{
-	showItemForMe: function() {
-		this.viewComponent.find(".card_back").hide();
-	}
-	,hideItemForMe: function() {
-		this.viewComponent.find(".card_back").show();
-	}
-	,rotateForward: function(sd,ed) {
+	rotateForward: function(sd,ed) {
 		this.rotateAnimation(sd,ed);
 	}
 	,rotateBackward: function(sd,ed) {
@@ -1263,6 +1338,8 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 var __map_reserved = {}
 Main.j = $;
 Main.playerId = "vic";
+Main.ary_sendMessage = [];
+Main.isSending = false;
 Main.tempItem = { type : "card", width : 200, height : 200, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : true, deg : 0, lock : false, owner : "desktop", viewer : "", id : Main.createDivId()};
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 controller_MainController.create_item = "create_item";
