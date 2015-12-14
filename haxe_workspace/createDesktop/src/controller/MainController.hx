@@ -64,12 +64,19 @@ class MainController extends Mediator
 				viewComponent.append( div );
 				onSelectItems( div, true );
 			case 'create_item':
-				createItem( notification.getBody() );
+				var ary_creates:Array<Dynamic> = notification.getBody();
+				ary_creates.foreach( function( c:Dynamic ) {
+					createItem( c );
+					return true;
+				});
 			case on_receiveMessage:
 				switch( notification.getType() ) {
-					
 					case 'addItems':
-						createItem( notification.getBody() );
+						var tempItems:Array<Dynamic> = notification.getBody();
+						tempItems.foreach( function( c:Dynamic ) {
+							createItem( c );
+							return true;
+						});
 					case 'applyTransform':
 						var tempItems:Array<Dynamic>= notification.getBody();
 						var ary_items = tempItems.map( function( tempItem:Dynamic ) {

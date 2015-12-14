@@ -29,15 +29,13 @@ class Main
 		}, false);
 		
 		Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
-		/*
-		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
-		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
-		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
-		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
-		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ));
-		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 700, 700 ));
-		Facade.getInstance().sendNotification( MainController.create_item, createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 300, 400 ));
-		*/
+		Facade.getInstance().sendNotification( MainController.create_item, [
+																				createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
+																				createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
+																				createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
+																				createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 700, 700 )
+																			]);
+		
 		createSocket( playerId );
 	}
 	
@@ -233,27 +231,8 @@ class Main
 				}
 				*/
 			},
-			onmessage: function( json ){
-				switch( json.type ) {
-					case 'addItems':
-						var item:Dynamic = json.msg[0];
-						Facade.getInstance().sendNotification( MainController.on_receiveMessage, item, json.type );
-					case 'applyTransform':
-						var items:Array<Dynamic> = json.msg;
-						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
-					case 'applyRotateForward':
-						var items:Array<Dynamic> = json.msg;
-						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
-					case 'applyRotateBackward':
-						var items:Array<Dynamic> = json.msg;
-						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
-					case 'applyViewerOwner':
-						var items:Array<Dynamic> = json.msg;
-						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
-					case 'applyFlip':
-						var items:Array<Dynamic> = json.msg;
-						Facade.getInstance().sendNotification( MainController.on_receiveMessage, items, json.type );
-				}
+			onmessage: function( json ) {
+				Facade.getInstance().sendNotification( MainController.on_receiveMessage, json.msg, json.type );
 			},
 			onerror: function() {
 				/*

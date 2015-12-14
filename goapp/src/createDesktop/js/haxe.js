@@ -87,6 +87,7 @@ Main.main = function() {
 		e.preventDefault();
 	},false);
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_MainController("",Main.j("#container_cards")));
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,[Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",700,700)]);
 	Main.createSocket(Main.playerId);
 };
 Main.doAction = function(methodName,ary_item,extra) {
@@ -134,7 +135,7 @@ Main.doAction = function(methodName,ary_item,extra) {
 			item.setViewer(itemModel.viewer == Main.playerId);
 			break;
 		case "setOwner":
-			haxe_Log.trace(itemModel.owner,{ fileName : "Main.hx", lineNumber : 86, className : "Main", methodName : "doAction"});
+			haxe_Log.trace(itemModel.owner,{ fileName : "Main.hx", lineNumber : 84, className : "Main", methodName : "doAction"});
 			if(itemModel.owner == Main.playerId) itemModel.owner = ""; else itemModel.owner = Main.playerId;
 			item.setOwner(itemModel.owner == Main.playerId);
 			break;
@@ -163,7 +164,7 @@ Main.doAction = function(methodName,ary_item,extra) {
 	}
 };
 Main.messageSocket = function(toId,type,msg) {
-	haxe_Log.trace("pushMessage",{ fileName : "Main.hx", lineNumber : 118, className : "Main", methodName : "messageSocket", customParams : [type]});
+	haxe_Log.trace("pushMessage",{ fileName : "Main.hx", lineNumber : 116, className : "Main", methodName : "messageSocket", customParams : [type]});
 	Main.ary_sendMessage.push({ toId : toId, msg : { type : type, msg : JSON.parse(JSON.stringify(msg))}, channel : channel});
 	var doNextChannel;
 	var doNextChannel1 = null;
@@ -171,7 +172,7 @@ Main.messageSocket = function(toId,type,msg) {
 		if(Main.ary_sendMessage.length > 0) {
 			Main.isSending = true;
 			var m = Main.ary_sendMessage.shift();
-			haxe_Log.trace("messageSocket",{ fileName : "Main.hx", lineNumber : 133, className : "Main", methodName : "messageSocket", customParams : [m.msg.type]});
+			haxe_Log.trace("messageSocket",{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "messageSocket", customParams : [m.msg.type]});
 			m.channel.sendChannelMessage(m.toId,JSON.stringify(m.msg),Main.handleResponse(function(ret) {
 				Main.isSending = false;
 				doNextChannel1();
@@ -211,33 +212,7 @@ Main.createSocket = function(id) {
 		Main.tempItem.owner = Main.playerId;
 		Main.messageSocket(Main.playerId,"applyViewerOwner",[Main.tempItem]);
 	}, onmessage : function(json) {
-		var _g = json.type;
-		switch(_g) {
-		case "addItems":
-			var item = json.msg[0];
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,item,json.type);
-			break;
-		case "applyTransform":
-			var items = json.msg;
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items,json.type);
-			break;
-		case "applyRotateForward":
-			var items1 = json.msg;
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items1,json.type);
-			break;
-		case "applyRotateBackward":
-			var items2 = json.msg;
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items2,json.type);
-			break;
-		case "applyViewerOwner":
-			var items3 = json.msg;
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items3,json.type);
-			break;
-		case "applyFlip":
-			var items4 = json.msg;
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,items4,json.type);
-			break;
-		}
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,json.msg,json.type);
 	}, onerror : function() {
 	}, onclose : function() {
 	}});
@@ -421,7 +396,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		return [controller_MainController.create_item,controller_MainController.on_select_cards,controller_MainController.on_receiveMessage,view_BasicItem.on_item_click,view_BasicItem.on_item_lock];
 	}
 	,handleNotification: function(notification) {
-		var _g2 = this;
+		var _g1 = this;
 		var _g = notification.getName();
 		var on_receiveMessage = _g;
 		switch(_g) {
@@ -436,18 +411,26 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.onSelectItems(div1,true);
 			break;
 		case "create_item":
-			this.createItem(notification.getBody());
+			var ary_creates = notification.getBody();
+			Lambda.foreach(ary_creates,function(c) {
+				_g1.createItem(c);
+				return true;
+			});
 			break;
 		default:
-			var _g1 = notification.getType();
-			switch(_g1) {
+			var _g11 = notification.getType();
+			switch(_g11) {
 			case "addItems":
-				this.createItem(notification.getBody());
+				var tempItems = notification.getBody();
+				Lambda.foreach(tempItems,function(c1) {
+					_g1.createItem(c1);
+					return true;
+				});
 				break;
 			case "applyTransform":
-				var tempItems = notification.getBody();
-				var ary_items = tempItems.map(function(tempItem) {
-					var model = _g2.getItemFromPoolById(tempItem.id);
+				var tempItems1 = notification.getBody();
+				var ary_items = tempItems1.map(function(tempItem) {
+					var model = _g1.getItemFromPoolById(tempItem.id);
 					model.pos = tempItem.pos.slice();
 					return model;
 				});
