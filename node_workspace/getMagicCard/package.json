@@ -7,7 +7,8 @@
     "request": "*",
     "yargs": "3.26.0",
     "constant-db": "2.0.3",
-    "sqlite3":"*"
+    "sqlite3":"*",
+    "rx":"4.0.7"
   },
   "main": "main.js"
 }

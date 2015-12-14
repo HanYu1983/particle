@@ -2,6 +2,25 @@ var gameController = {};
 (function( module ){
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'ws':
+				$.ajax({
+					url: '../common/txt/wsList.json',
+					dataType: 'json',
+					success: function( ret ){
+						var list = _.filter( ret, function( obj ){
+							return obj.id != null
+						})
+						for( var i in list ){
+							list[i]['card-id'] = list[i].id
+							list[i].id = list[i].img
+						}
+						onLoadGameCallback( null, list )
+					},
+					error: function(xhr, res, err){
+						onLoadGameCallback( err )
+					}
+				})
+				break;
 			case 'sgs':
 				sgs.load( "../common/txt/sgsList.json", onLoadGameCallback)
 				break;
@@ -52,6 +71,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'ws':
+				return wsQuerystring2fns( str )
 			case 'sgs':
 				return sgsQuerystring2fns( str );
 			case 'dragonZ':
@@ -73,6 +94,33 @@ var gameController = {};
 			default:
 				return gundamWarNQuerystring2fns(str)
 		}
+	}
+	
+	function wsQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+			case 'card_name':
+				fns.push( cardsearch.attrEq( "name", v ) )
+				break;
+			case 'rule':
+				fns.push( cardsearch.attrEq( "text", v ) )
+				break;
+			case 'symbol':
+				fns.push( cardsearch.attrEq( "chars", v ) )
+				break;
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break;
+			}
+		}
+		return fns
 	}
 	
 	function sgsQuerystring2fns( qstr ){
@@ -510,6 +558,13 @@ var gameController = {};
 				break;
 			case 'symbol':
 				fns.push( cardsearch.attrEq( "info_11", v ) )
+				break;
+			case 'gsign':
+				fns.push( (function( v ){
+					return function( obj ){
+						return obj["info_23"] == v
+					}
+				})( v ))
 				break;
 			case 'area':
 				switch( v ){

@@ -152,6 +152,9 @@ body{
 			<div game="sgs">{{html name}}</div>
 			<div game="sgs">{{html type}}</div>
 			<div game="sgs">{{html text}}</div>
+
+			<div game="ws">{{html id}}</div>
+			<div game="ws">{{html text}}</div>
 		</div>
 	</div>
 </script>
@@ -212,6 +215,9 @@ body{
 			<div game="sgs">{{html id}}</div>
 			<div game="sgs">{{html name}}</div>
 			<div game="sgs">{{html type}}</div>
+
+			<div game="ws">{{html id}}</div>
+			<div game="ws">{{html name}}</div>
 		</div>
 	</div>
 </script>
@@ -304,6 +310,7 @@ body{
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會</a>
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=battleSpirits'" style="width:130px;" data-options="">戰魂</a>
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=crusade'" style="width:130px;" data-options="">Crusade</a>
+				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=ws'" style="width:130px;" data-options="">黑白雙翼</a>
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=dragonZ'" style="width:130px;" data-options="">七龍珠TCG</a>
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=ch'" style="width:130px;" data-options="iconCls:'icon-fire2'">遊戲王</a>
 				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=en'" style="width:130px;" data-options="">遊戲王(英)</a>
@@ -363,8 +370,19 @@ body{
 			<div game="battleSpirits">${info_42}</div>
 			<div game="battleSpirits">稀有度: ${info_13}</div>
 			*/
-			
 	var tmplAry = {
+		ws:{
+			default:[
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox',val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox',val:{name:'rule'}}],
+				[	{type:'label', val:'特徵'},
+					{type:'textbox', val:{name:'symbol'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox',val:{name:'cid'}}]
+			]
+		},
 		sgs:{
 			default:[
 				[
@@ -429,6 +447,16 @@ body{
 					{type:'textbox', span:11,val:{name:'rule'}}],
 				[{type:'label', val:'特徵'},
 					{type:'textbox', span:11, val:{name:'symbol'}}],
+				[
+					{type:'label', val:'G簽名'},
+					{
+						type:'select', span:11,
+						val:{
+							name:'gsign', 
+							items:["ORIGIN","GUNDAM","83", "Z","ZZ","クロスボーン","OO","UC","Gのレコンギスタ","AGE","NEX-A","CCA","BF","X","∀","G","W","SEED"]
+						}
+					}
+				],
 				[	{type:'label', val:'id檢索'},
 					{type:'textbox', span:11,val:{name:'cid'}}]
 			]
@@ -954,7 +982,8 @@ body{
 		battleSpirits: '戰魂',
 		crusade: 'Crusade',
 		dragonZ: '七龍珠TCG',
-		sgs: '三國殺陣面對決'
+		sgs: '三國殺陣面對決',
+		ws: '黑白雙翼'
 	}
 	$('title').html(titlemapping[game] + '-組牌風雲' );
 	

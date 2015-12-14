@@ -9,6 +9,7 @@
     [test.gundamWarN]
     [test.dragonZ]
     [test.sanguosha]
+    [test.ws]
     [lib.tool :as t]
     [clojure.string :as str]))
 
@@ -155,6 +156,9 @@
       
       "sgs.test"
       (test.sanguosha/test-base)
+      
+      "ws.test"
+      (test.ws/test-base)
       
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動
