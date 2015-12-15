@@ -39,8 +39,6 @@ var ws = ws || {};
 					return all.concat( curr )
 				}, [])
 				
-				console.log( list )
-				
 				var formated = _.map( list, function( info ){
 					var idary = info[0].split("/")
 					var id = idary[idary.length-2] + "_" + idary[idary.length-1]
@@ -55,12 +53,12 @@ var ws = ws || {};
 						level: parseInt(info[7]),
 						cost: parseInt(info[8]),
 						power: parseInt(info[9]),
-						sole: parseInt(info[10]),
+						soul: parseInt(info[10]),
 						trigger: info[11],
 						text: info[12]
 					}
 				})
-				console.log( formated )
+
 				cb( null, formated )
 			}
 		], cb)

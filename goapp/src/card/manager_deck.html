@@ -375,14 +375,46 @@ body{
 	var tmplAry = {
 		ws:{
 			default:[
+				[
+					{type:'label', val:'彈'},
+					{type:'select', span:4, val:{name:'pkg', items:['初音ミク -Project DIVA- f', '初音ミク -Project DIVA- f 2nd', '涼宮ハルヒの憂鬱', '進撃の巨人', '戦姫絶唱シンフォギア', '戦姫絶唱シンフォギアG', '戦姫絶唱シンフォギアGX', '艦隊これくしょん -艦これ-', '艦隊これくしょん -艦これ- 第二艦隊', 'To LOVEる -とらぶる- ダークネス 2nd']}}
+				],
+				[
+					{type:'label', val:'種類'},
+					{type:'select', span:4, val:{name:'type', items:['キャラ','イベント','クライマックス']}}
+				],
+				[
+					{type:'label', val:'level以上'},
+					{type:'select', span:1,val:{name:'level_1', items:['1','2','3']}},
+					{type:'label',val:'level以下'},
+					{type:'select', span:1, val:{name:'level_2', items:['1','2','3']}}
+				],
+				[
+					{type:'label', val:'cost以上'},
+					{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5','6','7','8','9']}},
+					{type:'label',val:'cost以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5','6','7','8','9']}}
+				],
+				[
+					{type:'label', val:'power以上'},
+					{type:'select', span:1,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500','6000','6500','7000','7500','8000','8500','9000','9500','10000']}},
+					{type:'label',val:'power以下'},
+					{type:'select', span:1, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500','6000','6500','7000','7500','8000','8500','9000','9500','10000']}}
+				],
+				[
+					{type:'label', val:'soul以上'},
+					{type:'select', span:1,val:{name:'soul_1', items:['1','2','3']}},
+					{type:'label',val:'soul以下'},
+					{type:'select', span:1, val:{name:'soul_2', items:['1','2','3']}}
+				],
 				[	{type:'label', val:'卡片名稱檢索'},
-					{type:'textbox',val:{name:'card_name'}}],
+					{type:'textbox', span: 3, val:{name:'card_name'}}],
 				[	{type:'label', val:'卡片規則檢索'},
-					{type:'textbox',val:{name:'rule'}}],
+					{type:'textbox', span: 3,val:{name:'rule'}}],
 				[	{type:'label', val:'特徵'},
-					{type:'textbox', val:{name:'symbol'}}],
+					{type:'textbox', span: 3, val:{name:'symbol'}}],
 				[	{type:'label', val:'id檢索'},
-					{type:'textbox',val:{name:'cid'}}]
+					{type:'textbox', span: 3,val:{name:'cid'}}]
 			]
 		},
 		sgs:{

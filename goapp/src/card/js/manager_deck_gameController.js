@@ -90,6 +90,36 @@ var gameController = {};
 				continue
 			}
 			switch( k ){
+			case 'pkg':
+				fns.push( cardsearch.attrEq( "pkg", v ) )
+				break;
+			case 'type':
+				fns.push( cardsearch.attrEq( "type", v ) )
+				break;
+			case 'level_1':
+				fns.push( cardsearch.attrGe( "level", parseInt(v) ) )
+				break;
+			case 'level_2':
+				fns.push( cardsearch.attrLe( "level", parseInt(v) ) )
+				break;
+			case 'cost_1':
+				fns.push( cardsearch.attrGe( "cost", parseInt(v) ) )
+				break;
+			case 'cost_2':
+				fns.push( cardsearch.attrLe( "cost", parseInt(v) ) )
+				break;
+			case 'power_1':
+				fns.push( cardsearch.attrGe( "power", parseInt(v) ) )
+				break;
+			case 'power_2':
+				fns.push( cardsearch.attrLe( "power", parseInt(v) ) )
+				break;
+			case 'soul_1':
+				fns.push( cardsearch.attrGe( "soul", parseInt(v) ) )
+				break;
+			case 'soul_2':
+				fns.push( cardsearch.attrLe( "soul", parseInt(v) ) )
+				break;
 			case 'card_name':
 				fns.push( cardsearch.attrEq( "name", v ) )
 				break;
@@ -100,6 +130,9 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "chars", v ) )
 				break;
 			case 'cid':
+				fns.push( cardsearch.attrEq( "cid", v ) )
+				break;
+			case 'id':
 				fns.push( cardsearch.attrEq( "id", v ) )
 				break;
 			}
