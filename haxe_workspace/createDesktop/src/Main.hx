@@ -1,6 +1,7 @@
 package;
 
 import controller.MainController;
+import controller.UIController;
 import haxe.Json;
 import js.Browser;
 import js.Lib;
@@ -21,7 +22,11 @@ class Main
 {
 	public static var j:Dynamic = untyped __js__( '$' );
 	
-	public static var playerId:String = 'vic';
+	public static var onBtnStartServer = 'onBtnStartServer';
+	public static var onBtnPokerClick = 'onBtnPokerClick';
+	
+	public static var playerId:String = 'smart';
+	public static var ary_ops:Array<String>;
 	
 	static function main() 
 	{
@@ -29,21 +34,42 @@ class Main
 			e.preventDefault();
 		}, false);
 		
-		Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
-		Facade.getInstance().sendNotification( MainController.create_item, [
-																				createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-																				createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-																				createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-																				createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 700, 700 )
-																			]);
+		j( Browser.document ).ready( function() {
+			Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
+			Facade.getInstance().registerMediator( new UIController( 'UIController', j( '.easyui-layout' ) ) );
+			
+			/*
+			Facade.getInstance().sendNotification( MainController.create_item, [
+																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
+																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
+																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
+																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 700, 700 )
+																				]);*/
+																				
+		});
 		
-		createSocket( playerId );
+		Browser.window.setField( 'onHtmlClick', onHtmlClick );
 	}
 	
 	static var ary_sendMessage:Array<Dynamic> = [];
 	static var isSending = false;
 	
-	public static function messageSocket( toId, type, msg ) {
+	public static function messageSocket( type, msg ) {
+		
+		function messageSingle( toId, _type, _msg ){
+			untyped __js__( 'channel' ).sendChannelMessage( toId, Json.stringify( {
+				type:_type, 
+				msg:Json.parse( Json.stringify( _msg ))
+			}), handleResponse( function( ret ) {
+				trace( ret );
+			} ));
+		}
+		
+		ary_ops.foreach( function( op ) {
+			messageSingle( op, type, msg );
+			return true;
+		});
+		/*
 		ary_sendMessage.push( {
 			toId: toId,
 			msg:{ type:type, msg:Json.parse( Json.stringify( msg )) },
@@ -64,7 +90,7 @@ class Main
 		
 		if ( isSending ) return;
 		doNextChannel();
-		
+		*/
 	}
 	
 	public static function createItem( pos:Array<Int>, ?type:String = 'card', ?width:Int = 100, ?height:Int = 100, ?back = true, ?lock = false, ?owner = 'desktop', ?viewer = '' ) {
@@ -85,7 +111,8 @@ class Main
 	public static function createSocket( id ) {
 		untyped __js__( 'api.createChannel' )( id, {
 			onopen: function() {
-				
+				trace( 'ok' );
+				/*
 				var ary_temp = [
 									createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
 									createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
@@ -123,6 +150,8 @@ class Main
 				ary_temp[3].owner = playerId;
 				ary_temp[1].owner = playerId;
 				messageSocket( playerId, 'applyTransform', ary_temp );
+				
+				*/
 				/*
 				messageSocket( playerId, 'applyFlip', [ tempItem ] );
 				messageSocket( playerId, 'applyFlip', [ tempItem ] );
@@ -209,5 +238,9 @@ class Main
 				cb( ret );
 			}
 		}
+	}
+	
+	static function onHtmlClick( type:String ) {
+		Facade.getInstance().sendNotification( type );
 	}
 }

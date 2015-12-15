@@ -85,27 +85,22 @@ Main.main = function() {
 	window.document.addEventListener("contextmenu",function(e) {
 		e.preventDefault();
 	},false);
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_MainController("",Main.j("#container_cards")));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,[Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",700,700)]);
-	Main.createSocket(Main.playerId);
+	Main.j(window.document).ready(function() {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_MainController("",Main.j("#container_cards")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_UIController("UIController",Main.j(".easyui-layout")));
+	});
+	Reflect.setField(window,"onHtmlClick",Main.onHtmlClick);
 };
-Main.messageSocket = function(toId,type,msg) {
-	Main.ary_sendMessage.push({ toId : toId, msg : { type : type, msg : JSON.parse(JSON.stringify(msg))}, channel : channel});
-	var doNextChannel;
-	var doNextChannel1 = null;
-	doNextChannel1 = function() {
-		if(Main.ary_sendMessage.length > 0) {
-			Main.isSending = true;
-			var m = Main.ary_sendMessage.shift();
-			m.channel.sendChannelMessage(m.toId,JSON.stringify(m.msg),Main.handleResponse(function(ret) {
-				Main.isSending = false;
-				doNextChannel1();
-			}));
-		}
+Main.messageSocket = function(type,msg) {
+	var messageSingle = function(toId,_type,_msg) {
+		channel.sendChannelMessage(toId,JSON.stringify({ type : _type, msg : JSON.parse(JSON.stringify(_msg))}),Main.handleResponse(function(ret) {
+			console.log(ret);
+		}));
 	};
-	doNextChannel = doNextChannel1;
-	if(Main.isSending) return;
-	doNextChannel();
+	Lambda.foreach(Main.ary_ops,function(op) {
+		messageSingle(op,type,msg);
+		return true;
+	});
 };
 Main.createItem = function(pos,type,width,height,back,lock,owner,viewer) {
 	if(viewer == null) viewer = "";
@@ -119,31 +114,7 @@ Main.createItem = function(pos,type,width,height,back,lock,owner,viewer) {
 };
 Main.createSocket = function(id) {
 	api.createChannel(id,{ onopen : function() {
-		var ary_temp = [Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",200,50)];
-		Main.messageSocket(Main.playerId,"addItems",ary_temp);
-		ary_temp[0].pos[0] = 100;
-		ary_temp[0].pos[1] = 0;
-		ary_temp[1].pos[0] = 150;
-		ary_temp[1].pos[1] = 200;
-		Main.messageSocket(Main.playerId,"applyTransform",ary_temp);
-		ary_temp[0].deg += 90;
-		ary_temp[1].back = false;
-		Main.messageSocket(Main.playerId,"applyTransform",ary_temp);
-		ary_temp[0].deg += 90;
-		ary_temp[1].pos[0] += 90;
-		ary_temp[2].pos[1] += 90;
-		Main.messageSocket(Main.playerId,"applyTransform",ary_temp);
-		ary_temp[0].deg += 90;
-		Main.messageSocket(Main.playerId,"applyTransform",ary_temp);
-		ary_temp[0].deg -= 90;
-		Main.messageSocket(Main.playerId,"applyTransform",ary_temp);
-		ary_temp[0].pos[0] = 130;
-		ary_temp[0].pos[1] = 200;
-		ary_temp[2].owner = Main.playerId;
-		ary_temp[2].viewer = Main.playerId;
-		ary_temp[3].owner = Main.playerId;
-		ary_temp[1].owner = Main.playerId;
-		Main.messageSocket(Main.playerId,"applyTransform",ary_temp);
+		console.log("ok");
 	}, onmessage : function(json) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,json.msg,json.type);
 	}, onerror : function() {
@@ -169,6 +140,9 @@ Main.handleResponse = function(cb) {
 		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
+Main.onHtmlClick = function(type) {
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(type);
+};
 Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
@@ -179,6 +153,9 @@ Reflect.field = function(o,field) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
+};
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
 };
 Reflect.fields = function(o) {
 	var a = [];
@@ -320,6 +297,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 				_g1.createItem(c);
 				return true;
 			});
+			Main.messageSocket("addItems",ary_creates);
 			break;
 		default:
 			var _g11 = notification.getType();
@@ -469,6 +447,13 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.setModelLock();
 			this.updateView(this.ary_select);
 			break;
+		}
+		var _g1 = e.which;
+		switch(_g1) {
+		case 68:
+			break;
+		default:
+			Main.messageSocket("applyTransform",this.ary_select);
 		}
 	}
 	,rotateModel: function(deg) {
@@ -641,6 +626,40 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		});
 	}
 	,__class__: controller_MainController
+});
+var controller_UIController = function(mediatorName,viewComponent) {
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+};
+controller_UIController.__name__ = true;
+controller_UIController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [Main.onBtnStartServer,Main.onBtnPokerClick];
+	}
+	,handleNotification: function(notification) {
+		var _g = notification.getName();
+		switch(_g) {
+		case "onBtnStartServer":
+			this.startServer();
+			break;
+		case "onBtnPokerClick":
+			this.createPoker();
+			break;
+		}
+	}
+	,createPoker: function() {
+		var ary_create = [Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",200,200)];
+		this.facade.sendNotification(controller_MainController.create_item,ary_create);
+	}
+	,startServer: function() {
+		var playerId = this.viewComponent.find("#txt_id").textbox("getValue");
+		if(playerId == "") return;
+		Main.playerId = playerId;
+		Main.createSocket(playerId);
+		var ops = this.viewComponent.find("#combo_ops").combobox("getValue");
+		Main.ary_ops = ops.split(",");
+	}
+	,__class__: controller_UIController
 });
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
@@ -1323,7 +1342,9 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 };
 var __map_reserved = {}
 Main.j = $;
-Main.playerId = "vic";
+Main.onBtnStartServer = "onBtnStartServer";
+Main.onBtnPokerClick = "onBtnPokerClick";
+Main.playerId = "smart";
 Main.ary_sendMessage = [];
 Main.isSending = false;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";

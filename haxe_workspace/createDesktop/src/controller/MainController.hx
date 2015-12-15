@@ -54,7 +54,6 @@ class MainController extends Mediator
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
-		//trace( notification );
 		switch( notification.getName() ) {
 			
 			case BasicItem.on_item_lock:
@@ -71,6 +70,7 @@ class MainController extends Mediator
 					createItem( c );
 					return true;
 				});
+				Main.messageSocket( 'addItems', ary_creates );
 			case on_receiveMessage:
 				switch( notification.getType() ) {
 					case 'addItems':
@@ -81,22 +81,6 @@ class MainController extends Mediator
 						});
 					case 'applyTransform':
 						updateView( updateModel( notification.getBody() ) );
-						
-						/*
-					case 'applyRotateForward':
-						var ary_items = receiveItemToLocalModel( notification.getBody() );
-						Main.doAction( 'rotateForward', ary_items );
-					case 'applyRotateBackward':
-						var ary_items = receiveItemToLocalModel( notification.getBody() );
-						Main.doAction( 'rotateBackward', ary_items );
-					case 'applyViewerOwner':
-						var ary_items = receiveItemToLocalModel( notification.getBody() );
-						Main.doAction( 'setOwner', ary_items );
-						Main.doAction( 'setViewer', ary_items );
-					case 'applyFlip':
-						var ary_items = receiveItemToLocalModel( notification.getBody() );
-						Main.doAction( 'flip', ary_items );
-						*/
 				}
 		}
 	}
@@ -237,6 +221,13 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_L:
 				setModelLock();
 				updateView( ary_select );
+		}
+		
+		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_D:
+				//do nothing!
+			case _:
+				Main.messageSocket( 'applyTransform', ary_select );
 		}
 	}
 	
