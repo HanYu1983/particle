@@ -324,6 +324,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			model.owner = receive.owner;
 			model.viewer = receive.viewer;
 			model.back = receive.back;
+			model.lock = receive.lock;
 			return model;
 		});
 	}

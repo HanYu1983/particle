@@ -93,6 +93,7 @@ class MainController extends Mediator
 			model.owner = receive.owner;
 			model.viewer = receive.viewer;
 			model.back = receive.back;
+			model.lock = receive.lock;
 			return model;
 		});
 	}
