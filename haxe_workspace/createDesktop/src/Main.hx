@@ -12,6 +12,7 @@ import view.IItem;
 
 using Lambda;
 using Reflect;
+using StringTools;
 /**
  * ...
  * @author vic
@@ -55,6 +56,8 @@ class Main
 		}
 		//trace( info );
 		//trace( ary_item );
+		updateView( ary_item );
+		return ;
 		for ( i in 0...ary_item.length ) {
 			var itemModel:Dynamic = ary_item[i];
 			var itemMediator:IMediator = Facade.getInstance().retrieveMediator( itemModel.id );
@@ -93,6 +96,7 @@ class Main
 				case 'flip': 
 					itemModel.back = !itemModel.back;
 					item.flip( itemModel.back );
+					/*
 				case 'rotateForward':
 					var td = Math.floor( itemModel.deg + 90 );
 					item.rotateForward( itemModel.deg, td );
@@ -100,13 +104,27 @@ class Main
 				case 'rotateBackward':
 					var td = Math.floor( itemModel.deg - 90 );
 					item.rotateForward( itemModel.deg, td );
-					itemModel.deg = td;
+					itemModel.deg = td;*/
 				case 'lock':
 					itemModel.lock = !itemModel.lock;
 					item.lock( itemModel.lock );
 			}
 			
 		}
+	}
+	
+	public static function updateView( ary_item:Array<Dynamic> ) {
+		ary_item.foreach( function( item:Dynamic ) {
+			var m:IItem = cast( Facade.getInstance().retrieveMediator( item.id ), IItem );
+			var dom:Dynamic = Facade.getInstance().retrieveMediator( item.id ).getViewComponent();
+			var dom_pos = [ StringTools.replace( dom.css( 'left' ), 'px', '' ), StringTools.replace( dom.css( 'top' ), 'px', '' )];
+			
+			if ( ( dom_pos[0] != item.pos[0] ) || ( dom_pos[1] != item.pos[1] )) {
+				m.move( item.pos[0], item.pos[1] );
+			}
+			
+			return true;
+		});
 	}
 	
 	static var ary_sendMessage:Array<Dynamic> = [];
@@ -192,23 +210,27 @@ class Main
 				tempItem.pos[1] = 0;
 				messageSocket( playerId, 'applyTransform', [ tempItem ] );
 				
-				messageSocket( playerId, 'applyRotateForward', [ tempItem ] );
-				messageSocket( playerId, 'applyRotateForward', [ tempItem ] );
-				messageSocket( playerId, 'applyRotateForward', [ tempItem ] );
+				tempItem.deg += 90;
+				messageSocket( playerId, 'applyTransform', [ tempItem ] );
+				tempItem.deg += 90;
+				messageSocket( playerId, 'applyTransform', [ tempItem ] );
+				tempItem.deg += 90;
+				messageSocket( playerId, 'applyTransform', [ tempItem ] );
 				
-				messageSocket( playerId, 'applyRotateBackward', [ tempItem ] );
+				tempItem.deg -= 90;
+				messageSocket( playerId, 'applyTransform', [ tempItem ] );
 				
 				tempItem.pos[0] = 130;
 				tempItem.pos[1] = 200;
 				messageSocket( playerId, 'applyTransform', [ tempItem ] );
-				
+				/*
 				messageSocket( playerId, 'applyFlip', [ tempItem ] );
 				messageSocket( playerId, 'applyFlip', [ tempItem ] );
 				
 				tempItem.viewer = playerId;
 				tempItem.owner = playerId;
 				messageSocket( playerId, 'applyViewerOwner', [ tempItem ] );
-				
+				*/
 				/*
 				isCanSendMessage = true;
 				slide( '連線成功' );

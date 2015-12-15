@@ -1,5 +1,6 @@
 package controller;
 
+import js.Browser;
 import js.html.KeyboardEvent;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
@@ -78,13 +79,7 @@ class MainController extends Mediator
 							return true;
 						});
 					case 'applyTransform':
-						var tempItems:Array<Dynamic>= notification.getBody();
-						var ary_items = tempItems.map( function( tempItem:Dynamic ) {
-							var model:Dynamic = getItemFromPoolById( tempItem.id );
-							model.pos = tempItem.pos.slice();
-							return model;
-						});
-						doMoveItem( ary_items );
+						updateView( updateModel( notification.getBody() ) );
 					case 'applyRotateForward':
 						var ary_items = receiveItemToLocalModel( notification.getBody() );
 						Main.doAction( 'rotateForward', ary_items );
@@ -100,6 +95,63 @@ class MainController extends Mediator
 						Main.doAction( 'flip', ary_items );
 				}
 		}
+	}
+	
+	function updateModel( ary_receive:Array<Dynamic> ) {
+		return ary_receive.map( function( receive:Dynamic ) {
+			var model:Dynamic = getItemFromPoolById( receive.id );
+			model.pos = receive.pos.slice();
+			model.deg = receive.deg;
+			return model;
+		});
+	}
+	
+	function updateView( ary_item:Array<Dynamic> ) {
+		ary_item.foreach( function( item:Dynamic ) {
+			var m:IItem = cast( facade.retrieveMediator( item.id ), IItem );
+			var dom:Dynamic = facade.retrieveMediator( item.id ).getViewComponent();
+			var dom_pos = [ StringTools.replace( dom.css( 'left' ), 'px', '' ), StringTools.replace( dom.css( 'top' ), 'px', '' )];
+			
+			if ( dom.attr( 'deg' ) == null ) {
+				m.rotate( 0, item.deg );
+			}else {
+				var oldDegree = dom.attr( 'deg' );
+				if ( oldDegree != item.deg ) {
+					m.rotate( oldDegree, item.deg );
+				}
+			}
+			dom.attr( 'deg', item.deg );
+			/*
+			if ( dom.css('transform') == 'none' ) {
+				m.rotateBackward( 0, item.deg );
+			}else {
+				var oldDegree = getDegreeFromMatrix( dom.css( 'transform' ));
+				if ( oldDegree != item.deg ) {
+					m.rotateBackward( oldDegree, item.deg );
+				}
+				trace( oldDegree, item.deg );
+			}
+			*/
+			
+			if ( ( dom_pos[0] != item.pos[0] ) || ( dom_pos[1] != item.pos[1] )) {
+				m.move( item.pos[0], item.pos[1] );
+			}
+			
+			return true;
+		});
+	}
+	
+	function getDegreeFromMatrix( m ) {
+		var values = m.split('(')[1],
+			values = values.split(')')[0],
+			values = values.split(',');
+
+		var a = values[0]; // 0.866025
+		var b = values[1]; // 0.5
+		var c = values[2]; // -0.5
+		var d = values[3]; // 0.866025
+		
+		return Math.round( Math.asin(b) * (180 / Math.PI));
 	}
 	
 	function receiveItemToLocalModel( ary_receive:Array<Dynamic> ) {
@@ -130,6 +182,30 @@ class MainController extends Mediator
 		sendNotification( on_press, null, e.which );
 		
 		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_A:
+				doMoveItem( ary_select.slice( 0 ) );
+			case KeyboardEvent.DOM_VK_X:
+				ary_select.foreach( function( item:Dynamic ) {
+					item.deg += 90;
+					return true;
+				});
+				updateView( ary_select );
+			case KeyboardEvent.DOM_VK_Z:
+				ary_select.foreach( function( item:Dynamic ) {
+					item.deg -= 90;
+					return true;
+				});
+				updateView( ary_select );
+				/*
+				 * case 'rotateForward':
+					var td = Math.floor( itemModel.deg + 90 );
+					item.rotateForward( itemModel.deg, td );
+					itemModel.deg = td;
+				case 'rotateBackward':
+					var td = Math.floor( itemModel.deg - 90 );
+					item.rotateForward( itemModel.deg, td );
+					itemModel.deg = td;*/
+					
 			case KeyboardEvent.DOM_VK_E:
 				doSortingItem();
 				Main.doAction( 'list', ary_select, {pos_mouse:pos_mouse} );
@@ -150,14 +226,10 @@ class MainController extends Mediator
 				Main.doAction( 'setOwner', ary_select );
 			case KeyboardEvent.DOM_VK_V:
 				Main.doAction( 'setViewer', ary_select );
-			case KeyboardEvent.DOM_VK_A:
-				doMoveItem( ary_select.slice( 0 ) );
+			
 			case KeyboardEvent.DOM_VK_F:
 				Main.doAction( 'flip', ary_select );
-			case KeyboardEvent.DOM_VK_X:
-				Main.doAction( 'rotateForward', ary_select );
-			case KeyboardEvent.DOM_VK_Z:
-				Main.doAction( 'rotateBackward', ary_select );
+			
 			case KeyboardEvent.DOM_VK_L:
 				Main.doAction( 'lock', ary_select );
 		}

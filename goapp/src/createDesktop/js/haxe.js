@@ -107,6 +107,8 @@ Main.doAction = function(methodName,ary_item,extra) {
 	default:
 		info = { };
 	}
+	Main.updateView(ary_item);
+	return;
 	var _g1 = 0;
 	var _g = ary_item.length;
 	while(_g1 < _g) {
@@ -135,7 +137,7 @@ Main.doAction = function(methodName,ary_item,extra) {
 			item.setViewer(itemModel.viewer == Main.playerId);
 			break;
 		case "setOwner":
-			haxe_Log.trace(itemModel.owner,{ fileName : "Main.hx", lineNumber : 84, className : "Main", methodName : "doAction"});
+			haxe_Log.trace(itemModel.owner,{ fileName : "Main.hx", lineNumber : 87, className : "Main", methodName : "doAction"});
 			if(itemModel.owner == Main.playerId) itemModel.owner = ""; else itemModel.owner = Main.playerId;
 			item.setOwner(itemModel.owner == Main.playerId);
 			break;
@@ -146,16 +148,6 @@ Main.doAction = function(methodName,ary_item,extra) {
 			itemModel.back = !itemModel.back;
 			item.flip(itemModel.back);
 			break;
-		case "rotateForward":
-			var td = Math.floor(itemModel.deg + 90);
-			item.rotateForward(itemModel.deg,td);
-			itemModel.deg = td;
-			break;
-		case "rotateBackward":
-			var td1 = Math.floor(itemModel.deg - 90);
-			item.rotateForward(itemModel.deg,td1);
-			itemModel.deg = td1;
-			break;
 		case "lock":
 			itemModel.lock = !itemModel.lock;
 			item.lock(itemModel.lock);
@@ -163,8 +155,19 @@ Main.doAction = function(methodName,ary_item,extra) {
 		}
 	}
 };
+Main.updateView = function(ary_item) {
+	Lambda.foreach(ary_item,function(item) {
+		var m;
+		m = js_Boot.__cast(org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(item.id) , view_IItem);
+		var dom = org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(item.id).getViewComponent();
+		var dom_pos_0 = StringTools.replace(dom.css("left"),"px","");
+		var dom_pos_1 = StringTools.replace(dom.css("top"),"px","");
+		if(dom_pos_0 != item.pos[0] || dom_pos_1 != item.pos[1]) m.move(item.pos[0],item.pos[1]);
+		return true;
+	});
+};
 Main.messageSocket = function(toId,type,msg) {
-	haxe_Log.trace("pushMessage",{ fileName : "Main.hx", lineNumber : 116, className : "Main", methodName : "messageSocket", customParams : [type]});
+	haxe_Log.trace("pushMessage",{ fileName : "Main.hx", lineNumber : 134, className : "Main", methodName : "messageSocket", customParams : [type]});
 	Main.ary_sendMessage.push({ toId : toId, msg : { type : type, msg : JSON.parse(JSON.stringify(msg))}, channel : channel});
 	var doNextChannel;
 	var doNextChannel1 = null;
@@ -172,7 +175,7 @@ Main.messageSocket = function(toId,type,msg) {
 		if(Main.ary_sendMessage.length > 0) {
 			Main.isSending = true;
 			var m = Main.ary_sendMessage.shift();
-			haxe_Log.trace("messageSocket",{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "messageSocket", customParams : [m.msg.type]});
+			haxe_Log.trace("messageSocket",{ fileName : "Main.hx", lineNumber : 149, className : "Main", methodName : "messageSocket", customParams : [m.msg.type]});
 			m.channel.sendChannelMessage(m.toId,JSON.stringify(m.msg),Main.handleResponse(function(ret) {
 				Main.isSending = false;
 				doNextChannel1();
@@ -199,18 +202,17 @@ Main.createSocket = function(id) {
 		Main.tempItem.pos[0] = 100;
 		Main.tempItem.pos[1] = 0;
 		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyRotateBackward",[Main.tempItem]);
+		Main.tempItem.deg += 90;
+		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
+		Main.tempItem.deg += 90;
+		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
+		Main.tempItem.deg += 90;
+		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
+		Main.tempItem.deg -= 90;
+		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
 		Main.tempItem.pos[0] = 130;
 		Main.tempItem.pos[1] = 200;
 		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyFlip",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyFlip",[Main.tempItem]);
-		Main.tempItem.viewer = Main.playerId;
-		Main.tempItem.owner = Main.playerId;
-		Main.messageSocket(Main.playerId,"applyViewerOwner",[Main.tempItem]);
 	}, onmessage : function(json) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,json.msg,json.type);
 	}, onerror : function() {
@@ -296,6 +298,11 @@ var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
+};
+var StringTools = function() { };
+StringTools.__name__ = true;
+StringTools.replace = function(s,sub,by) {
+	return s.split(sub).join(by);
 };
 var Type = function() { };
 Type.__name__ = true;
@@ -383,7 +390,7 @@ var controller_MainController = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	leo.utils.initRectSelect(function(ary) {
-		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 35, className : "controller.MainController", methodName : "new"});
+		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 36, className : "controller.MainController", methodName : "new"});
 		_g.onSelectItems(ary);
 	});
 	Main.j("body").mousemove($bind(this,this.onBodyMouseMove));
@@ -428,33 +435,63 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 				});
 				break;
 			case "applyTransform":
-				var tempItems1 = notification.getBody();
-				var ary_items = tempItems1.map(function(tempItem) {
-					var model = _g1.getItemFromPoolById(tempItem.id);
-					model.pos = tempItem.pos.slice();
-					return model;
-				});
-				this.doMoveItem(ary_items);
+				this.updateView(this.updateModel(notification.getBody()));
 				break;
 			case "applyRotateForward":
-				var ary_items1 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("rotateForward",ary_items1);
+				var ary_items = this.receiveItemToLocalModel(notification.getBody());
+				Main.doAction("rotateForward",ary_items);
 				break;
 			case "applyRotateBackward":
-				var ary_items2 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("rotateBackward",ary_items2);
+				var ary_items1 = this.receiveItemToLocalModel(notification.getBody());
+				Main.doAction("rotateBackward",ary_items1);
 				break;
 			case "applyViewerOwner":
-				var ary_items3 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("setOwner",ary_items3);
-				Main.doAction("setViewer",ary_items3);
+				var ary_items2 = this.receiveItemToLocalModel(notification.getBody());
+				Main.doAction("setOwner",ary_items2);
+				Main.doAction("setViewer",ary_items2);
 				break;
 			case "applyFlip":
-				var ary_items4 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("flip",ary_items4);
+				var ary_items3 = this.receiveItemToLocalModel(notification.getBody());
+				Main.doAction("flip",ary_items3);
 				break;
 			}
 		}
+	}
+	,updateModel: function(ary_receive) {
+		var _g = this;
+		return ary_receive.map(function(receive) {
+			var model = _g.getItemFromPoolById(receive.id);
+			model.pos = receive.pos.slice();
+			model.deg = receive.deg;
+			return model;
+		});
+	}
+	,updateView: function(ary_item) {
+		var _g = this;
+		Lambda.foreach(ary_item,function(item) {
+			var m;
+			m = js_Boot.__cast(_g.facade.retrieveMediator(item.id) , view_IItem);
+			var dom = _g.facade.retrieveMediator(item.id).getViewComponent();
+			var dom_pos_0 = StringTools.replace(dom.css("left"),"px","");
+			var dom_pos_1 = StringTools.replace(dom.css("top"),"px","");
+			if(dom.attr("deg") == null) m.rotate(0,item.deg); else {
+				var oldDegree = dom.attr("deg");
+				if(oldDegree != item.deg) m.rotate(oldDegree,item.deg);
+			}
+			dom.attr("deg",item.deg);
+			if(dom_pos_0 != item.pos[0] || dom_pos_1 != item.pos[1]) m.move(item.pos[0],item.pos[1]);
+			return true;
+		});
+	}
+	,getDegreeFromMatrix: function(m) {
+		var values = m.split("(")[1];
+		var values1 = values.split(")")[0];
+		var values2 = values1.split(",");
+		var a = values2[0];
+		var b = values2[1];
+		var c = values2[2];
+		var d = values2[3];
+		return Math.round(Math.asin(b) * (180 / Math.PI));
 	}
 	,receiveItemToLocalModel: function(ary_receive) {
 		var _g = this;
@@ -485,6 +522,23 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		this.sendNotification(controller_MainController.on_press,null,e.which);
 		var _g = e.which;
 		switch(_g) {
+		case 65:
+			this.doMoveItem(this.ary_select.slice(0));
+			break;
+		case 88:
+			Lambda.foreach(this.ary_select,function(item) {
+				item.deg += 90;
+				return true;
+			});
+			this.updateView(this.ary_select);
+			break;
+		case 90:
+			Lambda.foreach(this.ary_select,function(item1) {
+				item1.deg -= 90;
+				return true;
+			});
+			this.updateView(this.ary_select);
+			break;
 		case 69:
 			this.doSortingItem();
 			Main.doAction("list",this.ary_select,{ pos_mouse : this.pos_mouse});
@@ -508,17 +562,8 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		case 86:
 			Main.doAction("setViewer",this.ary_select);
 			break;
-		case 65:
-			this.doMoveItem(this.ary_select.slice(0));
-			break;
 		case 70:
 			Main.doAction("flip",this.ary_select);
-			break;
-		case 88:
-			Main.doAction("rotateForward",this.ary_select);
-			break;
-		case 90:
-			Main.doAction("rotateBackward",this.ary_select);
 			break;
 		case 76:
 			Main.doAction("lock",this.ary_select);
@@ -1183,9 +1228,8 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 	,move: function(x,y) {
 		this.viewComponent.animate({ left : x, top : y});
 	}
-	,rotateForward: function(sd,ed) {
-	}
-	,rotateBackward: function(sd,ed) {
+	,rotate: function(sd,ed) {
+		this.rotateAnimation(sd,ed);
 	}
 	,setViewer: function(v) {
 		this._viewer = v;
@@ -1246,11 +1290,8 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 	,rotateAnimation: function(sd,ed) {
 		var _g = this;
 		Main.j({ deg : sd}).animate({ deg : ed},{ duration : 300, step : function(now) {
-			_g.rotate(now);
+			_g.getViewComponent().css({ '-moz-transform' : "rotate(" + now + "deg)", '-webkit-transform' : "rotate(" + now + "deg)", '-o-transform' : "rotate(" + now + "deg)", '-ms-transform' : "rotate(" + now + "deg)", 'transform' : "rotate(" + now + "deg)"});
 		}});
-	}
-	,rotate: function(d) {
-		this.getViewComponent().css({ '-moz-transform' : "rotate(" + d + "deg)", '-webkit-transform' : "rotate(" + d + "deg)", '-o-transform' : "rotate(" + d + "deg)", '-ms-transform' : "rotate(" + d + "deg)", 'transform' : "rotate(" + d + "deg)"});
 	}
 	,__class__: view_BasicItem
 });
@@ -1260,13 +1301,7 @@ var view_CardItem = function(mediatorName,viewComponent) {
 view_CardItem.__name__ = true;
 view_CardItem.__super__ = view_BasicItem;
 view_CardItem.prototype = $extend(view_BasicItem.prototype,{
-	rotateForward: function(sd,ed) {
-		this.rotateAnimation(sd,ed);
-	}
-	,rotateBackward: function(sd,ed) {
-		this.rotateAnimation(sd,ed);
-	}
-	,__class__: view_CardItem
+	__class__: view_CardItem
 });
 var view_MapItem = function(mediatorName,viewComponent) {
 	view_BasicItem.call(this,mediatorName,viewComponent);
@@ -1275,13 +1310,7 @@ view_MapItem.__name__ = true;
 view_MapItem.__interfaces__ = [view_IItem];
 view_MapItem.__super__ = view_BasicItem;
 view_MapItem.prototype = $extend(view_BasicItem.prototype,{
-	rotateForward: function(sd,ed) {
-		this.rotateAnimation(sd,ed);
-	}
-	,rotateBackward: function(sd,ed) {
-		this.rotateAnimation(sd,ed);
-	}
-	,__class__: view_MapItem
+	__class__: view_MapItem
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
