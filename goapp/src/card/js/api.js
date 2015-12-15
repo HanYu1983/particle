@@ -223,7 +223,7 @@ var api = api || {};
 		case 'other':
 			return '../common/images/card/' +id + '.jpg'
 		case 'ws':
-			return '//storage.googleapis.com/particle-resources/cardPackage/ws/' +id + '.gif'	
+			return '//storage.googleapis.com/particle-resources/cardPackage/ws/' +id + '.jpg'	
 		case 'sgs':
 			return '//storage.googleapis.com/particle-resources/cardPackage/sgs/' +id + '.jpg'
 		case 'gundamWarN':

@@ -10,6 +10,7 @@
     [test.dragonZ]
     [test.sanguosha]
     [test.ws]
+    [test.yoyo]
     [lib.tool :as t]
     [clojure.string :as str]))
 
@@ -159,6 +160,12 @@
       
       "ws.test"
       (test.ws/test-base)
+      
+      "yoyo.parseInfo"
+      (test.yoyo/parseInfo (.-n argv))
+      
+      "yoyo.getImage"
+      (test.yoyo/getImage (.-n argv))
       
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動
