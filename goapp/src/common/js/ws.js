@@ -3,16 +3,16 @@ var ws = ws || {};
 (function( module ) {
 	
 	var prods = [ 
-		'初音ミクProjectDIVAf',
-		'初音ミクProjectDIVAf2nd',
-		'涼宮ハルヒの憂鬱',
-		'進撃の巨人',
-		'戦姫絶唱シンフォギア',
-		'戦姫絶唱シンフォギアG',
-		'戦姫絶唱シンフォギアGX',
-		'艦隊これくしょん艦これ',
-		'艦隊これくしょん艦これ第二艦隊',
-		'ToLOVEるとらぶるダークネス2nd'
+		'aot',
+		'kancolle',
+		'kancolle2.0',
+		'miku',
+		'miku2.0',
+		'sh',
+		'symphogear',
+		'symphogearg',
+		'symphogeargx',
+		'tld2nd'
 	]
 	
 	function load( path, cb ){
