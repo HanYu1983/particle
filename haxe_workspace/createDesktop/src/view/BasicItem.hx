@@ -57,14 +57,8 @@ class BasicItem extends Mediator implements IItem
 		viewComponent.animate( { left:x, top:y } );
 	}
 	
-	public function rotateForward( sd:Int, ed:Int ):Void 
-	{
-		
-	}
-	
-	public function rotateBackward( sd:Int, ed:Int ):Void 
-	{
-		
+	public function rotate( sd:Int, ed:Int ):Void {
+		rotateAnimation( sd, ed );
 	}
 	
 	public function setViewer( v:Bool ):Void 
@@ -159,18 +153,15 @@ class BasicItem extends Mediator implements IItem
 		Main.j({deg: sd}).animate({deg: ed}, {
         duration: 300,
 			step: function(now) {
-				rotate( now );
+				getViewComponent().css({
+					'-moz-transform':'rotate('+now+'deg)',
+					'-webkit-transform':'rotate('+now+'deg)',
+					'-o-transform':'rotate('+now+'deg)',
+					'-ms-transform':'rotate('+now+'deg)',
+					'transform':'rotate('+now+'deg)'
+				}); 
 			}
 		});
 	}
 	
-	function rotate( d ) {
-		getViewComponent().css({
-			'-moz-transform':'rotate('+d+'deg)',
-			'-webkit-transform':'rotate('+d+'deg)',
-			'-o-transform':'rotate('+d+'deg)',
-			'-ms-transform':'rotate('+d+'deg)',
-			'transform':'rotate('+d+'deg)'
-		}); 
-	}
 }

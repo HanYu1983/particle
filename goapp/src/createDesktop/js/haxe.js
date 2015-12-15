@@ -79,109 +79,28 @@ _$List_ListIterator.prototype = {
 	}
 	,__class__: _$List_ListIterator
 };
-Math.__name__ = true;
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
 	window.document.addEventListener("contextmenu",function(e) {
 		e.preventDefault();
 	},false);
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_MainController("",Main.j("#container_cards")));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.create_item,[Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",700,700)]);
-	Main.createSocket(Main.playerId);
+	Main.j(window.document).ready(function() {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_MainController("",Main.j("#container_cards")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_UIController("UIController",Main.j(".easyui-layout")));
+	});
+	Reflect.setField(window,"onHtmlClick",Main.onHtmlClick);
 };
-Main.doAction = function(methodName,ary_item,extra) {
-	var info;
-	switch(methodName) {
-	case "list":case "together":
-		info = Main.collectInfo(ary_item);
-		break;
-	case "shuffle":
-		Main.doShuffleModel(ary_item);
-		info = { };
-		break;
-	case "reverse":
-		Main.doReverseModel(ary_item);
-		info = { };
-		break;
-	default:
-		info = { };
-	}
-	var _g1 = 0;
-	var _g = ary_item.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		var itemModel = ary_item[i];
-		var itemMediator = org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(itemModel.id);
-		var item;
-		item = js_Boot.__cast(itemMediator , view_IItem);
-		if(methodName != "lock") {
-			if(itemModel.lock) continue;
-		}
-		switch(methodName) {
-		case "shuffle":case "together":case "reverse":
-			var pos_mouse = Reflect.field(extra,"pos_mouse");
-			Main.doTogetherModel(itemModel,i,pos_mouse);
-			item.move(itemModel.pos[0],itemModel.pos[1]);
-			Main.doZSort(itemMediator.getViewComponent());
-			break;
-		case "list":
-			var pos_mouse1 = Reflect.field(extra,"pos_mouse");
-			Main.doListModel(itemModel,i,pos_mouse1,info);
-			item.move(itemModel.pos[0],itemModel.pos[1]);
-			break;
-		case "setViewer":
-			if(itemModel.viewer == Main.playerId) itemModel.viewer = ""; else itemModel.viewer = Main.playerId;
-			item.setViewer(itemModel.viewer == Main.playerId);
-			break;
-		case "setOwner":
-			haxe_Log.trace(itemModel.owner,{ fileName : "Main.hx", lineNumber : 84, className : "Main", methodName : "doAction"});
-			if(itemModel.owner == Main.playerId) itemModel.owner = ""; else itemModel.owner = Main.playerId;
-			item.setOwner(itemModel.owner == Main.playerId);
-			break;
-		case "move":
-			item.move(itemModel.pos[0],itemModel.pos[1]);
-			break;
-		case "flip":
-			itemModel.back = !itemModel.back;
-			item.flip(itemModel.back);
-			break;
-		case "rotateForward":
-			var td = Math.floor(itemModel.deg + 90);
-			item.rotateForward(itemModel.deg,td);
-			itemModel.deg = td;
-			break;
-		case "rotateBackward":
-			var td1 = Math.floor(itemModel.deg - 90);
-			item.rotateForward(itemModel.deg,td1);
-			itemModel.deg = td1;
-			break;
-		case "lock":
-			itemModel.lock = !itemModel.lock;
-			item.lock(itemModel.lock);
-			break;
-		}
-	}
-};
-Main.messageSocket = function(toId,type,msg) {
-	haxe_Log.trace("pushMessage",{ fileName : "Main.hx", lineNumber : 116, className : "Main", methodName : "messageSocket", customParams : [type]});
-	Main.ary_sendMessage.push({ toId : toId, msg : { type : type, msg : JSON.parse(JSON.stringify(msg))}, channel : channel});
-	var doNextChannel;
-	var doNextChannel1 = null;
-	doNextChannel1 = function() {
-		if(Main.ary_sendMessage.length > 0) {
-			Main.isSending = true;
-			var m = Main.ary_sendMessage.shift();
-			haxe_Log.trace("messageSocket",{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "messageSocket", customParams : [m.msg.type]});
-			m.channel.sendChannelMessage(m.toId,JSON.stringify(m.msg),Main.handleResponse(function(ret) {
-				Main.isSending = false;
-				doNextChannel1();
-			}));
-		}
+Main.messageSocket = function(type,msg) {
+	var messageSingle = function(toId,_type,_msg) {
+		channel.sendChannelMessage(toId,JSON.stringify({ type : _type, msg : JSON.parse(JSON.stringify(_msg))}),Main.handleResponse(function(ret) {
+			console.log(ret);
+		}));
 	};
-	doNextChannel = doNextChannel1;
-	if(Main.isSending) return;
-	doNextChannel();
+	Lambda.foreach(Main.ary_ops,function(op) {
+		messageSingle(op,type,msg);
+		return true;
+	});
 };
 Main.createItem = function(pos,type,width,height,back,lock,owner,viewer) {
 	if(viewer == null) viewer = "";
@@ -195,63 +114,12 @@ Main.createItem = function(pos,type,width,height,back,lock,owner,viewer) {
 };
 Main.createSocket = function(id) {
 	api.createChannel(id,{ onopen : function() {
-		Main.messageSocket(Main.playerId,"addItems",[Main.tempItem]);
-		Main.tempItem.pos[0] = 100;
-		Main.tempItem.pos[1] = 0;
-		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyRotateForward",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyRotateBackward",[Main.tempItem]);
-		Main.tempItem.pos[0] = 130;
-		Main.tempItem.pos[1] = 200;
-		Main.messageSocket(Main.playerId,"applyTransform",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyFlip",[Main.tempItem]);
-		Main.messageSocket(Main.playerId,"applyFlip",[Main.tempItem]);
-		Main.tempItem.viewer = Main.playerId;
-		Main.tempItem.owner = Main.playerId;
-		Main.messageSocket(Main.playerId,"applyViewerOwner",[Main.tempItem]);
+		console.log("ok");
 	}, onmessage : function(json) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,json.msg,json.type);
 	}, onerror : function() {
 	}, onclose : function() {
 	}});
-};
-Main.getMediatorFromId = function(id) {
-	return js_Boot.__cast(org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(id) , view_IItem);
-};
-Main.collectInfo = function(ary_item) {
-	var mw = 0.0;
-	var mh = 0.0;
-	var firstPos = [];
-	var _g1 = 0;
-	var _g = ary_item.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		if(i == 0) firstPos = ary_item[i].pos.slice();
-		mw = Math.max(mw,ary_item[i].width);
-		mh = Math.max(mw,ary_item[i].height);
-	}
-	return { mw : mw, mh : mh, firstPos : firstPos};
-};
-Main.doZSort = function(dom) {
-	dom.appendTo(dom.parent());
-};
-Main.doTogetherModel = function(itemModel,i,pos_mouse) {
-	itemModel.pos[0] = i * 2 + pos_mouse[0];
-	itemModel.pos[1] = i * 2 + pos_mouse[1];
-};
-Main.doListModel = function(itemModel,i,pos_mouse,info) {
-	itemModel.pos[0] = i % 10 * (Reflect.field(info,"mw") + 4) + pos_mouse[0];
-	itemModel.pos[1] = Math.floor(i / 10) * (Reflect.field(info,"mh") + 4) + pos_mouse[1];
-};
-Main.doShuffleModel = function(ary_item) {
-	ary_item.sort(function(a,b) {
-		if(Math.random() > .5) return 1; else return -1;
-	});
-};
-Main.doReverseModel = function(ary_item) {
-	ary_item.reverse();
 };
 Main.createItemDiv = function(type,model) {
 	var div = Main.j("#tmpl_" + type).tmpl(model);
@@ -272,6 +140,10 @@ Main.handleResponse = function(cb) {
 		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
+Main.onHtmlClick = function(type) {
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(type);
+};
+Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
 Reflect.field = function(o,field) {
@@ -281,6 +153,9 @@ Reflect.field = function(o,field) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
+};
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
 };
 Reflect.fields = function(o) {
 	var a = [];
@@ -296,6 +171,11 @@ var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
+};
+var StringTools = function() { };
+StringTools.__name__ = true;
+StringTools.replace = function(s,sub,by) {
+	return s.split(sub).join(by);
 };
 var Type = function() { };
 Type.__name__ = true;
@@ -383,8 +263,9 @@ var controller_MainController = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	leo.utils.initRectSelect(function(ary) {
-		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 35, className : "controller.MainController", methodName : "new"});
+		console.log(ary);
 		_g.onSelectItems(ary);
+		_g.zsorting();
 	});
 	Main.j("body").mousemove($bind(this,this.onBodyMouseMove));
 	Main.j("body").keyup($bind(this,this.onBodyKeyUp));
@@ -416,6 +297,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 				_g1.createItem(c);
 				return true;
 			});
+			Main.messageSocket("addItems",ary_creates);
 			break;
 		default:
 			var _g11 = notification.getType();
@@ -428,33 +310,63 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 				});
 				break;
 			case "applyTransform":
-				var tempItems1 = notification.getBody();
-				var ary_items = tempItems1.map(function(tempItem) {
-					var model = _g1.getItemFromPoolById(tempItem.id);
-					model.pos = tempItem.pos.slice();
-					return model;
-				});
-				this.doMoveItem(ary_items);
-				break;
-			case "applyRotateForward":
-				var ary_items1 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("rotateForward",ary_items1);
-				break;
-			case "applyRotateBackward":
-				var ary_items2 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("rotateBackward",ary_items2);
-				break;
-			case "applyViewerOwner":
-				var ary_items3 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("setOwner",ary_items3);
-				Main.doAction("setViewer",ary_items3);
-				break;
-			case "applyFlip":
-				var ary_items4 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("flip",ary_items4);
+				this.updateView(this.updateModel(notification.getBody()));
 				break;
 			}
 		}
+	}
+	,updateModel: function(ary_receive) {
+		var _g = this;
+		return ary_receive.map(function(receive) {
+			var model = _g.getItemFromPoolById(receive.id);
+			model.pos = receive.pos.slice();
+			model.deg = receive.deg;
+			model.owner = receive.owner;
+			model.viewer = receive.viewer;
+			model.back = receive.back;
+			model.lock = receive.lock;
+			return model;
+		});
+	}
+	,updateView: function(ary_item) {
+		var _g = this;
+		var updateRotate = function(item,dom,itemModel) {
+			if(dom.attr("deg") == null) item.rotate(0,itemModel.deg); else {
+				var oldDegree = dom.attr("deg");
+				if(oldDegree != itemModel.deg) item.rotate(oldDegree,itemModel.deg);
+			}
+			dom.attr("deg",itemModel.deg);
+		};
+		var updateMove = function(item1,dom1,itemModel1) {
+			var dom_pos_0 = StringTools.replace(dom1.css("left"),"px","");
+			var dom_pos_1 = StringTools.replace(dom1.css("top"),"px","");
+			if(dom_pos_0 != itemModel1.pos[0] || dom_pos_1 != itemModel1.pos[1]) item1.move(itemModel1.pos[0],itemModel1.pos[1]);
+		};
+		var updateOwner = function(item2,itemModel2) {
+			item2.setOwner(itemModel2.owner == Main.playerId);
+		};
+		var updateViewer = function(item3,itemModel3) {
+			item3.setViewer(itemModel3.viewer == Main.playerId);
+		};
+		var updateFlip = function(item4,itemModel4) {
+			item4.flip(itemModel4.back);
+		};
+		var updateLock = function(item5,itemModel5) {
+			item5.lock(itemModel5.lock);
+		};
+		Lambda.foreach(ary_item,function(itemModel6) {
+			var item6;
+			item6 = js_Boot.__cast(_g.facade.retrieveMediator(itemModel6.id) , view_IItem);
+			var dom2 = _g.facade.retrieveMediator(itemModel6.id).getViewComponent();
+			updateRotate(item6,dom2,itemModel6);
+			updateMove(item6,dom2,itemModel6);
+			updateOwner(item6,itemModel6);
+			updateViewer(item6,itemModel6);
+			updateFlip(item6,itemModel6);
+			updateLock(item6,itemModel6);
+			dom2.appendTo(dom2.parent());
+			return true;
+		});
 	}
 	,receiveItemToLocalModel: function(ary_receive) {
 		var _g = this;
@@ -485,45 +397,71 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		this.sendNotification(controller_MainController.on_press,null,e.which);
 		var _g = e.which;
 		switch(_g) {
+		case 65:
+			this.moveModel();
+			this.updateView(this.ary_select);
+			break;
+		case 88:
+			this.rotateModel(90);
+			this.updateView(this.ary_select);
+			break;
+		case 90:
+			this.rotateModel(-90);
+			this.updateView(this.ary_select);
+			break;
 		case 69:
-			this.doSortingItem();
-			Main.doAction("list",this.ary_select,{ pos_mouse : this.pos_mouse});
+			this.sortModel();
+			this.listModel();
+			this.updateView(this.ary_select);
 			break;
 		case 87:
-			Main.doAction("reverse",this.ary_select,{ pos_mouse : this.pos_mouse});
+			this.reverseModel();
+			this.togetherModel();
+			this.updateView(this.ary_select);
 			break;
 		case 81:
-			Main.doAction("shuffle",this.ary_select,{ pos_mouse : this.pos_mouse});
+			this.shuffleModel();
+			this.togetherModel();
+			this.updateView(this.ary_select);
+			break;
+		case 67:
+			this.setModelOwner();
+			this.updateView(this.ary_select);
 			break;
 		case 68:
 			this.selectMyItem();
 			break;
 		case 83:
-			if(this.isList) Main.doAction("together",this.ary_select,{ pos_mouse : this.pos_mouse}); else Main.doAction("list",this.ary_select,{ pos_mouse : this.pos_mouse});
+			if(this.isList) this.togetherModel(); else this.listModel();
 			this.isList = !this.isList;
-			break;
-		case 67:
-			Main.doAction("setOwner",this.ary_select);
+			this.updateView(this.ary_select);
 			break;
 		case 86:
-			Main.doAction("setViewer",this.ary_select);
-			break;
-		case 65:
-			this.doMoveItem(this.ary_select.slice(0));
+			this.setModelViewer();
+			this.updateView(this.ary_select);
 			break;
 		case 70:
-			Main.doAction("flip",this.ary_select);
-			break;
-		case 88:
-			Main.doAction("rotateForward",this.ary_select);
-			break;
-		case 90:
-			Main.doAction("rotateBackward",this.ary_select);
+			this.flipModel();
+			this.updateView(this.ary_select);
 			break;
 		case 76:
-			Main.doAction("lock",this.ary_select);
+			this.setModelLock();
+			this.updateView(this.ary_select);
 			break;
 		}
+		var _g1 = e.which;
+		switch(_g1) {
+		case 68:
+			break;
+		default:
+			Main.messageSocket("applyTransform",this.ary_select);
+		}
+	}
+	,rotateModel: function(deg) {
+		Lambda.foreach(this.ary_select,function(item) {
+			item.deg += deg;
+			return true;
+		});
 	}
 	,onSelectItems: function(ary,selectLock) {
 		if(selectLock == null) selectLock = false;
@@ -538,7 +476,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		this.ary_select = this.filterLock(this.getMyItemFromPool());
 		this.sendNotification(controller_MainController.on_select_cards,{ ary_select : this.ary_select});
 	}
-	,doSortingItem: function() {
+	,sortModel: function() {
 		var collectobj = { };
 		Lambda.foreach(this.ary_select,function(card) {
 			if(Reflect.field(collectobj,card.cardId) == null) collectobj[card.cardId] = [];
@@ -554,6 +492,98 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			newary = newary.concat(Reflect.field(collectobj,c));
 		}
 		this.ary_select = newary;
+	}
+	,setModelLock: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			itemModel.lock = !itemModel.lock;
+		}
+	}
+	,setModelOwner: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			var item;
+			item = js_Boot.__cast(this.facade.retrieveMediator(itemModel.id) , view_IItem);
+			if(itemModel.owner == Main.playerId) itemModel.owner = ""; else itemModel.owner = Main.playerId;
+		}
+	}
+	,setModelViewer: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			var item;
+			item = js_Boot.__cast(this.facade.retrieveMediator(itemModel.id) , view_IItem);
+			if(itemModel.viewer == Main.playerId) itemModel.viewer = ""; else itemModel.viewer = Main.playerId;
+		}
+	}
+	,listModel: function() {
+		var info = this.collectInfo(this.ary_select);
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			itemModel.pos[0] = i % 10 * (Reflect.field(info,"mw") + 4) + this.pos_mouse[0];
+			itemModel.pos[1] = Math.floor(i / 10) * (Reflect.field(info,"mh") + 4) + this.pos_mouse[1];
+		}
+	}
+	,togetherModel: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			itemModel.pos[0] = i * 2 + this.pos_mouse[0];
+			itemModel.pos[1] = i * 2 + this.pos_mouse[1];
+		}
+	}
+	,flipModel: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			itemModel.back = !itemModel.back;
+		}
+	}
+	,zsorting: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var dom = this.facade.retrieveMediator(this.ary_select[i].id).getViewComponent();
+			dom.appendTo(dom.parent());
+		}
+	}
+	,shuffleModel: function() {
+		this.ary_select.sort(function(a,b) {
+			if(Math.random() > .5) return 1; else return -1;
+		});
+	}
+	,reverseModel: function() {
+		this.ary_select.reverse();
+	}
+	,collectInfo: function(ary_item) {
+		var mw = 0.0;
+		var mh = 0.0;
+		var firstPos = [];
+		var _g1 = 0;
+		var _g = ary_item.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(i == 0) firstPos = ary_item[i].pos.slice();
+			mw = Math.max(mw,ary_item[i].width);
+			mh = Math.max(mw,ary_item[i].height);
+		}
+		return { mw : mw, mh : mh, firstPos : firstPos};
 	}
 	,filterLock: function(ary) {
 		var nary = Lambda.fold(ary,function(curr,first) {
@@ -576,18 +606,18 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			return Main.playerId == model.owner;
 		});
 	}
-	,doMoveItem: function(ary_items) {
+	,moveModel: function() {
 		var moveTarget = { };
-		ary_items.sort(function(ac,bc) {
+		this.ary_select.sort(function(ac,bc) {
 			if(ac.pos[0] < bc.pos[0]) return -1;
 			return 1;
 		});
-		moveTarget.x = ary_items[0].pos[0];
-		ary_items.sort(function(ac1,bc1) {
+		moveTarget.x = this.ary_select[0].pos[0];
+		this.ary_select.sort(function(ac1,bc1) {
 			if(ac1.pos[1] < bc1.pos[1]) return -1;
 			return 1;
 		});
-		moveTarget.y = ary_items[0].pos[1];
+		moveTarget.y = this.ary_select[0].pos[1];
 		var offset_0 = this.pos_mouse[0] - moveTarget.x;
 		var offset_1 = this.pos_mouse[1] - moveTarget.y;
 		Lambda.foreach(this.ary_select,function(select) {
@@ -595,17 +625,45 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			select.pos[1] += offset_1;
 			return true;
 		});
-		Main.doAction("move",ary_items);
 	}
 	,__class__: controller_MainController
 });
+var controller_UIController = function(mediatorName,viewComponent) {
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+};
+controller_UIController.__name__ = true;
+controller_UIController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [Main.onBtnStartServer,Main.onBtnPokerClick];
+	}
+	,handleNotification: function(notification) {
+		var _g = notification.getName();
+		switch(_g) {
+		case "onBtnStartServer":
+			this.startServer();
+			break;
+		case "onBtnPokerClick":
+			this.createPoker();
+			break;
+		}
+	}
+	,createPoker: function() {
+		var ary_create = [Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",200,200)];
+		this.facade.sendNotification(controller_MainController.create_item,ary_create);
+	}
+	,startServer: function() {
+		var playerId = this.viewComponent.find("#txt_id").textbox("getValue");
+		if(playerId == "") return;
+		Main.playerId = playerId;
+		Main.createSocket(playerId);
+		var ops = this.viewComponent.find("#combo_ops").combobox("getValue");
+		Main.ary_ops = ops.split(",");
+	}
+	,__class__: controller_UIController
+});
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -661,25 +719,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -1183,9 +1222,8 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 	,move: function(x,y) {
 		this.viewComponent.animate({ left : x, top : y});
 	}
-	,rotateForward: function(sd,ed) {
-	}
-	,rotateBackward: function(sd,ed) {
+	,rotate: function(sd,ed) {
+		this.rotateAnimation(sd,ed);
 	}
 	,setViewer: function(v) {
 		this._viewer = v;
@@ -1246,11 +1284,8 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 	,rotateAnimation: function(sd,ed) {
 		var _g = this;
 		Main.j({ deg : sd}).animate({ deg : ed},{ duration : 300, step : function(now) {
-			_g.rotate(now);
+			_g.getViewComponent().css({ '-moz-transform' : "rotate(" + now + "deg)", '-webkit-transform' : "rotate(" + now + "deg)", '-o-transform' : "rotate(" + now + "deg)", '-ms-transform' : "rotate(" + now + "deg)", 'transform' : "rotate(" + now + "deg)"});
 		}});
-	}
-	,rotate: function(d) {
-		this.getViewComponent().css({ '-moz-transform' : "rotate(" + d + "deg)", '-webkit-transform' : "rotate(" + d + "deg)", '-o-transform' : "rotate(" + d + "deg)", '-ms-transform' : "rotate(" + d + "deg)", 'transform' : "rotate(" + d + "deg)"});
 	}
 	,__class__: view_BasicItem
 });
@@ -1260,13 +1295,7 @@ var view_CardItem = function(mediatorName,viewComponent) {
 view_CardItem.__name__ = true;
 view_CardItem.__super__ = view_BasicItem;
 view_CardItem.prototype = $extend(view_BasicItem.prototype,{
-	rotateForward: function(sd,ed) {
-		this.rotateAnimation(sd,ed);
-	}
-	,rotateBackward: function(sd,ed) {
-		this.rotateAnimation(sd,ed);
-	}
-	,__class__: view_CardItem
+	__class__: view_CardItem
 });
 var view_MapItem = function(mediatorName,viewComponent) {
 	view_BasicItem.call(this,mediatorName,viewComponent);
@@ -1275,13 +1304,7 @@ view_MapItem.__name__ = true;
 view_MapItem.__interfaces__ = [view_IItem];
 view_MapItem.__super__ = view_BasicItem;
 view_MapItem.prototype = $extend(view_BasicItem.prototype,{
-	rotateForward: function(sd,ed) {
-		this.rotateAnimation(sd,ed);
-	}
-	,rotateBackward: function(sd,ed) {
-		this.rotateAnimation(sd,ed);
-	}
-	,__class__: view_MapItem
+	__class__: view_MapItem
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
@@ -1320,10 +1343,11 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 };
 var __map_reserved = {}
 Main.j = $;
-Main.playerId = "vic";
+Main.onBtnStartServer = "onBtnStartServer";
+Main.onBtnPokerClick = "onBtnPokerClick";
+Main.playerId = "smart";
 Main.ary_sendMessage = [];
 Main.isSending = false;
-Main.tempItem = { type : "card", width : 200, height : 200, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : true, deg : 0, lock : false, owner : "desktop", viewer : "", id : Main.createDivId()};
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 controller_MainController.create_item = "create_item";
 controller_MainController.on_receiveMessage = "on_receiveMessage";

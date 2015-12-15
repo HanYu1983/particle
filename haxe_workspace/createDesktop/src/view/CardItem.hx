@@ -11,14 +11,4 @@ class CardItem extends BasicItem
 		super(mediatorName, viewComponent);
 	}
 	
-	override public function rotateForward( sd:Int, ed:Int ):Void 
-	{
-		rotateAnimation( sd, ed );
-	}
-	
-	override public function rotateBackward( sd:Int, ed:Int ):Void 
-	{
-		rotateAnimation( sd, ed );
-	}
-	
 }

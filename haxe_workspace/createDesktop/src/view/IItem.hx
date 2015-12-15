@@ -10,8 +10,7 @@ interface IItem
 	function focus( f:Bool ):Void;
 	function flip( ?f:Bool ):Void;
 	function move(x:Int, y:Int):Void;
-	function rotateForward( sd:Int, ed:Int ):Void;
-	function rotateBackward( sd:Int, ed:Int ):Void;
+	function rotate( sd:Int, ed:Int ):Void;
 	function setViewer( v:Bool ):Void;
 	function setOwner( o:Bool ):Void;
 	

@@ -14,13 +14,4 @@ class MapItem extends BasicItem implements IItem
 		
 	}
 	
-	override public function rotateForward( sd:Int, ed:Int ):Void 
-	{
-		rotateAnimation( sd, ed );
-	}
-	
-	override public function rotateBackward( sd:Int, ed:Int ):Void 
-	{
-		rotateAnimation( sd, ed );
-	}
 }
