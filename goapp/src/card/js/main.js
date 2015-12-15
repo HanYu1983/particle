@@ -234,7 +234,7 @@ Main.loadDetail = function(game) {
 	Main.cardSuitsDetailsIsLoading[game] = true;
 	if(Reflect.field(Main.cardSuitsDetails,game) == null) switch(game) {
 	case "ws":
-		CallJs.ws_load("../common/txt/wsList.json",Main.onLoadGameCallback(game));
+		CallJs.ws_load("../common/txt/wsList/",Main.onLoadGameCallback(game));
 		break;
 	case "sgs":
 		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(game));

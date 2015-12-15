@@ -155,7 +155,7 @@ class Main
 		if( cardSuitsDetails.field( game ) == null ){
 			switch( game ) {
 				case 'ws':
-					CallJs.ws_load( "../common/txt/wsList.json", onLoadGameCallback( game ) );
+					CallJs.ws_load( "../common/txt/wsList/", onLoadGameCallback( game ) );
 				case 'sgs':
 					CallJs.sgs_load( "../common/txt/sgsList.json", onLoadGameCallback( game ) );
 				case 'dragonZ':
