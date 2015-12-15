@@ -437,23 +437,6 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			case "applyTransform":
 				this.updateView(this.updateModel(notification.getBody()));
 				break;
-			case "applyRotateForward":
-				var ary_items = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("rotateForward",ary_items);
-				break;
-			case "applyRotateBackward":
-				var ary_items1 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("rotateBackward",ary_items1);
-				break;
-			case "applyViewerOwner":
-				var ary_items2 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("setOwner",ary_items2);
-				Main.doAction("setViewer",ary_items2);
-				break;
-			case "applyFlip":
-				var ary_items3 = this.receiveItemToLocalModel(notification.getBody());
-				Main.doAction("flip",ary_items3);
-				break;
 			}
 		}
 	}
@@ -468,30 +451,26 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 	}
 	,updateView: function(ary_item) {
 		var _g = this;
-		Lambda.foreach(ary_item,function(item) {
-			var m;
-			m = js_Boot.__cast(_g.facade.retrieveMediator(item.id) , view_IItem);
-			var dom = _g.facade.retrieveMediator(item.id).getViewComponent();
-			var dom_pos_0 = StringTools.replace(dom.css("left"),"px","");
-			var dom_pos_1 = StringTools.replace(dom.css("top"),"px","");
-			if(dom.attr("deg") == null) m.rotate(0,item.deg); else {
+		var updateRotate = function(item,dom,itemModel) {
+			if(dom.attr("deg") == null) item.rotate(0,itemModel.deg); else {
 				var oldDegree = dom.attr("deg");
-				if(oldDegree != item.deg) m.rotate(oldDegree,item.deg);
+				if(oldDegree != itemModel.deg) item.rotate(oldDegree,itemModel.deg);
 			}
-			dom.attr("deg",item.deg);
-			if(dom_pos_0 != item.pos[0] || dom_pos_1 != item.pos[1]) m.move(item.pos[0],item.pos[1]);
+			dom.attr("deg",itemModel.deg);
+		};
+		var updateMove = function(item1,dom1,itemModel1) {
+			var dom_pos_0 = StringTools.replace(dom1.css("left"),"px","");
+			var dom_pos_1 = StringTools.replace(dom1.css("top"),"px","");
+			if(dom_pos_0 != itemModel1.pos[0] || dom_pos_1 != itemModel1.pos[1]) item1.move(itemModel1.pos[0],itemModel1.pos[1]);
+		};
+		Lambda.foreach(ary_item,function(itemModel2) {
+			var item2;
+			item2 = js_Boot.__cast(_g.facade.retrieveMediator(itemModel2.id) , view_IItem);
+			var dom2 = _g.facade.retrieveMediator(itemModel2.id).getViewComponent();
+			updateRotate(item2,dom2,itemModel2);
+			updateMove(item2,dom2,itemModel2);
 			return true;
 		});
-	}
-	,getDegreeFromMatrix: function(m) {
-		var values = m.split("(")[1];
-		var values1 = values.split(")")[0];
-		var values2 = values1.split(",");
-		var a = values2[0];
-		var b = values2[1];
-		var c = values2[2];
-		var d = values2[3];
-		return Math.round(Math.asin(b) * (180 / Math.PI));
 	}
 	,receiveItemToLocalModel: function(ary_receive) {
 		var _g = this;

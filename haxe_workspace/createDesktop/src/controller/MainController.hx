@@ -80,6 +80,8 @@ class MainController extends Mediator
 						});
 					case 'applyTransform':
 						updateView( updateModel( notification.getBody() ) );
+						
+						/*
 					case 'applyRotateForward':
 						var ary_items = receiveItemToLocalModel( notification.getBody() );
 						Main.doAction( 'rotateForward', ary_items );
@@ -93,6 +95,7 @@ class MainController extends Mediator
 					case 'applyFlip':
 						var ary_items = receiveItemToLocalModel( notification.getBody() );
 						Main.doAction( 'flip', ary_items );
+						*/
 				}
 		}
 	}
@@ -107,51 +110,35 @@ class MainController extends Mediator
 	}
 	
 	function updateView( ary_item:Array<Dynamic> ) {
-		ary_item.foreach( function( item:Dynamic ) {
-			var m:IItem = cast( facade.retrieveMediator( item.id ), IItem );
-			var dom:Dynamic = facade.retrieveMediator( item.id ).getViewComponent();
-			var dom_pos = [ StringTools.replace( dom.css( 'left' ), 'px', '' ), StringTools.replace( dom.css( 'top' ), 'px', '' )];
-			
+		
+		function updateRotate( item:IItem, dom:Dynamic, itemModel:Dynamic ) {
 			if ( dom.attr( 'deg' ) == null ) {
-				m.rotate( 0, item.deg );
+				item.rotate( 0, itemModel.deg );
 			}else {
 				var oldDegree = dom.attr( 'deg' );
-				if ( oldDegree != item.deg ) {
-					m.rotate( oldDegree, item.deg );
+				if ( oldDegree != itemModel.deg ) {
+					item.rotate( oldDegree, itemModel.deg );
 				}
 			}
-			dom.attr( 'deg', item.deg );
-			/*
-			if ( dom.css('transform') == 'none' ) {
-				m.rotateBackward( 0, item.deg );
-			}else {
-				var oldDegree = getDegreeFromMatrix( dom.css( 'transform' ));
-				if ( oldDegree != item.deg ) {
-					m.rotateBackward( oldDegree, item.deg );
-				}
-				trace( oldDegree, item.deg );
+			dom.attr( 'deg', itemModel.deg );
+		}
+		
+		function updateMove( item:IItem, dom:Dynamic, itemModel:Dynamic ) {
+			var dom_pos:Dynamic = [ StringTools.replace( dom.css( 'left' ), 'px', '' ), StringTools.replace( dom.css( 'top' ), 'px', '' )];
+			if ( ( dom_pos[0] != itemModel.pos[0] ) || ( dom_pos[1] != itemModel.pos[1] )) {
+				item.move( itemModel.pos[0], itemModel.pos[1] );
 			}
-			*/
+		}
+		
+		ary_item.foreach( function( itemModel:Dynamic ) {
+			var item:IItem = cast( facade.retrieveMediator( itemModel.id ), IItem );
+			var dom:Dynamic = facade.retrieveMediator( itemModel.id ).getViewComponent();
 			
-			if ( ( dom_pos[0] != item.pos[0] ) || ( dom_pos[1] != item.pos[1] )) {
-				m.move( item.pos[0], item.pos[1] );
-			}
+			updateRotate( item, dom, itemModel );
+			updateMove( item, dom, itemModel );
 			
 			return true;
 		});
-	}
-	
-	function getDegreeFromMatrix( m ) {
-		var values = m.split('(')[1],
-			values = values.split(')')[0],
-			values = values.split(',');
-
-		var a = values[0]; // 0.866025
-		var b = values[1]; // 0.5
-		var c = values[2]; // -0.5
-		var d = values[3]; // 0.866025
-		
-		return Math.round( Math.asin(b) * (180 / Math.PI));
 	}
 	
 	function receiveItemToLocalModel( ary_receive:Array<Dynamic> ) {
@@ -196,16 +183,6 @@ class MainController extends Mediator
 					return true;
 				});
 				updateView( ary_select );
-				/*
-				 * case 'rotateForward':
-					var td = Math.floor( itemModel.deg + 90 );
-					item.rotateForward( itemModel.deg, td );
-					itemModel.deg = td;
-				case 'rotateBackward':
-					var td = Math.floor( itemModel.deg - 90 );
-					item.rotateForward( itemModel.deg, td );
-					itemModel.deg = td;*/
-					
 			case KeyboardEvent.DOM_VK_E:
 				doSortingItem();
 				Main.doAction( 'list', ary_select, {pos_mouse:pos_mouse} );
