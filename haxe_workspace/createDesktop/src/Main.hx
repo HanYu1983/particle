@@ -82,19 +82,6 @@ class Main
 		}
 	}
 	
-	static var tempItem = { 
-		type:'card',
-		width:200,
-		height:200,
-		pos:[ Math.floor( Math.random() * 600 ), Math.floor( Math.random() * 600 ) ],
-		back:true,
-		deg:0,
-		lock:false,
-		owner:'desktop',
-		viewer:'',
-		id:createDivId()
-	}
-	
 	public static function createSocket( id ) {
 		untyped __js__( 'api.createChannel' )( id, {
 			onopen: function() {

@@ -79,7 +79,6 @@ _$List_ListIterator.prototype = {
 	}
 	,__class__: _$List_ListIterator
 };
-Math.__name__ = true;
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
@@ -170,6 +169,7 @@ Main.handleResponse = function(cb) {
 		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
+Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
 Reflect.field = function(o,field) {
@@ -1326,7 +1326,6 @@ Main.j = $;
 Main.playerId = "vic";
 Main.ary_sendMessage = [];
 Main.isSending = false;
-Main.tempItem = { type : "card", width : 200, height : 200, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : true, deg : 0, lock : false, owner : "desktop", viewer : "", id : Main.createDivId()};
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 controller_MainController.create_item = "create_item";
 controller_MainController.on_receiveMessage = "on_receiveMessage";
