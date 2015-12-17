@@ -61,7 +61,7 @@ return G__5231;
 }));
 }));
 });
-test.yoyo.parseHtml = (function parseHtml(data){return test.yoyo.rx.Observable.create((function (obs){var group = cljs.core.map.call(null,cljs.core.rest,cljs.core.re_seq.call(null,/[\s\S]+?<img src=\"(.+\.jpg)\".+?\/>[\s\S]+?<div class=\"data_box\">[\s\S]+?\"id\">(.+)<\/span> (.+?) (.+?)<\/p>[\s\S]+?<td class=\"w200\">(.+?)<\/td>[\s\S]+?<td class=\"w150\">(.+?)<\/td>[\s\S]+?<td class=\"w150\">(.+?)<\/td>[\s\S]+?<td class=\"w70\">(.+?)<\/td>[\s\S]+?<td class=\"w70\">(.+?)<\/td>[\s\S]+?<td class=\"w90\">(.+?)<\/td>[\s\S]+?<td class=\"w60\">(.+?)<\/td>[\s\S]+?<td class=\"w90\">([\s\S]+?)<\/td>[\s\S]+?<td class=\"text\">(.+?)<\/td>/,data));cljs.core.doall.call(null,(function (){var iter__4276__auto__ = ((function (group){
+test.yoyo.parseHtml = (function parseHtml(data){return test.yoyo.rx.Observable.create((function (obs){var group = cljs.core.map.call(null,cljs.core.rest,cljs.core.re_seq.call(null,/[\s\S]+?<img src=\"(.+\.jpg)\" height=\"124\".+?\/>[\s\S]+?<div class=\"data_box\">[\s\S]+?\"id\">(.+)<\/span> (.+?) (.+?)<\/p>[\s\S]+?<td class=\"w200\">(.+?)<\/td>[\s\S]+?<td class=\"w150\">(.+?)<\/td>[\s\S]+?<td class=\"w150\">(.+?)<\/td>[\s\S]+?<td class=\"w70\">(.+?)<\/td>[\s\S]+?<td class=\"w70\">(.+?)<\/td>[\s\S]+?<td class=\"w90\">(.+?)<\/td>[\s\S]+?<td class=\"w60\">(.+?)<\/td>[\s\S]+?<td class=\"w90\">([\s\S]+?)<\/td>[\s\S]+?<td class=\"text\">(.+?)<\/td>/,data));cljs.core.doall.call(null,(function (){var iter__4276__auto__ = ((function (group){
 return (function iter__5236(s__5237){return (new cljs.core.LazySeq(null,((function (group){
 return (function (){var s__5237__$1 = s__5237;while(true){
 var temp__4126__auto__ = cljs.core.seq.call(null,s__5237__$1);if(temp__4126__auto__)
