@@ -7,6 +7,7 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 import view.BasicItem;
 import view.CardItem;
 import view.IItem;
+import view.TokenItem;
 
 using Lambda;
 using Reflect;
@@ -161,8 +162,8 @@ class MainController extends Mediator
 		switch( model.type ) {
 			case 'card':
 				item = new CardItem( model.id, Main.createItemDiv( model.type, model ) );
-			case 'map':
-				item = new CardItem( model.id, Main.createItemDiv( model.type, model ) );
+			case 'token':
+				item = new TokenItem( model.id, Main.createItemDiv( model.type, model ) );
 			default:
 				item = new BasicItem( model.id, Main.createItemDiv( model.type, model ) );
 		}
@@ -172,7 +173,6 @@ class MainController extends Mediator
 		facade.registerMediator( item );
 		viewComponent.append( item.viewComponent );
 		
-		trace( model );
 		cast( item, IItem ).setOwner( model.owner );
 		cast( item, IItem ).setViewer( model.viewer );
 		
@@ -181,6 +181,14 @@ class MainController extends Mediator
 	
 	function onBodyKeyUp( e ) {
 		sendNotification( on_press, null, e.which );
+		
+		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_D:
+			case KeyboardEvent.DOM_VK_K:
+				//全選及解鎖不需要選擇任何牌也可以執行
+			case _:
+				if ( ary_select.length == 0 ) return;
+		}
 		
 		switch( e.which ) {
 			case KeyboardEvent.DOM_VK_A:
@@ -209,6 +217,7 @@ class MainController extends Mediator
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_D:
 				selectMyItem();
+				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_S:
 				if ( isList ) {
 					togetherModel();
@@ -226,14 +235,19 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_L:
 				setModelLock();
 				updateView( ary_select );
+			case KeyboardEvent.DOM_VK_K:
+				unlockAllItem();
+				updateView( ary_allItem );
 		}
-		
+		/*
 		switch( e.which ) {
 			case KeyboardEvent.DOM_VK_D:
-				//do nothing!
+				//全選這個指令不需要傳給其他玩家
 			case _:
 				Main.messageSocket( 'applyTransform', ary_select );
 		}
+		*/
+		Main.messageSocket( 'applyTransform', ary_select );
 	}
 	
 	function rotateModel( deg ) {
@@ -279,6 +293,15 @@ class MainController extends Mediator
 			var itemModel = ary_select[i];
 			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
 				itemModel.lock = !itemModel.lock;
+			}else continue;
+		}
+	}
+	
+	function unlockAllItem() {
+		for ( i in 0...ary_allItem.length ) {
+			var itemModel = ary_allItem[i];
+			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+				itemModel.lock = false;
 			}else continue;
 		}
 	}
@@ -397,6 +420,8 @@ class MainController extends Mediator
 	}
 	
 	function moveModel() {
+		
+		trace( ary_select );
 		var moveTarget:Dynamic = { };
 		ary_select.sort( function( ac, bc ) {
 			if ( ac.pos[0] < bc.pos[0] ) return -1;

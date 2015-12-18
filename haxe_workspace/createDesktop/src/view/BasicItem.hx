@@ -36,6 +36,7 @@ class BasicItem extends Mediator implements IItem
 		}else {
 			viewComponent.find( '#img_lock' ).hide();
 		}
+		Main.setSelectable( viewComponent, l );
 		sendNotification( on_item_lock, {view:viewComponent, lock:l} );
 	}
 	
@@ -65,13 +66,6 @@ class BasicItem extends Mediator implements IItem
 	public function setViewer( v:String ):Void 
 	{
 		_viewer = v;
-		/*
-		if ( _viewer == Main.playerId ) {
-			viewComponent.find( '#txt_viewer' ).show();
-		}else {
-			viewComponent.find( '#txt_viewer' ).hide();
-		}
-		*/
 		checkViewerAndShowCard();
 	}
 	

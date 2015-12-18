@@ -85,16 +85,17 @@ body{
 .focus{
 	border:1px yellow solid;
 }
-
+.lock{
+	pointer-events:none;
+}
 .card_icons{
 	width:20px;
 	height:20px;
 	display:none;
 }
 
-.map_root{
+.token_root{
 	position:absolute;
-	background-color:blue;
 	cursor:pointer;
 }
 
@@ -110,10 +111,9 @@ body{
 }
 </style>
 <script id="tmpl_card" type="jquery-x-tmpl">
-	<div id=${id} class="card_root elements" style=width:${width}px;height:${height}px>
+	<div id=${id} ondragstart="return false;" ondrop="return false;" class="card_root elements" style=width:${width}px;height:${height}px>
 		<div class="card">
-			<img style="position:relative; left:0; top:0; width:100%; height:100%;" src=${url}>
-			<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="../common/images/card/sampleTxt.png"/>
+			<img style="position:relative; left:0; top:0; width:100%; height:100%;" src=${extra[0]}>
 		</div>
 		<div class="card_back">
 			<img style="width:100%; height:100%;" src=${backurl} >
@@ -128,14 +128,9 @@ body{
 		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
 	</div>
 </script>
-<script id="tmpl_map" type="jquery-x-tmpl">
-	<div id=${id} class="map_root elements" style=width:${width}px;height:${height}px>
-		map
-		<div class="card_back">
-			<img style="width:100%; height:100%;" src=${backurl} >
-		</div>
-		<div id="txt_viewer" class="hide" style="position:absolute; top:20px; left:0; color:white; ">v</div>
-		<div id="txt_owner" class="hide" style="position:absolute; top:40px; left:0; color:white; ">o</div>
+<script id="tmpl_token" type="jquery-x-tmpl">
+	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
+		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />
 		<div id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; color:white; ">lock</div>
 	</div>
 </script>
