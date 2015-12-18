@@ -40,11 +40,9 @@ class Main
 			
 			/*
 			Facade.getInstance().sendNotification( MainController.create_item, [
-																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 700, 700 )
-																				]);*/
+																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 100, 100, true, false, playerId )
+																				]);
+																				*/
 																				
 		});
 		
@@ -65,6 +63,7 @@ class Main
 			} ));
 		}
 		
+		if ( ary_ops == null ) return;
 		ary_ops.foreach( function( op ) {
 			messageSingle( op, type, msg );
 			return true;
@@ -102,8 +101,8 @@ class Main
 			back:true,
 			deg:0,
 			lock:false,
-			owner:'desktop',
-			viewer:'',
+			owner:owner,
+			viewer:viewer,
 			id:createDivId()
 		}
 	}

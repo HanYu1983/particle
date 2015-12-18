@@ -11,9 +11,9 @@ interface IItem
 	function flip( ?f:Bool ):Void;
 	function move(x:Int, y:Int):Void;
 	function rotate( sd:Int, ed:Int ):Void;
-	function setViewer( v:Bool ):Void;
-	function setOwner( o:Bool ):Void;
+	function setViewer( v:String ):Void;
+	function setOwner( o:String ):Void;
 	
-	function getViewer():Dynamic;
-	function getOwner():Dynamic;
+	function getViewer():String;
+	function getOwner():String;
 }
