@@ -120,6 +120,12 @@ var gameController = {};
 			case 'soul_2':
 				fns.push( cardsearch.attrLe( "soul", parseInt(v) ) )
 				break;
+			case 'trigger':
+				fns.push( cardsearch.attrEq( "trigger", v ) )
+				break;
+			case 'keyword':
+				fns.push( cardsearch.attrEq( "text", v ) )
+				break;
 			case 'card_name':
 				fns.push( cardsearch.attrEq( "name", v ) )
 				break;

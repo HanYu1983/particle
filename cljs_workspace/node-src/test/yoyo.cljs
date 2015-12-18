@@ -38,13 +38,46 @@
             (doto obs
               (.onNext data)
               (.onCompleted))))))))
+              
+              
+(defn parseTrigger [data]
+  (let [triggerMark
+        {
+          "icon_tri_0.png" "なし"
+          "icon_tri_1.png" "ソウル"
+          "icon_tri_2.png" "ソウル"
+          "icon_tri_B.png" "プール"
+          "icon_tri_1A.png" "ソウル/リターン"
+          "icon_tri_C.png" "カムバック"
+          "icon_tri_D.png" "ドロー"
+          "icon_tri_1E.png" "ソウル/ショット"
+          "icon_tri_F.png" "トレジャー"
+          "icon_tri_1G.png" "ソウル/ゲート"
+        }]
+    (update-in data [11] 
+      (fn [data]
+        (->>
+          (map 
+            (fn [k]
+              [
+                k
+                (count (re-seq (re-pattern k) data))
+              ])
+            (keys triggerMark))
+          (reduce
+            (fn [all [k cnt]]
+              (if (pos? cnt)
+                (cons (get triggerMark k) all)
+                all))
+            [])
+          (str/join ","))))))
       
 (defn parseHtml [data]
   (.create rx.Observable 
     (fn [obs]
       ; 注意：它每一個彈的格式可能不一樣，看情況也許會須要重新定義regular
       (let [group 
-            (map rest 
+            (map (comp parseTrigger (partial apply vector) rest) 
               (re-seq 
                 #"[\s\S]+?<img src=\"(.+\.jpg)\" height=\"124\".+?/>[\s\S]+?<div class=\"data_box\">[\s\S]+?\"id\">(.+)</span> (.+?) (.+?)</p>[\s\S]+?<td class=\"w200\">(.+?)</td>[\s\S]+?<td class=\"w150\">(.+?)</td>[\s\S]+?<td class=\"w150\">(.+?)</td>[\s\S]+?<td class=\"w70\">(.+?)</td>[\s\S]+?<td class=\"w70\">(.+?)</td>[\s\S]+?<td class=\"w90\">(.+?)</td>[\s\S]+?<td class=\"w60\">(.+?)</td>[\s\S]+?<td class=\"w90\">([\s\S]+?)</td>[\s\S]+?<td class=\"text\">(.+?)</td>"
                 data))]
