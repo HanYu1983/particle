@@ -27,7 +27,6 @@ class BasicItem extends Mediator implements IItem
 			sendNotification( on_item_click, [viewComponent[0]] );
 			onSelect( [viewComponent[0]] );
 		});
-		
 	}
 	
 	public function lock( l:Bool ):Void {

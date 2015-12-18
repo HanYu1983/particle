@@ -111,7 +111,7 @@ Main.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
 	if(height == null) height = 100;
 	if(width == null) width = 100;
 	if(type == null) type = "card";
-	return { type : type, width : width, height : height, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : true, deg : 0, lock : false, owner : owner, viewer : viewer, id : Main.createDivId(), extra : extra};
+	return { type : type, width : width, height : height, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : Main.createDivId(), extra : extra};
 };
 Main.createSocket = function(id) {
 	api.createChannel(id,{ onopen : function() {
@@ -397,6 +397,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		this.viewComponent.append(item.viewComponent);
 		(js_Boot.__cast(item , view_IItem)).setOwner(model.owner);
 		(js_Boot.__cast(item , view_IItem)).setViewer(model.viewer);
+		(js_Boot.__cast(item , view_IItem)).flip(model.back);
 		this.ary_allItem.push(model);
 	}
 	,onBodyKeyUp: function(e) {
@@ -634,7 +635,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		});
 	}
 	,moveModel: function() {
-		haxe_Log.trace(this.ary_select,{ fileName : "MainController.hx", lineNumber : 424, className : "controller.MainController", methodName : "moveModel"});
+		haxe_Log.trace(this.ary_select,{ fileName : "MainController.hx", lineNumber : 417, className : "controller.MainController", methodName : "moveModel"});
 		var moveTarget = { };
 		this.ary_select.sort(function(ac,bc) {
 			if(ac.pos[0] < bc.pos[0]) return -1;
@@ -677,7 +678,7 @@ controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_M
 		}
 	}
 	,createPoker: function() {
-		var ary_create = [Main.createItem(["../common/images/createTable/002.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",700,700,true,false,Main.playerId),Main.createItem(["../common/images/createTable/Victory_Token.png"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"token",100,100,true,false,Main.playerId)];
+		var ary_create = [Main.createItem(["../common/images/createTable/002.jpg","../common/images/createTable/001.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",700,700,false,false,Main.playerId),Main.createItem(["../common/images/createTable/Victory_Token.png"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"token",100,100,true,false,Main.playerId)];
 		this.facade.sendNotification(controller_MainController.create_item,ary_create);
 	}
 	,startServer: function() {

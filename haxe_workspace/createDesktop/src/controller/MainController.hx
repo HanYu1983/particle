@@ -175,6 +175,7 @@ class MainController extends Mediator
 		
 		cast( item, IItem ).setOwner( model.owner );
 		cast( item, IItem ).setViewer( model.viewer );
+		cast( item, IItem ).flip( model.back );
 		
 		ary_allItem.push( model );
 	}
@@ -239,14 +240,6 @@ class MainController extends Mediator
 				unlockAllItem();
 				updateView( ary_allItem );
 		}
-		/*
-		switch( e.which ) {
-			case KeyboardEvent.DOM_VK_D:
-				//全選這個指令不需要傳給其他玩家
-			case _:
-				Main.messageSocket( 'applyTransform', ary_select );
-		}
-		*/
 		Main.messageSocket( 'applyTransform', ary_select );
 	}
 	
