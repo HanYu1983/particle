@@ -16,8 +16,8 @@ class BasicItem extends Mediator implements IItem
 	public static var on_item_lock = 'on_item_lock';
 	
 	var _filp:Bool = true;
-	var _viewer:Bool = false;
-	var _owner:Bool = false;
+	var _viewer:String = '';
+	var _owner:String = '';
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -27,6 +27,7 @@ class BasicItem extends Mediator implements IItem
 			sendNotification( on_item_click, [viewComponent[0]] );
 			onSelect( [viewComponent[0]] );
 		});
+		
 	}
 	
 	public function lock( l:Bool ):Void {
@@ -61,34 +62,36 @@ class BasicItem extends Mediator implements IItem
 		rotateAnimation( sd, ed );
 	}
 	
-	public function setViewer( v:Bool ):Void 
+	public function setViewer( v:String ):Void 
 	{
 		_viewer = v;
-		if ( _viewer ) {
+		/*
+		if ( _viewer == Main.playerId ) {
 			viewComponent.find( '#txt_viewer' ).show();
 		}else {
 			viewComponent.find( '#txt_viewer' ).hide();
 		}
+		*/
 		checkViewerAndShowCard();
 	}
 	
-	public function setOwner( o:Bool ):Void 
+	public function setOwner( o:String ):Void 
 	{
 		_owner = o;
-		if ( _owner ) {
-			viewComponent.find( '#txt_owner' ).show();
+		if ( _owner == Main.playerId ) {
+			viewComponent.find( '#img_owner' ).show();
 		}else {
-			viewComponent.find( '#txt_owner' ).hide();
+			viewComponent.find( '#img_owner' ).hide();
 		}
 		checkViewerAndShowCard();
 	}
 	
-	public function getViewer():Dynamic 
+	public function getViewer():String 
 	{
 		return _viewer;
 	}
 	
-	public function getOwner():Dynamic 
+	public function getOwner():String 
 	{
 		return _owner;
 	}
@@ -108,15 +111,43 @@ class BasicItem extends Mediator implements IItem
 	}
 	
 	function checkViewerAndShowCard() {
-	//	trace( '-----------------------' );
-	//	trace( '_filp', _filp );
-	//	trace( '_viewer', _viewer );
-	//	trace( '_owner', _owner );
-		if ( !_filp ) showItemForMe();
-		else {
-			if ( _viewer && _owner ) showItemForMe();
-			else hideItemForMe();
+		var showViewerImg = false;
+		var showRedback = false;
+		if ( !_filp ) {
+			//確實的翻牌了，整個打開
+			showItemForMe();
+		}else {
+			if ( _viewer == _owner ) {
+				//有人在觀察，這邊確認是不是自己在觀察
+				if ( _viewer == Main.playerId ) {
+					//有人在觀察，是自己，顯示眼睛
+					showItemForMe();
+					showViewerImg = true;
+				}else {
+					//有人在觀察，不是自己，顯示紅背
+					hideItemForMe();
+					if ( _viewer != '' ) {
+						//觀察者不是空白，才顯示紅背
+						showRedback = true;
+					}
+				}
+				//無人觀察
+			}else {
+				hideItemForMe();
+			}
 		}
+		
+		if ( _owner == '' ) {
+			viewComponent.css( 'opacity', .5 );
+		}else {
+			viewComponent.css( 'opacity', 1 );
+		}
+		
+		if ( showViewerImg ) viewComponent.find( '#img_viewer' ).show();
+		else viewComponent.find( '#img_viewer' ).hide();
+		
+		if ( showRedback ) viewComponent.find( '#mc_see' ).show();
+		else viewComponent.find( '#mc_see' ).hide();
 	}
 	
 	function showItemForMe() {

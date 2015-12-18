@@ -7,7 +7,6 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 import view.BasicItem;
 import view.CardItem;
 import view.IItem;
-import view.MapItem;
 
 using Lambda;
 using Reflect;
@@ -120,11 +119,11 @@ class MainController extends Mediator
 		}
 		
 		function updateOwner( item:IItem, itemModel:Dynamic ) {
-			item.setOwner( itemModel.owner == Main.playerId );
+			item.setOwner( itemModel.owner );
 		}
 		
 		function updateViewer( item:IItem, itemModel:Dynamic ) {
-			item.setViewer( itemModel.viewer == Main.playerId );
+			item.setViewer( itemModel.viewer );
 		}
 		
 		function updateFlip( item:IItem, itemModel:Dynamic ) {
@@ -169,8 +168,13 @@ class MainController extends Mediator
 		}
 		item.viewComponent.css( 'left', model.pos[0] + 'px' );
 		item.viewComponent.css( 'top', model.pos[1] + 'px' );
+		
 		facade.registerMediator( item );
 		viewComponent.append( item.viewComponent );
+		
+		trace( model );
+		cast( item, IItem ).setOwner( model.owner );
+		cast( item, IItem ).setViewer( model.viewer );
 		
 		ary_allItem.push( model );
 	}
@@ -273,7 +277,9 @@ class MainController extends Mediator
 	function setModelLock() {
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
-			itemModel.lock = !itemModel.lock;
+			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+				itemModel.lock = !itemModel.lock;
+			}else continue;
 		}
 	}
 	
@@ -282,9 +288,15 @@ class MainController extends Mediator
 			var itemModel = ary_select[i];
 			var item:IItem = cast( facade.retrieveMediator( itemModel.id ), IItem );
 			if ( itemModel.owner == Main.playerId ) {
+				//如果持有者是自己，就把持有者設為空白
 				itemModel.owner = '';
 			}else {
-				itemModel.owner = Main.playerId;
+				if ( itemModel.owner == '' ) {
+					//如果持有者是空白，就把持有者設為自己
+					itemModel.owner = Main.playerId;
+				}else {
+					//持有者不是空白也不是自己，不能設置
+				}
 			}
 		}
 	}
@@ -297,6 +309,9 @@ class MainController extends Mediator
 				itemModel.viewer = '';
 			}else {
 				itemModel.viewer = Main.playerId;
+				if ( itemModel.viewer == '' ) {
+					itemModel.viewer = Main.playerId;
+				}
 			}
 		}
 	}
@@ -321,7 +336,9 @@ class MainController extends Mediator
 	function flipModel() {
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
-			itemModel.back = !itemModel.back;
+			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+				itemModel.back = !itemModel.back;
+			}else continue;
 		}
 	}
 	

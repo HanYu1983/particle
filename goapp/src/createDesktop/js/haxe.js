@@ -94,9 +94,10 @@ Main.main = function() {
 Main.messageSocket = function(type,msg) {
 	var messageSingle = function(toId,_type,_msg) {
 		channel.sendChannelMessage(toId,JSON.stringify({ type : _type, msg : JSON.parse(JSON.stringify(_msg))}),Main.handleResponse(function(ret) {
-			console.log(ret);
+			haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "messageSocket"});
 		}));
 	};
+	if(Main.ary_ops == null) return;
 	Lambda.foreach(Main.ary_ops,function(op) {
 		messageSingle(op,type,msg);
 		return true;
@@ -110,11 +111,11 @@ Main.createItem = function(pos,type,width,height,back,lock,owner,viewer) {
 	if(height == null) height = 100;
 	if(width == null) width = 100;
 	if(type == null) type = "card";
-	return { type : type, width : width, height : height, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : true, deg : 0, lock : false, owner : "desktop", viewer : "", id : Main.createDivId()};
+	return { type : type, width : width, height : height, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : true, deg : 0, lock : false, owner : owner, viewer : viewer, id : Main.createDivId()};
 };
 Main.createSocket = function(id) {
 	api.createChannel(id,{ onopen : function() {
-		console.log("ok");
+		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 113, className : "Main", methodName : "createSocket"});
 	}, onmessage : function(json) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,json.msg,json.type);
 	}, onerror : function() {
@@ -263,7 +264,7 @@ var controller_MainController = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	leo.utils.initRectSelect(function(ary) {
-		console.log(ary);
+		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 35, className : "controller.MainController", methodName : "new"});
 		_g.onSelectItems(ary);
 		_g.zsorting();
 	});
@@ -343,10 +344,10 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			if(dom_pos_0 != itemModel1.pos[0] || dom_pos_1 != itemModel1.pos[1]) item1.move(itemModel1.pos[0],itemModel1.pos[1]);
 		};
 		var updateOwner = function(item2,itemModel2) {
-			item2.setOwner(itemModel2.owner == Main.playerId);
+			item2.setOwner(itemModel2.owner);
 		};
 		var updateViewer = function(item3,itemModel3) {
-			item3.setViewer(itemModel3.viewer == Main.playerId);
+			item3.setViewer(itemModel3.viewer);
 		};
 		var updateFlip = function(item4,itemModel4) {
 			item4.flip(itemModel4.back);
@@ -391,6 +392,9 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		item.viewComponent.css("top",model.pos[1] + "px");
 		this.facade.registerMediator(item);
 		this.viewComponent.append(item.viewComponent);
+		haxe_Log.trace(model,{ fileName : "MainController.hx", lineNumber : 175, className : "controller.MainController", methodName : "createItem"});
+		(js_Boot.__cast(item , view_IItem)).setOwner(model.owner);
+		(js_Boot.__cast(item , view_IItem)).setViewer(model.viewer);
 		this.ary_allItem.push(model);
 	}
 	,onBodyKeyUp: function(e) {
@@ -499,7 +503,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		while(_g1 < _g) {
 			var i = _g1++;
 			var itemModel = this.ary_select[i];
-			itemModel.lock = !itemModel.lock;
+			if(itemModel.owner == "" || itemModel.owner == Main.playerId) itemModel.lock = !itemModel.lock; else continue;
 		}
 	}
 	,setModelOwner: function() {
@@ -510,7 +514,8 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			var itemModel = this.ary_select[i];
 			var item;
 			item = js_Boot.__cast(this.facade.retrieveMediator(itemModel.id) , view_IItem);
-			if(itemModel.owner == Main.playerId) itemModel.owner = ""; else itemModel.owner = Main.playerId;
+			if(itemModel.owner == Main.playerId) itemModel.owner = ""; else if(itemModel.owner == "") itemModel.owner = Main.playerId; else {
+			}
 		}
 	}
 	,setModelViewer: function() {
@@ -521,7 +526,10 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			var itemModel = this.ary_select[i];
 			var item;
 			item = js_Boot.__cast(this.facade.retrieveMediator(itemModel.id) , view_IItem);
-			if(itemModel.viewer == Main.playerId) itemModel.viewer = ""; else itemModel.viewer = Main.playerId;
+			if(itemModel.viewer == Main.playerId) itemModel.viewer = ""; else {
+				itemModel.viewer = Main.playerId;
+				if(itemModel.viewer == "") itemModel.viewer = Main.playerId;
+			}
 		}
 	}
 	,listModel: function() {
@@ -551,7 +559,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		while(_g1 < _g) {
 			var i = _g1++;
 			var itemModel = this.ary_select[i];
-			itemModel.back = !itemModel.back;
+			if(itemModel.owner == "" || itemModel.owner == Main.playerId) itemModel.back = !itemModel.back; else continue;
 		}
 	}
 	,zsorting: function() {
@@ -649,7 +657,7 @@ controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_M
 		}
 	}
 	,createPoker: function() {
-		var ary_create = [Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)]),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"map",200,200)];
+		var ary_create = [Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,true,false,Main.playerId),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,true,false,Main.playerId),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,true,false,Main.playerId),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,true,false,Main.playerId),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",600,600,true,false,Main.playerId)];
 		this.facade.sendNotification(controller_MainController.create_item,ary_create);
 	}
 	,startServer: function() {
@@ -664,6 +672,11 @@ controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_M
 });
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -719,6 +732,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -1194,8 +1226,8 @@ view_IItem.prototype = {
 	__class__: view_IItem
 };
 var view_BasicItem = function(mediatorName,viewComponent) {
-	this._owner = false;
-	this._viewer = false;
+	this._owner = "";
+	this._viewer = "";
 	this._filp = true;
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
@@ -1227,12 +1259,11 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 	}
 	,setViewer: function(v) {
 		this._viewer = v;
-		if(this._viewer) this.viewComponent.find("#txt_viewer").show(); else this.viewComponent.find("#txt_viewer").hide();
 		this.checkViewerAndShowCard();
 	}
 	,setOwner: function(o) {
 		this._owner = o;
-		if(this._owner) this.viewComponent.find("#txt_owner").show(); else this.viewComponent.find("#txt_owner").hide();
+		if(this._owner == Main.playerId) this.viewComponent.find("#img_owner").show(); else this.viewComponent.find("#img_owner").hide();
 		this.checkViewerAndShowCard();
 	}
 	,getViewer: function() {
@@ -1253,7 +1284,20 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		}
 	}
 	,checkViewerAndShowCard: function() {
-		if(!this._filp) this.showItemForMe(); else if(this._viewer && this._owner) this.showItemForMe(); else this.hideItemForMe();
+		var showViewerImg = false;
+		var showRedback = false;
+		if(!this._filp) this.showItemForMe(); else if(this._viewer == this._owner) {
+			if(this._viewer == Main.playerId) {
+				this.showItemForMe();
+				showViewerImg = true;
+			} else {
+				this.hideItemForMe();
+				if(this._viewer != "") showRedback = true;
+			}
+		} else this.hideItemForMe();
+		if(this._owner == "") this.viewComponent.css("opacity",.5); else this.viewComponent.css("opacity",1);
+		if(showViewerImg) this.viewComponent.find("#img_viewer").show(); else this.viewComponent.find("#img_viewer").hide();
+		if(showRedback) this.viewComponent.find("#mc_see").show(); else this.viewComponent.find("#mc_see").hide();
 	}
 	,showItemForMe: function() {
 		this.viewComponent.find(".card_back").hide();
@@ -1290,21 +1334,13 @@ view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 	,__class__: view_BasicItem
 });
 var view_CardItem = function(mediatorName,viewComponent) {
+	haxe_Log.trace(mediatorName,{ fileName : "CardItem.hx", lineNumber : 11, className : "view.CardItem", methodName : "new", customParams : [viewComponent]});
 	view_BasicItem.call(this,mediatorName,viewComponent);
 };
 view_CardItem.__name__ = true;
 view_CardItem.__super__ = view_BasicItem;
 view_CardItem.prototype = $extend(view_BasicItem.prototype,{
 	__class__: view_CardItem
-});
-var view_MapItem = function(mediatorName,viewComponent) {
-	view_BasicItem.call(this,mediatorName,viewComponent);
-};
-view_MapItem.__name__ = true;
-view_MapItem.__interfaces__ = [view_IItem];
-view_MapItem.__super__ = view_BasicItem;
-view_MapItem.prototype = $extend(view_BasicItem.prototype,{
-	__class__: view_MapItem
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;

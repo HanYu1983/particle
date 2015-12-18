@@ -35,10 +35,11 @@ class UIController extends Mediator
 	
 	function createPoker() {
 		var ary_create = [
-							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 200, 200 )
+							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 100, 100, true, false, Main.playerId ),
+							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 100, 100, true, false, Main.playerId ),
+							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 100, 100, true, false, Main.playerId ),
+							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 100, 100, true, false, Main.playerId ),
+							Main.createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 600, 600, true, false, Main.playerId )
 						];
 		facade.sendNotification( MainController.create_item, ary_create );
 	}
