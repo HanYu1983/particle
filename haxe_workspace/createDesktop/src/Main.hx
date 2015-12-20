@@ -40,10 +40,11 @@ class Main
 			
 			/*
 			Facade.getInstance().sendNotification( MainController.create_item, [
-																					createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 100, 100, true, false, playerId )
+																					createItem( ['../common/images/createTable/002.jpg'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 700, 700, true, false, playerId ),
+																					createItem( ['../common/images/createTable/Victory_Token.png'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'token', 100, 100, true, false, playerId )
 																				]);
-																				*/
 																				
+																				*/
 		});
 		
 		Browser.window.setField( 'onHtmlClick', onHtmlClick );
@@ -92,18 +93,19 @@ class Main
 		*/
 	}
 	
-	public static function createItem( pos:Array<Int>, ?type:String = 'card', ?width:Int = 100, ?height:Int = 100, ?back = true, ?lock = false, ?owner = 'desktop', ?viewer = '' ) {
+	public static function createItem( extra:Array<Dynamic>, pos:Array<Int>, ?type:String = 'card', ?width:Int = 100, ?height:Int = 100, ?back = true, ?lock = false, ?owner = 'desktop', ?viewer = '' ) {
 		return { 
 			type:type,
 			width:width,
 			height:height,
 			pos:[ Math.floor( Math.random() * 600 ), Math.floor( Math.random() * 600 ) ],
-			back:true,
+			back:back,
 			deg:0,
-			lock:false,
+			lock:lock,
 			owner:owner,
 			viewer:viewer,
-			id:createDivId()
+			id:createDivId(),
+			extra: extra
 		}
 	}
 	
@@ -223,6 +225,14 @@ class Main
 	
 	public static function alert( msg ) {
         j.messager.alert('錯誤', msg );
+	}
+	
+	public static function setSelectable( dom:Dynamic, s:Bool ) {
+		if ( s ) {
+			dom.addClass( 'lock' );
+		}else {
+			dom.removeClass( 'lock' );
+		}
 	}
 	
 	static function handleResponse( cb ) {

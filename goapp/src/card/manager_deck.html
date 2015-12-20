@@ -379,46 +379,44 @@ body{
 					{type:'label', val:'タイトル'},
 					{type:'select', span:1, val:{name:'pkg', items:['初音ミク -Project DIVA- f', '初音ミク -Project DIVA- f 2nd', '涼宮ハルヒの憂鬱', '進撃の巨人', '戦姫絶唱シンフォギア', '戦姫絶唱シンフォギアG', '戦姫絶唱シンフォギアGX', '艦隊これくしょん -艦これ-', '艦隊これくしょん -艦これ- 第二艦隊', 'To LOVEる -とらぶる- ダークネス 2nd']}},
 					{type:'label', val:'カテゴリ'},
-					{type:'select', span:1, val:{name:'type', items:['キャラ','イベント','クライマックス']}}
-				],
-				[
-					{type:'label', val:'レベル以上'},
-					{type:'select', span:1,val:{name:'level_1', items:['1','2','3']}},
-					{type:'label',val:'レベル以下'},
-					{type:'select', span:1, val:{name:'level_2', items:['1','2','3']}}
-				],
-				[
-					{type:'label', val:'コスト以上'},
-					{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5','6','7','8','9']}},
-					{type:'label',val:'コスト以下'},
-					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5','6','7','8','9']}}
-				],
-				[
-					{type:'label', val:'パワー以上'},
-					{type:'select', span:1,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500','6000','6500','7000','7500','8000','8500','9000','9500','10000']}},
-					{type:'label',val:'パワー以下'},
-					{type:'select', span:1, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500','6000','6500','7000','7500','8000','8500','9000','9500','10000']}}
-				],
-				[
-					{type:'label', val:'ソウル以上'},
-					{type:'select', span:1,val:{name:'soul_1', items:['1','2','3']}},
-					{type:'label',val:'ソウル以下'},
-					{type:'select', span:1, val:{name:'soul_2', items:['1','2','3']}}
-				],
-				[
+					{type:'select', span:1, val:{name:'type', items:['キャラ','イベント','クライマックス']}},
 					{type:'label', val:'トリガー'},
 					{type:'select', span:1,val:{name:'trigger', items:['なし','ソウル','リターン','プール','カムバック','ドロー','ショット','トレジャー','ゲート']}},
 					{type:'label',val:'キーワード'},
 					{type:'select', span:1, val:{name:'keyword', items:['アンコール','応援','絆','助太刀','大活躍','アラーム','集中','チェンジ','記憶','経験','シフト','加速','共鳴']}}
 				],
+				[
+					{type:'label', val:'レベル以上'},
+					{type:'select', span:3,val:{name:'level_1', items:['1','2','3']}},
+					{type:'label',val:'レベル以下'},
+					{type:'select', span:3, val:{name:'level_2', items:['1','2','3']}}
+				],
+				[
+					{type:'label', val:'コスト以上'},
+					{type:'select', span:3,val:{name:'cost_1', items:['1','2','3','4','5','6','7','8','9']}},
+					{type:'label',val:'コスト以下'},
+					{type:'select', span:3, val:{name:'cost_2', items:['1','2','3','4','5','6','7','8','9']}}
+				],
+				[
+					{type:'label', val:'パワー以上'},
+					{type:'select', span:3,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500','6000','6500','7000','7500','8000','8500','9000','9500','10000']}},
+					{type:'label',val:'パワー以下'},
+					{type:'select', span:3, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500','6000','6500','7000','7500','8000','8500','9000','9500','10000']}}
+				],
+				[
+					{type:'label', val:'ソウル以上'},
+					{type:'select', span:3,val:{name:'soul_1', items:['1','2','3']}},
+					{type:'label',val:'ソウル以下'},
+					{type:'select', span:3, val:{name:'soul_2', items:['1','2','3']}}
+				],
 				[	{type:'label', val:'カード名'},
-					{type:'textbox', span: 3, val:{name:'card_name'}}],
+					{type:'textbox', span: 7, val:{name:'card_name'}}],
 				[	{type:'label', val:'テキスト'},
-					{type:'textbox', span: 3,val:{name:'rule'}}],
+					{type:'textbox', span: 7,val:{name:'rule'}}],
 				[	{type:'label', val:'特徴'},
-					{type:'textbox', span: 3, val:{name:'symbol'}}],
+					{type:'textbox', span: 7, val:{name:'symbol'}}],
 				[	{type:'label', val:'id'},
-					{type:'textbox', span: 3,val:{name:'cid'}}]
+					{type:'textbox', span: 7,val:{name:'cid'}}]
 			]
 		},
 		sgs:{

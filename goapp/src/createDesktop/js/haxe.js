@@ -94,7 +94,7 @@ Main.main = function() {
 Main.messageSocket = function(type,msg) {
 	var messageSingle = function(toId,_type,_msg) {
 		channel.sendChannelMessage(toId,JSON.stringify({ type : _type, msg : JSON.parse(JSON.stringify(_msg))}),Main.handleResponse(function(ret) {
-			haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "messageSocket"});
+			haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 63, className : "Main", methodName : "messageSocket"});
 		}));
 	};
 	if(Main.ary_ops == null) return;
@@ -103,7 +103,7 @@ Main.messageSocket = function(type,msg) {
 		return true;
 	});
 };
-Main.createItem = function(pos,type,width,height,back,lock,owner,viewer) {
+Main.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
 	if(viewer == null) viewer = "";
 	if(owner == null) owner = "desktop";
 	if(lock == null) lock = false;
@@ -111,11 +111,11 @@ Main.createItem = function(pos,type,width,height,back,lock,owner,viewer) {
 	if(height == null) height = 100;
 	if(width == null) width = 100;
 	if(type == null) type = "card";
-	return { type : type, width : width, height : height, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : true, deg : 0, lock : false, owner : owner, viewer : viewer, id : Main.createDivId()};
+	return { type : type, width : width, height : height, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : Main.createDivId(), extra : extra};
 };
 Main.createSocket = function(id) {
 	api.createChannel(id,{ onopen : function() {
-		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 113, className : "Main", methodName : "createSocket"});
+		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 115, className : "Main", methodName : "createSocket"});
 	}, onmessage : function(json) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,json.msg,json.type);
 	}, onerror : function() {
@@ -135,6 +135,9 @@ Main.slide = function(msg,time) {
 };
 Main.alert = function(msg) {
 	Main.j.messager.alert("錯誤",msg);
+};
+Main.setSelectable = function(dom,s) {
+	if(s) dom.addClass("lock"); else dom.removeClass("lock");
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
@@ -264,7 +267,7 @@ var controller_MainController = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	leo.utils.initRectSelect(function(ary) {
-		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 35, className : "controller.MainController", methodName : "new"});
+		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 36, className : "controller.MainController", methodName : "new"});
 		_g.onSelectItems(ary);
 		_g.zsorting();
 	});
@@ -382,8 +385,8 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		case "card":
 			item = new view_CardItem(model.id,Main.createItemDiv(model.type,model));
 			break;
-		case "map":
-			item = new view_CardItem(model.id,Main.createItemDiv(model.type,model));
+		case "token":
+			item = new view_TokenItem(model.id,Main.createItemDiv(model.type,model));
 			break;
 		default:
 			item = new view_BasicItem(model.id,Main.createItemDiv(model.type,model));
@@ -392,15 +395,24 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		item.viewComponent.css("top",model.pos[1] + "px");
 		this.facade.registerMediator(item);
 		this.viewComponent.append(item.viewComponent);
-		haxe_Log.trace(model,{ fileName : "MainController.hx", lineNumber : 175, className : "controller.MainController", methodName : "createItem"});
 		(js_Boot.__cast(item , view_IItem)).setOwner(model.owner);
 		(js_Boot.__cast(item , view_IItem)).setViewer(model.viewer);
+		(js_Boot.__cast(item , view_IItem)).flip(model.back);
 		this.ary_allItem.push(model);
 	}
 	,onBodyKeyUp: function(e) {
 		this.sendNotification(controller_MainController.on_press,null,e.which);
 		var _g = e.which;
 		switch(_g) {
+		case 68:
+			break;
+		case 75:
+			break;
+		default:
+			if(this.ary_select.length == 0) return;
+		}
+		var _g1 = e.which;
+		switch(_g1) {
 		case 65:
 			this.moveModel();
 			this.updateView(this.ary_select);
@@ -434,6 +446,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			break;
 		case 68:
 			this.selectMyItem();
+			this.updateView(this.ary_select);
 			break;
 		case 83:
 			if(this.isList) this.togetherModel(); else this.listModel();
@@ -452,14 +465,12 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.setModelLock();
 			this.updateView(this.ary_select);
 			break;
-		}
-		var _g1 = e.which;
-		switch(_g1) {
-		case 68:
+		case 75:
+			this.unlockAllItem();
+			this.updateView(this.ary_allItem);
 			break;
-		default:
-			Main.messageSocket("applyTransform",this.ary_select);
 		}
+		Main.messageSocket("applyTransform",this.ary_select);
 	}
 	,rotateModel: function(deg) {
 		Lambda.foreach(this.ary_select,function(item) {
@@ -504,6 +515,15 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			var i = _g1++;
 			var itemModel = this.ary_select[i];
 			if(itemModel.owner == "" || itemModel.owner == Main.playerId) itemModel.lock = !itemModel.lock; else continue;
+		}
+	}
+	,unlockAllItem: function() {
+		var _g1 = 0;
+		var _g = this.ary_allItem.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_allItem[i];
+			if(itemModel.owner == "" || itemModel.owner == Main.playerId) itemModel.lock = false; else continue;
 		}
 	}
 	,setModelOwner: function() {
@@ -615,6 +635,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		});
 	}
 	,moveModel: function() {
+		haxe_Log.trace(this.ary_select,{ fileName : "MainController.hx", lineNumber : 417, className : "controller.MainController", methodName : "moveModel"});
 		var moveTarget = { };
 		this.ary_select.sort(function(ac,bc) {
 			if(ac.pos[0] < bc.pos[0]) return -1;
@@ -657,7 +678,7 @@ controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_M
 		}
 	}
 	,createPoker: function() {
-		var ary_create = [Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,true,false,Main.playerId),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,true,false,Main.playerId),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,true,false,Main.playerId),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,true,false,Main.playerId),Main.createItem([Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",600,600,true,false,Main.playerId)];
+		var ary_create = [Main.createItem(["../common/images/createTable/002.jpg","../common/images/createTable/001.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",700,700,false,false,Main.playerId),Main.createItem(["../common/images/createTable/Victory_Token.png"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"token",100,100,true,false,Main.playerId)];
 		this.facade.sendNotification(controller_MainController.create_item,ary_create);
 	}
 	,startServer: function() {
@@ -1242,6 +1263,7 @@ view_BasicItem.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	lock: function(l) {
 		if(l) this.viewComponent.find("#img_lock").show(); else this.viewComponent.find("#img_lock").hide();
+		Main.setSelectable(this.viewComponent,l);
 		this.sendNotification(view_BasicItem.on_item_lock,{ view : this.viewComponent, lock : l});
 	}
 	,flip: function(f) {
@@ -1341,6 +1363,20 @@ view_CardItem.__name__ = true;
 view_CardItem.__super__ = view_BasicItem;
 view_CardItem.prototype = $extend(view_BasicItem.prototype,{
 	__class__: view_CardItem
+});
+var view_TokenItem = function(mediatorName,viewComponent) {
+	view_BasicItem.call(this,mediatorName,viewComponent);
+};
+view_TokenItem.__name__ = true;
+view_TokenItem.__super__ = view_BasicItem;
+view_TokenItem.prototype = $extend(view_BasicItem.prototype,{
+	flip: function(f) {
+	}
+	,setOwner: function(o) {
+	}
+	,setViewer: function(v) {
+	}
+	,__class__: view_TokenItem
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
