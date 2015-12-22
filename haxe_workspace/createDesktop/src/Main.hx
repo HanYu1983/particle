@@ -98,7 +98,7 @@ class Main
 			type:type,
 			width:width,
 			height:height,
-			pos:[ Math.floor( Math.random() * 600 ), Math.floor( Math.random() * 600 ) ],
+			pos: pos,
 			back:back,
 			deg:0,
 			lock:lock,

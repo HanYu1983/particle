@@ -34,7 +34,7 @@ class UIController extends Mediator
 	}
 	
 	function createPoker() {
-		var ary_create = [/*
+		var ary_create = [
 							Main.createItem( ['../common/images/createTable/yh/yh_03.jpg', '../common/images/createTable/yh/yh_20.jpg'], [ 50, 50], 'card', 100, 200, false, false, Main.playerId ),
 							Main.createItem( ['../common/images/createTable/yh/yh_13.jpg', '../common/images/createTable/yh/yh_20.jpg'], [ 50, 50], 'card', 100, 200, false, false, Main.playerId ),
 							Main.createItem( ['../common/images/createTable/yh/yh_14.jpg', '../common/images/createTable/yh/yh_20.jpg'], [ 50, 50], 'card', 100, 200, false, false, Main.playerId ),
@@ -92,10 +92,9 @@ class UIController extends Mediator
 							
 							Main.createItem( ['../common/images/createTable/yh/yh_16.jpg', '../common/images/createTable/yh/yh_49.jpg'], [ 50, 50], 'card', 900, 900, false, false, Main.playerId ),
 							
-							
 							Main.createItem( ['../common/images/createTable/other/role_01.png'], [ 50, 50], 'token', 99, 141, false, false, Main.playerId ),
 							Main.createItem( ['../common/images/createTable/other/role_04.png'], [ 50, 50], 'token', 196, 146, false, false, Main.playerId ),
-							*/
+							
 							//dice
 							Main.createItem( [
 												'../common/images/createTable/other/dice_01.png', 
