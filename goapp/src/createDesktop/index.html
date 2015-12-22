@@ -128,6 +128,19 @@ body{
 		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
 	</div>
 </script>
+<script id="tmpl_sequence" type="jquery-x-tmpl">
+	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
+		<div id="mc_seqs" style="position:relative; top:0; left:0; width:100%; height:100%;">
+			<img style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />
+			<img style="position:absolute; top:0; left:0; width:100%; height:100%;" src=${extra[1]} />
+			<img style="position:absolute; top:0; left:0; width:100%; height:100%;" src=${extra[2]} />
+			<img style="position:absolute; top:0; left:0; width:100%; height:100%;" src=${extra[3]} />
+			<img style="position:absolute; top:0; left:0; width:100%; height:100%;" src=${extra[4]} />
+			<img style="position:absolute; top:0; left:0; width:100%; height:100%;" src=${extra[5]} />
+		</div>
+		<div id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; color:white; ">lock</div>
+	</div>
+</script>
 <script id="tmpl_token" type="jquery-x-tmpl">
 	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
 		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />

@@ -105,7 +105,10 @@ class Main
 			owner:owner,
 			viewer:viewer,
 			id:createDivId(),
-			extra: extra
+			extra: extra,
+			action:{
+				sequence:Math.random()
+			}
 		}
 	}
 	
@@ -113,77 +116,9 @@ class Main
 		untyped __js__( 'api.createChannel' )( id, {
 			onopen: function() {
 				trace( 'ok' );
-				/*
-				var ary_temp = [
-									createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-									createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-									createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )] ),
-									createItem( [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'map', 200, 50 )
-								];
-				
-				messageSocket( playerId, 'addItems', ary_temp );
-				
-				ary_temp[0].pos[0] = 100;
-				ary_temp[0].pos[1] = 0;
-				
-				ary_temp[1].pos[0] = 150;
-				ary_temp[1].pos[1] = 200;
-				
-				messageSocket( playerId, 'applyTransform', ary_temp );
-				
-				ary_temp[0].deg += 90;
-				ary_temp[1].back = false;
-				messageSocket( playerId, 'applyTransform', ary_temp );
-				ary_temp[0].deg += 90;
-				ary_temp[1].pos[0] += 90;
-				ary_temp[2].pos[1] += 90;
-				messageSocket( playerId, 'applyTransform', ary_temp );
-				ary_temp[0].deg += 90;
-				messageSocket( playerId, 'applyTransform', ary_temp );
-				
-				ary_temp[0].deg -= 90;
-				messageSocket( playerId, 'applyTransform', ary_temp );
-				
-				ary_temp[0].pos[0] = 130;
-				ary_temp[0].pos[1] = 200;
-				ary_temp[2].owner = playerId;
-				ary_temp[2].viewer = playerId;
-				ary_temp[3].owner = playerId;
-				ary_temp[1].owner = playerId;
-				messageSocket( playerId, 'applyTransform', ary_temp );
-				
-				*/
-				/*
-				messageSocket( playerId, 'applyFlip', [ tempItem ] );
-				messageSocket( playerId, 'applyFlip', [ tempItem ] );
-				
-				tempItem.viewer = playerId;
-				tempItem.owner = playerId;
-				messageSocket( playerId, 'applyViewerOwner', [ tempItem ] );
-				*/
-				/*
-				isCanSendMessage = true;
-				slide( '連線成功' );
-				j( '#btn_connect' ).linkbutton( 'disable' );
-				
-				for ( i in 0...otherPlayerIds.length ) {
-					var fn = (function( _i: Int ):Bool -> Void {
-						return function( conn: Bool ) {
-							otherPlayerIdsForCheck[_i] = conn;
-							isConntect = Lambda.fold( otherPlayerIdsForCheck, function( curr, first ) {
-								return first && curr;
-							}, true );
-							if ( isConntect ) {
-								Facade.getInstance().sendNotification( on_searchComplete );
-							}
-							Facade.getInstance().sendNotification( on_heartbeat_event, {conn:isConntect} );
-						}
-					})( i );
-					CallJs.api_startHeartbeat( playerId, otherPlayerIds[i], fn );
-				}
-				*/
 			},
 			onmessage: function( json ) {
+				trace( json );
 				Facade.getInstance().sendNotification( MainController.on_receiveMessage, json.msg, json.type );
 			},
 			onerror: function() {

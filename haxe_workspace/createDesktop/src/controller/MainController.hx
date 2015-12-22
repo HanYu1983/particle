@@ -7,6 +7,7 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 import view.BasicItem;
 import view.CardItem;
 import view.IItem;
+import view.SequenceItem;
 import view.TokenItem;
 
 using Lambda;
@@ -94,6 +95,7 @@ class MainController extends Mediator
 			model.viewer = receive.viewer;
 			model.back = receive.back;
 			model.lock = receive.lock;
+			model.action = receive.action;
 			return model;
 		});
 	}
@@ -110,6 +112,10 @@ class MainController extends Mediator
 				}
 			}
 			dom.attr( 'deg', itemModel.deg );
+		}
+		
+		function updateAction( item:IItem, itemModel:Dynamic ) {
+			item.action( itemModel.action );
 		}
 		
 		function updateMove( item:IItem, dom:Dynamic, itemModel:Dynamic ) {
@@ -145,6 +151,7 @@ class MainController extends Mediator
 			updateViewer( item, itemModel );
 			updateFlip( item, itemModel );
 			updateLock( item, itemModel );
+			updateAction( item, itemModel );
 			
 			dom.appendTo( dom.parent() );
 			return true;
@@ -162,6 +169,8 @@ class MainController extends Mediator
 		switch( model.type ) {
 			case 'card':
 				item = new CardItem( model.id, Main.createItemDiv( model.type, model ) );
+			case 'sequence':
+				item = new SequenceItem( model.id, Main.createItemDiv( model.type, model ) );
 			case 'token':
 				item = new TokenItem( model.id, Main.createItemDiv( model.type, model ) );
 			default:
@@ -192,6 +201,9 @@ class MainController extends Mediator
 		}
 		
 		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_T:
+				actionModel();
+				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_A:
 				moveModel();
 				updateView( ary_select );
@@ -412,9 +424,18 @@ class MainController extends Mediator
 		});
 	}
 	
+	function actionModel() {
+		ary_select.foreach( function( item:Dynamic ) {
+			switch( item.type ) {
+				case 'sequence':
+					item.action.sequence = Math.random();
+				case _:
+			}
+			return true;
+		});
+	}
+	
 	function moveModel() {
-		
-		trace( ary_select );
 		var moveTarget:Dynamic = { };
 		ary_select.sort( function( ac, bc ) {
 			if ( ac.pos[0] < bc.pos[0] ) return -1;

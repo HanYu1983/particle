@@ -29,6 +29,10 @@ class BasicItem extends Mediator implements IItem
 		});
 	}
 	
+	public function action( value:Dynamic ):Void {
+		
+	}
+	
 	public function lock( l:Bool ):Void {
 		if ( l ) {
 			viewComponent.find( '#img_lock' ).show();

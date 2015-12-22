@@ -111,12 +111,13 @@ Main.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
 	if(height == null) height = 100;
 	if(width == null) width = 100;
 	if(type == null) type = "card";
-	return { type : type, width : width, height : height, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : Main.createDivId(), extra : extra};
+	return { type : type, width : width, height : height, pos : [Math.floor(Math.random() * 600),Math.floor(Math.random() * 600)], back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : Main.createDivId(), extra : extra, action : { sequence : Math.random()}};
 };
 Main.createSocket = function(id) {
 	api.createChannel(id,{ onopen : function() {
-		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 115, className : "Main", methodName : "createSocket"});
+		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 118, className : "Main", methodName : "createSocket"});
 	}, onmessage : function(json) {
+		haxe_Log.trace(json,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "createSocket"});
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(controller_MainController.on_receiveMessage,json.msg,json.type);
 	}, onerror : function() {
 	}, onclose : function() {
@@ -267,7 +268,7 @@ var controller_MainController = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	leo.utils.initRectSelect(function(ary) {
-		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 36, className : "controller.MainController", methodName : "new"});
+		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 37, className : "controller.MainController", methodName : "new"});
 		_g.onSelectItems(ary);
 		_g.zsorting();
 	});
@@ -329,6 +330,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			model.viewer = receive.viewer;
 			model.back = receive.back;
 			model.lock = receive.lock;
+			model.action = receive.action;
 			return model;
 		});
 	}
@@ -341,33 +343,37 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			}
 			dom.attr("deg",itemModel.deg);
 		};
-		var updateMove = function(item1,dom1,itemModel1) {
+		var updateAction = function(item1,itemModel1) {
+			item1.action(itemModel1.action);
+		};
+		var updateMove = function(item2,dom1,itemModel2) {
 			var dom_pos_0 = StringTools.replace(dom1.css("left"),"px","");
 			var dom_pos_1 = StringTools.replace(dom1.css("top"),"px","");
-			if(dom_pos_0 != itemModel1.pos[0] || dom_pos_1 != itemModel1.pos[1]) item1.move(itemModel1.pos[0],itemModel1.pos[1]);
+			if(dom_pos_0 != itemModel2.pos[0] || dom_pos_1 != itemModel2.pos[1]) item2.move(itemModel2.pos[0],itemModel2.pos[1]);
 		};
-		var updateOwner = function(item2,itemModel2) {
-			item2.setOwner(itemModel2.owner);
+		var updateOwner = function(item3,itemModel3) {
+			item3.setOwner(itemModel3.owner);
 		};
-		var updateViewer = function(item3,itemModel3) {
-			item3.setViewer(itemModel3.viewer);
+		var updateViewer = function(item4,itemModel4) {
+			item4.setViewer(itemModel4.viewer);
 		};
-		var updateFlip = function(item4,itemModel4) {
-			item4.flip(itemModel4.back);
+		var updateFlip = function(item5,itemModel5) {
+			item5.flip(itemModel5.back);
 		};
-		var updateLock = function(item5,itemModel5) {
-			item5.lock(itemModel5.lock);
+		var updateLock = function(item6,itemModel6) {
+			item6.lock(itemModel6.lock);
 		};
-		Lambda.foreach(ary_item,function(itemModel6) {
-			var item6;
-			item6 = js_Boot.__cast(_g.facade.retrieveMediator(itemModel6.id) , view_IItem);
-			var dom2 = _g.facade.retrieveMediator(itemModel6.id).getViewComponent();
-			updateRotate(item6,dom2,itemModel6);
-			updateMove(item6,dom2,itemModel6);
-			updateOwner(item6,itemModel6);
-			updateViewer(item6,itemModel6);
-			updateFlip(item6,itemModel6);
-			updateLock(item6,itemModel6);
+		Lambda.foreach(ary_item,function(itemModel7) {
+			var item7;
+			item7 = js_Boot.__cast(_g.facade.retrieveMediator(itemModel7.id) , view_IItem);
+			var dom2 = _g.facade.retrieveMediator(itemModel7.id).getViewComponent();
+			updateRotate(item7,dom2,itemModel7);
+			updateMove(item7,dom2,itemModel7);
+			updateOwner(item7,itemModel7);
+			updateViewer(item7,itemModel7);
+			updateFlip(item7,itemModel7);
+			updateLock(item7,itemModel7);
+			updateAction(item7,itemModel7);
 			dom2.appendTo(dom2.parent());
 			return true;
 		});
@@ -384,6 +390,9 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		switch(_g) {
 		case "card":
 			item = new view_CardItem(model.id,Main.createItemDiv(model.type,model));
+			break;
+		case "sequence":
+			item = new view_SequenceItem(model.id,Main.createItemDiv(model.type,model));
 			break;
 		case "token":
 			item = new view_TokenItem(model.id,Main.createItemDiv(model.type,model));
@@ -413,6 +422,10 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		}
 		var _g1 = e.which;
 		switch(_g1) {
+		case 84:
+			this.actionModel();
+			this.updateView(this.ary_select);
+			break;
 		case 65:
 			this.moveModel();
 			this.updateView(this.ary_select);
@@ -634,8 +647,19 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			return Main.playerId == model.owner;
 		});
 	}
+	,actionModel: function() {
+		Lambda.foreach(this.ary_select,function(item) {
+			var _g = item.type;
+			switch(_g) {
+			case "sequence":
+				item.action.sequence = Math.random();
+				break;
+			default:
+			}
+			return true;
+		});
+	}
 	,moveModel: function() {
-		haxe_Log.trace(this.ary_select,{ fileName : "MainController.hx", lineNumber : 417, className : "controller.MainController", methodName : "moveModel"});
 		var moveTarget = { };
 		this.ary_select.sort(function(ac,bc) {
 			if(ac.pos[0] < bc.pos[0]) return -1;
@@ -678,7 +702,7 @@ controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_M
 		}
 	}
 	,createPoker: function() {
-		var ary_create = [Main.createItem(["../common/images/createTable/yh/yh_03.jpg","../common/images/createTable/yh/yh_20.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_13.jpg","../common/images/createTable/yh/yh_20.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_14.jpg","../common/images/createTable/yh/yh_20.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_19.jpg","../common/images/createTable/yh/yh_20.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_35.jpg","../common/images/createTable/yh/yh_20.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_37.jpg","../common/images/createTable/yh/yh_20.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_39.jpg","../common/images/createTable/yh/yh_20.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_41.jpg","../common/images/createTable/yh/yh_20.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_01.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_05.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_06.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_07.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_08.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_09.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_10.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_11.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_15.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_38.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_42.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_46.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_47.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_53.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_54.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_55.jpg","../common/images/createTable/yh/yh_12.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_02.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_04.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_17.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_18.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_21.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_34.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_36.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_40.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_43.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_44.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_45.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_49.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_50.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_51.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_52.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_22.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_23.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_24.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_25.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_26.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_27.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_28.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_29.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_30.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_31.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_32.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_33.jpg","../common/images/createTable/yh/yh_56.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,100,false,false,Main.playerId),Main.createItem(["../common/images/createTable/yh/yh_16.jpg","../common/images/createTable/yh/yh_49.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",900,900,false,false,Main.playerId)];
+		var ary_create = [Main.createItem(["../common/images/createTable/other/dice_01.png","../common/images/createTable/other/dice_02.png","../common/images/createTable/other/dice_03.png","../common/images/createTable/other/dice_04.png","../common/images/createTable/other/dice_05.png","../common/images/createTable/other/dice_06.png"],[50,50],"sequence",50,50,false,false,Main.playerId)];
 		this.facade.sendNotification(controller_MainController.create_item,ary_create);
 	}
 	,startServer: function() {
@@ -697,6 +721,31 @@ var haxe_Log = function() { };
 haxe_Log.__name__ = true;
 haxe_Log.trace = function(v,infos) {
 	js_Boot.__trace(v,infos);
+};
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe_Timer.__name__ = true;
+haxe_Timer.delay = function(f,time_ms) {
+	var t = new haxe_Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+};
+haxe_Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
+	,__class__: haxe_Timer
 };
 var haxe_ds_StringMap = function() {
 	this.h = { };
@@ -1261,7 +1310,9 @@ view_BasicItem.__name__ = true;
 view_BasicItem.__interfaces__ = [view_IItem];
 view_BasicItem.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
-	lock: function(l) {
+	action: function(value) {
+	}
+	,lock: function(l) {
 		if(l) this.viewComponent.find("#img_lock").show(); else this.viewComponent.find("#img_lock").hide();
 		Main.setSelectable(this.viewComponent,l);
 		this.sendNotification(view_BasicItem.on_item_lock,{ view : this.viewComponent, lock : l});
@@ -1363,6 +1414,35 @@ view_CardItem.__name__ = true;
 view_CardItem.__super__ = view_BasicItem;
 view_CardItem.prototype = $extend(view_BasicItem.prototype,{
 	__class__: view_CardItem
+});
+var view_SequenceItem = function(mediatorName,viewComponent) {
+	view_BasicItem.call(this,mediatorName,viewComponent);
+};
+view_SequenceItem.__name__ = true;
+view_SequenceItem.__super__ = view_BasicItem;
+view_SequenceItem.prototype = $extend(view_BasicItem.prototype,{
+	action: function(value) {
+		var mc_seqs = this.viewComponent.find("#mc_seqs");
+		var count = mc_seqs.children().length;
+		var showTarget = function(index) {
+			mc_seqs.find("img").hide();
+			mc_seqs.children().eq(index).show();
+		};
+		haxe_Log.trace(value.sequence,{ fileName : "SequenceItem.hx", lineNumber : 27, className : "view.SequenceItem", methodName : "action", customParams : [this.viewComponent.attr("action")]});
+		if(this.viewComponent.attr("action") == null || this.viewComponent.attr("action") != value.sequence) {
+			var _g = 0;
+			while(_g < 30) {
+				var i = [_g++];
+				haxe_Timer.delay((function(i) {
+					return function() {
+						if(i[0] == 29) showTarget(Math.floor(value.sequence * count)); else showTarget(Math.floor(Math.random() * count));
+					};
+				})(i),i[0] * 10);
+			}
+			this.viewComponent.attr("action",value.sequence);
+		}
+	}
+	,__class__: view_SequenceItem
 });
 var view_TokenItem = function(mediatorName,viewComponent) {
 	view_BasicItem.call(this,mediatorName,viewComponent);

@@ -13,6 +13,7 @@ interface IItem
 	function rotate( sd:Int, ed:Int ):Void;
 	function setViewer( v:String ):Void;
 	function setOwner( o:String ):Void;
+	function action( value:Dynamic ):Void;
 	
 	function getViewer():String;
 	function getOwner():String;
