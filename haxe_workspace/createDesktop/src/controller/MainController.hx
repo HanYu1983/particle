@@ -185,6 +185,7 @@ class MainController extends Mediator
 		cast( item, IItem ).setOwner( model.owner );
 		cast( item, IItem ).setViewer( model.viewer );
 		cast( item, IItem ).flip( model.back );
+		cast( item, IItem ).action( model.action );
 		
 		ary_allItem.push( model );
 	}

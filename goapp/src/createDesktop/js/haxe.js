@@ -407,6 +407,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		(js_Boot.__cast(item , view_IItem)).setOwner(model.owner);
 		(js_Boot.__cast(item , view_IItem)).setViewer(model.viewer);
 		(js_Boot.__cast(item , view_IItem)).flip(model.back);
+		(js_Boot.__cast(item , view_IItem)).action(model.action);
 		this.ary_allItem.push(model);
 	}
 	,onBodyKeyUp: function(e) {
