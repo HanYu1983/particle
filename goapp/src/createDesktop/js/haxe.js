@@ -7,6 +7,23 @@ function $extend(from, fields) {
 }
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) return undefined;
+	return x;
+};
+HxOverrides.indexOf = function(a,obj,i) {
+	var len = a.length;
+	if(i < 0) {
+		i += len;
+		if(i < 0) i = 0;
+	}
+	while(i < len) {
+		if(a[i] === obj) return i;
+		i++;
+	}
+	return -1;
+};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -177,6 +194,12 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
+	if(isNaN(v)) return null;
+	return v;
+};
 var StringTools = function() { };
 StringTools.__name__ = true;
 StringTools.replace = function(s,sub,by) {
@@ -268,12 +291,12 @@ var controller_MainController = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	leo.utils.initRectSelect(function(ary) {
-		haxe_Log.trace(ary,{ fileName : "MainController.hx", lineNumber : 37, className : "controller.MainController", methodName : "new"});
 		_g.onSelectItems(ary);
 		_g.zsorting();
 	});
 	Main.j("body").mousemove($bind(this,this.onBodyMouseMove));
 	Main.j("body").keyup($bind(this,this.onBodyKeyUp));
+	Main.j("body").mousedown($bind(this,this.onBodyKeyUp));
 };
 controller_MainController.__name__ = true;
 controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -313,6 +336,11 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 					_g1.createItem(c1);
 					return true;
 				});
+				break;
+			case "deleteItem":
+				var localModel = this.receiveItemToLocalModel(notification.getBody());
+				this.deleteModel(localModel);
+				this.deleteView(localModel);
 				break;
 			case "applyTransform":
 				this.updateView(this.updateModel(notification.getBody()));
@@ -421,13 +449,17 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		default:
 			if(this.ary_select.length == 0) return;
 		}
-		var _g1 = e.which;
-		switch(_g1) {
+		var _g1 = Std.parseInt(e.which);
+		if(_g1 != null) switch(_g1) {
+		case 72:
+			this.deleteModel(this.ary_select);
+			this.deleteView(this.ary_select);
+			break;
 		case 84:
 			this.actionModel();
 			this.updateView(this.ary_select);
 			break;
-		case 65:
+		case 65:case 3:
 			this.moveModel();
 			this.updateView(this.ary_select);
 			break;
@@ -484,7 +516,17 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.updateView(this.ary_allItem);
 			break;
 		}
-		Main.messageSocket("applyTransform",this.ary_select);
+		var _g2 = e.which;
+		switch(_g2) {
+		case 72:
+			Main.messageSocket("deleteItem",this.ary_select);
+			break;
+		case 75:
+			Main.messageSocket("applyTransform",this.ary_allItem);
+			break;
+		default:
+			Main.messageSocket("applyTransform",this.ary_select);
+		}
 	}
 	,rotateModel: function(deg) {
 		Lambda.foreach(this.ary_select,function(item) {
@@ -500,6 +542,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		});
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.sendNotification(controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+		Main.messageSocket("applyTransform",this.ary_select);
 	}
 	,selectMyItem: function() {
 		this.ary_select = this.filterLock(this.getMyItemFromPool());
@@ -657,6 +700,21 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 				break;
 			default:
 			}
+			return true;
+		});
+	}
+	,deleteModel: function(ary_receive) {
+		var _g = this;
+		Lambda.foreach(ary_receive,function(removeItem) {
+			var rid = HxOverrides.indexOf(_g.ary_allItem,removeItem,0);
+			_g.ary_allItem.splice(rid,1);
+			return true;
+		});
+	}
+	,deleteView: function(ary_receive) {
+		var _g = this;
+		Lambda.foreach(ary_receive,function(removeItem) {
+			_g.facade.retrieveMediator(removeItem.id).getViewComponent().remove();
 			return true;
 		});
 	}
@@ -1462,6 +1520,9 @@ view_TokenItem.prototype = $extend(view_BasicItem.prototype,{
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
+if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
+	return Array.prototype.indexOf.call(a,o,i);
+};
 String.prototype.__class__ = String;
 String.__name__ = true;
 Array.__name__ = true;

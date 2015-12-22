@@ -34,13 +34,13 @@ class MainController extends Mediator
 		super(mediatorName, viewComponent);
 		
 		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ) {
-			trace( ary );
 			onSelectItems( ary );
 			zsorting();
 		});
 		
 		Main.j( 'body' ).mousemove( onBodyMouseMove );
 		Main.j( 'body' ).keyup( onBodyKeyUp );
+		Main.j( 'body' ).mousedown( onBodyKeyUp );
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -80,6 +80,10 @@ class MainController extends Mediator
 							createItem( c );
 							return true;
 						});
+					case 'deleteItem':
+						var localModel = receiveItemToLocalModel( notification.getBody() );
+						deleteModel( localModel );
+						deleteView( localModel );
 					case 'applyTransform':
 						updateView( updateModel( notification.getBody() ) );
 				}
@@ -201,11 +205,14 @@ class MainController extends Mediator
 				if ( ary_select.length == 0 ) return;
 		}
 		
-		switch( e.which ) {
+		switch( Std.parseInt( e.which ) ) {
+			case KeyboardEvent.DOM_VK_H:
+				deleteModel( ary_select );
+				deleteView( ary_select );
 			case KeyboardEvent.DOM_VK_T:
 				actionModel();
 				updateView( ary_select );
-			case KeyboardEvent.DOM_VK_A:
+			case KeyboardEvent.DOM_VK_A, 3:
 				moveModel();
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_X:
@@ -253,7 +260,15 @@ class MainController extends Mediator
 				unlockAllItem();
 				updateView( ary_allItem );
 		}
-		Main.messageSocket( 'applyTransform', ary_select );
+		
+		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_H:
+				Main.messageSocket( 'deleteItem', ary_select );
+			case KeyboardEvent.DOM_VK_K:
+				Main.messageSocket( 'applyTransform', ary_allItem );
+			case _:
+				Main.messageSocket( 'applyTransform', ary_select );
+		}
 	}
 	
 	function rotateModel( deg ) {
@@ -270,6 +285,7 @@ class MainController extends Mediator
 		if( !selectLock )
 			ary_select = filterLock( ary_select );
 		sendNotification( on_select_cards, { ary_select:ary_select } );
+		Main.messageSocket( 'applyTransform', ary_select );
 	}
 	
 	function selectMyItem() {
@@ -432,6 +448,21 @@ class MainController extends Mediator
 					item.action.sequence = Math.random();
 				case _:
 			}
+			return true;
+		});
+	}
+	
+	function deleteModel( ary_receive:Array<Dynamic> ) {
+		ary_receive.foreach( function( removeItem ) {
+			var rid = ary_allItem.indexOf( removeItem );
+			ary_allItem.splice( rid, 1 );
+			return true;
+		});
+	}
+	
+	function deleteView( ary_receive:Array<Dynamic> ) {
+		ary_receive.foreach( function( removeItem ) {
+			facade.retrieveMediator( removeItem.id ).getViewComponent().remove();
 			return true;
 		});
 	}
