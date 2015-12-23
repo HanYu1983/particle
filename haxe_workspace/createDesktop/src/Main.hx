@@ -69,28 +69,6 @@ class Main
 			messageSingle( op, type, msg );
 			return true;
 		});
-		/*
-		ary_sendMessage.push( {
-			toId: toId,
-			msg:{ type:type, msg:Json.parse( Json.stringify( msg )) },
-			channel:untyped __js__( 'channel' )
-		} );
-		
-		function doNextChannel() {
-			if ( ary_sendMessage.length > 0 ) {
-				isSending = true;
-				var m:Dynamic = ary_sendMessage.shift();
-				
-				m.channel.sendChannelMessage( m.toId, Json.stringify( m.msg ), handleResponse( function( ret ) {
-					isSending = false;
-					doNextChannel();
-				}));
-			}
-		}
-		
-		if ( isSending ) return;
-		doNextChannel();
-		*/
 	}
 	
 	public static function createItem( extra:Array<Dynamic>, pos:Array<Int>, ?type:String = 'card', ?width:Int = 100, ?height:Int = 100, ?back = true, ?lock = false, ?owner = 'desktop', ?viewer = '' ) {
@@ -161,7 +139,7 @@ class Main
 	public static function alert( msg ) {
         j.messager.alert('錯誤', msg );
 	}
-	
+	/*
 	public static function setSelectable( dom:Dynamic, s:Bool ) {
 		if ( s ) {
 			dom.addClass( 'lock' );
@@ -169,7 +147,7 @@ class Main
 			dom.removeClass( 'lock' );
 		}
 	}
-	
+	*/
 	static function handleResponse( cb ) {
 		return function ( err, ret ) {
 			if ( err != null ) {

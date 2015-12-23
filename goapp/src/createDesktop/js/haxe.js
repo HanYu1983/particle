@@ -132,9 +132,9 @@ Main.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
 };
 Main.createSocket = function(id) {
 	api.createChannel(id,{ onopen : function() {
-		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 118, className : "Main", methodName : "createSocket"});
+		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 96, className : "Main", methodName : "createSocket"});
 	}, onmessage : function(json) {
-		haxe_Log.trace(json,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "createSocket"});
+		haxe_Log.trace(json,{ fileName : "Main.hx", lineNumber : 99, className : "Main", methodName : "createSocket"});
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
 	}, onerror : function() {
 	}, onclose : function() {
@@ -153,9 +153,6 @@ Main.slide = function(msg,time) {
 };
 Main.alert = function(msg) {
 	Main.j.messager.alert("錯誤",msg);
-};
-Main.setSelectable = function(dom,s) {
-	if(s) dom.addClass("lock"); else dom.removeClass("lock");
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
@@ -1372,8 +1369,13 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype = $extend(org_puremvc
 	action: function(value) {
 	}
 	,lock: function(l) {
-		if(l) this.viewComponent.find("#img_lock").show(); else this.viewComponent.find("#img_lock").hide();
-		Main.setSelectable(this.viewComponent,l);
+		if(l) {
+			this.viewComponent.find("#img_lock").show();
+			this.viewComponent.addClass("lock");
+		} else {
+			this.viewComponent.find("#img_lock").hide();
+			this.viewComponent.removeClass("lock");
+		}
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock,{ view : this.viewComponent, lock : l});
 	}
 	,flip: function(f) {

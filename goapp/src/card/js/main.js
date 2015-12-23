@@ -163,27 +163,6 @@ _$List_ListIterator.prototype = {
 	,__class__: _$List_ListIterator
 };
 var Main = function() {
-	var _g = this;
-	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
-		Main.playerId = nv;
-	}});
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
-	if(CallJs.getCookie("otherPlayerId") != null) {
-		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
-	} else Main.ary_ops = [];
-	Main.openLoading("準備中...請稍等");
-	var fbappId = config.fbid[config.fbid.which];
-	CallJs.myapp_facebook_init(fbappId,function() {
-		_g.updateGameUI(Main.currentSelect);
-		Main.closeLoading();
-		_g.prepareCardsuit(CallJs.cardSuit_defaultModel().cardSuit);
-		Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
-	});
-	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
 Main.selectOps = function(ops) {
@@ -763,9 +742,6 @@ Reflect.field = function(o,field) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
-};
-Reflect.setField = function(o,field,value) {
-	o[field] = value;
 };
 Reflect.fields = function(o) {
 	var a = [];

@@ -36,10 +36,11 @@ class BasicItem extends Mediator implements IItem
 	public function lock( l:Bool ):Void {
 		if ( l ) {
 			viewComponent.find( '#img_lock' ).show();
+			viewComponent.addClass( 'lock' );
 		}else {
 			viewComponent.find( '#img_lock' ).hide();
+			viewComponent.removeClass( 'lock' );
 		}
-		Main.setSelectable( viewComponent, l );
 		sendNotification( on_item_lock, {view:viewComponent, lock:l} );
 	}
 	
