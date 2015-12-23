@@ -6,10 +6,8 @@ goog.require('clojure.string');
 test.yugioh.async = require("async");
 test.yugioh.fs = require("fs");
 test.yugioh.SqliteDB = require("sqlite3").verbose().Database;
-test.yugioh.db = (new test.yugioh.SqliteDB("yugiohDoc/ch/cards.cdb"));
-test.yugioh.stringsPath = "yugiohDoc/ch/strings.conf";
-test.yugioh.outputFile = "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListCh.json";
-test.yugioh.parseStrings = (function parseStrings(cb){return test.yugioh.fs.readFile(test.yugioh.stringsPath,"utf8",(function (err,data){var parseRow = (function (row){var vec__5125 = cljs.core.js__GT_clj.call(null,row.split(" "));var _ = cljs.core.nth.call(null,vec__5125,(0),null);var value = cljs.core.nth.call(null,vec__5125,(1),null);var text = cljs.core.nth.call(null,vec__5125,(2),null);return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [value,text], null);
+test.yugioh.config = new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"en","en",88457073),new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"db","db",993250759),"yugiohDoc/en/cards.cdb",new cljs.core.Keyword(null,"strings","strings",-2055406807),"yugiohDoc/en/strings.conf",new cljs.core.Keyword(null,"output","output",-1105869043),"/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListEn.json"], null),new cljs.core.Keyword(null,"ch","ch",-554717905),new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"db","db",993250759),"yugiohDoc/ch/cards.cdb",new cljs.core.Keyword(null,"strings","strings",-2055406807),"yugiohDoc/ch/strings.conf",new cljs.core.Keyword(null,"output","output",-1105869043),"/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListCh.json"], null)], null);
+test.yugioh.parseStrings = (function parseStrings(stringsPath,cb){return test.yugioh.fs.readFile(stringsPath,"utf8",(function (err,data){var parseRow = (function (row){var vec__5245 = cljs.core.js__GT_clj.call(null,row.split(" "));var _ = cljs.core.nth.call(null,vec__5245,(0),null);var value = cljs.core.nth.call(null,vec__5245,(1),null);var text = cljs.core.nth.call(null,vec__5245,(2),null);return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [value,text], null);
 });var rows = data.split("\n");var formated = cljs.core.reduce.call(null,((function (parseRow,rows){
 return (function (all,row){if((row.lastIndexOf("#",(0)) === (0)))
 {return all;
@@ -30,8 +28,8 @@ test.yugioh.formatTemplate = (function formatTemplate(i,cnt,strs,attr){return cl
 test.yugioh.formatAttribute = cljs.core.partial.call(null,test.yugioh.formatTemplate,(1010),(7));
 test.yugioh.formatRace = cljs.core.partial.call(null,test.yugioh.formatTemplate,(1020),(30));
 test.yugioh.formatType = cljs.core.partial.call(null,test.yugioh.formatTemplate,(1050),(30));
-test.yugioh.parseCDB = (function parseCDB(cb){return test.yugioh.db.serialize((function (){var output = [];return test.yugioh.db.each("select count(*) as cnt from datas,texts where datas.id=texts.id",((function (output){
-return (function (err,row){var total = row.cnt;var all = cljs.core.atom.call(null,cljs.core.PersistentVector.EMPTY);return test.yugioh.db.each("select * from datas,texts where datas.id=texts.id",((function (total,all,output){
+test.yugioh.parseCDB = (function parseCDB(db,cb){return db.serialize((function (){var output = [];return db.each("select count(*) as cnt from datas,texts where datas.id=texts.id",((function (output){
+return (function (err,row){var total = row.cnt;var all = cljs.core.atom.call(null,cljs.core.PersistentVector.EMPTY);return db.each("select * from datas,texts where datas.id=texts.id",((function (total,all,output){
 return (function (err__$1,row__$1){cljs.core.swap_BANG_.call(null,all,cljs.core.conj,row__$1);
 if(cljs.core._EQ_.call(null,cljs.core.count.call(null,cljs.core.deref.call(null,all)),total))
 {cb.call(null,null,cljs.core.deref.call(null,all));
@@ -45,7 +43,7 @@ return null;
 );
 }));
 });
-test.yugioh.parseFile = (function parseFile(){return test.yugioh.async.parallel([test.yugioh.parseStrings,test.yugioh.parseCDB],(function (err,rets){var strs = (rets[(0)]);var cards = (rets[(1)]);var formatObj = ((function (strs,cards){
+test.yugioh.parseFile = (function parseFile(lan){return test.yugioh.async.parallel([cljs.core.partial.call(null,test.yugioh.parseStrings,cljs.core.get_in.call(null,test.yugioh.config,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [lan,new cljs.core.Keyword(null,"strings","strings",-2055406807)], null))),cljs.core.partial.call(null,test.yugioh.parseCDB,(new test.yugioh.SqliteDB(cljs.core.get_in.call(null,test.yugioh.config,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [lan,new cljs.core.Keyword(null,"db","db",993250759)], null)))))],(function (err,rets){var strs = (rets[(0)]);var cards = (rets[(1)]);var formatObj = ((function (strs,cards){
 return (function (obj){obj.id = obj.id.toString();
 obj.lscale = ((obj.level >> (24)) & (255));
 obj.rscale = ((obj.level >> (16)) & (255));
@@ -55,8 +53,8 @@ obj.type = cljs.core.clj__GT_js.call(null,test.yugioh.formatType.call(null,strs,
 obj.race = cljs.core.clj__GT_js.call(null,test.yugioh.formatRace.call(null,strs,obj.race)).join("|");
 return obj;
 });})(strs,cards))
-;var formatCards = cljs.core.map.call(null,formatObj,cards);return test.yugioh.fs.writeFile(test.yugioh.outputFile,JSON.stringify(cljs.core.clj__GT_js.call(null,formatCards)),((function (strs,cards,formatObj,formatCards){
-return (function (err__$1){return console.log("write file ",test.yugioh.outputFile,"!");
+;var formatCards = cljs.core.map.call(null,formatObj,cards);return test.yugioh.fs.writeFile(cljs.core.get_in.call(null,test.yugioh.config,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [lan,new cljs.core.Keyword(null,"output","output",-1105869043)], null)),JSON.stringify(cljs.core.clj__GT_js.call(null,formatCards),null,"\t"),((function (strs,cards,formatObj,formatCards){
+return (function (err__$1){return console.log("write file ",cljs.core.get_in.call(null,test.yugioh.config,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [lan,new cljs.core.Keyword(null,"output","output",-1105869043)], null)),"!");
 });})(strs,cards,formatObj,formatCards))
 );
 }));

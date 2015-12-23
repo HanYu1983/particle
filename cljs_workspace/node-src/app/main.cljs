@@ -111,7 +111,9 @@
           (.log js/console err)))
     
       "parseYugiohCDB"
-      (test.yugioh/parseFile)
+      (do
+        (test.yugioh/parseFile :en)
+        (test.yugioh/parseFile :ch))
     
       "getSangoCard"
       (test.getSangoCard/testGetAll)

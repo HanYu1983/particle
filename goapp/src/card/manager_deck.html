@@ -770,11 +770,12 @@ body{
 					{type:'label', val:'Level以下'},
 					{type:'select', span:3, val:{name:'level_2', items:['1','2','3','4','5','6','7','8','9','10','11','12']}}
 				],
+				// race裡空白要用 這個字元來代替，因為原始資料中就是 
 				[
 					{type:'label', val:'Attribute'},
 					{type:'select', span:1, val:{name:'attr', items:['Earth','Water','Fire','Wind','Light','Dark','Divine']}},
 					{type:'label', val:'Race'},
-					{type:'textbox', span:1, val:{name:'race', items:['Warrior','Spellcaster','Fairy','Fiend','Zombie','Machine','Aqua','Pyro','Rock','Winged Beast','Plant','Insect','Thunder','Dragon','Beast','Beast-Warrior','Dinosaur','Fish','Sea Serpent','Reptile','Psychic','Divine-Beast','Creator God','Wyrm']}},
+					{type:'select', span:1, val:{name:'race', items:['Warrior','Spellcaster','Fairy','Fiend','Zombie','Machine','Aqua','Pyro','Rock','Winged Beast','Plant','Insect','Thunder','Dragon','Beast','Beast-Warrior','Dinosaur','Fish','Sea Serpent','Reptile','Psychic','Divine-Beast','Creator God','Wyrm']}},
 					{type:'label', val:'Card Type'},
 					{type:'select', span:1, val:{name:'ctype', items:['Monster','Spell','Trap']}},
 					{type:'label', val:'Summon Type'},
@@ -1241,8 +1242,8 @@ body{
 		}
 		
 		function searchCards( searchstr ){
-			console.log( searchstr );
-			if( searchstr == undefined ) return;
+			//console.log( searchstr );
+		//	if( searchstr == undefined ) return;
 			
 		//	searchstr = searchstr.replace( '+', '%20' );
 		//	console.log( searchstr );

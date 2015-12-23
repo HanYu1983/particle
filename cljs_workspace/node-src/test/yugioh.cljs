@@ -10,11 +10,23 @@
     (.verbose)
     (.-Database)))
 
-(def db (SqliteDB. "yugiohDoc/ch/cards.cdb"))
-(def stringsPath "yugiohDoc/ch/strings.conf")
-(def outputFile "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListCh.json")
+(def config
+  {
+    :en
+    {
+      :db "yugiohDoc/en/cards.cdb"
+      :strings "yugiohDoc/en/strings.conf"
+      :output "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListEn.json" 
+    }
+    :ch
+    {
+      :db "yugiohDoc/ch/cards.cdb"
+      :strings "yugiohDoc/ch/strings.conf"
+      :output "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListCh.json" 
+    }
+  })
 
-(defn parseStrings [cb]
+(defn parseStrings [stringsPath cb]
   (.readFile fs
     stringsPath
     "utf8"
@@ -49,7 +61,7 @@
 (def formatRace (partial formatTemplate 1020 30))
 (def formatType (partial formatTemplate 1050 30))
 
-(defn parseCDB [cb]
+(defn parseCDB [db cb]
   (.serialize db 
     (fn []
       (let [output (array)]
@@ -64,11 +76,11 @@
                     (cb nil @all)  
                     (comment "end when")))))))))))
                     
-(defn parseFile []
+(defn parseFile [lan]
   (.parallel async
     (array
-      parseStrings
-      parseCDB)
+      (partial parseStrings (get-in config [lan :strings]))
+      (partial parseCDB (SqliteDB. (get-in config [lan :db]))))
     (fn [err rets]
       (let [strs (aget rets 0)
             cards (aget rets 1)
@@ -117,7 +129,7 @@
               obj)
             formatCards (map formatObj cards)]
         (.writeFile fs
-          outputFile
-          (js/JSON.stringify (clj->js formatCards))
+          (get-in config [lan :output])
+          (.stringify js/JSON (clj->js formatCards) nil "\t")
           (fn [err]
-            (.log js/console "write file " outputFile "!")))))))
+            (.log js/console "write file " (get-in config [lan :output]) "!")))))))
