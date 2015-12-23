@@ -93,10 +93,10 @@ body{
 			<div game="sangoWar">${counter}</div>
 			
 			<div game="yugioh">${id}</div>
+			<div game="yugioh">${race}</div>
 			<div game="yugioh">${name}</div>
 			<div game="yugioh">level ${level}</div>
 			<div game="yugioh">${type}</div>
-			<div game="yugioh">${race}</div>
 			<div game="yugioh">${desc}</div>
 			
 			<div game="magic">${id}</div>
@@ -774,7 +774,7 @@ body{
 					{type:'label', val:'Attribute'},
 					{type:'select', span:1, val:{name:'attr', items:['Earth','Water','Fire','Wind','Light','Dark','Divine']}},
 					{type:'label', val:'Race'},
-					{type:'select', span:1, val:{name:'race', items:['Warrior','Spellcaster','Fairy','Fiend','Zombie','Machine','Aqua','Pyro','Rock','Winged Beast','Plant','Insect','Thunder','Dragon','Beast','Beast-Warrior','Dinosaur','Fish','Sea Serpent','Reptile','Psychic','Divine-Beast','Creator God','Wyrm']}},
+					{type:'textbox', span:1, val:{name:'race', items:['Warrior','Spellcaster','Fairy','Fiend','Zombie','Machine','Aqua','Pyro','Rock','Winged Beast','Plant','Insect','Thunder','Dragon','Beast','Beast-Warrior','Dinosaur','Fish','Sea Serpent','Reptile','Psychic','Divine-Beast','Creator God','Wyrm']}},
 					{type:'label', val:'Card Type'},
 					{type:'select', span:1, val:{name:'ctype', items:['Monster','Spell','Trap']}},
 					{type:'label', val:'Summon Type'},
@@ -1242,6 +1242,10 @@ body{
 		
 		function searchCards( searchstr ){
 			console.log( searchstr );
+			if( searchstr == undefined ) return;
+			
+		//	searchstr = searchstr.replace( '+', '%20' );
+		//	console.log( searchstr );
 			
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
