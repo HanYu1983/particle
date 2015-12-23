@@ -1,6 +1,5 @@
 package;
 
-import controller.MainController;
 import controller.UIController;
 import haxe.Json;
 import js.Browser;
@@ -8,8 +7,9 @@ import js.Lib;
 import org.puremvc.haxe.interfaces.IMediator;
 import org.puremvc.haxe.patterns.facade.Facade;
 import org.puremvc.haxe.patterns.mediator.Mediator;
-import view.CardItem;
-import view.IItem;
+import per.vic.pureMVCref.tableGameModel.controller.MainController;
+import per.vic.pureMVCref.tableGameModel.view.CardItem;
+import per.vic.pureMVCref.tableGameModel.view.IItem;
 
 using Lambda;
 using Reflect;

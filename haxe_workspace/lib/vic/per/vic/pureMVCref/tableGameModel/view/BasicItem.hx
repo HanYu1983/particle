@@ -1,6 +1,6 @@
-package view;
+package per.vic.pureMVCref.tableGameModel.view;
 
-import controller.MainController;
+import per.vic.pureMVCref.tableGameModel.controller.MainController;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
 

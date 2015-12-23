@@ -1,14 +1,14 @@
-package controller;
+package per.vic.pureMVCref.tableGameModel.controller;
 
 import js.Browser;
 import js.html.KeyboardEvent;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
-import view.BasicItem;
-import view.CardItem;
-import view.IItem;
-import view.SequenceItem;
-import view.TokenItem;
+import per.vic.pureMVCref.tableGameModel.view.BasicItem;
+import per.vic.pureMVCref.tableGameModel.view.CardItem;
+import per.vic.pureMVCref.tableGameModel.view.IItem;
+import per.vic.pureMVCref.tableGameModel.view.SequenceItem;
+import per.vic.pureMVCref.tableGameModel.view.TokenItem;
 
 using Lambda;
 using Reflect;
