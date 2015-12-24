@@ -5,6 +5,8 @@ import (
 	"appengine/datastore"
 	"encoding/json"
 	"errors"
+	"lib/tool"
+	"net/http"
 	"time"
 )
 
@@ -111,4 +113,28 @@ func SetMemento(ctx appengine.Context, memento []byte) error {
 		}
 	}
 	return nil
+}
+
+type IUser interface {
+}
+
+func Handle(user IUser) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer tool.Recover(func(err error) {
+			tool.Output(w, nil, err.Error())
+		})
+		ctx := appengine.NewContext(r)
+		if r.Method == "POST" {
+			form := r.PostForm
+			tool.Assert(tool.ParameterIsNotExist(form, "Name"))
+			tool.Assert(tool.ParameterIsNotExist(form, "Content"))
+			name := form["Name"][0]
+			content := form["Content"][0]
+			var override bool
+			if len(form["Override"]) > 0 {
+				override = true
+			}
+			WriteFile(ctx, name, content, "", override)
+		}
+	}
 }
