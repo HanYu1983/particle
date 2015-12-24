@@ -24,6 +24,18 @@
       :strings "yugiohDoc/ch/strings.conf"
       :output "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListCh.json" 
     }
+    :tf
+    {
+      :db "yugiohDoc/cards-tf.cdb"
+      :strings "yugiohDoc/en/strings.conf"
+      :output "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListTf.json" 
+    }
+    :anime
+    {
+      :db "yugiohDoc/en/anime.cdb"
+      :strings "yugiohDoc/en/strings.conf"
+      :output "/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/yugiohListAnime.json" 
+    }
   })
 
 (defn parseStrings [stringsPath cb]

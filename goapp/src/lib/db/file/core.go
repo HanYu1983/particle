@@ -3,6 +3,7 @@ package dbfile
 import (
 	"appengine"
 	"appengine/datastore"
+	"encoding/json"
 	"errors"
 	db "lib/db"
 	"time"
@@ -19,6 +20,10 @@ type DBFile struct {
 	Content  []byte
 	Owner    string
 	Time     int64
+}
+
+func AncestorKey(ctx appengine.Context) *datastore.Key {
+	return datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil)
 }
 
 func QueryKeys(ctx appengine.Context, position int64, name string) ([]DBFile, []*datastore.Key, error) {
@@ -173,4 +178,44 @@ func DeleteFile(ctx appengine.Context, id int64) error {
 
 	return nil
 
+}
+
+func GetMemento(ctx appengine.Context) ([]byte, error) {
+	fileList, err := FileList(ctx, -1)
+	if err != nil {
+		return nil, err
+	}
+	var ret []map[string]interface{}
+	for _, file := range fileList {
+		info := map[string]interface{}{
+			"Key":      file.Key,
+			"Position": file.Position,
+			"IsDir":    file.IsDir,
+			"Name":     file.Name,
+			"Content":  file.Content,
+			"Owner":    file.Owner,
+			"Time":     file.Time,
+		}
+		ret = append(ret, info)
+	}
+	jsonstr, err := json.Marshal(ret)
+	if err != nil {
+		return nil, err
+	}
+	return jsonstr, nil
+}
+
+func SetMemento(ctx appengine.Context, memento []byte) error {
+	var fileList []DBFile
+	err := json.Unmarshal(memento, &fileList)
+	if err != nil {
+		return err
+	}
+	for _, file := range fileList {
+		ak := AncestorKey(ctx)
+		key := datastore.NewIncompleteKey(ctx, Kind, ak)
+		nkey, err := datastore.Put(ctx, key, &file)
+		var _, _ = nkey, err
+	}
+	return nil
 }

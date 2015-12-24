@@ -112,6 +112,7 @@
     
       "parseYugiohCDB"
       (do
+        (test.yugioh/parseFile :anime)
         (test.yugioh/parseFile :en)
         (test.yugioh/parseFile :ch))
     
