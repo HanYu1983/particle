@@ -115,7 +115,7 @@ func DBFileSystem2(user IUser) http.HandlerFunc {
 					continue
 				}
 				if isDetail {
-					paths = append(paths, map[string]interface{}{"Key": file.Key, "Name": file.Name, "Content": string(file.Content), "Owner": file.Owner, "Time": time.Unix(file.Time, 0)})
+					paths = append(paths, map[string]interface{}{"Key": file.Key, "Name": file.Name, "Position": file.Position, "Content": string(file.Content), "Owner": file.Owner, "Time": time.Unix(file.Time, 0)})
 				} else {
 					paths = append(paths, map[string]interface{}{"Key": file.Key, "Name": file.Name, "Time": time.Unix(file.Time, 0)})
 				}
