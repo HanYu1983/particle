@@ -120,7 +120,7 @@ class Main
 		deck.backId = switch( deck.backId ) {
 			case null:"0";
 			case bid if( bid.length > 2 ): "0";
-			case bid if( Std.parseInt( bid ) <= 48 ) :bid;
+			case bid if( Std.parseInt( bid ) <= 49 ) :bid;
 			case _:"0";
 		}
 		
@@ -344,6 +344,75 @@ class Main
 													'token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1',
 													'token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2',
 													'token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2'
+													] } );
+				currentSelect = oldselect;
+			case 'onShaClick':
+				var oldselect = currentSelect;
+				currentSelect = 'sanguosha';
+				createCards( { backId:"49", cards:[
+													'b1_1_fight', 'b1_1_sanda',
+													'b1_2_cold', 'b1_2_double', 'b1_2_gua',
+													'b1_3_river', 'b1_3_steal', 
+													'b1_4_river', 'b1_4_steal', 
+													'b1_5_dragon', 'b1_5_shadow',
+													'b1_6_bluejian', 'b1_6_happy', 
+													'b1_7_nan', 'b1_7_sa', 
+													'b1_8_sa', 'b1_8_sa', 
+													'b1_9_sa', 'b1_9_sa', 
+													'b1_10_sa', 'b1_10_sa',
+													'b1_11_steal', 'b1_11_strong', 
+													'b1_12_eight', 'b1_12_river', 
+													'b1_13_horse', 'b1_13_nan', 
+													'b2_1_fight', 'b2_1_nu', 
+													'b2_2_gua', 'b2_2_sa', 'b2_2_shield',
+													'b2_3_river', 'b2_3_sa',
+													'b2_4_river','b2_4_sa',
+													'b2_5_horse', 'b2_5_sa',
+													'b2_6_happy', 'b2_6_sa',
+													'b2_7_nan', 'b2_7_sa', 
+													'b2_8_sa', 'b2_8_sa', 
+													'b2_9_sa', 'b2_9_sa',
+													'b2_10_sa', 'b2_10_sa',
+													'b2_11_sa', 'b2_11_sa',
+													'b2_12_dao', 'b2_12_strong',
+													'b2_13_dao', 'b2_13_strong',
+													'r1_1_spray', 'r1_1_together',
+													'r1_2_run','r1_2_run',
+													'r1_3_tao', 'r1_3_wugu', 
+													'r1_4_tao', 'r1_4_wugu',
+													'r1_5_gilin', 'r1_5_redhourse', 
+													'r1_6_happy', 'r1_6_tao', 
+													'r1_7_born','r1_7_tao',
+													'r1_8_born','r1_8_tao',
+													'r1_9_born','r1_9_tao',
+													'r1_10_sa','r1_10_sa',
+													'r1_11_born','r1_11_sa',
+													'r1_12_river','r1_12_sanda','r1_12_tao',
+													'r1_13_horse','r1_13_run',
+													'r2_1_fight','r2_1_nu',
+													'r2_2_run','r2_2_run',
+													'r2_3_run','r2_3_steal',
+													'r2_4_run','r2_4_steal',
+													'r2_5_axe','r2_5_run',
+													'r2_6_run','r2_6_sa',
+													'r2_7_run','r2_7_sa',
+													'r2_8_run','r2_8_sa',
+													'r2_9_run','r2_9_sa',
+													'r2_10_run','r2_10_sa',
+													'r2_11_run','r2_11_run',
+													'r2_12_draw','r2_12_strong','r2_12_tao',
+													'r2_13_hourse','r2_13_sa',
+													
+													'role_001','role_002','role_003','role_004','role_005',
+													'role_006','role_007','role_008','role_009','role_010',
+													'role_011','role_012','role_013','role_014','role_015',
+													'role_016','role_017','role_018','role_019','role_020',
+													'role_021', 'role_022', 'role_023', 'role_024', 'role_025',
+													
+													'id_0','id_0','id_0','id_0',
+													'id_1','id_1',
+													'id_3', 'id_3', 'id_3',
+													'id_2'
 													] } );
 				currentSelect = oldselect;
 			case 'onPokerClick':
