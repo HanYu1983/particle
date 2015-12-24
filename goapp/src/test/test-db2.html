@@ -1,0 +1,24 @@
+<html>
+	<body>
+		<h1>Write</h1>
+		<form action='../admindbfile2/' method='post'>
+			Name:<input name="Name"></input><br>
+			Content:<input name="Content"></input><br>
+			Override:<input type="CheckBox" name="Override"></input><br>
+			<input type="submit" value="Commit"></input>
+		</form>
+		
+		<h1>Delete</h1>
+		<form action='../admindbfile2/' method='post'>
+			<input type="Hidden" name="Delete">
+			Name:<input name="Name"></input><br>
+			<input type="submit" value="Commit"></input>
+		</form>
+		
+		<h1>Memento</h1>
+		<form action='../admindbfile2/__memento__' method='post'>
+			Data:<textarea name="Data"></textarea><br>
+			<input type="submit" value="Commit"></input>
+		</form>
+	</body>
+</html>

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	appauth "lib/auth"
 	"lib/db/file"
+	"lib/db2"
 	auth "lib/hack/go-http-auth"
 	"lib/tool"
 	"net/http"
@@ -68,6 +69,8 @@ func init() {
 	//http.HandleFunc("/testfn/memento", Memento)
 	//http.HandleFunc("/testfn/readfile", TestReadFile)
 	//http.HandleFunc("/testfn/TestWriteSnaphot", TestWriteSnaphot)
+	http.HandleFunc("/admindbfile2/__memento__", db2.HandleMemento)
+	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
