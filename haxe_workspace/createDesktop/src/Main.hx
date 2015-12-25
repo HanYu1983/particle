@@ -26,8 +26,8 @@ class Main
 	public static var onBtnStartServer = 'onBtnStartServer';
 	public static var onBtnPokerClick = 'onBtnPokerClick';
 	
-	public static var playerId:String = 'smart';
-	public static var ary_ops:Array<String>;
+	//public static var playerId:String = 'smart';
+	//public static var ary_ops:Array<String>;
 	
 	static function main() 
 	{

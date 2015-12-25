@@ -313,7 +313,7 @@ class MainController extends Mediator
 	function setModelLock() {
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
-			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+			if ( itemModel.owner == '' || itemModel.owner == SocketController.playerId ){
 				itemModel.lock = !itemModel.lock;
 			}else continue;
 		}
@@ -322,7 +322,7 @@ class MainController extends Mediator
 	function unlockAllItem() {
 		for ( i in 0...ary_allItem.length ) {
 			var itemModel = ary_allItem[i];
-			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+			if ( itemModel.owner == '' || itemModel.owner == SocketController.playerId ){
 				itemModel.lock = false;
 			}else continue;
 		}
@@ -332,13 +332,13 @@ class MainController extends Mediator
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
 			var item:IItem = cast( facade.retrieveMediator( itemModel.id ), IItem );
-			if ( itemModel.owner == Main.playerId ) {
+			if ( itemModel.owner == SocketController.playerId ) {
 				//如果持有者是自己，就把持有者設為空白
 				itemModel.owner = '';
 			}else {
 				if ( itemModel.owner == '' ) {
 					//如果持有者是空白，就把持有者設為自己
-					itemModel.owner = Main.playerId;
+					itemModel.owner = SocketController.playerId;
 				}else {
 					//持有者不是空白也不是自己，不能設置
 				}
@@ -350,12 +350,12 @@ class MainController extends Mediator
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
 			var item:IItem = cast( facade.retrieveMediator( itemModel.id ), IItem );
-			if ( itemModel.viewer == Main.playerId ) {
+			if ( itemModel.viewer == SocketController.playerId ) {
 				itemModel.viewer = '';
 			}else {
-				itemModel.viewer = Main.playerId;
+				itemModel.viewer = SocketController.playerId;
 				if ( itemModel.viewer == '' ) {
-					itemModel.viewer = Main.playerId;
+					itemModel.viewer = SocketController.playerId;
 				}
 			}
 		}
@@ -381,7 +381,7 @@ class MainController extends Mediator
 	function flipModel() {
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
-			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+			if ( itemModel.owner == '' || itemModel.owner == SocketController.playerId ){
 				itemModel.back = !itemModel.back;
 			}else continue;
 		}
@@ -437,7 +437,7 @@ class MainController extends Mediator
 	
 	function getMyItemFromPool() {
 		return ary_allItem.filter( function( model ) {
-			return Main.playerId == model.owner;
+			return SocketController.playerId == model.owner;
 		});
 	}
 	

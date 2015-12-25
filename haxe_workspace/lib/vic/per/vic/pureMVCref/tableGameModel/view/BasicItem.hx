@@ -3,6 +3,7 @@ package per.vic.pureMVCref.tableGameModel.view;
 import per.vic.pureMVCref.tableGameModel.controller.MainController;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
+import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 
 using Lambda;
 using Reflect;
@@ -76,7 +77,7 @@ class BasicItem extends Mediator implements IItem
 	public function setOwner( o:String ):Void 
 	{
 		_owner = o;
-		if ( _owner == Main.playerId ) {
+		if ( _owner == SocketController.playerId ) {
 			viewComponent.find( '#img_owner' ).show();
 		}else {
 			viewComponent.find( '#img_owner' ).hide();
@@ -117,7 +118,7 @@ class BasicItem extends Mediator implements IItem
 		}else {
 			if ( _viewer == _owner ) {
 				//有人在觀察，這邊確認是不是自己在觀察
-				if ( _viewer == Main.playerId ) {
+				if ( _viewer == SocketController.playerId ) {
 					//有人在觀察，是自己，顯示眼睛
 					showItemForMe();
 					showViewerImg = true;

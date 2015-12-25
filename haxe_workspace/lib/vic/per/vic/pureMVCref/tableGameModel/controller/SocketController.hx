@@ -15,7 +15,8 @@ class SocketController extends Mediator
 	public static var setOpponents = 'setOpponents';
 	public static var sendMessage = 'sendMessage';
 	public static var createPlayerSocket = 'createPlayerSocket';
-
+	public static var playerId:String = 'smart';
+	
 	var ary_ops:Array<String>;
 	
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -82,7 +83,7 @@ class SocketController extends Mediator
 				trace( ret );
 			} ));
 		}
-		
+		trace( ary_ops );
 		if ( ary_ops == null ) return;
 		ary_ops.foreach( function( op ) {
 			messageSingle( op, type, msg );
