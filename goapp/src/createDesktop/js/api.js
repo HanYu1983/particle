@@ -357,7 +357,6 @@ var api = api || {};
 					cb.onopen()
 				},
 				onmessage: function( path, option ){
-					
 					var origin = JSON.parse( path.data )
 					var json = JSON.parse( origin )
 					if( handleMessage( json ) == false ){
@@ -459,10 +458,26 @@ var api = api || {};
 	} 
 	
 	function sendMessageToSomeone( toId, type, msg ){
-		channel.sendChannelMessage( toId, JSON.stringify( {
+		
+		var jsonstr = JSON.stringify( {
 			type:type, 
 			msg:JSON.parse( JSON.stringify( msg ))
-		}), handleResponse( function( ret ) {
+		});
+		
+		//針對要encodeURIComponent的地方做，這個方法ok
+		/*
+		console.log( '{ type:"../common/images/createTable/yh/yh_03.jpg" }'.length );
+		jsonstr = JSON.stringify( {
+			type: encodeURIComponent( "../common/images/createTable/yh/yh_03.jpg" )
+		});
+		console.log( jsonstr.length );
+		*/
+		
+		/*
+		var compressstr = LZString.compress( encodeURLstr );
+		*/
+		
+		channel.sendChannelMessage( toId, jsonstr, handleResponse( function( ret ) {
 			console.log( ret );
 		} ));
 	}

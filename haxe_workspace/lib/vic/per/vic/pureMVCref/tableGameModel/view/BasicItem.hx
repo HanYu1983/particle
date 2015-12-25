@@ -180,7 +180,7 @@ class BasicItem extends Mediator implements IItem
 	
 	
 	function rotateAnimation( sd:Int, ed:Int ) {
-		Main.j({deg: sd}).animate({deg: ed}, {
+		Tool.j({deg: sd}).animate({deg: ed}, {
         duration: 300,
 			step: function(now) {
 				getViewComponent().css({

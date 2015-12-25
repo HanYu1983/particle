@@ -4,6 +4,7 @@ import js.Browser;
 import js.html.KeyboardEvent;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
+import per.vic.pureMVCref.tableGameModel.Tool;
 import per.vic.pureMVCref.tableGameModel.view.BasicItem;
 import per.vic.pureMVCref.tableGameModel.view.CardItem;
 import per.vic.pureMVCref.tableGameModel.view.IItem;
@@ -38,9 +39,9 @@ class MainController extends Mediator
 			zsorting();
 		});
 		
-		Main.j( 'body' ).mousemove( onBodyMouseMove );
-		Main.j( 'body' ).keyup( onBodyKeyUp );
-		Main.j( 'body' ).mousedown( onBodyKeyUp );
+		Tool.j( 'body' ).mousemove( onBodyMouseMove );
+		Tool.j( 'body' ).keyup( onBodyKeyUp );
+		Tool.j( 'body' ).mousedown( onBodyKeyUp );
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -172,13 +173,13 @@ class MainController extends Mediator
 		var item:Mediator;
 		switch( model.type ) {
 			case 'card':
-				item = new CardItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new CardItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'sequence':
-				item = new SequenceItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new SequenceItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'token':
-				item = new TokenItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new TokenItem( model.id, Tool.createItemDiv( model.type, model ) );
 			default:
-				item = new BasicItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new BasicItem( model.id, Tool.createItemDiv( model.type, model ) );
 		}
 		item.viewComponent.css( 'left', model.pos[0] + 'px' );
 		item.viewComponent.css( 'top', model.pos[1] + 'px' );

@@ -102,37 +102,13 @@ Main.main = function() {
 	window.document.addEventListener("contextmenu",function(e) {
 		e.preventDefault();
 	},false);
-	Main.j(window.document).ready(function() {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("MainController",Main.j("#container_cards")));
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_UIController("UIController",Main.j(".easyui-layout")));
+	per_vic_pureMVCref_tableGameModel_Tool.j(window.document).ready(function() {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("MainController",per_vic_pureMVCref_tableGameModel_Tool.j("#container_cards")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_UIController("UIController",per_vic_pureMVCref_tableGameModel_Tool.j(".easyui-layout")));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_SocketController("SocketController"));
-		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "main"});
+		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "main"});
 	});
 	Reflect.setField(window,"onHtmlClick",Main.onHtmlClick);
-};
-Main.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
-	if(viewer == null) viewer = "";
-	if(owner == null) owner = "desktop";
-	if(lock == null) lock = false;
-	if(back == null) back = true;
-	if(height == null) height = 100;
-	if(width == null) width = 100;
-	if(type == null) type = "card";
-	return { type : type, width : width, height : height, pos : pos, back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : Main.createDivId(), extra : extra, action : { sequence : Math.random()}};
-};
-Main.createItemDiv = function(type,model) {
-	var div = Main.j("#tmpl_" + type).tmpl(model);
-	return div;
-};
-Main.createDivId = function() {
-	return leo.utils.generateUUID();
-};
-Main.slide = function(msg,time) {
-	if(time == null) time = 2000;
-	Main.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide"});
-};
-Main.alert = function(msg) {
-	Main.j.messager.alert("錯誤",msg);
 };
 Main.onHtmlClick = function(type) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(type);
@@ -276,7 +252,7 @@ controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_M
 		}
 	}
 	,createPoker: function() {
-		var ary_create = [Main.createItem(["../common/images/createTable/yh/yh_03.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_13.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_14.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_19.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_35.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_37.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_39.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_41.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_01.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_05.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_06.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_07.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_08.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_09.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_10.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_11.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_15.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_38.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_42.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_46.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_47.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_53.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_54.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_55.jpg","../common/images/createTable/yh/yh_12.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_02.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_04.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_17.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_18.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_21.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_34.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_36.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_40.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_43.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_44.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_45.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_49.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_50.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_51.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_52.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_22.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_23.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_24.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_25.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_26.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_27.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_28.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_29.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_30.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_31.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_32.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_33.jpg","../common/images/createTable/yh/yh_56.jpg"],[50,50],"card",100,100,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/yh/yh_16.jpg","../common/images/createTable/yh/yh_49.jpg"],[50,50],"card",900,900,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/other/role_01.png"],[50,50],"token",99,141,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/other/role_04.png"],[50,50],"token",196,146,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),Main.createItem(["../common/images/createTable/other/dice_01.png","../common/images/createTable/other/dice_02.png","../common/images/createTable/other/dice_03.png","../common/images/createTable/other/dice_04.png","../common/images/createTable/other/dice_05.png","../common/images/createTable/other/dice_06.png"],[50,50],"sequence",50,50,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId)];
+		var ary_create = [per_vic_pureMVCref_tableGameModel_Tool.createItem(["../common/images/createTable/yh/yh_03.jpg","../common/images/createTable/yh/yh_20.jpg"],[50,50],"card",100,200,false,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId)];
 		this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,ary_create);
 	}
 	,startServer: function() {
@@ -869,6 +845,32 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 	}
 	,__class__: org_puremvc_haxe_patterns_observer_Observer
 };
+var per_vic_pureMVCref_tableGameModel_Tool = function() { };
+per_vic_pureMVCref_tableGameModel_Tool.__name__ = true;
+per_vic_pureMVCref_tableGameModel_Tool.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
+	if(viewer == null) viewer = "";
+	if(owner == null) owner = "desktop";
+	if(lock == null) lock = false;
+	if(back == null) back = true;
+	if(height == null) height = 100;
+	if(width == null) width = 100;
+	if(type == null) type = "card";
+	return { type : type, width : width, height : height, pos : pos, back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : per_vic_pureMVCref_tableGameModel_Tool.createDivId(), extra : extra, action : { sequence : Math.random()}};
+};
+per_vic_pureMVCref_tableGameModel_Tool.createItemDiv = function(type,model) {
+	var div = per_vic_pureMVCref_tableGameModel_Tool.j("#tmpl_" + type).tmpl(model);
+	return div;
+};
+per_vic_pureMVCref_tableGameModel_Tool.createDivId = function() {
+	return leo.utils.generateUUID();
+};
+per_vic_pureMVCref_tableGameModel_Tool.slide = function(msg,time) {
+	if(time == null) time = 2000;
+	per_vic_pureMVCref_tableGameModel_Tool.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide"});
+};
+per_vic_pureMVCref_tableGameModel_Tool.alert = function(msg) {
+	per_vic_pureMVCref_tableGameModel_Tool.j.messager.alert("錯誤",msg);
+};
 var per_vic_pureMVCref_tableGameModel_controller_MainController = function(mediatorName,viewComponent) {
 	this.isList = false;
 	this.pos_mouse = [0,0];
@@ -880,9 +882,9 @@ var per_vic_pureMVCref_tableGameModel_controller_MainController = function(media
 		_g.onSelectItems(ary);
 		_g.zsorting();
 	});
-	Main.j("body").mousemove($bind(this,this.onBodyMouseMove));
-	Main.j("body").keyup($bind(this,this.onBodyKeyUp));
-	Main.j("body").mousedown($bind(this,this.onBodyKeyUp));
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").mousemove($bind(this,this.onBodyMouseMove));
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").keyup($bind(this,this.onBodyKeyUp));
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").mousedown($bind(this,this.onBodyKeyUp));
 };
 per_vic_pureMVCref_tableGameModel_controller_MainController.__name__ = true;
 per_vic_pureMVCref_tableGameModel_controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -1003,16 +1005,16 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		var _g = model.type;
 		switch(_g) {
 		case "card":
-			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,Main.createItemDiv(model.type,model));
+			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 			break;
 		case "sequence":
-			item = new per_vic_pureMVCref_tableGameModel_view_SequenceItem(model.id,Main.createItemDiv(model.type,model));
+			item = new per_vic_pureMVCref_tableGameModel_view_SequenceItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 			break;
 		case "token":
-			item = new per_vic_pureMVCref_tableGameModel_view_TokenItem(model.id,Main.createItemDiv(model.type,model));
+			item = new per_vic_pureMVCref_tableGameModel_view_TokenItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 			break;
 		default:
-			item = new per_vic_pureMVCref_tableGameModel_view_BasicItem(model.id,Main.createItemDiv(model.type,model));
+			item = new per_vic_pureMVCref_tableGameModel_view_BasicItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 		}
 		item.viewComponent.css("left",model.pos[0] + "px");
 		item.viewComponent.css("top",model.pos[1] + "px");
@@ -1499,7 +1501,7 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype = $extend(org_puremvc
 	}
 	,rotateAnimation: function(sd,ed) {
 		var _g = this;
-		Main.j({ deg : sd}).animate({ deg : ed},{ duration : 300, step : function(now) {
+		per_vic_pureMVCref_tableGameModel_Tool.j({ deg : sd}).animate({ deg : ed},{ duration : 300, step : function(now) {
 			_g.getViewComponent().css({ '-moz-transform' : "rotate(" + now + "deg)", '-webkit-transform' : "rotate(" + now + "deg)", '-o-transform' : "rotate(" + now + "deg)", '-ms-transform' : "rotate(" + now + "deg)", 'transform' : "rotate(" + now + "deg)"});
 		}});
 	}
@@ -1596,11 +1598,11 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 	return a1;
 };
 var __map_reserved = {}
-Main.j = $;
 Main.onBtnStartServer = "onBtnStartServer";
 Main.onBtnPokerClick = "onBtnPokerClick";
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 js_Boot.__toStr = {}.toString;
+per_vic_pureMVCref_tableGameModel_Tool.j = $;
 per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "create_item";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
