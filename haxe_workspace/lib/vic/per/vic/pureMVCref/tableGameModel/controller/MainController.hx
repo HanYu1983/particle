@@ -71,7 +71,7 @@ class MainController extends Mediator
 					createItem( c );
 					return true;
 				});
-				Main.messageSocket( 'addItems', ary_creates );
+				facade.sendNotification( SocketController.sendMessage, { type:'addItems', msg: ary_creates } );
 			case on_receiveMessage:
 				switch( notification.getType() ) {
 					case 'addItems':
@@ -263,11 +263,11 @@ class MainController extends Mediator
 		
 		switch( e.which ) {
 			case KeyboardEvent.DOM_VK_H:
-				Main.messageSocket( 'deleteItem', ary_select );
+				facade.sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
 			case KeyboardEvent.DOM_VK_K:
-				Main.messageSocket( 'applyTransform', ary_allItem );
+				facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_allItem } );
 			case _:
-				Main.messageSocket( 'applyTransform', ary_select );
+				facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
 		}
 	}
 	
@@ -285,7 +285,7 @@ class MainController extends Mediator
 		if( !selectLock )
 			ary_select = filterLock( ary_select );
 		sendNotification( on_select_cards, { ary_select:ary_select } );
-		Main.messageSocket( 'applyTransform', ary_select );
+		facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
 	}
 	
 	function selectMyItem() {

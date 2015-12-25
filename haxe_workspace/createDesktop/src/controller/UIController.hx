@@ -4,6 +4,7 @@ import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
 import controller.UIController;
 import per.vic.pureMVCref.tableGameModel.controller.MainController;
+import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 
 /**
  * ...
@@ -115,9 +116,15 @@ class UIController extends Mediator
 		if ( playerId == '' ) return;
 		
 		Main.playerId = playerId;
-		Main.createSocket( playerId );
+		trace( SocketController.createPlayerSocket );
+		facade.sendNotification( SocketController.createPlayerSocket, playerId );
 		
+		trace( 'aa' );
 		var ops:String = viewComponent.find( '#combo_ops' ).combobox( 'getValue' );
 		Main.ary_ops = ops.split( ',' );
+		
+		trace( 'bb' );
+		trace( SocketController.setOpponents );
+		facade.sendNotification( SocketController.setOpponents, Main.ary_ops );
 	}
 }

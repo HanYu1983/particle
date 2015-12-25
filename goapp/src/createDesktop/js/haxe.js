@@ -103,22 +103,12 @@ Main.main = function() {
 		e.preventDefault();
 	},false);
 	Main.j(window.document).ready(function() {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("",Main.j("#container_cards")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("MainController",Main.j("#container_cards")));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_UIController("UIController",Main.j(".easyui-layout")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_SocketController("SocketController"));
+		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "main"});
 	});
 	Reflect.setField(window,"onHtmlClick",Main.onHtmlClick);
-};
-Main.messageSocket = function(type,msg) {
-	var messageSingle = function(toId,_type,_msg) {
-		channel.sendChannelMessage(toId,JSON.stringify({ type : _type, msg : JSON.parse(JSON.stringify(_msg))}),Main.handleResponse(function(ret) {
-			haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 63, className : "Main", methodName : "messageSocket"});
-		}));
-	};
-	if(Main.ary_ops == null) return;
-	Lambda.foreach(Main.ary_ops,function(op) {
-		messageSingle(op,type,msg);
-		return true;
-	});
 };
 Main.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
 	if(viewer == null) viewer = "";
@@ -129,16 +119,6 @@ Main.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
 	if(width == null) width = 100;
 	if(type == null) type = "card";
 	return { type : type, width : width, height : height, pos : pos, back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : Main.createDivId(), extra : extra, action : { sequence : Math.random()}};
-};
-Main.createSocket = function(id) {
-	api.createChannel(id,{ onopen : function() {
-		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 96, className : "Main", methodName : "createSocket"});
-	}, onmessage : function(json) {
-		haxe_Log.trace(json,{ fileName : "Main.hx", lineNumber : 99, className : "Main", methodName : "createSocket"});
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
-	}, onerror : function() {
-	}, onclose : function() {
-	}});
 };
 Main.createItemDiv = function(type,model) {
 	var div = Main.j("#tmpl_" + type).tmpl(model);
@@ -153,11 +133,6 @@ Main.slide = function(msg,time) {
 };
 Main.alert = function(msg) {
 	Main.j.messager.alert("錯誤",msg);
-};
-Main.handleResponse = function(cb) {
-	return function(err,ret) {
-		if(err != null) Main.alert(err); else cb(ret);
-	};
 };
 Main.onHtmlClick = function(type) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(type);
@@ -308,9 +283,14 @@ controller_UIController.prototype = $extend(org_puremvc_haxe_patterns_mediator_M
 		var playerId = this.viewComponent.find("#txt_id").textbox("getValue");
 		if(playerId == "") return;
 		Main.playerId = playerId;
-		Main.createSocket(playerId);
+		haxe_Log.trace(per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket,{ fileName : "UIController.hx", lineNumber : 119, className : "controller.UIController", methodName : "startServer"});
+		this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket,playerId);
+		haxe_Log.trace("aa",{ fileName : "UIController.hx", lineNumber : 122, className : "controller.UIController", methodName : "startServer"});
 		var ops = this.viewComponent.find("#combo_ops").combobox("getValue");
 		Main.ary_ops = ops.split(",");
+		haxe_Log.trace("bb",{ fileName : "UIController.hx", lineNumber : 126, className : "controller.UIController", methodName : "startServer"});
+		haxe_Log.trace(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,{ fileName : "UIController.hx", lineNumber : 127, className : "controller.UIController", methodName : "startServer"});
+		this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,Main.ary_ops);
 	}
 	,__class__: controller_UIController
 });
@@ -554,6 +534,11 @@ js_Boot.__isNativeObj = function(o) {
 };
 js_Boot.__resolveNativeClass = function(name) {
 	return $global[name];
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
 };
 var org_puremvc_haxe_interfaces_IController = function() { };
 org_puremvc_haxe_interfaces_IController.__name__ = true;
@@ -931,7 +916,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 				_g1.createItem(c);
 				return true;
 			});
-			Main.messageSocket("addItems",ary_creates);
+			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
 			break;
 		default:
 			var _g11 = notification.getType();
@@ -1125,13 +1110,13 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		var _g2 = e.which;
 		switch(_g2) {
 		case 72:
-			Main.messageSocket("deleteItem",this.ary_select);
+			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});
 			break;
 		case 75:
-			Main.messageSocket("applyTransform",this.ary_allItem);
+			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_allItem});
 			break;
 		default:
-			Main.messageSocket("applyTransform",this.ary_select);
+			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
 		}
 	}
 	,rotateModel: function(deg) {
@@ -1148,7 +1133,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		});
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
-		Main.messageSocket("applyTransform",this.ary_select);
+		this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
 	}
 	,selectMyItem: function() {
 		this.ary_select = this.filterLock(this.getMyItemFromPool());
@@ -1345,6 +1330,62 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		});
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_MainController
+});
+var per_vic_pureMVCref_tableGameModel_controller_SocketController = function(mediatorName,viewComponent) {
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_controller_SocketController.__name__ = true;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket];
+	}
+	,handleNotification: function(notification) {
+		haxe_Log.trace(notification.getName(),{ fileName : "SocketController.hx", lineNumber : 34, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "handleNotification"});
+		var _g = notification.getName();
+		var str = _g;
+		if(str == per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage) {
+			var type = notification.getBody().type;
+			var msg = notification.getBody().msg;
+			this.messageSocket(type,msg);
+		} else {
+			var str1 = _g;
+			if(str1 == per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents) this.ary_ops = notification.getBody().slice(); else {
+				var str2 = _g;
+				if(str2 == per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket) this.createSocket(notification.getBody());
+			}
+		}
+	}
+	,createSocket: function(id) {
+		var _g = this;
+		api.createChannel(id,{ onopen : function() {
+			haxe_Log.trace("ok",{ fileName : "SocketController.hx", lineNumber : 50, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "createSocket"});
+		}, onmessage : function(json) {
+			haxe_Log.trace(json,{ fileName : "SocketController.hx", lineNumber : 53, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "createSocket"});
+			_g.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
+		}, onerror : function() {
+		}, onclose : function() {
+		}});
+	}
+	,messageSocket: function(type,msg) {
+		var _g = this;
+		var messageSingle = function(toId,_type,_msg) {
+			channel.sendChannelMessage(toId,JSON.stringify({ type : _type, msg : JSON.parse(JSON.stringify(_msg))}),_g.handleResponse(function(ret) {
+				haxe_Log.trace(ret,{ fileName : "SocketController.hx", lineNumber : 82, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "messageSocket"});
+			}));
+		};
+		if(this.ary_ops == null) return;
+		Lambda.foreach(this.ary_ops,function(op) {
+			messageSingle(op,type,msg);
+			return true;
+		});
+	}
+	,handleResponse: function(cb) {
+		return function(err,ret) {
+			if(err != null) js_Browser.alert(err); else cb(ret);
+		};
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
 });
 var per_vic_pureMVCref_tableGameModel_view_IItem = function() { };
 per_vic_pureMVCref_tableGameModel_view_IItem.__name__ = true;
@@ -1562,14 +1603,15 @@ Main.j = $;
 Main.onBtnStartServer = "onBtnStartServer";
 Main.onBtnPokerClick = "onBtnPokerClick";
 Main.playerId = "smart";
-Main.ary_sendMessage = [];
-Main.isSending = false;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 js_Boot.__toStr = {}.toString;
 per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "create_item";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_press = "on_press";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents = "setOpponents";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage = "sendMessage";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket = "createPlayerSocket";
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click";
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();

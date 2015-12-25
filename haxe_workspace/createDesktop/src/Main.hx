@@ -8,6 +8,7 @@ import org.puremvc.haxe.interfaces.IMediator;
 import org.puremvc.haxe.patterns.facade.Facade;
 import org.puremvc.haxe.patterns.mediator.Mediator;
 import per.vic.pureMVCref.tableGameModel.controller.MainController;
+import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 import per.vic.pureMVCref.tableGameModel.view.CardItem;
 import per.vic.pureMVCref.tableGameModel.view.IItem;
 
@@ -35,9 +36,11 @@ class Main
 		}, false);
 		
 		j( Browser.document ).ready( function() {
-			Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
+			Facade.getInstance().registerMediator( new MainController( 'MainController', j( '#container_cards' ) ) );
 			Facade.getInstance().registerMediator( new UIController( 'UIController', j( '.easyui-layout' ) ) );
+			Facade.getInstance().registerMediator( new SocketController( 'SocketController' ));
 			
+			trace( 'ok' );
 			/*
 			Facade.getInstance().sendNotification( MainController.create_item, [
 																					createItem( ['../common/images/createTable/002.jpg'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 700, 700, true, false, playerId ),
@@ -50,9 +53,9 @@ class Main
 		Browser.window.setField( 'onHtmlClick', onHtmlClick );
 	}
 	
-	static var ary_sendMessage:Array<Dynamic> = [];
-	static var isSending = false;
-	
+//	static var ary_sendMessage:Array<Dynamic> = [];
+	//static var isSending = false;
+	/*
 	public static function messageSocket( type, msg ) {
 		
 		function messageSingle( toId, _type, _msg ){
@@ -70,7 +73,7 @@ class Main
 			return true;
 		});
 	}
-	
+	*/
 	public static function createItem( extra:Array<Dynamic>, pos:Array<Int>, ?type:String = 'card', ?width:Int = 100, ?height:Int = 100, ?back = true, ?lock = false, ?owner = 'desktop', ?viewer = '' ) {
 		return { 
 			type:type,
@@ -89,7 +92,7 @@ class Main
 			}
 		}
 	}
-	
+	/*
 	public static function createSocket( id ) {
 		untyped __js__( 'api.createChannel' )( id, {
 			onopen: function() {
@@ -100,24 +103,24 @@ class Main
 				Facade.getInstance().sendNotification( MainController.on_receiveMessage, json.msg, json.type );
 			},
 			onerror: function() {
-				/*
+				
 				j( '#btn_connect' ).linkbutton( 'enable' );
 				isConntect = false;
 				isCanSendMessage = false;
 				alert( '已斷線，請重新連線' );
-				*/
+				
 			},
 			onclose: function() {
-				/*
+				
 				j( '#btn_connect' ).linkbutton( 'enable' );	
 				isConntect = false;
 				isCanSendMessage = false;
 				alert( '已斷線，請重新連線' );
-				*/
+				
 			}
 		});
 	}
-	
+	*/
 	public static function createItemDiv( type:String, model:Dynamic ) {
 		var div:Dynamic = j('#tmpl_' + type ).tmpl( model );
 		return div;
@@ -148,6 +151,7 @@ class Main
 		}
 	}
 	*/
+	/*
 	static function handleResponse( cb ) {
 		return function ( err, ret ) {
 			if ( err != null ) {
@@ -161,6 +165,7 @@ class Main
 			}
 		}
 	}
+	*/
 	
 	static function onHtmlClick( type:String ) {
 		Facade.getInstance().sendNotification( type );
