@@ -357,6 +357,7 @@ var api = api || {};
 					cb.onopen()
 				},
 				onmessage: function( path, option ){
+					
 					var origin = JSON.parse( path.data )
 					var json = JSON.parse( origin )
 					if( handleMessage( json ) == false ){
@@ -457,6 +458,25 @@ var api = api || {};
 		})
 	} 
 	
+	function sendMessageToSomeone( toId, type, msg ){
+		channel.sendChannelMessage( toId, JSON.stringify( {
+			type:type, 
+			msg:JSON.parse( JSON.stringify( msg ))
+		}), handleResponse( function( ret ) {
+			console.log( ret );
+		} ));
+	}
+	
+	function handleResponse( cb ) {
+		return function ( err, ret ) {
+			if ( err != null ) {
+				alert( '錯誤:' + err );
+			}else {
+				cb( ret );
+			}
+		}
+	}
+	
 	module.createUser = createUser
 	module.users = users
 	module.createRoom = createRoom
@@ -474,5 +494,6 @@ var api = api || {};
 	module.createChannel = createChannel
 	module.startHeartbeat = startHeartbeat
 	module.getCardImageWithPackageName = getCardImageWithPackageName
+	module.sendMessageToSomeone = sendMessageToSomeone
 	
 }) (api)

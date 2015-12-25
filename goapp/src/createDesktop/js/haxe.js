@@ -1363,18 +1363,19 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 		}});
 	}
 	,messageSocket: function(type,msg) {
-		var _g = this;
 		var messageSingle = function(toId,_type,_msg) {
-			channel.sendChannelMessage(toId,JSON.stringify({ type : _type, msg : JSON.parse(JSON.stringify(_msg))}),_g.handleResponse(function(ret) {
-				haxe_Log.trace(ret,{ fileName : "SocketController.hx", lineNumber : 83, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "messageSocket"});
-			}));
 		};
-		haxe_Log.trace(this.ary_ops,{ fileName : "SocketController.hx", lineNumber : 86, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "messageSocket"});
 		if(this.ary_ops == null) return;
 		Lambda.foreach(this.ary_ops,function(op) {
-			messageSingle(op,type,msg);
+			api.sendMessageToSomeone(op,type,msg);
 			return true;
 		});
+	}
+	,compress: function(str) {
+		return LZString.compress(str);
+	}
+	,decompress: function(str) {
+		return LZString.decompress(str);
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
