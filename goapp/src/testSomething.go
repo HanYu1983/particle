@@ -10,6 +10,7 @@ import (
 	"io"
 	"io/ioutil"
 	"lib/db/file"
+	"lib/db2"
 	"net/http"
 )
 
@@ -145,6 +146,55 @@ func TestWriteSnaphot(w http.ResponseWriter, r *http.Request) {
 
 	for _, file := range fileList {
 		_, err := writeFile(file)
+		if err != nil {
+			fmt.Fprintf(w, `err: %s!`, err.Error())
+		}
+	}
+}
+
+func TestWriteSnaphot2(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	data2, err := ioutil.ReadFile("snapshot.json")
+	var fileList []dbfile.DBFile
+	err = json.Unmarshal(data2, &fileList)
+	if err != nil {
+		fmt.Fprintf(w, `err: %s!`, err.Error())
+	}
+
+	ak2 := db2.AncestorKey(ctx)
+	q := datastore.NewQuery(db2.Kind).Ancestor(ak2)
+	var entities []db2.DBFile
+	keys, err := q.GetAll(ctx, &entities)
+	if err != nil {
+		fmt.Fprintf(w, `err: %s!`, err.Error())
+	}
+	for _, key := range keys {
+		err = datastore.Delete(ctx, key)
+		if err != nil {
+			fmt.Fprintf(w, `err: %s!`, err.Error())
+		}
+	}
+
+	var getFileName func(file dbfile.DBFile) string
+	getFileName = func(file dbfile.DBFile) string {
+		for _, currFile := range fileList {
+			if currFile.Key == file.Position {
+				return getFileName(currFile) + "/" + file.Name
+			}
+		}
+		return file.Name
+	}
+
+	for _, file := range fileList {
+		file2 := db2.DBFile{
+			Name:    getFileName(file),
+			Content: file.Content,
+			Time:    file.Time,
+			Owner:   file.Owner,
+		}
+		key := datastore.NewIncompleteKey(ctx, db2.Kind, ak2)
+		_, err := datastore.Put(ctx, key, &file2)
 		if err != nil {
 			fmt.Fprintf(w, `err: %s!`, err.Error())
 		}

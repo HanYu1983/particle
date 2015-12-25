@@ -8,13 +8,14 @@ import (
 	"fmt"
 	"lib/tool"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 )
 
 type DBFile struct {
 	Name    string
-	Content string
+	Content []byte
 	Owner   string
 	Time    int64
 }
@@ -25,10 +26,6 @@ const (
 )
 
 var (
-	EmptyFile = DBFile{}
-)
-
-var (
 	ErrFileExist = errors.New("db2: file exist!")
 )
 
@@ -36,23 +33,24 @@ func AncestorKey(ctx appengine.Context) *datastore.Key {
 	return datastore.NewKey(ctx, AdminKind, "han", 0, nil)
 }
 
-func GetFile(ctx appengine.Context, filename string) (DBFile, error) {
+func GetFile(ctx appengine.Context, filename string) (*DBFile, error) {
 	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
 	var list []DBFile
 	keys, err := q.GetAll(ctx, &list)
 	if err != nil {
-		return EmptyFile, err
+		return nil, err
 	}
 	if len(keys) > 1 {
 		ctx.Infof("length shouldn't more then 1")
 	}
 	if len(keys) == 0 {
-		return EmptyFile, nil
+		return nil, nil
 	}
-	return list[0], nil
+	// 回傳指標沒問題，golang有自己的垃圾回收機制
+	return &list[0], nil
 }
 
-func GetFileList(ctx appengine.Context, filename string) ([]DBFile, error) {
+func GetFileList(ctx appengine.Context, filename string, filterLayer bool) ([]DBFile, error) {
 	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx))
 	if len(filename) > 0 {
 		q = q.Filter("Name >=", filename)
@@ -64,10 +62,31 @@ func GetFileList(ctx appengine.Context, filename string) ([]DBFile, error) {
 	}
 	var ret []DBFile
 	for _, file := range list {
-		// 由於Filter的>=不能當成Like使用，必需多加運算式來處理。將階層比較少的去除
-		token1 := strings.Split(file.Name, "/")
-		token2 := strings.Split(filename, "/")
-		if len(token1) >= len(token2) {
+		accept := true
+		if filterLayer {
+			// 由於Filter的>=不能當成Like使用，必需多加運算式來處理。將階層比較少的去除
+			token1 := strings.Split(file.Name, "/")
+			token2 := strings.Split(filename, "/")
+
+			var i int
+
+			if len(token1) != len(token2) {
+				accept = false
+			}
+			for i < len(token1) && i < len(token2) {
+				if token2[i] == "" {
+					i += 1
+					continue
+				}
+				if token1[i] != token2[i] {
+					accept = false
+					break
+				}
+				i += 1
+			}
+		}
+
+		if accept {
 			ret = append(ret, file)
 		}
 	}
@@ -94,7 +113,7 @@ func Delete(ctx appengine.Context, filename string) error {
 	return nil
 }
 
-func WriteFile(ctx appengine.Context, filename string, content string, owner string, override bool) error {
+func WriteFile(ctx appengine.Context, filename string, content []byte, owner string, override bool) error {
 	// 取出若已存在的檔案
 	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
 	var list []DBFile
@@ -135,7 +154,7 @@ func WriteFile(ctx appengine.Context, filename string, content string, owner str
 }
 
 func GetMemento(ctx appengine.Context) ([]byte, error) {
-	list, err := GetFileList(ctx, "")
+	list, err := GetFileList(ctx, "", false)
 	if err != nil {
 		return nil, err
 	}
@@ -164,6 +183,7 @@ func SetMemento(ctx appengine.Context, memento []byte) error {
 
 type IUser interface {
 	GetID() string
+	HasPermission2(DBFile) bool
 }
 
 func HandleMemento(w http.ResponseWriter, r *http.Request) {
@@ -204,48 +224,102 @@ func Handler(user IUser) http.HandlerFunc {
 		if r.Method == "POST" {
 			form := r.PostForm
 
+			tool.Assert(tool.ParameterIsNotExist(form, "Name"))
+			name := form["Name"][0]
+
+			originFile, err := GetFile(ctx, name)
+			tool.Assert(tool.IfError(err))
+
+			// 判斷權限
+			if originFile != nil {
+				if user.HasPermission2(*originFile) == false {
+					tool.Output(w, nil, "you are not owner!")
+					return
+				}
+			}
+
 			// 若有Delete參數，執行刪除
 			if len(form["Delete"]) > 0 {
-				tool.Assert(tool.ParameterIsNotExist(form, "Name"))
-				name := form["Name"][0]
 
 				err := Delete(ctx, name)
 				tool.Assert(tool.IfError(err))
 				tool.Output(w, nil, nil)
 
 			} else {
-				tool.Assert(tool.ParameterIsNotExist(form, "Name"))
 				tool.Assert(tool.ParameterIsNotExist(form, "Content"))
-				name := form["Name"][0]
+
 				content := form["Content"][0]
 				var override bool
 				if len(form["Override"]) > 0 {
 					override = true
 				}
-				err := WriteFile(ctx, name, content, user.GetID(), override)
+
+				err = WriteFile(ctx, name, []byte(content), user.GetID(), override)
 				tool.Assert(tool.IfError(err))
 				tool.Output(w, nil, nil)
 			}
 
 		} else {
+			fns := map[string]func(DBFile){
+				"json": func(file DBFile) {
+					fmt.Fprintf(w, "%s", string(file.Content))
+				},
+				"txt": func(file DBFile) {
+					w.Header().Set("Content-Type", "text/plain; charset=utf8")
+					fmt.Fprintf(w, "%s", string(file.Content))
+				},
+				"jpg": func(file DBFile) {
+					w.Header().Set("Content-Type", "image/jpeg; charset=utf8")
+					img := tool.DecodeBase64ToImage(string(file.Content))
+					tool.WriteJpg(w, img)
+				},
+			}
+
+			form := r.Form
 			//去掉第一個空白和dbfile2
 			filePathToken := strings.Split(r.URL.Path, "/")[2:]
 			filename := strings.Join(filePathToken, "/")
-
-			list, err := GetFileList(ctx, filename)
-			tool.Assert(tool.IfError(err))
-
-			infos := []map[string]interface{}{}
-			for _, file := range list {
-				infos = append(infos, map[string]interface{}{
-					"Name":    file.Name,
-					"Content": file.Content,
-					"Time":    time.Unix(file.Time, 0),
-				})
+			var filetype string
+			if len(filepath.Ext(filename)) > 1 {
+				filetype = filepath.Ext(filename)[1:] //delete first "."
 			}
+			outputFn, isSingle := fns[filetype]
 
-			tool.Assert(tool.IfError(err))
-			tool.Output(w, infos, nil)
+			if isSingle {
+				file, err := GetFile(ctx, filename)
+				tool.Assert(tool.IfError(err))
+				if file == nil {
+					fmt.Fprintf(w, "file not found")
+				} else {
+					if user.HasPermission2(*file) == false {
+						tool.Output(w, nil, "you are not owner!")
+						return
+					}
+					outputFn(*file)
+				}
+
+			} else {
+				isDetail := len(form["Detail"]) > 0
+
+				list, err := GetFileList(ctx, filename, true)
+				tool.Assert(tool.IfError(err))
+
+				infos := []map[string]interface{}{}
+				for _, file := range list {
+					if user.HasPermission2(file) == false {
+						continue
+					}
+					info := map[string]interface{}{
+						"Name": file.Name,
+						"Time": time.Unix(file.Time, 0),
+					}
+					if isDetail {
+						info["Content"] = string(file.Content)
+					}
+					infos = append(infos, info)
+				}
+				tool.Output(w, infos, nil)
+			}
 		}
 	}
 }
