@@ -34,9 +34,8 @@ func AncestorKey(ctx appengine.Context) *datastore.Key {
 }
 
 func GetFile(ctx appengine.Context, filename string) (*DBFile, error) {
-	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
-	var list []DBFile
-	keys, err := q.GetAll(ctx, &list)
+	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename).KeysOnly()
+	keys, err := q.GetAll(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -46,111 +45,125 @@ func GetFile(ctx appengine.Context, filename string) (*DBFile, error) {
 	if len(keys) == 0 {
 		return nil, nil
 	}
-	// 回傳指標沒問題，golang有自己的垃圾回收機制
-	return &list[0], nil
+	var file DBFile
+	err = datastore.Get(ctx, keys[0], &file)
+	return &file, err
 }
 
 func GetFileList(ctx appengine.Context, filename string, filterLayer bool) ([]DBFile, error) {
+	isAccept := func(file *DBFile) bool {
+		accept := true
+		// 由於Filter不能當成Like使用，必需多加運算式來處理。將階層比較少的去除
+		token1 := strings.Split(filename, "/")
+		token2 := strings.Split(file.Name, "/")
+
+		if len(token1) != len(token2) {
+			accept = false
+		}
+		var i int
+		for i < len(token1) && i < len(token2) {
+			if token1[i] == "" {
+				i += 1
+				continue
+			}
+			if token1[i] != token2[i] {
+				accept = false
+				break
+			}
+			i += 1
+		}
+		return accept
+	}
+
 	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx))
-	if len(filename) > 0 {
-		q = q.Filter("Name >=", filename)
-	}
-	var list []DBFile
-	_, err := q.GetAll(ctx, &list)
-	if err != nil {
-		return nil, err
-	}
+
 	var ret []DBFile
-	for _, file := range list {
+	t := q.Run(ctx)
+	for {
+		var file DBFile
+		_, err := t.Next(&file)
+		if err == datastore.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
 		accept := true
 		if filterLayer {
-			// 由於Filter的>=不能當成Like使用，必需多加運算式來處理。將階層比較少的去除
-			token1 := strings.Split(file.Name, "/")
-			token2 := strings.Split(filename, "/")
-
-			var i int
-
-			if len(token1) != len(token2) {
-				accept = false
-			}
-			for i < len(token1) && i < len(token2) {
-				if token2[i] == "" {
-					i += 1
-					continue
-				}
-				if token1[i] != token2[i] {
-					accept = false
-					break
-				}
-				i += 1
-			}
+			accept = isAccept(&file)
 		}
 
 		if accept {
 			ret = append(ret, file)
 		}
 	}
+
 	return ret, nil
 }
 
 func Delete(ctx appengine.Context, filename string) error {
-	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
-	var list []DBFile
-	keys, err := q.GetAll(ctx, &list)
-	if err != nil {
-		return err
-	}
-	if len(keys) > 1 {
-		ctx.Infof("length shouldn't more then 1")
-	}
-	if len(keys) == 0 {
+	err := tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+		q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename).KeysOnly()
+		keys, err := q.GetAll(ctx, nil)
+		if err != nil {
+			return err
+		}
+		if len(keys) > 1 {
+			ctx.Infof("length shouldn't more then 1")
+		}
+		if len(keys) == 0 {
+			return nil
+		}
+		err = datastore.Delete(ctx, keys[0])
+		if err != nil {
+			return err
+		}
 		return nil
-	}
-	err = datastore.Delete(ctx, keys[0])
-	if err != nil {
-		return err
-	}
-	return nil
+	})
+	return err
 }
 
 func WriteFile(ctx appengine.Context, filename string, content []byte, owner string, override bool) error {
-	// 取出若已存在的檔案
-	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
-	var list []DBFile
-	keys, err := q.GetAll(ctx, &list)
-	if err != nil {
-		return err
-	}
-
-	// 處理檔案已存在
-	if len(keys) > 0 {
-		if override == false {
-			return ErrFileExist
+	err := tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+		// 取出若已存在的檔案
+		q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
+		var list []DBFile
+		keys, err := q.GetAll(ctx, &list)
+		if err != nil {
+			return err
 		}
-	}
 
-	// 若檔案已存在，取得原檔案
-	var key *datastore.Key
-	var file DBFile
-	if len(keys) > 0 {
-		key = keys[0]
-		file = list[0]
-	}
+		// 處理檔案已存在
+		if len(keys) > 0 {
+			if override == false {
+				return ErrFileExist
+			}
+		}
 
-	file.Name = filename
-	file.Content = content
-	file.Owner = owner
-	file.Time = time.Now().Unix()
+		// 若檔案已存在，取得原檔案
+		var key *datastore.Key
+		var file DBFile
+		if len(keys) > 0 {
+			key = keys[0]
+			file = list[0]
+		}
 
-	if key == nil {
-		key = datastore.NewIncompleteKey(ctx, Kind, AncestorKey(ctx))
-	}
+		file.Name = filename
+		file.Content = content
+		file.Owner = owner
+		file.Time = time.Now().Unix()
 
-	_, err = datastore.Put(ctx, key, &file)
-	if err != nil {
-		return err
-	}
-	return nil
+		if key == nil {
+			key = datastore.NewIncompleteKey(ctx, Kind, AncestorKey(ctx))
+		}
+
+		_, err = datastore.Put(ctx, key, &file)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
 }
 
 func GetMemento(ctx appengine.Context) ([]byte, error) {
