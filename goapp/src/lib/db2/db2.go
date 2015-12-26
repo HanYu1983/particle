@@ -53,7 +53,6 @@ func GetFile(ctx appengine.Context, filename string) (*DBFile, error) {
 func GetFileList(ctx appengine.Context, filename string, filterLayer bool) ([]DBFile, error) {
 	isAccept := func(file *DBFile) bool {
 		accept := true
-		// 由於Filter不能當成Like使用，必需多加運算式來處理。將階層比較少的去除
 		token1 := strings.Split(filename, "/")
 		token2 := strings.Split(file.Name, "/")
 
