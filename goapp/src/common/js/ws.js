@@ -12,7 +12,18 @@ var ws = ws || {};
 		'symphogear',
 		'symphogearg',
 		'symphogeargx',
-		'tld2nd'
+		'tld2nd',
+		'tmh',
+		'tmh2.0',
+		'tmh2nd',
+		'tmhext',
+		'tmhext2.0',
+		'lb',
+		'lbcmext',
+		'lbe',
+		'lbext1.0',
+		'animelb',
+		'animelbrext'
 	]
 	
 	function load( path, cb ){

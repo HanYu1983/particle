@@ -79,8 +79,7 @@
       (let [group 
             (map (comp parseTrigger (partial apply vector) rest) 
               (re-seq
-                #"[\s\S]+?<img src=\"(.+\.jpg)\" height=\"124\".+?/>[\s\S]+?<div class=\"data_box\">[\s\S]+?\"id\">(.+)</span> (.+?) (.+?)</p>[\s\S]+?<td class=\"w200\">(.*?)</td>[\s\S]+?<td class=\"w150\">(.*?)</td>[\s\S]+?<td class=\"w150\">(.*?)</td>[\s\S]+?<td class=\"w70\">(.*?)</td>[\s\S]+?<td class=\"w70\">(.*?)</td>[\s\S]+?<td class=\"w90\">(.*?)</td>[\s\S]+?<td class=\"w60\">(.*?)</td>[\s\S]+?<td class=\"w90\">([\s\S]*?)</td>[\s\S]+?<td class=\"text\">(.*?)</td>" 
-                ;#"[\s\S]+?<img src=\"(.+\.jpg)\" height=\"124\".+?/>[\s\S]+?<div class=\"data_box\">[\s\S]+?\"id\">(.+)</span> (.+?) (.+?)</p>[\s\S]+?<td class=\"w200\">(.+?)</td>[\s\S]+?<td class=\"w150\">(.+?)</td>[\s\S]+?<td class=\"w150\">(.+?)</td>[\s\S]+?<td class=\"w70\">(.+?)</td>[\s\S]+?<td class=\"w70\">(.+?)</td>[\s\S]+?<td class=\"w90\">(.+?)</td>[\s\S]+?<td class=\"w60\">(.+?)</td>[\s\S]+?<td class=\"w90\">([\s\S]+?)</td>[\s\S]+?<td class=\"text\">(.+?)</td>"
+                #"[\s\S]+?<img src=\"(.+\.jpg)\" height=\"124\".+?/>[\s\S]+?<div class=\"data_box\">[\s\S]+?\"id\">(.+)</span> (.+?) (.+?)</p>[\s\S]+?<td class=\"w200\">(.*?)</td>[\s\S]+?<td class=\"w150\">(.*?)</td>[\s\S]+?<td class=\"w150\">(.*?)</td>[\s\S]+?<td class=\"w70\">(.*?)</td>[\s\S]+?<td class=\"w70\">(.*?)</td>[\s\S]+?<td class=\"w90\">(.*?)</td>[\s\S]+?<td class=\"w60\">(.*?)</td>[\s\S]+?<td class=\"w90\">([\s\S]*?)</td>[\s\S]+?<td class=\"text\">(.*?)</td>"
                 data))]
         (doall
           (for [obj group]
@@ -139,14 +138,21 @@
     (fn [] (.log js/console "write ok!"))))
     
 (defn getImage [pkgName]
+  (def idx (atom 0))
   (.subscribe
     (->
       (readfile (str output pkgName ".json"))
       (.map #(.parse js/JSON %))
       (.flatMap #(.from rx.Observable %))
-      (.map #(aget % 0))
+      (.delay
+        (.timer rx.Observable 0)
+        (fn [x]
+          (swap! idx inc)
+          (.timer rx.Observable (* @idx 3000))))
+      (.timeInterval)
+      (.map #(aget (.-value %) 0))
       (.map imageUrl)
       (.flatMap (partial fetchImage outputImageDir)))
-    (fn [data] (.log js/console data))
+    (fn [data] (.log js/console "wow!" data))
     (fn [err] (.log js/console "err:" err))
     (fn [] (.log js/console "get image ok!"))))
