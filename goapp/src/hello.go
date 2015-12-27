@@ -68,7 +68,7 @@ func init() {
 	//http.HandleFunc("/testfn/zip", TestZip)
 	//http.HandleFunc("/testfn/memento", Memento)
 	//http.HandleFunc("/testfn/readfile", TestReadFile)
-	http.HandleFunc("/testfn/TestWriteSnaphot", TestWriteSnaphot2)
+	//http.HandleFunc("/testfn/TestWriteSnaphot", TestWriteSnaphot2)
 	http.HandleFunc("/admindbfile2/__memento__", db2.HandleMemento)
 	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
 }
