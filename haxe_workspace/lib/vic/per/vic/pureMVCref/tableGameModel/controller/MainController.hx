@@ -176,6 +176,10 @@ class MainController extends Mediator
 			case 'data':
 				item = new DataItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'card':
+				model.extra = [ 
+					untyped __js__('api.getCardImageWithPackageName')( model.extra[2], model.extra[0] ),
+					'../common/images/card/cardback_' + model.extra[1]  + '.png'
+				];	
 				item = new CardItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'sequence':
 				item = new SequenceItem( model.id, Tool.createItemDiv( model.type, model ) );

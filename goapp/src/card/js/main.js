@@ -192,29 +192,6 @@ Main.saveOpponentToCookie = function(otherPlayerId) {
 	}
 	CallJs.setCookie("otherPlayerId",JSON.stringify(Main.ary_ops));
 };
-Main.createSelfDeck = function(deckId) {
-	if(Main.cardSuit == null) return;
-	var deck = Main.cardSuit[deckId];
-	if(deck == null) return;
-	Main.createCards(deck);
-};
-Main.createCards = function(deck,extra) {
-	var _g = deck.backId;
-	var bid = _g;
-	var bid1 = _g;
-	if(_g == null) deck.backId = "0"; else switch(_g) {
-	default:
-		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 49) deck.backId = bid1; else deck.backId = "0";
-	}
-	var newpos = null;
-	if(extra != null && Reflect.field(extra,"pos_mouse") != null) newpos = Reflect.field(extra,"pos_mouse");
-	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
-		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : newpos != null?newpos.slice():[100,100], back : Main.currentSelect != "other", showTo : ""};
-	}));
-	Main.slide("創建卡片完成");
-	Animate.addCardAndPrepare(toDeck);
-	Main.pushCmds({ cmd : "addCards", content : toDeck});
-};
 Main.loadDetail = function(game) {
 	if(Reflect.field(Main.cardSuitsDetailsIsLoading,game) != null) return;
 	Main.cardSuitsDetailsIsLoading[game] = true;
@@ -265,7 +242,6 @@ Main.getCardDetailById = function(game,cid) {
 	});
 };
 Main.pushCmds = function(content) {
-	if(!Main.isCanSendMessage) return;
 	Lambda.foreach(Main.otherPlayerIds,function(toId) {
 		if(toId.length != 0 && toId != Main.playerId) Main.messageSocket(toId,content.cmd,content);
 		return true;
@@ -343,22 +319,6 @@ Main.callAction = function(content) {
 };
 Main.pollAllMessage = function() {
 	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
-};
-Main.createSingleToken = function(type,pos_mouse) {
-	var oldselect = Main.currentSelect;
-	Main.currentSelect = "other";
-	switch(type) {
-	case "0":
-		Main.createCards({ backId : "0", cards : ["token_0"]},{ pos_mouse : pos_mouse});
-		break;
-	case "1":
-		Main.createCards({ backId : "1", cards : ["token_1"]},{ pos_mouse : pos_mouse});
-		break;
-	case "2":
-		Main.createCards({ backId : "2", cards : ["token_2"]},{ pos_mouse : pos_mouse});
-		break;
-	}
-	Main.currentSelect = oldselect;
 };
 Main.dice = function() {
 	var dice = Math.floor(Math.random() * 100);
@@ -486,7 +446,7 @@ Main.changeIndex = function(cardId) {
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		if( js_Boot.__instanceof(e,String) ) {
-			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 616, className : "Main", methodName : "changeIndex"});
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 714, className : "Main", methodName : "changeIndex"});
 		} else throw(e);
 	}
 };
@@ -558,7 +518,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -649,33 +609,26 @@ Main.prototype = {
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
 		case "onBtnCustomDeck":
-			var str = Main.j("#txt_custom").textbox("getValue");
-			str = "[" + str + "]";
-			try {
-				var createobj = JSON.parse(str);
-				Main.createCards({ backId : "0", cards : createobj});
-			} catch( e ) {
-				if (e instanceof js__$Boot_HaxeError) e = e.val;
-				Main.alert("輸入格式錯誤哦，請檢查!");
-			}
 			break;
 		case "onDiceClick":
 			Main.dice();
 			break;
 		case "onTokenClick":
-			var oldselect = Main.currentSelect;
-			Main.currentSelect = "other";
-			Main.createCards({ backId : "0", cards : ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2"]});
-			Main.currentSelect = oldselect;
 			break;
 		case "onShaClick":
-			var pokerdata = [per_vic_pureMVCref_tableGameModel_Tool.createItem([],[100,100],"card",100,200,false,false)];
-			Main.createCards({ backId : "49", cards : ["b1_1_fight","b1_1_sanda","b1_2_cold","b1_2_double","b1_2_gua","b1_3_river","b1_3_steal","b1_4_river","b1_4_steal","b1_5_dragon","b1_5_shadow","b1_6_bluejian","b1_6_happy","b1_7_nan","b1_7_sa","b1_8_sa","b1_8_sa","b1_9_sa","b1_9_sa","b1_10_sa","b1_10_sa","b1_11_steal","b1_11_strong","b1_12_eight","b1_12_river","b1_13_horse","b1_13_nan","b2_1_fight","b2_1_nu","b2_2_gua","b2_2_sa","b2_2_shield","b2_3_river","b2_3_sa","b2_4_river","b2_4_sa","b2_5_horse","b2_5_sa","b2_6_happy","b2_6_sa","b2_7_nan","b2_7_sa","b2_8_sa","b2_8_sa","b2_9_sa","b2_9_sa","b2_10_sa","b2_10_sa","b2_11_sa","b2_11_sa","b2_12_dao","b2_12_strong","b2_13_dao","b2_13_strong","r1_1_spray","r1_1_together","r1_2_run","r1_2_run","r1_3_tao","r1_3_wugu","r1_4_tao","r1_4_wugu","r1_5_gilin","r1_5_redhourse","r1_6_happy","r1_6_tao","r1_7_born","r1_7_tao","r1_8_born","r1_8_tao","r1_9_born","r1_9_tao","r1_10_sa","r1_10_sa","r1_11_born","r1_11_sa","r1_12_river","r1_12_sanda","r1_12_tao","r1_13_horse","r1_13_run","r2_1_fight","r2_1_nu","r2_2_run","r2_2_run","r2_3_run","r2_3_steal","r2_4_run","r2_4_steal","r2_5_axe","r2_5_run","r2_6_run","r2_6_sa","r2_7_run","r2_7_sa","r2_8_run","r2_8_sa","r2_9_run","r2_9_sa","r2_10_run","r2_10_sa","r2_11_run","r2_11_run","r2_12_draw","r2_12_strong","r2_12_tao","r2_13_hourse","r2_13_sa","role_001","role_002","role_003","role_004","role_005","role_006","role_007","role_008","role_009","role_010","role_011","role_012","role_013","role_014","role_015","role_016","role_017","role_018","role_019","role_020","role_021","role_022","role_023","role_024","role_025","id_0","id_0","id_0","id_0","id_1","id_1","id_3","id_3","id_3","id_2"]});
-			Main.currentSelect = oldselect1;
+			var pokerdata = [{ extra : ["b1_1_fight","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_1_sanda","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_2_cold","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false}];
+			var ary_pokerItem = pokerdata.map(function(data) {
+				return per_vic_pureMVCref_tableGameModel_Tool.createItem(data.extra,data.pos,data.type,data.width,data.height,data.back,data.lock);
+			});
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,ary_pokerItem);
 			break;
 		case "onPokerClick":
-			var oldselect2 = Main.currentSelect;
-			Main.currentSelect = oldselect1;
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "vic";
+			var pokerdata1 = [{ extra : ["10","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["11","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["12","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""}];
+			var ary_pokerItem1 = pokerdata1.map(function(data1) {
+				return per_vic_pureMVCref_tableGameModel_Tool.createItem(data1.extra,data1.pos,data1.type,data1.width,data1.height,data1.back,data1.lock,data1.owner);
+			});
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,ary_pokerItem1);
 			break;
 		}
 		CallJs.googleTracking_click(type);
@@ -1266,9 +1219,6 @@ mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.p
 		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
 		this._body.keyup($bind(this,this.onBodyKeyUp));
 		this._body.mousemove($bind(this,this.onBodyMouseMove));
-		window.document.addEventListener("contextmenu",function(e) {
-			e.preventDefault();
-		},false);
 		this._body.mousedown($bind(this,this.onBodyMouseDown));
 		CallJs.leo_utils_initRectSelect(function(ary) {
 			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
@@ -1537,7 +1487,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_createDeck_click":
-			Main.createSelfDeck(this.currentDeckId);
 			break;
 		case "on_combo_deck_change":
 			this.currentDeckId = notification.getBody().deckId;
@@ -1584,15 +1533,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			}
 			var _g11 = Std.parseInt(notification.getType());
 			if(_g11 != null) switch(_g11) {
-			case 80:
-				Main.createSingleToken("2",this.pos_mouse);
-				break;
-			case 79:
-				Main.createSingleToken("1",this.pos_mouse);
-				break;
-			case 73:
-				Main.createSingleToken("0",this.pos_mouse);
-				break;
 			case 84:
 				Main.dice();
 				break;
@@ -2284,6 +2224,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			item = new per_vic_pureMVCref_tableGameModel_view_DataItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 			break;
 		case "card":
+			model.extra = [api.getCardImageWithPackageName(model.extra[2],model.extra[0]),"../common/images/card/cardback_" + model.extra[1] + ".png"];
 			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 			break;
 		case "sequence":
@@ -2660,7 +2601,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
+			if(err != null) js_Browser.alert(err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2967,3 +2908,5 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=main.js.map

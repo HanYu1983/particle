@@ -12,6 +12,7 @@ import mediator.UI;
 import model.Model;
 import org.puremvc.haxe.patterns.facade.Facade;
 import per.vic.pureMVCref.tableGameModel.controller.MainController;
+import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 import per.vic.pureMVCref.tableGameModel.Tool;
 
 using Lambda;
@@ -133,14 +134,15 @@ class Main
 		}
 		CallJs.setCookie( 'otherPlayerId', Json.stringify( ary_ops ) );
 	}
-	
+	/*
 	public static function createSelfDeck( deckId:Int ) {
 		if ( cardSuit == null ) return;
 		var deck = cardSuit[deckId];
 		if ( deck == null ) return;
 		createCards( deck );
 	}
-	
+	*/
+	/*
 	public static function createCards( deck:Dynamic, ?extra:Dynamic ) {
 		deck.backId = switch( deck.backId ) {
 			case null:"0";
@@ -173,7 +175,7 @@ class Main
 		Animate.addCardAndPrepare( toDeck );
 		pushCmds( { cmd:'addCards', content:toDeck } );
 	}
-	
+	*/
 	public static function loadDetail( game:String ) {
 		if ( cardSuitsDetailsIsLoading.field( game ) != null ) return;
 		cardSuitsDetailsIsLoading.setField( game, true );
@@ -349,6 +351,7 @@ class Main
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
 			case 'onBtnCustomDeck':
+				/*
 				var str:String = j( "#txt_custom" ).textbox( 'getValue' );
 				str = '[' + str + ']';
 				try {
@@ -357,9 +360,11 @@ class Main
 				}catch ( e:Dynamic ) {
 					alert( '輸入格式錯誤哦，請檢查!' );
 				}
+				*/
 			case 'onDiceClick':
 				dice();
 			case 'onTokenClick':
+				/*
 				var oldselect = currentSelect;
 				currentSelect = 'other';
 				createCards( { backId:"0", cards:[
@@ -371,7 +376,21 @@ class Main
 													'token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2'
 													] } );
 				currentSelect = oldselect;
+				*/
 			case 'onShaClick':
+				var pokerdata = [
+					{extra:['b1_1_fight','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false },
+					{extra:['b1_1_sanda','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false },
+					{extra:['b1_2_cold','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false }
+				];
+				
+				var ary_pokerItem = pokerdata.map( function( data:Dynamic ) {
+					return Tool.createItem( data.extra, data.pos, data.type, data.width, data.height, data.back, data.lock );
+				});
+				
+				Facade.getInstance().sendNotification( MainController.create_item, ary_pokerItem);
+				
+				/*
 				var oldselect = currentSelect;
 				currentSelect = 'sanguosha';
 				createCards( { backId:"49", cards:[
@@ -440,12 +459,22 @@ class Main
 													'id_2'
 													] } );
 				currentSelect = oldselect;
+				*/
 			case 'onPokerClick':
+				
+				SocketController.playerId = 'vic';
+				
 				var pokerdata = [
-					Tool.createItem( [], [100, 100], 'card', 100, 200, false, false )
+					{extra:['10','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' },
+					{extra:['11','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' },
+					{extra:['12','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' }
 				];
 				
-				Facade.getInstance().sendNotification( MainController.create_item, pokerdata);
+				var ary_pokerItem = pokerdata.map( function( data:Dynamic ) {
+					return Tool.createItem( data.extra, data.pos, data.type, data.width, data.height, data.back, data.lock, data.owner );
+				});
+				
+				Facade.getInstance().sendNotification( MainController.create_item, ary_pokerItem);
 				/*
 				var oldselect = currentSelect;
 				currentSelect = 'poker';
@@ -514,7 +543,7 @@ class Main
 		}
 		Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
 	}
-	
+	/*
 	public static function createSingleToken( type:String, pos_mouse ) {
 		var oldselect = currentSelect;
 		currentSelect = 'other';
@@ -525,7 +554,7 @@ class Main
 		}
 		currentSelect = oldselect;
 	}
-	
+	*/
 	public static function dice() {
 		var dice:Int = Math.floor( Math.random() * 100 );
 		Main.pushCmds( { cmd:'onDiceAction', content: { playerId:playerId, dice:dice } } );

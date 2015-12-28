@@ -49,7 +49,7 @@ class Model extends Mediator
 	{
 		switch( notification.getName() ) {
 			case Main.on_createDeck_click:
-				Main.createSelfDeck( currentDeckId );
+				//Main.createSelfDeck( currentDeckId );
 			case UI.on_combo_deck_change:
 				currentDeckId = notification.getBody().deckId;
 			case Layer.on_select_cards:
@@ -99,9 +99,9 @@ class Model extends Mediator
 				}
 				
 				switch( Std.parseInt( notification.getType() ) ) {
-					case KeyboardEvent.DOM_VK_P: Main.createSingleToken( '2', pos_mouse );
-					case KeyboardEvent.DOM_VK_O: Main.createSingleToken( '1', pos_mouse );
-					case KeyboardEvent.DOM_VK_I: Main.createSingleToken( '0', pos_mouse );
+					//case KeyboardEvent.DOM_VK_P: Main.createSingleToken( '2', pos_mouse );
+					//case KeyboardEvent.DOM_VK_O: Main.createSingleToken( '1', pos_mouse );
+					//case KeyboardEvent.DOM_VK_I: Main.createSingleToken( '0', pos_mouse );
 					case KeyboardEvent.DOM_VK_T:
 						Main.dice();
 					case KeyboardEvent.DOM_VK_G:
