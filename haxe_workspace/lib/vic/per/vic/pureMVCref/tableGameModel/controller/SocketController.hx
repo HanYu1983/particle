@@ -74,24 +74,9 @@ class SocketController extends Mediator
 	}
 	
 	function messageSocket( type, msg ) {
-		
-		function messageSingle( toId, _type, _msg ) {
-			
-			//untyped __js__( 'sendMessageToSomeone' )( toId, _type, _msg );
-			/*
-			untyped __js__( 'channel' ).sendChannelMessage( toId, Json.stringify( {
-				type:_type, 
-				msg:Json.parse( Json.stringify( _msg ))
-			}), handleResponse( function( ret ) {
-				trace( ret );
-			} ));*/
-		}
-		trace( ary_ops );
-		//trace( msg );
 		if ( ary_ops == null ) return;
 		ary_ops.foreach( function( op ) {
 			untyped __js__( 'api.sendMessageToSomeone' )( op, type, msg );
-		//	messageSingle( op, type, msg );
 			return true;
 		});
 	}

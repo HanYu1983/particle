@@ -259,9 +259,11 @@ class MainController extends Mediator
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_V:
 				setModelViewer();
+				sendNotification( on_select_cards, { ary_select:ary_select } );
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_F:
 				flipModel();
+				sendNotification( on_select_cards, { ary_select:ary_select } );
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_L:
 				setModelLock();
@@ -295,7 +297,7 @@ class MainController extends Mediator
 		if( !selectLock )
 			ary_select = filterLock( ary_select );
 		sendNotification( on_select_cards, { ary_select:ary_select } );
-		facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
+		sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
 	}
 	
 	function selectMyItem() {

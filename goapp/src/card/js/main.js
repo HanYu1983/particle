@@ -477,7 +477,7 @@ Main.changeIndex = function(cardId) {
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		if( js_Boot.__instanceof(e,String) ) {
-			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 727, className : "Main", methodName : "changeIndex"});
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 725, className : "Main", methodName : "changeIndex"});
 		} else throw(e);
 	}
 };
@@ -1292,7 +1292,7 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event,Main.on_createDeck_click];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -1312,7 +1312,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.setComboOps(ary_ops);
 			this.combo_ops.combobox("select",ary_ops[ary_ops.length - 1]);
 			break;
-		case "on_model_select_cards":
+		case "on_select_cards":
 			this.showCards(notification.getBody().ary_select);
 			break;
 		case "on_state_change":
@@ -1376,9 +1376,12 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		this.getViewComponent().layout("collapse","north");
 	}
 	,showCard: function(card) {
+		haxe_Log.trace(card,{ fileName : "UI.hx", lineNumber : 140, className : "mediator.UI", methodName : "showCard"});
 		if(card == null) return;
-		if(card.showTo == Main.playerId) {
-			var url = Main.getCardImageUrlWithPackage(card.game,card.cardId);
+		if(!card.back || card.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId && card.viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) {
+			var game = card.extra[2];
+			var cardId = card.extra[0];
+			var url = Main.getCardImageUrlWithPackage(game,cardId);
 			var div = Main.j("<div></div>");
 			div.css("position","relative");
 			var img = Main.j("<img></img>");
@@ -1399,8 +1402,8 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				img2.css("left","0");
 			});
 			div.append(img2);
-			if(card.game != "other" && card.game != "poker") {
-				var detail = Main.getCardDetailById(card.game,card.cardId);
+			if(game != "other" && game != "poker") {
+				var detail = Main.getCardDetailById(game,cardId);
 				var detaildiv = Main.j("<div></div>");
 				detaildiv.css("position","relative");
 				detaildiv.css("width","95%");
@@ -1410,8 +1413,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				var str = "目前沒有資料或者資料還沒準備好哦，請稍後再點!";
 				if(detail != null) {
 					str = "";
-					var _g = card.game;
-					switch(_g) {
+					switch(game) {
 					case "ws":
 						str += detail.id;
 						str += "<br/>";
@@ -2346,10 +2348,12 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			break;
 		case 86:
 			this.setModelViewer();
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
 			this.updateView(this.ary_select);
 			break;
 		case 70:
 			this.flipModel();
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
 			this.updateView(this.ary_select);
 			break;
 		case 76:
@@ -2387,7 +2391,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		});
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
-		this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
 	}
 	,selectMyItem: function() {
 		this.ary_select = this.filterLock(this.getMyItemFromPool());
@@ -2622,9 +2626,6 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 		}});
 	}
 	,messageSocket: function(type,msg) {
-		var messageSingle = function(toId,_type,_msg) {
-		};
-		haxe_Log.trace(this.ary_ops,{ fileName : "SocketController.hx", lineNumber : 89, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "messageSocket"});
 		if(this.ary_ops == null) return;
 		Lambda.foreach(this.ary_ops,function(op) {
 			api.sendMessageToSomeone(op,type,msg);

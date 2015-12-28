@@ -306,9 +306,7 @@ class Main
 				}
 				
 				slide( '正在等待對手...' );
-				//createSocket( playerId );
 				Facade.getInstance().sendNotification( SocketController.createPlayerSocket, playerId );
-				
 				saveOpponentToCookie( otherPlayerId );
 			case 'onBtnNotLoginClick':
 				j( '#txt_id' ).textbox( 'setValue', getId() );

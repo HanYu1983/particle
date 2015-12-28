@@ -5,6 +5,8 @@ import js.html.Image;
 import model.Model;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
+import per.vic.pureMVCref.tableGameModel.controller.MainController;
+import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 
 /**
  * ...
@@ -41,8 +43,8 @@ class UI extends Mediator
 	
 	override public function listNotificationInterests():Array<String> 
 	{
-		return [ 	Model.on_select_cards, 
-					Model.on_state_change,
+		return [ 	
+					MainController.on_select_cards,
 					Main.on_getSuit_success,
 					Main.on_receiveOps,
 					Main.on_searchComplete,
@@ -64,7 +66,7 @@ class UI extends Mediator
 				var ary_ops = notification.getBody().ary_ops;
 				setComboOps( ary_ops );
 				combo_ops.combobox( 'select', ary_ops[ary_ops.length -1] );
-			case Model.on_select_cards:
+			case MainController.on_select_cards:
 				showCards( notification.getBody().ary_select );
 			case Model.on_state_change:
 				var notify = notification.getBody().notify;
@@ -135,10 +137,13 @@ class UI extends Mediator
 	}
 	
 	function showCard( card ) {
+		trace( card );
 		if ( card == null ) return;
-		if ( card.showTo == Main.playerId ) {
-			
-			var url = Main.getCardImageUrlWithPackage( card.game, card.cardId );
+		//if ( card.showTo == Main.playerId ) {
+		if ( !card.back || ( card.owner == SocketController.playerId && card.viewer == SocketController.playerId )) {
+			var game = card.extra[2];
+			var cardId = card.extra[0];
+			var url = Main.getCardImageUrlWithPackage( game, cardId );
 			var div = Main.j( '<div></div>' );
 			div.css( 'position', 'relative' );
 			
@@ -163,8 +168,8 @@ class UI extends Mediator
 			});
 			div.append( img2 );
 			
-			if ( card.game != 'other' && card.game != 'poker' ) {
-				var detail = Main.getCardDetailById( card.game, card.cardId );
+			if ( game != 'other' && game != 'poker' ) {
+				var detail = Main.getCardDetailById( game, cardId );
 				var detaildiv:Dynamic = Main.j( '<div></div>' );
 				detaildiv.css( 'position', 'relative' );
 				detaildiv.css( 'width', '95%' );
@@ -174,7 +179,7 @@ class UI extends Mediator
 				var str:String = '目前沒有資料或者資料還沒準備好哦，請稍後再點!';
 				if ( detail != null ) {
 					str = '';
-					switch( card.game ) {
+					switch( game ) {
 						case 'ws':
 							str += detail.id;
 							str += '<br/>';
