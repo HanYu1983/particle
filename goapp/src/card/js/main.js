@@ -163,25 +163,11 @@ _$List_ListIterator.prototype = {
 	,__class__: _$List_ListIterator
 };
 var Main = function() {
-	var _g = this;
-	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
-		Main.playerId = nv;
-	}});
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
-	if(CallJs.getCookie("otherPlayerId") != null) {
-		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
-	} else Main.ary_ops = [];
-	Main.openLoading("準備中...請稍等");
-	var fbappId = config.fbid[config.fbid.which];
-	CallJs.myapp_facebook_init(fbappId,function() {
-		_g.updateGameUI(Main.currentSelect);
-		Main.closeLoading();
-		_g.prepareCardsuit(CallJs.cardSuit_defaultModel().cardSuit);
-		Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
+	window.document.addEventListener("contextmenu",function(e) {
+		e.preventDefault();
+	},false);
+	Main.j(window.document).ready(function() {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("",Main.j("#container_cards")));
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
@@ -500,7 +486,7 @@ Main.changeIndex = function(cardId) {
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		if( js_Boot.__instanceof(e,String) ) {
-			console.log(e);
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 616, className : "Main", methodName : "changeIndex"});
 		} else throw(e);
 	}
 };
@@ -683,16 +669,13 @@ Main.prototype = {
 			Main.currentSelect = oldselect;
 			break;
 		case "onShaClick":
-			var oldselect1 = Main.currentSelect;
-			Main.currentSelect = "sanguosha";
+			var pokerdata = [per_vic_pureMVCref_tableGameModel_Tool.createItem([],[100,100],"card",100,200,false,false)];
 			Main.createCards({ backId : "49", cards : ["b1_1_fight","b1_1_sanda","b1_2_cold","b1_2_double","b1_2_gua","b1_3_river","b1_3_steal","b1_4_river","b1_4_steal","b1_5_dragon","b1_5_shadow","b1_6_bluejian","b1_6_happy","b1_7_nan","b1_7_sa","b1_8_sa","b1_8_sa","b1_9_sa","b1_9_sa","b1_10_sa","b1_10_sa","b1_11_steal","b1_11_strong","b1_12_eight","b1_12_river","b1_13_horse","b1_13_nan","b2_1_fight","b2_1_nu","b2_2_gua","b2_2_sa","b2_2_shield","b2_3_river","b2_3_sa","b2_4_river","b2_4_sa","b2_5_horse","b2_5_sa","b2_6_happy","b2_6_sa","b2_7_nan","b2_7_sa","b2_8_sa","b2_8_sa","b2_9_sa","b2_9_sa","b2_10_sa","b2_10_sa","b2_11_sa","b2_11_sa","b2_12_dao","b2_12_strong","b2_13_dao","b2_13_strong","r1_1_spray","r1_1_together","r1_2_run","r1_2_run","r1_3_tao","r1_3_wugu","r1_4_tao","r1_4_wugu","r1_5_gilin","r1_5_redhourse","r1_6_happy","r1_6_tao","r1_7_born","r1_7_tao","r1_8_born","r1_8_tao","r1_9_born","r1_9_tao","r1_10_sa","r1_10_sa","r1_11_born","r1_11_sa","r1_12_river","r1_12_sanda","r1_12_tao","r1_13_horse","r1_13_run","r2_1_fight","r2_1_nu","r2_2_run","r2_2_run","r2_3_run","r2_3_steal","r2_4_run","r2_4_steal","r2_5_axe","r2_5_run","r2_6_run","r2_6_sa","r2_7_run","r2_7_sa","r2_8_run","r2_8_sa","r2_9_run","r2_9_sa","r2_10_run","r2_10_sa","r2_11_run","r2_11_run","r2_12_draw","r2_12_strong","r2_12_tao","r2_13_hourse","r2_13_sa","role_001","role_002","role_003","role_004","role_005","role_006","role_007","role_008","role_009","role_010","role_011","role_012","role_013","role_014","role_015","role_016","role_017","role_018","role_019","role_020","role_021","role_022","role_023","role_024","role_025","id_0","id_0","id_0","id_0","id_1","id_1","id_3","id_3","id_3","id_2"]});
 			Main.currentSelect = oldselect1;
 			break;
 		case "onPokerClick":
 			var oldselect2 = Main.currentSelect;
-			Main.currentSelect = "poker";
-			Main.createCards({ backId : "34", cards : ["10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62"]});
-			Main.currentSelect = oldselect2;
+			Main.currentSelect = oldselect1;
 			break;
 		}
 		CallJs.googleTracking_click(type);
@@ -829,6 +812,11 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -909,6 +897,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -1030,6 +1037,9 @@ js_Boot.__instanceof = function(o,cl) {
 		return o.__enum__ == cl;
 	}
 };
+js_Boot.__cast = function(o,t) {
+	if(js_Boot.__instanceof(o,t)) return o; else throw new js__$Boot_HaxeError("Cannot cast " + Std.string(o) + " to " + Std.string(t));
+};
 js_Boot.__nativeClassName = function(o) {
 	var name = js_Boot.__toStr.call(o).slice(8,-1);
 	if(name == "Object" || name == "Function" || name == "Math" || name == "JSON") return null;
@@ -1040,6 +1050,11 @@ js_Boot.__isNativeObj = function(o) {
 };
 js_Boot.__resolveNativeClass = function(name) {
 	return $global[name];
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
 };
 var org_puremvc_haxe_interfaces_INotifier = function() { };
 org_puremvc_haxe_interfaces_INotifier.__name__ = true;
@@ -2106,6 +2121,731 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 	}
 	,__class__: org_puremvc_haxe_patterns_observer_Observer
 };
+var per_vic_pureMVCref_tableGameModel_Tool = function() { };
+per_vic_pureMVCref_tableGameModel_Tool.__name__ = true;
+per_vic_pureMVCref_tableGameModel_Tool.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
+	if(viewer == null) viewer = "";
+	if(owner == null) owner = "desktop";
+	if(lock == null) lock = false;
+	if(back == null) back = true;
+	if(height == null) height = 100;
+	if(width == null) width = 100;
+	if(type == null) type = "card";
+	return { type : type, width : width, height : height, pos : pos, back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : per_vic_pureMVCref_tableGameModel_Tool.createDivId(), extra : extra, action : { sequence : Math.random()}};
+};
+per_vic_pureMVCref_tableGameModel_Tool.createItemDiv = function(type,model) {
+	var div = per_vic_pureMVCref_tableGameModel_Tool.j("#tmpl_" + type).tmpl(model);
+	return div;
+};
+per_vic_pureMVCref_tableGameModel_Tool.createDivId = function() {
+	return leo.utils.generateUUID();
+};
+per_vic_pureMVCref_tableGameModel_Tool.slide = function(msg,time) {
+	if(time == null) time = 2000;
+	per_vic_pureMVCref_tableGameModel_Tool.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide"});
+};
+per_vic_pureMVCref_tableGameModel_Tool.alert = function(msg) {
+	per_vic_pureMVCref_tableGameModel_Tool.j.messager.alert("錯誤",msg);
+};
+var per_vic_pureMVCref_tableGameModel_controller_MainController = function(mediatorName,viewComponent) {
+	this.isList = false;
+	this.pos_mouse = [0,0];
+	this.ary_allItem = [];
+	this.ary_select = [];
+	var _g = this;
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+	leo.utils.initRectSelect(function(ary) {
+		_g.onSelectItems(ary);
+		_g.zsorting();
+	});
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").mousemove($bind(this,this.onBodyMouseMove));
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").keyup($bind(this,this.onBodyKeyUp));
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").mousedown($bind(this,this.onBodyKeyUp));
+};
+per_vic_pureMVCref_tableGameModel_controller_MainController.__name__ = true;
+per_vic_pureMVCref_tableGameModel_controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
+	}
+	,handleNotification: function(notification) {
+		var _g1 = this;
+		var _g = notification.getName();
+		var on_receiveMessage = _g;
+		switch(_g) {
+		case "on_item_lock":
+			var div = notification.getBody().view;
+			var lock = notification.getBody().lock;
+			if(lock) this.viewComponent.prepend(div);
+			break;
+		case "on_item_click":
+			var div1 = notification.getBody();
+			this.viewComponent.append(div1);
+			this.onSelectItems(div1,true);
+			break;
+		case "create_item":
+			var ary_creates = notification.getBody();
+			Lambda.foreach(ary_creates,function(c) {
+				_g1.createItem(c);
+				return true;
+			});
+			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
+			break;
+		default:
+			var _g11 = notification.getType();
+			switch(_g11) {
+			case "addItems":
+				var tempItems = notification.getBody();
+				Lambda.foreach(tempItems,function(c1) {
+					_g1.createItem(c1);
+					return true;
+				});
+				break;
+			case "deleteItem":
+				var localModel = this.receiveItemToLocalModel(notification.getBody());
+				this.deleteModel(localModel);
+				this.deleteView(localModel);
+				break;
+			case "applyTransform":
+				this.updateView(this.updateModel(notification.getBody()));
+				break;
+			}
+		}
+	}
+	,updateModel: function(ary_receive) {
+		var _g = this;
+		return ary_receive.map(function(receive) {
+			var model = _g.getItemFromPoolById(receive.id);
+			model.pos = receive.pos.slice();
+			model.deg = receive.deg;
+			model.owner = receive.owner;
+			model.viewer = receive.viewer;
+			model.back = receive.back;
+			model.lock = receive.lock;
+			model.action = receive.action;
+			return model;
+		});
+	}
+	,updateView: function(ary_item) {
+		var _g = this;
+		var updateRotate = function(item,dom,itemModel) {
+			if(dom.attr("deg") == null) item.rotate(0,itemModel.deg); else {
+				var oldDegree = dom.attr("deg");
+				if(oldDegree != itemModel.deg) item.rotate(oldDegree,itemModel.deg);
+			}
+			dom.attr("deg",itemModel.deg);
+		};
+		var updateAction = function(item1,itemModel1) {
+			item1.action(itemModel1.action);
+		};
+		var updateMove = function(item2,dom1,itemModel2) {
+			var dom_pos_0 = StringTools.replace(dom1.css("left"),"px","");
+			var dom_pos_1 = StringTools.replace(dom1.css("top"),"px","");
+			if(dom_pos_0 != itemModel2.pos[0] || dom_pos_1 != itemModel2.pos[1]) item2.move(itemModel2.pos[0],itemModel2.pos[1]);
+		};
+		var updateOwner = function(item3,itemModel3) {
+			item3.setOwner(itemModel3.owner);
+		};
+		var updateViewer = function(item4,itemModel4) {
+			item4.setViewer(itemModel4.viewer);
+		};
+		var updateFlip = function(item5,itemModel5) {
+			item5.flip(itemModel5.back);
+		};
+		var updateLock = function(item6,itemModel6) {
+			item6.lock(itemModel6.lock);
+		};
+		Lambda.foreach(ary_item,function(itemModel7) {
+			var item7;
+			item7 = js_Boot.__cast(_g.facade.retrieveMediator(itemModel7.id) , per_vic_pureMVCref_tableGameModel_view_IItem);
+			var dom2 = _g.facade.retrieveMediator(itemModel7.id).getViewComponent();
+			updateRotate(item7,dom2,itemModel7);
+			updateMove(item7,dom2,itemModel7);
+			updateOwner(item7,itemModel7);
+			updateViewer(item7,itemModel7);
+			updateFlip(item7,itemModel7);
+			updateLock(item7,itemModel7);
+			updateAction(item7,itemModel7);
+			dom2.appendTo(dom2.parent());
+			return true;
+		});
+	}
+	,receiveItemToLocalModel: function(ary_receive) {
+		var _g = this;
+		return ary_receive.map(function(tempItem) {
+			return _g.getItemFromPoolById(tempItem.id);
+		});
+	}
+	,createItem: function(model) {
+		var item;
+		var _g = model.type;
+		switch(_g) {
+		case "data":
+			item = new per_vic_pureMVCref_tableGameModel_view_DataItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			break;
+		case "card":
+			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			break;
+		case "sequence":
+			item = new per_vic_pureMVCref_tableGameModel_view_SequenceItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			break;
+		case "token":
+			item = new per_vic_pureMVCref_tableGameModel_view_TokenItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			break;
+		default:
+			item = new per_vic_pureMVCref_tableGameModel_view_BasicItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+		}
+		item.viewComponent.css("left",model.pos[0] + "px");
+		item.viewComponent.css("top",model.pos[1] + "px");
+		this.facade.registerMediator(item);
+		this.viewComponent.append(item.viewComponent);
+		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).setOwner(model.owner);
+		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).setViewer(model.viewer);
+		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).flip(model.back);
+		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).action(model.action);
+		this.ary_allItem.push(model);
+	}
+	,onBodyKeyUp: function(e) {
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_press,null,e.which);
+		var _g = e.which;
+		switch(_g) {
+		case 68:
+			break;
+		case 75:
+			break;
+		default:
+			if(this.ary_select.length == 0) return;
+		}
+		var _g1 = Std.parseInt(e.which);
+		if(_g1 != null) switch(_g1) {
+		case 72:
+			this.deleteModel(this.ary_select);
+			this.deleteView(this.ary_select);
+			break;
+		case 84:
+			this.actionModel();
+			this.updateView(this.ary_select);
+			break;
+		case 65:case 3:
+			this.moveModel();
+			this.updateView(this.ary_select);
+			break;
+		case 88:
+			this.rotateModel(90);
+			this.updateView(this.ary_select);
+			break;
+		case 90:
+			this.rotateModel(-90);
+			this.updateView(this.ary_select);
+			break;
+		case 69:
+			this.sortModel();
+			this.listModel();
+			this.updateView(this.ary_select);
+			break;
+		case 87:
+			this.reverseModel();
+			this.togetherModel();
+			this.updateView(this.ary_select);
+			break;
+		case 81:
+			this.shuffleModel();
+			this.togetherModel();
+			this.updateView(this.ary_select);
+			break;
+		case 67:
+			this.setModelOwner();
+			this.updateView(this.ary_select);
+			break;
+		case 68:
+			this.selectMyItem();
+			this.updateView(this.ary_select);
+			break;
+		case 83:
+			if(this.isList) this.togetherModel(); else this.listModel();
+			this.isList = !this.isList;
+			this.updateView(this.ary_select);
+			break;
+		case 86:
+			this.setModelViewer();
+			this.updateView(this.ary_select);
+			break;
+		case 70:
+			this.flipModel();
+			this.updateView(this.ary_select);
+			break;
+		case 76:
+			this.setModelLock();
+			this.updateView(this.ary_select);
+			break;
+		case 75:
+			this.unlockAllItem();
+			this.updateView(this.ary_allItem);
+			break;
+		}
+		var _g2 = e.which;
+		switch(_g2) {
+		case 72:
+			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});
+			break;
+		case 75:
+			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_allItem});
+			break;
+		default:
+			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+		}
+	}
+	,rotateModel: function(deg) {
+		Lambda.foreach(this.ary_select,function(item) {
+			item.deg += deg;
+			return true;
+		});
+	}
+	,onSelectItems: function(ary,selectLock) {
+		if(selectLock == null) selectLock = false;
+		var _g = this;
+		this.ary_select = ary.map(function(model) {
+			return _g.getItemFromPoolById(model.id);
+		});
+		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+		this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+	}
+	,selectMyItem: function() {
+		this.ary_select = this.filterLock(this.getMyItemFromPool());
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+	}
+	,sortModel: function() {
+		var collectobj = { };
+		Lambda.foreach(this.ary_select,function(card) {
+			if(Reflect.field(collectobj,card.cardId) == null) collectobj[card.cardId] = [];
+			Reflect.field(collectobj,card.cardId).push(card);
+			return true;
+		});
+		var newary = [];
+		var _g = 0;
+		var _g1 = Reflect.fields(collectobj);
+		while(_g < _g1.length) {
+			var c = _g1[_g];
+			++_g;
+			newary = newary.concat(Reflect.field(collectobj,c));
+		}
+		this.ary_select = newary;
+	}
+	,setModelLock: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			if(itemModel.owner == "" || itemModel.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.lock = !itemModel.lock; else continue;
+		}
+	}
+	,unlockAllItem: function() {
+		var _g1 = 0;
+		var _g = this.ary_allItem.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_allItem[i];
+			if(itemModel.owner == "" || itemModel.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.lock = false; else continue;
+		}
+	}
+	,setModelOwner: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			var item;
+			item = js_Boot.__cast(this.facade.retrieveMediator(itemModel.id) , per_vic_pureMVCref_tableGameModel_view_IItem);
+			if(itemModel.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.owner = ""; else if(itemModel.owner == "") itemModel.owner = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId; else {
+			}
+		}
+	}
+	,setModelViewer: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			var item;
+			item = js_Boot.__cast(this.facade.retrieveMediator(itemModel.id) , per_vic_pureMVCref_tableGameModel_view_IItem);
+			if(itemModel.viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.viewer = ""; else {
+				itemModel.viewer = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId;
+				if(itemModel.viewer == "") itemModel.viewer = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId;
+			}
+		}
+	}
+	,listModel: function() {
+		var info = this.collectInfo(this.ary_select);
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			itemModel.pos[0] = i % 10 * (Reflect.field(info,"mw") + 4) + this.pos_mouse[0];
+			itemModel.pos[1] = Math.floor(i / 10) * (Reflect.field(info,"mh") + 4) + this.pos_mouse[1];
+		}
+	}
+	,togetherModel: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			itemModel.pos[0] = i * 2 + this.pos_mouse[0];
+			itemModel.pos[1] = i * 2 + this.pos_mouse[1];
+		}
+	}
+	,flipModel: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			if(itemModel.owner == "" || itemModel.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.back = !itemModel.back; else continue;
+		}
+	}
+	,zsorting: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var dom = this.facade.retrieveMediator(this.ary_select[i].id).getViewComponent();
+			dom.appendTo(dom.parent());
+		}
+	}
+	,shuffleModel: function() {
+		this.ary_select.sort(function(a,b) {
+			if(Math.random() > .5) return 1; else return -1;
+		});
+	}
+	,reverseModel: function() {
+		this.ary_select.reverse();
+	}
+	,collectInfo: function(ary_item) {
+		var mw = 0.0;
+		var mh = 0.0;
+		var firstPos = [];
+		var _g1 = 0;
+		var _g = ary_item.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(i == 0) firstPos = ary_item[i].pos.slice();
+			mw = Math.max(mw,ary_item[i].width);
+			mh = Math.max(mw,ary_item[i].height);
+		}
+		return { mw : mw, mh : mh, firstPos : firstPos};
+	}
+	,filterLock: function(ary) {
+		var nary = Lambda.fold(ary,function(curr,first) {
+			if(!curr.lock) first.push(curr);
+			return first;
+		},[]);
+		return nary;
+	}
+	,onBodyMouseMove: function(e) {
+		this.pos_mouse[0] = e.pageX;
+		this.pos_mouse[1] = e.pageY;
+	}
+	,getItemFromPoolById: function(id) {
+		return this.ary_allItem.filter(function(model) {
+			return id == model.id;
+		})[0];
+	}
+	,getMyItemFromPool: function() {
+		return this.ary_allItem.filter(function(model) {
+			return per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId == model.owner;
+		});
+	}
+	,actionModel: function() {
+		Lambda.foreach(this.ary_select,function(item) {
+			var _g = item.type;
+			switch(_g) {
+			case "sequence":
+				item.action.sequence = Math.random();
+				break;
+			default:
+			}
+			return true;
+		});
+	}
+	,deleteModel: function(ary_receive) {
+		var _g = this;
+		Lambda.foreach(ary_receive,function(removeItem) {
+			var rid = HxOverrides.indexOf(_g.ary_allItem,removeItem,0);
+			_g.ary_allItem.splice(rid,1);
+			return true;
+		});
+	}
+	,deleteView: function(ary_receive) {
+		var _g = this;
+		Lambda.foreach(ary_receive,function(removeItem) {
+			_g.facade.retrieveMediator(removeItem.id).getViewComponent().remove();
+			return true;
+		});
+	}
+	,moveModel: function() {
+		var moveTarget = { };
+		this.ary_select.sort(function(ac,bc) {
+			if(ac.pos[0] < bc.pos[0]) return -1;
+			return 1;
+		});
+		moveTarget.x = this.ary_select[0].pos[0];
+		this.ary_select.sort(function(ac1,bc1) {
+			if(ac1.pos[1] < bc1.pos[1]) return -1;
+			return 1;
+		});
+		moveTarget.y = this.ary_select[0].pos[1];
+		var offset_0 = this.pos_mouse[0] - moveTarget.x;
+		var offset_1 = this.pos_mouse[1] - moveTarget.y;
+		Lambda.foreach(this.ary_select,function(select) {
+			select.pos[0] += offset_0;
+			select.pos[1] += offset_1;
+			return true;
+		});
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_controller_MainController
+});
+var per_vic_pureMVCref_tableGameModel_controller_SocketController = function(mediatorName,viewComponent) {
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_controller_SocketController.__name__ = true;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket];
+	}
+	,handleNotification: function(notification) {
+		haxe_Log.trace(notification.getName(),{ fileName : "SocketController.hx", lineNumber : 35, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "handleNotification"});
+		var _g = notification.getName();
+		var str = _g;
+		if(str == per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage) {
+			var type = notification.getBody().type;
+			var msg = notification.getBody().msg;
+			this.messageSocket(type,msg);
+		} else {
+			var str1 = _g;
+			if(str1 == per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents) this.ary_ops = notification.getBody().slice(); else {
+				var str2 = _g;
+				if(str2 == per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket) this.createSocket(notification.getBody());
+			}
+		}
+	}
+	,createSocket: function(id) {
+		var _g = this;
+		api.createChannel(id,{ onopen : function() {
+			haxe_Log.trace("ok",{ fileName : "SocketController.hx", lineNumber : 51, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "createSocket"});
+		}, onmessage : function(json) {
+			haxe_Log.trace(json,{ fileName : "SocketController.hx", lineNumber : 54, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "createSocket"});
+			_g.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
+		}, onerror : function() {
+		}, onclose : function() {
+		}});
+	}
+	,messageSocket: function(type,msg) {
+		var messageSingle = function(toId,_type,_msg) {
+		};
+		if(this.ary_ops == null) return;
+		Lambda.foreach(this.ary_ops,function(op) {
+			api.sendMessageToSomeone(op,type,msg);
+			return true;
+		});
+	}
+	,compress: function(str) {
+		return LZString.compress(str);
+	}
+	,decompress: function(str) {
+		return LZString.decompress(str);
+	}
+	,handleResponse: function(cb) {
+		return function(err,ret) {
+			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
+		};
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
+});
+var per_vic_pureMVCref_tableGameModel_view_IItem = function() { };
+per_vic_pureMVCref_tableGameModel_view_IItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_IItem.prototype = {
+	__class__: per_vic_pureMVCref_tableGameModel_view_IItem
+};
+var per_vic_pureMVCref_tableGameModel_view_BasicItem = function(mediatorName,viewComponent) {
+	this._owner = "";
+	this._viewer = "";
+	this._filp = true;
+	var _g = this;
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+	viewComponent.click(function(e) {
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,[viewComponent[0]]);
+		_g.onSelect([viewComponent[0]]);
+	});
+};
+per_vic_pureMVCref_tableGameModel_view_BasicItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_BasicItem.__interfaces__ = [per_vic_pureMVCref_tableGameModel_view_IItem];
+per_vic_pureMVCref_tableGameModel_view_BasicItem.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	action: function(value) {
+	}
+	,lock: function(l) {
+		if(l) {
+			this.viewComponent.find("#img_lock").show();
+			this.viewComponent.addClass("lock");
+		} else {
+			this.viewComponent.find("#img_lock").hide();
+			this.viewComponent.removeClass("lock");
+		}
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock,{ view : this.viewComponent, lock : l});
+	}
+	,flip: function(f) {
+		this._filp = f;
+		this.checkViewerAndShowCard();
+	}
+	,focus: function(f) {
+		if(f) this.viewComponent.addClass("focus"); else this.viewComponent.removeClass("focus");
+	}
+	,move: function(x,y) {
+		this.viewComponent.animate({ left : x, top : y});
+	}
+	,rotate: function(sd,ed) {
+		this.rotateAnimation(sd,ed);
+	}
+	,setViewer: function(v) {
+		this._viewer = v;
+		this.checkViewerAndShowCard();
+	}
+	,setOwner: function(o) {
+		this._owner = o;
+		if(this._owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) this.viewComponent.find("#img_owner").show(); else this.viewComponent.find("#img_owner").hide();
+		this.checkViewerAndShowCard();
+	}
+	,getViewer: function() {
+		return this._viewer;
+	}
+	,getOwner: function() {
+		return this._owner;
+	}
+	,listNotificationInterests: function() {
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards];
+	}
+	,handleNotification: function(notification) {
+		var _g = notification.getName();
+		switch(_g) {
+		case "on_select_cards":
+			this.onSelect(Reflect.field(notification.getBody(),"ary_select"));
+			break;
+		}
+	}
+	,checkViewerAndShowCard: function() {
+		var showViewerImg = false;
+		var showRedback = false;
+		if(!this._filp) this.showItemForMe(); else if(this._viewer == this._owner) {
+			if(this._viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) {
+				this.showItemForMe();
+				showViewerImg = true;
+			} else {
+				this.hideItemForMe();
+				if(this._viewer != "") showRedback = true;
+			}
+		} else this.hideItemForMe();
+		if(this._owner == "") this.viewComponent.css("opacity",.5); else this.viewComponent.css("opacity",1);
+		if(showViewerImg) this.viewComponent.find("#img_viewer").show(); else this.viewComponent.find("#img_viewer").hide();
+		if(showRedback) this.viewComponent.find("#mc_see").show(); else this.viewComponent.find("#mc_see").hide();
+	}
+	,showItemForMe: function() {
+		this.viewComponent.find(".card_back").hide();
+	}
+	,hideItemForMe: function() {
+		this.viewComponent.find(".card_back").show();
+	}
+	,onSelect: function(ary_select) {
+		this.focus(false);
+		if(this.checkSelf(ary_select)) this.focus(true);
+	}
+	,checkSelf: function(ary_select) {
+		if(ary_select == null) return false;
+		var isSelf = false;
+		var _g1 = 0;
+		var _g = ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var div = ary_select[i];
+			var itemId = div.id;
+			if(itemId == this.getMediatorName()) {
+				isSelf = true;
+				return isSelf;
+			}
+		}
+		return isSelf;
+	}
+	,rotateAnimation: function(sd,ed) {
+		var _g = this;
+		per_vic_pureMVCref_tableGameModel_Tool.j({ deg : sd}).animate({ deg : ed},{ duration : 300, step : function(now) {
+			_g.getViewComponent().css({ '-moz-transform' : "rotate(" + now + "deg)", '-webkit-transform' : "rotate(" + now + "deg)", '-o-transform' : "rotate(" + now + "deg)", '-ms-transform' : "rotate(" + now + "deg)", 'transform' : "rotate(" + now + "deg)"});
+		}});
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_view_BasicItem
+});
+var per_vic_pureMVCref_tableGameModel_view_CardItem = function(mediatorName,viewComponent) {
+	haxe_Log.trace(mediatorName,{ fileName : "CardItem.hx", lineNumber : 12, className : "per.vic.pureMVCref.tableGameModel.view.CardItem", methodName : "new", customParams : [viewComponent]});
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_CardItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_CardItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_CardItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	__class__: per_vic_pureMVCref_tableGameModel_view_CardItem
+});
+var per_vic_pureMVCref_tableGameModel_view_DataItem = function(mediatorName,viewComponent) {
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_DataItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_DataItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_DataItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	__class__: per_vic_pureMVCref_tableGameModel_view_DataItem
+});
+var per_vic_pureMVCref_tableGameModel_view_SequenceItem = function(mediatorName,viewComponent) {
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_SequenceItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_SequenceItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_SequenceItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	action: function(value) {
+		var mc_seqs = this.viewComponent.find("#mc_seqs");
+		var count = mc_seqs.children().length;
+		var showTarget = function(index) {
+			mc_seqs.find("img").hide();
+			mc_seqs.children().eq(index).show();
+		};
+		haxe_Log.trace(value.sequence,{ fileName : "SequenceItem.hx", lineNumber : 28, className : "per.vic.pureMVCref.tableGameModel.view.SequenceItem", methodName : "action", customParams : [this.viewComponent.attr("action")]});
+		if(this.viewComponent.attr("action") == null || this.viewComponent.attr("action") != value.sequence) {
+			var _g = 0;
+			while(_g < 30) {
+				var i = [_g++];
+				haxe_Timer.delay((function(i) {
+					return function() {
+						if(i[0] == 29) showTarget(Math.floor(value.sequence * count)); else showTarget(Math.floor(Math.random() * count));
+					};
+				})(i),i[0] * 10);
+			}
+			this.viewComponent.attr("action",value.sequence);
+		}
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_view_SequenceItem
+});
+var per_vic_pureMVCref_tableGameModel_view_TokenItem = function(mediatorName,viewComponent) {
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_TokenItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_TokenItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_TokenItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	flip: function(f) {
+	}
+	,setOwner: function(o) {
+	}
+	,setViewer: function(v) {
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_view_TokenItem
+});
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
@@ -2123,6 +2863,27 @@ var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
+if(Array.prototype.map == null) Array.prototype.map = function(f) {
+	var a = [];
+	var _g1 = 0;
+	var _g = this.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		a[i] = f(this[i]);
+	}
+	return a;
+};
+if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
+	var a1 = [];
+	var _g11 = 0;
+	var _g2 = this.length;
+	while(_g11 < _g2) {
+		var i1 = _g11++;
+		var e = this[i1];
+		if(f1(e)) a1.push(e);
+	}
+	return a1;
+};
 var __map_reserved = {}
 CallJs.setCookie = setCookie;
 CallJs.getCookie = getCookie;
@@ -2193,5 +2954,16 @@ model_Model.on_card_remove = "on_card_remove";
 model_Model.on_card_move = "on_card_move";
 model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
+per_vic_pureMVCref_tableGameModel_Tool.j = $;
+per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "create_item";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_press = "on_press";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents = "setOpponents";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage = "sendMessage";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket = "createPlayerSocket";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "smart";
+per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click";
+per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

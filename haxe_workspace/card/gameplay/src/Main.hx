@@ -11,7 +11,10 @@ import mediator.Layer;
 import mediator.UI;
 import model.Model;
 import org.puremvc.haxe.patterns.facade.Facade;
+import per.vic.pureMVCref.tableGameModel.controller.MainController;
+import per.vic.pureMVCref.tableGameModel.Tool;
 
+using Lambda;
 using Reflect;
 /**
  * ...
@@ -51,6 +54,27 @@ class Main
 	static var cardPackageUrlMapping:Dynamic = { };
 	
 	function new() {
+		
+		Browser.document.addEventListener("contextmenu", function(e){
+			e.preventDefault();
+		}, false);
+		
+		j( Browser.document ).ready( function() {
+			Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
+		//	Facade.getInstance().registerMediator( new UIController( 'UIController', j( '.easyui-layout' ) ) );
+			
+			/*
+			Facade.getInstance().sendNotification( MainController.create_item, [
+																					createItem( ['../common/images/createTable/002.jpg'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 700, 700, true, false, playerId ),
+																					createItem( ['../common/images/createTable/Victory_Token.png'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'token', 100, 100, true, false, playerId )
+																				]);
+																				
+																				*/
+		});
+		
+		Browser.window.setField( 'onHtmlClick', onHtmlClick );
+		
+		/*
 		j( '#btn_connect' ).linkbutton();
 		j( '#txt_id' ).textbox( {
 			#if debug
@@ -83,6 +107,7 @@ class Main
 			slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
 		});
 		Reflect.setField( Browser.window, 'onHtmlClick', onHtmlClick );
+		*/
 	}
 	
 	
@@ -416,8 +441,15 @@ class Main
 													] } );
 				currentSelect = oldselect;
 			case 'onPokerClick':
+				var pokerdata = [
+					Tool.createItem( [], [100, 100], 'card', 100, 200, false, false )
+				];
+				
+				Facade.getInstance().sendNotification( MainController.create_item, pokerdata);
+				/*
 				var oldselect = currentSelect;
 				currentSelect = 'poker';
+				
 				createCards( { backId:"34", cards:[
 													'10', '11', '12',
 													'13', '14', '15', '16',
@@ -435,6 +467,7 @@ class Main
 													'61', '62'
 													] } );
 				currentSelect = oldselect;
+				*/
 		}
 		CallJs.googleTracking_click( type );
 	}

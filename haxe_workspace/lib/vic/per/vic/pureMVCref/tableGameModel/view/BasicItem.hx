@@ -1,8 +1,9 @@
-package view;
+package per.vic.pureMVCref.tableGameModel.view;
 
-import controller.MainController;
+import per.vic.pureMVCref.tableGameModel.controller.MainController;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
+import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 
 using Lambda;
 using Reflect;
@@ -36,10 +37,11 @@ class BasicItem extends Mediator implements IItem
 	public function lock( l:Bool ):Void {
 		if ( l ) {
 			viewComponent.find( '#img_lock' ).show();
+			viewComponent.addClass( 'lock' );
 		}else {
 			viewComponent.find( '#img_lock' ).hide();
+			viewComponent.removeClass( 'lock' );
 		}
-		Main.setSelectable( viewComponent, l );
 		sendNotification( on_item_lock, {view:viewComponent, lock:l} );
 	}
 	
@@ -75,7 +77,7 @@ class BasicItem extends Mediator implements IItem
 	public function setOwner( o:String ):Void 
 	{
 		_owner = o;
-		if ( _owner == Main.playerId ) {
+		if ( _owner == SocketController.playerId ) {
 			viewComponent.find( '#img_owner' ).show();
 		}else {
 			viewComponent.find( '#img_owner' ).hide();
@@ -116,7 +118,7 @@ class BasicItem extends Mediator implements IItem
 		}else {
 			if ( _viewer == _owner ) {
 				//有人在觀察，這邊確認是不是自己在觀察
-				if ( _viewer == Main.playerId ) {
+				if ( _viewer == SocketController.playerId ) {
 					//有人在觀察，是自己，顯示眼睛
 					showItemForMe();
 					showViewerImg = true;
@@ -178,7 +180,7 @@ class BasicItem extends Mediator implements IItem
 	
 	
 	function rotateAnimation( sd:Int, ed:Int ) {
-		Main.j({deg: sd}).animate({deg: ed}, {
+		Tool.j({deg: sd}).animate({deg: ed}, {
         duration: 300,
 			step: function(now) {
 				getViewComponent().css({

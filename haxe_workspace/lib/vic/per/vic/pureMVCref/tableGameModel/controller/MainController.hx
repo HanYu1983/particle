@@ -1,14 +1,16 @@
-package controller;
+package per.vic.pureMVCref.tableGameModel.controller;
 
 import js.Browser;
 import js.html.KeyboardEvent;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
-import view.BasicItem;
-import view.CardItem;
-import view.IItem;
-import view.SequenceItem;
-import view.TokenItem;
+import per.vic.pureMVCref.tableGameModel.Tool;
+import per.vic.pureMVCref.tableGameModel.view.BasicItem;
+import per.vic.pureMVCref.tableGameModel.view.CardItem;
+import per.vic.pureMVCref.tableGameModel.view.DataItem;
+import per.vic.pureMVCref.tableGameModel.view.IItem;
+import per.vic.pureMVCref.tableGameModel.view.SequenceItem;
+import per.vic.pureMVCref.tableGameModel.view.TokenItem;
 
 using Lambda;
 using Reflect;
@@ -38,9 +40,9 @@ class MainController extends Mediator
 			zsorting();
 		});
 		
-		Main.j( 'body' ).mousemove( onBodyMouseMove );
-		Main.j( 'body' ).keyup( onBodyKeyUp );
-		Main.j( 'body' ).mousedown( onBodyKeyUp );
+		Tool.j( 'body' ).mousemove( onBodyMouseMove );
+		Tool.j( 'body' ).keyup( onBodyKeyUp );
+		Tool.j( 'body' ).mousedown( onBodyKeyUp );
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -71,7 +73,7 @@ class MainController extends Mediator
 					createItem( c );
 					return true;
 				});
-				Main.messageSocket( 'addItems', ary_creates );
+				facade.sendNotification( SocketController.sendMessage, { type:'addItems', msg: ary_creates } );
 			case on_receiveMessage:
 				switch( notification.getType() ) {
 					case 'addItems':
@@ -171,14 +173,16 @@ class MainController extends Mediator
 	function createItem( model:Dynamic ) {
 		var item:Mediator;
 		switch( model.type ) {
+			case 'data':
+				item = new DataItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'card':
-				item = new CardItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new CardItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'sequence':
-				item = new SequenceItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new SequenceItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'token':
-				item = new TokenItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new TokenItem( model.id, Tool.createItemDiv( model.type, model ) );
 			default:
-				item = new BasicItem( model.id, Main.createItemDiv( model.type, model ) );
+				item = new BasicItem( model.id, Tool.createItemDiv( model.type, model ) );
 		}
 		item.viewComponent.css( 'left', model.pos[0] + 'px' );
 		item.viewComponent.css( 'top', model.pos[1] + 'px' );
@@ -263,11 +267,11 @@ class MainController extends Mediator
 		
 		switch( e.which ) {
 			case KeyboardEvent.DOM_VK_H:
-				Main.messageSocket( 'deleteItem', ary_select );
+				facade.sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
 			case KeyboardEvent.DOM_VK_K:
-				Main.messageSocket( 'applyTransform', ary_allItem );
+				facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_allItem } );
 			case _:
-				Main.messageSocket( 'applyTransform', ary_select );
+				facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
 		}
 	}
 	
@@ -285,7 +289,7 @@ class MainController extends Mediator
 		if( !selectLock )
 			ary_select = filterLock( ary_select );
 		sendNotification( on_select_cards, { ary_select:ary_select } );
-		Main.messageSocket( 'applyTransform', ary_select );
+		facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
 	}
 	
 	function selectMyItem() {
@@ -313,7 +317,7 @@ class MainController extends Mediator
 	function setModelLock() {
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
-			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+			if ( itemModel.owner == '' || itemModel.owner == SocketController.playerId ){
 				itemModel.lock = !itemModel.lock;
 			}else continue;
 		}
@@ -322,7 +326,7 @@ class MainController extends Mediator
 	function unlockAllItem() {
 		for ( i in 0...ary_allItem.length ) {
 			var itemModel = ary_allItem[i];
-			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+			if ( itemModel.owner == '' || itemModel.owner == SocketController.playerId ){
 				itemModel.lock = false;
 			}else continue;
 		}
@@ -332,13 +336,13 @@ class MainController extends Mediator
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
 			var item:IItem = cast( facade.retrieveMediator( itemModel.id ), IItem );
-			if ( itemModel.owner == Main.playerId ) {
+			if ( itemModel.owner == SocketController.playerId ) {
 				//如果持有者是自己，就把持有者設為空白
 				itemModel.owner = '';
 			}else {
 				if ( itemModel.owner == '' ) {
 					//如果持有者是空白，就把持有者設為自己
-					itemModel.owner = Main.playerId;
+					itemModel.owner = SocketController.playerId;
 				}else {
 					//持有者不是空白也不是自己，不能設置
 				}
@@ -350,12 +354,12 @@ class MainController extends Mediator
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
 			var item:IItem = cast( facade.retrieveMediator( itemModel.id ), IItem );
-			if ( itemModel.viewer == Main.playerId ) {
+			if ( itemModel.viewer == SocketController.playerId ) {
 				itemModel.viewer = '';
 			}else {
-				itemModel.viewer = Main.playerId;
+				itemModel.viewer = SocketController.playerId;
 				if ( itemModel.viewer == '' ) {
-					itemModel.viewer = Main.playerId;
+					itemModel.viewer = SocketController.playerId;
 				}
 			}
 		}
@@ -381,7 +385,7 @@ class MainController extends Mediator
 	function flipModel() {
 		for ( i in 0...ary_select.length ) {
 			var itemModel = ary_select[i];
-			if ( itemModel.owner == '' || itemModel.owner == Main.playerId ){
+			if ( itemModel.owner == '' || itemModel.owner == SocketController.playerId ){
 				itemModel.back = !itemModel.back;
 			}else continue;
 		}
@@ -437,7 +441,7 @@ class MainController extends Mediator
 	
 	function getMyItemFromPool() {
 		return ary_allItem.filter( function( model ) {
-			return Main.playerId == model.owner;
+			return SocketController.playerId == model.owner;
 		});
 	}
 	

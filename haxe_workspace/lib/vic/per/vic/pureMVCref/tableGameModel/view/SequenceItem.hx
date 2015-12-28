@@ -1,5 +1,6 @@
-package view;
+package per.vic.pureMVCref.tableGameModel.view;
 import haxe.Timer;
+import per.vic.pureMVCref.tableGameModel.view.BasicItem;
 
 /**
  * ...
