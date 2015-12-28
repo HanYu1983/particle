@@ -12,7 +12,9 @@ import mediator.UI;
 import model.Model;
 import org.puremvc.haxe.patterns.facade.Facade;
 import per.vic.pureMVCref.tableGameModel.controller.MainController;
+import per.vic.pureMVCref.tableGameModel.Tool;
 
+using Lambda;
 using Reflect;
 /**
  * ...
@@ -370,8 +372,15 @@ class Main
 													] } );
 				currentSelect = oldselect;
 			case 'onPokerClick':
+				var pokerdata = [
+					Tool.createItem( [], [100, 100], 'card', 100, 200, false, false )
+				];
+				
+				Facade.getInstance().sendNotification( MainController.create_item, pokerdata);
+				/*
 				var oldselect = currentSelect;
 				currentSelect = 'poker';
+				
 				createCards( { backId:"34", cards:[
 													'10', '11', '12',
 													'13', '14', '15', '16',
@@ -389,6 +398,7 @@ class Main
 													'61', '62'
 													] } );
 				currentSelect = oldselect;
+				*/
 		}
 		CallJs.googleTracking_click( type );
 	}
