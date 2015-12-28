@@ -37,13 +37,13 @@ class Main
 			Facade.getInstance().registerMediator( new SocketController( 'SocketController' ));
 			
 			trace( 'ok' );
-			/*
+			
 			Facade.getInstance().sendNotification( MainController.create_item, [
-																					createItem( ['../common/images/createTable/002.jpg'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 700, 700, true, false, playerId ),
-																					createItem( ['../common/images/createTable/Victory_Token.png'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'token', 100, 100, true, false, playerId )
+																					Tool.createItem( ['../common/images/createTable/002.jpg'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 100, 200, true, false, SocketController.playerId ),
+																					Tool.createItem( ['___J20</br>level:10</br>幹爆20台，爽'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'data', 100, 200, true, false, SocketController.playerId ),
+																					Tool.createItem( ['../common/images/createTable/Victory_Token.png'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'token', 100, 100, true, false, SocketController.playerId )
 																				]);
 																				
-																				*/
 		});
 		
 		Browser.window.setField( 'onHtmlClick', onHtmlClick );

@@ -107,6 +107,7 @@ Main.main = function() {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new controller_UIController("UIController",per_vic_pureMVCref_tableGameModel_Tool.j(".easyui-layout")));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_SocketController("SocketController"));
 		haxe_Log.trace("ok",{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "main"});
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,[per_vic_pureMVCref_tableGameModel_Tool.createItem(["../common/images/createTable/002.jpg"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"card",100,200,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),per_vic_pureMVCref_tableGameModel_Tool.createItem(["___J20</br>level:10</br>幹爆20台，爽"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"data",100,200,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId),per_vic_pureMVCref_tableGameModel_Tool.createItem(["../common/images/createTable/Victory_Token.png"],[Math.floor(Math.random() * 500),Math.floor(Math.random() * 500)],"token",100,100,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId)]);
 	});
 	Reflect.setField(window,"onHtmlClick",Main.onHtmlClick);
 };
@@ -1004,6 +1005,9 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		var item;
 		var _g = model.type;
 		switch(_g) {
+		case "data":
+			item = new per_vic_pureMVCref_tableGameModel_view_DataItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			break;
 		case "card":
 			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 			break;
@@ -1515,6 +1519,14 @@ per_vic_pureMVCref_tableGameModel_view_CardItem.__name__ = true;
 per_vic_pureMVCref_tableGameModel_view_CardItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
 per_vic_pureMVCref_tableGameModel_view_CardItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
 	__class__: per_vic_pureMVCref_tableGameModel_view_CardItem
+});
+var per_vic_pureMVCref_tableGameModel_view_DataItem = function(mediatorName,viewComponent) {
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_DataItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_DataItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_DataItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	__class__: per_vic_pureMVCref_tableGameModel_view_DataItem
 });
 var per_vic_pureMVCref_tableGameModel_view_SequenceItem = function(mediatorName,viewComponent) {
 	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);

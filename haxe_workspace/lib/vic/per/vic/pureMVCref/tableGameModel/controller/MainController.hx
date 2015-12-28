@@ -7,6 +7,7 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 import per.vic.pureMVCref.tableGameModel.Tool;
 import per.vic.pureMVCref.tableGameModel.view.BasicItem;
 import per.vic.pureMVCref.tableGameModel.view.CardItem;
+import per.vic.pureMVCref.tableGameModel.view.DataItem;
 import per.vic.pureMVCref.tableGameModel.view.IItem;
 import per.vic.pureMVCref.tableGameModel.view.SequenceItem;
 import per.vic.pureMVCref.tableGameModel.view.TokenItem;
@@ -172,6 +173,8 @@ class MainController extends Mediator
 	function createItem( model:Dynamic ) {
 		var item:Mediator;
 		switch( model.type ) {
+			case 'data':
+				item = new DataItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'card':
 				item = new CardItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'sequence':
