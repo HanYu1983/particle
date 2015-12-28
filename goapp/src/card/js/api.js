@@ -461,6 +461,41 @@ var api = api || {};
 		})
 	} 
 	
+	function sendMessageToSomeone( toId, type, msg ){
+		
+		var jsonstr = JSON.stringify( {
+			type:type, 
+			msg:JSON.parse( JSON.stringify( msg ))
+		});
+		console.log( jsonstr );
+		//針對要encodeURIComponent的地方做，這個方法ok
+		/*
+		console.log( '{ type:"../common/images/createTable/yh/yh_03.jpg" }'.length );
+		jsonstr = JSON.stringify( {
+			type: encodeURIComponent( "../common/images/createTable/yh/yh_03.jpg" )
+		});
+		console.log( jsonstr.length );
+		*/
+		
+		/*
+		var compressstr = LZString.compress( encodeURLstr );
+		*/
+		
+		channel.sendChannelMessage( toId, jsonstr, handleResponse( function( ret ) {
+			console.log( ret );
+		} ));
+	}
+	
+	function handleResponse( cb ) {
+		return function ( err, ret ) {
+			if ( err != null ) {
+				alert( '錯誤:' + err );
+			}else {
+				cb( ret );
+			}
+		}
+	}
+	
 	module.createUser = createUser
 	module.users = users
 	module.createRoom = createRoom
@@ -478,5 +513,6 @@ var api = api || {};
 	module.createChannel = createChannel
 	module.startHeartbeat = startHeartbeat
 	module.getCardImageWithPackageName = getCardImageWithPackageName
+	module.sendMessageToSomeone = sendMessageToSomeone
 	
 }) (api)

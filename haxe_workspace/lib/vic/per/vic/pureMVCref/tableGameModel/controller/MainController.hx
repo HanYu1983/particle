@@ -1,5 +1,6 @@
 package per.vic.pureMVCref.tableGameModel.controller;
 
+import haxe.Json;
 import js.Browser;
 import js.html.KeyboardEvent;
 import org.puremvc.haxe.interfaces.INotification;
@@ -176,11 +177,12 @@ class MainController extends Mediator
 			case 'data':
 				item = new DataItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'card':
-				model.extra = [ 
+				var parseData = Json.parse( Json.stringify( model ) );
+				parseData.extra = [ 
 					untyped __js__('api.getCardImageWithPackageName')( model.extra[2], model.extra[0] ),
 					'../common/images/card/cardback_' + model.extra[1]  + '.png'
 				];	
-				item = new CardItem( model.id, Tool.createItemDiv( model.type, model ) );
+				item = new CardItem( model.id, Tool.createItemDiv( model.type, parseData ) );
 			case 'sequence':
 				item = new SequenceItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'token':

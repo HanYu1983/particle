@@ -1,5 +1,7 @@
 package per.vic.pureMVCref.tableGameModel;
 
+using Lambda;
+using Reflect;
 /**
  * ...
  * @author vic
@@ -25,6 +27,18 @@ class Tool
 				sequence:Math.random()
 			}
 		}
+	}
+	
+	public static function createDataFromDeck( deck:Dynamic, owner:String ) {
+		return deck.cards.map( function( str:String ) {
+			return { extra:[str, deck.backId == null ? '0' : deck.backId, deck.game ], pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:owner }
+		});
+	}
+	
+	public static function createItemFromData( ary_data ) {
+		return ary_data.map( function( data:Dynamic ) {
+			return createItem( data.extra, data.pos, data.type, data.width, data.height, data.back, data.lock, data.owner );
+		});
 	}
 	
 	public static function createItemDiv( type:String, model:Dynamic ) {

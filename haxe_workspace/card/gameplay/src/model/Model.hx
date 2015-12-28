@@ -36,10 +36,10 @@ class Model extends Mediator
 	{
 		return [Card.card_click, 
 				Card.card_enter, 
-				Layer.on_layout_mouse_up, 
-				Layer.on_press,
-				Layer.on_body_mousemove,
-				Layer.on_select_cards,
+			//	Layer.on_layout_mouse_up, 
+			//	Layer.on_press,
+			//	Layer.on_body_mousemove,
+			//	Layer.on_select_cards,
 				UI.on_combo_deck_change,
 				Main.on_createDeck_click
 				];
@@ -49,7 +49,7 @@ class Model extends Mediator
 	{
 		switch( notification.getName() ) {
 			case Main.on_createDeck_click:
-				//Main.createSelfDeck( currentDeckId );
+				Main.createSelfDeck( currentDeckId );
 			case UI.on_combo_deck_change:
 				currentDeckId = notification.getBody().deckId;
 			case Layer.on_select_cards:

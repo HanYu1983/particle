@@ -163,13 +163,34 @@ _$List_ListIterator.prototype = {
 	,__class__: _$List_ListIterator
 };
 var Main = function() {
+	var _g = this;
 	window.document.addEventListener("contextmenu",function(e) {
 		e.preventDefault();
 	},false);
 	Main.j(window.document).ready(function() {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("",Main.j("#container_cards")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_SocketController("SocketController"));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
+	});
+	Main.openLoading("準備中...請稍等");
+	var fbappId = config.fbid[config.fbid.which];
+	CallJs.myapp_facebook_init(fbappId,function() {
+		_g.updateGameUI(Main.currentSelect);
+		Main.closeLoading();
+		_g.prepareCardsuit(CallJs.cardSuit_defaultModel().cardSuit);
+		Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
+	Main.j("#btn_connect").linkbutton();
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
+		Main.playerId = nv;
+		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = Main.playerId;
+	}});
+	if(CallJs.getCookie("otherPlayerId") != null) {
+		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
+	} else Main.ary_ops = [];
 };
 Main.__name__ = true;
 Main.selectOps = function(ops) {
@@ -182,6 +203,7 @@ Main.selectOps = function(ops) {
 			Main.otherPlayerId = ops;
 		} else throw(e);
 	}
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,Main.otherPlayerIds);
 	Main.j("#btn_connect").linkbutton("enable");
 };
 Main.saveOpponentToCookie = function(otherPlayerId) {
@@ -191,6 +213,12 @@ Main.saveOpponentToCookie = function(otherPlayerId) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
 	}
 	CallJs.setCookie("otherPlayerId",JSON.stringify(Main.ary_ops));
+};
+Main.createSelfDeck = function(deckId) {
+	if(Main.cardSuit == null) return;
+	var deck = Main.cardSuit[deckId];
+	if(deck == null) return;
+	Main.createItem(per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck(deck,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
 };
 Main.loadDetail = function(game) {
 	if(Reflect.field(Main.cardSuitsDetailsIsLoading,game) != null) return;
@@ -320,6 +348,9 @@ Main.callAction = function(content) {
 Main.pollAllMessage = function() {
 	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
 };
+Main.createItem = function(ary_data) {
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,per_vic_pureMVCref_tableGameModel_Tool.createItemFromData(ary_data));
+};
 Main.dice = function() {
 	var dice = Math.floor(Math.random() * 100);
 	Main.pushCmds({ cmd : "onDiceAction", content : { playerId : Main.playerId, dice : dice}});
@@ -446,7 +477,7 @@ Main.changeIndex = function(cardId) {
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		if( js_Boot.__instanceof(e,String) ) {
-			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 714, className : "Main", methodName : "changeIndex"});
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 727, className : "Main", methodName : "changeIndex"});
 		} else throw(e);
 	}
 };
@@ -537,7 +568,7 @@ Main.prototype = {
 				return;
 			}
 			Main.slide("正在等待對手...");
-			Main.createSocket(Main.playerId);
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket,Main.playerId);
 			Main.saveOpponentToCookie(Main.otherPlayerId);
 			break;
 		case "onBtnNotLoginClick":
@@ -616,19 +647,13 @@ Main.prototype = {
 		case "onTokenClick":
 			break;
 		case "onShaClick":
-			var pokerdata = [{ extra : ["b1_1_fight","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_1_sanda","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_2_cold","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false}];
-			var ary_pokerItem = pokerdata.map(function(data) {
-				return per_vic_pureMVCref_tableGameModel_Tool.createItem(data.extra,data.pos,data.type,data.width,data.height,data.back,data.lock);
-			});
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,ary_pokerItem);
+			var data = [{ extra : ["b1_1_fight","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_1_sanda","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_2_cold","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false}];
+			Main.createItem(data);
 			break;
 		case "onPokerClick":
 			per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "vic";
-			var pokerdata1 = [{ extra : ["10","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["11","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["12","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""}];
-			var ary_pokerItem1 = pokerdata1.map(function(data1) {
-				return per_vic_pureMVCref_tableGameModel_Tool.createItem(data1.extra,data1.pos,data1.type,data1.width,data1.height,data1.back,data1.lock,data1.owner);
-			});
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,ary_pokerItem1);
+			var data1 = [{ extra : ["10","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["11","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["12","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""}];
+			Main.createItem(data1);
 			break;
 		}
 		CallJs.googleTracking_click(type);
@@ -1481,12 +1506,13 @@ model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards,mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
+		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_createDeck_click":
+			Main.createSelfDeck(this.currentDeckId);
 			break;
 		case "on_combo_deck_change":
 			this.currentDeckId = notification.getBody().deckId;
@@ -2073,6 +2099,16 @@ per_vic_pureMVCref_tableGameModel_Tool.createItem = function(extra,pos,type,widt
 	if(type == null) type = "card";
 	return { type : type, width : width, height : height, pos : pos, back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : per_vic_pureMVCref_tableGameModel_Tool.createDivId(), extra : extra, action : { sequence : Math.random()}};
 };
+per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck = function(deck,owner) {
+	return deck.cards.map(function(str) {
+		return { extra : [str,deck.backId == null?"0":deck.backId,deck.game], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : owner};
+	});
+};
+per_vic_pureMVCref_tableGameModel_Tool.createItemFromData = function(ary_data) {
+	return ary_data.map(function(data) {
+		return per_vic_pureMVCref_tableGameModel_Tool.createItem(data.extra,data.pos,data.type,data.width,data.height,data.back,data.lock,data.owner);
+	});
+};
 per_vic_pureMVCref_tableGameModel_Tool.createItemDiv = function(type,model) {
 	var div = per_vic_pureMVCref_tableGameModel_Tool.j("#tmpl_" + type).tmpl(model);
 	return div;
@@ -2224,8 +2260,9 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			item = new per_vic_pureMVCref_tableGameModel_view_DataItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 			break;
 		case "card":
-			model.extra = [api.getCardImageWithPackageName(model.extra[2],model.extra[0]),"../common/images/card/cardback_" + model.extra[1] + ".png"];
-			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			var parseData = JSON.parse(JSON.stringify(model));
+			parseData.extra = [api.getCardImageWithPackageName(model.extra[2],model.extra[0]),"../common/images/card/cardback_" + model.extra[1] + ".png"];
+			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,parseData));
 			break;
 		case "sequence":
 			item = new per_vic_pureMVCref_tableGameModel_view_SequenceItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
@@ -2587,6 +2624,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	,messageSocket: function(type,msg) {
 		var messageSingle = function(toId,_type,_msg) {
 		};
+		haxe_Log.trace(this.ary_ops,{ fileName : "SocketController.hx", lineNumber : 89, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "messageSocket"});
 		if(this.ary_ops == null) return;
 		Lambda.foreach(this.ary_ops,function(op) {
 			api.sendMessageToSomeone(op,type,msg);

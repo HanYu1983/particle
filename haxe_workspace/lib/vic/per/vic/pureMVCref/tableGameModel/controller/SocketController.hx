@@ -86,7 +86,8 @@ class SocketController extends Mediator
 				trace( ret );
 			} ));*/
 		}
-		
+		trace( ary_ops );
+		//trace( msg );
 		if ( ary_ops == null ) return;
 		ary_ops.foreach( function( op ) {
 			untyped __js__( 'api.sendMessageToSomeone' )( op, type, msg );

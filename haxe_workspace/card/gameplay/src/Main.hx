@@ -62,20 +62,24 @@ class Main
 		
 		j( Browser.document ).ready( function() {
 			Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
-		//	Facade.getInstance().registerMediator( new UIController( 'UIController', j( '.easyui-layout' ) ) );
+			Facade.getInstance().registerMediator( new SocketController( 'SocketController' ) );
 			
-			/*
-			Facade.getInstance().sendNotification( MainController.create_item, [
-																					createItem( ['../common/images/createTable/002.jpg'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'card', 700, 700, true, false, playerId ),
-																					createItem( ['../common/images/createTable/Victory_Token.png'], [ Math.floor( Math.random() * 500 ), Math.floor( Math.random() * 500 )], 'token', 100, 100, true, false, playerId )
-																				]);
-																				
-																				*/
+			Facade.getInstance().registerMediator( new Model( 'model' ));
+			Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
+		});
+		
+		openLoading( '準備中...請稍等' );
+		var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
+		CallJs.myapp_facebook_init( fbappId, function() {
+			updateGameUI( currentSelect );
+			closeLoading();
+			prepareCardsuit( CallJs.cardSuit_defaultModel().cardSuit );
+			slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
 		});
 		
 		Browser.window.setField( 'onHtmlClick', onHtmlClick );
 		
-		/*
+		
 		j( '#btn_connect' ).linkbutton();
 		j( '#txt_id' ).textbox( {
 			#if debug
@@ -85,9 +89,18 @@ class Main
 			#end
 			onChange:function( nv, od ) {
 				playerId = nv;
+				SocketController.playerId = playerId;
 			}
 		});
 		
+		if ( CallJs.getCookie( 'otherPlayerId' ) != null ) {
+			ary_ops = Json.parse( CallJs.getCookie( 'otherPlayerId' ));
+			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
+		}else {
+			ary_ops = [];
+		}
+		
+		/*
 		Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
 		Facade.getInstance().registerMediator( new Model( 'model' ));
 		Facade.getInstance().registerMediator( new Layer( 'layer', { body:j(Browser.document.body), container_cards:j( '#container_cards' ) } ));
@@ -120,6 +133,7 @@ class Main
 			otherPlayerId = ops;
 		}
 		
+		Facade.getInstance().sendNotification( SocketController.setOpponents, otherPlayerIds );
 		j( '#btn_connect' ).linkbutton( 'enable' );
 	}
 	
@@ -134,14 +148,14 @@ class Main
 		}
 		CallJs.setCookie( 'otherPlayerId', Json.stringify( ary_ops ) );
 	}
-	/*
+	
 	public static function createSelfDeck( deckId:Int ) {
 		if ( cardSuit == null ) return;
 		var deck = cardSuit[deckId];
 		if ( deck == null ) return;
-		createCards( deck );
+		createItem( Tool.createDataFromDeck( deck, SocketController.playerId ) );
 	}
-	*/
+	
 	/*
 	public static function createCards( deck:Dynamic, ?extra:Dynamic ) {
 		deck.backId = switch( deck.backId ) {
@@ -292,7 +306,9 @@ class Main
 				}
 				
 				slide( '正在等待對手...' );
-				createSocket( playerId );
+				//createSocket( playerId );
+				Facade.getInstance().sendNotification( SocketController.createPlayerSocket, playerId );
+				
 				saveOpponentToCookie( otherPlayerId );
 			case 'onBtnNotLoginClick':
 				j( '#txt_id' ).textbox( 'setValue', getId() );
@@ -378,17 +394,13 @@ class Main
 				currentSelect = oldselect;
 				*/
 			case 'onShaClick':
-				var pokerdata = [
+				var data = [
 					{extra:['b1_1_fight','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false },
 					{extra:['b1_1_sanda','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false },
 					{extra:['b1_2_cold','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false }
 				];
 				
-				var ary_pokerItem = pokerdata.map( function( data:Dynamic ) {
-					return Tool.createItem( data.extra, data.pos, data.type, data.width, data.height, data.back, data.lock );
-				});
-				
-				Facade.getInstance().sendNotification( MainController.create_item, ary_pokerItem);
+				createItem( data );
 				
 				/*
 				var oldselect = currentSelect;
@@ -464,17 +476,14 @@ class Main
 				
 				SocketController.playerId = 'vic';
 				
-				var pokerdata = [
+				var data = [
 					{extra:['10','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' },
 					{extra:['11','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' },
 					{extra:['12','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' }
 				];
 				
-				var ary_pokerItem = pokerdata.map( function( data:Dynamic ) {
-					return Tool.createItem( data.extra, data.pos, data.type, data.width, data.height, data.back, data.lock, data.owner );
-				});
+				createItem( data );
 				
-				Facade.getInstance().sendNotification( MainController.create_item, ary_pokerItem);
 				/*
 				var oldselect = currentSelect;
 				currentSelect = 'poker';
@@ -499,6 +508,10 @@ class Main
 				*/
 		}
 		CallJs.googleTracking_click( type );
+	}
+	
+	static function createItem( ary_data ) {
+		Facade.getInstance().sendNotification( MainController.create_item, Tool.createItemFromData( ary_data ));
 	}
 	
 	function prepareCardsuit( inputCardsuit:Array<Dynamic> ) {
