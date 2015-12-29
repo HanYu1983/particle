@@ -51,26 +51,28 @@ class Main
 			Facade.getInstance().registerMediator( new SocketController( 'SocketController' ) );
 			
 			Facade.getInstance().registerMediator( new Model( 'model' ));
-			Facade.getInstance().registerMediator( new UI(null, j('.easyui-layout')) );
+			Facade.getInstance().registerMediator( new UI( 'UI', j('.easyui-layout')) );
+			
+			openLoading( '準備中...請稍等' );
+			var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
+			CallJs.myapp_facebook_init( fbappId, function() {
+				updateGameUI( currentSelect );
+				closeLoading();
+				prepareCardsuit( CallJs.cardSuit_defaultModel().cardSuit );
+				slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
+			});
+			
+			Browser.window.setField( 'onHtmlClick', onHtmlClick );
+			
+			if ( CallJs.getCookie( 'otherPlayerId' ) != null ) {
+				ary_ops = Json.parse( CallJs.getCookie( 'otherPlayerId' ));
+				Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
+			}else {
+				ary_ops = [];
+			}
 		});
 		
-		openLoading( '準備中...請稍等' );
-		var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
-		CallJs.myapp_facebook_init( fbappId, function() {
-			updateGameUI( currentSelect );
-			closeLoading();
-			prepareCardsuit( CallJs.cardSuit_defaultModel().cardSuit );
-			slide( '所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!' );
-		});
 		
-		Browser.window.setField( 'onHtmlClick', onHtmlClick );
-		
-		if ( CallJs.getCookie( 'otherPlayerId' ) != null ) {
-			ary_ops = Json.parse( CallJs.getCookie( 'otherPlayerId' ));
-			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );
-		}else {
-			ary_ops = [];
-		}
 	}
 	
 	

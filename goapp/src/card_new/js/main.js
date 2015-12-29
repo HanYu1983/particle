@@ -115,21 +115,21 @@ var Main = function() {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("",Main.j("#container_cards")));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_SocketController("SocketController"));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI("UI",Main.j(".easyui-layout")));
+		Main.openLoading("準備中...請稍等");
+		var fbappId = config.fbid[config.fbid.which];
+		CallJs.myapp_facebook_init(fbappId,function() {
+			_g.updateGameUI(Main.currentSelect);
+			Main.closeLoading();
+			_g.prepareCardsuit(CallJs.cardSuit_defaultModel().cardSuit);
+			Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
+		});
+		Reflect.setField(window,"onHtmlClick",$bind(_g,_g.onHtmlClick));
+		if(CallJs.getCookie("otherPlayerId") != null) {
+			Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
+		} else Main.ary_ops = [];
 	});
-	Main.openLoading("準備中...請稍等");
-	var fbappId = config.fbid[config.fbid.which];
-	CallJs.myapp_facebook_init(fbappId,function() {
-		_g.updateGameUI(Main.currentSelect);
-		Main.closeLoading();
-		_g.prepareCardsuit(CallJs.cardSuit_defaultModel().cardSuit);
-		Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
-	});
-	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
-	if(CallJs.getCookie("otherPlayerId") != null) {
-		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
-	} else Main.ary_ops = [];
 };
 Main.__name__ = true;
 Main.selectOps = function(ops) {
@@ -232,7 +232,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert(err); else cb(ret);
+		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -788,7 +788,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		Main.selectOps(nv);
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv1,od) {
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv1;
 	}});
 };
@@ -1981,7 +1981,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert(err); else cb(ret);
+			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2272,5 +2272,3 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=main.js.map
