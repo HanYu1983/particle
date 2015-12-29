@@ -232,7 +232,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -788,7 +788,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		Main.selectOps(nv);
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv1,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv1;
 	}});
 };
@@ -799,7 +799,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
-		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
 		case "on_socket_success":
@@ -827,14 +826,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "on_select_cards":
 			this.showCards(notification.getBody().ary_select);
-			break;
-		case "on_state_change":
-			var notify = notification.getBody().notify;
-			if(!notify) return;
-			this.mc_detailContainer.empty();
-			haxe_Timer.delay(function() {
-				_g1.showCard(notification.getBody().select);
-			},10);
 			break;
 		case "on_getSuit_success":
 			this.createComboDeck(notification.getBody().cardSuit);
@@ -1474,7 +1465,10 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 				this.deleteView(localModel);
 				break;
 			case "applyTransform":
-				this.updateView(this.updateModel(notification.getBody()));
+				var ary_item = notification.getBody().ary_item;
+				var zs = notification.getBody().zsorting;
+				console.log(zs);
+				this.updateView(this.updateModel(ary_item),zs);
 				break;
 			}
 		}
@@ -1496,14 +1490,20 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			return curr;
 		},[]);
 	}
-	,updateView: function(ary_item) {
+	,updateView: function(ary_item,zs) {
+		if(zs == null) zs = false;
 		var _g = this;
 		var updateRotate = function(item,dom,itemModel) {
-			if(dom.attr("deg") == null) item.rotate(0,itemModel.deg); else {
+			if(dom.attr("deg") == null) {
+				item.rotate(0,itemModel.deg);
+				dom.attr("deg",itemModel.deg);
+			} else {
 				var oldDegree = dom.attr("deg");
-				if(oldDegree != itemModel.deg) item.rotate(oldDegree,itemModel.deg);
+				if(oldDegree != itemModel.deg) {
+					item.rotate(oldDegree,itemModel.deg);
+					dom.attr("deg",itemModel.deg);
+				}
 			}
-			dom.attr("deg",itemModel.deg);
 		};
 		var updateAction = function(item1,itemModel1) {
 			item1.action(itemModel1.action);
@@ -1538,6 +1538,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			updateAction(item7,itemModel7);
 			return true;
 		});
+		if(zs) this.zsorting();
 	}
 	,receiveItemToLocalModel: function(ary_receive) {
 		var _g = this;
@@ -1641,12 +1642,12 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		case 87:
 			this.reverseModel();
 			this.togetherModel();
-			this.updateView(this.ary_select);
+			this.updateView(this.ary_select,true);
 			break;
 		case 81:
 			this.shuffleModel();
 			this.togetherModel();
-			this.updateView(this.ary_select);
+			this.updateView(this.ary_select,true);
 			break;
 		case 67:
 			this.setModelOwner();
@@ -1657,9 +1658,14 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.updateView(this.ary_select);
 			break;
 		case 83:
-			if(this.isList) this.togetherModel(); else this.listModel();
+			if(this.isList) {
+				this.togetherModel();
+				this.updateView(this.ary_select,true);
+			} else {
+				this.listModel();
+				this.updateView(this.ary_select);
+			}
 			this.isList = !this.isList;
-			this.updateView(this.ary_select);
 			break;
 		case 86:
 			this.setModelViewer();
@@ -1688,10 +1694,17 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});
 			break;
 		case 75:
-			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_allItem});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_allItem, zsorting : false}});
+			break;
+		case 87:
+			break;
+		case 81:
+			break;
+		case 83:
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zsorting : true}});
 			break;
 		default:
-			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zsorting : false}});
 		}
 	}
 	,rotateModel: function(deg) {
@@ -1709,7 +1722,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.indexSorting();
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
-		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zsorting : true}});
 	}
 	,indexSorting: function() {
 		this.ary_select.sort(function(a,b) {
@@ -1981,7 +1994,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
+			if(err != null) js_Browser.alert(err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2245,11 +2258,6 @@ Main.cardSuitsDetailsIsLoading = { };
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_UI.on_combo_deck_change = "on_combo_deck_change";
-model_Model.on_card_enter = "on_card_enter";
-model_Model.on_card_remove = "on_card_remove";
-model_Model.on_card_move = "on_card_move";
-model_Model.on_state_change = "on_state_change";
-model_Model.on_select_cards = "on_model_select_cards";
 per_vic_pureMVCref_tableGameModel_Tool.j = $;
 per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "create_item";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
@@ -2272,3 +2280,5 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=main.js.map

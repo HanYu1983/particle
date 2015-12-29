@@ -13,12 +13,6 @@ using Reflect;
  */
 class Model extends Mediator
 {
-	public static var on_card_enter = 'on_card_enter';
-	public static var on_card_remove = 'on_card_remove';
-	public static var on_card_move = 'on_card_move';
-	public static var on_state_change = 'on_state_change';
-	public static var on_select_cards = 'on_model_select_cards';
-	
 	var currentDeckId = 0;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
