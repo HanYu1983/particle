@@ -90,7 +90,7 @@ class MainController extends Mediator
 						deleteModel( localModel );
 						deleteView( localModel );
 					case 'applyTransform':
-						updateView( updateModel( notification.getBody() ) );
+						updateView( updateModel( notification.getBody().ary_item ), notification.getBody().zs );
 				}
 		}
 	}
@@ -306,10 +306,12 @@ class MainController extends Mediator
 				sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
 			//解鎖，對象是全部的物件
 			case KeyboardEvent.DOM_VK_K:
-				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_allItem } );
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_allItem, zs:false } } );
+			case KeyboardEvent.DOM_VK_W, KeyboardEvent.DOM_VK_Q, KeyboardEvent.DOM_VK_S:
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true } } );
 			//其他，更新所有狀態就可以了
 			case _:
-				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:false} } );
 		}
 	}
 	
@@ -329,7 +331,7 @@ class MainController extends Mediator
 			
 		indexSorting();
 		sendNotification( on_select_cards, { ary_select:ary_select } );
-		sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
+		sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true} } );
 	}
 	
 	function indexSorting() {

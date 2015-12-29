@@ -1465,7 +1465,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 				this.deleteView(localModel);
 				break;
 			case "applyTransform":
-				this.updateView(this.updateModel(notification.getBody()));
+				this.updateView(this.updateModel(notification.getBody().ary_item),notification.getBody().zs);
 				break;
 			}
 		}
@@ -1686,10 +1686,13 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});
 			break;
 		case 75:
-			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_allItem});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_allItem, zs : false}});
+			break;
+		case 87:case 81:case 83:
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
 			break;
 		default:
-			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : false}});
 		}
 	}
 	,rotateModel: function(deg) {
@@ -1707,7 +1710,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.indexSorting();
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
-		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
 	}
 	,indexSorting: function() {
 		this.ary_select.sort(function(a,b) {
