@@ -32,7 +32,6 @@ class Main
 	
 	public static var fbid = '';
 	public static var token = '';
-	//public static var playerId = 'smart';
 	public static var otherPlayerId = '';
 	public static var otherPlayerIds:Array<String> = [];
 	public static var otherPlayerIdsForCheck:Array<Bool> = [];
