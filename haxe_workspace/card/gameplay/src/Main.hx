@@ -318,7 +318,7 @@ class Main
 										'id_2'
 										];
 				var data = ary_sangosha.map( function( idstr ) {
-					return { extra:[ idstr, '49', 'sanguosha'], pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:SocketController.playerId };
+					return { extra:[ idstr, '49', 'sanguosha'], pos:[100, 100], type:'card', width:50, height:75, back:false, lock:false, owner:SocketController.playerId };
 				});
 				createItem( data );
 			case 'onPokerClick':
@@ -340,7 +340,7 @@ class Main
 									];
 				
 				var data = ary_poker.map( function( idstr ) {
-					return { extra:[ idstr, '34', 'poker'], pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:SocketController.playerId };
+					return { extra:[ idstr, '34', 'poker'], pos:[100, 100], type:'card', width:50, height:75, back:false, lock:false, owner:SocketController.playerId };
 				});
 				createItem( data );
 		}
