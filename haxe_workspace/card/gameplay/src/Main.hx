@@ -245,17 +245,16 @@ class Main
 					alert( '輸入格式錯誤哦，請檢查!' );
 				}
 			case 'onConcreteDiceClick':
-				var data = [
-					{extra:['../common/images/createTable/other/dice_01.png',
-							'../common/images/createTable/other/dice_02.png',
-							'../common/images/createTable/other/dice_03.png',
-							'../common/images/createTable/other/dice_04.png',
-							'../common/images/createTable/other/dice_05.png',
-							'../common/images/createTable/other/dice_06.png'
-							],pos:[100, 100], type:'sequence', width:50, height:50, back:false, lock:false }
-					
-				];
-				createItem( data );
+				var ary_data = [for ( i in 0...6 ) i ].map( function( idstr ) {
+					return {	extra:['../common/images/createTable/other/dice_01.png',
+								'../common/images/createTable/other/dice_02.png',
+								'../common/images/createTable/other/dice_03.png',
+								'../common/images/createTable/other/dice_04.png',
+								'../common/images/createTable/other/dice_05.png',
+								'../common/images/createTable/other/dice_06.png'
+								], pos:[100, 100], type:'sequence', width:50, height:50 };
+				});
+				createItem( ary_data );
 			case 'onTokenClick':
 				var ary_token = [
 					'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
@@ -266,7 +265,7 @@ class Main
 					'token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2'
 				];
 				var data = ary_token.map( function( idstr ) {
-					return { extra:[ idstr, 'other'], pos:[100, 100], type:'token', width:50, height:50, back:false, lock:false, owner:SocketController.playerId };
+					return { extra:[ idstr, 'other'], pos:[100, 100], type:'token', width:50, height:50, owner:SocketController.playerId };
 				});
 				createItem( data );
 			case 'onShaClick':
@@ -340,9 +339,6 @@ class Main
 				});
 				createItem( data );
 			case 'onPokerClick':
-				
-				SocketController.playerId = 'vic';
-				
 				var ary_poker = [
 									'10', '11', '12',
 									'13', '14', '15', '16',

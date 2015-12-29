@@ -18,13 +18,4 @@ class TokenItem extends BasicItem
 		//nothing
 	}
 	
-	override public function setOwner(o:String):Void 
-	{
-		//nothing
-	}
-	
-	override public function setViewer(v:String):Void 
-	{
-		//nothing
-	}
 }

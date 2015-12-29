@@ -231,11 +231,11 @@ class MainController extends Mediator
 				deleteModel( ary_select );
 				deleteView( ary_select );
 			case KeyboardEvent.DOM_VK_I:
-				createItem( Tool.createItem( [ 'token_0', 'other' ], pos_mouse.slice(0), 'token', 50, 50 ) );
+				createItem( Tool.createItem( [ 'token_0', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId ) );
 			case KeyboardEvent.DOM_VK_O:
-				createItem( Tool.createItem( [ 'token_1', 'other' ], pos_mouse.slice(0), 'token', 50, 50 ) );
+				createItem( Tool.createItem( [ 'token_1', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId ) );
 			case KeyboardEvent.DOM_VK_P:
-				createItem( Tool.createItem( [ 'token_2', 'other' ], pos_mouse.slice(0), 'token', 50, 50 ) );
+				createItem( Tool.createItem( [ 'token_2', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId ) );
 			case KeyboardEvent.DOM_VK_T:
 				var dice:Int = Math.floor( Math.random() * 100 );
 				sendNotification( on_dice, { playerId:SocketController.playerId, dice:dice } );

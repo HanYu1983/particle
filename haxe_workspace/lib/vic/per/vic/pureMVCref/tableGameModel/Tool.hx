@@ -32,7 +32,7 @@ class Tool
 	
 	public static function createDataFromDeck( deck:Dynamic, owner:String ) {
 		return deck.cards.map( function( str:String ) {
-			return { extra:[str, deck.backId == null ? '0' : deck.backId, deck.game ], pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:owner }
+			return { extra:[str, deck.backId == null ? '0' : deck.backId, deck.game ], pos:[100, 100], type:'card', width:50, height:75, back:false, lock:false, owner:owner }
 		});
 	}
 	

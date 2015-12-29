@@ -35,7 +35,6 @@ class SocketController extends Mediator
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
-		trace( notification.getName() );
 		switch( notification.getName() ) {
 			case str if( str == sendMessage ):
 				var type = notification.getBody().type;
@@ -51,10 +50,9 @@ class SocketController extends Mediator
 	function createSocket( id ) {
 		untyped __js__( 'api.createChannel' )( id, {
 			onopen: function() {
-				trace( 'ok' );
+				
 			},
 			onmessage: function( json ) {
-				trace( json );
 				facade.sendNotification( MainController.on_receiveMessage, json.msg, json.type );
 			},
 			onerror: function() {
