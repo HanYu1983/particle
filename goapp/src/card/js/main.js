@@ -1713,7 +1713,7 @@ per_vic_pureMVCref_tableGameModel_Tool.createItem = function(extra,pos,type,widt
 	if(height == null) height = 100;
 	if(width == null) width = 100;
 	if(type == null) type = "card";
-	return { type : type, width : width, height : height, pos : pos, back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, id : per_vic_pureMVCref_tableGameModel_Tool.createDivId(), extra : extra, action : { sequence : Math.random()}};
+	return { type : type, width : width, height : height, pos : pos, back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, cardId : extra[0], id : per_vic_pureMVCref_tableGameModel_Tool.createDivId(), extra : extra, action : { sequence : Math.random()}};
 };
 per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck = function(deck,owner) {
 	return deck.cards.map(function(str) {
@@ -1884,7 +1884,9 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			item = new per_vic_pureMVCref_tableGameModel_view_SequenceItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
 			break;
 		case "token":
-			item = new per_vic_pureMVCref_tableGameModel_view_TokenItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			var parseData1 = JSON.parse(JSON.stringify(model));
+			parseData1.extra = [api.getCardImageWithPackageName(model.extra[1],model.extra[0])];
+			item = new per_vic_pureMVCref_tableGameModel_view_TokenItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,parseData1));
 			break;
 		default:
 			item = new per_vic_pureMVCref_tableGameModel_view_BasicItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
@@ -1907,6 +1909,12 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			break;
 		case 75:
 			break;
+		case 73:
+			break;
+		case 79:
+			break;
+		case 80:
+			break;
 		default:
 			if(this.ary_select.length == 0) return;
 		}
@@ -1915,6 +1923,15 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		case 72:
 			this.deleteModel(this.ary_select);
 			this.deleteView(this.ary_select);
+			break;
+		case 73:
+			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_0","other"],this.pos_mouse.slice(0),"token",50,50));
+			break;
+		case 79:
+			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_1","other"],this.pos_mouse.slice(0),"token",50,50));
+			break;
+		case 80:
+			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_2","other"],this.pos_mouse.slice(0),"token",50,50));
 			break;
 		case 84:
 			break;

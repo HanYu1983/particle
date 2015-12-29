@@ -223,7 +223,7 @@ var api = api || {};
 		case 'poker':
 			return '../common/images/poker/' +id + '.jpg'
 		case 'other':
-			return '../common/images/card/' +id + '.jpg'
+			return '../common/images/card/' +id + '.png'
 		case 'ws':
 			return '//storage.googleapis.com/particle-resources/cardPackage/ws/' +id	
 		case 'sgs':

@@ -21,6 +21,7 @@ class Tool
 			lock:lock,
 			owner:owner,
 			viewer:viewer,
+			cardId:extra[0],
 			id:createDivId(),
 			extra: extra,
 			action:{

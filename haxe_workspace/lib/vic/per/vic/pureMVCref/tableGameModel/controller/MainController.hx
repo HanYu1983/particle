@@ -186,7 +186,11 @@ class MainController extends Mediator
 			case 'sequence':
 				item = new SequenceItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'token':
-				item = new TokenItem( model.id, Tool.createItemDiv( model.type, model ) );
+				var parseData = Json.parse( Json.stringify( model ) );
+				parseData.extra = [ 
+					untyped __js__('api.getCardImageWithPackageName')( model.extra[1], model.extra[0] )
+				];
+				item = new TokenItem( model.id, Tool.createItemDiv( model.type, parseData ) );
 			default:
 				item = new BasicItem( model.id, Tool.createItemDiv( model.type, model ) );
 		}
@@ -210,6 +214,9 @@ class MainController extends Mediator
 		switch( e.which ) {
 			case KeyboardEvent.DOM_VK_D:
 			case KeyboardEvent.DOM_VK_K:
+			case KeyboardEvent.DOM_VK_I:
+			case KeyboardEvent.DOM_VK_O:
+			case KeyboardEvent.DOM_VK_P:
 				//全選及解鎖不需要選擇任何牌也可以執行
 			case _:
 				if ( ary_select.length == 0 ) return;
@@ -219,6 +226,12 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_H:
 				deleteModel( ary_select );
 				deleteView( ary_select );
+			case KeyboardEvent.DOM_VK_I:
+				createItem( Tool.createItem( [ 'token_0', 'other' ], pos_mouse.slice(0), 'token', 50, 50 ) );
+			case KeyboardEvent.DOM_VK_O:
+				createItem( Tool.createItem( [ 'token_1', 'other' ], pos_mouse.slice(0), 'token', 50, 50 ) );
+			case KeyboardEvent.DOM_VK_P:
+				createItem( Tool.createItem( [ 'token_2', 'other' ], pos_mouse.slice(0), 'token', 50, 50 ) );
 			case KeyboardEvent.DOM_VK_T:
 			case KeyboardEvent.DOM_VK_R:
 				actionModel();
