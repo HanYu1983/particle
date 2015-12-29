@@ -365,16 +365,14 @@ class Main
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
 			case 'onBtnCustomDeck':
-				/*
 				var str:String = j( "#txt_custom" ).textbox( 'getValue' );
 				str = '[' + str + ']';
 				try {
 					var createobj:Dynamic = Json.parse( str );
-					createCards( {backId:"0", cards:createobj} );
+					createItem( Tool.createDataFromDeck( { backId:"0", cards:createobj, game:currentSelect }, SocketController.playerId ) );
 				}catch ( e:Dynamic ) {
 					alert( '輸入格式錯誤哦，請檢查!' );
 				}
-				*/
 			case 'onDiceClick':
 				dice();
 			case 'onConcreteDiceClick':
@@ -390,132 +388,113 @@ class Main
 				];
 				createItem( data );
 			case 'onTokenClick':
-				/*
-				var oldselect = currentSelect;
-				currentSelect = 'other';
-				createCards( { backId:"0", cards:[
-													'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
-													'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
-													'token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1',
-													'token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1',
-													'token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2',
-													'token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2'
-													] } );
-				currentSelect = oldselect;
-				*/
-			case 'onShaClick':
-				var data = [
-					{extra:['b1_1_fight','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false },
-					{extra:['b1_1_sanda','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false },
-					{extra:['b1_2_cold','49','sanguosha'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false }
+				var ary_token = [
+					'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
+					'token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0', 'token_0', 'token_0','token_0',
+					'token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1',
+					'token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1', 'token_1', 'token_1','token_1',
+					'token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2',
+					'token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2', 'token_2', 'token_2','token_2'
 				];
-				
+				var data = ary_token.map( function( idstr ) {
+					return { extra:[ idstr, 'other'], pos:[100, 100], type:'token', width:50, height:50, back:false, lock:false, owner:SocketController.playerId };
+				});
 				createItem( data );
-				
-				/*
-				var oldselect = currentSelect;
-				currentSelect = 'sanguosha';
-				createCards( { backId:"49", cards:[
-													'b1_1_fight', 'b1_1_sanda',
-													'b1_2_cold', 'b1_2_double', 'b1_2_gua',
-													'b1_3_river', 'b1_3_steal', 
-													'b1_4_river', 'b1_4_steal', 
-													'b1_5_dragon', 'b1_5_shadow',
-													'b1_6_bluejian', 'b1_6_happy', 
-													'b1_7_nan', 'b1_7_sa', 
-													'b1_8_sa', 'b1_8_sa', 
-													'b1_9_sa', 'b1_9_sa', 
-													'b1_10_sa', 'b1_10_sa',
-													'b1_11_steal', 'b1_11_strong', 
-													'b1_12_eight', 'b1_12_river', 
-													'b1_13_horse', 'b1_13_nan', 
-													'b2_1_fight', 'b2_1_nu', 
-													'b2_2_gua', 'b2_2_sa', 'b2_2_shield',
-													'b2_3_river', 'b2_3_sa',
-													'b2_4_river','b2_4_sa',
-													'b2_5_horse', 'b2_5_sa',
-													'b2_6_happy', 'b2_6_sa',
-													'b2_7_nan', 'b2_7_sa', 
-													'b2_8_sa', 'b2_8_sa', 
-													'b2_9_sa', 'b2_9_sa',
-													'b2_10_sa', 'b2_10_sa',
-													'b2_11_sa', 'b2_11_sa',
-													'b2_12_dao', 'b2_12_strong',
-													'b2_13_dao', 'b2_13_strong',
-													'r1_1_spray', 'r1_1_together',
-													'r1_2_run','r1_2_run',
-													'r1_3_tao', 'r1_3_wugu', 
-													'r1_4_tao', 'r1_4_wugu',
-													'r1_5_gilin', 'r1_5_redhourse', 
-													'r1_6_happy', 'r1_6_tao', 
-													'r1_7_born','r1_7_tao',
-													'r1_8_born','r1_8_tao',
-													'r1_9_born','r1_9_tao',
-													'r1_10_sa','r1_10_sa',
-													'r1_11_born','r1_11_sa',
-													'r1_12_river','r1_12_sanda','r1_12_tao',
-													'r1_13_horse','r1_13_run',
-													'r2_1_fight','r2_1_nu',
-													'r2_2_run','r2_2_run',
-													'r2_3_run','r2_3_steal',
-													'r2_4_run','r2_4_steal',
-													'r2_5_axe','r2_5_run',
-													'r2_6_run','r2_6_sa',
-													'r2_7_run','r2_7_sa',
-													'r2_8_run','r2_8_sa',
-													'r2_9_run','r2_9_sa',
-													'r2_10_run','r2_10_sa',
-													'r2_11_run','r2_11_run',
-													'r2_12_draw','r2_12_strong','r2_12_tao',
-													'r2_13_hourse','r2_13_sa',
-													
-													'role_001','role_002','role_003','role_004','role_005',
-													'role_006','role_007','role_008','role_009','role_010',
-													'role_011','role_012','role_013','role_014','role_015',
-													'role_016','role_017','role_018','role_019','role_020',
-													'role_021', 'role_022', 'role_023', 'role_024', 'role_025',
-													
-													'id_0','id_0','id_0','id_0',
-													'id_1','id_1',
-													'id_3', 'id_3', 'id_3',
-													'id_2'
-													] } );
-				currentSelect = oldselect;
-				*/
+			case 'onShaClick':
+				var ary_sangosha = [
+										'b1_1_fight', 'b1_1_sanda',
+										'b1_2_cold', 'b1_2_double', 'b1_2_gua',
+										'b1_3_river', 'b1_3_steal', 
+										'b1_4_river', 'b1_4_steal', 
+										'b1_5_dragon', 'b1_5_shadow',
+										'b1_6_bluejian', 'b1_6_happy', 
+										'b1_7_nan', 'b1_7_sa', 
+										'b1_8_sa', 'b1_8_sa', 
+										'b1_9_sa', 'b1_9_sa', 
+										'b1_10_sa', 'b1_10_sa',
+										'b1_11_steal', 'b1_11_strong', 
+										'b1_12_eight', 'b1_12_river', 
+										'b1_13_horse', 'b1_13_nan', 
+										'b2_1_fight', 'b2_1_nu', 
+										'b2_2_gua', 'b2_2_sa', 'b2_2_shield',
+										'b2_3_river', 'b2_3_sa',
+										'b2_4_river','b2_4_sa',
+										'b2_5_horse', 'b2_5_sa',
+										'b2_6_happy', 'b2_6_sa',
+										'b2_7_nan', 'b2_7_sa', 
+										'b2_8_sa', 'b2_8_sa', 
+										'b2_9_sa', 'b2_9_sa',
+										'b2_10_sa', 'b2_10_sa',
+										'b2_11_sa', 'b2_11_sa',
+										'b2_12_dao', 'b2_12_strong',
+										'b2_13_dao', 'b2_13_strong',
+										'r1_1_spray', 'r1_1_together',
+										'r1_2_run','r1_2_run',
+										'r1_3_tao', 'r1_3_wugu', 
+										'r1_4_tao', 'r1_4_wugu',
+										'r1_5_gilin', 'r1_5_redhourse', 
+										'r1_6_happy', 'r1_6_tao', 
+										'r1_7_born','r1_7_tao',
+										'r1_8_born','r1_8_tao',
+										'r1_9_born','r1_9_tao',
+										'r1_10_sa','r1_10_sa',
+										'r1_11_born','r1_11_sa',
+										'r1_12_river','r1_12_sanda','r1_12_tao',
+										'r1_13_horse','r1_13_run',
+										'r2_1_fight','r2_1_nu',
+										'r2_2_run','r2_2_run',
+										'r2_3_run','r2_3_steal',
+										'r2_4_run','r2_4_steal',
+										'r2_5_axe','r2_5_run',
+										'r2_6_run','r2_6_sa',
+										'r2_7_run','r2_7_sa',
+										'r2_8_run','r2_8_sa',
+										'r2_9_run','r2_9_sa',
+										'r2_10_run','r2_10_sa',
+										'r2_11_run','r2_11_run',
+										'r2_12_draw','r2_12_strong','r2_12_tao',
+										'r2_13_hourse','r2_13_sa',
+										
+										'role_001','role_002','role_003','role_004','role_005',
+										'role_006','role_007','role_008','role_009','role_010',
+										'role_011','role_012','role_013','role_014','role_015',
+										'role_016','role_017','role_018','role_019','role_020',
+										'role_021', 'role_022', 'role_023', 'role_024', 'role_025',
+										
+										'id_0','id_0','id_0','id_0',
+										'id_1','id_1',
+										'id_3', 'id_3', 'id_3',
+										'id_2'
+										];
+				var data = ary_sangosha.map( function( idstr ) {
+					return { extra:[ idstr, '49', 'sanguosha'], pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:SocketController.playerId };
+				});
+				createItem( data );
 			case 'onPokerClick':
 				
 				SocketController.playerId = 'vic';
 				
-				var data = [
-					{extra:['10','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' },
-					{extra:['11','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' },
-					{extra:['12','34','poker'],pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:'' }
-				];
+				var ary_poker = [
+									'10', '11', '12',
+									'13', '14', '15', '16',
+									'17', '18', '19', '20',
+									'21', '22', '23', '24',
+									'25', '26', '27', '28',
+									'29', '30', '31', '32',
+									'33', '34', '35', '36',
+									'37', '38', '39', '40',
+									'41', '42', '43', '44',
+									'45', '46', '47', '48',
+									'49', '50', '51', '52',
+									'53', '54', '55', '56',
+									'57', '58', '59', '60',
+									'61', '62', '62'
+									];
 				
+				var data = ary_poker.map( function( idstr ) {
+					return { extra:[ idstr, '34', 'poker'], pos:[100, 100], type:'card', width:100, height:150, back:false, lock:false, owner:SocketController.playerId };
+				});
 				createItem( data );
-				
-				/*
-				var oldselect = currentSelect;
-				currentSelect = 'poker';
-				
-				createCards( { backId:"34", cards:[
-													'10', '11', '12',
-													'13', '14', '15', '16',
-													'17', '18', '19', '20',
-													'21', '22', '23', '24',
-													'25', '26', '27', '28',
-													'29', '30', '31', '32',
-													'33', '34', '35', '36',
-													'37', '38', '39', '40',
-													'41', '42', '43', '44',
-													'45', '46', '47', '48',
-													'49', '50', '51', '52',
-													'53', '54', '55', '56',
-													'57', '58', '59', '60',
-													'61', '62'
-													] } );
-				currentSelect = oldselect;
-				*/
 		}
 		CallJs.googleTracking_click( type );
 	}
