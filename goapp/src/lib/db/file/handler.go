@@ -133,7 +133,9 @@ func DBFileSystem2(user IUser) http.HandlerFunc {
 		if isSnapshot {
 			files, err := FileList(ctx, -1)
 			tool.Assert(tool.IfError(err))
-			tool.Output(w, files, nil)
+			str, err := json.Marshal(files)
+			tool.Assert(tool.IfError(err))
+			fmt.Fprintf(w, "%s", str)
 			return
 		}
 

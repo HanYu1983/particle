@@ -9,6 +9,7 @@ var ws = ws || {};
 		'miku',
 		'miku2.0',
 		'sh',
+		'shext',
 		'symphogear',
 		'symphogearg',
 		'symphogeargx',
@@ -23,7 +24,9 @@ var ws = ws || {};
 		'lbe',
 		'lbext1.0',
 		'animelb',
-		'animelbrext'
+		'animelbrext',
+		'ft',
+		'ftext1.0'
 	]
 	
 	function load( path, cb ){

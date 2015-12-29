@@ -69,8 +69,10 @@ func init() {
 	//http.HandleFunc("/testfn/memento", Memento)
 	//http.HandleFunc("/testfn/readfile", TestReadFile)
 	//http.HandleFunc("/testfn/TestWriteSnaphot", TestWriteSnaphot2)
+	http.HandleFunc("/admindbfile2/__archiveAndClear__", db2.HandleClearDataAndDownloadArchive)
 	http.HandleFunc("/admindbfile2/__memento__", db2.HandleMemento)
 	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
+	http.HandleFunc("/temp/dbtodb2", dbtodb2)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

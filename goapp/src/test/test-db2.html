@@ -15,10 +15,107 @@
 			<input type="submit" value="Commit"></input>
 		</form>
 		
-		<h1>Restore Memento</h1>
-		<form action='../admindbfile2/__memento__' method='post'>
-			Data:<textarea name="Data"></textarea><br>
-			<input type="submit" value="Commit"></input>
+		<h1>db2資料回塑</h1>
+		選檔後會自動上傳
+		<input type="file" id="db2input"/>
+		<script>
+		document.getElementById('db2input').addEventListener('change', readSingleFileDb2, false);
+		function readSingleFileDb2(evt) {
+			//Retrieve the first (and only!) File from the FileList object
+			var f = evt.target.files[0]; 
+
+			if (f) {
+				var r = new FileReader();
+				r.onload = function(e) { 
+					var contents = e.target.result;
+					try{
+						console.log(JSON.parse(contents))
+					} catch (e ){
+						alert('format is not right')
+					}
+					$.ajax({
+						url: '../admindbfile2/__memento__',
+						method: 'post',
+						data: {
+							Data: contents
+						},
+						type: 'json',
+						success: function(ret){
+							if( ret.Error ){
+								alert( ret.Error )
+							} else {
+								alert('ok')
+							}
+						},
+						error: function(xhr, res, err){
+							alert(err)
+						}
+					})
+				}
+				r.readAsText(f);
+			} else { 
+				alert("Failed to load file");
+			}
+		}
+		
+		</script>
+		
+		<h1>db2備份和清除</h1>
+		<form action='../admindbfile2/__archiveAndClear__'>
+			<button>start</button>
 		</form>
+		
+		<h1>Db to Db2</h1>
+		選檔後會自動上傳
+		<input type="file" id="dbinput"/>
+		
+		<script src='../common/js/lib/jquery-1.9.min.js'></script>
+		<script>
+		document.getElementById('dbinput').addEventListener('change', readSingleFile, false);
+		function readSingleFile(evt) {
+			//Retrieve the first (and only!) File from the FileList object
+			var f = evt.target.files[0]; 
+
+			if (f) {
+				var r = new FileReader();
+				r.onload = function(e) { 
+					var contents = e.target.result;
+					try{
+						console.log(JSON.parse(contents))
+					} catch (e ){
+						alert('format is not right')
+					}
+					$.ajax({
+						url: '../temp/dbtodb2',
+						method: 'post',
+						data: {
+							Data: contents
+						},
+						type: 'json',
+						success: function(ret){
+							if( ret.Error ){
+								alert( ret.Error )
+							} else {
+								alert('ok')
+							}
+						},
+						error: function(xhr, res, err){
+							alert(err)
+						}
+					})
+				}
+				r.readAsText(f);
+			} else { 
+				alert("Failed to load file");
+			}
+		}
+		
+		</script>
+		<script src='../common/js/db2.js'></script>
+		<script>
+		db2.filelist( 'root/user/', 'json', function(err, ret){
+			console.log( ret )
+		})
+		</script>
 	</body>
 </html>
