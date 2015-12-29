@@ -45,17 +45,20 @@ class UI extends Mediator
 	{
 		return [ 	
 					MainController.on_select_cards,
+					MainController.on_dice,
 					Main.on_getSuit_success,
 					Main.on_receiveOps,
 					Main.on_searchComplete,
 					Main.on_heartbeat_event,
-					Main.on_createDeck_click
+					Main.on_createDeck_click,
 				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case MainController.on_dice:
+				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
 			case Main.on_heartbeat_event:

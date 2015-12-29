@@ -373,8 +373,6 @@ class Main
 				}catch ( e:Dynamic ) {
 					alert( '輸入格式錯誤哦，請檢查!' );
 				}
-			case 'onDiceClick':
-				dice();
 			case 'onConcreteDiceClick':
 				var data = [
 					{extra:['../common/images/createTable/other/dice_01.png',
@@ -558,15 +556,6 @@ class Main
 	}
 	*/
 	
-	
-	public static function dice() {
-		var dice:Int = Math.floor( Math.random() * 100 );
-		//Main.pushCmds( { cmd:'onDiceAction', content: { playerId:playerId, dice:dice } } );
-		
-		showDiceMessage( playerId, dice );
-		
-		//Browser.window.open( 'http://www.wasabistudio.ca/scripts/dice.php?account=card&name=' + playerId + '&reason=forGame&dice_amount=1&dice_faces=100&offset=0&c=pub' );
-	}
 	
 	public static function showDiceMessage( id:String, dice:Int ) {
 		slide( '玩家 ' + id + ' 擲了 ' + dice + ' 點', 4000 );

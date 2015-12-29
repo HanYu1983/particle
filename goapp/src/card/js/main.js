@@ -243,10 +243,6 @@ Main.getCardDetailById = function(game,cid) {
 Main.createItem = function(ary_data) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,per_vic_pureMVCref_tableGameModel_Tool.createItemFromData(ary_data));
 };
-Main.dice = function() {
-	var dice = Math.floor(Math.random() * 100);
-	Main.showDiceMessage(Main.playerId,dice);
-};
 Main.showDiceMessage = function(id,dice) {
 	Main.slide("玩家 " + id + " 擲了 " + dice + " 點",4000);
 };
@@ -368,7 +364,7 @@ Main.changeIndex = function(cardId) {
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		if( js_Boot.__instanceof(e,String) ) {
-			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 718, className : "Main", methodName : "changeIndex"});
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 707, className : "Main", methodName : "changeIndex"});
 		} else throw(e);
 	}
 };
@@ -497,9 +493,6 @@ Main.prototype = {
 				if (e instanceof js__$Boot_HaxeError) e = e.val;
 				Main.alert("輸入格式錯誤哦，請檢查!");
 			}
-			break;
-		case "onDiceClick":
-			Main.dice();
 			break;
 		case "onConcreteDiceClick":
 			var data = [{ extra : ["../common/images/createTable/other/dice_01.png","../common/images/createTable/other/dice_02.png","../common/images/createTable/other/dice_03.png","../common/images/createTable/other/dice_04.png","../common/images/createTable/other/dice_05.png","../common/images/createTable/other/dice_06.png"], pos : [100,100], type : "sequence", width : 50, height : 50, back : false, lock : false}];
@@ -1153,12 +1146,15 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event,Main.on_createDeck_click];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_dice":
+			Main.showDiceMessage(notification.getBody().playerId,notification.getBody().dice);
+			break;
 		case "on_createDeck_click":
 			this.closeNorthPanel();
 			break;
@@ -1237,7 +1233,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		this.getViewComponent().layout("collapse","north");
 	}
 	,showCard: function(card) {
-		haxe_Log.trace(card,{ fileName : "UI.hx", lineNumber : 140, className : "mediator.UI", methodName : "showCard"});
+		haxe_Log.trace(card,{ fileName : "UI.hx", lineNumber : 143, className : "mediator.UI", methodName : "showCard"});
 		if(card == null) return;
 		if(!card.back || card.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId && card.viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) {
 			var game = card.extra[2];
@@ -1801,11 +1797,14 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 				_g1.createItem(c);
 				return true;
 			});
-			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
 			break;
 		default:
 			var _g11 = notification.getType();
 			switch(_g11) {
+			case "dice":
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,notification.getBody());
+				break;
 			case "addItems":
 				var tempItems = notification.getBody();
 				Lambda.foreach(tempItems,function(c1) {
@@ -1925,6 +1924,8 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_press,null,e.which);
 		var _g = e.which;
 		switch(_g) {
+		case 84:
+			break;
 		case 68:
 			break;
 		case 75:
@@ -1954,6 +1955,9 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_2","other"],this.pos_mouse.slice(0),"token",50,50));
 			break;
 		case 84:
+			var dice = Math.floor(Math.random() * 100);
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,{ playerId : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, dice : dice});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "dice", msg : { playerId : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, dice : dice}});
 			break;
 		case 82:
 			this.actionModel();
@@ -2020,14 +2024,16 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		}
 		var _g2 = e.which;
 		switch(_g2) {
+		case 84:
+			break;
 		case 72:
-			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});
 			break;
 		case 75:
-			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_allItem});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_allItem});
 			break;
 		default:
-			this.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
 		}
 	}
 	,rotateModel: function(deg) {
@@ -2603,6 +2609,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "creat
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_press = "on_press";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice = "on_dice";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents = "setOpponents";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage = "sendMessage";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket = "createPlayerSocket";

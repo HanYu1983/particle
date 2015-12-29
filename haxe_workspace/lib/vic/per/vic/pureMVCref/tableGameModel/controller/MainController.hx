@@ -26,6 +26,7 @@ class MainController extends Mediator
 	
 	public static var on_select_cards = 'on_select_cards';
 	public static var on_press = 'on_press';
+	public static var on_dice = 'on_dice';
 	
 	var ary_select:Array<Dynamic> = [];
 	var ary_allItem:Array<Dynamic> = [];
@@ -74,9 +75,11 @@ class MainController extends Mediator
 					createItem( c );
 					return true;
 				});
-				facade.sendNotification( SocketController.sendMessage, { type:'addItems', msg: ary_creates } );
+				sendNotification( SocketController.sendMessage, { type:'addItems', msg: ary_creates } );
 			case on_receiveMessage:
 				switch( notification.getType() ) {
+					case 'dice':
+						sendNotification( on_dice, notification.getBody() );
 					case 'addItems':
 						var tempItems:Array<Dynamic> = notification.getBody();
 						tempItems.foreach( function( c:Dynamic ) {
@@ -212,6 +215,7 @@ class MainController extends Mediator
 		sendNotification( on_press, null, e.which );
 		
 		switch( e.which ) {
+			case KeyboardEvent.DOM_VK_T:
 			case KeyboardEvent.DOM_VK_D:
 			case KeyboardEvent.DOM_VK_K:
 			case KeyboardEvent.DOM_VK_I:
@@ -233,6 +237,9 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_P:
 				createItem( Tool.createItem( [ 'token_2', 'other' ], pos_mouse.slice(0), 'token', 50, 50 ) );
 			case KeyboardEvent.DOM_VK_T:
+				var dice:Int = Math.floor( Math.random() * 100 );
+				sendNotification( on_dice, { playerId:SocketController.playerId, dice:dice } );
+				sendNotification( SocketController.sendMessage, { type:'dice', msg: { playerId:SocketController.playerId, dice:dice } } );
 			case KeyboardEvent.DOM_VK_R:
 				actionModel();
 				updateView( ary_select );
@@ -288,12 +295,17 @@ class MainController extends Mediator
 		}
 		
 		switch( e.which ) {
+			//骰子，不經過這邊，在上邊的時候就分發了
+			case KeyboardEvent.DOM_VK_T:
+			//刪除，針對要刪除的陣列
 			case KeyboardEvent.DOM_VK_H:
-				facade.sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
+				sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
+			//解鎖，對象是全部的物件
 			case KeyboardEvent.DOM_VK_K:
-				facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_allItem } );
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_allItem } );
+			//其他，更新所有狀態就可以了
 			case _:
-				facade.sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
 		}
 	}
 	
