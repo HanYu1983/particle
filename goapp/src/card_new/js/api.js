@@ -467,7 +467,7 @@ var api = api || {};
 			type:type, 
 			msg:JSON.parse( JSON.stringify( msg ))
 		});
-		console.log( jsonstr );
+		
 		//針對要encodeURIComponent的地方做，這個方法ok
 		/*
 		console.log( '{ type:"../common/images/createTable/yh/yh_03.jpg" }'.length );
@@ -482,7 +482,7 @@ var api = api || {};
 		*/
 		
 		channel.sendChannelMessage( toId, jsonstr, handleResponse( function( ret ) {
-			console.log( ret );
+			
 		} ));
 	}
 	
