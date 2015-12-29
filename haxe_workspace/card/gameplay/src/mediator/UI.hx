@@ -89,13 +89,6 @@ class UI extends Mediator
 				combo_ops.combobox( 'select', ary_ops[ary_ops.length -1] );
 			case MainController.on_select_cards:
 				showCards( notification.getBody().ary_select );
-			case Model.on_state_change:
-				var notify = notification.getBody().notify;
-				if ( !notify ) return;
-				mc_detailContainer.empty();
-				Timer.delay( function(){
-					showCard( notification.getBody().select );
-				}, 10 );
 			case Main.on_getSuit_success:
 				createComboDeck( notification.getBody().cardSuit );
 		}

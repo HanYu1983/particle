@@ -90,7 +90,7 @@ class MainController extends Mediator
 						deleteModel( localModel );
 						deleteView( localModel );
 					case 'applyTransform':
-						updateView( updateModel( notification.getBody() ) );
+						updateView( updateModel( notification.getBody().ary_item ), notification.getBody().zs );
 				}
 		}
 	}
@@ -112,7 +112,7 @@ class MainController extends Mediator
 		}, [] );
 	}
 	
-	function updateView( ary_item:Array<Dynamic> ) {
+	function updateView( ary_item:Array<Dynamic>, ?zs:Bool = false ) {
 		function updateRotate( item:IItem, dom:Dynamic, itemModel:Dynamic ) {
 			if ( dom.attr( 'deg' ) == null ) {
 				item.rotate( 0, itemModel.deg );
@@ -163,6 +163,8 @@ class MainController extends Mediator
 			updateFlip( item, itemModel );
 			updateLock( item, itemModel );
 			updateAction( item, itemModel );
+			
+			if( zs ) dom.appendTo( dom.parent() );
 			
 			return true;
 		});
@@ -259,11 +261,11 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_W:
 				reverseModel();
 				togetherModel();
-				updateView( ary_select );
+				updateView( ary_select, true );
 			case KeyboardEvent.DOM_VK_Q:
 				shuffleModel();
 				togetherModel();
-				updateView( ary_select );
+				updateView( ary_select, true );
 			case KeyboardEvent.DOM_VK_C:
 				setModelOwner();
 				updateView( ary_select );
@@ -273,11 +275,12 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_S:
 				if ( isList ) {
 					togetherModel();
+					updateView( ary_select, true );
 				}else {
 					listModel();
+					updateView( ary_select );
 				}
 				isList = !isList;
-				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_V:
 				setModelViewer();
 				sendNotification( on_select_cards, { ary_select:ary_select } );
@@ -302,10 +305,12 @@ class MainController extends Mediator
 				sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
 			//解鎖，對象是全部的物件
 			case KeyboardEvent.DOM_VK_K:
-				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_allItem } );
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_allItem, zs:false } } );
+			case KeyboardEvent.DOM_VK_W, KeyboardEvent.DOM_VK_Q, KeyboardEvent.DOM_VK_S:
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true } } );
 			//其他，更新所有狀態就可以了
 			case _:
-				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:false} } );
 		}
 	}
 	
@@ -325,7 +330,10 @@ class MainController extends Mediator
 			
 		indexSorting();
 		sendNotification( on_select_cards, { ary_select:ary_select } );
-		sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
+		
+		if ( ary_select.length == 0 ) {
+			sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true} } );
+		}
 	}
 	
 	function indexSorting() {
