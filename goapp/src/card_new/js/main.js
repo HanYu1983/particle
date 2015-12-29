@@ -1481,17 +1481,20 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 	}
 	,updateModel: function(ary_receive) {
 		var _g = this;
-		return ary_receive.map(function(receive) {
+		return Lambda.fold(ary_receive,function(receive,curr) {
 			var model = _g.getItemFromPoolById(receive.id);
-			model.pos = receive.pos.slice();
-			model.deg = receive.deg;
-			model.owner = receive.owner;
-			model.viewer = receive.viewer;
-			model.back = receive.back;
-			model.lock = receive.lock;
-			model.action = receive.action;
-			return model;
-		});
+			if(model != null) {
+				model.pos = receive.pos.slice();
+				model.deg = receive.deg;
+				model.owner = receive.owner;
+				model.viewer = receive.viewer;
+				model.back = receive.back;
+				model.lock = receive.lock;
+				model.action = receive.action;
+				curr.push(model);
+			}
+			return curr;
+		},[]);
 	}
 	,updateView: function(ary_item) {
 		var _g = this;

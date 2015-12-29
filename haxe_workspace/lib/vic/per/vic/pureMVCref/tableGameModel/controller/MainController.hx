@@ -97,6 +97,21 @@ class MainController extends Mediator
 	}
 	
 	function updateModel( ary_receive:Array<Dynamic> ) {
+		return ary_receive.fold( function( receive:Dynamic, curr:Dynamic ) {
+			var model:Dynamic = getItemFromPoolById( receive.id );
+			if( model != null ){
+				model.pos = receive.pos.slice();
+				model.deg = receive.deg;
+				model.owner = receive.owner;
+				model.viewer = receive.viewer;
+				model.back = receive.back;
+				model.lock = receive.lock;
+				model.action = receive.action;
+				curr.push( model );
+			}
+			return curr;
+		}, [] );
+		/*
 		return ary_receive.map( function( receive:Dynamic ) {
 			var model:Dynamic = getItemFromPoolById( receive.id );
 			model.pos = receive.pos.slice();
@@ -108,6 +123,7 @@ class MainController extends Mediator
 			model.action = receive.action;
 			return model;
 		});
+		*/
 	}
 	
 	function updateView( ary_item:Array<Dynamic> ) {
