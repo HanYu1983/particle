@@ -220,6 +220,7 @@ class MainController extends Mediator
 				deleteModel( ary_select );
 				deleteView( ary_select );
 			case KeyboardEvent.DOM_VK_T:
+			case KeyboardEvent.DOM_VK_R:
 				actionModel();
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_A, 3:
@@ -296,8 +297,22 @@ class MainController extends Mediator
 		});
 		if( !selectLock )
 			ary_select = filterLock( ary_select );
+			
+		indexSorting();
 		sendNotification( on_select_cards, { ary_select:ary_select } );
 		sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: ary_select } );
+	}
+	
+	function indexSorting() {
+		ary_select.sort( function( a, b ) {
+			if ( b.pos[0] < a.pos[0] ) return 1;
+			return -1;
+		});
+		
+		ary_select.sort( function( a, b ) {
+			if ( b.pos[1] < a.pos[1] ) return 1;
+			return -1;
+		});
 	}
 	
 	function selectMyItem() {

@@ -190,6 +190,7 @@ body{
 			<div>X-右轉牌面</div>
 			<div>C-設定持有者</div>
 			<div>V-設定觀察者</div>
+			<div>R-執行動作</div>
 			<div>T-擲骰</div>
 			<div>I-黃色指示物</div>
 			<div>O-綠色指示物</div>
@@ -225,9 +226,12 @@ body{
 				</div>
 			</div>
 			<div class="group" style="text-align:center; margin-bottom:10px;">
-				<div class="hori"><a href="#" class="easyui-linkbutton" style="width:100px;" public="false" onclick="onHtmlClick('onShaClick')">三國殺</a></div>
-				<div class="hori"><a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onPokerClick')">撲克牌</a></div>
-				<div class="hori"><a href="#" title="每種顏色各二十個的指示物套包，要創建單個指示物可以按 I, O, P" class="easyui-linkbutton easyui-tooltip" style="width:100px;" onclick="onHtmlClick('onTokenClick')">指示物套組</a></div>
+				<div class="group" style="margin-top:5px; margin-bottom:5px;">
+					<a href="#" class="easyui-linkbutton" style="width:100px;" public="false" onclick="onHtmlClick('onShaClick')">三國殺</a>
+					<a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onPokerClick')">撲克牌</a>
+					<a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onConcreteDiceClick')">骰子套組</a>
+					<a href="#" title="每種顏色各二十個的指示物套包，要創建單個指示物可以按 I, O, P" class="easyui-linkbutton easyui-tooltip" style="width:100px;" onclick="onHtmlClick('onTokenClick')">指示物套組</a>
+				</div>
 			</div>
 			<div class="group" style="text-align:center; margin-bottom:10px;">
 				<div id="mc_btnGame" class="group" style="margin-top:5px; margin-bottom:5px;">

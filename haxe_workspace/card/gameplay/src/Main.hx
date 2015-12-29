@@ -234,7 +234,7 @@ class Main
 			return cardDetail.id.indexOf( cid ) == 0;
 		});
 	}
-	
+	/*
 	public static function pushCmds( content:Dynamic ) {
 		#if debug
 		//debug 時不要擋
@@ -295,7 +295,7 @@ class Main
 	public static function pollAllMessage() {
 		CallJs.api_pollMessage( { FBID:playerId }, handleResponse( onBackCallback ) );
 	}
-	
+	*/
 	function onHtmlClick( type, ?params ) {
 		
 		switch( type ) {
@@ -377,6 +377,18 @@ class Main
 				*/
 			case 'onDiceClick':
 				dice();
+			case 'onConcreteDiceClick':
+				var data = [
+					{extra:['../common/images/createTable/other/dice_01.png',
+							'../common/images/createTable/other/dice_02.png',
+							'../common/images/createTable/other/dice_03.png',
+							'../common/images/createTable/other/dice_04.png',
+							'../common/images/createTable/other/dice_05.png',
+							'../common/images/createTable/other/dice_06.png'
+							],pos:[100, 100], type:'sequence', width:50, height:50, back:false, lock:false }
+					
+				];
+				createItem( data );
 			case 'onTokenClick':
 				/*
 				var oldselect = currentSelect;
@@ -566,9 +578,11 @@ class Main
 		currentSelect = oldselect;
 	}
 	*/
+	
+	
 	public static function dice() {
 		var dice:Int = Math.floor( Math.random() * 100 );
-		Main.pushCmds( { cmd:'onDiceAction', content: { playerId:playerId, dice:dice } } );
+		//Main.pushCmds( { cmd:'onDiceAction', content: { playerId:playerId, dice:dice } } );
 		
 		showDiceMessage( playerId, dice );
 		
@@ -733,7 +747,7 @@ class Main
 			return true;
 		});
 	}
-	
+	/*
 	public static function createSocket( id ) {
 		CallJs.api_createChannel( id, {
 			onopen: function() {
@@ -777,7 +791,8 @@ class Main
 			}
 		});
 	}
-	
+	*/
+	/*
 	public static function messageSocket( toId, type, msg ) {
 		var _channel:Dynamic = untyped __js__( 'channel' );
 		var msg = {
@@ -788,7 +803,7 @@ class Main
 			//trace( ret );
 		}));
 	}
-	
+	*/
 	public static function getCardImageUrlWithPackage( select:String, key:String ):String {
 		return CallJs.api_getCardImageWithPackageName( select, key );
 		

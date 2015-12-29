@@ -5,16 +5,6 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var Animate = function() { };
-Animate.__name__ = true;
-Animate.addCardAndPrepare = function(cards) {
-	Main.ary_cards = Main.ary_cards.concat(cards);
-	Lambda.foreach(Main.ary_cards,function(card) {
-		Main.createCard(card);
-		return true;
-	});
-	Main.applyValue(cards,false);
-};
 var CallJs = function() { };
 CallJs.__name__ = true;
 var HxOverrides = function() { };
@@ -77,15 +67,6 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
-Lambda.filter = function(it,f) {
-	var l = new List();
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var x = $it0.next();
-		if(f(x)) l.add(x);
-	}
-	return l;
-};
 Lambda.fold = function(it,f,first) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -93,16 +74,6 @@ Lambda.fold = function(it,f,first) {
 		first = f(x,first);
 	}
 	return first;
-};
-Lambda.indexOf = function(it,v) {
-	var i = 0;
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var v2 = $it0.next();
-		if(v == v2) return i;
-		i++;
-	}
-	return -1;
 };
 Lambda.find = function(it,f) {
 	var $it0 = $iterator(it)();
@@ -269,91 +240,11 @@ Main.getCardDetailById = function(game,cid) {
 		return cardDetail.id.indexOf(cid) == 0;
 	});
 };
-Main.pushCmds = function(content) {
-	Lambda.foreach(Main.otherPlayerIds,function(toId) {
-		if(toId.length != 0 && toId != Main.playerId) Main.messageSocket(toId,content.cmd,content);
-		return true;
-	});
-};
-Main.onBackCallback = function(ret) {
-	Main.callAction(ret.msg);
-};
-Main.callAction = function(content) {
-	if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
-		var localCard = Main.getCardsById(remoteCard.id);
-		if(localCard != null) {
-			localCard.owner = remoteCard.owner;
-			localCard.relate = remoteCard.relate;
-			localCard.back = remoteCard.back;
-			localCard.pos = remoteCard.pos;
-			localCard.deg = remoteCard.deg;
-			curr.push(localCard);
-		}
-		return curr;
-	},[]);
-	var _g = content.cmd;
-	switch(_g) {
-	case "onDiceAction":
-		Main.showDiceMessage(content.content.playerId,content.content.dice);
-		break;
-	case "seperateCardSameTogether":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	case "changeIndex":
-		Main.changeIndex(content.content.cardId);
-		break;
-	case "removeCards":
-		Main.removeCards(content.content.ary_select);
-		break;
-	case "addCards":
-		Animate.addCardAndPrepare(content.content);
-		break;
-	case "listCard":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
-		break;
-	case "listSeparate":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	case "flip":
-		Main.applyValue(content.content.ary_select,false);
-		break;
-	case "setOwner":
-		Main.applyValue(content.content.ary_select,false);
-		break;
-	case "setRelate":
-		Main.applyValue(content.content.ary_select,false);
-		break;
-	case "shuffle":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
-		break;
-	case "shuffleSeparate":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	case "rotate":
-		Main.applyValue(content.content.ary_select,false);
-		break;
-	case "listCardReverse":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
-		break;
-	case "listSeparateReverse":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	case "moveCards":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	default:
-		return null;
-	}
-};
-Main.pollAllMessage = function() {
-	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
-};
 Main.createItem = function(ary_data) {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,per_vic_pureMVCref_tableGameModel_Tool.createItemFromData(ary_data));
 };
 Main.dice = function() {
 	var dice = Math.floor(Math.random() * 100);
-	Main.pushCmds({ cmd : "onDiceAction", content : { playerId : Main.playerId, dice : dice}});
 	Main.showDiceMessage(Main.playerId,dice);
 };
 Main.showDiceMessage = function(id,dice) {
@@ -477,7 +368,7 @@ Main.changeIndex = function(cardId) {
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		if( js_Boot.__instanceof(e,String) ) {
-			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 725, className : "Main", methodName : "changeIndex"});
+			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 739, className : "Main", methodName : "changeIndex"});
 		} else throw(e);
 	}
 };
@@ -487,49 +378,6 @@ Main.removeCards = function(ary_select) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_card_remove,{ select : card});
 		return true;
 	});
-};
-Main.createSocket = function(id) {
-	CallJs.api_createChannel(id,{ onopen : function() {
-		Main.isCanSendMessage = true;
-		Main.slide("連線成功");
-		Main.j("#btn_connect").linkbutton("disable");
-		Main.j("#btn_login").linkbutton("disable");
-		Main.j("#btn_notLogin").linkbutton("disable");
-		var _g1 = 0;
-		var _g = Main.otherPlayerIds.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var fn = (function(_i) {
-				return function(conn) {
-					Main.otherPlayerIdsForCheck[_i] = conn;
-					Main.isConntect = Lambda.fold(Main.otherPlayerIdsForCheck,function(curr,first) {
-						return first && curr;
-					},true);
-					if(Main.isConntect) org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_searchComplete);
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_heartbeat_event,{ conn : Main.isConntect});
-				};
-			})(i);
-			CallJs.api_startHeartbeat(Main.playerId,Main.otherPlayerIds[i],fn);
-		}
-	}, onmessage : function(json) {
-		Main.onBackCallback(json);
-	}, onerror : function() {
-		Main.j("#btn_connect").linkbutton("enable");
-		Main.isConntect = false;
-		Main.isCanSendMessage = false;
-		Main.alert("已斷線，請重新連線");
-	}, onclose : function() {
-		Main.j("#btn_connect").linkbutton("enable");
-		Main.isConntect = false;
-		Main.isCanSendMessage = false;
-		Main.alert("已斷線，請重新連線");
-	}});
-};
-Main.messageSocket = function(toId,type,msg) {
-	var _channel = channel;
-	var msg1 = { type : type, msg : msg};
-	_channel.sendChannelMessage(toId,JSON.stringify(msg1),Main.handleResponse(function(ret) {
-	}));
 };
 Main.getCardImageUrlWithPackage = function(select,key) {
 	return CallJs.api_getCardImageWithPackageName(select,key);
@@ -644,16 +492,20 @@ Main.prototype = {
 		case "onDiceClick":
 			Main.dice();
 			break;
+		case "onConcreteDiceClick":
+			var data = [{ extra : ["../common/images/createTable/other/dice_01.png","../common/images/createTable/other/dice_02.png","../common/images/createTable/other/dice_03.png","../common/images/createTable/other/dice_04.png","../common/images/createTable/other/dice_05.png","../common/images/createTable/other/dice_06.png"], pos : [100,100], type : "sequence", width : 50, height : 50, back : false, lock : false}];
+			Main.createItem(data);
+			break;
 		case "onTokenClick":
 			break;
 		case "onShaClick":
-			var data = [{ extra : ["b1_1_fight","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_1_sanda","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_2_cold","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false}];
-			Main.createItem(data);
+			var data1 = [{ extra : ["b1_1_fight","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_1_sanda","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false},{ extra : ["b1_2_cold","49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false}];
+			Main.createItem(data1);
 			break;
 		case "onPokerClick":
 			per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "vic";
-			var data1 = [{ extra : ["10","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["11","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["12","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""}];
-			Main.createItem(data1);
+			var data2 = [{ extra : ["10","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["11","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""},{ extra : ["12","34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : ""}];
+			Main.createItem(data2);
 			break;
 		}
 		CallJs.googleTracking_click(type);
@@ -1096,8 +948,6 @@ mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	onRegister: function() {
 		this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-		this.getViewComponent().click($bind(this,this.onCardClick));
-		this.getViewComponent().mousedown($bind(this,this.onCardMouseDown));
 	}
 	,onRemove: function() {
 		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRemove.call(this);
@@ -1180,15 +1030,6 @@ mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.pr
 	,focusCard: function(focus) {
 		if(focus != null) this._focus = focus; else this._focus = !this._focus;
 		if(this._focus) this.getViewComponent().addClass("card_focus"); else this.getViewComponent().removeClass("card_focus");
-	}
-	,onCardClick: function(e) {
-		this.focusCard();
-		this.sendNotification(mediator_Card.card_click,{ id : this.getMediatorName(), focus : this._focus});
-		Main.changeIndex(this.getMediatorName());
-		Main.pushCmds({ cmd : "changeIndex", content : { cardId : this.getMediatorName()}});
-	}
-	,onCardMouseDown: function(e) {
-		this.sendNotification(mediator_Card.card_down,{ id : this.getMediatorName()});
 	}
 	,rotateAnimation: function(d) {
 		var _g = this;
@@ -1519,234 +1360,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		case "on_combo_deck_change":
 			this.currentDeckId = notification.getBody().deckId;
 			break;
-		case "on_select_cards":
-			var ori = notification.getBody().ary_select;
-			ori.sort(function(a,b) {
-				var ax = Std.parseInt(StringTools.replace(Main.j(a).css("left"),"px",""));
-				var ay = Std.parseInt(StringTools.replace(Main.j(a).css("top"),"px",""));
-				var bx = Std.parseInt(StringTools.replace(Main.j(b).css("left"),"px",""));
-				var by = Std.parseInt(StringTools.replace(Main.j(b).css("top"),"px",""));
-				if(bx < ax) return 1;
-				return -1;
-			});
-			ori.sort(function(a1,b1) {
-				var ax1 = Std.parseInt(StringTools.replace(Main.j(a1).css("left"),"px",""));
-				var ay1 = Std.parseInt(StringTools.replace(Main.j(a1).css("top"),"px",""));
-				var bx1 = Std.parseInt(StringTools.replace(Main.j(b1).css("left"),"px",""));
-				var by1 = Std.parseInt(StringTools.replace(Main.j(b1).css("top"),"px",""));
-				if(by1 < ay1) return 1;
-				return -1;
-			});
-			this.ary_select = Lambda.fold(ori,function(dom,curr) {
-				curr.push(Main.getCardsById(Main.j(dom).attr("id")));
-				return curr;
-			},[]);
-			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
-			break;
-		case "on_press":
-			var _g1 = notification.getType();
-			switch(_g1) {
-			case 68:
-				break;
-			case 84:
-				break;
-			case 73:
-				break;
-			case 79:
-				break;
-			case 80:
-				break;
-			default:
-				if(this.ary_select.length == 0) return;
-			}
-			var _g11 = Std.parseInt(notification.getType());
-			if(_g11 != null) switch(_g11) {
-			case 84:
-				Main.dice();
-				break;
-			case 71:
-				break;
-			case 72:
-				Main.removeCards(this.ary_select);
-				Main.pushCmds({ cmd : "removeCards", content : { ary_select : this.ary_select.slice(0)}});
-				this.ary_select = [];
-				break;
-			case 67:
-				if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select.slice(0)}});
-				break;
-			case 86:
-				if(Main.setRelate(this.ary_select)) Main.pushCmds({ cmd : "setRelate", content : { ary_select : this.ary_select.slice(0)}});
-				break;
-			case 90:
-				Main.rotate(this.ary_select,-90);
-				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select.slice(0), deg : -90}});
-				break;
-			case 88:
-				Main.rotate(this.ary_select,90);
-				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select.slice(0), deg : 90}});
-				break;
-			case 81:
-				this.doListShuffle();
-				break;
-			case 87:
-				this.doListReverse();
-				break;
-			case 69:
-				this.doSeperateSameTogether();
-				break;
-			case 82:
-				break;
-			case 65:case 3:
-				this.doMoveCards();
-				break;
-			case 83:
-				if(this.isSeperate) this.doList(); else this.doListSeperate();
-				this.isSeperate = !this.isSeperate;
-				break;
-			case 68:
-				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
-					return card.owner == Main.playerId;
-				}));
-				this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
-				break;
-			case 70:
-				this.doFlip();
-				break;
-			case 32:
-				break;
-			default:
-			} else {
-			}
-			break;
-		case "on_body_mousemove":
-			this.pos_mouse[0] = notification.getBody().x;
-			this.pos_mouse[1] = notification.getBody().y;
-			break;
-		case "card_enter":
-			this.sendNotification(model_Model.on_card_enter,notification.getBody());
-			break;
-		case "card_click":
-			if(notification.getBody().focus) this.ary_select = [Main.getCardsById(notification.getBody().id)]; else this.ary_select = [];
-			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select.slice(0)});
-			break;
-		case "on_layout_mouse_up":
-			this.sendNotification(model_Model.on_card_move,notification.getBody());
-			break;
 		}
-	}
-	,listCard: function() {
-		var _g = this;
-		Lambda.foreach(this.ary_select,function(select) {
-			var cardIndex = Lambda.indexOf(_g.ary_select,select);
-			select.pos[0] = _g.pos_mouse[0] + cardIndex * 2;
-			select.pos[1] = _g.pos_mouse[1] + cardIndex * 2;
-			return true;
-		});
-	}
-	,listSeperate: function() {
-		var _g = this;
-		Lambda.foreach(this.ary_select,function(select) {
-			var cardIndex = Lambda.indexOf(_g.ary_select,select);
-			select.pos[0] = _g.pos_mouse[0] + cardIndex % 10 * 55;
-			select.pos[1] = _g.pos_mouse[1] + Math.floor(cardIndex / 10) * 80;
-			return true;
-		});
-	}
-	,doFlip: function() {
-		var _g = this;
-		if(this.ary_select.length > 1) {
-			this.isBack = !this.isBack;
-			Lambda.foreach(this.ary_select,function(card) {
-				if(card.owner == Main.playerId || card.owner == "") card.back = _g.isBack;
-				return true;
-			});
-		} else {
-			var card1 = this.ary_select[0];
-			if(card1.owner == Main.playerId || card1.owner == "") card1.back = !card1.back;
-		}
-		Main.applyValue(this.ary_select,true);
-		Main.pushCmds({ cmd : "flip", content : { ary_select : this.deepCopy(this.ary_select)}});
-	}
-	,doList: function() {
-		this.listCard();
-		Main.moveCards(this.ary_select,this.pos_mouse,true);
-		Main.pushCmds({ cmd : "listCard", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doListSeperate: function() {
-		this.listSeperate();
-		Main.moveCards(this.ary_select,this.pos_mouse,false);
-		Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doListReverse: function() {
-		this.ary_select.reverse();
-		this.listCard();
-		Main.moveCards(this.ary_select,this.pos_mouse,true);
-		Main.pushCmds({ cmd : "listCardReverse", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doSeperateSameTogether: function() {
-		var collectobj = { };
-		Lambda.foreach(this.ary_select,function(card) {
-			if(Reflect.field(collectobj,card.cardId) == null) collectobj[card.cardId] = [];
-			Reflect.field(collectobj,card.cardId).push(card);
-			return true;
-		});
-		var newary = [];
-		var _g = 0;
-		var _g1 = Reflect.fields(collectobj);
-		while(_g < _g1.length) {
-			var c = _g1[_g];
-			++_g;
-			newary = newary.concat(Reflect.field(collectobj,c));
-		}
-		this.ary_select = newary;
-		this.listSeperate();
-		Main.moveCards(this.ary_select,this.pos_mouse,true);
-		Main.pushCmds({ cmd : "seperateCardSameTogether", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doSeperateReverse: function() {
-		this.ary_select.reverse();
-		this.listSeperate();
-		Main.moveCards(this.ary_select,this.pos_mouse,false);
-		Main.pushCmds({ cmd : "listSeparateReverse", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doListShuffle: function() {
-		this.ary_select.sort(function(a,b) {
-			if(Math.random() > .5) return 1; else return -1;
-		});
-		this.listCard();
-		Main.moveCards(this.ary_select,this.pos_mouse,true);
-		Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doSeperateShuffle: function() {
-		this.ary_select.sort(function(a,b) {
-			if(Math.random() > .5) return 1; else return -1;
-		});
-		this.listSeperate();
-		Main.moveCards(this.ary_select,this.pos_mouse,false);
-		Main.pushCmds({ cmd : "shuffleSeparate", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doMoveCards: function() {
-		var moveTarget = { };
-		var copySelect = this.ary_select.slice(0);
-		copySelect.sort(function(ac,bc) {
-			if(ac.pos[0] < bc.pos[0]) return -1;
-			return 1;
-		});
-		moveTarget.x = copySelect[0].pos[0];
-		copySelect.sort(function(ac1,bc1) {
-			if(ac1.pos[1] < bc1.pos[1]) return -1;
-			return 1;
-		});
-		moveTarget.y = copySelect[0].pos[1];
-		var offset_0 = this.pos_mouse[0] - moveTarget.x;
-		var offset_1 = this.pos_mouse[1] - moveTarget.y;
-		Lambda.foreach(this.ary_select,function(select) {
-			select.pos[0] += offset_0;
-			select.pos[1] += offset_1;
-			return true;
-		});
-		Main.moveCards(this.ary_select,this.pos_mouse,false);
-		Main.pushCmds({ cmd : "moveCards", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
 	}
 	,deepCopy: function(ary_select) {
 		return Lambda.array(Lambda.map(ary_select,function(card) {
@@ -2303,6 +1917,8 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.deleteView(this.ary_select);
 			break;
 		case 84:
+			break;
+		case 82:
 			this.actionModel();
 			this.updateView(this.ary_select);
 			break;
@@ -2390,8 +2006,19 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			return _g.getItemFromPoolById(model.id);
 		});
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
+		this.indexSorting();
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+	}
+	,indexSorting: function() {
+		this.ary_select.sort(function(a,b) {
+			if(b.pos[0] < a.pos[0]) return 1;
+			return -1;
+		});
+		this.ary_select.sort(function(a1,b1) {
+			if(b1.pos[1] < a1.pos[1]) return 1;
+			return -1;
+		});
 	}
 	,selectMyItem: function() {
 		this.ary_select = this.filterLock(this.getMyItemFromPool());

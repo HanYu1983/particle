@@ -33,8 +33,8 @@ class Card extends Mediator
 		
 		sendNotification( card_enter, getViewComponent() );
 		
-		getViewComponent().click( onCardClick );
-		getViewComponent().mousedown( onCardMouseDown );
+		//getViewComponent().click( onCardClick );
+		//getViewComponent().mousedown( onCardMouseDown );
 	}
 	
 	override public function onRemove():Void 
@@ -173,7 +173,7 @@ class Card extends Mediator
 			getViewComponent().removeClass( 'card_focus' );
 		}
 	}
-	
+	/*
 	function onCardClick( e ) {
 		focusCard();
 		
@@ -185,7 +185,7 @@ class Card extends Mediator
 	function onCardMouseDown( e ) {
 		sendNotification( card_down, { id:getMediatorName() } );
 	}
-	
+	*/
 	function rotateAnimation( d:Int ) {
 		
 		Main.j({deg: _deg}).animate({deg: d}, {

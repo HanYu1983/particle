@@ -52,6 +52,7 @@ class Model extends Mediator
 				Main.createSelfDeck( currentDeckId );
 			case UI.on_combo_deck_change:
 				currentDeckId = notification.getBody().deckId;
+				/*
 			case Layer.on_select_cards:
 				var ori = notification.getBody().ary_select;
 				
@@ -163,9 +164,10 @@ class Model extends Mediator
 				sendNotification( on_select_cards, { ary_select:ary_select.slice( 0 ) } );
 			case Layer.on_layout_mouse_up:
 				sendNotification( on_card_move, notification.getBody() );
+				*/
 		}
 	}
-	
+	/*
 	function listCard() {
 		Lambda.foreach( ary_select, function( select ) {
 			var cardIndex = Lambda.indexOf( ary_select, select );
@@ -295,7 +297,7 @@ class Model extends Mediator
 		Main.moveCards( ary_select, pos_mouse, false );
 		Main.pushCmds( { cmd:'moveCards', content:{ ary_select:deepCopy( ary_select ), pos_mouse:pos_mouse.slice( 0 ) } } );
 	}
-	
+	*/
 	//沒有同步的原因是因為每個card物件沒有被深復制，所以移動了好幾次。pos永遠都會抓到最新的。這邊用深復制，才可以存下當時的資訊
 	function deepCopy( ary_select ) {
 		return Lambda.array( Lambda.map( ary_select, function( card ) {
