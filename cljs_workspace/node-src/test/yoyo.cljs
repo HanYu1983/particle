@@ -156,3 +156,19 @@
     (fn [data] (.log js/console "wow!" data))
     (fn [err] (.log js/console "err:" err))
     (fn [] (.log js/console "get image ok!"))))
+    
+    
+    
+(defn compress
+  "這個函式不能使用，imagemin套件不能用"
+  [p]
+  (let [imagemin (js/require "imagemin")]
+    (->
+      (imagemin.)
+      (.src (str p "/*.{gif,jpg,png,svg}"))
+      (.dest "output/compress/")
+      (.use (.jpegtran imagemin (js-obj "progressive" false)))
+      (.run 
+        (fn [err files] 
+          (.log js/console "end")
+          (.log js/console err))))))
