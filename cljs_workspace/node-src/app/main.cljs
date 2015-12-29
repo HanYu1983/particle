@@ -170,6 +170,9 @@
       "yoyo.getImage"
       (test.yoyo/getImage (.-n argv))
       
+      "yoyo.compress"
+      (test.yoyo/compress (.-d argv))
+      
       (println "no cmd"))))
 ;沒有這兩行nodejs跑不動
 (enable-console-print!)
