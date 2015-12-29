@@ -337,7 +337,7 @@ class MainController extends Mediator
 		indexSorting();
 		sendNotification( on_select_cards, { ary_select:ary_select } );
 		
-		if ( ary_select.length == 0 ) {
+		if ( ary_select.length != 0 ) {
 			sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true} } );
 		}
 	}

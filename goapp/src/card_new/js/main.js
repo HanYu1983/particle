@@ -1380,7 +1380,7 @@ per_vic_pureMVCref_tableGameModel_Tool.createItem = function(extra,pos,type,widt
 };
 per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck = function(deck,owner) {
 	return deck.cards.map(function(str) {
-		return { extra : [str,deck.backId == null?"0":deck.backId,deck.game], pos : [100,100], type : "card", width : 50, height : 75, back : false, lock : false, owner : owner};
+		return { extra : [str,deck.backId == null?"0":deck.backId,deck.game], pos : [100,100], type : "card", width : 50, height : 75, back : true, lock : false, owner : owner};
 	});
 };
 per_vic_pureMVCref_tableGameModel_Tool.createItemFromData = function(ary_data) {
@@ -1716,7 +1716,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.indexSorting();
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
-		if(this.ary_select.length == 0) this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
+		if(this.ary_select.length != 0) this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
 	}
 	,indexSorting: function() {
 		this.ary_select.sort(function(a,b) {
