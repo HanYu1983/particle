@@ -1597,13 +1597,19 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.deleteView(this.ary_select);
 			break;
 		case 73:
-			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_0","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
+			var token = per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_0","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId);
+			this.createItem(token);
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : [token]});
 			break;
 		case 79:
-			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_1","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
+			var token1 = per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_1","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId);
+			this.createItem(token1);
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : [token1]});
 			break;
 		case 80:
-			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_2","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
+			var token2 = per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_2","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId);
+			this.createItem(token2);
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : [token2]});
 			break;
 		case 84:
 			var dice = Math.floor(Math.random() * 100);
@@ -1680,7 +1686,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		}
 		var _g2 = e.which;
 		switch(_g2) {
-		case 84:
+		case 84:case 73:case 79:case 80:
 			break;
 		case 72:
 			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});

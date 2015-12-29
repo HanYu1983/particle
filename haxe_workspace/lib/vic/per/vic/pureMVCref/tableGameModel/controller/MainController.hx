@@ -233,11 +233,17 @@ class MainController extends Mediator
 				deleteModel( ary_select );
 				deleteView( ary_select );
 			case KeyboardEvent.DOM_VK_I:
-				createItem( Tool.createItem( [ 'token_0', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId ) );
+				var token = Tool.createItem( [ 'token_0', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId );
+				createItem( token );
+				sendNotification( SocketController.sendMessage, { type:'addItems', msg: [token] } );
 			case KeyboardEvent.DOM_VK_O:
-				createItem( Tool.createItem( [ 'token_1', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId ) );
+				var token = Tool.createItem( [ 'token_1', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId );
+				createItem( token );
+				sendNotification( SocketController.sendMessage, { type:'addItems', msg: [token] } );
 			case KeyboardEvent.DOM_VK_P:
-				createItem( Tool.createItem( [ 'token_2', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId ) );
+				var token = Tool.createItem( [ 'token_2', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId );
+				createItem( token );
+				sendNotification( SocketController.sendMessage, { type:'addItems', msg: [token] } );
 			case KeyboardEvent.DOM_VK_T:
 				var dice:Int = Math.floor( Math.random() * 100 );
 				sendNotification( on_dice, { playerId:SocketController.playerId, dice:dice } );
@@ -299,7 +305,7 @@ class MainController extends Mediator
 		
 		switch( e.which ) {
 			//骰子，不經過這邊，在上邊的時候就分發了
-			case KeyboardEvent.DOM_VK_T:
+			case KeyboardEvent.DOM_VK_T,KeyboardEvent.DOM_VK_I,KeyboardEvent.DOM_VK_O,KeyboardEvent.DOM_VK_P:
 			//刪除，針對要刪除的陣列
 			case KeyboardEvent.DOM_VK_H:
 				sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
