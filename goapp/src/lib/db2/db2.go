@@ -3,9 +3,12 @@ package db2
 import (
 	"appengine"
 	"appengine/datastore"
+	"archive/zip"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"lib/tool"
 	"net/http"
 	"path/filepath"
@@ -74,7 +77,7 @@ func GetFileList(ctx appengine.Context, filename string, filterLayer bool) ([]DB
 		return accept
 	}
 
-	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx))
+	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Order("-Time")
 
 	var ret []DBFile
 	t := q.Run(ctx)
@@ -222,6 +225,63 @@ func HandleMemento(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Fprintf(w, string(data))
 	}
+}
+
+func HandleClearDataAndDownloadArchive(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	buf := &bytes.Buffer{}
+	zw := zip.NewWriter(buf)
+	data, err := GetMemento(ctx)
+	if err != nil {
+		fmt.Fprintf(w, "err: %v", err.Error())
+		return
+	}
+
+	var files = []struct {
+		Name, Body string
+	}{
+		{"data.json", string(data)},
+	}
+
+	for _, file := range files {
+		f, err := zw.Create(file.Name)
+		if err != nil {
+			fmt.Fprintf(w, "err: %s!", err.Error())
+			return
+		}
+		_, err = f.Write([]byte(file.Body))
+		if err != nil {
+			fmt.Fprintf(w, "err: %s!", err.Error())
+			return
+		}
+	}
+	// Make sure to check the error on Close.
+	err = zw.Close()
+	if err != nil {
+		fmt.Fprintf(w, "err: %v", err.Error())
+		return
+	}
+	ctx.Infof("write file")
+
+	w.Header().Set("Content-Disposition", "attachment; filename=db2.zip")
+	w.Header().Set("Content-Type", "application/zip")
+	w.Header().Set("Content-Length", fmt.Sprintf("%d", buf.Len()))
+	io.Copy(w, buf)
+
+	ctx.Infof("clear db")
+	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).KeysOnly()
+	keys, err := q.GetAll(ctx, nil)
+	if err != nil {
+		ctx.Infof(err.Error())
+	}
+	for _, key := range keys {
+		err = datastore.Delete(ctx, key)
+		if err != nil {
+			ctx.Infof(err.Error())
+		}
+	}
+
 }
 
 func Handler(user IUser) http.HandlerFunc {
