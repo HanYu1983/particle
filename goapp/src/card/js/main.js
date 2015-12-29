@@ -820,12 +820,15 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event,Main.on_createDeck_click];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_socket_error":
+			this.onSocketError();
+			break;
 		case "on_dice":
 			Main.showDiceMessage(notification.getBody().playerId,notification.getBody().dice);
 			break;
@@ -907,7 +910,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		this.getViewComponent().layout("collapse","north");
 	}
 	,showCard: function(card) {
-		haxe_Log.trace(card,{ fileName : "UI.hx", lineNumber : 143, className : "mediator.UI", methodName : "showCard"});
+		haxe_Log.trace(card,{ fileName : "UI.hx", lineNumber : 146, className : "mediator.UI", methodName : "showCard"});
 		if(card == null) return;
 		if(!card.back || card.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId && card.viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) {
 			var game = card.extra[2];
@@ -1024,6 +1027,10 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			}
 			this.mc_detailContainer.append(div);
 		}
+	}
+	,onSocketError: function() {
+		Main.j("#btn_connect").linkbutton("enable");
+		Main.alert("已斷線，請重新連線");
 	}
 	,__class__: mediator_UI
 });
@@ -1950,16 +1957,16 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,createSocket: function(id) {
 		var _g = this;
+		var onSocketError = function() {
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
+			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error);
+		};
 		api.createChannel(id,{ onopen : function() {
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = true;
 		}, onmessage : function(json) {
 			_g.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
-		}, onerror : function() {
-			per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
-			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
-		}, onclose : function() {
-			per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
-			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
-		}});
+		}, onerror : onSocketError, onclose : onSocketError});
 	}
 	,messageSocket: function(type,msg) {
 		if(!per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage) return;
@@ -1968,12 +1975,6 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 			api.sendMessageToSomeone(op,type,msg);
 			return true;
 		});
-	}
-	,compress: function(str) {
-		return LZString.compress(str);
-	}
-	,decompress: function(str) {
-		return LZString.decompress(str);
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
@@ -2264,6 +2265,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket
 per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "smart";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
 per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error = "on_socket_error";
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click";
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();

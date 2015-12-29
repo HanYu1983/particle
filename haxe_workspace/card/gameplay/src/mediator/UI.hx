@@ -46,6 +46,7 @@ class UI extends Mediator
 		return [ 	
 					MainController.on_select_cards,
 					MainController.on_dice,
+					SocketController.on_socket_error,
 					Main.on_getSuit_success,
 					Main.on_receiveOps,
 					Main.on_searchComplete,
@@ -57,6 +58,8 @@ class UI extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case SocketController.on_socket_error:
+				onSocketError();
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
 			case Main.on_createDeck_click:
@@ -261,5 +264,10 @@ class UI extends Mediator
 			mc_detailContainer.append( img );
 			*/
 		}
+	}
+	
+	function onSocketError() {
+		Main.j( '#btn_connect' ).linkbutton( 'enable' );	
+		Main.alert( '已斷線，請重新連線' );
 	}
 }

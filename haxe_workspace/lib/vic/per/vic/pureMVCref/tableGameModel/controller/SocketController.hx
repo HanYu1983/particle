@@ -20,6 +20,8 @@ class SocketController extends Mediator
 	public static var isConntect = false;
 	public static var isCanSendMessage = false;
 	
+	public static var on_socket_error = 'on_socket_error';
+	
 	var ary_ops:Array<String>;
 	
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -48,33 +50,22 @@ class SocketController extends Mediator
 	}
 	
 	function createSocket( id ) {
+		
+		function onSocketError() {
+			isConntect = false;
+			isCanSendMessage = false;
+			sendNotification( on_socket_error );
+		}
+		
 		untyped __js__( 'api.createChannel' )( id, {
 			onopen: function() {
-				
+				isConntect = true;
 			},
 			onmessage: function( json ) {
 				facade.sendNotification( MainController.on_receiveMessage, json.msg, json.type );
 			},
-			onerror: function() {
-				isConntect = false;
-				isCanSendMessage = false;
-				/*
-				j( '#btn_connect' ).linkbutton( 'enable' );
-				isConntect = false;
-				isCanSendMessage = false;
-				alert( '已斷線，請重新連線' );
-				*/
-			},
-			onclose: function() {
-				isConntect = false;
-				isCanSendMessage = false;
-				/*
-				j( '#btn_connect' ).linkbutton( 'enable' );	
-				isConntect = false;
-				isCanSendMessage = false;
-				alert( '已斷線，請重新連線' );
-				*/
-			}
+			onerror: onSocketError,
+			onclose: onSocketError
 		});
 	}
 	
@@ -85,14 +76,6 @@ class SocketController extends Mediator
 			untyped __js__( 'api.sendMessageToSomeone' )( op, type, msg );
 			return true;
 		});
-	}
-	
-	function compress( str:String ):String {
-		return untyped __js__( 'LZString.compress' )( str );
-	}
-	
-	function decompress( str:String ):String {
-		return untyped __js__( 'LZString.decompress' )( str );
 	}
 	
 	function handleResponse( cb ) {
