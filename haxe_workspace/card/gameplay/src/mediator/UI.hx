@@ -39,6 +39,18 @@ class UI extends Mediator
 				Main.selectOps( nv );
 			}
 		});
+		
+		Main.j( '#btn_connect' ).linkbutton();
+		Main.j( '#txt_id' ).textbox( {
+			#if debug
+			editable:true,
+			#else
+			editable:false,
+			#end
+			onChange:function( nv, od ) {
+				SocketController.playerId = nv;
+			}
+		});
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -90,7 +102,6 @@ class UI extends Mediator
 	}
 	
 	function showOnlineOffline( show:Bool ) {
-		trace( show );
 		if ( show ) {
 			mc_light.css( 'background-color', 'green' );
 		}else {
@@ -147,9 +158,7 @@ class UI extends Mediator
 	}
 	
 	function showCard( card ) {
-		trace( card );
 		if ( card == null ) return;
-		//if ( card.showTo == Main.playerId ) {
 		if ( !card.back || ( card.owner == SocketController.playerId && card.viewer == SocketController.playerId )) {
 			var game = card.extra[2];
 			var cardId = card.extra[0];

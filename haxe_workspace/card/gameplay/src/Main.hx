@@ -65,19 +65,6 @@ class Main
 		
 		Browser.window.setField( 'onHtmlClick', onHtmlClick );
 		
-		
-		j( '#btn_connect' ).linkbutton();
-		j( '#txt_id' ).textbox( {
-			#if debug
-			editable:true,
-			#else
-			editable:false,
-			#end
-			onChange:function( nv, od ) {
-				SocketController.playerId = nv;
-			}
-		});
-		
 		if ( CallJs.getCookie( 'otherPlayerId' ) != null ) {
 			ary_ops = Json.parse( CallJs.getCookie( 'otherPlayerId' ));
 			Facade.getInstance().sendNotification( on_receiveOps, { ary_ops:ary_ops } );

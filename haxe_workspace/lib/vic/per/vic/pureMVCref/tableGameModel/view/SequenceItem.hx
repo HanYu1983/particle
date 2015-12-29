@@ -25,8 +25,6 @@ class SequenceItem extends BasicItem
 			mc_seqs.children().eq( index ).show();
 		}
 		
-		trace( value.sequence,viewComponent.attr( 'action' )  );
-		
 		if ( viewComponent.attr( 'action' ) == null || viewComponent.attr( 'action' ) != value.sequence ) {
 			for ( i in 0...30 ) {
 				Timer.delay( function() {

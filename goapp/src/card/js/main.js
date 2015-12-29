@@ -126,10 +126,6 @@ var Main = function() {
 		Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
-	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
-		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv;
-	}});
 	if(CallJs.getCookie("otherPlayerId") != null) {
 		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
@@ -511,11 +507,6 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -596,25 +587,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -815,6 +787,10 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.combo_ops.combobox({ onChange : function(nv,ov) {
 		Main.selectOps(nv);
 	}});
+	Main.j("#btn_connect").linkbutton();
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
+		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv1;
+	}});
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -866,7 +842,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		}
 	}
 	,showOnlineOffline: function(show) {
-		haxe_Log.trace(show,{ fileName : "UI.hx", lineNumber : 93, className : "mediator.UI", methodName : "showOnlineOffline"});
 		if(show) this.mc_light.css("background-color","green"); else this.mc_light.css("background-color","red");
 	}
 	,disabledOpponent: function() {
@@ -914,7 +889,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		this.getViewComponent().layout("collapse","north");
 	}
 	,showCard: function(card) {
-		haxe_Log.trace(card,{ fileName : "UI.hx", lineNumber : 150, className : "mediator.UI", methodName : "showCard"});
 		if(card == null) return;
 		if(!card.back || card.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId && card.viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) {
 			var game = card.extra[2];
@@ -2132,7 +2106,6 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype = $extend(org_puremvc
 	,__class__: per_vic_pureMVCref_tableGameModel_view_BasicItem
 });
 var per_vic_pureMVCref_tableGameModel_view_CardItem = function(mediatorName,viewComponent) {
-	haxe_Log.trace(mediatorName,{ fileName : "CardItem.hx", lineNumber : 12, className : "per.vic.pureMVCref.tableGameModel.view.CardItem", methodName : "new", customParams : [viewComponent]});
 	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
 };
 per_vic_pureMVCref_tableGameModel_view_CardItem.__name__ = true;
@@ -2161,7 +2134,6 @@ per_vic_pureMVCref_tableGameModel_view_SequenceItem.prototype = $extend(per_vic_
 			mc_seqs.find("img").hide();
 			mc_seqs.children().eq(index).show();
 		};
-		haxe_Log.trace(value.sequence,{ fileName : "SequenceItem.hx", lineNumber : 28, className : "per.vic.pureMVCref.tableGameModel.view.SequenceItem", methodName : "action", customParams : [this.viewComponent.attr("action")]});
 		if(this.viewComponent.attr("action") == null || this.viewComponent.attr("action") != value.sequence) {
 			var _g = 0;
 			while(_g < 30) {
