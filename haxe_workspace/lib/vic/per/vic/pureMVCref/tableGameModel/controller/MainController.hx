@@ -50,7 +50,6 @@ class MainController extends Mediator
 	override public function listNotificationInterests():Array<String> 
 	{
 		return [ 	create_item, 
-					on_select_cards, 
 					on_receiveMessage,
 					BasicItem.on_item_click,
 					BasicItem.on_item_lock
@@ -111,23 +110,9 @@ class MainController extends Mediator
 			}
 			return curr;
 		}, [] );
-		/*
-		return ary_receive.map( function( receive:Dynamic ) {
-			var model:Dynamic = getItemFromPoolById( receive.id );
-			model.pos = receive.pos.slice();
-			model.deg = receive.deg;
-			model.owner = receive.owner;
-			model.viewer = receive.viewer;
-			model.back = receive.back;
-			model.lock = receive.lock;
-			model.action = receive.action;
-			return model;
-		});
-		*/
 	}
 	
 	function updateView( ary_item:Array<Dynamic> ) {
-		
 		function updateRotate( item:IItem, dom:Dynamic, itemModel:Dynamic ) {
 			if ( dom.attr( 'deg' ) == null ) {
 				item.rotate( 0, itemModel.deg );
@@ -179,7 +164,6 @@ class MainController extends Mediator
 			updateLock( item, itemModel );
 			updateAction( item, itemModel );
 			
-			dom.appendTo( dom.parent() );
 			return true;
 		});
 	}
