@@ -16,6 +16,8 @@ handlers:
   static_dir: common
 - url: /stock
   static_dir: stock
+- url: /card_new
+  static_dir: card_new
 - url: /card
   static_dir: card
 - url: /.*
