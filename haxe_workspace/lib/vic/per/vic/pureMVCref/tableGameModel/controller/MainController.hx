@@ -281,7 +281,6 @@ class MainController extends Mediator
 					updateView( ary_select );
 				}
 				isList = !isList;
-				
 			case KeyboardEvent.DOM_VK_V:
 				setModelViewer();
 				sendNotification( on_select_cards, { ary_select:ary_select } );
@@ -331,7 +330,10 @@ class MainController extends Mediator
 			
 		indexSorting();
 		sendNotification( on_select_cards, { ary_select:ary_select } );
-		sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true} } );
+		
+		if ( ary_select.length == 0 ) {
+			sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true} } );
+		}
 	}
 	
 	function indexSorting() {

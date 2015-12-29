@@ -1710,7 +1710,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.indexSorting();
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
-		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
+		if(this.ary_select.length == 0) this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
 	}
 	,indexSorting: function() {
 		this.ary_select.sort(function(a,b) {
