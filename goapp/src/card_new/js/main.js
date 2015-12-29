@@ -5,16 +5,6 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var Animate = function() { };
-Animate.__name__ = true;
-Animate.addCardAndPrepare = function(cards) {
-	Main.ary_cards = Main.ary_cards.concat(cards);
-	Lambda.foreach(Main.ary_cards,function(card) {
-		Main.createCard(card);
-		return true;
-	});
-	Main.applyValue(cards,false);
-};
 var CallJs = function() { };
 CallJs.__name__ = true;
 var HxOverrides = function() { };
@@ -36,12 +26,6 @@ HxOverrides.indexOf = function(a,obj,i) {
 	}
 	return -1;
 };
-HxOverrides.remove = function(a,obj) {
-	var i = HxOverrides.indexOf(a,obj,0);
-	if(i == -1) return false;
-	a.splice(i,1);
-	return true;
-};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -51,24 +35,6 @@ HxOverrides.iter = function(a) {
 };
 var Lambda = function() { };
 Lambda.__name__ = true;
-Lambda.array = function(it) {
-	var a = [];
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var i = $it0.next();
-		a.push(i);
-	}
-	return a;
-};
-Lambda.map = function(it,f) {
-	var l = new List();
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var x = $it0.next();
-		l.add(f(x));
-	}
-	return l;
-};
 Lambda.foreach = function(it,f) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -77,15 +43,6 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
-Lambda.filter = function(it,f) {
-	var l = new List();
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var x = $it0.next();
-		if(f(x)) l.add(x);
-	}
-	return l;
-};
 Lambda.fold = function(it,f,first) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -93,16 +50,6 @@ Lambda.fold = function(it,f,first) {
 		first = f(x,first);
 	}
 	return first;
-};
-Lambda.indexOf = function(it,v) {
-	var i = 0;
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var v2 = $it0.next();
-		if(v == v2) return i;
-		i++;
-	}
-	return -1;
 };
 Lambda.find = function(it,f) {
 	var $it0 = $iterator(it)();
@@ -141,9 +88,6 @@ List.prototype = {
 		}
 		return false;
 	}
-	,iterator: function() {
-		return new _$List_ListIterator(this.h);
-	}
 	,__class__: List
 };
 var _$List_ListIterator = function(head) {
@@ -164,17 +108,15 @@ _$List_ListIterator.prototype = {
 };
 var Main = function() {
 	var _g = this;
-	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv,od) {
-		Main.playerId = nv;
-	}});
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_Layer("layer",{ body : Main.j(window.document.body), container_cards : Main.j("#container_cards")}));
-	if(CallJs.getCookie("otherPlayerId") != null) {
-		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
-	} else Main.ary_ops = [];
+	window.document.addEventListener("contextmenu",function(e) {
+		e.preventDefault();
+	},false);
+	Main.j(window.document).ready(function() {
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("",Main.j("#container_cards")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_SocketController("SocketController"));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI(null,Main.j(".easyui-layout")));
+	});
 	Main.openLoading("準備中...請稍等");
 	var fbappId = config.fbid[config.fbid.which];
 	CallJs.myapp_facebook_init(fbappId,function() {
@@ -184,11 +126,15 @@ var Main = function() {
 		Main.slide("所有卡牌準備完畢，登入並選擇填入對手的id後，才能開始創建套牌哦!");
 	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
+	if(CallJs.getCookie("otherPlayerId") != null) {
+		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
+	} else Main.ary_ops = [];
 };
 Main.__name__ = true;
 Main.selectOps = function(ops) {
 	try {
-		Main.otherPlayerIds = ops.split(",");
+		per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds = ops.split(",");
 		Main.otherPlayerId = ops;
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
@@ -196,6 +142,7 @@ Main.selectOps = function(ops) {
 			Main.otherPlayerId = ops;
 		} else throw(e);
 	}
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds);
 	Main.j("#btn_connect").linkbutton("enable");
 };
 Main.saveOpponentToCookie = function(otherPlayerId) {
@@ -210,24 +157,7 @@ Main.createSelfDeck = function(deckId) {
 	if(Main.cardSuit == null) return;
 	var deck = Main.cardSuit[deckId];
 	if(deck == null) return;
-	Main.createCards(deck);
-};
-Main.createCards = function(deck,extra) {
-	var _g = deck.backId;
-	var bid = _g;
-	var bid1 = _g;
-	if(_g == null) deck.backId = "0"; else switch(_g) {
-	default:
-		if(bid.length > 2) deck.backId = "0"; else if(Std.parseInt(bid1) <= 49) deck.backId = bid1; else deck.backId = "0";
-	}
-	var newpos = null;
-	if(extra != null && Reflect.field(extra,"pos_mouse") != null) newpos = Reflect.field(extra,"pos_mouse");
-	var toDeck = Lambda.array(Lambda.map(deck.cards,function(cardId) {
-		return { id : Main.getId(), backId : deck.backId, cardId : cardId, owner : Main.playerId, game : Main.currentSelect, relate : "", deg : 0, pos : newpos != null?newpos.slice():[100,100], back : Main.currentSelect != "other", showTo : ""};
-	}));
-	Main.slide("創建卡片完成");
-	Animate.addCardAndPrepare(toDeck);
-	Main.pushCmds({ cmd : "addCards", content : toDeck});
+	Main.createItem(per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck(deck,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
 };
 Main.loadDetail = function(game) {
 	if(Reflect.field(Main.cardSuitsDetailsIsLoading,game) != null) return;
@@ -278,281 +208,11 @@ Main.getCardDetailById = function(game,cid) {
 		return cardDetail.id.indexOf(cid) == 0;
 	});
 };
-Main.pushCmds = function(content) {
-	if(!Main.isCanSendMessage) return;
-	Lambda.foreach(Main.otherPlayerIds,function(toId) {
-		if(toId.length != 0 && toId != Main.playerId) Main.messageSocket(toId,content.cmd,content);
-		return true;
-	});
-};
-Main.onBackCallback = function(ret) {
-	Main.callAction(ret.msg);
-};
-Main.callAction = function(content) {
-	if(content.content.ary_select != null) content.content.ary_select = Lambda.fold(content.content.ary_select,function(remoteCard,curr) {
-		var localCard = Main.getCardsById(remoteCard.id);
-		if(localCard != null) {
-			localCard.owner = remoteCard.owner;
-			localCard.relate = remoteCard.relate;
-			localCard.back = remoteCard.back;
-			localCard.pos = remoteCard.pos;
-			localCard.deg = remoteCard.deg;
-			curr.push(localCard);
-		}
-		return curr;
-	},[]);
-	var _g = content.cmd;
-	switch(_g) {
-	case "onDiceAction":
-		Main.showDiceMessage(content.content.playerId,content.content.dice);
-		break;
-	case "seperateCardSameTogether":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	case "changeIndex":
-		Main.changeIndex(content.content.cardId);
-		break;
-	case "removeCards":
-		Main.removeCards(content.content.ary_select);
-		break;
-	case "addCards":
-		Animate.addCardAndPrepare(content.content);
-		break;
-	case "listCard":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
-		break;
-	case "listSeparate":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	case "flip":
-		Main.applyValue(content.content.ary_select,false);
-		break;
-	case "setOwner":
-		Main.applyValue(content.content.ary_select,false);
-		break;
-	case "setRelate":
-		Main.applyValue(content.content.ary_select,false);
-		break;
-	case "shuffle":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
-		break;
-	case "shuffleSeparate":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	case "rotate":
-		Main.applyValue(content.content.ary_select,false);
-		break;
-	case "listCardReverse":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,true);
-		break;
-	case "listSeparateReverse":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	case "moveCards":
-		Main.moveCards(content.content.ary_select,content.content.pos_mouse,false);
-		break;
-	default:
-		return null;
-	}
-};
-Main.pollAllMessage = function() {
-	CallJs.api_pollMessage({ FBID : Main.playerId},Main.handleResponse(Main.onBackCallback));
-};
-Main.createSingleToken = function(type,pos_mouse) {
-	var oldselect = Main.currentSelect;
-	Main.currentSelect = "other";
-	switch(type) {
-	case "0":
-		Main.createCards({ backId : "0", cards : ["token_0"]},{ pos_mouse : pos_mouse});
-		break;
-	case "1":
-		Main.createCards({ backId : "1", cards : ["token_1"]},{ pos_mouse : pos_mouse});
-		break;
-	case "2":
-		Main.createCards({ backId : "2", cards : ["token_2"]},{ pos_mouse : pos_mouse});
-		break;
-	}
-	Main.currentSelect = oldselect;
-};
-Main.dice = function() {
-	var dice = Math.floor(Math.random() * 100);
-	Main.pushCmds({ cmd : "onDiceAction", content : { playerId : Main.playerId, dice : dice}});
-	Main.showDiceMessage(Main.playerId,dice);
+Main.createItem = function(ary_data) {
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,per_vic_pureMVCref_tableGameModel_Tool.createItemFromData(ary_data));
 };
 Main.showDiceMessage = function(id,dice) {
 	Main.slide("玩家 " + id + " 擲了 " + dice + " 點",4000);
-};
-Main.applyValue = function(ary_select,self) {
-	Lambda.foreach(ary_select,function(card) {
-		var showWho = (function() {
-			if(card.relate == card.owner) {
-				if(card.relate == Main.playerId) return ""; else if((function($this) {
-					var $r;
-					var x = card.relate;
-					$r = HxOverrides.indexOf(Main.otherPlayerIds,x,0);
-					return $r;
-				}(this)) != -1) return "red";
-			}
-			return "";
-		})();
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ noOwner : card.owner == "", select : card, showWho : showWho, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card), notify : self},"ownerAndRelate_change");
-		return true;
-	});
-};
-Main.seeCard = function(card) {
-	var _g = card.owner;
-	var owner = _g;
-	switch(_g) {
-	case "":
-		return false;
-	default:
-		return owner == card.relate && owner == Main.playerId;
-	}
-};
-Main.setOwner = function(ary_select) {
-	var send = false;
-	Lambda.foreach(ary_select,function(card) {
-		var _g = card.owner;
-		var owner = _g;
-		switch(_g) {
-		case "":
-			card.owner = Main.playerId;
-			send = true;
-			break;
-		default:
-			if(owner == Main.playerId) {
-				card.owner = "";
-				card.relate = "";
-				send = true;
-			}
-		}
-		return true;
-	});
-	Main.applyValue(ary_select,true);
-	return send;
-};
-Main.setRelate = function(ary_select) {
-	var send = false;
-	Lambda.foreach(ary_select,function(card) {
-		if(card.owner != Main.playerId) return true;
-		var _g = card.relate;
-		var relate = _g;
-		switch(_g) {
-		case "":
-			card.relate = Main.playerId;
-			send = true;
-			break;
-		default:
-			if(relate == Main.playerId) {
-				card.relate = "";
-				send = true;
-			}
-		}
-		return true;
-	});
-	Main.applyValue(ary_select,true);
-	return send;
-};
-Main.rotate = function(ary_select,deg) {
-	if(deg == null) deg = 90;
-	Lambda.foreach(ary_select,function(card) {
-		card.deg += deg;
-		return true;
-	});
-	Main.applyValue(ary_select,true);
-};
-Main.createCard = function(model) {
-	Main.loadDetail(model.game);
-	model.url = CallJs.api_getCardImageWithPackageName(model.game,model.cardId);
-	model.backurl = "../common/images/card/cardback_" + Std.string(model.backId) + ".png";
-	var cardMediator = new mediator_Card(model.id,Main.tmpl_card.tmpl(model));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(cardMediator);
-	cardMediator.getViewComponent().animate({ left : model.pos[0], top : model.pos[1]});
-};
-Main.flip = function(ary_select) {
-	var send = false;
-	Lambda.foreach(ary_select,function(card) {
-		if(card.owner == Main.playerId || card.owner == "") {
-			send = true;
-			card.back = !card.back;
-		}
-		return true;
-	});
-	Main.applyValue(ary_select,true);
-	return send;
-};
-Main.moveCards = function(ary_select,pos_mouse,zsort) {
-	Lambda.foreach(ary_select,function(select) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, zsort : zsort, notify : false},"moveCards");
-		return true;
-	});
-};
-Main.getCardsById = function(id) {
-	return Lambda.find(Main.ary_cards,function(card) {
-		return id == card.id;
-	});
-};
-Main.changeIndex = function(cardId) {
-	try {
-		var cm = org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId);
-		if(cm == null) return;
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_Card.card_enter,org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId).getViewComponent());
-	} catch( e ) {
-		if (e instanceof js__$Boot_HaxeError) e = e.val;
-		if( js_Boot.__instanceof(e,String) ) {
-			console.log(e);
-		} else throw(e);
-	}
-};
-Main.removeCards = function(ary_select) {
-	Lambda.foreach(ary_select,function(card) {
-		HxOverrides.remove(Main.ary_cards,card);
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_card_remove,{ select : card});
-		return true;
-	});
-};
-Main.createSocket = function(id) {
-	CallJs.api_createChannel(id,{ onopen : function() {
-		Main.isCanSendMessage = true;
-		Main.slide("連線成功");
-		Main.j("#btn_connect").linkbutton("disable");
-		Main.j("#btn_login").linkbutton("disable");
-		Main.j("#btn_notLogin").linkbutton("disable");
-		var _g1 = 0;
-		var _g = Main.otherPlayerIds.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var fn = (function(_i) {
-				return function(conn) {
-					Main.otherPlayerIdsForCheck[_i] = conn;
-					Main.isConntect = Lambda.fold(Main.otherPlayerIdsForCheck,function(curr,first) {
-						return first && curr;
-					},true);
-					if(Main.isConntect) org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_searchComplete);
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_heartbeat_event,{ conn : Main.isConntect});
-				};
-			})(i);
-			CallJs.api_startHeartbeat(Main.playerId,Main.otherPlayerIds[i],fn);
-		}
-	}, onmessage : function(json) {
-		Main.onBackCallback(json);
-	}, onerror : function() {
-		Main.j("#btn_connect").linkbutton("enable");
-		Main.isConntect = false;
-		Main.isCanSendMessage = false;
-		Main.alert("已斷線，請重新連線");
-	}, onclose : function() {
-		Main.j("#btn_connect").linkbutton("enable");
-		Main.isConntect = false;
-		Main.isCanSendMessage = false;
-		Main.alert("已斷線，請重新連線");
-	}});
-};
-Main.messageSocket = function(toId,type,msg) {
-	var _channel = channel;
-	var msg1 = { type : type, msg : msg};
-	_channel.sendChannelMessage(toId,JSON.stringify(msg1),Main.handleResponse(function(ret) {
-	}));
 };
 Main.getCardImageUrlWithPackage = function(select,key) {
 	return CallJs.api_getCardImageWithPackageName(select,key);
@@ -572,7 +232,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -586,12 +246,12 @@ Main.prototype = {
 		var _g = this;
 		switch(type) {
 		case "onBtnStartServer":
-			if(Main.playerId == "smart" || Main.otherPlayerId == "") {
+			if(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId == "smart" || Main.otherPlayerId == "") {
 				Main.slide("請先登入並且輸入對手的id");
 				return;
 			}
 			Main.slide("正在等待對手...");
-			Main.createSocket(Main.playerId);
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId);
 			Main.saveOpponentToCookie(Main.otherPlayerId);
 			break;
 		case "onBtnNotLoginClick":
@@ -667,32 +327,50 @@ Main.prototype = {
 			str = "[" + str + "]";
 			try {
 				var createobj = JSON.parse(str);
-				Main.createCards({ backId : "0", cards : createobj});
+				Main.createItem(per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck({ backId : "0", cards : createobj, game : Main.currentSelect},per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
 			} catch( e ) {
 				if (e instanceof js__$Boot_HaxeError) e = e.val;
 				Main.alert("輸入格式錯誤哦，請檢查!");
 			}
 			break;
-		case "onDiceClick":
-			Main.dice();
+		case "onConcreteDiceClick":
+			var ary_data = ((function($this) {
+				var $r;
+				var _g1 = [];
+				{
+					var _g11 = 0;
+					while(_g11 < 6) {
+						var i = _g11++;
+						_g1.push(i);
+					}
+				}
+				$r = _g1;
+				return $r;
+			}(this))).map(function(idstr) {
+				return { extra : ["../common/images/createTable/other/dice_01.png","../common/images/createTable/other/dice_02.png","../common/images/createTable/other/dice_03.png","../common/images/createTable/other/dice_04.png","../common/images/createTable/other/dice_05.png","../common/images/createTable/other/dice_06.png"], pos : [100,100], type : "sequence", width : 50, height : 50};
+			});
+			Main.createItem(ary_data);
 			break;
 		case "onTokenClick":
-			var oldselect = Main.currentSelect;
-			Main.currentSelect = "other";
-			Main.createCards({ backId : "0", cards : ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2"]});
-			Main.currentSelect = oldselect;
+			var ary_token = ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2"];
+			var data = ary_token.map(function(idstr1) {
+				return { extra : [idstr1,"other"], pos : [100,100], type : "token", width : 50, height : 50, owner : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId};
+			});
+			Main.createItem(data);
 			break;
 		case "onShaClick":
-			var oldselect1 = Main.currentSelect;
-			Main.currentSelect = "sanguosha";
-			Main.createCards({ backId : "49", cards : ["b1_1_fight","b1_1_sanda","b1_2_cold","b1_2_double","b1_2_gua","b1_3_river","b1_3_steal","b1_4_river","b1_4_steal","b1_5_dragon","b1_5_shadow","b1_6_bluejian","b1_6_happy","b1_7_nan","b1_7_sa","b1_8_sa","b1_8_sa","b1_9_sa","b1_9_sa","b1_10_sa","b1_10_sa","b1_11_steal","b1_11_strong","b1_12_eight","b1_12_river","b1_13_horse","b1_13_nan","b2_1_fight","b2_1_nu","b2_2_gua","b2_2_sa","b2_2_shield","b2_3_river","b2_3_sa","b2_4_river","b2_4_sa","b2_5_horse","b2_5_sa","b2_6_happy","b2_6_sa","b2_7_nan","b2_7_sa","b2_8_sa","b2_8_sa","b2_9_sa","b2_9_sa","b2_10_sa","b2_10_sa","b2_11_sa","b2_11_sa","b2_12_dao","b2_12_strong","b2_13_dao","b2_13_strong","r1_1_spray","r1_1_together","r1_2_run","r1_2_run","r1_3_tao","r1_3_wugu","r1_4_tao","r1_4_wugu","r1_5_gilin","r1_5_redhourse","r1_6_happy","r1_6_tao","r1_7_born","r1_7_tao","r1_8_born","r1_8_tao","r1_9_born","r1_9_tao","r1_10_sa","r1_10_sa","r1_11_born","r1_11_sa","r1_12_river","r1_12_sanda","r1_12_tao","r1_13_horse","r1_13_run","r2_1_fight","r2_1_nu","r2_2_run","r2_2_run","r2_3_run","r2_3_steal","r2_4_run","r2_4_steal","r2_5_axe","r2_5_run","r2_6_run","r2_6_sa","r2_7_run","r2_7_sa","r2_8_run","r2_8_sa","r2_9_run","r2_9_sa","r2_10_run","r2_10_sa","r2_11_run","r2_11_run","r2_12_draw","r2_12_strong","r2_12_tao","r2_13_hourse","r2_13_sa","role_001","role_002","role_003","role_004","role_005","role_006","role_007","role_008","role_009","role_010","role_011","role_012","role_013","role_014","role_015","role_016","role_017","role_018","role_019","role_020","role_021","role_022","role_023","role_024","role_025","id_0","id_0","id_0","id_0","id_1","id_1","id_3","id_3","id_3","id_2"]});
-			Main.currentSelect = oldselect1;
+			var ary_sangosha = ["b1_1_fight","b1_1_sanda","b1_2_cold","b1_2_double","b1_2_gua","b1_3_river","b1_3_steal","b1_4_river","b1_4_steal","b1_5_dragon","b1_5_shadow","b1_6_bluejian","b1_6_happy","b1_7_nan","b1_7_sa","b1_8_sa","b1_8_sa","b1_9_sa","b1_9_sa","b1_10_sa","b1_10_sa","b1_11_steal","b1_11_strong","b1_12_eight","b1_12_river","b1_13_horse","b1_13_nan","b2_1_fight","b2_1_nu","b2_2_gua","b2_2_sa","b2_2_shield","b2_3_river","b2_3_sa","b2_4_river","b2_4_sa","b2_5_horse","b2_5_sa","b2_6_happy","b2_6_sa","b2_7_nan","b2_7_sa","b2_8_sa","b2_8_sa","b2_9_sa","b2_9_sa","b2_10_sa","b2_10_sa","b2_11_sa","b2_11_sa","b2_12_dao","b2_12_strong","b2_13_dao","b2_13_strong","r1_1_spray","r1_1_together","r1_2_run","r1_2_run","r1_3_tao","r1_3_wugu","r1_4_tao","r1_4_wugu","r1_5_gilin","r1_5_redhourse","r1_6_happy","r1_6_tao","r1_7_born","r1_7_tao","r1_8_born","r1_8_tao","r1_9_born","r1_9_tao","r1_10_sa","r1_10_sa","r1_11_born","r1_11_sa","r1_12_river","r1_12_sanda","r1_12_tao","r1_13_horse","r1_13_run","r2_1_fight","r2_1_nu","r2_2_run","r2_2_run","r2_3_run","r2_3_steal","r2_4_run","r2_4_steal","r2_5_axe","r2_5_run","r2_6_run","r2_6_sa","r2_7_run","r2_7_sa","r2_8_run","r2_8_sa","r2_9_run","r2_9_sa","r2_10_run","r2_10_sa","r2_11_run","r2_11_run","r2_12_draw","r2_12_strong","r2_12_tao","r2_13_hourse","r2_13_sa","role_001","role_002","role_003","role_004","role_005","role_006","role_007","role_008","role_009","role_010","role_011","role_012","role_013","role_014","role_015","role_016","role_017","role_018","role_019","role_020","role_021","role_022","role_023","role_024","role_025","id_0","id_0","id_0","id_0","id_1","id_1","id_3","id_3","id_3","id_2"];
+			var data1 = ary_sangosha.map(function(idstr2) {
+				return { extra : [idstr2,"49","sanguosha"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId};
+			});
+			Main.createItem(data1);
 			break;
 		case "onPokerClick":
-			var oldselect2 = Main.currentSelect;
-			Main.currentSelect = "poker";
-			Main.createCards({ backId : "34", cards : ["10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62"]});
-			Main.currentSelect = oldselect2;
+			var ary_poker = ["10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","62"];
+			var data2 = ary_poker.map(function(idstr3) {
+				return { extra : [idstr3,"34","poker"], pos : [100,100], type : "card", width : 100, height : 150, back : false, lock : false, owner : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId};
+			});
+			Main.createItem(data2);
 			break;
 		}
 		CallJs.googleTracking_click(type);
@@ -748,7 +426,7 @@ Main.prototype = {
 		}
 	}
 	,checkCanCreate: function() {
-		return Main.playerId != "" && Main.otherPlayerId != "";
+		return per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId != "" && Main.otherPlayerId != "";
 	}
 	,chooseCardSuit: function(suitName) {
 		Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
@@ -1030,6 +708,9 @@ js_Boot.__instanceof = function(o,cl) {
 		return o.__enum__ == cl;
 	}
 };
+js_Boot.__cast = function(o,t) {
+	if(js_Boot.__instanceof(o,t)) return o; else throw new js__$Boot_HaxeError("Cannot cast " + Std.string(o) + " to " + Std.string(t));
+};
 js_Boot.__nativeClassName = function(o) {
 	var name = js_Boot.__toStr.call(o).slice(8,-1);
 	if(name == "Object" || name == "Function" || name == "Math" || name == "JSON") return null;
@@ -1040,6 +721,11 @@ js_Boot.__isNativeObj = function(o) {
 };
 js_Boot.__resolveNativeClass = function(name) {
 	return $global[name];
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
 };
 var org_puremvc_haxe_interfaces_INotifier = function() { };
 org_puremvc_haxe_interfaces_INotifier.__name__ = true;
@@ -1091,202 +777,6 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 	}
 	,__class__: org_puremvc_haxe_patterns_mediator_Mediator
 });
-var mediator_Card = function(mediatorName,viewComponent) {
-	this._see = false;
-	this._deg = 0;
-	this._back = true;
-	this._focus = false;
-	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
-};
-mediator_Card.__name__ = true;
-mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
-mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
-	onRegister: function() {
-		this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-		this.getViewComponent().click($bind(this,this.onCardClick));
-		this.getViewComponent().mousedown($bind(this,this.onCardMouseDown));
-	}
-	,onRemove: function() {
-		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRemove.call(this);
-		this.getViewComponent().off("click");
-	}
-	,listNotificationInterests: function() {
-		return [model_Model.on_state_change,model_Model.on_select_cards,model_Model.on_card_remove];
-	}
-	,handleNotification: function(notification) {
-		var _g1 = this;
-		var _g = notification.getName();
-		switch(_g) {
-		case "on_card_remove":
-			if(!this.checkSelf(notification.getBody().select.id)) return;
-			this.sendNotification(mediator_Card.card_remove,{ dom : this.getViewComponent()});
-			break;
-		case "on_model_select_cards":
-			this.focusCard(false);
-			Lambda.foreach(Lambda.array(notification.getBody().ary_select),function(dom) {
-				if(Main.j(dom).attr("id") == _g1.getMediatorName()) _g1.focusCard();
-				return true;
-			});
-			break;
-		case "on_state_change":
-			var _g11 = notification.getType();
-			switch(_g11) {
-			case "ownerAndRelate_change":
-				if(!this.checkSelf(notification.getBody().select.id)) return;
-				this._card = notification.getBody().select;
-				this._back = notification.getBody().select.back;
-				this.rotateAnimation(notification.getBody().select.deg);
-				this.showOnwer(notification.getBody().showOwner);
-				this.showNoOwner(notification.getBody().noOwner);
-				this.showRelate(notification.getBody().showRelate);
-				this.showWho(notification.getBody().showWho);
-				this.seeCard(notification.getBody().seeCard);
-				this.setView();
-				break;
-			case "moveCards":
-				if(!this.checkSelf(notification.getBody().select.id)) return;
-				this.moveCard(notification.getBody().select.pos[0],notification.getBody().select.pos[1]);
-				if(notification.getBody().zsort) this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-				break;
-			case "list_shuffle":
-				if(!this.checkSelf(notification.getBody().select.id)) return;
-				this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-				this.listStack(notification.getBody().mouse,notification.getBody().pos,2,2,notification.getBody().count);
-				break;
-			}
-			break;
-		}
-	}
-	,showWho: function(color) {
-		if(color != "") {
-			this.getViewComponent().find("#mc_see").css("background-color",color);
-			this.getViewComponent().find("#mc_see").show();
-		} else this.getViewComponent().find("#mc_see").hide();
-	}
-	,showOnwer: function(show) {
-		if(show) this.getViewComponent().find("#img_owner").show(); else this.getViewComponent().find("#img_owner").hide();
-	}
-	,showNoOwner: function(show) {
-		if(show) this.getViewComponent().css("opacity",.5); else this.getViewComponent().css("opacity",1);
-	}
-	,showRelate: function(show) {
-		if(show) this.getViewComponent().find("#img_relate").show(); else this.getViewComponent().find("#img_relate").hide();
-	}
-	,listStack: function(initpos,pos,x,y,count) {
-		this.moveCard(initpos[0] + pos * x,initpos[1] - pos * y);
-	}
-	,listStackSeprate: function(initpos,pos,x,y,count) {
-		this.moveCard(initpos[0] + pos % 10 * x,initpos[1] + Math.floor(pos / 10) * y);
-	}
-	,checkSelf: function(id) {
-		return this.getMediatorName() == id;
-	}
-	,moveCard: function(x,y) {
-		this.getViewComponent().animate({ left : x, top : y});
-	}
-	,focusCard: function(focus) {
-		if(focus != null) this._focus = focus; else this._focus = !this._focus;
-		if(this._focus) this.getViewComponent().addClass("card_focus"); else this.getViewComponent().removeClass("card_focus");
-	}
-	,onCardClick: function(e) {
-		this.focusCard();
-		this.sendNotification(mediator_Card.card_click,{ id : this.getMediatorName(), focus : this._focus});
-		Main.changeIndex(this.getMediatorName());
-		Main.pushCmds({ cmd : "changeIndex", content : { cardId : this.getMediatorName()}});
-	}
-	,onCardMouseDown: function(e) {
-		this.sendNotification(mediator_Card.card_down,{ id : this.getMediatorName()});
-	}
-	,rotateAnimation: function(d) {
-		var _g = this;
-		Main.j({ deg : this._deg}).animate({ deg : d},{ duration : 300, step : function(now) {
-			_g.rotate(now);
-		}});
-		this._deg = d;
-	}
-	,rotate: function(d) {
-		this.getViewComponent().css({ '-moz-transform' : "rotate(" + d + "deg)", '-webkit-transform' : "rotate(" + d + "deg)", '-o-transform' : "rotate(" + d + "deg)", '-ms-transform' : "rotate(" + d + "deg)", 'transform' : "rotate(" + d + "deg)"});
-	}
-	,flip: function(value) {
-		this._back = value;
-		this.setView();
-	}
-	,setView: function() {
-		if(this._see) {
-			this.getViewComponent().find(".card_back").hide();
-			this._card.showTo = Main.playerId;
-		} else if(this._back) {
-			this.getViewComponent().find(".card_back").show();
-			this._card.showTo = "";
-		} else {
-			this.getViewComponent().find(".card_back").hide();
-			this._card.showTo = Main.playerId;
-		}
-		if(this._back) this.getViewComponent().find("#img_back").show(); else {
-			this.getViewComponent().find("#img_relate").hide();
-			this.getViewComponent().find("#img_back").hide();
-		}
-		if(!this._back) this.showWho("");
-	}
-	,seeCard: function(see) {
-		this._see = see;
-		this.setView();
-	}
-	,setState: function(state) {
-		this.getViewComponent().find("#txt_state").html(state);
-	}
-	,__class__: mediator_Card
-});
-var mediator_Layer = function(mediatorName,viewComponent) {
-	this._currentMoveCardId = "";
-	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
-	this._container_cards = viewComponent.container_cards;
-	this._body = viewComponent.body;
-};
-mediator_Layer.__name__ = true;
-mediator_Layer.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
-mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
-	onRegister: function() {
-		var _g = this;
-		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
-		this._body.keyup($bind(this,this.onBodyKeyUp));
-		this._body.mousemove($bind(this,this.onBodyMouseMove));
-		window.document.addEventListener("contextmenu",function(e) {
-			e.preventDefault();
-		},false);
-		this._body.mousedown($bind(this,this.onBodyMouseDown));
-		CallJs.leo_utils_initRectSelect(function(ary) {
-			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
-		});
-	}
-	,listNotificationInterests: function() {
-		return [model_Model.on_card_enter,mediator_Card.card_down,mediator_Card.card_remove];
-	}
-	,handleNotification: function(notification) {
-		var _g = notification.getName();
-		switch(_g) {
-		case "on_card_enter":
-			this._container_cards.append(notification.getBody());
-			break;
-		case "card_remove":
-			notification.getBody().dom.remove();
-			break;
-		case "card_down":
-			this._currentMoveCardId = notification.getBody().id;
-			break;
-		}
-	}
-	,onBodyMouseMove: function(e) {
-		this.sendNotification(mediator_Layer.on_body_mousemove,{ x : e.pageX, y : e.pageY});
-	}
-	,onBodyKeyUp: function(e) {
-		this.sendNotification(mediator_Layer.on_press,null,e.which);
-	}
-	,onBodyMouseDown: function(e) {
-		this.sendNotification(mediator_Layer.on_press,null,e.which);
-	}
-	,__class__: mediator_Layer
-});
 var mediator_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
@@ -1297,17 +787,30 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.combo_ops.combobox({ onChange : function(nv,ov) {
 		Main.selectOps(nv);
 	}});
+	Main.j("#btn_connect").linkbutton();
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
+		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv1;
+	}});
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_Model.on_select_cards,model_Model.on_state_change,Main.on_getSuit_success,Main.on_receiveOps,Main.on_searchComplete,Main.on_heartbeat_event,Main.on_createDeck_click];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_socket_success":
+			this.onSocketSuccess();
+			break;
+		case "on_socket_error":
+			this.onSocketError();
+			break;
+		case "on_dice":
+			Main.showDiceMessage(notification.getBody().playerId,notification.getBody().dice);
+			break;
 		case "on_createDeck_click":
 			this.closeNorthPanel();
 			break;
@@ -1322,7 +825,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.setComboOps(ary_ops);
 			this.combo_ops.combobox("select",ary_ops[ary_ops.length - 1]);
 			break;
-		case "on_model_select_cards":
+		case "on_select_cards":
 			this.showCards(notification.getBody().ary_select);
 			break;
 		case "on_state_change":
@@ -1387,8 +890,10 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 	}
 	,showCard: function(card) {
 		if(card == null) return;
-		if(card.showTo == Main.playerId) {
-			var url = Main.getCardImageUrlWithPackage(card.game,card.cardId);
+		if(!card.back || card.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId && card.viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) {
+			var game = card.extra[2];
+			var cardId = card.extra[0];
+			var url = Main.getCardImageUrlWithPackage(game,cardId);
 			var div = Main.j("<div></div>");
 			div.css("position","relative");
 			var img = Main.j("<img></img>");
@@ -1409,8 +914,8 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				img2.css("left","0");
 			});
 			div.append(img2);
-			if(card.game != "other" && card.game != "poker") {
-				var detail = Main.getCardDetailById(card.game,card.cardId);
+			if(game != "other" && game != "poker") {
+				var detail = Main.getCardDetailById(game,cardId);
 				var detaildiv = Main.j("<div></div>");
 				detaildiv.css("position","relative");
 				detaildiv.css("width","95%");
@@ -1420,8 +925,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				var str = "目前沒有資料或者資料還沒準備好哦，請稍後再點!";
 				if(detail != null) {
 					str = "";
-					var _g = card.game;
-					switch(_g) {
+					switch(game) {
 					case "ws":
 						str += detail.id;
 						str += "<br/>";
@@ -1502,21 +1006,27 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.mc_detailContainer.append(div);
 		}
 	}
+	,onSocketError: function() {
+		Main.j("#btn_connect").linkbutton("enable");
+		Main.alert("已斷線，請重新連線");
+	}
+	,onSocketSuccess: function() {
+		Main.slide("連線成功");
+		Main.j("#btn_connect").linkbutton("disable");
+		Main.j("#btn_login").linkbutton("disable");
+		Main.j("#btn_notLogin").linkbutton("disable");
+	}
 	,__class__: mediator_UI
 });
 var model_Model = function(mediatorName,viewComponent) {
-	this.pos_mouse = [0,0];
-	this.isBack = true;
-	this.isSeperate = false;
 	this.currentDeckId = 0;
-	this.ary_select = [];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
 model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_Layer.on_layout_mouse_up,mediator_Layer.on_press,mediator_Layer.on_body_mousemove,mediator_Layer.on_select_cards,mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
+		return [mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -1527,248 +1037,7 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		case "on_combo_deck_change":
 			this.currentDeckId = notification.getBody().deckId;
 			break;
-		case "on_select_cards":
-			var ori = notification.getBody().ary_select;
-			ori.sort(function(a,b) {
-				var ax = Std.parseInt(StringTools.replace(Main.j(a).css("left"),"px",""));
-				var ay = Std.parseInt(StringTools.replace(Main.j(a).css("top"),"px",""));
-				var bx = Std.parseInt(StringTools.replace(Main.j(b).css("left"),"px",""));
-				var by = Std.parseInt(StringTools.replace(Main.j(b).css("top"),"px",""));
-				if(bx < ax) return 1;
-				return -1;
-			});
-			ori.sort(function(a1,b1) {
-				var ax1 = Std.parseInt(StringTools.replace(Main.j(a1).css("left"),"px",""));
-				var ay1 = Std.parseInt(StringTools.replace(Main.j(a1).css("top"),"px",""));
-				var bx1 = Std.parseInt(StringTools.replace(Main.j(b1).css("left"),"px",""));
-				var by1 = Std.parseInt(StringTools.replace(Main.j(b1).css("top"),"px",""));
-				if(by1 < ay1) return 1;
-				return -1;
-			});
-			this.ary_select = Lambda.fold(ori,function(dom,curr) {
-				curr.push(Main.getCardsById(Main.j(dom).attr("id")));
-				return curr;
-			},[]);
-			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
-			break;
-		case "on_press":
-			var _g1 = notification.getType();
-			switch(_g1) {
-			case 68:
-				break;
-			case 84:
-				break;
-			case 73:
-				break;
-			case 79:
-				break;
-			case 80:
-				break;
-			default:
-				if(this.ary_select.length == 0) return;
-			}
-			var _g11 = Std.parseInt(notification.getType());
-			if(_g11 != null) switch(_g11) {
-			case 80:
-				Main.createSingleToken("2",this.pos_mouse);
-				break;
-			case 79:
-				Main.createSingleToken("1",this.pos_mouse);
-				break;
-			case 73:
-				Main.createSingleToken("0",this.pos_mouse);
-				break;
-			case 84:
-				Main.dice();
-				break;
-			case 71:
-				break;
-			case 72:
-				Main.removeCards(this.ary_select);
-				Main.pushCmds({ cmd : "removeCards", content : { ary_select : this.ary_select.slice(0)}});
-				this.ary_select = [];
-				break;
-			case 67:
-				if(Main.setOwner(this.ary_select)) Main.pushCmds({ cmd : "setOwner", content : { ary_select : this.ary_select.slice(0)}});
-				break;
-			case 86:
-				if(Main.setRelate(this.ary_select)) Main.pushCmds({ cmd : "setRelate", content : { ary_select : this.ary_select.slice(0)}});
-				break;
-			case 90:
-				Main.rotate(this.ary_select,-90);
-				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select.slice(0), deg : -90}});
-				break;
-			case 88:
-				Main.rotate(this.ary_select,90);
-				Main.pushCmds({ cmd : "rotate", content : { ary_select : this.ary_select.slice(0), deg : 90}});
-				break;
-			case 81:
-				this.doListShuffle();
-				break;
-			case 87:
-				this.doListReverse();
-				break;
-			case 69:
-				this.doSeperateSameTogether();
-				break;
-			case 82:
-				break;
-			case 65:case 3:
-				this.doMoveCards();
-				break;
-			case 83:
-				if(this.isSeperate) this.doList(); else this.doListSeperate();
-				this.isSeperate = !this.isSeperate;
-				break;
-			case 68:
-				this.ary_select = Lambda.array(Lambda.filter(Main.ary_cards,function(card) {
-					return card.owner == Main.playerId;
-				}));
-				this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select});
-				break;
-			case 70:
-				this.doFlip();
-				break;
-			case 32:
-				break;
-			default:
-			} else {
-			}
-			break;
-		case "on_body_mousemove":
-			this.pos_mouse[0] = notification.getBody().x;
-			this.pos_mouse[1] = notification.getBody().y;
-			break;
-		case "card_enter":
-			this.sendNotification(model_Model.on_card_enter,notification.getBody());
-			break;
-		case "card_click":
-			if(notification.getBody().focus) this.ary_select = [Main.getCardsById(notification.getBody().id)]; else this.ary_select = [];
-			this.sendNotification(model_Model.on_select_cards,{ ary_select : this.ary_select.slice(0)});
-			break;
-		case "on_layout_mouse_up":
-			this.sendNotification(model_Model.on_card_move,notification.getBody());
-			break;
 		}
-	}
-	,listCard: function() {
-		var _g = this;
-		Lambda.foreach(this.ary_select,function(select) {
-			var cardIndex = Lambda.indexOf(_g.ary_select,select);
-			select.pos[0] = _g.pos_mouse[0] + cardIndex * 2;
-			select.pos[1] = _g.pos_mouse[1] + cardIndex * 2;
-			return true;
-		});
-	}
-	,listSeperate: function() {
-		var _g = this;
-		Lambda.foreach(this.ary_select,function(select) {
-			var cardIndex = Lambda.indexOf(_g.ary_select,select);
-			select.pos[0] = _g.pos_mouse[0] + cardIndex % 10 * 55;
-			select.pos[1] = _g.pos_mouse[1] + Math.floor(cardIndex / 10) * 80;
-			return true;
-		});
-	}
-	,doFlip: function() {
-		var _g = this;
-		if(this.ary_select.length > 1) {
-			this.isBack = !this.isBack;
-			Lambda.foreach(this.ary_select,function(card) {
-				if(card.owner == Main.playerId || card.owner == "") card.back = _g.isBack;
-				return true;
-			});
-		} else {
-			var card1 = this.ary_select[0];
-			if(card1.owner == Main.playerId || card1.owner == "") card1.back = !card1.back;
-		}
-		Main.applyValue(this.ary_select,true);
-		Main.pushCmds({ cmd : "flip", content : { ary_select : this.deepCopy(this.ary_select)}});
-	}
-	,doList: function() {
-		this.listCard();
-		Main.moveCards(this.ary_select,this.pos_mouse,true);
-		Main.pushCmds({ cmd : "listCard", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doListSeperate: function() {
-		this.listSeperate();
-		Main.moveCards(this.ary_select,this.pos_mouse,false);
-		Main.pushCmds({ cmd : "listSeparate", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doListReverse: function() {
-		this.ary_select.reverse();
-		this.listCard();
-		Main.moveCards(this.ary_select,this.pos_mouse,true);
-		Main.pushCmds({ cmd : "listCardReverse", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doSeperateSameTogether: function() {
-		var collectobj = { };
-		Lambda.foreach(this.ary_select,function(card) {
-			if(Reflect.field(collectobj,card.cardId) == null) collectobj[card.cardId] = [];
-			Reflect.field(collectobj,card.cardId).push(card);
-			return true;
-		});
-		var newary = [];
-		var _g = 0;
-		var _g1 = Reflect.fields(collectobj);
-		while(_g < _g1.length) {
-			var c = _g1[_g];
-			++_g;
-			newary = newary.concat(Reflect.field(collectobj,c));
-		}
-		this.ary_select = newary;
-		this.listSeperate();
-		Main.moveCards(this.ary_select,this.pos_mouse,true);
-		Main.pushCmds({ cmd : "seperateCardSameTogether", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doSeperateReverse: function() {
-		this.ary_select.reverse();
-		this.listSeperate();
-		Main.moveCards(this.ary_select,this.pos_mouse,false);
-		Main.pushCmds({ cmd : "listSeparateReverse", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doListShuffle: function() {
-		this.ary_select.sort(function(a,b) {
-			if(Math.random() > .5) return 1; else return -1;
-		});
-		this.listCard();
-		Main.moveCards(this.ary_select,this.pos_mouse,true);
-		Main.pushCmds({ cmd : "shuffle", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doSeperateShuffle: function() {
-		this.ary_select.sort(function(a,b) {
-			if(Math.random() > .5) return 1; else return -1;
-		});
-		this.listSeperate();
-		Main.moveCards(this.ary_select,this.pos_mouse,false);
-		Main.pushCmds({ cmd : "shuffleSeparate", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,doMoveCards: function() {
-		var moveTarget = { };
-		var copySelect = this.ary_select.slice(0);
-		copySelect.sort(function(ac,bc) {
-			if(ac.pos[0] < bc.pos[0]) return -1;
-			return 1;
-		});
-		moveTarget.x = copySelect[0].pos[0];
-		copySelect.sort(function(ac1,bc1) {
-			if(ac1.pos[1] < bc1.pos[1]) return -1;
-			return 1;
-		});
-		moveTarget.y = copySelect[0].pos[1];
-		var offset_0 = this.pos_mouse[0] - moveTarget.x;
-		var offset_1 = this.pos_mouse[1] - moveTarget.y;
-		Lambda.foreach(this.ary_select,function(select) {
-			select.pos[0] += offset_0;
-			select.pos[1] += offset_1;
-			return true;
-		});
-		Main.moveCards(this.ary_select,this.pos_mouse,false);
-		Main.pushCmds({ cmd : "moveCards", content : { ary_select : this.deepCopy(this.ary_select), pos_mouse : this.pos_mouse.slice(0)}});
-	}
-	,deepCopy: function(ary_select) {
-		return Lambda.array(Lambda.map(ary_select,function(card) {
-			return { id : card.id, cardId : card.cardId, name : card.name, owner : card.owner, relate : card.relate, deg : card.deg, pos : [card.pos[0],card.pos[1]], back : card.back, showTo : card.showTo};
-		}));
 	}
 	,__class__: model_Model
 });
@@ -2106,6 +1375,790 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 	}
 	,__class__: org_puremvc_haxe_patterns_observer_Observer
 };
+var per_vic_pureMVCref_tableGameModel_Tool = function() { };
+per_vic_pureMVCref_tableGameModel_Tool.__name__ = true;
+per_vic_pureMVCref_tableGameModel_Tool.createItem = function(extra,pos,type,width,height,back,lock,owner,viewer) {
+	if(viewer == null) viewer = "";
+	if(owner == null) owner = "desktop";
+	if(lock == null) lock = false;
+	if(back == null) back = true;
+	if(height == null) height = 100;
+	if(width == null) width = 100;
+	if(type == null) type = "card";
+	return { type : type, width : width, height : height, pos : pos, back : back, deg : 0, lock : lock, owner : owner, viewer : viewer, cardId : extra[0], id : per_vic_pureMVCref_tableGameModel_Tool.createDivId(), extra : extra, action : { sequence : Math.random()}};
+};
+per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck = function(deck,owner) {
+	return deck.cards.map(function(str) {
+		return { extra : [str,deck.backId == null?"0":deck.backId,deck.game], pos : [100,100], type : "card", width : 50, height : 75, back : false, lock : false, owner : owner};
+	});
+};
+per_vic_pureMVCref_tableGameModel_Tool.createItemFromData = function(ary_data) {
+	return ary_data.map(function(data) {
+		return per_vic_pureMVCref_tableGameModel_Tool.createItem(data.extra,data.pos,data.type,data.width,data.height,data.back,data.lock,data.owner);
+	});
+};
+per_vic_pureMVCref_tableGameModel_Tool.createItemDiv = function(type,model) {
+	var div = per_vic_pureMVCref_tableGameModel_Tool.j("#tmpl_" + type).tmpl(model);
+	return div;
+};
+per_vic_pureMVCref_tableGameModel_Tool.createDivId = function() {
+	return leo.utils.generateUUID();
+};
+per_vic_pureMVCref_tableGameModel_Tool.slide = function(msg,time) {
+	if(time == null) time = 2000;
+	per_vic_pureMVCref_tableGameModel_Tool.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide"});
+};
+per_vic_pureMVCref_tableGameModel_Tool.alert = function(msg) {
+	per_vic_pureMVCref_tableGameModel_Tool.j.messager.alert("錯誤",msg);
+};
+var per_vic_pureMVCref_tableGameModel_controller_MainController = function(mediatorName,viewComponent) {
+	this.isList = false;
+	this.pos_mouse = [0,0];
+	this.ary_allItem = [];
+	this.ary_select = [];
+	var _g = this;
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+	leo.utils.initRectSelect(function(ary) {
+		_g.onSelectItems(ary);
+		_g.zsorting();
+	});
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").mousemove($bind(this,this.onBodyMouseMove));
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").keyup($bind(this,this.onBodyKeyUp));
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").mousedown($bind(this,this.onBodyKeyUp));
+};
+per_vic_pureMVCref_tableGameModel_controller_MainController.__name__ = true;
+per_vic_pureMVCref_tableGameModel_controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
+	}
+	,handleNotification: function(notification) {
+		var _g1 = this;
+		var _g = notification.getName();
+		var on_receiveMessage = _g;
+		switch(_g) {
+		case "on_item_lock":
+			var div = notification.getBody().view;
+			var lock = notification.getBody().lock;
+			if(lock) this.viewComponent.prepend(div);
+			break;
+		case "on_item_click":
+			var div1 = notification.getBody();
+			this.viewComponent.append(div1);
+			this.onSelectItems(div1,true);
+			break;
+		case "create_item":
+			var ary_creates = notification.getBody();
+			Lambda.foreach(ary_creates,function(c) {
+				_g1.createItem(c);
+				return true;
+			});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
+			break;
+		default:
+			var _g11 = notification.getType();
+			switch(_g11) {
+			case "dice":
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,notification.getBody());
+				break;
+			case "addItems":
+				var tempItems = notification.getBody();
+				Lambda.foreach(tempItems,function(c1) {
+					_g1.createItem(c1);
+					return true;
+				});
+				break;
+			case "deleteItem":
+				var localModel = this.receiveItemToLocalModel(notification.getBody());
+				this.deleteModel(localModel);
+				this.deleteView(localModel);
+				break;
+			case "applyTransform":
+				this.updateView(this.updateModel(notification.getBody()));
+				break;
+			}
+		}
+	}
+	,updateModel: function(ary_receive) {
+		var _g = this;
+		return ary_receive.map(function(receive) {
+			var model = _g.getItemFromPoolById(receive.id);
+			model.pos = receive.pos.slice();
+			model.deg = receive.deg;
+			model.owner = receive.owner;
+			model.viewer = receive.viewer;
+			model.back = receive.back;
+			model.lock = receive.lock;
+			model.action = receive.action;
+			return model;
+		});
+	}
+	,updateView: function(ary_item) {
+		var _g = this;
+		var updateRotate = function(item,dom,itemModel) {
+			if(dom.attr("deg") == null) item.rotate(0,itemModel.deg); else {
+				var oldDegree = dom.attr("deg");
+				if(oldDegree != itemModel.deg) item.rotate(oldDegree,itemModel.deg);
+			}
+			dom.attr("deg",itemModel.deg);
+		};
+		var updateAction = function(item1,itemModel1) {
+			item1.action(itemModel1.action);
+		};
+		var updateMove = function(item2,dom1,itemModel2) {
+			var dom_pos_0 = StringTools.replace(dom1.css("left"),"px","");
+			var dom_pos_1 = StringTools.replace(dom1.css("top"),"px","");
+			if(dom_pos_0 != itemModel2.pos[0] || dom_pos_1 != itemModel2.pos[1]) item2.move(itemModel2.pos[0],itemModel2.pos[1]);
+		};
+		var updateOwner = function(item3,itemModel3) {
+			item3.setOwner(itemModel3.owner);
+		};
+		var updateViewer = function(item4,itemModel4) {
+			item4.setViewer(itemModel4.viewer);
+		};
+		var updateFlip = function(item5,itemModel5) {
+			item5.flip(itemModel5.back);
+		};
+		var updateLock = function(item6,itemModel6) {
+			item6.lock(itemModel6.lock);
+		};
+		Lambda.foreach(ary_item,function(itemModel7) {
+			var item7;
+			item7 = js_Boot.__cast(_g.facade.retrieveMediator(itemModel7.id) , per_vic_pureMVCref_tableGameModel_view_IItem);
+			var dom2 = _g.facade.retrieveMediator(itemModel7.id).getViewComponent();
+			updateRotate(item7,dom2,itemModel7);
+			updateMove(item7,dom2,itemModel7);
+			updateOwner(item7,itemModel7);
+			updateViewer(item7,itemModel7);
+			updateFlip(item7,itemModel7);
+			updateLock(item7,itemModel7);
+			updateAction(item7,itemModel7);
+			dom2.appendTo(dom2.parent());
+			return true;
+		});
+	}
+	,receiveItemToLocalModel: function(ary_receive) {
+		var _g = this;
+		return ary_receive.map(function(tempItem) {
+			return _g.getItemFromPoolById(tempItem.id);
+		});
+	}
+	,createItem: function(model) {
+		var item;
+		var _g = model.type;
+		switch(_g) {
+		case "data":
+			item = new per_vic_pureMVCref_tableGameModel_view_DataItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			break;
+		case "card":
+			var parseData = JSON.parse(JSON.stringify(model));
+			parseData.extra = [api.getCardImageWithPackageName(model.extra[2],model.extra[0]),"../common/images/card/cardback_" + model.extra[1] + ".png"];
+			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,parseData));
+			break;
+		case "sequence":
+			item = new per_vic_pureMVCref_tableGameModel_view_SequenceItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+			break;
+		case "token":
+			var parseData1 = JSON.parse(JSON.stringify(model));
+			parseData1.extra = [api.getCardImageWithPackageName(model.extra[1],model.extra[0])];
+			item = new per_vic_pureMVCref_tableGameModel_view_TokenItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,parseData1));
+			break;
+		default:
+			item = new per_vic_pureMVCref_tableGameModel_view_BasicItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,model));
+		}
+		item.viewComponent.css("left",model.pos[0] + "px");
+		item.viewComponent.css("top",model.pos[1] + "px");
+		this.facade.registerMediator(item);
+		this.viewComponent.append(item.viewComponent);
+		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).setOwner(model.owner);
+		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).setViewer(model.viewer);
+		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).flip(model.back);
+		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).action(model.action);
+		this.ary_allItem.push(model);
+	}
+	,onBodyKeyUp: function(e) {
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_press,null,e.which);
+		var _g = e.which;
+		switch(_g) {
+		case 84:
+			break;
+		case 68:
+			break;
+		case 75:
+			break;
+		case 73:
+			break;
+		case 79:
+			break;
+		case 80:
+			break;
+		default:
+			if(this.ary_select.length == 0) return;
+		}
+		var _g1 = Std.parseInt(e.which);
+		if(_g1 != null) switch(_g1) {
+		case 72:
+			this.deleteModel(this.ary_select);
+			this.deleteView(this.ary_select);
+			break;
+		case 73:
+			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_0","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
+			break;
+		case 79:
+			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_1","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
+			break;
+		case 80:
+			this.createItem(per_vic_pureMVCref_tableGameModel_Tool.createItem(["token_2","other"],this.pos_mouse.slice(0),"token",50,50,true,false,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
+			break;
+		case 84:
+			var dice = Math.floor(Math.random() * 100);
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,{ playerId : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, dice : dice});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "dice", msg : { playerId : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, dice : dice}});
+			break;
+		case 82:
+			this.actionModel();
+			this.updateView(this.ary_select);
+			break;
+		case 65:case 3:
+			this.moveModel();
+			this.updateView(this.ary_select);
+			break;
+		case 88:
+			this.rotateModel(90);
+			this.updateView(this.ary_select);
+			break;
+		case 90:
+			this.rotateModel(-90);
+			this.updateView(this.ary_select);
+			break;
+		case 69:
+			this.sortModel();
+			this.listModel();
+			this.updateView(this.ary_select);
+			break;
+		case 87:
+			this.reverseModel();
+			this.togetherModel();
+			this.updateView(this.ary_select);
+			break;
+		case 81:
+			this.shuffleModel();
+			this.togetherModel();
+			this.updateView(this.ary_select);
+			break;
+		case 67:
+			this.setModelOwner();
+			this.updateView(this.ary_select);
+			break;
+		case 68:
+			this.selectMyItem();
+			this.updateView(this.ary_select);
+			break;
+		case 83:
+			if(this.isList) this.togetherModel(); else this.listModel();
+			this.isList = !this.isList;
+			this.updateView(this.ary_select);
+			break;
+		case 86:
+			this.setModelViewer();
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+			this.updateView(this.ary_select);
+			break;
+		case 70:
+			this.flipModel();
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+			this.updateView(this.ary_select);
+			break;
+		case 76:
+			this.setModelLock();
+			this.updateView(this.ary_select);
+			break;
+		case 75:
+			this.unlockAllItem();
+			this.updateView(this.ary_allItem);
+			break;
+		}
+		var _g2 = e.which;
+		switch(_g2) {
+		case 84:
+			break;
+		case 72:
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});
+			break;
+		case 75:
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_allItem});
+			break;
+		default:
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+		}
+	}
+	,rotateModel: function(deg) {
+		Lambda.foreach(this.ary_select,function(item) {
+			item.deg += deg;
+			return true;
+		});
+	}
+	,onSelectItems: function(ary,selectLock) {
+		if(selectLock == null) selectLock = false;
+		var _g = this;
+		this.ary_select = ary.map(function(model) {
+			return _g.getItemFromPoolById(model.id);
+		});
+		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
+		this.indexSorting();
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
+	}
+	,indexSorting: function() {
+		this.ary_select.sort(function(a,b) {
+			if(b.pos[0] < a.pos[0]) return 1;
+			return -1;
+		});
+		this.ary_select.sort(function(a1,b1) {
+			if(b1.pos[1] < a1.pos[1]) return 1;
+			return -1;
+		});
+	}
+	,selectMyItem: function() {
+		this.ary_select = this.filterLock(this.getMyItemFromPool());
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
+	}
+	,sortModel: function() {
+		var collectobj = { };
+		Lambda.foreach(this.ary_select,function(card) {
+			if(Reflect.field(collectobj,card.cardId) == null) collectobj[card.cardId] = [];
+			Reflect.field(collectobj,card.cardId).push(card);
+			return true;
+		});
+		var newary = [];
+		var _g = 0;
+		var _g1 = Reflect.fields(collectobj);
+		while(_g < _g1.length) {
+			var c = _g1[_g];
+			++_g;
+			newary = newary.concat(Reflect.field(collectobj,c));
+		}
+		this.ary_select = newary;
+	}
+	,setModelLock: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			if(itemModel.owner == "" || itemModel.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.lock = !itemModel.lock; else continue;
+		}
+	}
+	,unlockAllItem: function() {
+		var _g1 = 0;
+		var _g = this.ary_allItem.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_allItem[i];
+			if(itemModel.owner == "" || itemModel.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.lock = false; else continue;
+		}
+	}
+	,setModelOwner: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			var item;
+			item = js_Boot.__cast(this.facade.retrieveMediator(itemModel.id) , per_vic_pureMVCref_tableGameModel_view_IItem);
+			if(itemModel.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.owner = ""; else if(itemModel.owner == "") itemModel.owner = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId; else {
+			}
+		}
+	}
+	,setModelViewer: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			var item;
+			item = js_Boot.__cast(this.facade.retrieveMediator(itemModel.id) , per_vic_pureMVCref_tableGameModel_view_IItem);
+			if(itemModel.viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.viewer = ""; else {
+				itemModel.viewer = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId;
+				if(itemModel.viewer == "") itemModel.viewer = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId;
+			}
+		}
+	}
+	,listModel: function() {
+		var info = this.collectInfo(this.ary_select);
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			itemModel.pos[0] = i % 10 * (Reflect.field(info,"mw") + 4) + this.pos_mouse[0];
+			itemModel.pos[1] = Math.floor(i / 10) * (Reflect.field(info,"mh") + 4) + this.pos_mouse[1];
+		}
+	}
+	,togetherModel: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			itemModel.pos[0] = i * 2 + this.pos_mouse[0];
+			itemModel.pos[1] = i * 2 + this.pos_mouse[1];
+		}
+	}
+	,flipModel: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var itemModel = this.ary_select[i];
+			if(itemModel.owner == "" || itemModel.owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) itemModel.back = !itemModel.back; else continue;
+		}
+	}
+	,zsorting: function() {
+		var _g1 = 0;
+		var _g = this.ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var dom = this.facade.retrieveMediator(this.ary_select[i].id).getViewComponent();
+			dom.appendTo(dom.parent());
+		}
+	}
+	,shuffleModel: function() {
+		this.ary_select.sort(function(a,b) {
+			if(Math.random() > .5) return 1; else return -1;
+		});
+	}
+	,reverseModel: function() {
+		this.ary_select.reverse();
+	}
+	,collectInfo: function(ary_item) {
+		var mw = 0.0;
+		var mh = 0.0;
+		var firstPos = [];
+		var _g1 = 0;
+		var _g = ary_item.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(i == 0) firstPos = ary_item[i].pos.slice();
+			mw = Math.max(mw,ary_item[i].width);
+			mh = Math.max(mw,ary_item[i].height);
+		}
+		return { mw : mw, mh : mh, firstPos : firstPos};
+	}
+	,filterLock: function(ary) {
+		var nary = Lambda.fold(ary,function(curr,first) {
+			if(!curr.lock) first.push(curr);
+			return first;
+		},[]);
+		return nary;
+	}
+	,onBodyMouseMove: function(e) {
+		this.pos_mouse[0] = e.pageX;
+		this.pos_mouse[1] = e.pageY;
+	}
+	,getItemFromPoolById: function(id) {
+		return this.ary_allItem.filter(function(model) {
+			return id == model.id;
+		})[0];
+	}
+	,getMyItemFromPool: function() {
+		return this.ary_allItem.filter(function(model) {
+			return per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId == model.owner;
+		});
+	}
+	,actionModel: function() {
+		Lambda.foreach(this.ary_select,function(item) {
+			var _g = item.type;
+			switch(_g) {
+			case "sequence":
+				item.action.sequence = Math.random();
+				break;
+			default:
+			}
+			return true;
+		});
+	}
+	,deleteModel: function(ary_receive) {
+		var _g = this;
+		Lambda.foreach(ary_receive,function(removeItem) {
+			var rid = HxOverrides.indexOf(_g.ary_allItem,removeItem,0);
+			_g.ary_allItem.splice(rid,1);
+			return true;
+		});
+	}
+	,deleteView: function(ary_receive) {
+		var _g = this;
+		Lambda.foreach(ary_receive,function(removeItem) {
+			_g.facade.retrieveMediator(removeItem.id).getViewComponent().remove();
+			return true;
+		});
+	}
+	,moveModel: function() {
+		var moveTarget = { };
+		this.ary_select.sort(function(ac,bc) {
+			if(ac.pos[0] < bc.pos[0]) return -1;
+			return 1;
+		});
+		moveTarget.x = this.ary_select[0].pos[0];
+		this.ary_select.sort(function(ac1,bc1) {
+			if(ac1.pos[1] < bc1.pos[1]) return -1;
+			return 1;
+		});
+		moveTarget.y = this.ary_select[0].pos[1];
+		var offset_0 = this.pos_mouse[0] - moveTarget.x;
+		var offset_1 = this.pos_mouse[1] - moveTarget.y;
+		Lambda.foreach(this.ary_select,function(select) {
+			select.pos[0] += offset_0;
+			select.pos[1] += offset_1;
+			return true;
+		});
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_controller_MainController
+});
+var per_vic_pureMVCref_tableGameModel_controller_SocketController = function(mediatorName,viewComponent) {
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_controller_SocketController.__name__ = true;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket];
+	}
+	,handleNotification: function(notification) {
+		var _g = notification.getName();
+		var str = _g;
+		if(str == per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage) {
+			var type = notification.getBody().type;
+			var msg = notification.getBody().msg;
+			this.messageSocket(type,msg);
+		} else {
+			var str1 = _g;
+			if(str1 == per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents) this.ary_ops = notification.getBody().slice(); else {
+				var str2 = _g;
+				if(str2 == per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket) this.createSocket(notification.getBody());
+			}
+		}
+	}
+	,createSocket: function(id) {
+		var _g = this;
+		var onSocketError = function() {
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
+			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error);
+		};
+		api.createChannel(id,{ onopen : function() {
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = true;
+			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success);
+			var _g2 = 0;
+			var _g1 = per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds.length;
+			while(_g2 < _g1) {
+				var i = _g2++;
+				var fn = (function(_i) {
+					return function(conn) {
+						per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIdsForCheck[_i] = conn;
+						per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = Lambda.fold(per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIdsForCheck,function(curr,first) {
+							return first && curr;
+						},true);
+						if(per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect) _g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete);
+						_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,{ conn : per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect});
+					};
+				})(i);
+				CallJs.api_startHeartbeat(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds[i],fn);
+			}
+		}, onmessage : function(json) {
+			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
+		}, onerror : onSocketError, onclose : onSocketError});
+	}
+	,messageSocket: function(type,msg) {
+		if(!per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage) return;
+		if(this.ary_ops == null) return;
+		Lambda.foreach(this.ary_ops,function(op) {
+			api.sendMessageToSomeone(op,type,msg);
+			return true;
+		});
+	}
+	,handleResponse: function(cb) {
+		return function(err,ret) {
+			if(err != null) js_Browser.alert(err); else cb(ret);
+		};
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
+});
+var per_vic_pureMVCref_tableGameModel_view_IItem = function() { };
+per_vic_pureMVCref_tableGameModel_view_IItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_IItem.prototype = {
+	__class__: per_vic_pureMVCref_tableGameModel_view_IItem
+};
+var per_vic_pureMVCref_tableGameModel_view_BasicItem = function(mediatorName,viewComponent) {
+	this._owner = "";
+	this._viewer = "";
+	this._filp = true;
+	var _g = this;
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+	viewComponent.click(function(e) {
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,[viewComponent[0]]);
+		_g.onSelect([viewComponent[0]]);
+	});
+};
+per_vic_pureMVCref_tableGameModel_view_BasicItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_BasicItem.__interfaces__ = [per_vic_pureMVCref_tableGameModel_view_IItem];
+per_vic_pureMVCref_tableGameModel_view_BasicItem.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	action: function(value) {
+	}
+	,lock: function(l) {
+		if(l) {
+			this.viewComponent.find("#img_lock").show();
+			this.viewComponent.addClass("lock");
+		} else {
+			this.viewComponent.find("#img_lock").hide();
+			this.viewComponent.removeClass("lock");
+		}
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock,{ view : this.viewComponent, lock : l});
+	}
+	,flip: function(f) {
+		this._filp = f;
+		this.checkViewerAndShowCard();
+	}
+	,focus: function(f) {
+		if(f) this.viewComponent.addClass("focus"); else this.viewComponent.removeClass("focus");
+	}
+	,move: function(x,y) {
+		this.viewComponent.animate({ left : x, top : y});
+	}
+	,rotate: function(sd,ed) {
+		this.rotateAnimation(sd,ed);
+	}
+	,setViewer: function(v) {
+		this._viewer = v;
+		this.checkViewerAndShowCard();
+	}
+	,setOwner: function(o) {
+		this._owner = o;
+		if(this._owner == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) this.viewComponent.find("#img_owner").show(); else this.viewComponent.find("#img_owner").hide();
+		this.checkViewerAndShowCard();
+	}
+	,getViewer: function() {
+		return this._viewer;
+	}
+	,getOwner: function() {
+		return this._owner;
+	}
+	,listNotificationInterests: function() {
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards];
+	}
+	,handleNotification: function(notification) {
+		var _g = notification.getName();
+		switch(_g) {
+		case "on_select_cards":
+			this.onSelect(Reflect.field(notification.getBody(),"ary_select"));
+			break;
+		}
+	}
+	,checkViewerAndShowCard: function() {
+		var showViewerImg = false;
+		var showRedback = false;
+		if(!this._filp) this.showItemForMe(); else if(this._viewer == this._owner) {
+			if(this._viewer == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) {
+				this.showItemForMe();
+				showViewerImg = true;
+			} else {
+				this.hideItemForMe();
+				if(this._viewer != "") showRedback = true;
+			}
+		} else this.hideItemForMe();
+		if(this._owner == "") this.viewComponent.css("opacity",.5); else this.viewComponent.css("opacity",1);
+		if(showViewerImg) this.viewComponent.find("#img_viewer").show(); else this.viewComponent.find("#img_viewer").hide();
+		if(showRedback) this.viewComponent.find("#mc_see").show(); else this.viewComponent.find("#mc_see").hide();
+	}
+	,showItemForMe: function() {
+		this.viewComponent.find(".card_back").hide();
+	}
+	,hideItemForMe: function() {
+		this.viewComponent.find(".card_back").show();
+	}
+	,onSelect: function(ary_select) {
+		this.focus(false);
+		if(this.checkSelf(ary_select)) this.focus(true);
+	}
+	,checkSelf: function(ary_select) {
+		if(ary_select == null) return false;
+		var isSelf = false;
+		var _g1 = 0;
+		var _g = ary_select.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var div = ary_select[i];
+			var itemId = div.id;
+			if(itemId == this.getMediatorName()) {
+				isSelf = true;
+				return isSelf;
+			}
+		}
+		return isSelf;
+	}
+	,rotateAnimation: function(sd,ed) {
+		var _g = this;
+		per_vic_pureMVCref_tableGameModel_Tool.j({ deg : sd}).animate({ deg : ed},{ duration : 300, step : function(now) {
+			_g.getViewComponent().css({ '-moz-transform' : "rotate(" + now + "deg)", '-webkit-transform' : "rotate(" + now + "deg)", '-o-transform' : "rotate(" + now + "deg)", '-ms-transform' : "rotate(" + now + "deg)", 'transform' : "rotate(" + now + "deg)"});
+		}});
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_view_BasicItem
+});
+var per_vic_pureMVCref_tableGameModel_view_CardItem = function(mediatorName,viewComponent) {
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_CardItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_CardItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_CardItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	__class__: per_vic_pureMVCref_tableGameModel_view_CardItem
+});
+var per_vic_pureMVCref_tableGameModel_view_DataItem = function(mediatorName,viewComponent) {
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_DataItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_DataItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_DataItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	__class__: per_vic_pureMVCref_tableGameModel_view_DataItem
+});
+var per_vic_pureMVCref_tableGameModel_view_SequenceItem = function(mediatorName,viewComponent) {
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_SequenceItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_SequenceItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_SequenceItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	action: function(value) {
+		var mc_seqs = this.viewComponent.find("#mc_seqs");
+		var count = mc_seqs.children().length;
+		var showTarget = function(index) {
+			mc_seqs.find("img").hide();
+			mc_seqs.children().eq(index).show();
+		};
+		if(this.viewComponent.attr("action") == null || this.viewComponent.attr("action") != value.sequence) {
+			var _g = 0;
+			while(_g < 30) {
+				var i = [_g++];
+				haxe_Timer.delay((function(i) {
+					return function() {
+						if(i[0] == 29) showTarget(Math.floor(value.sequence * count)); else showTarget(Math.floor(Math.random() * count));
+					};
+				})(i),i[0] * 10);
+			}
+			this.viewComponent.attr("action",value.sequence);
+		}
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_view_SequenceItem
+});
+var per_vic_pureMVCref_tableGameModel_view_TokenItem = function(mediatorName,viewComponent) {
+	per_vic_pureMVCref_tableGameModel_view_BasicItem.call(this,mediatorName,viewComponent);
+};
+per_vic_pureMVCref_tableGameModel_view_TokenItem.__name__ = true;
+per_vic_pureMVCref_tableGameModel_view_TokenItem.__super__ = per_vic_pureMVCref_tableGameModel_view_BasicItem;
+per_vic_pureMVCref_tableGameModel_view_TokenItem.prototype = $extend(per_vic_pureMVCref_tableGameModel_view_BasicItem.prototype,{
+	flip: function(f) {
+	}
+	,__class__: per_vic_pureMVCref_tableGameModel_view_TokenItem
+});
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
@@ -2123,6 +2176,27 @@ var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
+if(Array.prototype.map == null) Array.prototype.map = function(f) {
+	var a = [];
+	var _g1 = 0;
+	var _g = this.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		a[i] = f(this[i]);
+	}
+	return a;
+};
+if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
+	var a1 = [];
+	var _g11 = 0;
+	var _g2 = this.length;
+	while(_g11 < _g2) {
+		var i1 = _g11++;
+		var e = this[i1];
+		if(f1(e)) a1.push(e);
+	}
+	return a1;
+};
 var __map_reserved = {}
 CallJs.setCookie = setCookie;
 CallJs.getCookie = getCookie;
@@ -2158,40 +2232,43 @@ CallJs.googleTracking_click = googleTracking.click;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
-Main.on_searchComplete = "on_searchComplete";
-Main.on_heartbeat_event = "on_heartbeat_event";
 Main.j = $;
 Main.fbid = "";
 Main.token = "";
-Main.playerId = "smart";
 Main.otherPlayerId = "";
-Main.otherPlayerIds = [];
-Main.otherPlayerIdsForCheck = [];
-Main.ary_cards = [];
 Main.currentSelect = "army";
 Main.cardSuits = { };
 Main.cardSuitsDetails = { };
 Main.cardSuitsDetailsIsLoading = { };
-Main.isConntect = false;
-Main.isCanSendMessage = false;
-Main.tmpl_card = Main.j("#tmpl_card");
-Main.longPolling = config.longPolling;
-Main.cardPackageUrlMapping = { };
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
-mediator_Card.card_click = "card_click";
-mediator_Card.card_down = "card_down";
-mediator_Card.card_enter = "card_enter";
-mediator_Card.card_remove = "card_remove";
-mediator_Layer.on_layout_mouse_up = "on_layout_mouse_up";
-mediator_Layer.on_select_cards = "on_select_cards";
-mediator_Layer.on_press = "on_press";
-mediator_Layer.on_body_mousemove = "on_body_mousemove";
 mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 model_Model.on_card_enter = "on_card_enter";
 model_Model.on_card_remove = "on_card_remove";
 model_Model.on_card_move = "on_card_move";
 model_Model.on_state_change = "on_state_change";
 model_Model.on_select_cards = "on_model_select_cards";
+per_vic_pureMVCref_tableGameModel_Tool.j = $;
+per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "create_item";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_press = "on_press";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice = "on_dice";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents = "setOpponents";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage = "sendMessage";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket = "createPlayerSocket";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete = "on_searchComplete";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event = "on_heartbeat_event";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "smart";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds = [];
+per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIdsForCheck = [];
+per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error = "on_socket_error";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success = "on_socket_success";
+per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click";
+per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=main.js.map

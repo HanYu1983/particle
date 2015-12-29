@@ -1,0 +1,65 @@
+<html>
+	<body>
+		新增/修改
+		<form name='add/modify card' action='../fn/cardInfo/addCard' method='post'>
+			<input name='Id' value=''><br>
+			<input name='WName' value='劍'><br>
+			<input name='WLevel' value='2'><br>
+			<input name='WWeight' value='2'><br>
+			<input name='WPower' value='2'><br>
+			<input name='WType' value='劍'><br>
+			<input name='SName' value='挑刺'><br>
+			<input name='SType' value='招式'><br>
+			<input name='SCost' value='劍2'><br>
+			<input name='SText' value='出擊'><br>
+			<input name='Type' value='武具'><br>
+			<input type=submit>
+		</form>
+		<br>
+		刪除
+		<form name='delete card' action='../fn/cardInfo/deleteCard' method='post'>
+			<input name='Id' value=''><br>
+			<input type=submit>
+		</form>
+		
+		<script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>
+		<script src="js/capi.js"></script>
+		<script src="js/capi2.js"></script>
+		<script>
+		/*
+		capi.addCard({
+			Id: "",
+			WName: "string",
+			WLevel: 0,
+			WWeight: 1,
+			WPower: 2,
+			WType: "string",
+			SName: "string",
+			SType: "string",
+			SCost: "string",
+			SText: "string",
+			Type: "string"
+		}, function(err, info){
+			console.log( err )
+			console.log( info )
+		})
+		
+		capi.cardList( function(err, ret){
+			console.log( ret )
+		})
+		*/
+		
+		capi2.addCard({
+			Id: "",
+			Params: '{"haha":"woow!"}'
+		}, function(err, info){
+			console.log( err )
+			console.log( info )
+		})
+		
+		capi2.cardList( function(err, ret){
+			console.log( ret )
+		})
+		</script>
+	</body>
+</html>

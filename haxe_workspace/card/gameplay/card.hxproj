@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="..\..\..\goapp\src\card\js\main.js" />
+    <movie path="..\..\..\goapp\src\card_new\js\main.js" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
