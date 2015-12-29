@@ -270,18 +270,19 @@ func HandleClearDataAndDownloadArchive(w http.ResponseWriter, r *http.Request) {
 	io.Copy(w, buf)
 
 	ctx.Infof("clear db")
-	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).KeysOnly()
-	keys, err := q.GetAll(ctx, nil)
-	if err != nil {
-		ctx.Infof(err.Error())
-	}
-	for _, key := range keys {
-		err = datastore.Delete(ctx, key)
+	/*
+		q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).KeysOnly()
+		keys, err := q.GetAll(ctx, nil)
 		if err != nil {
 			ctx.Infof(err.Error())
 		}
-	}
-
+		for _, key := range keys {
+			err = datastore.Delete(ctx, key)
+			if err != nil {
+				ctx.Infof(err.Error())
+			}
+		}
+	*/
 }
 
 func Handler(user IUser) http.HandlerFunc {
