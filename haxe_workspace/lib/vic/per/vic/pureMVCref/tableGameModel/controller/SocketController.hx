@@ -17,6 +17,9 @@ class SocketController extends Mediator
 	public static var createPlayerSocket = 'createPlayerSocket';
 	public static var playerId:String = 'smart';
 	
+	public static var isConntect = false;
+	public static var isCanSendMessage = false;
+	
 	var ary_ops:Array<String>;
 	
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -55,6 +58,8 @@ class SocketController extends Mediator
 				facade.sendNotification( MainController.on_receiveMessage, json.msg, json.type );
 			},
 			onerror: function() {
+				isConntect = false;
+				isCanSendMessage = false;
 				/*
 				j( '#btn_connect' ).linkbutton( 'enable' );
 				isConntect = false;
@@ -63,6 +68,8 @@ class SocketController extends Mediator
 				*/
 			},
 			onclose: function() {
+				isConntect = false;
+				isCanSendMessage = false;
 				/*
 				j( '#btn_connect' ).linkbutton( 'enable' );	
 				isConntect = false;
@@ -74,6 +81,7 @@ class SocketController extends Mediator
 	}
 	
 	function messageSocket( type, msg ) {
+		if ( !isCanSendMessage ) return;
 		if ( ary_ops == null ) return;
 		ary_ops.foreach( function( op ) {
 			untyped __js__( 'api.sendMessageToSomeone' )( op, type, msg );

@@ -26,12 +26,6 @@ HxOverrides.indexOf = function(a,obj,i) {
 	}
 	return -1;
 };
-HxOverrides.remove = function(a,obj) {
-	var i = HxOverrides.indexOf(a,obj,0);
-	if(i == -1) return false;
-	a.splice(i,1);
-	return true;
-};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -41,24 +35,6 @@ HxOverrides.iter = function(a) {
 };
 var Lambda = function() { };
 Lambda.__name__ = true;
-Lambda.array = function(it) {
-	var a = [];
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var i = $it0.next();
-		a.push(i);
-	}
-	return a;
-};
-Lambda.map = function(it,f) {
-	var l = new List();
-	var $it0 = $iterator(it)();
-	while( $it0.hasNext() ) {
-		var x = $it0.next();
-		l.add(f(x));
-	}
-	return l;
-};
 Lambda.foreach = function(it,f) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -112,9 +88,6 @@ List.prototype = {
 		}
 		return false;
 	}
-	,iterator: function() {
-		return new _$List_ListIterator(this.h);
-	}
 	,__class__: List
 };
 var _$List_ListIterator = function(head) {
@@ -155,8 +128,7 @@ var Main = function() {
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 	Main.j("#btn_connect").linkbutton();
 	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv,od) {
-		Main.playerId = nv;
-		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = Main.playerId;
+		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv;
 	}});
 	if(CallJs.getCookie("otherPlayerId") != null) {
 		Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
@@ -246,135 +218,6 @@ Main.createItem = function(ary_data) {
 Main.showDiceMessage = function(id,dice) {
 	Main.slide("玩家 " + id + " 擲了 " + dice + " 點",4000);
 };
-Main.applyValue = function(ary_select,self) {
-	Lambda.foreach(ary_select,function(card) {
-		var showWho = (function() {
-			if(card.relate == card.owner) {
-				if(card.relate == Main.playerId) return ""; else if((function($this) {
-					var $r;
-					var x = card.relate;
-					$r = HxOverrides.indexOf(Main.otherPlayerIds,x,0);
-					return $r;
-				}(this)) != -1) return "red";
-			}
-			return "";
-		})();
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ noOwner : card.owner == "", select : card, showWho : showWho, showRelate : Main.playerId == card.relate, showOwner : Main.playerId == card.owner, seeCard : Main.seeCard(card), notify : self},"ownerAndRelate_change");
-		return true;
-	});
-};
-Main.seeCard = function(card) {
-	var _g = card.owner;
-	var owner = _g;
-	switch(_g) {
-	case "":
-		return false;
-	default:
-		return owner == card.relate && owner == Main.playerId;
-	}
-};
-Main.setOwner = function(ary_select) {
-	var send = false;
-	Lambda.foreach(ary_select,function(card) {
-		var _g = card.owner;
-		var owner = _g;
-		switch(_g) {
-		case "":
-			card.owner = Main.playerId;
-			send = true;
-			break;
-		default:
-			if(owner == Main.playerId) {
-				card.owner = "";
-				card.relate = "";
-				send = true;
-			}
-		}
-		return true;
-	});
-	Main.applyValue(ary_select,true);
-	return send;
-};
-Main.setRelate = function(ary_select) {
-	var send = false;
-	Lambda.foreach(ary_select,function(card) {
-		if(card.owner != Main.playerId) return true;
-		var _g = card.relate;
-		var relate = _g;
-		switch(_g) {
-		case "":
-			card.relate = Main.playerId;
-			send = true;
-			break;
-		default:
-			if(relate == Main.playerId) {
-				card.relate = "";
-				send = true;
-			}
-		}
-		return true;
-	});
-	Main.applyValue(ary_select,true);
-	return send;
-};
-Main.rotate = function(ary_select,deg) {
-	if(deg == null) deg = 90;
-	Lambda.foreach(ary_select,function(card) {
-		card.deg += deg;
-		return true;
-	});
-	Main.applyValue(ary_select,true);
-};
-Main.createCard = function(model) {
-	Main.loadDetail(model.game);
-	model.url = CallJs.api_getCardImageWithPackageName(model.game,model.cardId);
-	model.backurl = "../common/images/card/cardback_" + Std.string(model.backId) + ".png";
-	var cardMediator = new mediator_Card(model.id,Main.tmpl_card.tmpl(model));
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(cardMediator);
-	cardMediator.getViewComponent().animate({ left : model.pos[0], top : model.pos[1]});
-};
-Main.flip = function(ary_select) {
-	var send = false;
-	Lambda.foreach(ary_select,function(card) {
-		if(card.owner == Main.playerId || card.owner == "") {
-			send = true;
-			card.back = !card.back;
-		}
-		return true;
-	});
-	Main.applyValue(ary_select,true);
-	return send;
-};
-Main.moveCards = function(ary_select,pos_mouse,zsort) {
-	Lambda.foreach(ary_select,function(select) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_state_change,{ select : select, zsort : zsort, notify : false},"moveCards");
-		return true;
-	});
-};
-Main.getCardsById = function(id) {
-	return Lambda.find(Main.ary_cards,function(card) {
-		return id == card.id;
-	});
-};
-Main.changeIndex = function(cardId) {
-	try {
-		var cm = org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId);
-		if(cm == null) return;
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_Card.card_enter,org_puremvc_haxe_patterns_facade_Facade.getInstance().retrieveMediator(cardId).getViewComponent());
-	} catch( e ) {
-		if (e instanceof js__$Boot_HaxeError) e = e.val;
-		if( js_Boot.__instanceof(e,String) ) {
-			haxe_Log.trace(e,{ fileName : "Main.hx", lineNumber : 707, className : "Main", methodName : "changeIndex"});
-		} else throw(e);
-	}
-};
-Main.removeCards = function(ary_select) {
-	Lambda.foreach(ary_select,function(card) {
-		HxOverrides.remove(Main.ary_cards,card);
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_Model.on_card_remove,{ select : card});
-		return true;
-	});
-};
 Main.getCardImageUrlWithPackage = function(select,key) {
 	return CallJs.api_getCardImageWithPackageName(select,key);
 };
@@ -407,12 +250,12 @@ Main.prototype = {
 		var _g = this;
 		switch(type) {
 		case "onBtnStartServer":
-			if(Main.playerId == "smart" || Main.otherPlayerId == "") {
+			if(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId == "smart" || Main.otherPlayerId == "") {
 				Main.slide("請先登入並且輸入對手的id");
 				return;
 			}
 			Main.slide("正在等待對手...");
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket,Main.playerId);
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId);
 			Main.saveOpponentToCookie(Main.otherPlayerId);
 			break;
 		case "onBtnNotLoginClick":
@@ -574,7 +417,7 @@ Main.prototype = {
 		}
 	}
 	,checkCanCreate: function() {
-		return Main.playerId != "" && Main.otherPlayerId != "";
+		return per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId != "" && Main.otherPlayerId != "";
 	}
 	,chooseCardSuit: function(suitName) {
 		Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
@@ -949,188 +792,6 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 	}
 	,__class__: org_puremvc_haxe_patterns_mediator_Mediator
 });
-var mediator_Card = function(mediatorName,viewComponent) {
-	this._see = false;
-	this._deg = 0;
-	this._back = true;
-	this._focus = false;
-	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
-};
-mediator_Card.__name__ = true;
-mediator_Card.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
-mediator_Card.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
-	onRegister: function() {
-		this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-	}
-	,onRemove: function() {
-		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRemove.call(this);
-		this.getViewComponent().off("click");
-	}
-	,listNotificationInterests: function() {
-		return [model_Model.on_state_change,model_Model.on_select_cards,model_Model.on_card_remove];
-	}
-	,handleNotification: function(notification) {
-		var _g1 = this;
-		var _g = notification.getName();
-		switch(_g) {
-		case "on_card_remove":
-			if(!this.checkSelf(notification.getBody().select.id)) return;
-			this.sendNotification(mediator_Card.card_remove,{ dom : this.getViewComponent()});
-			break;
-		case "on_model_select_cards":
-			this.focusCard(false);
-			Lambda.foreach(Lambda.array(notification.getBody().ary_select),function(dom) {
-				if(Main.j(dom).attr("id") == _g1.getMediatorName()) _g1.focusCard();
-				return true;
-			});
-			break;
-		case "on_state_change":
-			var _g11 = notification.getType();
-			switch(_g11) {
-			case "ownerAndRelate_change":
-				if(!this.checkSelf(notification.getBody().select.id)) return;
-				this._card = notification.getBody().select;
-				this._back = notification.getBody().select.back;
-				this.rotateAnimation(notification.getBody().select.deg);
-				this.showOnwer(notification.getBody().showOwner);
-				this.showNoOwner(notification.getBody().noOwner);
-				this.showRelate(notification.getBody().showRelate);
-				this.showWho(notification.getBody().showWho);
-				this.seeCard(notification.getBody().seeCard);
-				this.setView();
-				break;
-			case "moveCards":
-				if(!this.checkSelf(notification.getBody().select.id)) return;
-				this.moveCard(notification.getBody().select.pos[0],notification.getBody().select.pos[1]);
-				if(notification.getBody().zsort) this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-				break;
-			case "list_shuffle":
-				if(!this.checkSelf(notification.getBody().select.id)) return;
-				this.sendNotification(mediator_Card.card_enter,this.getViewComponent());
-				this.listStack(notification.getBody().mouse,notification.getBody().pos,2,2,notification.getBody().count);
-				break;
-			}
-			break;
-		}
-	}
-	,showWho: function(color) {
-		if(color != "") {
-			this.getViewComponent().find("#mc_see").css("background-color",color);
-			this.getViewComponent().find("#mc_see").show();
-		} else this.getViewComponent().find("#mc_see").hide();
-	}
-	,showOnwer: function(show) {
-		if(show) this.getViewComponent().find("#img_owner").show(); else this.getViewComponent().find("#img_owner").hide();
-	}
-	,showNoOwner: function(show) {
-		if(show) this.getViewComponent().css("opacity",.5); else this.getViewComponent().css("opacity",1);
-	}
-	,showRelate: function(show) {
-		if(show) this.getViewComponent().find("#img_relate").show(); else this.getViewComponent().find("#img_relate").hide();
-	}
-	,listStack: function(initpos,pos,x,y,count) {
-		this.moveCard(initpos[0] + pos * x,initpos[1] - pos * y);
-	}
-	,listStackSeprate: function(initpos,pos,x,y,count) {
-		this.moveCard(initpos[0] + pos % 10 * x,initpos[1] + Math.floor(pos / 10) * y);
-	}
-	,checkSelf: function(id) {
-		return this.getMediatorName() == id;
-	}
-	,moveCard: function(x,y) {
-		this.getViewComponent().animate({ left : x, top : y});
-	}
-	,focusCard: function(focus) {
-		if(focus != null) this._focus = focus; else this._focus = !this._focus;
-		if(this._focus) this.getViewComponent().addClass("card_focus"); else this.getViewComponent().removeClass("card_focus");
-	}
-	,rotateAnimation: function(d) {
-		var _g = this;
-		Main.j({ deg : this._deg}).animate({ deg : d},{ duration : 300, step : function(now) {
-			_g.rotate(now);
-		}});
-		this._deg = d;
-	}
-	,rotate: function(d) {
-		this.getViewComponent().css({ '-moz-transform' : "rotate(" + d + "deg)", '-webkit-transform' : "rotate(" + d + "deg)", '-o-transform' : "rotate(" + d + "deg)", '-ms-transform' : "rotate(" + d + "deg)", 'transform' : "rotate(" + d + "deg)"});
-	}
-	,flip: function(value) {
-		this._back = value;
-		this.setView();
-	}
-	,setView: function() {
-		if(this._see) {
-			this.getViewComponent().find(".card_back").hide();
-			this._card.showTo = Main.playerId;
-		} else if(this._back) {
-			this.getViewComponent().find(".card_back").show();
-			this._card.showTo = "";
-		} else {
-			this.getViewComponent().find(".card_back").hide();
-			this._card.showTo = Main.playerId;
-		}
-		if(this._back) this.getViewComponent().find("#img_back").show(); else {
-			this.getViewComponent().find("#img_relate").hide();
-			this.getViewComponent().find("#img_back").hide();
-		}
-		if(!this._back) this.showWho("");
-	}
-	,seeCard: function(see) {
-		this._see = see;
-		this.setView();
-	}
-	,setState: function(state) {
-		this.getViewComponent().find("#txt_state").html(state);
-	}
-	,__class__: mediator_Card
-});
-var mediator_Layer = function(mediatorName,viewComponent) {
-	this._currentMoveCardId = "";
-	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
-	this._container_cards = viewComponent.container_cards;
-	this._body = viewComponent.body;
-};
-mediator_Layer.__name__ = true;
-mediator_Layer.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
-mediator_Layer.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
-	onRegister: function() {
-		var _g = this;
-		org_puremvc_haxe_patterns_mediator_Mediator.prototype.onRegister.call(this);
-		this._body.keyup($bind(this,this.onBodyKeyUp));
-		this._body.mousemove($bind(this,this.onBodyMouseMove));
-		this._body.mousedown($bind(this,this.onBodyMouseDown));
-		CallJs.leo_utils_initRectSelect(function(ary) {
-			_g.sendNotification(mediator_Layer.on_select_cards,{ ary_select : ary});
-		});
-	}
-	,listNotificationInterests: function() {
-		return [model_Model.on_card_enter,mediator_Card.card_down,mediator_Card.card_remove];
-	}
-	,handleNotification: function(notification) {
-		var _g = notification.getName();
-		switch(_g) {
-		case "on_card_enter":
-			this._container_cards.append(notification.getBody());
-			break;
-		case "card_remove":
-			notification.getBody().dom.remove();
-			break;
-		case "card_down":
-			this._currentMoveCardId = notification.getBody().id;
-			break;
-		}
-	}
-	,onBodyMouseMove: function(e) {
-		this.sendNotification(mediator_Layer.on_body_mousemove,{ x : e.pageX, y : e.pageY});
-	}
-	,onBodyKeyUp: function(e) {
-		this.sendNotification(mediator_Layer.on_press,null,e.which);
-	}
-	,onBodyMouseDown: function(e) {
-		this.sendNotification(mediator_Layer.on_press,null,e.which);
-	}
-	,__class__: mediator_Layer
-});
 var mediator_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
@@ -1354,18 +1015,14 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 	,__class__: mediator_UI
 });
 var model_Model = function(mediatorName,viewComponent) {
-	this.pos_mouse = [0,0];
-	this.isBack = true;
-	this.isSeperate = false;
 	this.currentDeckId = 0;
-	this.ary_select = [];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
 model_Model.__name__ = true;
 model_Model.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [mediator_Card.card_click,mediator_Card.card_enter,mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
+		return [mediator_UI.on_combo_deck_change,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -1377,11 +1034,6 @@ model_Model.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.currentDeckId = notification.getBody().deckId;
 			break;
 		}
-	}
-	,deepCopy: function(ary_select) {
-		return Lambda.array(Lambda.map(ary_select,function(card) {
-			return { id : card.id, cardId : card.cardId, name : card.name, owner : card.owner, relate : card.relate, deg : card.deg, pos : [card.pos[0],card.pos[1]], back : card.back, showTo : card.showTo};
-		}));
 	}
 	,__class__: model_Model
 });
@@ -2269,7 +1921,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 		return [per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket];
 	}
 	,handleNotification: function(notification) {
-		haxe_Log.trace(notification.getName(),{ fileName : "SocketController.hx", lineNumber : 35, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "handleNotification"});
+		haxe_Log.trace(notification.getName(),{ fileName : "SocketController.hx", lineNumber : 38, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "handleNotification"});
 		var _g = notification.getName();
 		var str = _g;
 		if(str == per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage) {
@@ -2287,15 +1939,20 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	,createSocket: function(id) {
 		var _g = this;
 		api.createChannel(id,{ onopen : function() {
-			haxe_Log.trace("ok",{ fileName : "SocketController.hx", lineNumber : 51, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "createSocket"});
+			haxe_Log.trace("ok",{ fileName : "SocketController.hx", lineNumber : 54, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "createSocket"});
 		}, onmessage : function(json) {
-			haxe_Log.trace(json,{ fileName : "SocketController.hx", lineNumber : 54, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "createSocket"});
+			haxe_Log.trace(json,{ fileName : "SocketController.hx", lineNumber : 57, className : "per.vic.pureMVCref.tableGameModel.controller.SocketController", methodName : "createSocket"});
 			_g.facade.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
 		}, onerror : function() {
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
 		}, onclose : function() {
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
+			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
 		}});
 	}
 	,messageSocket: function(type,msg) {
+		if(!per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage) return;
 		if(this.ary_ops == null) return;
 		Lambda.foreach(this.ary_ops,function(op) {
 			api.sendMessageToSomeone(op,type,msg);
@@ -2574,30 +2231,15 @@ Main.on_heartbeat_event = "on_heartbeat_event";
 Main.j = $;
 Main.fbid = "";
 Main.token = "";
-Main.playerId = "smart";
 Main.otherPlayerId = "";
 Main.otherPlayerIds = [];
 Main.otherPlayerIdsForCheck = [];
-Main.ary_cards = [];
 Main.currentSelect = "army";
 Main.cardSuits = { };
 Main.cardSuitsDetails = { };
 Main.cardSuitsDetailsIsLoading = { };
-Main.isConntect = false;
-Main.isCanSendMessage = false;
-Main.tmpl_card = Main.j("#tmpl_card");
-Main.longPolling = config.longPolling;
-Main.cardPackageUrlMapping = { };
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
-mediator_Card.card_click = "card_click";
-mediator_Card.card_down = "card_down";
-mediator_Card.card_enter = "card_enter";
-mediator_Card.card_remove = "card_remove";
-mediator_Layer.on_layout_mouse_up = "on_layout_mouse_up";
-mediator_Layer.on_select_cards = "on_select_cards";
-mediator_Layer.on_press = "on_press";
-mediator_Layer.on_body_mousemove = "on_body_mousemove";
 mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 model_Model.on_card_enter = "on_card_enter";
 model_Model.on_card_remove = "on_card_remove";
@@ -2614,6 +2256,8 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents = "se
 per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage = "sendMessage";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket = "createPlayerSocket";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "smart";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = false;
+per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = false;
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click";
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
