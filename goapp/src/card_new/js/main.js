@@ -232,7 +232,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert(err); else cb(ret);
+		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -788,7 +788,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		Main.selectOps(nv);
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv1,od) {
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv1;
 	}});
 };
@@ -1982,7 +1982,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert(err); else cb(ret);
+			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2268,5 +2268,3 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=main.js.map
