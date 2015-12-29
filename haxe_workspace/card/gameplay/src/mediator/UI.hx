@@ -47,10 +47,11 @@ class UI extends Mediator
 					MainController.on_select_cards,
 					MainController.on_dice,
 					SocketController.on_socket_error,
+					SocketController.on_socket_success,
 					Main.on_getSuit_success,
 					Main.on_receiveOps,
-					Main.on_searchComplete,
-					Main.on_heartbeat_event,
+					SocketController.on_searchComplete,
+					SocketController.on_heartbeat_event,
 					Main.on_createDeck_click,
 				];
 	}
@@ -58,15 +59,17 @@ class UI extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case SocketController.on_socket_success:
+				onSocketSuccess();
 			case SocketController.on_socket_error:
 				onSocketError();
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
-			case Main.on_heartbeat_event:
+			case SocketController.on_heartbeat_event:
 				showOnlineOffline( notification.getBody().conn );
-			case Main.on_searchComplete:
+			case SocketController.on_searchComplete:
 				disabledOpponent();
 			case Main.on_receiveOps:
 				var ary_ops = notification.getBody().ary_ops;
@@ -87,6 +90,7 @@ class UI extends Mediator
 	}
 	
 	function showOnlineOffline( show:Bool ) {
+		trace( show );
 		if ( show ) {
 			mc_light.css( 'background-color', 'green' );
 		}else {
@@ -269,5 +273,12 @@ class UI extends Mediator
 	function onSocketError() {
 		Main.j( '#btn_connect' ).linkbutton( 'enable' );	
 		Main.alert( '已斷線，請重新連線' );
+	}
+	
+	function onSocketSuccess() {
+		Main.slide( '連線成功' );
+		Main.j( '#btn_connect' ).linkbutton( 'disable' );
+		Main.j( '#btn_login' ).linkbutton( 'disable' );
+		Main.j( '#btn_notLogin' ).linkbutton( 'disable' );
 	}
 }

@@ -15,12 +15,19 @@ class SocketController extends Mediator
 	public static var setOpponents = 'setOpponents';
 	public static var sendMessage = 'sendMessage';
 	public static var createPlayerSocket = 'createPlayerSocket';
+	
+	public static var on_searchComplete = 'on_searchComplete';
+	public static var on_heartbeat_event = 'on_heartbeat_event';
+	
 	public static var playerId:String = 'smart';
+	public static var otherPlayerIds:Array<String> = [];
+	public static var otherPlayerIdsForCheck:Array<Bool> = [];
 	
 	public static var isConntect = false;
 	public static var isCanSendMessage = false;
 	
 	public static var on_socket_error = 'on_socket_error';
+	public static var on_socket_success = 'on_socket_success';
 	
 	var ary_ops:Array<String>;
 	
@@ -59,10 +66,28 @@ class SocketController extends Mediator
 		
 		untyped __js__( 'api.createChannel' )( id, {
 			onopen: function() {
-				isConntect = true;
+				isCanSendMessage = true;
+				sendNotification( on_socket_success );
+				
+				for ( i in 0...otherPlayerIds.length ) {
+					var fn = (function( _i: Int ):Bool -> Void {
+						return function( conn: Bool ) {
+							otherPlayerIdsForCheck[_i] = conn;
+							isConntect = Lambda.fold( otherPlayerIdsForCheck, function( curr, first ) {
+								return first && curr;
+							}, true );
+							if ( isConntect ) {
+								sendNotification( on_searchComplete );
+							}
+							sendNotification( on_heartbeat_event, {conn:isConntect} );
+						}
+					})( i );
+					CallJs.api_startHeartbeat( playerId, otherPlayerIds[i], fn );
+				}
+				
 			},
 			onmessage: function( json ) {
-				facade.sendNotification( MainController.on_receiveMessage, json.msg, json.type );
+				sendNotification( MainController.on_receiveMessage, json.msg, json.type );
 			},
 			onerror: onSocketError,
 			onclose: onSocketError

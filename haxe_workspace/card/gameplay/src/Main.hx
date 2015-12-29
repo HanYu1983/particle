@@ -25,16 +25,12 @@ class Main
 	public static var on_getSuit_success = 'on_getSuit_success';
 	public static var on_createDeck_click = 'on_createDeck_click';
 	public static var on_receiveOps = 'on_receiveOps';
-	public static var on_searchComplete = 'on_searchComplete';
-	public static var on_heartbeat_event = 'on_heartbeat_event';
-	
+
 	public static var j:Dynamic = untyped __js__('$');
 	
 	public static var fbid = '';
 	public static var token = '';
 	public static var otherPlayerId = '';
-	public static var otherPlayerIds:Array<String> = [];
-	public static var otherPlayerIdsForCheck:Array<Bool> = [];
 	
 	public static var currentSelect = 'army';
 	public static var cardSuits:Dynamic = {};
@@ -93,13 +89,13 @@ class Main
 	
 	public static function selectOps( ops:String ) {
 		try{
-			otherPlayerIds = ops.split(',');
+			SocketController.otherPlayerIds = ops.split(',');
 			otherPlayerId = ops;
 		}catch ( e:String ) {
 			otherPlayerId = ops;
 		}
 		
-		Facade.getInstance().sendNotification( SocketController.setOpponents, otherPlayerIds );
+		Facade.getInstance().sendNotification( SocketController.setOpponents, SocketController.otherPlayerIds );
 		j( '#btn_connect' ).linkbutton( 'enable' );
 	}
 	
