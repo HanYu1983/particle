@@ -1465,10 +1465,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 				this.deleteView(localModel);
 				break;
 			case "applyTransform":
-				var ary_item = notification.getBody().ary_item;
-				var zs = notification.getBody().zsorting;
-				console.log(zs);
-				this.updateView(this.updateModel(ary_item),zs);
+				this.updateView(this.updateModel(notification.getBody()));
 				break;
 			}
 		}
@@ -1494,16 +1491,11 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		if(zs == null) zs = false;
 		var _g = this;
 		var updateRotate = function(item,dom,itemModel) {
-			if(dom.attr("deg") == null) {
-				item.rotate(0,itemModel.deg);
-				dom.attr("deg",itemModel.deg);
-			} else {
+			if(dom.attr("deg") == null) item.rotate(0,itemModel.deg); else {
 				var oldDegree = dom.attr("deg");
-				if(oldDegree != itemModel.deg) {
-					item.rotate(oldDegree,itemModel.deg);
-					dom.attr("deg",itemModel.deg);
-				}
+				if(oldDegree != itemModel.deg) item.rotate(oldDegree,itemModel.deg);
 			}
+			dom.attr("deg",itemModel.deg);
 		};
 		var updateAction = function(item1,itemModel1) {
 			item1.action(itemModel1.action);
@@ -1536,9 +1528,9 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			updateFlip(item7,itemModel7);
 			updateLock(item7,itemModel7);
 			updateAction(item7,itemModel7);
+			if(zs) dom2.appendTo(dom2.parent());
 			return true;
 		});
-		if(zs) this.zsorting();
 	}
 	,receiveItemToLocalModel: function(ary_receive) {
 		var _g = this;
@@ -1694,17 +1686,10 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "deleteItem", msg : this.ary_select});
 			break;
 		case 75:
-			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_allItem, zsorting : false}});
-			break;
-		case 87:
-			break;
-		case 81:
-			break;
-		case 83:
-			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zsorting : true}});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_allItem});
 			break;
 		default:
-			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zsorting : false}});
+			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
 		}
 	}
 	,rotateModel: function(deg) {
@@ -1722,7 +1707,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.indexSorting();
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
-		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zsorting : true}});
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : this.ary_select});
 	}
 	,indexSorting: function() {
 		this.ary_select.sort(function(a,b) {

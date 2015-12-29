@@ -112,7 +112,7 @@ class MainController extends Mediator
 		}, [] );
 	}
 	
-	function updateView( ary_item:Array<Dynamic> ) {
+	function updateView( ary_item:Array<Dynamic>, ?zs:Bool = false ) {
 		function updateRotate( item:IItem, dom:Dynamic, itemModel:Dynamic ) {
 			if ( dom.attr( 'deg' ) == null ) {
 				item.rotate( 0, itemModel.deg );
@@ -163,6 +163,8 @@ class MainController extends Mediator
 			updateFlip( item, itemModel );
 			updateLock( item, itemModel );
 			updateAction( item, itemModel );
+			
+			if( zs ) dom.appendTo( dom.parent() );
 			
 			return true;
 		});
@@ -259,11 +261,11 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_W:
 				reverseModel();
 				togetherModel();
-				updateView( ary_select );
+				updateView( ary_select, true );
 			case KeyboardEvent.DOM_VK_Q:
 				shuffleModel();
 				togetherModel();
-				updateView( ary_select );
+				updateView( ary_select, true );
 			case KeyboardEvent.DOM_VK_C:
 				setModelOwner();
 				updateView( ary_select );
@@ -273,11 +275,13 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_S:
 				if ( isList ) {
 					togetherModel();
+					updateView( ary_select, true );
 				}else {
 					listModel();
+					updateView( ary_select );
 				}
 				isList = !isList;
-				updateView( ary_select );
+				
 			case KeyboardEvent.DOM_VK_V:
 				setModelViewer();
 				sendNotification( on_select_cards, { ary_select:ary_select } );
