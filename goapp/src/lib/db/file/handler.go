@@ -4,6 +4,7 @@ import (
 	"appengine"
 	"encoding/json"
 	"fmt"
+	"lib/abstract"
 	"lib/tool"
 	"net/http"
 	"path/filepath"
@@ -12,11 +13,6 @@ import (
 	"time"
 )
 
-type IUser interface {
-	GetID() string
-	HasPermission(DBFile) bool
-}
-
 func WriteFile(w http.ResponseWriter, r *http.Request) {
 	t := tool.TemplateWithFile("write", "lib/db/file/write.html")
 	t.Execute(w, map[string]string{
@@ -24,7 +20,7 @@ func WriteFile(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func DBFileSystem2(user IUser) http.HandlerFunc {
+func DBFileSystem2(user abstract.IUser) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer tool.Recover(func(err error) {
 			tool.Output(w, nil, err.Error())

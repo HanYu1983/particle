@@ -23,6 +23,17 @@ func Secret(user, realm string) string {
 	return ""
 }
 
+/*
+func (u auth.User) HasPermission(file interface{}) bool {
+	if u.Key == "admin" {
+		return true
+	}
+	if file.Owner == "" {
+		return true
+	}
+	return u.Key == file.Owner
+}
+*/
 func init() {
 	authenticator := auth.NewDigestAuthenticator("dbpublic", Secret)
 	// 歡迎頁面
@@ -69,6 +80,8 @@ func init() {
 	//http.HandleFunc("/testfn/memento", Memento)
 	//http.HandleFunc("/testfn/readfile", TestReadFile)
 	//http.HandleFunc("/testfn/TestWriteSnaphot", TestWriteSnaphot2)
+	// 使用者用
+	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
 	http.HandleFunc("/admindbfile2/__archiveAndClear__", db2.HandleClearDataAndDownloadArchive)
 	http.HandleFunc("/admindbfile2/__memento__", db2.HandleMemento)
 	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))

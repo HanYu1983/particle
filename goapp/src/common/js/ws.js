@@ -26,7 +26,9 @@ var ws = ws || {};
 		'animelb',
 		'animelbrext',
 		'ft',
-		'ftext1.0'
+		'ftext1.0',
+		'gf',
+		'gf2.0'
 	]
 	
 	function load( path, cb ){
