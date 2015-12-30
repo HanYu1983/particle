@@ -1596,11 +1596,11 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_press,null,e.which);
 		var _g = Std.parseInt(e.which);
 		if(_g != null) switch(_g) {
-		case 84:case 68:case 75:case 73:case 79:case 80:
+		case 84:case 68:case 65:case 75:case 73:case 79:case 80:
 			break;
 		case 17:
 			this.isCtrl = false;
-			return;
+			break;
 		case 1:
 			return;
 		default:
@@ -1637,7 +1637,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.updateView(this.ary_select);
 			break;
 		case 65:case 3:
-			this.moveModel();
+			if(this.isCtrl) this.selectMyItem(); else this.moveModel();
 			this.updateView(this.ary_select);
 			break;
 		case 88:
@@ -1702,6 +1702,8 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		}
 		var _g2 = e.which;
 		switch(_g2) {
+		case 17:
+			break;
 		case 84:case 73:case 79:case 80:
 			break;
 		case 72:
@@ -1951,6 +1953,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		});
 	}
 	,moveModel: function() {
+		if(this.ary_select.length == 0) return;
 		var moveTarget = { };
 		this.ary_select.sort(function(ac,bc) {
 			if(ac.pos[0] < bc.pos[0]) return -1;

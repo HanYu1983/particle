@@ -232,13 +232,12 @@ class MainController extends Mediator
 			//不需要選擇任何牌也可以執行
 			case 	KeyboardEvent.DOM_VK_T,
 					KeyboardEvent.DOM_VK_D,
+					KeyboardEvent.DOM_VK_A,
 					KeyboardEvent.DOM_VK_K,
 					KeyboardEvent.DOM_VK_I,
 					KeyboardEvent.DOM_VK_O,
 					KeyboardEvent.DOM_VK_P:
-			//ctrl事件只要到這裡就行了
-			case KeyboardEvent.DOM_VK_CONTROL:
-				isCtrl = false;return;
+			case KeyboardEvent.DOM_VK_CONTROL: isCtrl = false;
 			//滑鼠左鍵的事件不需要到這裡	
 			case 1:return;
 			case _:
@@ -269,7 +268,11 @@ class MainController extends Mediator
 				actionModel();
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_A, 3:
-				moveModel();
+				if ( isCtrl ) {
+					selectMyItem();
+				}else {
+					moveModel();
+				}
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_X:
 				rotateModel( 90 );
@@ -321,6 +324,8 @@ class MainController extends Mediator
 		}
 		
 		switch( e.which ) {
+			//ctrl事件只要到這裡就行了，不用傳指令出去
+			case KeyboardEvent.DOM_VK_CONTROL:
 			//骰子，不經過這邊，在上邊的時候就分發了
 			case KeyboardEvent.DOM_VK_T,KeyboardEvent.DOM_VK_I,KeyboardEvent.DOM_VK_O,KeyboardEvent.DOM_VK_P:
 			//刪除，針對要刪除的陣列
@@ -600,6 +605,7 @@ class MainController extends Mediator
 	}
 	
 	function moveModel() {
+		if ( ary_select.length == 0 ) return;
 		var moveTarget:Dynamic = { };
 		ary_select.sort( function( ac, bc ) {
 			if ( ac.pos[0] < bc.pos[0] ) return -1;
