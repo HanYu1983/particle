@@ -583,15 +583,18 @@ class MainController extends Mediator
 	
 	function deleteModel( ary_receive:Array<Dynamic> ) {
 		ary_receive.foreach( function( removeItem ) {
-			var rid = ary_allItem.indexOf( removeItem );
-			ary_allItem.splice( rid, 1 );
+			ary_allItem.remove( removeItem );
 			return true;
 		});
 	}
 	
 	function deleteView( ary_receive:Array<Dynamic> ) {
 		ary_receive.foreach( function( removeItem ) {
-			facade.retrieveMediator( removeItem.id ).getViewComponent().remove();
+			var m = facade.retrieveMediator( removeItem.id );
+			if ( m != null ) {
+				m.getViewComponent().remove();
+			}
+			facade.removeMediator( m.getMediatorName() );
 			return true;
 		});
 	}

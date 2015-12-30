@@ -26,6 +26,12 @@ HxOverrides.indexOf = function(a,obj,i) {
 	}
 	return -1;
 };
+HxOverrides.remove = function(a,obj) {
+	var i = HxOverrides.indexOf(a,obj,0);
+	if(i == -1) return false;
+	a.splice(i,1);
+	return true;
+};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -1931,15 +1937,16 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 	,deleteModel: function(ary_receive) {
 		var _g = this;
 		Lambda.foreach(ary_receive,function(removeItem) {
-			var rid = HxOverrides.indexOf(_g.ary_allItem,removeItem,0);
-			_g.ary_allItem.splice(rid,1);
+			HxOverrides.remove(_g.ary_allItem,removeItem);
 			return true;
 		});
 	}
 	,deleteView: function(ary_receive) {
 		var _g = this;
 		Lambda.foreach(ary_receive,function(removeItem) {
-			_g.facade.retrieveMediator(removeItem.id).getViewComponent().remove();
+			var m = _g.facade.retrieveMediator(removeItem.id);
+			if(m != null) m.getViewComponent().remove();
+			_g.facade.removeMediator(m.getMediatorName());
 			return true;
 		});
 	}
