@@ -220,6 +220,18 @@ class Main
 				chooseCardSuit( 'sgs' );
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
+			case 'onBtnTableDeck':
+				var str:String = j( "#txt_table" ).textbox( 'getValue' );
+				try {
+					var obj_table:Array<Dynamic> = Json.parse( str );
+					obj_table.foreach( function( item ) {
+						item.owner = SocketController.playerId;
+						return true;
+					});
+					createItem( obj_table );
+				}catch ( e:Dynamic ) {
+					alert( '輸入格式錯誤哦，請檢查!' );
+				}
 			case 'onBtnCustomDeck':
 				var str:String = j( "#txt_custom" ).textbox( 'getValue' );
 				str = '[' + str + ']';

@@ -328,14 +328,28 @@ Main.prototype = {
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
-		case "onBtnCustomDeck":
-			var str = Main.j("#txt_custom").textbox("getValue");
-			str = "[" + str + "]";
+		case "onBtnTableDeck":
+			var str = Main.j("#txt_table").textbox("getValue");
 			try {
-				var createobj = JSON.parse(str);
-				Main.createItem(per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck({ backId : "0", cards : createobj, game : Main.currentSelect},per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
+				var obj_table = JSON.parse(str);
+				Lambda.foreach(obj_table,function(item) {
+					item.owner = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId;
+					return true;
+				});
+				Main.createItem(obj_table);
 			} catch( e ) {
 				if (e instanceof js__$Boot_HaxeError) e = e.val;
+				Main.alert("輸入格式錯誤哦，請檢查!");
+			}
+			break;
+		case "onBtnCustomDeck":
+			var str1 = Main.j("#txt_custom").textbox("getValue");
+			str1 = "[" + str1 + "]";
+			try {
+				var createobj = JSON.parse(str1);
+				Main.createItem(per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck({ backId : "0", cards : createobj, game : Main.currentSelect},per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
+			} catch( e1 ) {
+				if (e1 instanceof js__$Boot_HaxeError) e1 = e1.val;
 				Main.alert("輸入格式錯誤哦，請檢查!");
 			}
 			break;
