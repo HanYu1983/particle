@@ -222,10 +222,46 @@ var cardSuit = cardSuit || {};
     })
   }
   
+  function load2( fbid, token, cb ){
+    db2.filelist( 'root/user/'+fbid+'/cardSuit.json', 
+      {
+        FBID: fbid,
+        AccessToken: token
+      },
+      'json',
+      function( err, ret ){
+        if( err ){
+          cb( err )
+        } else {
+          if( ret == "" ){
+            cb( null, defaultModel() )
+          
+          } else {
+            cb( null, JSON.parse( ret ))
+          
+          }
+        }
+      })
+  }
+  
+  function save2( fbid, token, data, cb ){
+    db2.writefile( 'root/user/'+fbid+'/cardSuit.json', 
+      {
+        FBID: fbid,
+        AccessToken: token,
+        Content: JSON.stringify(data),
+        Override: true
+      },
+      'json',
+      cb)
+  }
+  
   module.defaultModel = defaultModel
   module.editCardSuit = editCardSuit
   module.removeCardSuit = removeCardSuit
   module.load = load
   module.save = save
+  module.load2 = load2
+  module.save2 = save2
   
 }) (cardSuit)
