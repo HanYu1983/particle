@@ -74,17 +74,23 @@ func init() {
 	// 余氏K線圖用的記錄功能。已修改為SaveToUser
 	//http.HandleFunc("/simple/save", Save)
 	//http.HandleFunc("/simple/load", Load)
+
 	// 測試用
 	http.HandleFunc("/welcome/", welcome)
 	//http.HandleFunc("/testfn/zip", TestZip)
 	//http.HandleFunc("/testfn/memento", Memento)
 	//http.HandleFunc("/testfn/readfile", TestReadFile)
 	//http.HandleFunc("/testfn/TestWriteSnaphot", TestWriteSnaphot2)
-	// 使用者用
+
+	// 使用者用，這個會先經過FB認證
 	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
+	// 下載備份加清除。若有Clear參數，才會執行清除
 	http.HandleFunc("/admindbfile2/__archiveAndClear__", db2.HandleClearDataAndDownloadArchive)
+	// 觀看現在資料庫的備份狀態（資料列表）
 	http.HandleFunc("/admindbfile2/__memento__", db2.HandleMemento)
+	// 資料庫viewer
 	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
+	// 新舊資料庫整合（舊方法移除後移除）
 	http.HandleFunc("/temp/dbtodb2", dbtodb2)
 }
 
