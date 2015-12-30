@@ -1,0 +1,123 @@
+[
+	{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"extra":[
+			"陸（重裝甲） M60A3 錢2 攻2 擊破（裝甲、步兵）"
+		]
+	},
+	{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"extra":[
+			"陸（輕裝甲） T-34 錢1 攻1 擊破（輕裝甲、步兵）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"陸（輕裝甲） 步兵戰車 錢1 攻1 擊破（輕裝甲、步兵） 內文（擊破階段這張卡可以支付1錢獲得「擊破（裝甲）」到階段結束）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"建 都市 錢0 擊破（無） 內文（產錢3）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"建 要塞 錢0 擊破（全） 內文（迎擊3）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"空 A10 錢3 攻3 擊破（裝甲） 內文（這張在交戰階段可以在規則內進戰線，擊破階段結束時回到自己牌頂或牌底）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"空 AH-1 錢2 攻2 擊破（裝甲、步兵） 內文（低空。）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"空 F-16 錢3 攻3 擊破（飛行器） 內文（）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"海（船） 航空母艦 錢6 攻6 擊破（全） 內文（飛行器能進入海上戰線）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"海（船） 大和號 錢5 攻5 擊破（船、裝甲、飛行器） 內文（這戰線的敵軍飛行器獲得「擊破（船）」；這張卡不能成為這個戰線敵軍船的擊破對象）"
+		]
+	},{
+		"type":"html",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"海（船） 大和號 錢5 攻5 擊破（船、裝甲、飛行器） 內文（這戰線的敵軍飛行器獲得「擊破（船）」；這張卡不能成為這個戰線敵軍船的擊破對象）"
+		]
+	}
+]
