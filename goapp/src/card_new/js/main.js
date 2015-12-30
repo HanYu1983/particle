@@ -1435,8 +1435,8 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			break;
 		case "on_item_click":
 			var div1 = notification.getBody();
-			this.viewComponent.append(div1);
 			this.onSelectItems(div1,true);
+			this.zsorting();
 			break;
 		case "create_item":
 			var ary_creates = notification.getBody();
@@ -1465,7 +1465,9 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 				this.deleteView(localModel);
 				break;
 			case "applyTransform":
-				this.updateView(this.updateModel(notification.getBody().ary_item),notification.getBody().zs);
+				var needApply;
+				if(notification.getBody().applyValue == null) needApply = true; else needApply = notification.getBody().applyValue;
+				this.updateView(this.updateModel(notification.getBody().ary_item),notification.getBody().zs,needApply);
 				break;
 			}
 		}
@@ -1487,7 +1489,8 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			return curr;
 		},[]);
 	}
-	,updateView: function(ary_item,zs) {
+	,updateView: function(ary_item,zs,apply) {
+		if(apply == null) apply = true;
 		if(zs == null) zs = false;
 		var _g = this;
 		var updateRotate = function(item,dom,itemModel) {
@@ -1521,13 +1524,15 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			var item7;
 			item7 = js_Boot.__cast(_g.facade.retrieveMediator(itemModel7.id) , per_vic_pureMVCref_tableGameModel_view_IItem);
 			var dom2 = _g.facade.retrieveMediator(itemModel7.id).getViewComponent();
-			updateRotate(item7,dom2,itemModel7);
-			updateMove(item7,dom2,itemModel7);
-			updateOwner(item7,itemModel7);
-			updateViewer(item7,itemModel7);
-			updateFlip(item7,itemModel7);
-			updateLock(item7,itemModel7);
-			updateAction(item7,itemModel7);
+			if(apply) {
+				updateRotate(item7,dom2,itemModel7);
+				updateMove(item7,dom2,itemModel7);
+				updateOwner(item7,itemModel7);
+				updateViewer(item7,itemModel7);
+				updateFlip(item7,itemModel7);
+				updateLock(item7,itemModel7);
+				updateAction(item7,itemModel7);
+			}
 			if(zs) dom2.appendTo(dom2.parent());
 			return true;
 		});
@@ -1573,23 +1578,15 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 	}
 	,onBodyKeyUp: function(e) {
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_press,null,e.which);
-		var _g = e.which;
-		switch(_g) {
-		case 84:
+		var _g = Std.parseInt(e.which);
+		if(_g != null) switch(_g) {
+		case 84:case 68:case 75:case 73:case 79:case 80:
 			break;
-		case 68:
-			break;
-		case 75:
-			break;
-		case 73:
-			break;
-		case 79:
-			break;
-		case 80:
-			break;
+		case 1:
+			return;
 		default:
 			if(this.ary_select.length == 0) return;
-		}
+		} else if(this.ary_select.length == 0) return;
 		var _g1 = Std.parseInt(e.which);
 		if(_g1 != null) switch(_g1) {
 		case 72:
@@ -1716,7 +1713,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.indexSorting();
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,{ ary_select : this.ary_select});
-		if(this.ary_select.length != 0) this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
+		if(this.ary_select.length != 0) this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true, applyValue : false}});
 	}
 	,indexSorting: function() {
 		this.ary_select.sort(function(a,b) {

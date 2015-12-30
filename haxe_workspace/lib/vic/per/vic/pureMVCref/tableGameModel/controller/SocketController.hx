@@ -1,5 +1,6 @@
 package per.vic.pureMVCref.tableGameModel.controller;
 
+import haxe.CallStack;
 import haxe.Json;
 import js.Browser;
 import org.puremvc.haxe.interfaces.INotification;
@@ -97,6 +98,7 @@ class SocketController extends Mediator
 	function messageSocket( type, msg ) {
 		if ( !isCanSendMessage ) return;
 		if ( ary_ops == null ) return;
+		
 		ary_ops.foreach( function( op ) {
 			untyped __js__( 'api.sendMessageToSomeone' )( op, type, msg );
 			return true;

@@ -66,8 +66,8 @@ class MainController extends Mediator
 				if ( lock ) viewComponent.prepend( div );
 			case BasicItem.on_item_click:
 				var div:Dynamic = notification.getBody();
-				viewComponent.append( div );
 				onSelectItems( div, true );
+				zsorting();
 			case 'create_item':
 				var ary_creates:Array<Dynamic> = notification.getBody();
 				ary_creates.foreach( function( c:Dynamic ) {
@@ -90,7 +90,8 @@ class MainController extends Mediator
 						deleteModel( localModel );
 						deleteView( localModel );
 					case 'applyTransform':
-						updateView( updateModel( notification.getBody().ary_item ), notification.getBody().zs );
+						var needApply = notification.getBody().applyValue == null ? true : notification.getBody().applyValue;
+						updateView( updateModel( notification.getBody().ary_item ), notification.getBody().zs, needApply );
 				}
 		}
 	}
@@ -112,7 +113,7 @@ class MainController extends Mediator
 		}, [] );
 	}
 	
-	function updateView( ary_item:Array<Dynamic>, ?zs:Bool = false ) {
+	function updateView( ary_item:Array<Dynamic>, ?zs:Bool = false, ?apply:Bool = true  ) {
 		function updateRotate( item:IItem, dom:Dynamic, itemModel:Dynamic ) {
 			if ( dom.attr( 'deg' ) == null ) {
 				item.rotate( 0, itemModel.deg );
@@ -156,13 +157,15 @@ class MainController extends Mediator
 			var item:IItem = cast( facade.retrieveMediator( itemModel.id ), IItem );
 			var dom:Dynamic = facade.retrieveMediator( itemModel.id ).getViewComponent();
 			
-			updateRotate( item, dom, itemModel );
-			updateMove( item, dom, itemModel );
-			updateOwner( item, itemModel );
-			updateViewer( item, itemModel );
-			updateFlip( item, itemModel );
-			updateLock( item, itemModel );
-			updateAction( item, itemModel );
+			if( apply ){
+				updateRotate( item, dom, itemModel );
+				updateMove( item, dom, itemModel );
+				updateOwner( item, itemModel );
+				updateViewer( item, itemModel );
+				updateFlip( item, itemModel );
+				updateLock( item, itemModel );
+				updateAction( item, itemModel );
+			}
 			
 			if( zs ) dom.appendTo( dom.parent() );
 			
@@ -216,14 +219,16 @@ class MainController extends Mediator
 	function onBodyKeyUp( e ) {
 		sendNotification( on_press, null, e.which );
 		
-		switch( e.which ) {
-			case KeyboardEvent.DOM_VK_T:
-			case KeyboardEvent.DOM_VK_D:
-			case KeyboardEvent.DOM_VK_K:
-			case KeyboardEvent.DOM_VK_I:
-			case KeyboardEvent.DOM_VK_O:
-			case KeyboardEvent.DOM_VK_P:
-				//全選及解鎖不需要選擇任何牌也可以執行
+		switch( Std.parseInt( e.which ) ) {
+			//不需要選擇任何牌也可以執行
+			case 	KeyboardEvent.DOM_VK_T,
+					KeyboardEvent.DOM_VK_D,
+					KeyboardEvent.DOM_VK_K,
+					KeyboardEvent.DOM_VK_I,
+					KeyboardEvent.DOM_VK_O,
+					KeyboardEvent.DOM_VK_P:
+			//滑鼠左鍵的事件不需要到這裡	
+			case 1:return;
 			case _:
 				if ( ary_select.length == 0 ) return;
 		}
@@ -311,8 +316,11 @@ class MainController extends Mediator
 				sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
 			//解鎖，對象是全部的物件
 			case KeyboardEvent.DOM_VK_K:
-				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_allItem, zs:false } } );
-			case KeyboardEvent.DOM_VK_W, KeyboardEvent.DOM_VK_Q, KeyboardEvent.DOM_VK_S:
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: { ary_item:ary_allItem, zs:false } } );
+			//牌面聚合時，要更新圖層
+			case 	KeyboardEvent.DOM_VK_W, 
+					KeyboardEvent.DOM_VK_Q, 
+					KeyboardEvent.DOM_VK_S:
 				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true } } );
 			//其他，更新所有狀態就可以了
 			case _:
@@ -338,7 +346,7 @@ class MainController extends Mediator
 		sendNotification( on_select_cards, { ary_select:ary_select } );
 		
 		if ( ary_select.length != 0 ) {
-			sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true} } );
+			sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: {ary_item:ary_select, zs:true, applyValue:false } } );
 		}
 	}
 	
@@ -347,7 +355,6 @@ class MainController extends Mediator
 			if ( b.pos[0] < a.pos[0] ) return 1;
 			return -1;
 		});
-		
 		ary_select.sort( function( a, b ) {
 			if ( b.pos[1] < a.pos[1] ) return 1;
 			return -1;

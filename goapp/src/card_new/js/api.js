@@ -462,7 +462,6 @@ var api = api || {};
 	} 
 	
 	function sendMessageToSomeone( toId, type, msg ){
-		
 		var jsonstr = JSON.stringify( {
 			type:type, 
 			msg:JSON.parse( JSON.stringify( msg ))
