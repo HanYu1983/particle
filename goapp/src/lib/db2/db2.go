@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"lib/abstract"
 	"lib/tool"
 	"net/http"
 	"path/filepath"
@@ -196,11 +197,6 @@ func SetMemento(ctx appengine.Context, memento []byte) error {
 	return nil
 }
 
-type IUser interface {
-	GetID() string
-	HasPermission2(DBFile) bool
-}
-
 func HandleMemento(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		w.Header().Set("Content-Type", "application/json; charset=utf8")
@@ -228,6 +224,8 @@ func HandleMemento(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleClearDataAndDownloadArchive(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
 	ctx := appengine.NewContext(r)
 
 	buf := &bytes.Buffer{}
@@ -262,15 +260,15 @@ func HandleClearDataAndDownloadArchive(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "err: %v", err.Error())
 		return
 	}
-	ctx.Infof("write file")
 
 	w.Header().Set("Content-Disposition", "attachment; filename=db2.zip")
 	w.Header().Set("Content-Type", "application/zip")
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", buf.Len()))
 	io.Copy(w, buf)
 
-	ctx.Infof("clear db")
-	/*
+	isClear := len(r.PostForm["Clear"]) > 0
+
+	if isClear {
 		q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).KeysOnly()
 		keys, err := q.GetAll(ctx, nil)
 		if err != nil {
@@ -282,10 +280,10 @@ func HandleClearDataAndDownloadArchive(w http.ResponseWriter, r *http.Request) {
 				ctx.Infof(err.Error())
 			}
 		}
-	*/
+	}
 }
 
-func Handler(user IUser) http.HandlerFunc {
+func Handler(user abstract.IUser) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf8")
 		defer tool.Recover(func(err error) {
@@ -305,7 +303,7 @@ func Handler(user IUser) http.HandlerFunc {
 
 			// 判斷權限
 			if originFile != nil {
-				if user.HasPermission2(*originFile) == false {
+				if user.HasPermission(*originFile) == false {
 					tool.Output(w, nil, "you are not owner!")
 					return
 				}
@@ -364,7 +362,7 @@ func Handler(user IUser) http.HandlerFunc {
 				if file == nil {
 					fmt.Fprintf(w, "file not found")
 				} else {
-					if user.HasPermission2(*file) == false {
+					if user.HasPermission(*file) == false {
 						tool.Output(w, nil, "you are not owner!")
 						return
 					}
@@ -379,7 +377,7 @@ func Handler(user IUser) http.HandlerFunc {
 
 				infos := []map[string]interface{}{}
 				for _, file := range list {
-					if user.HasPermission2(file) == false {
+					if user.HasPermission(file) == false {
 						continue
 					}
 					info := map[string]interface{}{
