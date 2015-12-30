@@ -1403,6 +1403,7 @@ per_vic_pureMVCref_tableGameModel_Tool.alert = function(msg) {
 	per_vic_pureMVCref_tableGameModel_Tool.j.messager.alert("錯誤",msg);
 };
 var per_vic_pureMVCref_tableGameModel_controller_MainController = function(mediatorName,viewComponent) {
+	this.isCtrl = false;
 	this.isList = false;
 	this.pos_mouse = [0,0];
 	this.ary_allItem = [];
@@ -1410,10 +1411,11 @@ var per_vic_pureMVCref_tableGameModel_controller_MainController = function(media
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	leo.utils.initRectSelect(function(ary) {
-		_g.onSelectItems(ary);
+		_g.onSelectItems(ary,false,_g.isCtrl);
 		_g.zsorting();
 	});
 	per_vic_pureMVCref_tableGameModel_Tool.j("body").mousemove($bind(this,this.onBodyMouseMove));
+	per_vic_pureMVCref_tableGameModel_Tool.j("body").keydown($bind(this,this.onBodyKeyDown));
 	per_vic_pureMVCref_tableGameModel_Tool.j("body").keyup($bind(this,this.onBodyKeyUp));
 	per_vic_pureMVCref_tableGameModel_Tool.j("body").mousedown($bind(this,this.onBodyKeyUp));
 };
@@ -1435,7 +1437,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			break;
 		case "on_item_click":
 			var div1 = notification.getBody();
-			this.onSelectItems(div1,true);
+			this.onSelectItems(div1,true,this.isCtrl);
 			this.zsorting();
 			break;
 		case "create_item":
@@ -1576,12 +1578,23 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		(js_Boot.__cast(item , per_vic_pureMVCref_tableGameModel_view_IItem)).action(model.action);
 		this.ary_allItem.push(model);
 	}
+	,onBodyKeyDown: function(e) {
+		var _g = Std.parseInt(e.which);
+		if(_g != null) switch(_g) {
+		case 17:
+			this.isCtrl = true;
+			break;
+		}
+	}
 	,onBodyKeyUp: function(e) {
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_press,null,e.which);
 		var _g = Std.parseInt(e.which);
 		if(_g != null) switch(_g) {
 		case 84:case 68:case 75:case 73:case 79:case 80:
 			break;
+		case 17:
+			this.isCtrl = false;
+			return;
 		case 1:
 			return;
 		default:
@@ -1704,11 +1717,42 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			return true;
 		});
 	}
-	,onSelectItems: function(ary,selectLock) {
+	,onSelectItems: function(ary,selectLock,addSelect) {
+		if(addSelect == null) addSelect = false;
 		if(selectLock == null) selectLock = false;
 		var _g = this;
-		this.ary_select = ary.map(function(model) {
-			return _g.getItemFromPoolById(model.id);
+		if(addSelect) {
+			if(this.ary_select.length == 0) this.ary_select = ary.map(function(model) {
+				return _g.getItemFromPoolById(model.id);
+			}); else {
+				var needRemove = [];
+				var needAdd = [];
+				Lambda.foreach(ary,function(model1) {
+					var _g2 = 0;
+					var _g1 = _g.ary_select.length;
+					while(_g2 < _g1) {
+						var i = _g2++;
+						if(_g.ary_select[i].id == model1.id) needRemove.push(model1);
+					}
+					if(needRemove.length == 0) needAdd.push(model1);
+					return true;
+				});
+				var _g11 = 0;
+				var _g3 = needRemove.length;
+				while(_g11 < _g3) {
+					var j = _g11++;
+					var i1 = this.ary_select.length;
+					while(i1 > 0) {
+						--i1;
+						if(this.ary_select[i1].id == needRemove[j].id) this.ary_select.splice(i1,1);
+					}
+				}
+				this.ary_select = this.ary_select.concat(needAdd.map(function(model2) {
+					return _g.getItemFromPoolById(model2.id);
+				}));
+			}
+		} else this.ary_select = ary.map(function(model3) {
+			return _g.getItemFromPoolById(model3.id);
 		});
 		if(!selectLock) this.ary_select = this.filterLock(this.ary_select);
 		this.indexSorting();
@@ -2003,7 +2047,6 @@ var per_vic_pureMVCref_tableGameModel_view_BasicItem = function(mediatorName,vie
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	viewComponent.click(function(e) {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,[viewComponent[0]]);
-		_g.onSelect([viewComponent[0]]);
 	});
 };
 per_vic_pureMVCref_tableGameModel_view_BasicItem.__name__ = true;

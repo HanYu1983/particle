@@ -32,17 +32,19 @@ class MainController extends Mediator
 	var ary_allItem:Array<Dynamic> = [];
 	var pos_mouse = [0, 0];
 	var isList = false;
+	var isCtrl = false;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
 		super(mediatorName, viewComponent);
 		
 		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ) {
-			onSelectItems( ary );
+			onSelectItems( ary, false, isCtrl );
 			zsorting();
 		});
 		
 		Tool.j( 'body' ).mousemove( onBodyMouseMove );
+		Tool.j( 'body' ).keydown( onBodyKeyDown );
 		Tool.j( 'body' ).keyup( onBodyKeyUp );
 		Tool.j( 'body' ).mousedown( onBodyKeyUp );
 	}
@@ -66,7 +68,7 @@ class MainController extends Mediator
 				if ( lock ) viewComponent.prepend( div );
 			case BasicItem.on_item_click:
 				var div:Dynamic = notification.getBody();
-				onSelectItems( div, true );
+				onSelectItems( div, true, isCtrl );
 				zsorting();
 			case 'create_item':
 				var ary_creates:Array<Dynamic> = notification.getBody();
@@ -216,6 +218,13 @@ class MainController extends Mediator
 		ary_allItem.push( model );
 	}
 	
+	function onBodyKeyDown( e ) {
+		switch( Std.parseInt( e.which ) ) {
+			case KeyboardEvent.DOM_VK_CONTROL:
+				isCtrl = true;
+		}
+	}
+	
 	function onBodyKeyUp( e ) {
 		sendNotification( on_press, null, e.which );
 		
@@ -227,6 +236,9 @@ class MainController extends Mediator
 					KeyboardEvent.DOM_VK_I,
 					KeyboardEvent.DOM_VK_O,
 					KeyboardEvent.DOM_VK_P:
+			//ctrl事件只要到這裡就行了
+			case KeyboardEvent.DOM_VK_CONTROL:
+				isCtrl = false;return;
 			//滑鼠左鍵的事件不需要到這裡	
 			case 1:return;
 			case _:
@@ -335,10 +347,54 @@ class MainController extends Mediator
 		});
 	}
 	
-	function onSelectItems( ary:Array<Dynamic>, selectLock:Bool = false ) {
-		ary_select = ary.map( function( model:Dynamic ) {
-			return getItemFromPoolById( model.id );
-		});
+	function onSelectItems( ary:Array<Dynamic>, selectLock:Bool = false, ?addSelect:Bool = false ) {
+		
+		if ( addSelect ) {
+			//複選狀態，已經被選到的就取消，沒被選到的就加進來
+			if ( ary_select.length == 0 ) {
+				//如果本來就沒有任何一個是選取狀態的時候，就把所有選到的直接選取起來
+				ary_select = ary.map( function( model:Dynamic ) {
+					return getItemFromPoolById( model.id );
+				});
+			}else {
+				//識別出哪些是新增，哪些是已經有的
+				var needRemove = [];
+				var needAdd = [];
+				ary.foreach( function( model:Dynamic ) {
+					for ( i in 0...ary_select.length ) {
+						if ( ary_select[i].id == model.id ) {
+							needRemove.push( model );
+						}
+					}
+					if ( needRemove.length == 0 ) {
+						needAdd.push( model );
+					}
+					return true;
+				});
+				
+				//把已經有的取消選取
+				for ( j in 0...needRemove.length ) {
+					var i = ary_select.length;
+					while ( i > 0 ) {
+						--i;
+						if ( ary_select[i].id == needRemove[j].id ) {
+							ary_select.splice(i, 1 );
+						}
+					}
+				}
+				
+				//把新增的加進來
+				ary_select = ary_select.concat( needAdd.map( function( model:Dynamic ) {
+					return getItemFromPoolById( model.id );
+				}));
+			}
+		}else {
+			//直接點選狀態，點到啥就選到啥，沒選到就排除
+			ary_select = ary.map( function( model:Dynamic ) {
+				return getItemFromPoolById( model.id );
+			});
+		}
+		
 		if( !selectLock )
 			ary_select = filterLock( ary_select );
 			

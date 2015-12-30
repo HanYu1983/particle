@@ -26,7 +26,6 @@ class BasicItem extends Mediator implements IItem
 		
 		viewComponent.click( function( e ) {
 			sendNotification( on_item_click, [viewComponent[0]] );
-			onSelect( [viewComponent[0]] );
 		});
 	}
 	
