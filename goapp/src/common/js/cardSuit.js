@@ -233,7 +233,8 @@ var cardSuit = cardSuit || {};
 		if( err == "file not found" ){
 			cb( null, defaultModel() )
 		} else {
-			cb( null, JSON.parse( ret ))
+			//cb( null, JSON.parse( ret ))
+			cb( null, ret)
 		}
 		  /*
         if( err ){

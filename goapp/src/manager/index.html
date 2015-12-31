@@ -553,7 +553,7 @@ a{
 	var loadModel;
 	
 	showLoading( '準備中...' );
-	myapp.facebook.init( '679171275511375', function(){
+	myapp.facebook.init( '425311264344425', function(){
 		$('#btn_login' ).linkbutton( 'enable' );
 		closeLoading();
 	});
@@ -573,6 +573,8 @@ a{
 					
 					if( _beta ){
 						cardSuit.load2( fbid, token, handleModel( function( ret ){
+							console.log( ret );
+						
 							loadModel = ret;
 							app.card.showDeckList( loadModel );
 							

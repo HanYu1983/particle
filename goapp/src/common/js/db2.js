@@ -19,7 +19,7 @@ var db2 = db2 || {};
 			data: data,
 			dataType: dataType,
 			success: function( ret ){
-				cb( ret.Error, ret.Info )
+				cb( null, ret )
 			},
 			error: function( xhr, res, err ){
 				cb( err )
