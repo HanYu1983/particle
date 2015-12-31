@@ -295,10 +295,14 @@ func Handler(user abstract.IUser) http.HandlerFunc {
 		if r.Method == "POST" {
 			form := r.PostForm
 
-			tool.Assert(tool.ParameterIsNotExist(form, "Name"))
-			name := form["Name"][0]
+			//去掉第一個空白和dbfile2
+			filePathToken := strings.Split(r.URL.Path, "/")[2:]
+			filename := strings.Join(filePathToken, "/")
 
-			originFile, err := GetFile(ctx, name)
+			//tool.Assert(tool.ParameterIsNotExist(form, "Name"))
+			//name := form["Name"][0]
+
+			originFile, err := GetFile(ctx, filename)
 			tool.Assert(tool.IfError(err))
 
 			// 判斷權限
@@ -312,7 +316,7 @@ func Handler(user abstract.IUser) http.HandlerFunc {
 			// 若有Delete參數，執行刪除
 			if len(form["Delete"]) > 0 {
 
-				err := Delete(ctx, name)
+				err := Delete(ctx, filename)
 				tool.Assert(tool.IfError(err))
 				tool.Output(w, nil, nil)
 
@@ -325,7 +329,7 @@ func Handler(user abstract.IUser) http.HandlerFunc {
 					override = true
 				}
 
-				err = WriteFile(ctx, name, []byte(content), user.GetID(), override)
+				err = WriteFile(ctx, filename, []byte(content), user.GetID(), override)
 				tool.Assert(tool.IfError(err))
 				tool.Output(w, nil, nil)
 			}
