@@ -170,12 +170,16 @@ class Main
 				openLoading( '登入並讀取資料中...' );
 				
 				CallJs.myapp_facebook_login( function( ret ) {
+					trace( ret );
+					
 					fbid = ret.authResponse.userID;
 					token = ret.authResponse.accessToken;
 					
 					j( '#txt_id' ).textbox( 'setValue', fbid );
 					
-					CallJs.cardSuit_load( fbid, token, handleResponse( function( ret ) {
+					CallJs.cardSuit_load2( fbid, token, handleResponse( function( ret ) {
+						
+						trace( ret );
 						prepareCardsuit( ret.cardSuit );
 						j( '#btn_login' ).linkbutton( 'disable' );
 						j( '#btn_notLogin' ).linkbutton( 'disable' );
@@ -442,6 +446,7 @@ class Main
 	
 	static function handleResponse( cb ) {
 		return function ( err, ret ) {
+			trace( err, ret );
 			if ( err != null ) {
 				#if debug
 				alert( err );

@@ -230,6 +230,13 @@ var cardSuit = cardSuit || {};
       },
       'json',
       function( err, ret ){
+		if( err == "file not found" ){
+			cb( null, defaultModel() )
+		} else {
+			//cb( null, JSON.parse( ret ))
+			cb( null, ret)
+		}
+		  /*
         if( err ){
           cb( err )
         } else {
@@ -241,6 +248,7 @@ var cardSuit = cardSuit || {};
           
           }
         }
+		*/
       })
   }
   
@@ -252,7 +260,6 @@ var cardSuit = cardSuit || {};
         Content: JSON.stringify(data),
         Override: true
       },
-      'json',
       cb)
   }
   

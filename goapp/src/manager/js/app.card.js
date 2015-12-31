@@ -18,12 +18,22 @@ app.card = app.card || {};
 	$('#btn_saveDeck' ).linkbutton( {
 		onClick:function(){
 			showLoading( '存檔中...' );
-			cardSuit.save( fbid, token, loadModel, handleModel( function( ret ){
-				showMessage( '存檔成功' );
-				$('#btn_saveDeck' ).linkbutton( 'disable' );
-				
-				closeLoading();
-			}));
+			
+			if( _beta ){
+				cardSuit.save2( fbid, token, loadModel, handleModel( function( ret ){
+					showMessage( '存檔成功' );
+					$('#btn_saveDeck' ).linkbutton( 'disable' );
+					
+					closeLoading();
+				}));
+			}else{
+				cardSuit.save( fbid, token, loadModel, handleModel( function( ret ){
+					showMessage( '存檔成功' );
+					$('#btn_saveDeck' ).linkbutton( 'disable' );
+					
+					closeLoading();
+				}));
+			}
 		}
 	});
 	
