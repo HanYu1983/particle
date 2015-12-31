@@ -7,7 +7,7 @@
 		"back":true,
 		"lock":false,
 		"extra":[
-			"陸（重裝甲） M60A3 錢2 攻2 擊破（裝甲、步兵）"
+			"陸（重裝甲） 炮塔 錢1 攻0 內文（擊破（裝甲）；迎擊2）"
 		]
 	},
 	{
@@ -18,7 +18,17 @@
 		"back":true,
 		"lock":false,
 		"extra":[
-			"陸（輕裝甲） T-34 錢1 攻1 擊破（輕裝甲、步兵）"
+			"陸（重裝甲） M60A3 錢1 攻1 內文（擊破（裝甲、步兵））"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"extra":[
+			"陸（輕裝甲） T-34 錢1 攻1 內文（擊破（輕裝甲、步兵））"
 		]
 	},{
 		"type":"data",
@@ -118,6 +128,182 @@
 		"owner":"smart",
 		"extra":[
 			"海（船） 大和號 錢5 攻5 擊破（船、裝甲、飛行器） 內文（這戰線的敵軍飛行器獲得「擊破（船）」；這張卡不能成為這個戰線敵軍船的擊破對象）"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
+		]
+	},{
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"owner":"smart",
+		"extra":[
+			"金錢"
 		]
 	}
 ]
