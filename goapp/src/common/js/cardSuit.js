@@ -223,7 +223,7 @@ var cardSuit = cardSuit || {};
   }
   
   function load2( fbid, token, cb ){
-    db2.filelist( 'root/user/'+fbid+'/cardSuit.json', 
+    db2.file( 'root/user/'+fbid+'/cardSuit.json', 
       {
         FBID: fbid,
         AccessToken: token
@@ -233,22 +233,8 @@ var cardSuit = cardSuit || {};
 		if( err == "file not found" ){
 			cb( null, defaultModel() )
 		} else {
-			//cb( null, JSON.parse( ret ))
 			cb( null, ret)
 		}
-		  /*
-        if( err ){
-          cb( err )
-        } else {
-          if( ret == "" ){
-            cb( null, defaultModel() )
-          
-          } else {
-            cb( null, JSON.parse( ret ))
-          
-          }
-        }
-		*/
       })
   }
   

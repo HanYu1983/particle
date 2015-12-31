@@ -12,7 +12,7 @@ var db2 = db2 || {};
 		AccessToken: string
 	}
 	*/
-	function filelist( path, data, dataType, cb ){
+	function file( path, data, dataType, cb ){
 		$.ajax({
 			url: basePath + path,
 			method: 'get',
@@ -20,6 +20,21 @@ var db2 = db2 || {};
 			dataType: dataType,
 			success: function( ret ){
 				cb( null, ret )
+			},
+			error: function( xhr, res, err ){
+				cb( err )
+			}
+		})
+	}
+	
+	function filelist( path, data, cb ){
+		$.ajax({
+			url: basePath + path,
+			method: 'get',
+			data: data,
+			dataType: 'json',
+			success: function( ret ){
+				cb( ret.Error, ret.Info )
 			},
 			error: function( xhr, res, err ){
 				cb( err )
@@ -50,7 +65,8 @@ var db2 = db2 || {};
 		})
 	}
 	
-	module.filelist = filelist
+	module.file = file
 	module.writefile = writefile
+	module.filelist = filelist
 	
 }) (db2)
