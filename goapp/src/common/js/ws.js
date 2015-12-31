@@ -28,7 +28,16 @@ var ws = ws || {};
 		'ft',
 		'ftext1.0',
 		'gf',
-		'gf2.0'
+		'gf2.0',
+		'ab',
+		'abext',
+		'abext2.0',
+		'abre',
+		'ns',
+		'nsa',
+		'nsm',
+		'nsm1m2',
+		'nsm2'
 	]
 	
 	function load( path, cb ){
