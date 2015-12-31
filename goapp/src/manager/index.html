@@ -429,6 +429,7 @@ a{
 		<img id='cornerGlow_256_256' src='../common/images/effect/cornerGlow_256_256.png'>
 	</div>
 	<script src="../common/js/lib/underscore/underscore-min.js"></script>	
+	<script src="../common/js/db2.js"></script>	
 	<script src="../common/js/store.js"></script>	
 	<script src="../common/js/cardSuit.js"></script>	
 	<script src="../common/js/admin.js"></script>	
@@ -552,7 +553,7 @@ a{
 	var loadModel;
 	
 	showLoading( '準備中...' );
-	myapp.facebook.init( '425311264344425', function(){
+	myapp.facebook.init( '679171275511375', function(){
 		$('#btn_login' ).linkbutton( 'enable' );
 		closeLoading();
 	});
@@ -570,15 +571,27 @@ a{
 					fbid = ret.authResponse.userID;
 					token = ret.authResponse.accessToken;
 					
-					cardSuit.load( fbid, token, handleModel( function( ret ){
-						loadModel = ret;
-						app.card.showDeckList( loadModel );
-						
-						$('#btn_addDeck').linkbutton( 'enable' );
-						
-						mc_backContainer.find( '.cardback' ).show();
-						closeLoading();
-					}));
+					if( _beta ){
+						cardSuit.load2( fbid, token, handleModel( function( ret ){
+							loadModel = ret;
+							app.card.showDeckList( loadModel );
+							
+							$('#btn_addDeck').linkbutton( 'enable' );
+							
+							mc_backContainer.find( '.cardback' ).show();
+							closeLoading();
+						}));
+					}else{
+						cardSuit.load( fbid, token, handleModel( function( ret ){
+							loadModel = ret;
+							app.card.showDeckList( loadModel );
+							
+							$('#btn_addDeck').linkbutton( 'enable' );
+							
+							mc_backContainer.find( '.cardback' ).show();
+							closeLoading();
+						}));
+					}
 				});
 				break;
 			case 'btn_addDeck':

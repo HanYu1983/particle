@@ -4,6 +4,6 @@ var config = config || {};
 	module.fbid = {
 		online:'425311264344425',
 		local:'679171275511375',
-		which:'online'
+		which:'local'
 	}
 })( config );

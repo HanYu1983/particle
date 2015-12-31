@@ -2,7 +2,7 @@ var db2 = db2 || {};
 
 (function( module ){
 	
-	var basePath = '../admindbfile2/'
+	var basePath = '../dbfile2/'
 	
 	/**
 	dataType基本上都是json

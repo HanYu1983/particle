@@ -360,7 +360,7 @@ func Handler(user abstract.IUser) http.HandlerFunc {
 				file, err := GetFile(ctx, filename)
 				tool.Assert(tool.IfError(err))
 				if file == nil {
-					fmt.Fprintf(w, "file not found")
+					tool.Output(w, nil, "file not found")
 				} else {
 					if user.HasPermission(*file) == false {
 						tool.Output(w, nil, "you are not owner!")
