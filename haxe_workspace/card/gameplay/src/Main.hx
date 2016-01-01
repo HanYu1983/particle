@@ -179,7 +179,6 @@ class Main
 					
 					CallJs.cardSuit_load2( fbid, token, handleResponse( function( ret ) {
 						
-						trace( ret );
 						prepareCardsuit( ret.cardSuit );
 						j( '#btn_login' ).linkbutton( 'disable' );
 						j( '#btn_notLogin' ).linkbutton( 'disable' );
