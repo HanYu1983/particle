@@ -57,23 +57,34 @@ func GetFile(ctx appengine.Context, filename string) (*DBFile, error) {
 func GetFileList(ctx appengine.Context, filename string, filterLayer bool) ([]DBFile, error) {
 	isAccept := func(file *DBFile) bool {
 		accept := true
-		token1 := strings.Split(filename, "/")
-		token2 := strings.Split(file.Name, "/")
 
-		if len(token1) != len(token2) {
-			accept = false
-		}
-		var i int
-		for i < len(token1) && i < len(token2) {
-			if token1[i] == "" {
-				i += 1
-				continue
-			}
-			if token1[i] != token2[i] {
+		/*
+			token1 := strings.Split(filename, "/")
+			token2 := strings.Split(file.Name, "/")
+
+			ctx.Infof(filename)
+			ctx.Infof(file.Name)
+
+			if len(token1) != len(token2) {
 				accept = false
-				break
 			}
-			i += 1
+		*/
+		/*
+			var i int
+			for i < len(token1) && i < len(token2) {
+				if token1[i] == "" {
+					i += 1
+					continue
+				}
+				if token1[i] != token2[i] {
+					accept = false
+					break
+				}
+				i += 1
+			}
+		*/
+		if strings.Index(file.Name, filename) != 0 {
+			accept = false
 		}
 		return accept
 	}
