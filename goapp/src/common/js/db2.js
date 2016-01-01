@@ -17,9 +17,20 @@ var db2 = db2 || {};
 			url: basePath + path,
 			method: 'get',
 			data: data,
-			dataType: dataType,
+			dataType: 'text',
 			success: function( ret ){
-				cb( null, ret )
+				if( ret == 'file not found' ){
+					cb( 'file not found' )
+				} else {
+					switch( dataType ){
+						case 'json':
+							cb( null, JSON.parse( ret ) )
+							break
+						default:
+							cb( null, ret )
+							break
+					}
+				}
 			},
 			error: function( xhr, res, err ){
 				cb( err )
