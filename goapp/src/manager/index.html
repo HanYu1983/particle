@@ -573,10 +573,9 @@ a{
 					
 					if( _beta ){
 						cardSuit.load2( fbid, token, handleModel( function( ret ){
-							console.log( ret );
-						
+							
 							loadModel = ret;
-							app.card.showDeckList( loadModel );
+							app.card.showDeckList( loadModel, true );
 							
 							$('#btn_addDeck').linkbutton( 'enable' );
 							
@@ -587,7 +586,6 @@ a{
 						cardSuit.load( fbid, token, handleModel( function( ret ){
 							loadModel = ret;
 							app.card.showDeckList( loadModel );
-							
 							$('#btn_addDeck').linkbutton( 'enable' );
 							
 							mc_backContainer.find( '.cardback' ).show();

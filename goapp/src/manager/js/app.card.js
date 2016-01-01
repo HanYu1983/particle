@@ -1,10 +1,17 @@
 var app = app || {};
 app.card = app.card || {};
 (function( module ){
-	function showDeckList( retModel ){
+	function showDeckList( retModel, sort ){
 		var mc_deckContainer = $("#mc_deckContainer");
 		var oldtop = mc_deckContainer.parent().parent().scrollTop();
 		mc_deckContainer.empty();
+		
+		if( sort != undefined && sort ){
+			retModel.cardSuit.sort( function( aobj, bobj ){
+				return aobj.game.localeCompare( bobj.game );
+			});
+		}
+		
 		_.each( retModel.cardSuit, function( deck ){
 			var copyDeck = JSON.parse( JSON.stringify( deck ) );
 			if( copyDeck.backId == undefined ){
