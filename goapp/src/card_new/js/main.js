@@ -1516,7 +1516,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			case "applyTransform":
 				var needApply;
 				if(notification.getBody().applyValue == null) needApply = true; else needApply = notification.getBody().applyValue;
-				this.updateView(this.updateModel(notification.getBody().ary_item),notification.getBody().zs,needApply);
+				if(needApply) this.updateView(this.updateModel(notification.getBody().ary_item),notification.getBody().zs); else this.updateView(notification.getBody().ary_item,notification.getBody().zs,needApply);
 				break;
 			}
 		}

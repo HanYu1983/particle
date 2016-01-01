@@ -93,7 +93,12 @@ class MainController extends Mediator
 						deleteView( localModel );
 					case 'applyTransform':
 						var needApply = notification.getBody().applyValue == null ? true : notification.getBody().applyValue;
-						updateView( updateModel( notification.getBody().ary_item ), notification.getBody().zs, needApply );
+						if ( needApply ) {
+							updateView( updateModel( notification.getBody().ary_item ), notification.getBody().zs );
+						}else {
+							updateView( notification.getBody().ary_item, notification.getBody().zs, needApply );
+						}
+						
 				}
 		}
 	}
