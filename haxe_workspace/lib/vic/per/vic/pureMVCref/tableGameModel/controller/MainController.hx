@@ -603,8 +603,8 @@ class MainController extends Mediator
 			var m = facade.retrieveMediator( removeItem.id );
 			if ( m != null ) {
 				m.getViewComponent().remove();
+				facade.removeMediator( m.getMediatorName() );
 			}
-			facade.removeMediator( m.getMediatorName() );
 			return true;
 		});
 	}

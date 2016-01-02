@@ -100,7 +100,9 @@ class SocketController extends Mediator
 		if ( ary_ops == null ) return;
 		
 		ary_ops.foreach( function( op ) {
-			untyped __js__( 'api.sendMessageToSomeone' )( op, type, msg );
+			if ( op != SocketController.playerId ) {
+				untyped __js__( 'api.sendMessageToSomeone' )( op, type, msg );
+			}
 			return true;
 		});
 	}

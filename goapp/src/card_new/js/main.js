@@ -238,7 +238,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 449, className : "Main", methodName : "handleResponse", customParams : [ret]});
+		haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 448, className : "Main", methodName : "handleResponse", customParams : [ret]});
 		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
 	};
 };
@@ -272,7 +272,6 @@ Main.prototype = {
 				Main.token = ret.authResponse.accessToken;
 				Main.j("#txt_id").textbox("setValue",Main.fbid);
 				CallJs.cardSuit_load2(Main.fbid,Main.token,Main.handleResponse(function(ret1) {
-					haxe_Log.trace(ret1,{ fileName : "Main.hx", lineNumber : 182, className : "Main", methodName : "onHtmlClick"});
 					_g.prepareCardsuit(ret1.cardSuit);
 					Main.j("#btn_login").linkbutton("disable");
 					Main.j("#btn_notLogin").linkbutton("disable");
@@ -1988,8 +1987,10 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		var _g = this;
 		Lambda.foreach(ary_receive,function(removeItem) {
 			var m = _g.facade.retrieveMediator(removeItem.id);
-			if(m != null) m.getViewComponent().remove();
-			_g.facade.removeMediator(m.getMediatorName());
+			if(m != null) {
+				m.getViewComponent().remove();
+				_g.facade.removeMediator(m.getMediatorName());
+			}
 			return true;
 		});
 	}
@@ -2074,7 +2075,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 		if(!per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage) return;
 		if(this.ary_ops == null) return;
 		Lambda.foreach(this.ary_ops,function(op) {
-			api.sendMessageToSomeone(op,type,msg);
+			if(op != per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) api.sendMessageToSomeone(op,type,msg);
 			return true;
 		});
 	}
