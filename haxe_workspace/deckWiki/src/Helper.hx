@@ -30,11 +30,20 @@ class Helper
 		});
 	}
 	
-	public static function createDetail( game, card:Dynamic ) {
-		card.url = untyped __js__('gameController.getCardUrl')( game, card );
+	public static function loadDetail( game:String, cb ) {
+		untyped __js__('api.cardInfo')( game, function(err, data) {
+			cb( data );
+			//console.log(api.cardimageurl('sgs', data[0].id))
+		});
+	}
+	
+	public static function createDetail( game:String, card:Dynamic ) {
+		card.url = untyped __js__('api.cardimageurl')( game, card );
+		trace( card.url );
 		if( card.url == null ) {
-			card.url = 'images/cardback.png';
+			card.url = '../common/images/card/cardback_0.png';
 		}
+		trace( card.url );
 		
 		var div = j("#tmpl_bigCard").tmpl( card );
 		div.find( 'div[game]' ).hide();

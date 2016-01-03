@@ -24,9 +24,16 @@ class Main
 			return true;
 		});
 		
+		Helper.loadDetail( 'sgs', function( data:Dynamic ) {
+			trace( data );
+			var dom = Helper.createDetail( 'sg', data[0] );
+			j( '#mc_bigItemContainer' ).append( dom );
+		});
+		/*
 		var dom = Helper.createDetail( 'army', { } );
 		trace( dom );
 		j( '#mc_bigItemContainer' ).append( dom );
+		*/
 	}
 	
 }

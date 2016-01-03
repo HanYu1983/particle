@@ -16,9 +16,16 @@ Helper.addItemListener = function(dom) {
 		console.log(e2);
 	});
 };
+Helper.loadDetail = function(game,cb) {
+	api.cardInfo(game,function(err,data) {
+		cb(data);
+	});
+};
 Helper.createDetail = function(game,card) {
-	card.url = gameController.getCardUrl(game,card);
-	if(card.url == null) card.url = "images/cardback.png";
+	card.url = api.cardimageurl(game,card);
+	console.log(card.url);
+	if(card.url == null) card.url = "../common/images/card/cardback_0.png";
+	console.log(card.url);
 	var div = Helper.j("#tmpl_bigCard").tmpl(card);
 	div.find("div[game]").hide();
 	div.find("div[game=" + game + "]").show();
@@ -58,14 +65,16 @@ Main.main = function() {
 		$r = _g;
 		return $r;
 	}(this)),function(str) {
-		var dom1 = Helper.createItem({ });
-		Helper.addItemListener(dom1);
-		j("#mc_itemContainer").append(dom1);
+		var dom = Helper.createItem({ });
+		Helper.addItemListener(dom);
+		j("#mc_itemContainer").append(dom);
 		return true;
 	});
-	var dom = Helper.createDetail("army",{ });
-	console.log(dom);
-	j("#mc_bigItemContainer").append(dom);
+	Helper.loadDetail("sgs",function(data) {
+		console.log(data);
+		var dom1 = Helper.createDetail("sg",data[0]);
+		j("#mc_bigItemContainer").append(dom1);
+	});
 };
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
