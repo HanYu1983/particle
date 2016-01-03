@@ -21,6 +21,8 @@
 	<script src="../common/js/cardinfoloader.js"></script>
 	<script src="../common/js/cardsearch.js"></script>
 	<script src="../common/js/db2.js"></script>
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script src='../common/js/admin.js'></script>
 	<script src='js/api.js'></script>
 		<script>
 		api.cardInfo( 'sgs', function(err, data){
@@ -35,13 +37,8 @@
 				console.log(data)
 			})
 		})
-		$.ajax({
-			url:'../fn/message',
-			dataType:'json',
-			success:function(data){
-				console.log(data)
-				console.log(data.Message)
-			}
+		admin.message(function(err,data){
+			console.log(data)
 		})
 		</script>
 	</body>
