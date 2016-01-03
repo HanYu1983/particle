@@ -1,0 +1,33 @@
+<html>
+	<body>
+
+	<script src="../common/js/lib/jquery-1.9.min.js"></script>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>
+	<script src="../common/js/lib/async/async.js"></script>
+	<script src="../common/js/lib/google/ga.js"></script>
+	<script src="../common/js/lib/csv.js"></script>
+	<script src="../common/js/lib/purl.js"></script>	
+	<script src="../common/js/sangoWar.js"></script>	
+	<script src="../common/js/yugioh.js"></script>	
+	<script src="../common/js/magic.js"></script>	
+	<script src="../common/js/gundamWar.js"></script>	
+	<script src="../common/js/gundamWarN.js"></script>	
+	<script src="../common/js/army.js"></script>	
+	<script src="../common/js/battleSpirits.js"></script>	
+	<script src='../common/js/crusade.js'></script>
+	<script src='../common/js/dragonZ.js'></script>
+	<script src='../common/js/ws.js'></script>
+	<script src='../common/js/sgs.js'></script>
+	<script src="../common/js/cardinfoloader.js"></script>
+	<script src="../common/js/cardsearch.js"></script>
+	<script src='js/api.js'></script>
+		<script>
+		api.cardInfo( 'sgs', function(err, data){
+			console.log(api.cardimageurl('sgs', data[0].id))
+		})
+		api.cardInfo( 'sgs', function(err, data){
+			console.log(data)
+		})
+		</script>
+	</body>
+</html>
