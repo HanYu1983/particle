@@ -335,7 +335,7 @@ body{
 						個性簽名
 					</div>
 					<div class="hori">
-						<input name="sign" type="text" />
+						<input name="author" type="text" />
 					</div>
 				</div>
 				<div class="group" style="margin-bottom:5px;">
@@ -1429,7 +1429,7 @@ body{
 			var savestr = $( document.form_save ).serialize();
 			savestr += '&cards=' + encodeURIComponent( getDeckString());
 			var savedata = getQueryByStr( savestr );
-			api.save( uid, {Content:JSON.stringify({author:savedata.name, game:game, describe:savedata.describe, cards:JSON.parse( savedata.cards ) })}, function( err ){
+			api.save( uid, {Content:JSON.stringify({name:savedata.name, type:savedata.type, author:savedata.author, game:game, describe:savedata.describe, cards:JSON.parse( savedata.cards ) })}, function( err ){
 				if( err != null ){
 					$.messager.alert('提示', err );
 				}else{

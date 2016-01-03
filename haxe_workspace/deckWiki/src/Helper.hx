@@ -16,7 +16,7 @@ class Helper
 		return j('#tmpl_item' ).tmpl( model );
 	}
 	
-	public static function addItemListener( dom:Dynamic ) {
+	public static function addItemListener( dom:Dynamic, click:Dynamic -> Void ) {
 		dom.mouseover( function(e) {
 			var dom = j( e.currentTarget );
 			dom.addClass( 'focus' );
@@ -25,9 +25,7 @@ class Helper
 			var dom = j( e.currentTarget );
 			dom.removeClass( 'focus' );
 		});
-		dom.click( function(e) {
-			trace( e );
-		});
+		dom.click( click );
 	}
 	
 	public static function loadDetail( game:String, cb ) {
