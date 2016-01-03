@@ -215,6 +215,7 @@ var api = api || {};
 	/**
 	取得圖片路徑
 	pkgName: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
+	這個方法過時，轉移到common/js/cardinfoloader
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
 		switch( pkgName ){

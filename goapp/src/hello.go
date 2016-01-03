@@ -84,6 +84,8 @@ func init() {
 
 	// 使用者用，這個會先經過FB認證
 	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
+	// 組牌危機用
+	http.HandleFunc("/deckwikidbfile2/", db2.Handler(appauth.User{Key: "deckWiki"}))
 	// 下載備份加清除。若有Clear參數，才會執行清除
 	http.HandleFunc("/admindbfile2/__archiveAndClear__", db2.HandleClearDataAndDownloadArchive)
 	// 觀看現在資料庫的備份狀態（資料列表）
