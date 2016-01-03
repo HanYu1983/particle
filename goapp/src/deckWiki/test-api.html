@@ -20,6 +20,7 @@
 	<script src='../common/js/sgs.js'></script>
 	<script src="../common/js/cardinfoloader.js"></script>
 	<script src="../common/js/cardsearch.js"></script>
+	<script src="../common/js/db2.js"></script>
 	<script src='js/api.js'></script>
 		<script>
 		api.cardInfo( 'sgs', function(err, data){
@@ -27,6 +28,12 @@
 		})
 		api.cardInfo( 'sgs', function(err, data){
 			console.log(data)
+		})
+		api.save('han', {Content:JSON.stringify([1,2,{}])}, function(err){
+			console.log(err)
+			api.load( function(err,data) {
+				console.log(data)
+			})
 		})
 		</script>
 	</body>

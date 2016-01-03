@@ -106,7 +106,7 @@ var db2 = db2 || {};
 	}
 	
 	function filelist( path, data, cb ){
-		filelist( basePath+path, data, cb )
+		pfilelist( basePath+path, data, cb )
 		/*
 		$.ajax({
 			url: basePath + path,
@@ -132,7 +132,7 @@ var db2 = db2 || {};
 	}
 	*/
 	function writefile( path, data, cb ){
-		writefile( basePath+path, data, cb )
+		pwritefile( basePath+path, data, cb )
 		/*
 		$.ajax({
 			url: basePath + path,

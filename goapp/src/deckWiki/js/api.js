@@ -2,7 +2,7 @@ var api = api || {};
 
 (function( module ){
 	
-	var appid = 'deckWiki'
+	var appid = 'deckwiki'
 	
 	var _cardInfo = {}
 	
@@ -38,18 +38,20 @@ var api = api || {};
 		Content: ""
 	}
 	*/
-	function save(data, cb){
-		db2.writefile( '../'+appid+'/list.json', data, cb )
+	function save(id, data, cb){
+		db2.writefile( '../deckwikidbfile2/'+appid+'/list/'+id+'.json', data, cb )
 	}
 	
 	/*
 	
 	*/
 	function load(cb){
-		db2.file( '../'+appid+'/list.json', null, 'json', cb)
+		db2.filelist( '../deckwikidbfile2/'+appid+'/list/?Detail', null, cb)
 	}
 	
 	module.cardInfo = cardInfo
 	module.cardimageurl = cardimageurl
+	module.save = save
+	module.load = load
 
 }) (api)
