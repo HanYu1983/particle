@@ -19,8 +19,6 @@
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
 	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
 		
-	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
-	<script type="text/javascript" src="../common/js/lib/underscore/underscore-min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
@@ -274,13 +272,14 @@ body{
 			</div>
 		</div>
 	</div>
-	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false,closed:true,modal:true" style="width:500px;height:300px" >
+	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false,closed:true,modal:true" style="width:660px;height:300px" >
 		<div class="group" style="text-align:center;">
 			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 			<div class="hori" style="margin-top:10px;">
 				<a id="btn" href="#" title="歡迎大家加入哦" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" onclick="app.view.onGoToClubClick();">加入社團找牌咖</a>
 				<a id="btn" href="#" title="匯入由此組牌機所輸出的文字來產生牌組" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
 				<a id="btn_gotoSet" href="#" title="去上善若水app的首頁，登入並輸入由此組牌機所產生的文字，來新增自己的套牌" class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" onclick="app.view.onSetDeckClick()" data-options="iconCls:'icon-back'">去輸入牌組</a>
+				<a id="btn_saveDeck" href="#" title="組牌危機是可以分享套牌並且評論套牌的一個網頁哦" class="easyui-linkbutton easyui-tooltip" style="width:140px; height:40px;" onclick="app.view.onOpenSaveForm()" data-options="iconCls:'icon-save'">儲存到組牌危機</a>
 				<a id="btn_gotoGame" href="#" title="去卡牌風雲頁面使用臨時創建的功能，來測試由此組牌機所組出來的套牌" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onGotoGameClick()" data-options="iconCls:'icon-redo'">線上打牌去</a>
 			</div>
 		</div>
@@ -320,6 +319,56 @@ body{
 			</div>
 		</div>
 	</div>
+	<div id="dia_saveForm" class="easyui-dialog" title="組牌危機儲存填寫單" data-options="closed:true" style="width:300px; padding:10px">
+		<form name="form_save">
+			<div class="group" style="text-align:center">
+				<div class="group" style="margin-bottom:5px;">
+					<div class="hori" style="width:60px;">
+						套牌名稱
+					</div>
+					<div class="hori">
+						<input name="name" type="text" />
+					</div>
+				</div>
+				<div class="group" style="margin-bottom:5px;">
+					<div class="hori" style="width:60px;">
+						個性簽名
+					</div>
+					<div class="hori">
+						<input name="sign" type="text" />
+					</div>
+				</div>
+				<div class="group" style="margin-bottom:5px;">
+					<div class="hori" style="width:60px;">
+						說明
+					</div>
+					<div class="hori">
+						<textarea name="describe" type="text" style="height:100px;" ></textarea>
+					</div>
+				</div>
+				<div class="group" style="margin-bottom:20px;">
+					<div class="hori" style="width:60px;">
+						類型
+					</div>
+					<div class="hori">
+						<select name="type">
+							<option value=""></option>
+							<option value="high_speed">小快</option>
+							<option value="middle_speed">中速</option>
+							<option value="low_speed">後期</option>
+							<option value="balance">均衡</option>
+							<option value="control">控制</option>
+							<option value="disgust">噁心</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" style="margin-bottom:5px;">
+					<a id="" href="#" class="easyui-linkbutton" onclick="app.view.onSaveDeck()" style="width:100px;" data-options="iconCls:'icon-save'">儲存</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 	<script src="../common/js/lib/underscore/underscore-min.js"></script>
 	<script src="../common/js/lib/async/async.js"></script>
 	<script src="../common/js/lib/google/ga.js"></script>
@@ -338,6 +387,8 @@ body{
 	<script src='../common/js/sgs.js'></script>
 	<script src="../common/js/cardsearch.js"></script>	
 	<script src="../common/js/admin.js"></script>	
+	<script src="../common/js/db2.js"></script>	
+	<script src="../common/js/store.js"></script>	
 	<script src='js/api.js'></script>
 	<script src="js/manager_deck_gameController.js"></script>
 	<script>
@@ -1045,7 +1096,7 @@ body{
 	$.messager.progress({text:'讀取資料中…'}); 
 	
 	function onLoadGameCallback( err, _cardlist ){
-		console.log( _cardlist );
+		//console.log( _cardlist );
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
@@ -1243,12 +1294,6 @@ body{
 		}
 		
 		function searchCards( searchstr ){
-			//console.log( searchstr );
-		//	if( searchstr == undefined ) return;
-			
-		//	searchstr = searchstr.replace( '+', '%20' );
-		//	console.log( searchstr );
-			
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
 			
@@ -1259,8 +1304,6 @@ body{
 			createBigCard();
 			setPagination( ary_cards.length );
 		}
-		
-		
 		
 		function searchLib( str ){
 			var fns = gameController.getQueryStr( game, str );
@@ -1285,6 +1328,12 @@ body{
 		function onSaveClick(){
 			googleTracking.click( 'onSaveClick' );
 			win_output.window('open' );
+			var outputstr = getDeckString();
+			outputstr = outputstr.substr( 1, outputstr.length - 2 );
+			win_output.find( '.easyui-textbox' ).textbox( 'setText', outputstr);
+		}
+		
+		function getDeckString(){
 			var ary_new = _.map( ary_deck, function( card ){
 				switch( game ){
 				default:
@@ -1293,9 +1342,7 @@ body{
 					return sangoWar.formatKey( card.id );
 				}
 			});
-			var outputstr = JSON.stringify( ary_new );
-			outputstr = outputstr.substr( 1, outputstr.length - 2 );
-			win_output.find( '.easyui-textbox' ).textbox( 'setText', outputstr);
+			return JSON.stringify( ary_new );
 		}
 		
 		function onLoadClick(){
@@ -1373,6 +1420,30 @@ body{
 			window.open('//www.facebook.com/groups/1521526761495948/');
 		}
 		
+		function onOpenSaveForm(){
+			$('#dia_saveForm').panel('open' );
+		}
+		
+		function onSaveDeck(){
+			var uid = leo.utils.generateUUID();
+			var savestr = $( document.form_save ).serialize();
+			savestr += '&cards=' + encodeURIComponent( getDeckString());
+			var savedata = getQueryByStr( savestr );
+			api.save( uid, {Content:JSON.stringify({author:savedata.name, game:game, describe:savedata.describe, cards:JSON.parse( savedata.cards ) })}, function( err ){
+				if( err != null ){
+					$.messager.alert('提示', err );
+				}else{
+					showMessage( '儲存成功!' );
+					$('#dia_saveForm').panel('close' );
+				}
+			});
+		}
+		
+		function getQueryByStr(qstr){
+			var url = $.url("?" + qstr);
+			return url.data.param.query;
+		}
+		
 		module.onResetClick = onResetClick;
 		module.onSearchClick = onSearchClick;
 		module.onTipClick = onTipClick;
@@ -1382,7 +1453,8 @@ body{
 		module.onSetDeckClick = onSetDeckClick;
 		module.onGotoGameClick = onGotoGameClick;
 		module.onGoToClubClick = onGoToClubClick;
-		
+		module.onOpenSaveForm = onOpenSaveForm;
+		module.onSaveDeck = onSaveDeck;
 		module.searchCards = searchCards;
 		
 	})( app.view );
