@@ -17,6 +17,7 @@ class Main
 		var j:Dynamic = untyped __js__('$');
 		
 		
+		/*
 		[for ( i in 0...50 ) i ].foreach( function( str ) {
 			var dom = Helper.createItem( { } );
 			Helper.addItemListener( dom );
@@ -25,14 +26,9 @@ class Main
 		});
 		
 		Helper.loadDetail( 'sgs', function( data:Dynamic ) {
-			trace( data );
-			var dom = Helper.createDetail( 'sg', data[0] );
+			var dom = Helper.createDetail( 'sgs', data[0] );
 			j( '#mc_bigItemContainer' ).append( dom );
 		});
-		/*
-		var dom = Helper.createDetail( 'army', { } );
-		trace( dom );
-		j( '#mc_bigItemContainer' ).append( dom );
 		*/
 	}
 	

@@ -33,43 +33,19 @@ class Helper
 	public static function loadDetail( game:String, cb ) {
 		untyped __js__('api.cardInfo')( game, function(err, data) {
 			cb( data );
-			//console.log(api.cardimageurl('sgs', data[0].id))
 		});
 	}
 	
 	public static function createDetail( game:String, card:Dynamic ) {
-		card.url = untyped __js__('api.cardimageurl')( game, card );
-		trace( card.url );
+		card.url = untyped __js__('api.cardimageurl')( game, card.id );
 		if( card.url == null ) {
 			card.url = '../common/images/card/cardback_0.png';
 		}
-		trace( card.url );
 		
 		var div = j("#tmpl_bigCard").tmpl( card );
 		div.find( 'div[game]' ).hide();
 		div.find( 'div[game=' + game + ']' ).show();
 		div.attr( 'data', Json.stringify( card ));
 		return div;
-		
-		/*
-		_.each( showCards, function( card ){
-			card.url = gameController.getCardUrl( game, card );
-			if( card.url == undefined ) {
-				card.url = 'images/cardback.png';
-			}
-			
-			var div = $("#tmpl_bigCard").tmpl( card );
-			div.find( 'div[game]' ).hide();
-			div.find( 'div[game=' + game + ']' ).show();
-			div.attr( 'data', JSON.stringify( card ));
-			div.click( function(){
-				var thisDom = $(this);
-				outFocusAll();
-				thisDom.addClass( 'big_card_root_focus' );
-				pushToDeck( JSON.parse( thisDom.attr( 'data' ) ));
-			});
-			mc_bigCardContainer.append( div );
-		});
-		*/
 	}
 }

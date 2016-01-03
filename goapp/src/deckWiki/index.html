@@ -81,7 +81,18 @@ body{
 .focus{
 	border:1px solid yellow;
 }
+.big_card_root{
+	position:relative;
+	display:inline-block;
+	width:260px;
+	height:390px;;
+	cursor:pointer;
+	border:1px black solid;
+}
 
+.big_card_root_focus{
+	border:1px red solid;
+}
 </style>
 <body>
 	<script id="tmpl_bigCard" type="jquery-x-tmpl">
@@ -183,6 +194,16 @@ body{
 			<div class="group horiCenter" style="margin-bottom:5px;">
 				<div>作者搜尋</div>
 				<input class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:100%">
+				<div>類別搜尋</div>
+				<select id="" class="easyui-combobox" name="dept" style="width:100%;">
+					<option value="aa"></option>
+					<option value="aa">小快</option>
+					<option value="">中速</option>
+					<option value="">後期</option>
+					<option value="">均衡</option>
+					<option value="e">控制</option>
+					<option value="e">噁心</option>
+				</select>
 			</div>
 			<div class="group horiCenter" style="margin-bottom:5px;">
 				<div class="hori">
