@@ -315,6 +315,10 @@ body{
 		window.location.href = '../card_new/index.html?admin=nimda';
 	}
 	
+	admin.message(function(err,data){
+		console.log(data)
+	})
+	
 	$( document ).ready(function() {
 		if( admin.admin ){
 			$('#dia_alert').panel( 'open' );
