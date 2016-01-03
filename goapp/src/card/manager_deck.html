@@ -319,7 +319,7 @@ body{
 			</div>
 		</div>
 	</div>
-	<div id="dia_saveForm" class="easyui-dialog" title="組牌危機儲存填寫單" data-options="closed:true" style="width:300px; padding:10px">
+	<div id="dia_saveForm" class="easyui-dialog" title="組牌危機儲存填寫單" data-options="closed:true,modal:true" style="width:300px; padding:10px">
 		<form name="form_save">
 			<div class="group" style="text-align:center">
 				<div class="group" style="margin-bottom:5px;">
@@ -1422,16 +1422,33 @@ body{
 		
 		function onOpenSaveForm(){
 			$('#dia_saveForm').panel('open' );
+			/*
+			try{
+				var deckstr = win_output.find( '.easyui-textbox' ).textbox( 'getText');
+				JSON.parse( deckstr );
+				$('#dia_saveForm').panel('open' );
+			}catch( e ){
+				$.messager.alert('提示','格式錯誤哦');
+			}*/
 		}
 		
 		function onSaveDeck(){
+			
 			var uid = leo.utils.generateUUID();
 			var savestr = $( document.form_save ).serialize();
+			
+			//因為要檢查輸入的id是不是有資料的id，所以要先匯入才行
 			if( ary_deck.length == 0 ){
 				showMessage( '請先匯入牌組!' );
 				return;
 			}
+			$.messager.progress({text:'讀取資料中…'}); 
 			savestr += '&cards=' + encodeURIComponent( getDeckString());
+			/*
+			var deckstr = win_output.find( '.easyui-textbox' ).textbox( 'getText');
+			deckstr = '[' + deckstr + ']';
+			savestr += '&cards=' + encodeURIComponent( deckstr );
+			*/
 			var savedata = getQueryByStr( savestr );
 			api.save( uid, {Content:JSON.stringify({name:savedata.name, type:savedata.type, author:savedata.author, game:game, describe:savedata.describe, cards:JSON.parse( savedata.cards ) })}, function( err ){
 				if( err != null ){
@@ -1440,6 +1457,7 @@ body{
 					showMessage( '儲存成功!' );
 					$('#dia_saveForm').panel('close' );
 				}
+				$.messager.progress('close'); 
 			});
 		}
 		
