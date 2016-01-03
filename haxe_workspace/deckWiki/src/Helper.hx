@@ -36,6 +36,10 @@ class Helper
 		});
 	}
 	
+	public static function loadList( cb ) {
+		untyped __js__('api.load')( cb );
+	}
+	
 	public static function createDetail( game:String, card:Dynamic ) {
 		card.url = untyped __js__('api.cardimageurl')( game, card.id );
 		if( card.url == null ) {

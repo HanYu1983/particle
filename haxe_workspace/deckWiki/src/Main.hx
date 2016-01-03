@@ -17,6 +17,9 @@ class Main
 		var j:Dynamic = untyped __js__('$');
 		
 		
+		Helper.loadList( function( err, data ) {
+			trace( data );
+		});
 		/*
 		[for ( i in 0...50 ) i ].foreach( function( str ) {
 			var dom = Helper.createItem( { } );
