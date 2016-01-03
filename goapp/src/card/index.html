@@ -311,12 +311,12 @@ body{
 	<script src="../common/js/admin.js"></script>	
 	<script>
 	
-	if( _beta ){
+	if( admin.beta ){
 		window.location.href = '../card_new/index.html?admin=nimda';
 	}
 	
 	$( document ).ready(function() {
-		if( _admin ){
+		if( admin.admin ){
 			$('#dia_alert').panel( 'open' );
 			setTimeout( function(){
 				$('#dia_alert').panel( 'close' );

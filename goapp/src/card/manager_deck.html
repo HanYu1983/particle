@@ -393,16 +393,7 @@ body{
 	<script src="js/manager_deck_gameController.js"></script>
 	<script>
 	googleTracking.init( 'UA-55273266-3' );
-	
-	var _ary_fire = ['sgs', 'magic', 'gundamWar'];
-	$('#dia_others' ).find( 'a' ).each( function( id, dom ){
-		var game = $(dom).attr('game' );
-		if( _ary_fire.indexOf( game ) != -1 ){
-			$(dom).linkbutton({
-				iconCls: 'icon-fire2'
-			});
-		}
-	});
+	admin.showHotGame($('#dia_others'));
 		  /*
 		  <!--
 					<option value="ZDK">ZDK</option>
