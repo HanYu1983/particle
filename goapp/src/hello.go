@@ -82,6 +82,8 @@ func init() {
 	//http.HandleFunc("/testfn/readfile", TestReadFile)
 	//http.HandleFunc("/testfn/TestWriteSnaphot", TestWriteSnaphot2)
 
+	// 給前台的訊息
+	http.HandleFunc("/fn/message", MessageConfig)
 	// 使用者用，這個會先經過FB認證
 	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
 	// 組牌危機用

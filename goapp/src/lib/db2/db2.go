@@ -1,3 +1,4 @@
+// 之後要使用compress/gzip的壓縮技術減少資料大小
 package db2
 
 import (
