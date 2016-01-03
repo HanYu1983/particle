@@ -29,9 +29,12 @@ const (
 )
 
 func MessageConfig(w http.ResponseWriter, r *http.Request) {
-	config := map[string]interface{}{
-		"level":   3,
-		"Message": "<img src='xxx'></img><h1>header</h1>content",
+	config := []map[string]interface{}{
+		map[string]interface{}{
+			"app":     "card",
+			"level":   3,
+			"Message": "<img src='xxx'></img><h1>header</h1>content",
+		},
 	}
 	jsonstr, _ := json.Marshal(config)
 	fmt.Fprintf(w, string(jsonstr))
