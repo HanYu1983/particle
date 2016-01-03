@@ -11,6 +11,7 @@
     [test.sanguosha]
     [test.ws]
     [test.yoyo]
+    [test.bs]
     [lib.tool :as t]
     [clojure.string :as str]))
 
@@ -131,11 +132,8 @@
       "gundamWar.parseInfo"
       (test.gundamWar.parseInfo 213 1)
       
-      "bs.fetch"
-      (test.battleSpirits/fetchAll)
-      
-      "bs.fetchImage"
-      (test.battleSpirits/fetchAllImage)
+      "bs.parseInfo"
+      (test.bs/parseInfo (.-n argv))
       
       "crusade.fetchImage"
       (test.crusade/fetchAllImage)

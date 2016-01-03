@@ -49,9 +49,19 @@ var api = api || {};
 		db2.filelist( '../deckwikidbfile2/'+appid+'/list/?Detail', null, cb)
 	}
 	
+	function saveMessage(id, data, cb){
+		db2.writefile( '../deckwikidbfile2/'+appid+'/message/'+id+'.json', data, cb )
+	}
+	
+	function loadMessage(id, data, cb){
+		db2.filelist( '../deckwikidbfile2/'+appid+'/message/?Detail', null, cb)
+	}
+	
 	module.cardInfo = cardInfo
 	module.cardimageurl = cardimageurl
 	module.save = save
 	module.load = load
+	module.saveMessage = saveMessage
+	module.loadMessage = loadMessage
 
 }) (api)
