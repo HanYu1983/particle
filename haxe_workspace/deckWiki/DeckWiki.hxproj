@@ -16,6 +16,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
+    <class path="..\lib\puremvc-haxe-standard-framework-master" />
   </classpaths>
   <!-- Build options -->
   <build>

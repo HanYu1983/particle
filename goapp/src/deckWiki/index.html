@@ -62,45 +62,7 @@ body{
 	left:0;
 	width:100%;
 	height:100%;
-	background-color:#333333;
 }
-.card_root{
-	position:absolute;
-	width:50px;
-	height:75px;;
-	cursor:pointer;
-	border:1px black solid;
-}
-.card{
-	position:relative;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
-	background-color:white;
-}
-.card_back{
-	position:absolute;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
-	background-color:black;
-}
-
-.focus{
-	border:1px yellow solid;
-}
-.lock{
-	pointer-events:none;
-}
-
-.card_icons{
-	width:20px;
-	height:20px;
-	display:none;
-}
-
 .group{
 	position:relative;
 	width:100%;
@@ -108,280 +70,144 @@ body{
 .hori{
 	display:inline-block;
 }
-
-.background{
-	position:relative;
-	left:0;
-	top:0;
-	width:100%;
-	height:100%;
-	background-image:url( images/grid.png );
-	opacity:.2;
+.horiCenter{
+	text-align:center;
 }
-
-#mc_light{
-	width:10px;
-	height:10px;
-	background-color:red;
-	vertical-align:middle;
-	outline:1px solid black;
-}
-
 .hide{
 	display:none;
 }
+.focus{
+	border:1px solid yellow;
+}
+
 </style>
-<script id="tmpl_card" type="jquery-x-tmpl">
-	<div id=${id} ondragstart="return false;" ondrop="return false;" class="card_root elements" style=width:${width}px;height:${height}px>
-		<div class="card">
-			<img style="position:relative; left:0; top:0; width:100%; height:100%;" src=${extra[0]}>
-		</div>
-		<div class="card_back">
-			<img style="width:100%; height:100%;" src=${extra[1]}>
-		</div>
-		<img id="img_viewer" class="hide" style="position:absolute; top:0; right:0; width:25px;" src="../common/images/card/Eye.png"/>
-		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
-		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
-		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
-	</div>
-</script>
-<script id="tmpl_sequence" type="jquery-x-tmpl">
-	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
-		<div id="mc_seqs" style="position:relative; top:0; left:0; width:100%; height:100%;">
-			{{each(i,url) extra}}
-				<img style="position:relative; top:0; left:0; width:100%; height:100%;" src=${url} />
-			{{/each}}
-		</div>
-		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
-	</div>
-</script>
-<script id="tmpl_token" type="jquery-x-tmpl">
-	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
-		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />
-		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
-		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
-	</div>
-</script>
-<script id="tmpl_data" type="jquery-x-tmpl">
-	<div id=${id} ondragstart="return false;" ondrop="return false;" class="card_root elements" style=width:${width}px;height:${height}px>
-		<div class="card" style="word-wrap: break-word; font-size:8px;">
-			____{{html extra[0]}}
-		</div>
-		<div class="card_back"></div>
-		<img id="img_viewer" class="hide" style="position:absolute; top:0; right:0; width:25px;" src="../common/images/card/Eye.png"/>
-		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
-		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
-		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
-	</div>
-</script>
 <body>
-	<div style="position:relative; width:100%; height:3000px; left:0; top:0; ">
-		<div class="background"></div>
-		<div style="position:absolute; top:0; left:0; color:white; opacity:.5;">
-			<div>當持有者和觀察者是同一個人的時候，即使牌面向下，觀察者依然可以看見牌</div>
-			<div>拖拉滑鼠-框選物件</div>
-			<div>滑鼠左鍵-點選物件</div>
-			<div>ctrl+滑鼠左鍵 or ctrl+拖拉滑鼠-加減選物件</div>
-			<div>Q-洗牌</div>
-			<div>W-反向</div>
-			<div>E-把同樣的牌放在一起並排列</div>
-			<div>A or 滑鼠右鍵-移動</div>
-			<div>S-展開/合起</div>
-			<div>D or ctrl+A-選擇所有自己的牌</div>
-			<div>F-翻面</div>
-			<div>Z-左轉牌面</div>
-			<div>X-右轉牌面</div>
-			<div>L-鎖定當前物件</div>
-			<div>K-解鎖所有物件</div>
-			<div>C-設定持有者</div>
-			<div>V-設定觀察者</div>
-			<div>R-執行動作</div>
-			<div>T-擲骰</div>
-			<div>I-黃色指示物</div>
-			<div>O-綠色指示物</div>
-			<div>P-紅色指示物</div>
-			<div>H-移除</div>
+	<script id="tmpl_bigCard" type="jquery-x-tmpl">
+		<div cid=${id} class="big_card_root">
+			<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="../common/images/card/cardback_0.png"/>
+			<img src=${url} style="position:relative; top:0; left:0; width:100%; height:100%;" />
+			<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
+			<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
+			<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:10px; padding-right:10px; padding-top:10px; ">
+				<div game="sangoWar">${id}</div>
+				<div game="sangoWar">${cname}</div>
+				<div game="sangoWar">${atype}/${atype2}</div>
+				<div game="sangoWar">${ability}</div>
+				<div game="sangoWar">${content}</div>
+				<br/>
+				<div game="sangoWar">${counter}</div>
+				
+				<div game="yugioh">${id}</div>
+				<div game="yugioh">${race}</div>
+				<div game="yugioh">${name}</div>
+				<div game="yugioh">level ${level}</div>
+				<div game="yugioh">${type}</div>
+				<div game="yugioh">${desc}</div>
+				
+				<div game="magic">${id}</div>
+				<div game="magic">${type}</div>
+				<div game="magic">${text}</div>
+				
+				<div game="gundamWar">${id}</div>
+				<div game="gundamWar">${name}</div>
+				<div game="gundamWar">${ctype}</div>
+				<div game="gundamWar">${area}</div>
+				<div game="gundamWar">{{html context}}</div>
+				
+				<div game="army">${id}</div>
+				<div game="army">${Name}</div>
+				<div game="army">${Nation}</div>
+				<div game="army">${Ctype}</div>
+				<div game="army">${Atype}</div>
+				<div game="army">${text}</div>
+				 
+				<div game="battleSpirits">${id}</div>
+				<div game="battleSpirits">${info_2}/${info_41}</div>
+				<div game="battleSpirits">系統: ${info_25}</div>
+				<div game="battleSpirits">卡片種類: ${info_3}</div>
+				<div game="battleSpirits">属性: ${info_4}${info_5}</div>
+				<div game="battleSpirits">減輕需求: ${info_6}</div>
+				<div game="battleSpirits">LV1 core: ${info_7} hp: ${info_8}</div>
+				<div game="battleSpirits">LV2 core: ${info_9} hp: ${info_10}</div>
+				<div game="battleSpirits">LV3 core: ${info_11} hp: ${info_12}</div>
+				<div game="battleSpirits">中: {{html info_42}}</div>
+				<div game="battleSpirits">日: {{html info_14}}</div>
+				<div game="battleSpirits">稀有度: ${info_13}</div>
+				
+				<div game="crusade">${id}</div>
+				<div game="crusade">${info_2}</div>
+				<div game="crusade">${info_4}</div>
+				<div game="crusade">${info_3}</div>
+				<div game="crusade">${info_15}</div>
+				<div game="crusade">${info_5}-${info_6}-${info_7}</div>
+				<div game="crusade">{{html info_16}}</div>
+
+				<div game="gundamWarN">${id}</div>
+				<div game="gundamWarN">${info_2}</div>
+				<div game="gundamWarN">{{html info_12}}</div>
+				<div game="gundamWarN">{{html info_11}}</div>
+				
+				<div game="dragonZ">{{html id}}</div>
+				<div game="dragonZ">{{html name}}</div>
+				<div game="dragonZ">{{html type}}</div>
+				<div game="dragonZ">{{html descrition}}</div>
+				<div game="dragonZ">{{html rarity}}</div>
+
+				<div game="sgs">{{html id}}</div>
+				<div game="sgs">{{html name}}</div>
+				<div game="sgs">{{html type}}</div>
+				<div game="sgs">{{html text}}</div>
+
+				<div game="ws">{{html id}}</div>
+				<div game="ws">{{html name}}</div>
+				<div game="ws">{{html text}}</div>
+				<div game="ws">{{html chars}}</div>
+			</div>
+		</div>
+	</script>
+	<script id="tmpl_item" type="jquery-x-tmpl">
+		<div class="hori" style="width:150px; cursor:pointer;">
+			<img class="hori" style="width:40px;" src="../common/images/card/cardback_0.png"/>
+			<div class="hori" style="vertical-align:top;">
+				<div>vic</div>
+				<div style="color:yellow;">三國殺陣面對決</div>
+				<div>吳快攻</div>
+				<div>快攻、小快</div>
+			</div>
+		</div>
+	</script>
+	<div id="" class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'west',title:'列表',split:true" style="min-width:500px; width:500px; padding:10px;">
+			<div class="group horiCenter" style="margin-bottom:5px;">
+				<div>作者搜尋</div>
+				<input class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:100%">
+			</div>
+			<div class="group horiCenter" style="margin-bottom:5px;">
+				<div class="hori">
+					<div id="pp" class="easyui-pagination" data-options="total:2000,pageSize:10,layout:['first','links','last'],displayMsg:''"></div>
+				</div>
+			</div>
+			<div id="mc_itemContainer" class="group">
+				
+			</div>
+		</div>
+		<div data-options="region:'center'" style="">
+			<div id="mc_bigItemContainer" class="group">
+				
+			</div>
 		</div>
 	</div>
-	<div style="position:absolute; top:0; left:0; width:100%; height:3000px;" id="grid">
-		<div class="ghost-select"><span></span></div>
-	</div>
-	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
-	
-	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:540px;" >
-			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:10px;">
-				<div class="hori">
-					<a id="btn_notLogin" href="#" title="不需要登入就可以使用預組套牌跟朋友連線對戰哦!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnNotLoginClick')" data-options="iconCls:'icon-fire2'">創建臨時ID</a>
-					<a id="btn_login" href="#" title="登入fb，使用自己的套牌跟朋友連線對戰!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
-				</div>
-				<div class="hori">
-					<a id="btn_about" href="#" title="關於上善若水&卡牌遊戲規則" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
-				</div>
-			</div>
-			<div class="group" style="text-align:center; margin-bottom:30px;">
-				<div>玩家:</div>
-				<input id="txt_id" class="easyui-textbox" style="width:153px;" />
-				<div>對手:</div>
-				<select id="combo_ops" name="dept" style="width:150px;">
-				</select>
-				<div style="margin-top:10px;">
-					<div id="mc_light" class="hori"></div>
-					<div class="hori"><a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="iconCls:'icon-add',disabled:false">開始連線</a></div>
-				</div>
-			</div>
-			<div class="group" style="text-align:center; margin-bottom:30px;">
-				<div class="group" style="margin-bottom:30px;">
-					<a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onPokerClick')">撲克牌</a>
-					<a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onConcreteDiceClick')">骰子套組</a>
-					<a href="#" title="每種顏色各二十個的指示物套包，要創建單個指示物可以按 I, O, P" class="easyui-linkbutton easyui-tooltip" style="width:100px;" onclick="onHtmlClick('onTokenClick')">指示物套組</a>
-					<a href="#" class="easyui-linkbutton" style="width:100px;" public="false" onclick="onHtmlClick('onShaClick')">三國殺</a>
-				</div>
-				<div id="mc_btnGame" class="group" style="margin-top:5px; margin-bottom:5px;">
-					<a href="#" id="btn_army" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadArmyClick')" style="width:100px;" data-options="toggle:true,group:'g1',selected:false">軍武gogogo</a>
-					<a href="#" id="btn_gundam" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">鋼彈大戰</a>
-					<a href="#" id="btn_gundamN" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarNClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">鋼彈大戰NexA</a>
-					<a href="#" id="btn_magic" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadMagicClick')" style="width:100px;"  public="false" data-options="toggle:true,group:'g1',selected:false">魔法風雲會</a>
-					<a href="#" id="btn_sango" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSangoWarClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">三國志大戰</a>
-					<a href="#" id="btn_sgs" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSgsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">三國殺陣面對決</a>
-					<a href="#" id="btn_yugioh" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadYugiohClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">遊戲王</a>
-					<a href="#" id="btn_battleSpirits" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadBattleSpiritsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">戰魂</a>
-					<a href="#" id="btn_crusade" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadCrusadeClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">Crusade</a>
-					<a href="#" id="btn_dragonZ" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadDragonZClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">七龍珠TCG</a>
-					<a href="#" id="btn_ws" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadWsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">黑白雙翼</a>
-				</div>
-			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<select id="combo_deck" class="easyui-combobox" name="state" style="width:100px;"></select>
-				</div>
-				<div class="hori">
-					<a href="#" onclick="onHtmlClick('onBtnCreateDeck')" title="對手有了之後，所創建的卡牌對手才會收到哦" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-ok', disabled:false">創建套牌</a>
-				</div>
-			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<select id="txt_custom" class="easyui-textbox" name="state" style="width:100px;"></select>
-				</div>
-				<div class="hori">
-					<a href="#" onclick="onHtmlClick('onBtnCustomDeck')" title="創建臨時用的套牌" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時套牌</a>
-				</div>
-			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<select id="txt_table" class="easyui-textbox" name="state" style="width:100px;"></select>
-				</div>
-				<div class="hori">
-					<a href="#" onclick="onHtmlClick('onBtnTableDeck')" title="創建臨時用的桌遊" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時桌遊</a>
-				</div>
-			</div>
-		</div>
-		<div data-options="region:'center'">
-			<div id="mc_detailContainer" style="position:relative; width:100%">
-				<!-- create by script -->
-			</div>
-        </div>
-		<div id="dia_about" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
-			<div class="group" style="position:relative; width:100%; text-align:center;">
-				<div class="hori" >
-					上善若水APP
-					<br/>
-					<img src="../common/images/logo.jpg" width="100" height="100">
-					<br/>
-				</div>
-			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//www.facebook.com/pages/上善若水/1653920964852269" target="_blank">上善若水粉絲頁</a>
-				</div>
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/manager/index.html#" target="_blank">上善若水官網&牌組管理器</a>
-				</div>
-			</div>
-			<br/>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=sangoWar" target="_blank">三國志大戰組牌機</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//forum.gamer.com.tw/C.php?bsn=10095&snA=9647&tnum=605" target="_blank">三國志大戰規則</a>	
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//sangokushi-taisen-tcg.segataiwan.com.tw/cardlist.php" target="_blank">三國志大戰卡表</a>
-				</div>
-			</div>
-			<br/>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=gundamWar" target="_blank">鋼彈大戰組牌機</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//www11.atwiki.jp/gundamwar/" target="_blank">鋼彈大戰規則</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//www.shiner96500.com/cards/gundamwar/main.php" target="_blank">鋼彈大戰卡表</a>
-				</div>
-			</div>
-			<br/>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=yugioh&lang=ch" target="_blank">遊戲王組牌機</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//zh.wikipedia.org/wiki/%E9%81%8A%E6%88%B2%E7%8E%8B%E9%9B%86%E6%8F%9B%E7%B4%99%E7%89%8C%E9%81%8A%E6%88%B2" target="_blank">遊戲王規則</a>
-				</div>
-			</div>
-			<br/>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=magic" target="_blank">魔法風雲會組牌機</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//zh.wikipedia.org/zh-tw/%E9%AD%94%E6%B3%95%E9%A2%A8%E9%9B%B2%E6%9C%83%E8%A6%8F%E5%89%87" target="_blank">魔法風雲會規則</a>
-				</div>
-			</div>
-		</div>
-		<div id="dia_alert" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
-			此網址僅供私下交流用，請勿公開分享!
-		</div>
-    </div>
-	<script src="../common/js/admin.js"></script>	
 	<script>
-	
-	$( document ).ready(function() {
-		if( _admin ){
-			$('#dia_alert').panel( 'open' );
-			setTimeout( function(){
-				$('#dia_alert').panel( 'close' );
-			}, 5000 );
-		}else{
-			$('[public=false]').hide();
-		}
+	//test
+	/*
+	_.each( _.range( 100 ), function( i ){
+		var dom = $('#tmpl_item' ).tmpl();
+		$('#mc_itemContainer' ).append( dom );
 	});
+	*/
 	
-	googleTracking.init( 'UA-55273266-3' );
-	
-	function setCookie( key, value ){
-		$.cookie( key, value, { expires: 7 });
-	}
-	
-	function getCookie( key ){
-		return $.cookie( key );
-	}
-	
-	function removeCookie( key ){
-		$.removeCookie( key );
-	}
 	
 	</script>
-	<script type="text/javascript" src="/_ah/channel/jsapi"></script>
-	<script type="text/javascript" src="../common/js/channel.js"></script>
-	<script src="../common/js/db2.js"></script>	
-	<script src="../common/js/store.js"></script>	
-	<script src="../common/js/cardSuit.js"></script>	
-	<script src='js/api.js'></script>
-	<script src="js/config.js"></script>
 	<script src="js/main.js"></script>
-	
 </body>
 </html>
