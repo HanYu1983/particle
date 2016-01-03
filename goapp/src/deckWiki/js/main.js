@@ -12,11 +12,11 @@ Helper.createItem = function(model) {
 Helper.addItemListener = function(dom,click) {
 	dom.mouseover(function(e) {
 		var dom1 = Helper.j(e.currentTarget);
-		dom1.addClass("focus");
+		dom1.css("border","1px solid yellow");
 	});
 	dom.mouseout(function(e1) {
 		var dom2 = Helper.j(e1.currentTarget);
-		dom2.removeClass("focus");
+		dom2.css("border","1px solid gray");
 	});
 	dom.click(click);
 };

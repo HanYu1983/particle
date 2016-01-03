@@ -70,9 +70,6 @@ body{
 	border:1px black solid;
 }
 
-.big_card_root_focus{
-	border:1px red solid;
-}
 </style>
 <body>
 	<script id="tmpl_bigCard" type="jquery-x-tmpl">
@@ -159,7 +156,7 @@ body{
 		</div>
 	</script>
 	<script id="tmpl_item" type="jquery-x-tmpl">
-		<div id=${id} game=${game} class="hori" style="width:150px; cursor:pointer;">
+		<div id=${id} game=${game} class="hori" style="width:150px; cursor:pointer; border:1px solid gray;">
 			<img class="hori" style="width:40px;" src="../common/images/card/cardback_0.png"/>
 			<div class="hori" style="vertical-align:top;">
 				<div>${author}</div>

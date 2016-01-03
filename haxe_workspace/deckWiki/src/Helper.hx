@@ -19,11 +19,11 @@ class Helper
 	public static function addItemListener( dom:Dynamic, click:Dynamic -> Void ) {
 		dom.mouseover( function(e) {
 			var dom = j( e.currentTarget );
-			dom.addClass( 'focus' );
+			dom.css( 'border', '1px solid yellow' );
 		});
 		dom.mouseout( function(e) {
 			var dom = j( e.currentTarget );
-			dom.removeClass( 'focus' );
+			dom.css( 'border', '1px solid gray' );
 		});
 		dom.click( click );
 	}

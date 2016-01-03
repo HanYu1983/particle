@@ -1427,6 +1427,10 @@ body{
 		function onSaveDeck(){
 			var uid = leo.utils.generateUUID();
 			var savestr = $( document.form_save ).serialize();
+			if( ary_deck.length == 0 ){
+				showMessage( '請先匯入牌組!' );
+				return;
+			}
 			savestr += '&cards=' + encodeURIComponent( getDeckString());
 			var savedata = getQueryByStr( savestr );
 			api.save( uid, {Content:JSON.stringify({name:savedata.name, type:savedata.type, author:savedata.author, game:game, describe:savedata.describe, cards:JSON.parse( savedata.cards ) })}, function( err ){
