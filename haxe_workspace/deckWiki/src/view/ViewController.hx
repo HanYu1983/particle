@@ -198,26 +198,36 @@ class ViewController extends Mediator
 	}
 	
 	function getSaveDataFromDom() {
-		var ary_save = [];
+		var savefile = { 
+			cardSuit:[]
+		};
 		mc_deckContainer.children().each( function( id, dom ) {
 			dom = j( dom );
 			var cardstr = dom.find( '#txt_cards' ).textbox('getValue' );
 			cardstr = '[' + cardstr + ']';
-			ary_save.push( {
+			savefile.cardSuit.push( {
 				name:dom.find( '#txt_name' ).textbox('getValue' ),
 				game:dom.find( '.easyui-combobox' ).combobox('getValue' ),
 				cards: Json.parse( cardstr ),
-				back:dom.find( '#txt_back' ).textbox('getValue' )
+				backId:dom.find( '#txt_back' ).textbox('getValue' ),
+				'public':dom.find( '#btn_public' ).hasClass( 'l-btn-selected' )
 			});
 		});
-		return ary_save;
+		
+		trace( savefile );
+		return savefile;
 	}
 	
 	function addDeck( deckModel:Dynamic ) {
 		trace( deckModel );
 		
+		
 		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
 		mc_deckContainer.append( dom );
+		
+		dom.find( '#btn_public' ).linkbutton( {
+			selected: deckModel.field( 'public' ) == null ? false : deckModel.field( 'public' )
+		});
 		
 		dom.find( '.easyui-linkbutton' ).linkbutton( {
 			onClick:function() {

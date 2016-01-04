@@ -27,6 +27,10 @@ class Helper
 		});
 	}
 	
+	public static function getUUID() {
+		return untyped __js__('leo.utils.generateUUID')();
+	}
+	
 	public static function getCardsuits( fbid, token, cb ) {
 		untyped __js__('cardSuit.load2')( fbid, token, handleModel( function( ret ){
 			cb( ret );

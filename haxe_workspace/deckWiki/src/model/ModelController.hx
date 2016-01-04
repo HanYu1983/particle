@@ -214,13 +214,15 @@ class ModelController extends Mediator
 	}
 	
 	function oriDataToUseData( ori ) {
-		data = ori.map( function( item ){
-			var transItem = Json.parse( item.Content );
-			transItem.id = item.Name.replace( 'deckwiki/list/', '' ).replace('.json', '');
-			transItem.gameName = Helper.EnToCh( transItem.game );
-			transItem.type = transItem.type;
-			transItem.typeName = Helper.EnToCh( transItem.type );
-			return transItem;
+		data = ori.map( function( item ) {
+			item.id = Helper.getUUID();
+			item.author = item.username;
+			item.gameName = Helper.EnToCh( item.game );
+			
+			trace( item );
+			//transItem.type = transItem.type;
+			//transItem.typeName = Helper.EnToCh( transItem.type );
+			return item;
 		});
 		ary_result = data;
 	}

@@ -8,12 +8,15 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("425311264344425",cb);
+	myapp.facebook.init("679171275511375",cb);
 };
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
 		cb(ret.authResponse.userID,ret.authResponse.accessToken);
 	});
+};
+Helper.getUUID = function() {
+	return leo.utils.generateUUID();
 };
 Helper.getCardsuits = function(fbid,token,cb) {
 	cardSuit.load2(fbid,token,Helper.handleModel(function(ret) {
@@ -193,7 +196,7 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	Helper.initFb(function() {
 		Helper.loadList(function(err,data) {
-			console.log(err);
+			haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 29, className : "Main", methodName : "main", customParams : [data]});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
@@ -256,6 +259,11 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -309,6 +317,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -563,12 +590,11 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,oriDataToUseData: function(ori) {
 		this.data = ori.map(function(item) {
-			var transItem = JSON.parse(item.Content);
-			transItem.id = item.Name.replace("deckwiki/list/","").replace(".json","");
-			transItem.gameName = Helper.EnToCh(transItem.game);
-			transItem.type = transItem.type;
-			transItem.typeName = Helper.EnToCh(transItem.type);
-			return transItem;
+			item.id = Helper.getUUID();
+			item.author = item.username;
+			item.gameName = Helper.EnToCh(item.game);
+			haxe_Log.trace(item,{ fileName : "ModelController.hx", lineNumber : 222, className : "model.ModelController", methodName : "oriDataToUseData"});
+			return item;
 		});
 		this.ary_result = this.data;
 	}
@@ -1000,20 +1026,22 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	}
 	,getSaveDataFromDom: function() {
 		var _g = this;
-		var ary_save = [];
+		var savefile = { cardSuit : []};
 		this.mc_deckContainer.children().each(function(id,dom) {
 			dom = _g.j(dom);
 			var cardstr = dom.find("#txt_cards").textbox("getValue");
 			cardstr = "[" + cardstr + "]";
-			ary_save.push({ name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), back : dom.find("#txt_back").textbox("getValue")});
+			savefile.cardSuit.push({ name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
-		return ary_save;
+		haxe_Log.trace(savefile,{ fileName : "ViewController.hx", lineNumber : 217, className : "view.ViewController", methodName : "getSaveDataFromDom"});
+		return savefile;
 	}
 	,addDeck: function(deckModel) {
 		var _g = this;
-		console.log(deckModel);
+		haxe_Log.trace(deckModel,{ fileName : "ViewController.hx", lineNumber : 222, className : "view.ViewController", methodName : "addDeck"});
 		var dom = this.j("#tmpl_deck").tmpl(deckModel);
 		this.mc_deckContainer.append(dom);
+		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public")});
 		dom.find(".easyui-linkbutton").linkbutton({ onClick : function() {
 			_g.enableSave(true);
 		}});
@@ -1189,3 +1217,5 @@ view_ViewController.on_btn_addDeck_click = "on_btn_addDeck_click";
 view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map
