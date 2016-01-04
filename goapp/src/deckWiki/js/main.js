@@ -1033,24 +1033,25 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			cardstr = "[" + cardstr + "]";
 			savefile.cardSuit.push({ name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
-		haxe_Log.trace(savefile,{ fileName : "ViewController.hx", lineNumber : 217, className : "view.ViewController", methodName : "getSaveDataFromDom"});
 		return savefile;
 	}
 	,addDeck: function(deckModel) {
 		var _g = this;
-		haxe_Log.trace(deckModel,{ fileName : "ViewController.hx", lineNumber : 222, className : "view.ViewController", methodName : "addDeck"});
 		var dom = this.j("#tmpl_deck").tmpl(deckModel);
 		this.mc_deckContainer.append(dom);
 		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public")});
-		dom.find(".easyui-linkbutton").linkbutton({ onClick : function() {
+		dom.find(".easyui-linkbutton").linkbutton();
+		dom.find("#btn_remove").linkbutton({ onClick : function() {
+			var _this = _g.j($(this));
+			_this.parent().remove();
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-combobox").combobox({ value : deckModel.game, onSelect : function() {
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-textbox").textbox({ onChange : function(nv,ov) {
-			var _this = $(this);
-			var _g1 = _this.attr("id");
+			var _this1 = $(this);
+			var _g1 = _this1.attr("id");
 			switch(_g1) {
 			case "txt_cards":
 				try {
@@ -1059,7 +1060,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				} catch( e ) {
 					if (e instanceof js__$Boot_HaxeError) e = e.val;
 					_g.alert("格式輸入錯誤，請檢查");
-					_this.textbox({ value : ""});
+					_this1.textbox({ value : ""});
 				}
 				break;
 			default:

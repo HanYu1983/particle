@@ -213,14 +213,10 @@ class ViewController extends Mediator
 				'public':dom.find( '#btn_public' ).hasClass( 'l-btn-selected' )
 			});
 		});
-		
-		trace( savefile );
 		return savefile;
 	}
 	
 	function addDeck( deckModel:Dynamic ) {
-		trace( deckModel );
-		
 		
 		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
 		mc_deckContainer.append( dom );
@@ -229,8 +225,11 @@ class ViewController extends Mediator
 			selected: deckModel.field( 'public' ) == null ? false : deckModel.field( 'public' )
 		});
 		
-		dom.find( '.easyui-linkbutton' ).linkbutton( {
+		dom.find( '.easyui-linkbutton' ).linkbutton();
+		dom.find( '#btn_remove' ).linkbutton( {
 			onClick:function() {
+				var _this = j( untyped __js__( '$(this)' ));
+				_this.parent().remove();
 				enableSave( true );
 			}
 		});
