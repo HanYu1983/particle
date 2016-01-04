@@ -1,4 +1,4 @@
-package hello
+package app
 
 import (
 	"appengine"
@@ -8,6 +8,8 @@ import (
 	"lib/tool"
 	"net/http"
 )
+
+var Output = tool.Output
 
 var _ = fmt.Printf
 var rootDir int64
