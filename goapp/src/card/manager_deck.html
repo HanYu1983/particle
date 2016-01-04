@@ -265,6 +265,9 @@ body{
 					<div class="hori">
 						<a id="btn_output" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onSaveClick()" data-options="iconCls:'icon-save',disabled:true">匯入/匯出</a>
 					</div>
+					<div class="hori">
+						<a id="btn_saveDeck" href="#" title="組牌危機是可以分享套牌並且評論套牌的一個網頁哦" class="easyui-linkbutton easyui-tooltip" style="width:203px; height:40px;" onclick="app.view.onOpenSaveForm()" data-options="iconCls:'icon-save'">儲存到組牌危機</a>
+					</div>
 				</div>
 			</div>
 			<div id="mc_cardContainer" class="group" style="margin-top:10px;">
@@ -272,14 +275,13 @@ body{
 			</div>
 		</div>
 	</div>
-	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false,closed:true,modal:true" style="width:660px;height:300px" >
+	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false,closed:true,modal:true" style="width:530px;height:300px" >
 		<div class="group" style="text-align:center;">
 			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 			<div class="hori" style="margin-top:10px;">
 				<a id="btn" href="#" title="歡迎大家加入哦" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" onclick="app.view.onGoToClubClick();">加入社團找牌咖</a>
 				<a id="btn" href="#" title="匯入由此組牌機所輸出的文字來產生牌組" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
 				<a id="btn_gotoSet" href="#" title="去上善若水app的首頁，登入並輸入由此組牌機所產生的文字，來新增自己的套牌" class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" onclick="app.view.onSetDeckClick()" data-options="iconCls:'icon-back'">去輸入牌組</a>
-				<a id="btn_saveDeck" href="#" title="組牌危機是可以分享套牌並且評論套牌的一個網頁哦" class="easyui-linkbutton easyui-tooltip" style="width:140px; height:40px;" onclick="app.view.onOpenSaveForm()" data-options="iconCls:'icon-save'">儲存到組牌危機</a>
 				<a id="btn_gotoGame" href="#" title="去卡牌風雲頁面使用臨時創建的功能，來測試由此組牌機所組出來的套牌" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onGotoGameClick()" data-options="iconCls:'icon-redo'">線上打牌去</a>
 			</div>
 		</div>
@@ -327,7 +329,7 @@ body{
 						套牌名稱
 					</div>
 					<div class="hori">
-						<input name="name" type="text" />
+						<input name="name" type="text" placeholder="請輸入容易識別的名稱" />
 					</div>
 				</div>
 				<div class="group" style="margin-bottom:5px;">
@@ -335,7 +337,7 @@ body{
 						個性簽名
 					</div>
 					<div class="hori">
-						<input name="author" type="text" />
+						<input name="author" type="text" placeholder="請輸入容易識別的名稱" />
 					</div>
 				</div>
 				<div class="group" style="margin-bottom:5px;">
@@ -343,7 +345,7 @@ body{
 						說明
 					</div>
 					<div class="hori">
-						<textarea name="describe" type="text" style="height:100px;" ></textarea>
+						<textarea name="describe" type="text" style="height:100px;" placeholder="" ></textarea>
 					</div>
 				</div>
 				<div class="group" style="margin-bottom:20px;">

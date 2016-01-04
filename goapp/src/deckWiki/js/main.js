@@ -723,5 +723,3 @@ view_ViewController.do_show_bigList = "do_show_bigList";
 view_ViewController.on_item_click = "on_item_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map
