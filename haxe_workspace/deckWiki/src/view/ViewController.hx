@@ -18,11 +18,15 @@ class ViewController extends Mediator
 	public static var do_show_bigList = 'do_show_bigList';
 	public static var do_show_showDetail = 'do_show_showDetail';
 	public static var do_show_loading = 'do_show_loading';
+	public static var do_show_output = 'do_show_output';
 	
 	public static var on_item_click = 'on_item_click';
 	public static var on_item_over = 'on_item_over';
 	public static var on_input_search_change = 'on_input_search_change';
 	public static var on_pag_page_change = 'on_pag_page_change';
+	public static var on_btn_output_click = 'on_btn_output_click';
+	public static var on_btn_gotoGroup_click = 'on_btn_gotoGroup_click';
+	public static var on_btn_gotoDeckManager_click = 'on_btn_gotoDeckManager_click';
 	
 	var j:Dynamic = untyped __js__('$');
 	var mc_itemContainer:Dynamic;
@@ -32,6 +36,8 @@ class ViewController extends Mediator
 	var slt_game:Dynamic;
 	var slt_type:Dynamic;
 	var pag_page:Dynamic;
+	var btn_output:Dynamic;
+	var dia_output:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -44,6 +50,8 @@ class ViewController extends Mediator
 		slt_game = viewComponent.find( '#slt_game' );
 		slt_type = viewComponent.find( '#slt_type' );
 		pag_page = viewComponent.find( '#pag_page' );
+		btn_output = viewComponent.find( '#btn_output' );
+		dia_output = viewComponent.find( '#dia_output' );
 		
 		input_search.textbox( {
 			onChange:function( nv, ov ) {
@@ -68,6 +76,18 @@ class ViewController extends Mediator
 				sendNotification( on_pag_page_change, { number:number, size:size } );
 			}
 		});
+		
+		dia_output.dialog();
+		dia_output.find( '#btn_gotoGroup' ).click( function() {
+			sendNotification( on_btn_gotoGroup_click );
+		});
+		dia_output.find( '#btn_gotoDeckManager' ).click( function() {
+			sendNotification( on_btn_gotoDeckManager_click );
+		});
+		
+		btn_output.click( function() {
+			sendNotification( on_btn_output_click );
+		});
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -76,13 +96,20 @@ class ViewController extends Mediator
 			do_show_list,
 			do_show_bigList,
 			do_show_showDetail,
-			do_show_loading
+			do_show_loading,
+			do_show_output
 		];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case str if ( str == do_show_output ):
+				if ( notification.getBody().str == null ) {
+					alert( '請選擇套牌哦!' );
+				}else {
+					setOutput( notification.getBody().str );
+				}
 			case str if( str == do_show_loading ):
 				showLoading( notification.getBody().show );
 			case str if( str == do_show_bigList ):
@@ -93,6 +120,16 @@ class ViewController extends Mediator
 			case str if ( str == do_show_showDetail ):
 				showDetail( notification.getBody().showDetail );
 		}
+	}
+	
+	function alert( msg:String ) {
+		j.messager.alert('提示',msg);
+	}
+	
+	function setOutput( deckstr:String ) {
+		dia_output.dialog('open' );
+		deckstr = deckstr.replace( '[', '' ).replace( ']', '' );
+		dia_output.find( '#input_output' ).textbox('setValue', deckstr );
 	}
 	
 	function showLoading( show:Bool ) {
@@ -131,10 +168,6 @@ class ViewController extends Mediator
 	function showBigList( game:String, ary_showData:Array<Dynamic> ) {
 		mc_bigItemContainer.empty();
 		ary_showData.foreach( function( item ) {
-			switch( game ) {
-				case 'sangoWar':
-					
-			}
 			var dom = Helper.createDetail( game, item );
 			dom.find('#mc_detail > div[game=' + game + ']').hide();
 			dom.find('#mc_black').hide();
@@ -142,6 +175,7 @@ class ViewController extends Mediator
 			overListener( game );
 			return true;
 		});
+		untyped __js__( 'googleTracking.event' )( 'showBigList:game=' + game );
 	}
 	
 	function overListener( game ){

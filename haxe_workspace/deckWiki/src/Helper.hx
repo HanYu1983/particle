@@ -32,11 +32,15 @@ class Helper
 	}
 	
 	public static function createDetail( game:String, card:Dynamic ) {
-		card.url = getImageUrlByGameAndId( game, card.id );
+		switch( game ) {
+			case 'sangoWar':
+				card.url = getImageUrlByGameAndId( game, untyped __js__( 'sangoWar.formatKey' )( card.id ) );
+			case _:
+				card.url = getImageUrlByGameAndId( game, card.id );
+		}
 		if( card.url == null ) {
 			card.url = '../common/images/card/cardback_0.png';
 		}
-		
 		var div = j("#tmpl_bigCard").tmpl( card );
 		div.find( 'div[game]' ).hide();
 		div.find( 'div[game=' + game + ']' ).show();

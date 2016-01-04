@@ -22,7 +22,13 @@ Helper.getImageUrlByGameAndId = function(game,id) {
 	return api.cardimageurl(game,id);
 };
 Helper.createDetail = function(game,card) {
-	card.url = Helper.getImageUrlByGameAndId(game,card.id);
+	switch(game) {
+	case "sangoWar":
+		card.url = Helper.getImageUrlByGameAndId(game,sangoWar.formatKey(card.id));
+		break;
+	default:
+		card.url = Helper.getImageUrlByGameAndId(game,card.id);
+	}
 	if(card.url == null) card.url = "../common/images/card/cardback_0.png";
 	var div = Helper.j("#tmpl_bigCard").tmpl(card);
 	div.find("div[game]").hide();
@@ -143,8 +149,10 @@ Main.main = function() {
 	var j = $;
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new view_ViewController("ViewController",j("body")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_ModelController("ModelController"));
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	Helper.loadList(function(err,data) {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
 	});
 };
 var Reflect = function() { };
@@ -291,13 +299,29 @@ var model_ModelController = function(mediatorName,viewComponent) {
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,model_ModelController.do_save_data];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,model_ModelController.do_save_data];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		var do_save_data = _g;
 		switch(_g) {
+		case "on_btn_gotoDeckManager_click":
+			var _g11 = this.currentGame;
+			switch(_g11) {
+			case "yugioh":
+				window.open("../card/manager_deck.html?game=yugioh&lang=ch","_blank");
+				break;
+			default:
+				window.open("../card/manager_deck.html?game=" + this.currentGame,"_blank");
+			}
+			break;
+		case "on_btn_gotoGroup_click":
+			window.open("https://www.facebook.com/groups/1521526761495948/","_blank");
+			break;
+		case "on_btn_output_click":
+			this.sendNotification(view_ViewController.do_show_output,{ str : this.currentOutputStr});
+			break;
 		case "on_pag_page_change":
 			var page = Math.floor(notification.getBody().number - 1);
 			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(this.ary_result,page), total : this.ary_result.length});
@@ -316,6 +340,8 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var id1 = notification.getBody().id;
 			var game1 = notification.getBody().game;
 			var cards = this.findDataById(this.data,id1).cards;
+			this.currentGame = game1;
+			this.currentOutputStr = JSON.stringify(cards);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.loadDetail(game1,function(data) {
 				var ary_showData = cards.map(function(str) {
@@ -697,6 +723,8 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.slt_game = viewComponent.find("#slt_game");
 	this.slt_type = viewComponent.find("#slt_type");
 	this.pag_page = viewComponent.find("#pag_page");
+	this.btn_output = viewComponent.find("#btn_output");
+	this.dia_output = viewComponent.find("#dia_output");
 	this.input_search.textbox({ onChange : function(nv,ov) {
 		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
 	}});
@@ -709,28 +737,51 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.pag_page.pagination({ onSelectPage : function(number,size) {
 		_g.sendNotification(view_ViewController.on_pag_page_change,{ number : number, size : size});
 	}});
+	this.dia_output.dialog();
+	this.dia_output.find("#btn_gotoGroup").click(function() {
+		_g.sendNotification(view_ViewController.on_btn_gotoGroup_click);
+	});
+	this.dia_output.find("#btn_gotoDeckManager").click(function() {
+		_g.sendNotification(view_ViewController.on_btn_gotoDeckManager_click);
+	});
+	this.btn_output.click(function() {
+		_g.sendNotification(view_ViewController.on_btn_output_click);
+	});
 };
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading];
+		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		var str = _g;
-		if(str == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else {
+		if(str == view_ViewController.do_show_output) {
+			if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else this.setOutput(notification.getBody().str);
+		} else {
 			var str1 = _g;
-			if(str1 == view_ViewController.do_show_bigList) this.showBigList(notification.getBody().game,notification.getBody().ary_showData); else {
+			if(str1 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else {
 				var str2 = _g;
-				if(str2 == view_ViewController.do_show_list) {
-					this.setPagPage(notification.getBody().total);
-					this.showList(notification.getBody().data);
-				} else {
+				if(str2 == view_ViewController.do_show_bigList) this.showBigList(notification.getBody().game,notification.getBody().ary_showData); else {
 					var str3 = _g;
-					if(str3 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
+					if(str3 == view_ViewController.do_show_list) {
+						this.setPagPage(notification.getBody().total);
+						this.showList(notification.getBody().data);
+					} else {
+						var str4 = _g;
+						if(str4 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
+					}
 				}
 			}
 		}
+	}
+	,alert: function(msg) {
+		this.j.messager.alert("提示",msg);
+	}
+	,setOutput: function(deckstr) {
+		this.dia_output.dialog("open");
+		deckstr = StringTools.replace(StringTools.replace(deckstr,"[",""),"]","");
+		this.dia_output.find("#input_output").textbox("setValue",deckstr);
 	}
 	,showLoading: function(show) {
 		if(show) this.j.messager.progress({ msg : "讀取資料中，請稍等…"}); else this.j.messager.progress("close");
@@ -753,10 +804,6 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		var _g = this;
 		this.mc_bigItemContainer.empty();
 		Lambda.foreach(ary_showData,function(item) {
-			switch(game) {
-			case "sangoWar":
-				break;
-			}
 			var dom = Helper.createDetail(game,item);
 			dom.find("#mc_detail > div[game=" + game + "]").hide();
 			dom.find("#mc_black").hide();
@@ -764,6 +811,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			_g.overListener(game);
 			return true;
 		});
+		googleTracking.event("showBigList:game=" + game);
 	}
 	,overListener: function(game) {
 		var _g = this;
@@ -836,9 +884,13 @@ view_ViewController.do_show_list = "do_show_list";
 view_ViewController.do_show_bigList = "do_show_bigList";
 view_ViewController.do_show_showDetail = "do_show_showDetail";
 view_ViewController.do_show_loading = "do_show_loading";
+view_ViewController.do_show_output = "do_show_output";
 view_ViewController.on_item_click = "on_item_click";
 view_ViewController.on_item_over = "on_item_over";
 view_ViewController.on_input_search_change = "on_input_search_change";
 view_ViewController.on_pag_page_change = "on_pag_page_change";
+view_ViewController.on_btn_output_click = "on_btn_output_click";
+view_ViewController.on_btn_gotoGroup_click = "on_btn_gotoGroup_click";
+view_ViewController.on_btn_gotoDeckManager_click = "on_btn_gotoDeckManager_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

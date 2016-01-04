@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8"/>
-	<title>卡牌風雲</title>
+	<title>組牌危機</title>
 	<!--page information for search engine-->
-	<meta name="title" content="卡牌風雲" />
-	<meta name="keyword" content="卡牌風雲,三國志大戰,集換式卡牌,線上卡牌,虛擬桌面" />
-	<meta name="description" content="卡牌風雲" />
+	<meta name="title" content="組牌危機" />
+	<meta name="keyword" content="組牌危機,集換式卡牌" />
+	<meta name="description" content="組牌危機" />
 	<link rel="image_src" href=""/>
 	
 	<!--share information for fb-->
-	<meta property="og:description" content="卡牌風雲" />
-	<meta property="og:title" content="卡牌風雲" />
-	<meta property="og:url" content="http://particle-979.appspot.com/card/index.html#"/>
+	<meta property="og:description" content="組牌危機" />
+	<meta property="og:title" content="組牌危機" />
+	<meta property="og:url" content="http://particle-979.appspot.com/deckWiki/index.html"/>
 	
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
@@ -201,24 +201,12 @@ body{
 				</select>
 			</div>
 			<div class="group horiCenter" style="margin-bottom:5px;">
+				<a id="btn_output" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" data-options="iconCls:'icon-save'">匯出</a>
+			</div>
+			<div class="group horiCenter" style="margin-bottom:5px;">
 				<div class="hori">
 					<div id="pag_page" class="easyui-pagination" data-options="total:0,pageSize:10,layout:['first','links','last'],displayMsg:''"></div>
 				</div>
-			</div>
-			<div class="group" style="margin-bottom:5px;">
-				<!--
-				<div id="mc_deckDetail" class="hori" style="width:100%; height:60px; border:1px solid gray;">
-					<img class="hori" style="height:100%;" src="../common/images/card/cardback_0.png"/>
-					<div id="mc_info1" class="hori" style="width:100px; vertical-align:top; margin-right:10px;">
-						<div></div>
-						<div style="color:yellow;"></div>
-						<div></div>
-						<div></div>
-					</div>
-					<div id="mc_info2" class="hori" style="width:300px; vertical-align:top;">
-					</div>
-				</div>
-				-->
 			</div>
 			<div id="mc_itemContainer" class="group">
 				
@@ -228,6 +216,15 @@ body{
 		<div data-options="region:'center'" style="">
 			<div id="mc_bigItemContainer" class="group">
 				
+			</div>
+		</div>
+		<div id="dia_output" class="easyui-dialog" title="匯出" data-options="closed:true,modal:true" style="width:530px;height:300px" >
+			<div class="group" style="text-align:center;">
+				<input id="input_output" class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
+				<div class="hori" style="margin-top:10px;">
+					<a id="btn_gotoGroup" href="#" title="歡迎大家加入哦" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" >加入社團找牌咖</a>
+					<a id="btn_gotoDeckManager" href="#"  class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" data-options="iconCls:'icon-back'">回組牌風雲</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -253,5 +250,8 @@ body{
 	<script src="../common/js/db2.js"></script>
 	<script src="js/api.js"></script>
 	<script src="js/main.js"></script>
+	<script>
+		googleTracking.init( 'UA-55273266-3' );
+	</script>
 </body>
 </html>

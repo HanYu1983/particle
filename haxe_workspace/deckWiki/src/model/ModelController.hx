@@ -1,6 +1,7 @@
 package model;
 
 import haxe.Json;
+import js.Browser;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
 import view.ViewController;
@@ -18,6 +19,9 @@ class ModelController extends Mediator
 	
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
+	
+	var currentGame:String;
+	var currentOutputStr:String;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -32,6 +36,9 @@ class ModelController extends Mediator
 			ViewController.on_item_over,
 			ViewController.on_input_search_change,
 			ViewController.on_pag_page_change,
+			ViewController.on_btn_output_click,
+			ViewController.on_btn_gotoDeckManager_click,
+			ViewController.on_btn_gotoGroup_click,
 			do_save_data
 		];
 	}
@@ -39,6 +46,17 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_btn_gotoDeckManager_click:
+				switch( currentGame ) {
+					case 'yugioh':
+						Browser.window.open( '../card/manager_deck.html?game=yugioh&lang=ch', '_blank' );
+					case _:
+						Browser.window.open( '../card/manager_deck.html?game=' + currentGame, '_blank' );
+				}
+			case ViewController.on_btn_gotoGroup_click:
+				Browser.window.open( 'https://www.facebook.com/groups/1521526761495948/', '_blank' );
+			case ViewController.on_btn_output_click:
+				sendNotification( ViewController.do_show_output, { str:currentOutputStr } );
 			case ViewController.on_pag_page_change:
 				var page:Int = Math.floor( notification.getBody().number - 1 );
 				sendNotification( ViewController.do_show_list, { data:filterByPage( ary_result, page ), total: ary_result.length } );
@@ -54,6 +72,9 @@ class ModelController extends Mediator
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
 				var cards:Array<Dynamic> = findDataById( data, id ).cards;
+				
+				currentGame = game;
+				currentOutputStr = Json.stringify( cards );
 				
 				sendNotification( ViewController.do_show_loading, { show:true } );
 				Helper.loadDetail( game, function( data:Array<Dynamic> ) {
