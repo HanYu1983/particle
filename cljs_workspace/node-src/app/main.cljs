@@ -135,6 +135,12 @@
       "bs.parseInfo"
       (test.bs/parseInfo (.-n argv))
       
+      "bs.getImage"
+      (test.bs/getImage (.-n argv))
+      
+      "bs.parseAll"
+      (test.bs/parseAll)
+      
       "crusade.fetchImage"
       (test.crusade/fetchAllImage)
       
