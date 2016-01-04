@@ -46,6 +46,7 @@ class ViewController extends Mediator
 	var btn_addDeck:Dynamic;
 	var btn_saveDeck:Dynamic;
 	var mc_backContainer:Dynamic;
+	var mc_deckContainer:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -64,6 +65,7 @@ class ViewController extends Mediator
 		btn_saveDeck = viewComponent.find( '#btn_saveDeck' );
 		dia_output = viewComponent.find( '#dia_output' );
 		mc_backContainer = viewComponent.find( '#mc_backContainer' );
+		mc_deckContainer = viewComponent.find( '#mc_deckContainer' );
 		
 		[for ( i in 0...49 ) i ].foreach( function( bid ) {
 			var useId = bid+1;
@@ -110,16 +112,24 @@ class ViewController extends Mediator
 			sendNotification( on_btn_output_click );
 		});
 		
-		btn_login.click( function() {
-			sendNotification( on_btn_login_click );
+		btn_login.linkbutton( {
+			onClick:function() {
+				sendNotification( on_btn_login_click );
+			}
 		});
 		
 		btn_addDeck.click( function() {
-			sendNotification( on_btn_addDeck_click );
+			addDeck( { 
+				game:'army',
+				name:'default',
+				backId:'0',
+				cards:[]
+			} );
+			enableSave( true );
 		});
 		
 		btn_saveDeck.click( function() {
-			sendNotification( on_btn_saveDeck_click );
+			sendNotification( on_btn_saveDeck_click, { savedata:getSaveDataFromDom() } );
 		});
 	}
 	
@@ -145,7 +155,7 @@ class ViewController extends Mediator
 				showMessage( '存檔成功' );
 				enableSave( false );
 			case ModelController.on_cardsuit_load:
-				Helper.showDeckList( notification.getBody().cardsuit, true );
+				showDeckList( notification.getBody().cardsuit, true );
 				enableAddDeck( true );
 				showAllCardback();
 			case ModelController.on_facebook_login:
@@ -169,6 +179,149 @@ class ViewController extends Mediator
 			case str if ( str == do_show_showDetail ):
 				showDetail( notification.getBody().showDetail );
 		}
+	}
+	
+	function showDeckList( retModel:Dynamic, ?sort:Bool = false ) {
+		var oldtop = mc_deckContainer.parent().parent().scrollTop();
+		mc_deckContainer.empty();
+		
+		if( sort ){
+			retModel.cardSuit.sort( function( aobj, bobj ){
+				return aobj.game.localeCompare( bobj.game );
+			});
+		}
+		
+		retModel.cardSuit.forEach( function( deck ) {
+			addDeck( deck );
+		});
+		mc_deckContainer.parent().parent().scrollTop( oldtop );
+	}
+	
+	function getSaveDataFromDom() {
+		var ary_save = [];
+		mc_deckContainer.children().each( function( id, dom ) {
+			dom = j( dom );
+			var cardstr = dom.find( '#txt_cards' ).textbox('getValue' );
+			cardstr = '[' + cardstr + ']';
+			ary_save.push( {
+				name:dom.find( '#txt_name' ).textbox('getValue' ),
+				game:dom.find( '.easyui-combobox' ).combobox('getValue' ),
+				cards: Json.parse( cardstr ),
+				back:dom.find( '#txt_back' ).textbox('getValue' )
+			});
+		});
+		return ary_save;
+	}
+	
+	function addDeck( deckModel:Dynamic ) {
+		trace( deckModel );
+		
+		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
+		mc_deckContainer.append( dom );
+		
+		dom.find( '.easyui-linkbutton' ).linkbutton( {
+			onClick:function() {
+				enableSave( true );
+			}
+		});
+		dom.find( '.easyui-combobox' ).combobox( {
+			value:deckModel.game,
+			onSelect:function() {
+				enableSave( true );
+			}
+		});
+		
+		dom.find( '.easyui-textbox' ).textbox({
+			onChange:function( nv, ov ) {
+				var _this = untyped __js__( '$(this)' );
+				switch( _this.attr( 'id' ) ){
+					case 'txt_cards':
+						try {
+							Json.parse( '[' + nv + ']' );
+							enableSave( true );
+						}catch( e:Dynamic ){
+							alert("格式輸入錯誤，請檢查");
+							_this.textbox( {
+								value:''
+							});
+						}
+					case _:
+						enableSave( true );
+				}
+				
+			}
+		});
+		var cardstr = (function(){
+			var str = Json.stringify( deckModel.cards );
+			str = str.substr( 1, str.length - 2 );
+			return str;
+		})();
+		
+		dom.find( '#txt_cards' ).textbox( {
+			value:cardstr
+		});
+		dom.find( '#txt_name' ).textbox( {
+			value:deckModel.name
+		});
+		
+		
+		/*
+		dom.find( '.easyui-combobox' ).combobox({
+			value: deckModel.game,
+			onSelect:(function( _deckModel ){
+				return function( record ){
+					_deckModel.game = record.value;
+					cardSuit.editCardSuit( loadModel, _deckModel );
+					var tid = setTimeout( function(){
+						clearTimeout( tid );
+						editAndShow( loadModel );
+					}, 10 );
+				}
+			})( deckModel )
+		});
+		
+		dom.find( '.easyui-textbox' ).textbox({
+			onChange:(function( __model ){
+				return function( nv, ov ){
+					switch( $( this ).attr( 'id' )){
+						case 'txt_name':
+							__model.name = nv;
+							cardSuit.editCardSuit( loadModel, __model );
+							cardSuit.removeCardSuit( loadModel, ov );
+							editAndShow( loadModel );
+							break;
+						case 'txt_cards':
+							try{
+								__model.cards = JSON.parse( '[' + nv + ']' );
+							}catch( e ){
+								showAlert("格式輸入錯誤，請檢查");
+							}
+							cardSuit.editCardSuit( loadModel, __model );
+							editAndShow( loadModel );
+							break;
+						case 'txt_back':
+							__model.backId = nv + "";
+							cardSuit.editCardSuit( loadModel, __model );
+							editAndShow( loadModel );
+					}
+					
+				}
+			})( deckModel )
+		});
+		var cardstr = (function(){
+			var str = JSON.stringify( deckModel.cards );
+			str = str.substr( 1, str.length - 2 );
+			return str;
+		})();
+		dom.find( '#txt_cards' ).textbox( {
+			value:cardstr
+		});
+		dom.find( '.easyui-linkbutton' ).linkbutton();
+		dom.find( '#btn_remove' ).click( function(){
+			var deckName = $(this).parent().find( '#txt_name' ).textbox( 'getValue' );
+			cardSuit.removeCardSuit( loadModel, deckName );
+			editAndShow();
+		});*/
 	}
 	
 	function showAllCardback() {

@@ -38,7 +38,7 @@ class Helper
 			cb( ret );
 		}));
 	}
-	
+	/*
 	public static function showDeckList( model, sort ) {
 		untyped __js__('app.card.showDeckList')( model, sort );
 	}
@@ -51,7 +51,7 @@ class Helper
 		});
 		showDeckList( model, false );
 	}
-	
+	*/
 
 	public static function createItem( model:Dynamic ) {
 		model.url = getImageUrlByGameAndId( model.game, model.cards[0] );

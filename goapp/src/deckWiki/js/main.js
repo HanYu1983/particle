@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("679171275511375",cb);
+	myapp.facebook.init("425311264344425",cb);
 };
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
@@ -24,13 +24,6 @@ Helper.saveDeck = function(fbid,token,model,cb) {
 	cardSuit.save2(fbid,token,model,Helper.handleModel(function(ret) {
 		cb(ret);
 	}));
-};
-Helper.showDeckList = function(model,sort) {
-	app.card.showDeckList(model,sort);
-};
-Helper.addDeck = function(model) {
-	cardSuit.editCardSuit(model,{ name : "default", game : "army", cards : []});
-	Helper.showDeckList(model,false);
 };
 Helper.createItem = function(model) {
 	model.url = Helper.getImageUrlByGameAndId(model.game,model.cards[0]);
@@ -112,6 +105,15 @@ Helper.handleModel = function(func) {
 };
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.substr = function(s,pos,len) {
+	if(pos != null && pos != 0 && len != null && len < 0) return "";
+	if(len == null) len = s.length;
+	if(pos < 0) {
+		pos = s.length + pos;
+		if(pos < 0) pos = 0;
+	} else if(len < 0) len = s.length + len - pos;
+	return s.substr(pos,len);
+};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -191,7 +193,7 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	Helper.initFb(function() {
 		Helper.loadList(function(err,data) {
-			console.log(data);
+			console.log(err);
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
@@ -438,13 +440,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		switch(_g) {
 		case "on_btn_saveDeck_click":
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
-			Helper.saveDeck(this.fbid,this.token,this.currentCardsuit,function(ret) {
+			Helper.saveDeck(this.fbid,this.token,notification.getBody().savedata,function(ret) {
 				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
 				_g1.sendNotification(model_ModelController.on_cardsuit_save_success);
 			});
-			break;
-		case "on_btn_addDeck_click":
-			Helper.addDeck(this.currentCardsuit);
 			break;
 		case "on_btn_login_click":
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
@@ -453,8 +452,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				_g1.token = token;
 				_g1.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
 				Helper.getCardsuits(fbid,token,function(ret1) {
-					_g1.currentCardsuit = ret1;
-					_g1.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : _g1.currentCardsuit});
+					_g1.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : ret1});
 					_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
 				});
 			});
@@ -896,6 +894,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_saveDeck = viewComponent.find("#btn_saveDeck");
 	this.dia_output = viewComponent.find("#dia_output");
 	this.mc_backContainer = viewComponent.find("#mc_backContainer");
+	this.mc_deckContainer = viewComponent.find("#mc_deckContainer");
 	Lambda.foreach((function($this) {
 		var $r;
 		var _g = [];
@@ -938,14 +937,15 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_output.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_output_click);
 	});
-	this.btn_login.click(function() {
+	this.btn_login.linkbutton({ onClick : function() {
 		_g1.sendNotification(view_ViewController.on_btn_login_click);
-	});
+	}});
 	this.btn_addDeck.click(function() {
-		_g1.sendNotification(view_ViewController.on_btn_addDeck_click);
+		_g1.addDeck({ game : "army", name : "default", backId : "0", cards : []});
+		_g1.enableSave(true);
 	});
 	this.btn_saveDeck.click(function() {
-		_g1.sendNotification(view_ViewController.on_btn_saveDeck_click);
+		_g1.sendNotification(view_ViewController.on_btn_saveDeck_click,{ savedata : _g1.getSaveDataFromDom()});
 	});
 };
 view_ViewController.__name__ = true;
@@ -968,7 +968,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			this.enableSave(false);
 			break;
 		case "on_cardsuit_load":
-			Helper.showDeckList(notification.getBody().cardsuit,true);
+			this.showDeckList(notification.getBody().cardsuit,true);
 			this.enableAddDeck(true);
 			this.showAllCardback();
 			break;
@@ -984,6 +984,67 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				this.showList(notification.getBody().data);
 			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
+	}
+	,showDeckList: function(retModel,sort) {
+		if(sort == null) sort = false;
+		var _g = this;
+		var oldtop = this.mc_deckContainer.parent().parent().scrollTop();
+		this.mc_deckContainer.empty();
+		if(sort) retModel.cardSuit.sort(function(aobj,bobj) {
+			return aobj.game.localeCompare(bobj.game);
+		});
+		retModel.cardSuit.forEach(function(deck) {
+			_g.addDeck(deck);
+		});
+		this.mc_deckContainer.parent().parent().scrollTop(oldtop);
+	}
+	,getSaveDataFromDom: function() {
+		var _g = this;
+		var ary_save = [];
+		this.mc_deckContainer.children().each(function(id,dom) {
+			dom = _g.j(dom);
+			var cardstr = dom.find("#txt_cards").textbox("getValue");
+			cardstr = "[" + cardstr + "]";
+			ary_save.push({ name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), back : dom.find("#txt_back").textbox("getValue")});
+		});
+		return ary_save;
+	}
+	,addDeck: function(deckModel) {
+		var _g = this;
+		console.log(deckModel);
+		var dom = this.j("#tmpl_deck").tmpl(deckModel);
+		this.mc_deckContainer.append(dom);
+		dom.find(".easyui-linkbutton").linkbutton({ onClick : function() {
+			_g.enableSave(true);
+		}});
+		dom.find(".easyui-combobox").combobox({ value : deckModel.game, onSelect : function() {
+			_g.enableSave(true);
+		}});
+		dom.find(".easyui-textbox").textbox({ onChange : function(nv,ov) {
+			var _this = $(this);
+			var _g1 = _this.attr("id");
+			switch(_g1) {
+			case "txt_cards":
+				try {
+					JSON.parse("[" + nv + "]");
+					_g.enableSave(true);
+				} catch( e ) {
+					if (e instanceof js__$Boot_HaxeError) e = e.val;
+					_g.alert("格式輸入錯誤，請檢查");
+					_this.textbox({ value : ""});
+				}
+				break;
+			default:
+				_g.enableSave(true);
+			}
+		}});
+		var cardstr = (function() {
+			var str = JSON.stringify(deckModel.cards);
+			str = HxOverrides.substr(str,1,str.length - 2);
+			return str;
+		})();
+		dom.find("#txt_cards").textbox({ value : cardstr});
+		dom.find("#txt_name").textbox({ value : deckModel.name});
 	}
 	,showAllCardback: function() {
 		this.mc_backContainer.find(".cardback").show();
@@ -1128,5 +1189,3 @@ view_ViewController.on_btn_addDeck_click = "on_btn_addDeck_click";
 view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

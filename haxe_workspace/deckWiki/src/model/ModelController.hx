@@ -28,7 +28,6 @@ class ModelController extends Mediator
 	var token:String;
 	var currentGame:String;
 	var currentOutputStr:String;
-	var currentCardsuit:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -57,13 +56,12 @@ class ModelController extends Mediator
 	{
 		switch( notification.getName() ) {
 			case ViewController.on_btn_saveDeck_click:
+				
 				sendNotification( ViewController.do_show_loading, { show:true } );
-				Helper.saveDeck( this.fbid, this.token, currentCardsuit, function( ret ) {
+				Helper.saveDeck( this.fbid, this.token, notification.getBody().savedata, function( ret ) {
 					sendNotification( ViewController.do_show_loading, { show:false } );
 					sendNotification( on_cardsuit_save_success );
 				});
-			case ViewController.on_btn_addDeck_click:
-				Helper.addDeck( currentCardsuit );
 			case ViewController.on_btn_login_click:
 				sendNotification( ViewController.do_show_loading, { show:true } );
 				Helper.loginFb( function(fbid, token) {
@@ -72,8 +70,7 @@ class ModelController extends Mediator
 					sendNotification( on_facebook_login, { fbid:fbid, token:token } );
 					
 					Helper.getCardsuits( fbid, token, function( ret ) {
-						currentCardsuit = ret;
-						sendNotification( on_cardsuit_load, { cardsuit:currentCardsuit } );
+						sendNotification( on_cardsuit_load, { cardsuit:ret } );
 						sendNotification( ViewController.do_show_loading, { show:false } );
 					});
 					
