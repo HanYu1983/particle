@@ -42,6 +42,7 @@ html, body{
 #btn_login,
 #btn_stock,
 #btn_deck,
+#btn_deckWiki,
 #btn_particle,
 #btn_particleClojure,
 #btn_card
@@ -55,6 +56,7 @@ html, body{
 #btn_stockLink,
 #btn_particleLink,
 #btn_deckLink,
+#btn_deckWikiLink,
 #btn_cardLink{
 	width:100%; 
 	//height:40px;
@@ -159,6 +161,14 @@ a{
 					</div>
 					<div class="hori" style="width:83%">
 						<a id="btn_deck" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >組牌風雲</a>
+					</div>
+				</div>
+				<div class="group">
+					<div class="hori" style="width:15%">
+						<a id="btn_deckWikiLink" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+					</div>
+					<div class="hori" style="width:83%">
+						<a id="btn_deckWiki" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >組牌危機</a>
 					</div>
 				</div>
 				<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
@@ -356,6 +366,21 @@ a{
 					</div>
 				</div>
 			</div>
+			<div id="mc_deckWiki" style="position:relative; width:100%; height:100%; ">
+				<div class="group" style="text-align:center; margin-top:60px;">
+					<h1>開發環境</h1>
+					google app engine<br>
+					haxe<br>
+					jquery easy ui<br>
+					<h1>產品描述</h1>
+					組牌危機是一款通用的集換式卡牌牌組搜尋器。可以讓玩家搜尋、分享自己所組的套牌的網頁。
+				</div>
+				<div class="group" style="overflow:auto; margin-top:30px; ">
+					<div class="group" style="text-align:center;">
+						<img src="images/006.jpg" class="hori showcase" />
+					</div>
+				</div>
+			</div>
 			<div id="mc_team" style="position:relative; width:100%; height:100%; display:none;">
 				<div class="group" style="text-align:center; margin-top:60px;">
 					<span style="font-size:20px;">余漢君 HanYu</span>
@@ -468,6 +493,7 @@ a{
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
 		$('#mc_deck' ).hide();
+		$('#mc_deckWiki' ).hide();
 	}
 	
 	function openParticleClojure(){
@@ -477,6 +503,7 @@ a{
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
 		$('#mc_deck' ).hide();
+		$('#mc_deckWiki' ).hide();
 	}
 	
 	function openParticle(){
@@ -486,6 +513,7 @@ a{
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
 		$('#mc_deck' ).hide();
+		$('#mc_deckWiki' ).hide();
 	}
 	
 	function openCard(){
@@ -495,6 +523,7 @@ a{
 		$('#mc_card' ).show();
 		$('#mc_team' ).hide();
 		$('#mc_deck' ).hide();
+		$('#mc_deckWiki' ).hide();
 	}
 	
 	function openDeck(){
@@ -504,6 +533,17 @@ a{
 		$('#mc_card' ).hide();
 		$('#mc_team' ).hide();
 		$('#mc_deck' ).show();
+		$('#mc_deckWiki' ).hide();
+	}
+	
+	function openDeckWiki(){
+		$('#mc_stock' ).hide();
+		$('#mc_particle' ).hide();
+		$('#mc_particle_clojure' ).hide();
+		$('#mc_card' ).hide();
+		$('#mc_team' ).hide();
+		$('#mc_deck' ).hide();
+		$('#mc_deckWiki' ).show();
 	}
 	
 	function openTeam(){
@@ -513,6 +553,7 @@ a{
 		$('#mc_card' ).hide();
 		$('#mc_team' ).show();
 		$('#mc_deck' ).hide();
+		$('#mc_deckWiki' ).hide();
 	}
 	
 	function showMessage( msg ){
@@ -615,6 +656,9 @@ a{
 			case 'btn_deckLink':
 				window.open( '../card/manager_deck.html?game=gundamWar' );
 				break;
+			case 'btn_deckWikiLink':
+				window.open( '../deckWiki/index.html' );
+				break;
 			case 'btn_particleClojureLink':
 				window.open( '../particle/index_clojure.html#' );
 				break;
@@ -632,6 +676,9 @@ a{
 				break;
 			case 'btn_deck':
 				openDeck();
+				break;
+			case 'btn_deckWiki':
+				openDeckWiki();
 				break;
 			case 'btn_team':
 				openTeam();
