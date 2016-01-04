@@ -15,7 +15,7 @@ using StringTools;
  */
 class ModelController extends Mediator
 {
-	public static var do_save_data = 'do_save_data';
+	public static var do_load_all_list = 'do_load_all_list';
 	
 	public static var on_facebook_login = 'on_facebook_login';
 	public static var on_cardsuit_load = 'on_cardsuit_load';
@@ -48,7 +48,7 @@ class ModelController extends Mediator
 			ViewController.on_btn_login_click,
 			ViewController.on_btn_addDeck_click,
 			ViewController.on_btn_saveDeck_click,
-			do_save_data
+			do_load_all_list
 		];
 	}
 	
@@ -56,11 +56,11 @@ class ModelController extends Mediator
 	{
 		switch( notification.getName() ) {
 			case ViewController.on_btn_saveDeck_click:
-				
 				sendNotification( ViewController.do_show_loading, { show:true } );
 				Helper.saveDeck( this.fbid, this.token, notification.getBody().savedata, function( ret ) {
 					sendNotification( ViewController.do_show_loading, { show:false } );
 					sendNotification( on_cardsuit_save_success );
+					doLoadList();
 				});
 			case ViewController.on_btn_login_click:
 				sendNotification( ViewController.do_show_loading, { show:true } );
@@ -117,11 +117,23 @@ class ModelController extends Mediator
 					sendNotification( ViewController.do_show_loading, { show:false } );
 					sendNotification( ViewController.do_show_bigList, { game:game, ary_showData:ary_showData } );
 				});
-				
-			case do_save_data:
-				oriDataToUseData( notification.getBody().data );
-				sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length} );
+			case str if ( str == do_load_all_list ):
+				doLoadList();
 		}
+	}
+	
+	function doLoadList() {
+		sendNotification( ViewController.do_show_loading, { show:true } );
+		Helper.loadList( function( err, data:Array<Dynamic> ) {
+			doSetData( data );
+			sendNotification( ViewController.do_show_loading, { show:false } );
+			sendNotification( ViewController.do_enable_login, { enable:true } );
+		});
+	}
+	
+	function doSetData( data:Array<Dynamic> ) {
+		oriDataToUseData( data );
+		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length} );
 	}
 	
 	function filterByPage( from, ?page:Int = 0 ) {

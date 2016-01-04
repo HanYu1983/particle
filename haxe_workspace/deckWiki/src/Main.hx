@@ -25,11 +25,8 @@ class Main
 		Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:true } );
 		
 		Helper.initFb( function() {
-			Helper.loadList( function( err, data:Array<Dynamic> ) {
-				Facade.getInstance().sendNotification( ModelController.do_save_data, { data:data } );
-				Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:false } );
-				Facade.getInstance().sendNotification( ViewController.do_enable_login, { enable:true } );
-			});
+			Facade.getInstance().sendNotification( ModelController.do_load_all_list );
+			Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:false } );
 		});
 		
 	}
