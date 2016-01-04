@@ -40,6 +40,9 @@
               (.onCompleted))))))))
               
               
+(defn dbc2sbc [s]
+  (when s
+    (str/replace s #"[\uff01-\uff5e]" #(.fromCharCode js/String (- (.charCodeAt % 0) 65248)))))
 
       
 (defn parseHtml [data]
@@ -49,10 +52,23 @@
       (let [group 
             (map rest
               (re-seq
-                #"real_src\s?=\"(.+?)\"[\s\S]+?<div>(.*?)</DIV>\s<div>(.*?)</DIV>\s<div>(.*?)</DIV>\s<div>(.*?)<br /></DIV>\s<div>([.\s\S]*?)<br /></DIV>([.\s\S]*?)<br /></DIV>\s<div>.*?</DIV>\s<div>([.\s\S]*?)<br /></DIV>"
-                data))]
+                #"real_src\s?=\"(.+?)\"[\s\S]+?<div>(.*?)</DIV>([\s\S.]*?)<br /></DIV>([\s\S.]*?)<div>卡牌解说</DIV>([\s\S.]*?)<br /></DIV>"
+                data))
+                
+            urlidpair
+            (->
+              (map
+                vector
+                (map first group)
+                (map
+                  #(->>
+                    (nth % 2)
+                    (re-find #"编号：(.*?)　收录")
+                    second
+                    dbc2sbc)
+                  group)))]
         (doall
-          (for [obj group]
+          (for [obj urlidpair]
             (.onNext obs (apply array obj))))
         (.onCompleted obs)))))
 
@@ -69,7 +85,7 @@
             (doto obs
               (.onCompleted))))))))
 
-(defn fetchImage [outputImageDir url]
+(defn fetchImage [outputImage url]
   (.log js/console url)
   (.create rx.Observable
     (fn [obs]
@@ -79,16 +95,30 @@
         (.pipe 
           (.createWriteStream 
             fs 
-            (str outputImageDir 
-              (->
-                url 
-                (str/split #"/")
-                (->>
-                  (take-last 2)
-                  (str/join "_"))))))
+            outputImage))
         (.on "close" 
           (fn [] 
             (.onCompleted obs)))))))
+            
+        
+    
+(defn parseAll []
+  (.subscribe 
+    (->
+      (readdir "bsDoc")
+      (.map (fn [filename] (str "bsDoc/" filename)))
+      (.flatMap readfile)
+      (.flatMap parseHtml)
+      (.reduce
+        (fn [acc x]
+          (doto acc
+            (.push x))) 
+        (array))
+      (.flatMap (partial writefile (str output "all.json"))))
+    (fn [data])
+    (fn [err] (.log js/console "err:" err))
+    (fn [] (.log js/console "write ok!"))))
+  
         
 (defn parseInfo [pkgName]
   (.subscribe 
@@ -118,11 +148,15 @@
         (.timer rx.Observable 0)
         (fn [x]
           (swap! idx inc)
-          (.timer rx.Observable (* @idx 3000))))
+          (.timer rx.Observable (* @idx 10000))))
       (.timeInterval)
-      (.map #(aget (.-value %) 0))
-      (.map imageUrl)
-      (.flatMap (partial fetchImage outputImageDir)))
+      (.flatMap
+        (fn [obj]
+          (let [v (.-value obj)
+                [url id] v]
+            (if id
+              (fetchImage (str outputImageDir id ".jpg") url)
+              (.just rx.Observable nil))))))
     (fn [data] (.log js/console "wow!" data))
     (fn [err] (.log js/console "err:" err))
     (fn [] (.log js/console "get image ok!"))))
