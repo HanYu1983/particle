@@ -217,20 +217,6 @@ class ModelController extends Mediator
 	}
 	
 	function oriDataToUseData( ori ) {
-		#if debug
-		data = [for ( i in 0...14 ) i ].map( function( id ) {
-			return { 
-				id:Math.random() * 10000,
-				cards:[],
-				author:'vic',
-				game:'sgs',
-				gameName:'',
-				describe:'',
-				type:'high_speed',
-				typeName:'high_speed'
-			};
-		});
-		#else
 		data = ori.map( function( item ){
 			var transItem = Json.parse( item.Content );
 			transItem.id = item.Name.replace( 'deckwiki/list/', '' ).replace('.json', '');
@@ -239,7 +225,6 @@ class ModelController extends Mediator
 			transItem.typeName = Helper.EnToCh( transItem.type );
 			return transItem;
 		});
-		#end
 		ary_result = data;
 	}
 }

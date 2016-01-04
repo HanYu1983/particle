@@ -191,6 +191,7 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	Helper.initFb(function() {
 		Helper.loadList(function(err,data) {
+			console.log(data);
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
@@ -563,20 +564,13 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		});
 	}
 	,oriDataToUseData: function(ori) {
-		this.data = ((function($this) {
-			var $r;
-			var _g = [];
-			{
-				var _g1 = 0;
-				while(_g1 < 14) {
-					var i = _g1++;
-					_g.push(i);
-				}
-			}
-			$r = _g;
-			return $r;
-		}(this))).map(function(id) {
-			return { id : Math.random() * 10000, cards : [], author : "vic", game : "sgs", gameName : "", describe : "", type : "high_speed", typeName : "high_speed"};
+		this.data = ori.map(function(item) {
+			var transItem = JSON.parse(item.Content);
+			transItem.id = item.Name.replace("deckwiki/list/","").replace(".json","");
+			transItem.gameName = Helper.EnToCh(transItem.game);
+			transItem.type = transItem.type;
+			transItem.typeName = Helper.EnToCh(transItem.type);
+			return transItem;
 		});
 		this.ary_result = this.data;
 	}
