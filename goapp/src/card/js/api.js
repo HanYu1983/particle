@@ -462,6 +462,10 @@ var api = api || {};
 		})
 	} 
 	
+	function save(id, data, cb){
+		db2.writefile( '../deckwikidbfile2/deckwiki/list/'+id+'.json', data, cb )
+	}
+	
 	module.createUser = createUser
 	module.users = users
 	module.createRoom = createRoom
@@ -479,5 +483,6 @@ var api = api || {};
 	module.createChannel = createChannel
 	module.startHeartbeat = startHeartbeat
 	module.getCardImageWithPackageName = getCardImageWithPackageName
+	module.save = save
 	
 }) (api)

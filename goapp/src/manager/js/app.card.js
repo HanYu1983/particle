@@ -26,7 +26,7 @@ app.card = app.card || {};
 		onClick:function(){
 			showLoading( '存檔中...' );
 			
-			if( _beta ){
+			if( admin.beta ){
 				cardSuit.save2( fbid, token, loadModel, handleModel( function( ret ){
 					showMessage( '存檔成功' );
 					$('#btn_saveDeck' ).linkbutton( 'disable' );

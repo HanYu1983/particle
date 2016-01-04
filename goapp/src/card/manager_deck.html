@@ -19,8 +19,6 @@
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
 	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
 		
-	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
-	<script type="text/javascript" src="../common/js/lib/underscore/underscore-min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
@@ -244,8 +242,8 @@ body{
 					</div>
 				</div>
 				<div id="mc_lefttop" >
-					<a id="btn_about" href="#" title="我們有收錄很多遊戲哦!" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
-					<a id="btn_about" href="#" title="關於上善若水" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
+					<a  href="#" title="我們有收錄很多遊戲哦!" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
+					<a  href="#" title="關於上善若水" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
 				</div>
 			</div>
 		</div>
@@ -267,6 +265,9 @@ body{
 					<div class="hori">
 						<a id="btn_output" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onSaveClick()" data-options="iconCls:'icon-save',disabled:true">匯入/匯出</a>
 					</div>
+					<div class="hori">
+						<a id="btn_saveDeck" href="#" title="組牌危機是可以分享套牌並且評論套牌的一個網頁哦" class="easyui-linkbutton easyui-tooltip" style="width:203px; height:40px;" onclick="app.view.onOpenSaveForm()" data-options="iconCls:'icon-save'">儲存到組牌危機</a>
+					</div>
 				</div>
 			</div>
 			<div id="mc_cardContainer" class="group" style="margin-top:10px;">
@@ -274,7 +275,7 @@ body{
 			</div>
 		</div>
 	</div>
-	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false,closed:true,modal:true" style="width:500px;height:300px" >
+	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false,closed:true,modal:true" style="width:530px;height:300px" >
 		<div class="group" style="text-align:center;">
 			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 			<div class="hori" style="margin-top:10px;">
@@ -304,22 +305,73 @@ body{
 	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="width:480px; padding:10px">
 		<div class="group" style="position:relative; width:100%; text-align:center;">
 			<div class="group">
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=army'" style="width:130px;" data-options="">軍武gogogo</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWar'" style="width:130px;" data-options="iconCls:'icon-fire2'">鋼彈大戰</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWarN'" style="width:130px;" data-options="">鋼彈大戰NexA</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar'" style="width:130px;" data-options="iconCls:'icon-fire2'">三國志大戰</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sgs'" style="width:130px;" data-options="">三國殺陣面對決</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=battleSpirits'" style="width:130px;" data-options="">戰魂</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=crusade'" style="width:130px;" data-options="">Crusade</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=ws'" style="width:130px;" data-options="">黑白雙翼</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=dragonZ'" style="width:130px;" data-options="">七龍珠TCG</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=ch'" style="width:130px;" data-options="iconCls:'icon-fire2'">遊戲王</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=en'" style="width:130px;" data-options="">遊戲王(英)</a>
-				<a id="btn_about" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=jp'" style="width:130px;" data-options="">遊戲王(日)</a>
+				<a game="army" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=army'" style="width:130px;" data-options="">軍武gogogo</a>
+				<a game="gundamWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWar'" style="width:130px;" data-options="">鋼彈大戰</a>
+				<a game="gundamWarN" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWarN'" style="width:130px;" data-options="">鋼彈大戰NexA</a>
+				<a game="sangoWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar'" style="width:130px;" data-options="">三國志大戰</a>
+				<a game="sgs" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sgs'" style="width:130px;" data-options="">三國殺陣面對決</a>
+				<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會</a>
+				<a game="battleSpirits" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=battleSpirits'" style="width:130px;" data-options="">戰魂</a>
+				<a game="crusade" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=crusade'" style="width:130px;" data-options="">Crusade</a>
+				<a game="ws" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=ws'" style="width:130px;" data-options="">黑白雙翼</a>
+				<a game="dragonZ" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=dragonZ'" style="width:130px;" data-options="">七龍珠TCG</a>
+				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=ch'" style="width:130px;" data-options="">遊戲王</a>
+				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=en'" style="width:130px;" data-options="">遊戲王(英)</a>
+				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=jp'" style="width:130px;" data-options="">遊戲王(日)</a>
 			</div>
 		</div>
 	</div>
+	<div id="dia_saveForm" class="easyui-dialog" title="組牌危機儲存填寫單" data-options="closed:true,modal:true" style="width:300px; padding:10px">
+		<form name="form_save">
+			<div class="group" style="text-align:center">
+				<div class="group" style="margin-bottom:5px;">
+					<div class="hori" style="width:60px;">
+						套牌名稱
+					</div>
+					<div class="hori">
+						<input name="name" type="text" placeholder="請輸入容易識別的名稱" />
+					</div>
+				</div>
+				<div class="group" style="margin-bottom:5px;">
+					<div class="hori" style="width:60px;">
+						個性簽名
+					</div>
+					<div class="hori">
+						<input name="author" type="text" placeholder="請輸入容易識別的名稱" />
+					</div>
+				</div>
+				<div class="group" style="margin-bottom:5px;">
+					<div class="hori" style="width:60px;">
+						說明
+					</div>
+					<div class="hori">
+						<textarea name="describe" type="text" style="height:100px;" placeholder="" ></textarea>
+					</div>
+				</div>
+				<div class="group" style="margin-bottom:20px;">
+					<div class="hori" style="width:60px;">
+						類型
+					</div>
+					<div class="hori">
+						<select name="type">
+							<option value=""></option>
+							<option value="high_speed">小快</option>
+							<option value="middle_speed">中速</option>
+							<option value="low_speed">後期</option>
+							<option value="balance">均衡</option>
+							<option value="control">控制</option>
+							<option value="disgust">噁心</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" style="margin-bottom:5px;">
+					<a id="" href="#" class="easyui-linkbutton" onclick="app.view.onGotoWiki()" style="width:100px;" data-options="iconCls:'icon-back'">組牌危機</a>
+					<a id="" href="#" class="easyui-linkbutton" onclick="app.view.onSaveDeck()" style="width:100px;" data-options="iconCls:'icon-save'">儲存</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 	<script src="../common/js/lib/underscore/underscore-min.js"></script>
 	<script src="../common/js/lib/async/async.js"></script>
 	<script src="../common/js/lib/google/ga.js"></script>
@@ -338,11 +390,13 @@ body{
 	<script src='../common/js/sgs.js'></script>
 	<script src="../common/js/cardsearch.js"></script>	
 	<script src="../common/js/admin.js"></script>	
+	<script src="../common/js/db2.js"></script>	
+	<script src="../common/js/store.js"></script>	
 	<script src='js/api.js'></script>
 	<script src="js/manager_deck_gameController.js"></script>
 	<script>
 	googleTracking.init( 'UA-55273266-3' );
-	
+	admin.showHotGame($('#dia_others'));
 		  /*
 		  <!--
 					<option value="ZDK">ZDK</option>
@@ -1045,7 +1099,7 @@ body{
 	$.messager.progress({text:'讀取資料中…'}); 
 	
 	function onLoadGameCallback( err, _cardlist ){
-		console.log( _cardlist );
+		//console.log( _cardlist );
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
@@ -1243,12 +1297,6 @@ body{
 		}
 		
 		function searchCards( searchstr ){
-			//console.log( searchstr );
-		//	if( searchstr == undefined ) return;
-			
-		//	searchstr = searchstr.replace( '+', '%20' );
-		//	console.log( searchstr );
-			
 			currentPage = 0;
 			pag_bigCard.pagination( 'select', 1 );
 			
@@ -1259,8 +1307,6 @@ body{
 			createBigCard();
 			setPagination( ary_cards.length );
 		}
-		
-		
 		
 		function searchLib( str ){
 			var fns = gameController.getQueryStr( game, str );
@@ -1285,6 +1331,12 @@ body{
 		function onSaveClick(){
 			googleTracking.click( 'onSaveClick' );
 			win_output.window('open' );
+			var outputstr = getDeckString();
+			outputstr = outputstr.substr( 1, outputstr.length - 2 );
+			win_output.find( '.easyui-textbox' ).textbox( 'setText', outputstr);
+		}
+		
+		function getDeckString(){
 			var ary_new = _.map( ary_deck, function( card ){
 				switch( game ){
 				default:
@@ -1293,9 +1345,7 @@ body{
 					return sangoWar.formatKey( card.id );
 				}
 			});
-			var outputstr = JSON.stringify( ary_new );
-			outputstr = outputstr.substr( 1, outputstr.length - 2 );
-			win_output.find( '.easyui-textbox' ).textbox( 'setText', outputstr);
+			return JSON.stringify( ary_new );
 		}
 		
 		function onLoadClick(){
@@ -1373,6 +1423,50 @@ body{
 			window.open('//www.facebook.com/groups/1521526761495948/');
 		}
 		
+		function onOpenSaveForm(){
+			googleTracking.click( 'onOpenSaveForm' );
+			$('#dia_saveForm').panel('open' );
+		}
+		
+		function onSaveDeck(){
+			googleTracking.click( 'onSaveDeck' );
+			var uid = leo.utils.generateUUID();
+			var savestr = $( document.form_save ).serialize();
+			
+			//因為要檢查輸入的id是不是有資料的id，所以要先匯入才行
+			if( ary_deck.length == 0 ){
+				showMessage( '請先匯入牌組!' );
+				return;
+			}
+			$.messager.progress({text:'讀取資料中…'}); 
+			savestr += '&cards=' + encodeURIComponent( getDeckString());
+			/*
+			var deckstr = win_output.find( '.easyui-textbox' ).textbox( 'getText');
+			deckstr = '[' + deckstr + ']';
+			savestr += '&cards=' + encodeURIComponent( deckstr );
+			*/
+			var savedata = getQueryByStr( savestr );
+			api.save( uid, {Content:JSON.stringify({name:savedata.name, type:savedata.type, author:savedata.author, game:game, describe:savedata.describe, cards:JSON.parse( savedata.cards ) })}, function( err ){
+				if( err != null ){
+					$.messager.alert('提示', err );
+				}else{
+					showMessage( '儲存成功!' );
+					$('#dia_saveForm').panel('close' );
+				}
+				$.messager.progress('close'); 
+			});
+		}
+		
+		function getQueryByStr(qstr){
+			var url = $.url("?" + qstr);
+			return url.data.param.query;
+		}
+		
+		function onGotoWiki(){
+			googleTracking.click( 'onGotoWiki' );
+			window.open( '../deckWiki/index.html', '_blank' );
+		}
+		
 		module.onResetClick = onResetClick;
 		module.onSearchClick = onSearchClick;
 		module.onTipClick = onTipClick;
@@ -1382,7 +1476,9 @@ body{
 		module.onSetDeckClick = onSetDeckClick;
 		module.onGotoGameClick = onGotoGameClick;
 		module.onGoToClubClick = onGoToClubClick;
-		
+		module.onOpenSaveForm = onOpenSaveForm;
+		module.onSaveDeck = onSaveDeck;
+		module.onGotoWiki = onGotoWiki;
 		module.searchCards = searchCards;
 		
 	})( app.view );
