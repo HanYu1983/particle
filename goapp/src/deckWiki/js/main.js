@@ -200,6 +200,7 @@ Main.main = function() {
 	Helper.initFb(function() {
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
 	});
 };
 Math.__name__ = true;
@@ -519,7 +520,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		Helper.loadList(function(err,data) {
 			_g.doSetData(data);
 			_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
-			_g.sendNotification(view_ViewController.do_enable_login,{ enable : true});
 		});
 	}
 	,doSetData: function(data) {

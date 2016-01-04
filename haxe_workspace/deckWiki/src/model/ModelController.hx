@@ -127,7 +127,6 @@ class ModelController extends Mediator
 		Helper.loadList( function( err, data:Array<Dynamic> ) {
 			doSetData( data );
 			sendNotification( ViewController.do_show_loading, { show:false } );
-			sendNotification( ViewController.do_enable_login, { enable:true } );
 		});
 	}
 	

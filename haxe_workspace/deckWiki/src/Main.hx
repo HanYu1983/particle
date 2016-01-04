@@ -27,6 +27,7 @@ class Main
 		Helper.initFb( function() {
 			Facade.getInstance().sendNotification( ModelController.do_load_all_list );
 			Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:false } );
+			Facade.getInstance().sendNotification( ViewController.do_enable_login, { enable:true } );
 		});
 		
 	}
