@@ -156,8 +156,8 @@ body{
 		</div>
 	</script>
 	<script id="tmpl_item" type="jquery-x-tmpl">
-		<div id=${id} game=${game} class="hori" style="width:150px; cursor:pointer; border:1px solid gray;">
-			<img class="hori" style="width:40px;" src="../common/images/card/cardback_0.png"/>
+		<div id=${id} game=${game} class="hori" style="height:60px; width:150px; cursor:pointer; border:1px solid gray;">
+			<img class="hori" style="height:100%;" src=${url} />
 			<div class="hori" style="vertical-align:top;">
 				<div>${author}</div>
 				<div style="color:yellow;">${gameName}</div>
@@ -187,9 +187,23 @@ body{
 					<div id="pp" class="easyui-pagination" data-options="total:2000,pageSize:10,layout:['first','links','last'],displayMsg:''"></div>
 				</div>
 			</div>
+			<div class="group" style="margin-bottom:5px;">
+				<div id="mc_deckDetail" class="hori" style="width:100%; height:60px; border:1px solid gray;">
+					<img class="hori" style="height:100%;" src="../common/images/card/cardback_0.png"/>
+					<div id="mc_info1" class="hori" style="width:100px; vertical-align:top; margin-right:10px;">
+						<div></div>
+						<div style="color:yellow;"></div>
+						<div></div>
+						<div></div>
+					</div>
+					<div id="mc_info2" class="hori" style="width:300px; vertical-align:top;">
+					</div>
+				</div>
+			</div>
 			<div id="mc_itemContainer" class="group">
 				
 			</div>
+			
 		</div>
 		<div data-options="region:'center'" style="">
 			<div id="mc_bigItemContainer" class="group">

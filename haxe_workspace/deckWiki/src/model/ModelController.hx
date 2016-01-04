@@ -28,6 +28,7 @@ class ModelController extends Mediator
 	{
 		return [
 			ViewController.on_item_click,
+			ViewController.on_item_over,
 			do_save_data
 		];
 	}
@@ -35,6 +36,10 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_item_over:
+				var id = notification.getBody().id;
+				var game = notification.getBody().game;
+				sendNotification( ViewController.do_show_showDetail, { showDetail:findDataById( id ) } );
 			case ViewController.on_item_click:
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
@@ -67,29 +72,8 @@ class ModelController extends Mediator
 		data = ori.map( function( item ){
 			var transItem = Json.parse( item.Content );
 			transItem.id = item.Name.replace( 'deckwiki/list/', '' ).replace('.json', '');
-			transItem.gameName = switch( transItem.game ) {
-				case 'army':'軍武gogogo';
-				case 'gundamWar':'鋼彈大戰';
-				case 'gundamWarN':'鋼彈大戰Nex-A';
-				case 'sangoWar':'三國志大戰';
-				case 'sgs':'三國殺陣面對決';
-				case 'magic':'魔法風雲會';
-				case 'battleSpirit':'戰魂';
-				case 'crusade':'Crusade';
-				case 'ws':'黑白雙翼';
-				case 'dragonZ':'七龍珠TCG';
-				case 'yugioh':'遊戲王';
-				case _:'';
-			}
-			transItem.type = switch( transItem.type ) {
-				case 'high_speed':'小快';
-				case 'middle_speed':'中速';
-				case 'low_speed':'後期';
-				case 'balance':'均衡';
-				case 'control':'控制';
-				case 'disgust':'噁心';
-				case _:'';
-			}
+			transItem.gameName = Helper.EnToCh( transItem.game );
+			transItem.type = Helper.EnToCh( transItem.type );
 			return transItem;
 		});
 	}
