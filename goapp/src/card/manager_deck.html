@@ -365,6 +365,7 @@ body{
 					</div>
 				</div>
 				<div class="group" style="margin-bottom:5px;">
+					<a id="" href="#" class="easyui-linkbutton" onclick="app.view.onGotoWiki()" style="width:100px;" data-options="iconCls:'icon-back'">組牌危機</a>
 					<a id="" href="#" class="easyui-linkbutton" onclick="app.view.onSaveDeck()" style="width:100px;" data-options="iconCls:'icon-save'">儲存</a>
 				</div>
 			</div>
@@ -1423,19 +1424,12 @@ body{
 		}
 		
 		function onOpenSaveForm(){
+			googleTracking.click( 'onOpenSaveForm' );
 			$('#dia_saveForm').panel('open' );
-			/*
-			try{
-				var deckstr = win_output.find( '.easyui-textbox' ).textbox( 'getText');
-				JSON.parse( deckstr );
-				$('#dia_saveForm').panel('open' );
-			}catch( e ){
-				$.messager.alert('提示','格式錯誤哦');
-			}*/
 		}
 		
 		function onSaveDeck(){
-			
+			googleTracking.click( 'onSaveDeck' );
 			var uid = leo.utils.generateUUID();
 			var savestr = $( document.form_save ).serialize();
 			
@@ -1468,6 +1462,11 @@ body{
 			return url.data.param.query;
 		}
 		
+		function onGotoWiki(){
+			googleTracking.click( 'onGotoWiki' );
+			window.open( '../deckWiki/index.html', '_blank' );
+		}
+		
 		module.onResetClick = onResetClick;
 		module.onSearchClick = onSearchClick;
 		module.onTipClick = onTipClick;
@@ -1479,6 +1478,7 @@ body{
 		module.onGoToClubClick = onGoToClubClick;
 		module.onOpenSaveForm = onOpenSaveForm;
 		module.onSaveDeck = onSaveDeck;
+		module.onGotoWiki = onGotoWiki;
 		module.searchCards = searchCards;
 		
 	})( app.view );
