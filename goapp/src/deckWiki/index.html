@@ -162,7 +162,7 @@ body{
 				<div>${author}</div>
 				<div style="color:yellow;">${gameName}</div>
 				<div>${name}</div>
-				<div>${type}</div>
+				<div>${typeName}</div>
 			</div>
 		</div>
 	</script>
@@ -171,9 +171,24 @@ body{
 			<div class="group horiCenter" style="margin-bottom:5px;">
 				<div>作者搜尋</div>
 				<input id="input_search" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:100%">
+				<div>遊戲搜尋</div>
+				<select id="slt_game" class="easyui-combobox" name="dept" style="width:100%;">
+					<option value="">不檢索</option>
+					<option value="army">軍武gogogo</option>
+					<option value="gundamWar">鋼彈大戰</option>
+					<option value="gundamWarN">鋼彈大戰NexA</option>
+					<option value="sangoWar">三國志大戰</option>
+					<option value="sgs">三國殺陣面對決</option>
+					<option value="magic">魔法風雲會</option>
+					<option value="battleSpirits">戰魂</option>
+					<option value="crusade">Crusade</option>
+					<option value="ws">黑白雙翼</option>
+					<option value="dragonZ">七龍珠TCG</option>
+					<option value="yugioh">遊戲王</option>
+				</select>
 				<div>類別搜尋</div>
-				<select id="" class="easyui-combobox" name="dept" style="width:100%;">
-					<option value=""></option>
+				<select id="slt_type" class="easyui-combobox" name="dept" style="width:100%;">
+					<option value="">不檢索</option>
 					<option value="high_speed">小快</option>
 					<option value="middle_speed">中速</option>
 					<option value="low_speed">後期</option>

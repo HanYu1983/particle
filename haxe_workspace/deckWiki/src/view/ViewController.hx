@@ -27,6 +27,8 @@ class ViewController extends Mediator
 	var mc_bigItemContainer:Dynamic;
 	var mc_deckDetail:Dynamic;
 	var input_search:Dynamic;
+	var slt_game:Dynamic;
+	var slt_type:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -36,10 +38,24 @@ class ViewController extends Mediator
 		mc_bigItemContainer = viewComponent.find( '#mc_bigItemContainer' );
 		mc_deckDetail = viewComponent.find( '#mc_deckDetail' );
 		input_search = viewComponent.find( '#input_search' );
+		slt_game = viewComponent.find( '#slt_game' );
+		slt_type = viewComponent.find( '#slt_type' );
 		
 		input_search.textbox( {
 			onChange:function( nv, ov ) {
-				sendNotification( on_input_search_change, { value:nv } );
+				sendNotification( on_input_search_change, { value:getSearchConditions() } );
+			}
+		});
+		
+		slt_game.combobox( {
+			onChange:function( nv, ov ) {
+				sendNotification( on_input_search_change, { value:getSearchConditions() } );
+			}
+		});
+		
+		slt_type.combobox( {
+			onChange:function( nv, ov ) {
+				sendNotification( on_input_search_change, { value:getSearchConditions() } );
 			}
 		});
 	}
@@ -65,11 +81,19 @@ class ViewController extends Mediator
 		}
 	}
 	
+	function getSearchConditions() {
+		return {
+			author:input_search.textbox('getValue' ),
+			game:slt_game.combobox( 'getValue' ),
+			type:slt_type.combobox( 'getValue' )
+		}
+	}
+	
 	function showDetail( detail:Dynamic ) {
 		mc_deckDetail.find( '#mc_info1 > div' ).eq(0).html( detail.author );
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(1).html( Helper.EnToCh( detail.game ) );
+		mc_deckDetail.find( '#mc_info1 > div' ).eq(1).html( detail.gameName );
 		mc_deckDetail.find( '#mc_info1 > div' ).eq(2).html( detail.name );
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(3).html( Helper.EnToCh( detail.type ) );
+		mc_deckDetail.find( '#mc_info1 > div' ).eq(3).html( detail.typeName );
 		mc_deckDetail.find( '#mc_info2' ).html( detail.describe );
 		mc_deckDetail.find( 'img' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
 	}

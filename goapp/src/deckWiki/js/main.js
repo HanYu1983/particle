@@ -154,6 +154,25 @@ Main.prototype = {
 	onHtmlClick: function() {
 	}
 };
+var Reflect = function() { };
+Reflect.field = function(o,field) {
+	try {
+		return o[field];
+	} catch( e ) {
+		if (e instanceof js__$Boot_HaxeError) e = e.val;
+		return null;
+	}
+};
+Reflect.fields = function(o) {
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(f != "__id__" && f != "hx__closures__" && hasOwnProperty.call(o,f)) a.push(f);
+		}
+	}
+	return a;
+};
 var StringTools = function() { };
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
@@ -287,18 +306,18 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		var do_save_data = _g;
 		switch(_g) {
 		case "on_input_search_change":
-			var searchstr = notification.getBody().value;
-			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterDataByAuthor(searchstr)});
+			var searchConditions = notification.getBody().value;
+			this.sendNotification(view_ViewController.do_show_list,{ data : this.multiSearch(searchConditions)});
 			break;
 		case "on_item_over":
 			var id = notification.getBody().id;
 			var game = notification.getBody().game;
-			this.sendNotification(view_ViewController.do_show_showDetail,{ showDetail : this.findDataById(id)});
+			this.sendNotification(view_ViewController.do_show_showDetail,{ showDetail : this.findDataById(this.data,id)});
 			break;
 		case "on_item_click":
 			var id1 = notification.getBody().id;
 			var game1 = notification.getBody().game;
-			var cards = this.findDataById(id1).cards;
+			var cards = this.findDataById(this.data,id1).cards;
 			Helper.loadDetail(game1,function(data) {
 				var ary_showData = cards.map(function(str) {
 					str = StringTools.replace(str,".jpg","");
@@ -315,14 +334,46 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.sendNotification(view_ViewController.do_show_list,{ data : this.data});
 		}
 	}
-	,findDataById: function(id) {
-		return Lambda.find(this.data,function(item) {
+	,multiSearch: function(value) {
+		var ret = null;
+		var _g = 0;
+		var _g1 = Reflect.fields(value);
+		while(_g < _g1.length) {
+			var f = _g1[_g];
+			++_g;
+			console.log(Reflect.field(value,f));
+			switch(f) {
+			case "author":
+				if(ret == null) ret = this.filterDataByAuthor(this.data,Reflect.field(value,f)); else ret = this.filterDataByAuthor(ret,Reflect.field(value,f));
+				break;
+			case "game":
+				if(ret == null) ret = this.filterDataByGame(this.data,Reflect.field(value,f)); else ret = this.filterDataByGame(ret,Reflect.field(value,f));
+				break;
+			case "type":
+				if(ret == null) ret = this.filterDataByType(this.data,Reflect.field(value,f)); else ret = this.filterDataByType(ret,Reflect.field(value,f));
+				break;
+			}
+		}
+		return ret;
+	}
+	,findDataById: function(from,id) {
+		return Lambda.find(from,function(item) {
 			return item.id == id;
 		});
 	}
-	,filterDataByAuthor: function(author) {
-		return this.data.filter(function(obj) {
+	,filterDataByAuthor: function(from,author) {
+		return from.filter(function(obj) {
 			return obj.author.indexOf(author) != -1;
+		});
+	}
+	,filterDataByGame: function(from,game) {
+		return from.filter(function(obj) {
+			return game == "" || obj.game == game;
+		});
+	}
+	,filterDataByType: function(from,type) {
+		return from.filter(function(obj) {
+			return type == "" || obj.type == type;
 		});
 	}
 	,oriDataToUseData: function(ori) {
@@ -330,7 +381,8 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var transItem = JSON.parse(item.Content);
 			transItem.id = item.Name.replace("deckwiki/list/","").replace(".json","");
 			transItem.gameName = Helper.EnToCh(transItem.game);
-			transItem.type = Helper.EnToCh(transItem.type);
+			transItem.type = transItem.type;
+			transItem.typeName = Helper.EnToCh(transItem.type);
 			return transItem;
 		});
 	}
@@ -633,8 +685,16 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.mc_bigItemContainer = viewComponent.find("#mc_bigItemContainer");
 	this.mc_deckDetail = viewComponent.find("#mc_deckDetail");
 	this.input_search = viewComponent.find("#input_search");
+	this.slt_game = viewComponent.find("#slt_game");
+	this.slt_type = viewComponent.find("#slt_type");
 	this.input_search.textbox({ onChange : function(nv,ov) {
-		_g.sendNotification(view_ViewController.on_input_search_change,{ value : nv});
+		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
+	}});
+	this.slt_game.combobox({ onChange : function(nv1,ov1) {
+		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
+	}});
+	this.slt_type.combobox({ onChange : function(nv2,ov2) {
+		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
 	}});
 };
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -653,11 +713,14 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			}
 		}
 	}
+	,getSearchConditions: function() {
+		return { author : this.input_search.textbox("getValue"), game : this.slt_game.combobox("getValue"), type : this.slt_type.combobox("getValue")};
+	}
 	,showDetail: function(detail) {
 		this.mc_deckDetail.find("#mc_info1 > div").eq(0).html(detail.author);
-		this.mc_deckDetail.find("#mc_info1 > div").eq(1).html(Helper.EnToCh(detail.game));
+		this.mc_deckDetail.find("#mc_info1 > div").eq(1).html(detail.gameName);
 		this.mc_deckDetail.find("#mc_info1 > div").eq(2).html(detail.name);
-		this.mc_deckDetail.find("#mc_info1 > div").eq(3).html(Helper.EnToCh(detail.type));
+		this.mc_deckDetail.find("#mc_info1 > div").eq(3).html(detail.typeName);
 		this.mc_deckDetail.find("#mc_info2").html(detail.describe);
 		this.mc_deckDetail.find("img").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
 	}

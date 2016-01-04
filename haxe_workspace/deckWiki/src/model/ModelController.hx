@@ -17,6 +17,7 @@ class ModelController extends Mediator
 	public static var do_save_data = 'do_save_data';
 	
 	var data:Array<Dynamic>;
+//	var nowResult:Array<Dynamic>;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -38,16 +39,16 @@ class ModelController extends Mediator
 	{
 		switch( notification.getName() ) {
 			case ViewController.on_input_search_change:
-				var searchstr:String = notification.getBody().value;
-				sendNotification( ViewController.do_show_list, {data:filterDataByAuthor( searchstr )} );
+				var searchConditions:Dynamic = notification.getBody().value;
+				sendNotification( ViewController.do_show_list, { data:multiSearch( searchConditions ) } );
 			case ViewController.on_item_over:
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
-				sendNotification( ViewController.do_show_showDetail, { showDetail:findDataById( id ) } );
+				sendNotification( ViewController.do_show_showDetail, { showDetail:findDataById( data, id ) } );
 			case ViewController.on_item_click:
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
-				var cards:Array<Dynamic> = findDataById( id ).cards;
+				var cards:Array<Dynamic> = findDataById( data, id ).cards;
 				
 				Helper.loadDetail( game, function( data:Array<Dynamic> ) {
 					var ary_showData = cards.map( function( str:String ) {
@@ -66,15 +67,55 @@ class ModelController extends Mediator
 		}
 	}
 	
-	function findDataById( id ):Dynamic {
-		return data.find( function( item ) {
+	function multiSearch( value:Dynamic ) {
+		var ret:Array<Dynamic> = null;
+		for ( f in value.fields() ) {
+			trace( value.field( f ));
+			switch( f ) {
+				case 'author':
+					if ( ret == null ) {
+						ret = filterDataByAuthor( data, value.field( f ) );
+					}else {
+						ret = filterDataByAuthor( ret, value.field( f ) );
+					}
+				case 'game':
+					if ( ret == null ) {
+						ret = filterDataByGame( data, value.field( f ) );
+					}else {
+						ret = filterDataByGame( ret, value.field( f ) );
+					}
+				case 'type':
+					if ( ret == null ) {
+						ret = filterDataByType( data, value.field( f ) );
+					}else {
+						ret = filterDataByType( ret, value.field( f ) );
+					}
+			}
+		}
+		return ret;
+	}
+	
+	function findDataById( from:Array<Dynamic>, id ):Dynamic {
+		return from.find( function( item ) {
 			return item.id == id;
 		});
 	}
 	
-	function filterDataByAuthor( author:String ) {
-		return data.filter( function( obj ) {
+	function filterDataByAuthor( from:Array<Dynamic>, author:String ) {
+		return from.filter( function( obj ) {
 			return obj.author.indexOf( author ) != -1;
+		});
+	}
+	
+	function filterDataByGame( from:Array<Dynamic>, game:String ) {
+		return from.filter( function( obj ) {
+			return game == '' || obj.game == game;
+		});
+	}
+	
+	function filterDataByType( from:Array<Dynamic>, type:String ) {
+		return from.filter( function( obj ) {
+			return type == '' || obj.type == type;
 		});
 	}
 	
@@ -83,7 +124,8 @@ class ModelController extends Mediator
 			var transItem = Json.parse( item.Content );
 			transItem.id = item.Name.replace( 'deckwiki/list/', '' ).replace('.json', '');
 			transItem.gameName = Helper.EnToCh( transItem.game );
-			transItem.type = Helper.EnToCh( transItem.type );
+			transItem.type = transItem.type;
+			transItem.typeName = Helper.EnToCh( transItem.type );
 			return transItem;
 		});
 	}
