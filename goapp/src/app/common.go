@@ -1,5 +1,6 @@
-package hello
+package app
 
+// 這個檔沒有作用了，可能可以刪了
 import (
 	"appengine"
 	"fmt"
@@ -8,6 +9,8 @@ import (
 	"lib/tool"
 	"net/http"
 )
+
+var Output = tool.Output
 
 var _ = fmt.Printf
 var rootDir int64

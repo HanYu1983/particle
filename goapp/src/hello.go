@@ -1,6 +1,7 @@
 package hello
 
 import (
+	"app"
 	"app/cardInfo"
 	"appengine"
 	"appengine/user"
@@ -12,8 +13,6 @@ import (
 	"lib/tool"
 	"net/http"
 )
-
-var Output = tool.Output
 
 func Secret(user, realm string) string {
 	if user == "hanvicadmin" {
@@ -50,9 +49,9 @@ func init() {
 	// 檔案的操做管理
 	http.HandleFunc("/write", dbfile.WriteFile)
 	// 簡易將app的存檔記到個人資料夾
-	SetUserPosition(UserPosition)
-	http.HandleFunc("/fn/saveUser", appauth.WrapFBAuth(SaveToUser))
-	http.HandleFunc("/fn/loadUser", appauth.WrapFBAuth(LoadFormUser))
+	app.SetUserPosition(app.UserPosition)
+	http.HandleFunc("/fn/saveUser", appauth.WrapFBAuth(app.SaveToUser))
+	http.HandleFunc("/fn/loadUser", appauth.WrapFBAuth(app.LoadFormUser))
 	//http.HandleFunc("/fn/saveUser", SaveToUser(appauth.User{ Key: "admin" }))
 	//http.HandleFunc("/fn/loadUser", LoadFormUser(appauth.User{ Key: "admin" }))
 	// 格鬥風雲錄卡表
@@ -61,16 +60,16 @@ func init() {
 	  http.HandleFunc("/fn/cardInfo/deleteCard", DeleteCard)
 	  http.HandleFunc("/fn/cardInfo/cardList", CardList)
 	*/
-	cardInfo.SetCardInfoPosition(CardInfoPosition2)
+	cardInfo.SetCardInfoPosition(app.CardInfoPosition2)
 	http.HandleFunc("/fn/cardInfo/addCard", cardInfo.AddCard)
 	http.HandleFunc("/fn/cardInfo/deleteCard", cardInfo.DeleteCard)
 	http.HandleFunc("/fn/cardInfo/cardList", cardInfo.CardList)
 	// 卡牌風雲
-	http.HandleFunc("/fn/createChannel", CreateChannel)
-	http.HandleFunc("/fn/sendChannelMessage", SendChannelMessage)
+	http.HandleFunc("/fn/createChannel", app.CreateChannel)
+	http.HandleFunc("/fn/sendChannelMessage", app.SendChannelMessage)
 	// 傾聽事件，沒有實作內容
-	http.HandleFunc("/_ah/channel/connected/", onChannelConnected)
-	http.HandleFunc("/_ah/channel/disconnected/", onChannelDisconnected)
+	http.HandleFunc("/_ah/channel/connected/", app.OnChannelConnected)
+	http.HandleFunc("/_ah/channel/disconnected/", app.OnChannelDisconnected)
 	// 余氏K線圖用的記錄功能。已修改為SaveToUser
 	//http.HandleFunc("/simple/save", Save)
 	//http.HandleFunc("/simple/load", Load)
@@ -83,7 +82,9 @@ func init() {
 	//http.HandleFunc("/testfn/TestWriteSnaphot", TestWriteSnaphot2)
 
 	// 給前台的訊息
-	http.HandleFunc("/fn/message", MessageConfig)
+	http.HandleFunc("/fn/message", app.MessageConfig)
+
+	http.HandleFunc("/fn/publicdeck", app.ReadPublicCardSuit)
 	// 使用者用，這個會先經過FB認證
 	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
 	// 組牌危機用
@@ -95,7 +96,7 @@ func init() {
 	// 資料庫viewer
 	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
 	// 新舊資料庫整合（舊方法移除後移除）
-	http.HandleFunc("/temp/dbtodb2", dbtodb2)
+	http.HandleFunc("/temp/dbtodb2", app.Dbtodb2)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

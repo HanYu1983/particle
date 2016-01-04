@@ -148,7 +148,7 @@
         (.timer rx.Observable 0)
         (fn [x]
           (swap! idx inc)
-          (.timer rx.Observable (* @idx 10000))))
+          (.timer rx.Observable (* @idx 3000))))
       (.timeInterval)
       (.flatMap
         (fn [obj]

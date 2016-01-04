@@ -1,4 +1,4 @@
-package hello
+package app
 
 import (
 	"appengine"
@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func dbtodb2(w http.ResponseWriter, r *http.Request) {
+func Dbtodb2(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		Output(w, nil, err.Error())
 	})
