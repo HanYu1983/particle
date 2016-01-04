@@ -6,6 +6,19 @@ import (
 	"net/http"
 )
 
+func MessageConfig(w http.ResponseWriter, r *http.Request) {
+	config := []map[string]interface{}{
+		map[string]interface{}{
+			"app":     "card",
+			"level":   3,
+			"Message": "<h1>目前正在測試新系統，舊系統將不在維護，請先至<a href='../card_new/index.html?admin=nimda'>開測區<a/>來遊玩。並請隨時注意社團資訊</h1>",
+		},
+	}
+	jsonstr, _ := json.Marshal(config)
+	fmt.Fprintf(w, string(jsonstr))
+}
+
+// 以下資料將不在維護
 const (
 	// ========= 使用者資料夾 ========= //
 	// han local
@@ -27,15 +40,3 @@ const (
 	// remote
 	CardInfoPosition2 = 4839624983707648
 )
-
-func MessageConfig(w http.ResponseWriter, r *http.Request) {
-	config := []map[string]interface{}{
-		map[string]interface{}{
-			"app":     "card",
-			"level":   3,
-			"Message": "<img src='xxx'></img><h1>header</h1>content",
-		},
-	}
-	jsonstr, _ := json.Marshal(config)
-	fmt.Fprintf(w, string(jsonstr))
-}

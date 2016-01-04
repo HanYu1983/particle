@@ -83,6 +83,8 @@ func init() {
 
 	// 給前台的訊息
 	http.HandleFunc("/fn/message", app.MessageConfig)
+
+	http.HandleFunc("/fn/publicdeck", app.ReadPublicCardSuit)
 	// 使用者用，這個會先經過FB認證
 	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
 	// 組牌危機用

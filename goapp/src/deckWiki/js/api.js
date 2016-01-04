@@ -46,7 +46,16 @@ var api = api || {};
 	
 	*/
 	function load(cb){
-		db2.filelist( '../deckwikidbfile2/'+appid+'/list/?Detail', null, cb)
+		$.ajax({
+			url: '../fn/publicdeck',
+			dataType: 'json',
+			success: function(data){
+				cb(data.Error, data.Info)
+			},
+			error: function(xhr, res, err){
+				cb(err)
+			}
+		})
 	}
 	
 	function saveMessage(id, data, cb){

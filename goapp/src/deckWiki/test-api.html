@@ -31,12 +31,17 @@
 		api.cardInfo( 'sgs', function(err, data){
 			console.log(data)
 		})
+		api.load( function(err,data) {
+			console.log(data)
+		})
+		/*
 		api.save('han', {Content:JSON.stringify([1,2,{}])}, function(err){
 			console.log(err)
 			api.load( function(err,data) {
 				console.log(data)
 			})
 		})
+		*/
 		admin.message(function(err,data){
 			console.log(data)
 		})
