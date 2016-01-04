@@ -370,6 +370,7 @@ class ViewController extends Mediator
 			overListener( game );
 			return true;
 		});
+		viewComponent.find( '.easyui-layout' ).layout( 'collapse', 'east' );
 		untyped __js__( 'googleTracking.event' )( 'showBigList:game=' + game );
 	}
 	
