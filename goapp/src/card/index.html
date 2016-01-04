@@ -312,17 +312,7 @@ body{
 	<script src="../common/js/admin.js"></script>	
 	<script>
 	
-	admin.message(function(err,data){
-		var ary_showMessage = _.filter( data, function( msgobj ){
-			return msgobj.app == 'card';
-		});
-		
-		var msg = ary_showMessage[0];
-		if( msg.level != 0 ){
-			$('#dia_message').html( msg.Message );
-			$('#dia_message').panel( 'open' );
-		}
-	})
+	
 	
 	$( document ).ready(function() {
 		if( admin.admin ){
@@ -330,6 +320,18 @@ body{
 			setTimeout( function(){
 				$('#dia_alert').panel( 'close' );
 			}, 5000 );
+			
+			admin.message(function(err,data){
+				var ary_showMessage = _.filter( data, function( msgobj ){
+					return msgobj.app == 'card';
+				});
+				
+				var msg = ary_showMessage[0];
+				if( msg.level != 0 ){
+					$('#dia_message').html( msg.Message );
+					$('#dia_message').panel( 'open' );
+				}
+			})
 		}else{
 			$('[public=false]').hide();
 		}
