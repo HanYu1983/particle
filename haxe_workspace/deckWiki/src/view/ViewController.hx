@@ -20,11 +20,13 @@ class ViewController extends Mediator
 	
 	public static var on_item_click = 'on_item_click';
 	public static var on_item_over = 'on_item_over';
+	public static var on_input_search_change = 'on_input_search_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	var mc_itemContainer:Dynamic;
 	var mc_bigItemContainer:Dynamic;
 	var mc_deckDetail:Dynamic;
+	var input_search:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -33,6 +35,13 @@ class ViewController extends Mediator
 		mc_itemContainer = viewComponent.find( '#mc_itemContainer' );
 		mc_bigItemContainer = viewComponent.find( '#mc_bigItemContainer' );
 		mc_deckDetail = viewComponent.find( '#mc_deckDetail' );
+		input_search = viewComponent.find( '#input_search' );
+		
+		input_search.textbox( {
+			onChange:function( nv, ov ) {
+				sendNotification( on_input_search_change, { value:nv } );
+			}
+		});
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -99,6 +108,7 @@ class ViewController extends Mediator
 	}
 	
 	function showList( data:Array<Dynamic>) {
+		mc_itemContainer.empty();
 		data.foreach( function( item ) {
 			var dom:Dynamic = Helper.createItem( item );
 			dom.mouseover( function(e) {

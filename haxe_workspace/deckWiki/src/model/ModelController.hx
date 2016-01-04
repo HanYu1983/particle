@@ -29,6 +29,7 @@ class ModelController extends Mediator
 		return [
 			ViewController.on_item_click,
 			ViewController.on_item_over,
+			ViewController.on_input_search_change,
 			do_save_data
 		];
 	}
@@ -36,6 +37,9 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_input_search_change:
+				var searchstr:String = notification.getBody().value;
+				sendNotification( ViewController.do_show_list, {data:filterDataByAuthor( searchstr )} );
 			case ViewController.on_item_over:
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
@@ -65,6 +69,12 @@ class ModelController extends Mediator
 	function findDataById( id ):Dynamic {
 		return data.find( function( item ) {
 			return item.id == id;
+		});
+	}
+	
+	function filterDataByAuthor( author:String ) {
+		return data.filter( function( obj ) {
+			return obj.author.indexOf( author ) != -1;
 		});
 	}
 	
