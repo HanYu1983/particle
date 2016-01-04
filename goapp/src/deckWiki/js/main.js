@@ -144,15 +144,8 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new view_ViewController("ViewController",j("body")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_ModelController("ModelController"));
 	Helper.loadList(function(err,data) {
-		console.log(data);
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
 	});
-};
-Main.click = function() {
-};
-Main.prototype = {
-	onHtmlClick: function() {
-	}
 };
 var Reflect = function() { };
 Reflect.field = function(o,field) {
@@ -298,16 +291,21 @@ var model_ModelController = function(mediatorName,viewComponent) {
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,model_ModelController.do_save_data];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,model_ModelController.do_save_data];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		var do_save_data = _g;
 		switch(_g) {
+		case "on_pag_page_change":
+			var page = Math.floor(notification.getBody().number - 1);
+			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(this.ary_result,page), total : this.ary_result.length});
+			break;
 		case "on_input_search_change":
 			var searchConditions = notification.getBody().value;
-			this.sendNotification(view_ViewController.do_show_list,{ data : this.multiSearch(searchConditions)});
+			var showData = this.multiSearch(searchConditions);
+			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData,0), total : showData.length});
 			break;
 		case "on_item_over":
 			var id = notification.getBody().id;
@@ -318,6 +316,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var id1 = notification.getBody().id;
 			var game1 = notification.getBody().game;
 			var cards = this.findDataById(this.data,id1).cards;
+			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.loadDetail(game1,function(data) {
 				var ary_showData = cards.map(function(str) {
 					str = StringTools.replace(str,".jpg","");
@@ -326,13 +325,23 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 					});
 					return retobj;
 				});
+				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
 				_g1.sendNotification(view_ViewController.do_show_bigList,{ game : game1, ary_showData : ary_showData});
 			});
 			break;
 		default:
 			this.oriDataToUseData(notification.getBody().data);
-			this.sendNotification(view_ViewController.do_show_list,{ data : this.data});
+			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(this.data,0), total : this.data.length});
 		}
+	}
+	,filterByPage: function(from,page) {
+		if(page == null) page = 0;
+		var sid = page * 10;
+		var eid;
+		if(sid + 10 < from.length) eid = sid + 10; else eid = from.length;
+		var _g = from.length;
+		var l = _g;
+		if(l < 10) return from.slice(0,from.length); else return from.slice(sid,eid);
 	}
 	,multiSearch: function(value) {
 		var ret = null;
@@ -341,7 +350,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		while(_g < _g1.length) {
 			var f = _g1[_g];
 			++_g;
-			console.log(Reflect.field(value,f));
 			switch(f) {
 			case "author":
 				if(ret == null) ret = this.filterDataByAuthor(this.data,Reflect.field(value,f)); else ret = this.filterDataByAuthor(ret,Reflect.field(value,f));
@@ -354,7 +362,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				break;
 			}
 		}
-		return ret;
+		return this.ary_result = ret;
 	}
 	,findDataById: function(from,id) {
 		return Lambda.find(from,function(item) {
@@ -385,6 +393,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			transItem.typeName = Helper.EnToCh(transItem.type);
 			return transItem;
 		});
+		this.ary_result = this.data;
 	}
 });
 var org_puremvc_haxe_interfaces_IController = function() { };
@@ -687,6 +696,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.input_search = viewComponent.find("#input_search");
 	this.slt_game = viewComponent.find("#slt_game");
 	this.slt_type = viewComponent.find("#slt_type");
+	this.pag_page = viewComponent.find("#pag_page");
 	this.input_search.textbox({ onChange : function(nv,ov) {
 		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
 	}});
@@ -696,22 +706,37 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.slt_type.combobox({ onChange : function(nv2,ov2) {
 		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
 	}});
+	this.pag_page.pagination({ onSelectPage : function(number,size) {
+		_g.sendNotification(view_ViewController.on_pag_page_change,{ number : number, size : size});
+	}});
 };
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail];
+		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		var str = _g;
-		if(str == view_ViewController.do_show_bigList) this.showBigList(notification.getBody().game,notification.getBody().ary_showData); else {
+		if(str == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else {
 			var str1 = _g;
-			if(str1 == view_ViewController.do_show_list) this.showList(notification.getBody().data); else {
+			if(str1 == view_ViewController.do_show_bigList) this.showBigList(notification.getBody().game,notification.getBody().ary_showData); else {
 				var str2 = _g;
-				if(str2 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
+				if(str2 == view_ViewController.do_show_list) {
+					this.setPagPage(notification.getBody().total);
+					this.showList(notification.getBody().data);
+				} else {
+					var str3 = _g;
+					if(str3 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
+				}
 			}
 		}
+	}
+	,showLoading: function(show) {
+		if(show) this.j.messager.progress({ msg : "讀取資料中，請稍等…"}); else this.j.messager.progress("close");
+	}
+	,setPagPage: function(total) {
+		this.pag_page.pagination("refresh",{ total : total});
 	}
 	,getSearchConditions: function() {
 		return { author : this.input_search.textbox("getValue"), game : this.slt_game.combobox("getValue"), type : this.slt_type.combobox("getValue")};
@@ -810,10 +835,10 @@ model_ModelController.do_save_data = "do_save_data";
 view_ViewController.do_show_list = "do_show_list";
 view_ViewController.do_show_bigList = "do_show_bigList";
 view_ViewController.do_show_showDetail = "do_show_showDetail";
+view_ViewController.do_show_loading = "do_show_loading";
 view_ViewController.on_item_click = "on_item_click";
 view_ViewController.on_item_over = "on_item_over";
 view_ViewController.on_input_search_change = "on_input_search_change";
+view_ViewController.on_pag_page_change = "on_pag_page_change";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

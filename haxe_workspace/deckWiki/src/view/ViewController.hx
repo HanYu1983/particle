@@ -17,10 +17,12 @@ class ViewController extends Mediator
 	public static var do_show_list = 'do_show_list';
 	public static var do_show_bigList = 'do_show_bigList';
 	public static var do_show_showDetail = 'do_show_showDetail';
+	public static var do_show_loading = 'do_show_loading';
 	
 	public static var on_item_click = 'on_item_click';
 	public static var on_item_over = 'on_item_over';
 	public static var on_input_search_change = 'on_input_search_change';
+	public static var on_pag_page_change = 'on_pag_page_change';
 	
 	var j:Dynamic = untyped __js__('$');
 	var mc_itemContainer:Dynamic;
@@ -29,6 +31,7 @@ class ViewController extends Mediator
 	var input_search:Dynamic;
 	var slt_game:Dynamic;
 	var slt_type:Dynamic;
+	var pag_page:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -40,6 +43,7 @@ class ViewController extends Mediator
 		input_search = viewComponent.find( '#input_search' );
 		slt_game = viewComponent.find( '#slt_game' );
 		slt_type = viewComponent.find( '#slt_type' );
+		pag_page = viewComponent.find( '#pag_page' );
 		
 		input_search.textbox( {
 			onChange:function( nv, ov ) {
@@ -58,6 +62,12 @@ class ViewController extends Mediator
 				sendNotification( on_input_search_change, { value:getSearchConditions() } );
 			}
 		});
+		
+		pag_page.pagination( {
+			onSelectPage:function( number, size ) {
+				sendNotification( on_pag_page_change, { number:number, size:size } );
+			}
+		});
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -65,20 +75,40 @@ class ViewController extends Mediator
 		return [ 
 			do_show_list,
 			do_show_bigList,
-			do_show_showDetail
+			do_show_showDetail,
+			do_show_loading
 		];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case str if( str == do_show_loading ):
+				showLoading( notification.getBody().show );
 			case str if( str == do_show_bigList ):
 				showBigList( notification.getBody().game, notification.getBody().ary_showData );
-			case str if( str == do_show_list ):
+			case str if ( str == do_show_list ):
+				setPagPage( notification.getBody().total );
 				showList( notification.getBody().data );
 			case str if ( str == do_show_showDetail ):
 				showDetail( notification.getBody().showDetail );
 		}
+	}
+	
+	function showLoading( show:Bool ) {
+		if ( show ) {
+			j.messager.progress( {
+				msg:'讀取資料中，請稍等…'
+			} );
+		}else {
+			j.messager.progress( 'close' );
+		}
+	}
+	
+	function setPagPage( total ){
+		pag_page.pagination( 'refresh', {
+			total:total
+		});
 	}
 	
 	function getSearchConditions() {
