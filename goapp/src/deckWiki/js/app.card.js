@@ -110,7 +110,7 @@ app.card = app.card || {};
 		dom.find( '#txt_cards' ).textbox( {
 			value:cardstr
 		});
-		dom.find( '#btn_remove' ).linkbutton();
+		dom.find( '.easyui-linkbutton' ).linkbutton();
 		dom.find( '#btn_remove' ).click( function(){
 			var deckName = $(this).parent().find( '#txt_name' ).textbox( 'getValue' );
 			cardSuit.removeCardSuit( loadModel, deckName );
