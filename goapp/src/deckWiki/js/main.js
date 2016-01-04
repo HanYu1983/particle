@@ -1117,6 +1117,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			_g.overListener(game);
 			return true;
 		});
+		this.viewComponent.find(".easyui-layout").layout("collapse","east");
 		googleTracking.event("showBigList:game=" + game);
 	}
 	,overListener: function(game) {
