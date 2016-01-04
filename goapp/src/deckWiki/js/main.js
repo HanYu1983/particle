@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("679171275511375",cb);
+	myapp.facebook.init("425311264344425",cb);
 };
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
@@ -1212,5 +1212,3 @@ view_ViewController.on_btn_addDeck_click = "on_btn_addDeck_click";
 view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map
