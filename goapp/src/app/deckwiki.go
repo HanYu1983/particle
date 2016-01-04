@@ -31,15 +31,17 @@ func ReadPublicCardSuit(w http.ResponseWriter, r *http.Request) {
 		if filename != "cardSuit.json" {
 			continue
 		}
+		username :=  filePathToken[len(filePathToken)-2]
 		cardSuit, err := db2.GetFile(ctx, filepath)
 		tool.Assert(tool.IfError(err))
 		err = json.Unmarshal(cardSuit.Content, &jsoninfo)
 		tool.Assert(tool.IfError(err))
 		for _, subsuit := range jsoninfo["cardSuit"].([]interface{}) {
 			subsuitinfo := subsuit.(map[string]interface{})
+			subsuitinfo["username"] = username
 			isPublic, hasPublic := subsuitinfo["public"].(bool)
 			if hasPublic && isPublic {
-				pubs = append(pubs, jsoninfo)
+				pubs = append(pubs, subsuitinfo)
 			}
 		}
 	}

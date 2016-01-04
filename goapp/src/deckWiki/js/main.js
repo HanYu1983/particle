@@ -15,6 +15,9 @@ Helper.loginFb = function(cb) {
 		cb(ret.authResponse.userID,ret.authResponse.accessToken);
 	});
 };
+Helper.getUUID = function() {
+	return leo.utils.generateUUID();
+};
 Helper.getCardsuits = function(fbid,token,cb) {
 	cardSuit.load2(fbid,token,Helper.handleModel(function(ret) {
 		cb(ret);
@@ -94,6 +97,9 @@ Helper.EnToCh = function(en) {
 	default:
 		return "";
 	}
+};
+Helper.isAdmin = function() {
+	return admin.admin;
 };
 Helper.handleModel = function(func) {
 	return function(err,ret) {
@@ -192,12 +198,9 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_ModelController("ModelController"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	Helper.initFb(function() {
-		Helper.loadList(function(err,data) {
-			console.log(err);
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
-		});
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
 	});
 };
 Math.__name__ = true;
@@ -431,18 +434,19 @@ model_ModelController.__name__ = true;
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,model_ModelController.do_save_data];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,model_ModelController.do_load_all_list];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
-		var do_save_data = _g;
+		var str = _g;
 		switch(_g) {
 		case "on_btn_saveDeck_click":
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.saveDeck(this.fbid,this.token,notification.getBody().savedata,function(ret) {
 				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
 				_g1.sendNotification(model_ModelController.on_cardsuit_save_success);
+				_g1.doLoadList();
 			});
 			break;
 		case "on_btn_login_click":
@@ -495,10 +499,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.currentOutputStr = JSON.stringify(cards);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.loadDetail(game1,function(data) {
-				var ary_showData = cards.map(function(str) {
-					str = StringTools.replace(str,".jpg","");
+				var ary_showData = cards.map(function(str1) {
+					str1 = StringTools.replace(str1,".jpg","");
 					var retobj = Lambda.find(data,function(oriData) {
-						return oriData.id.indexOf(str) != -1;
+						return oriData.id.indexOf(str1) != -1;
 					});
 					return retobj;
 				});
@@ -507,9 +511,20 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			});
 			break;
 		default:
-			this.oriDataToUseData(notification.getBody().data);
-			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(this.data,0), total : this.data.length});
+			if(str == model_ModelController.do_load_all_list) this.doLoadList();
 		}
+	}
+	,doLoadList: function() {
+		var _g = this;
+		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
+		Helper.loadList(function(err,data) {
+			_g.doSetData(data);
+			_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
+		});
+	}
+	,doSetData: function(data) {
+		this.oriDataToUseData(data);
+		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length});
 	}
 	,filterByPage: function(from,page) {
 		if(page == null) page = 0;
@@ -563,12 +578,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,oriDataToUseData: function(ori) {
 		this.data = ori.map(function(item) {
-			var transItem = JSON.parse(item.Content);
-			transItem.id = item.Name.replace("deckwiki/list/","").replace(".json","");
-			transItem.gameName = Helper.EnToCh(transItem.game);
-			transItem.type = transItem.type;
-			transItem.typeName = Helper.EnToCh(transItem.type);
-			return transItem;
+			item.id = Helper.getUUID();
+			item.author = item.username;
+			item.gameName = Helper.EnToCh(item.game);
+			return item;
 		});
 		this.ary_result = this.data;
 	}
@@ -947,6 +960,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_saveDeck.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_saveDeck_click,{ savedata : _g1.getSaveDataFromDom()});
 	});
+	this.hideCardBackContainer();
 };
 view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -1000,29 +1014,34 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	}
 	,getSaveDataFromDom: function() {
 		var _g = this;
-		var ary_save = [];
+		var savefile = { cardSuit : []};
 		this.mc_deckContainer.children().each(function(id,dom) {
 			dom = _g.j(dom);
 			var cardstr = dom.find("#txt_cards").textbox("getValue");
 			cardstr = "[" + cardstr + "]";
-			ary_save.push({ name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), back : dom.find("#txt_back").textbox("getValue")});
+			savefile.cardSuit.push({ name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
-		return ary_save;
+		return savefile;
 	}
 	,addDeck: function(deckModel) {
 		var _g = this;
-		console.log(deckModel);
 		var dom = this.j("#tmpl_deck").tmpl(deckModel);
 		this.mc_deckContainer.append(dom);
-		dom.find(".easyui-linkbutton").linkbutton({ onClick : function() {
+		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public"), onClick : function() {
+			_g.enableSave(true);
+		}});
+		dom.find(".easyui-linkbutton").linkbutton();
+		dom.find("#btn_remove").linkbutton({ onClick : function() {
+			var _this = _g.j($(this));
+			_this.parent().remove();
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-combobox").combobox({ value : deckModel.game, onSelect : function() {
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-textbox").textbox({ onChange : function(nv,ov) {
-			var _this = $(this);
-			var _g1 = _this.attr("id");
+			var _this1 = $(this);
+			var _g1 = _this1.attr("id");
 			switch(_g1) {
 			case "txt_cards":
 				try {
@@ -1031,7 +1050,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				} catch( e ) {
 					if (e instanceof js__$Boot_HaxeError) e = e.val;
 					_g.alert("格式輸入錯誤，請檢查");
-					_this.textbox({ value : ""});
+					_this1.textbox({ value : ""});
 				}
 				break;
 			default:
@@ -1045,6 +1064,10 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		})();
 		dom.find("#txt_cards").textbox({ value : cardstr});
 		dom.find("#txt_name").textbox({ value : deckModel.name});
+		if(!Helper.isAdmin()) dom.find("#txt_back").parent().hide();
+	}
+	,hideCardBackContainer: function() {
+		if(!Helper.isAdmin()) this.mc_backContainer.parent().hide();
 	}
 	,showAllCardback: function() {
 		this.mc_backContainer.find(".cardback").show();
@@ -1167,7 +1190,7 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 var __map_reserved = {}
 Helper.j = $;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
-model_ModelController.do_save_data = "do_save_data";
+model_ModelController.do_load_all_list = "do_load_all_list";
 model_ModelController.on_facebook_login = "on_facebook_login";
 model_ModelController.on_cardsuit_load = "on_cardsuit_load";
 model_ModelController.on_cardsuit_save_success = "on_cardsuit_save_success";
