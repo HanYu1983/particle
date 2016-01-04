@@ -98,6 +98,9 @@ Helper.EnToCh = function(en) {
 		return "";
 	}
 };
+Helper.isAdmin = function() {
+	return admin.admin;
+};
 Helper.handleModel = function(func) {
 	return function(err,ret) {
 		if(err != null) {
@@ -196,7 +199,6 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	Helper.initFb(function() {
 		Helper.loadList(function(err,data) {
-			haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 29, className : "Main", methodName : "main", customParams : [data]});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
@@ -259,11 +261,6 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -317,25 +314,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -593,7 +571,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			item.id = Helper.getUUID();
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
-			haxe_Log.trace(item,{ fileName : "ModelController.hx", lineNumber : 222, className : "model.ModelController", methodName : "oriDataToUseData"});
 			return item;
 		});
 		this.ary_result = this.data;
@@ -973,6 +950,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_saveDeck.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_saveDeck_click,{ savedata : _g1.getSaveDataFromDom()});
 	});
+	this.hideCardBackContainer();
 };
 view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -1039,7 +1017,10 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		var _g = this;
 		var dom = this.j("#tmpl_deck").tmpl(deckModel);
 		this.mc_deckContainer.append(dom);
-		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public")});
+		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public"), onClick : function() {
+			_g.enableSave(true);
+			console.log("G");
+		}});
 		dom.find(".easyui-linkbutton").linkbutton();
 		dom.find("#btn_remove").linkbutton({ onClick : function() {
 			var _this = _g.j($(this));
@@ -1074,6 +1055,10 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		})();
 		dom.find("#txt_cards").textbox({ value : cardstr});
 		dom.find("#txt_name").textbox({ value : deckModel.name});
+		if(!Helper.isAdmin()) dom.find("#txt_back").parent().hide();
+	}
+	,hideCardBackContainer: function() {
+		if(!Helper.isAdmin()) this.mc_backContainer.parent().hide();
 	}
 	,showAllCardback: function() {
 		this.mc_backContainer.find(".cardback").show();

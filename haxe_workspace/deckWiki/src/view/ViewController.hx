@@ -1,6 +1,7 @@
 package view;
 
 import haxe.Json;
+import haxe.Timer;
 import model.ModelController;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
@@ -131,6 +132,8 @@ class ViewController extends Mediator
 		btn_saveDeck.click( function() {
 			sendNotification( on_btn_saveDeck_click, { savedata:getSaveDataFromDom() } );
 		});
+		
+		hideCardBackContainer();
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -222,7 +225,10 @@ class ViewController extends Mediator
 		mc_deckContainer.append( dom );
 		
 		dom.find( '#btn_public' ).linkbutton( {
-			selected: deckModel.field( 'public' ) == null ? false : deckModel.field( 'public' )
+			selected: deckModel.field( 'public' ) == null ? false : deckModel.field( 'public' ),
+			onClick:function() {
+				enableSave( true );
+			}
 		});
 		
 		dom.find( '.easyui-linkbutton' ).linkbutton();
@@ -273,64 +279,14 @@ class ViewController extends Mediator
 			value:deckModel.name
 		});
 		
-		
-		/*
-		dom.find( '.easyui-combobox' ).combobox({
-			value: deckModel.game,
-			onSelect:(function( _deckModel ){
-				return function( record ){
-					_deckModel.game = record.value;
-					cardSuit.editCardSuit( loadModel, _deckModel );
-					var tid = setTimeout( function(){
-						clearTimeout( tid );
-						editAndShow( loadModel );
-					}, 10 );
-				}
-			})( deckModel )
-		});
-		
-		dom.find( '.easyui-textbox' ).textbox({
-			onChange:(function( __model ){
-				return function( nv, ov ){
-					switch( $( this ).attr( 'id' )){
-						case 'txt_name':
-							__model.name = nv;
-							cardSuit.editCardSuit( loadModel, __model );
-							cardSuit.removeCardSuit( loadModel, ov );
-							editAndShow( loadModel );
-							break;
-						case 'txt_cards':
-							try{
-								__model.cards = JSON.parse( '[' + nv + ']' );
-							}catch( e ){
-								showAlert("格式輸入錯誤，請檢查");
-							}
-							cardSuit.editCardSuit( loadModel, __model );
-							editAndShow( loadModel );
-							break;
-						case 'txt_back':
-							__model.backId = nv + "";
-							cardSuit.editCardSuit( loadModel, __model );
-							editAndShow( loadModel );
-					}
-					
-				}
-			})( deckModel )
-		});
-		var cardstr = (function(){
-			var str = JSON.stringify( deckModel.cards );
-			str = str.substr( 1, str.length - 2 );
-			return str;
-		})();
-		dom.find( '#txt_cards' ).textbox( {
-			value:cardstr
-		});
-		dom.find( '.easyui-linkbutton' ).linkbutton();
-		dom.find( '#btn_remove' ).click( function(){
-			var deckName = $(this).parent().find( '#txt_name' ).textbox( 'getValue' );
-			cardSuit.removeCardSuit( loadModel, deckName );
-			editAndShow();
-		});*/
+		if ( !Helper.isAdmin() ) {
+			dom.find( '#txt_back' ).parent().hide();
+		}
+	}
+	
+	function hideCardBackContainer() {
+		if( !Helper.isAdmin() )
+			mc_backContainer.parent().hide();
 	}
 	
 	function showAllCardback() {

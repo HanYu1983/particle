@@ -117,6 +117,10 @@ class Helper
 		}
 	}
 	
+	public static function isAdmin() {
+		return untyped __js__('admin.admin' );
+	}
+	
 	public static function handleModel( func ){
 		return function( err, ret ){
 			if( err != null ){

@@ -75,35 +75,6 @@ class ModelController extends Mediator
 					});
 					
 				});
-				
-				/*
-					*/
-					/*
-					
-					if( admin.beta ){
-						cardSuit.load2( fbid, token, handleModel( function( ret ){
-							
-							loadModel = ret;
-							app.card.showDeckList( loadModel, true );
-							
-							$('#btn_addDeck').linkbutton( 'enable' );
-							
-							mc_backContainer.find( '.cardback' ).show();
-							closeLoading();
-						}));
-					}else{
-						cardSuit.load( fbid, token, handleModel( function( ret ){
-							loadModel = ret;
-							app.card.showDeckList( loadModel );
-							$('#btn_addDeck').linkbutton( 'enable' );
-							
-							mc_backContainer.find( '.cardback' ).show();
-							closeLoading();
-						}));
-					}
-					*/
-				
-				
 			case ViewController.on_btn_gotoDeckManager_click:
 				switch( currentGame ) {
 					case 'yugioh':
@@ -218,10 +189,6 @@ class ModelController extends Mediator
 			item.id = Helper.getUUID();
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
-			
-			trace( item );
-			//transItem.type = transItem.type;
-			//transItem.typeName = Helper.EnToCh( transItem.type );
 			return item;
 		});
 		ary_result = data;
