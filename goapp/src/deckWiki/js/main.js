@@ -6,6 +6,32 @@ function $extend(from, fields) {
 	return proto;
 }
 var Helper = function() { };
+Helper.__name__ = true;
+Helper.initFb = function(cb) {
+	myapp.facebook.init("679171275511375",cb);
+};
+Helper.loginFb = function(cb) {
+	myapp.facebook.login(function(ret) {
+		cb(ret.authResponse.userID,ret.authResponse.accessToken);
+	});
+};
+Helper.getCardsuits = function(fbid,token,cb) {
+	cardSuit.load2(fbid,token,Helper.handleModel(function(ret) {
+		cb(ret);
+	}));
+};
+Helper.saveDeck = function(fbid,token,model,cb) {
+	cardSuit.save2(fbid,token,model,Helper.handleModel(function(ret) {
+		cb(ret);
+	}));
+};
+Helper.showDeckList = function(model,sort) {
+	app.card.showDeckList(model,sort);
+};
+Helper.addDeck = function(model) {
+	cardSuit.editCardSuit(model,{ name : "default", game : "army", cards : []});
+	Helper.showDeckList(model,false);
+};
 Helper.createItem = function(model) {
 	model.url = Helper.getImageUrlByGameAndId(model.game,model.cards[0]);
 	return Helper.j("#tmpl_item").tmpl(model);
@@ -76,7 +102,16 @@ Helper.EnToCh = function(en) {
 		return "";
 	}
 };
+Helper.handleModel = function(func) {
+	return function(err,ret) {
+		if(err != null) {
+			js_Browser.alert(err);
+			window.location.reload();
+		} else func(ret);
+	};
+};
 var HxOverrides = function() { };
+HxOverrides.__name__ = true;
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -85,6 +120,7 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
+Lambda.__name__ = true;
 Lambda.foreach = function(it,f) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -104,6 +140,7 @@ Lambda.find = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
+List.__name__ = true;
 List.prototype = {
 	add: function(item) {
 		var x = [item];
@@ -134,6 +171,7 @@ var _$List_ListIterator = function(head) {
 	this.head = head;
 	this.val = null;
 };
+_$List_ListIterator.__name__ = true;
 _$List_ListIterator.prototype = {
 	hasNext: function() {
 		return this.head != null;
@@ -145,17 +183,23 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() { };
+Main.__name__ = true;
 Main.main = function() {
 	var j = $;
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new view_ViewController("ViewController",j("body")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_ModelController("ModelController"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
-	Helper.loadList(function(err,data) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
+	Helper.initFb(function() {
+		Helper.loadList(function(err,data) {
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_data,{ data : data});
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+		});
 	});
 };
+Math.__name__ = true;
 var Reflect = function() { };
+Reflect.__name__ = true;
 Reflect.field = function(o,field) {
 	try {
 		return o[field];
@@ -175,10 +219,12 @@ Reflect.fields = function(o) {
 	return a;
 };
 var StringTools = function() { };
+StringTools.__name__ = true;
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };
 var Type = function() { };
+Type.__name__ = true;
 Type.createInstance = function(cl,args) {
 	var _g = args.length;
 	switch(_g) {
@@ -206,9 +252,11 @@ Type.createInstance = function(cl,args) {
 	return null;
 };
 var haxe_IMap = function() { };
+haxe_IMap.__name__ = true;
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
+haxe_ds_StringMap.__name__ = true;
 haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
 haxe_ds_StringMap.prototype = {
 	set: function(key,value) {
@@ -252,13 +300,91 @@ var js__$Boot_HaxeError = function(val) {
 	this.message = String(val);
 	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
 };
+js__$Boot_HaxeError.__name__ = true;
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+};
+var js_Browser = function() { };
+js_Browser.__name__ = true;
+js_Browser.alert = function(v) {
+	window.alert(js_Boot.__string_rec(v,""));
+};
 var org_puremvc_haxe_interfaces_INotifier = function() { };
+org_puremvc_haxe_interfaces_INotifier.__name__ = true;
 var org_puremvc_haxe_patterns_observer_Notifier = function() {
 	this.facade = org_puremvc_haxe_patterns_facade_Facade.getInstance();
 };
+org_puremvc_haxe_patterns_observer_Notifier.__name__ = true;
 org_puremvc_haxe_patterns_observer_Notifier.__interfaces__ = [org_puremvc_haxe_interfaces_INotifier];
 org_puremvc_haxe_patterns_observer_Notifier.prototype = {
 	sendNotification: function(notificationName,body,type) {
@@ -266,11 +392,13 @@ org_puremvc_haxe_patterns_observer_Notifier.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IMediator = function() { };
+org_puremvc_haxe_interfaces_IMediator.__name__ = true;
 var org_puremvc_haxe_patterns_mediator_Mediator = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_observer_Notifier.call(this);
 	if(mediatorName != null) this.mediatorName = mediatorName; else this.mediatorName = org_puremvc_haxe_patterns_mediator_Mediator.NAME;
 	if(viewComponent != null) this.viewComponent = viewComponent;
 };
+org_puremvc_haxe_patterns_mediator_Mediator.__name__ = true;
 org_puremvc_haxe_patterns_mediator_Mediator.__interfaces__ = [org_puremvc_haxe_interfaces_IMediator];
 org_puremvc_haxe_patterns_mediator_Mediator.__super__ = org_puremvc_haxe_patterns_observer_Notifier;
 org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe_patterns_observer_Notifier.prototype,{
@@ -296,16 +424,40 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 var model_ModelController = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
+model_ModelController.__name__ = true;
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,model_ModelController.do_save_data];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,model_ModelController.do_save_data];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		var do_save_data = _g;
 		switch(_g) {
+		case "on_btn_saveDeck_click":
+			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
+			Helper.saveDeck(this.fbid,this.token,this.currentCardsuit,function(ret) {
+				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
+				_g1.sendNotification(model_ModelController.on_cardsuit_save_success);
+			});
+			break;
+		case "on_btn_addDeck_click":
+			Helper.addDeck(this.currentCardsuit);
+			break;
+		case "on_btn_login_click":
+			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
+			Helper.loginFb(function(fbid,token) {
+				_g1.fbid = fbid;
+				_g1.token = token;
+				_g1.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
+				Helper.getCardsuits(fbid,token,function(ret1) {
+					_g1.currentCardsuit = ret1;
+					_g1.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : _g1.currentCardsuit});
+					_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
+				});
+			});
+			break;
 		case "on_btn_gotoDeckManager_click":
 			var _g11 = this.currentGame;
 			switch(_g11) {
@@ -411,23 +563,32 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		});
 	}
 	,oriDataToUseData: function(ori) {
-		this.data = ori.map(function(item) {
-			var transItem = JSON.parse(item.Content);
-			transItem.id = item.Name.replace("deckwiki/list/","").replace(".json","");
-			transItem.gameName = Helper.EnToCh(transItem.game);
-			transItem.type = transItem.type;
-			transItem.typeName = Helper.EnToCh(transItem.type);
-			return transItem;
+		this.data = ((function($this) {
+			var $r;
+			var _g = [];
+			{
+				var _g1 = 0;
+				while(_g1 < 14) {
+					var i = _g1++;
+					_g.push(i);
+				}
+			}
+			$r = _g;
+			return $r;
+		}(this))).map(function(id) {
+			return { id : Math.random() * 10000, cards : [], author : "vic", game : "sgs", gameName : "", describe : "", type : "high_speed", typeName : "high_speed"};
 		});
 		this.ary_result = this.data;
 	}
 });
 var org_puremvc_haxe_interfaces_IController = function() { };
+org_puremvc_haxe_interfaces_IController.__name__ = true;
 var org_puremvc_haxe_core_Controller = function() {
 	org_puremvc_haxe_core_Controller.instance = this;
 	this.commandMap = new haxe_ds_StringMap();
 	this.initializeController();
 };
+org_puremvc_haxe_core_Controller.__name__ = true;
 org_puremvc_haxe_core_Controller.__interfaces__ = [org_puremvc_haxe_interfaces_IController];
 org_puremvc_haxe_core_Controller.getInstance = function() {
 	if(org_puremvc_haxe_core_Controller.instance == null) org_puremvc_haxe_core_Controller.instance = new org_puremvc_haxe_core_Controller();
@@ -458,11 +619,13 @@ org_puremvc_haxe_core_Controller.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IModel = function() { };
+org_puremvc_haxe_interfaces_IModel.__name__ = true;
 var org_puremvc_haxe_core_Model = function() {
 	org_puremvc_haxe_core_Model.instance = this;
 	this.proxyMap = new haxe_ds_StringMap();
 	this.initializeModel();
 };
+org_puremvc_haxe_core_Model.__name__ = true;
 org_puremvc_haxe_core_Model.__interfaces__ = [org_puremvc_haxe_interfaces_IModel];
 org_puremvc_haxe_core_Model.getInstance = function() {
 	if(org_puremvc_haxe_core_Model.instance == null) org_puremvc_haxe_core_Model.instance = new org_puremvc_haxe_core_Model();
@@ -491,12 +654,14 @@ org_puremvc_haxe_core_Model.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_IView = function() { };
+org_puremvc_haxe_interfaces_IView.__name__ = true;
 var org_puremvc_haxe_core_View = function() {
 	org_puremvc_haxe_core_View.instance = this;
 	this.mediatorMap = new haxe_ds_StringMap();
 	this.observerMap = new haxe_ds_StringMap();
 	this.initializeView();
 };
+org_puremvc_haxe_core_View.__name__ = true;
 org_puremvc_haxe_core_View.__interfaces__ = [org_puremvc_haxe_interfaces_IView];
 org_puremvc_haxe_core_View.getInstance = function() {
 	if(org_puremvc_haxe_core_View.instance == null) org_puremvc_haxe_core_View.instance = new org_puremvc_haxe_core_View();
@@ -583,14 +748,20 @@ org_puremvc_haxe_core_View.prototype = {
 	}
 };
 var org_puremvc_haxe_interfaces_ICommand = function() { };
+org_puremvc_haxe_interfaces_ICommand.__name__ = true;
 var org_puremvc_haxe_interfaces_IFacade = function() { };
+org_puremvc_haxe_interfaces_IFacade.__name__ = true;
 var org_puremvc_haxe_interfaces_INotification = function() { };
+org_puremvc_haxe_interfaces_INotification.__name__ = true;
 var org_puremvc_haxe_interfaces_IObserver = function() { };
+org_puremvc_haxe_interfaces_IObserver.__name__ = true;
 var org_puremvc_haxe_interfaces_IProxy = function() { };
+org_puremvc_haxe_interfaces_IProxy.__name__ = true;
 var org_puremvc_haxe_patterns_facade_Facade = function() {
 	org_puremvc_haxe_patterns_facade_Facade.instance = this;
 	this.initializeFacade();
 };
+org_puremvc_haxe_patterns_facade_Facade.__name__ = true;
 org_puremvc_haxe_patterns_facade_Facade.__interfaces__ = [org_puremvc_haxe_interfaces_IFacade];
 org_puremvc_haxe_patterns_facade_Facade.getInstance = function() {
 	if(org_puremvc_haxe_patterns_facade_Facade.instance == null) org_puremvc_haxe_patterns_facade_Facade.instance = new org_puremvc_haxe_patterns_facade_Facade();
@@ -663,6 +834,7 @@ var org_puremvc_haxe_patterns_observer_Notification = function(name,body,type) {
 	if(body != null) this.body = body;
 	if(type != null) this.type = type;
 };
+org_puremvc_haxe_patterns_observer_Notification.__name__ = true;
 org_puremvc_haxe_patterns_observer_Notification.__interfaces__ = [org_puremvc_haxe_interfaces_INotification];
 org_puremvc_haxe_patterns_observer_Notification.prototype = {
 	getName: function() {
@@ -691,6 +863,7 @@ var org_puremvc_haxe_patterns_observer_Observer = function(notifyMethod,notifyCo
 	this.setNotifyMethod(notifyMethod);
 	this.setNotifyContext(notifyContext);
 };
+org_puremvc_haxe_patterns_observer_Observer.__name__ = true;
 org_puremvc_haxe_patterns_observer_Observer.__interfaces__ = [org_puremvc_haxe_interfaces_IObserver];
 org_puremvc_haxe_patterns_observer_Observer.prototype = {
 	setNotifyMethod: function(notifyMethod) {
@@ -714,7 +887,7 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 };
 var view_ViewController = function(mediatorName,viewComponent) {
 	this.j = $;
-	var _g = this;
+	var _g1 = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.mc_itemContainer = viewComponent.find("#mc_itemContainer");
 	this.mc_bigItemContainer = viewComponent.find("#mc_bigItemContainer");
@@ -724,56 +897,111 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.slt_type = viewComponent.find("#slt_type");
 	this.pag_page = viewComponent.find("#pag_page");
 	this.btn_output = viewComponent.find("#btn_output");
+	this.btn_login = viewComponent.find("#btn_login");
+	this.btn_addDeck = viewComponent.find("#btn_addDeck");
+	this.btn_saveDeck = viewComponent.find("#btn_saveDeck");
 	this.dia_output = viewComponent.find("#dia_output");
+	this.mc_backContainer = viewComponent.find("#mc_backContainer");
+	Lambda.foreach((function($this) {
+		var $r;
+		var _g = [];
+		{
+			var _g11 = 0;
+			while(_g11 < 49) {
+				var i = _g11++;
+				_g.push(i);
+			}
+		}
+		$r = _g;
+		return $r;
+	}(this)),function(bid) {
+		var useId = bid + 1;
+		var url = "../common/images/card/cardback_" + useId + ".png";
+		var div = _g1.j("#tmpl_back").tmpl({ id : useId, url : url});
+		div.hide();
+		_g1.mc_backContainer.append(div);
+		return true;
+	});
 	this.input_search.textbox({ onChange : function(nv,ov) {
-		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
+		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.slt_game.combobox({ onChange : function(nv1,ov1) {
-		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
+		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.slt_type.combobox({ onChange : function(nv2,ov2) {
-		_g.sendNotification(view_ViewController.on_input_search_change,{ value : _g.getSearchConditions()});
+		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.pag_page.pagination({ onSelectPage : function(number,size) {
-		_g.sendNotification(view_ViewController.on_pag_page_change,{ number : number, size : size});
+		_g1.sendNotification(view_ViewController.on_pag_page_change,{ number : number, size : size});
 	}});
 	this.dia_output.dialog();
 	this.dia_output.find("#btn_gotoGroup").click(function() {
-		_g.sendNotification(view_ViewController.on_btn_gotoGroup_click);
+		_g1.sendNotification(view_ViewController.on_btn_gotoGroup_click);
 	});
 	this.dia_output.find("#btn_gotoDeckManager").click(function() {
-		_g.sendNotification(view_ViewController.on_btn_gotoDeckManager_click);
+		_g1.sendNotification(view_ViewController.on_btn_gotoDeckManager_click);
 	});
 	this.btn_output.click(function() {
-		_g.sendNotification(view_ViewController.on_btn_output_click);
+		_g1.sendNotification(view_ViewController.on_btn_output_click);
+	});
+	this.btn_login.click(function() {
+		_g1.sendNotification(view_ViewController.on_btn_login_click);
+	});
+	this.btn_addDeck.click(function() {
+		_g1.sendNotification(view_ViewController.on_btn_addDeck_click);
+	});
+	this.btn_saveDeck.click(function() {
+		_g1.sendNotification(view_ViewController.on_btn_saveDeck_click);
 	});
 };
+view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output];
+		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_enable_login,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		var str = _g;
-		if(str == view_ViewController.do_show_output) {
-			if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else this.setOutput(notification.getBody().str);
-		} else {
-			var str1 = _g;
-			if(str1 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else {
-				var str2 = _g;
-				if(str2 == view_ViewController.do_show_bigList) this.showBigList(notification.getBody().game,notification.getBody().ary_showData); else {
-					var str3 = _g;
-					if(str3 == view_ViewController.do_show_list) {
-						this.setPagPage(notification.getBody().total);
-						this.showList(notification.getBody().data);
-					} else {
-						var str4 = _g;
-						if(str4 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
-					}
-				}
-			}
+		var str1 = _g;
+		var str2 = _g;
+		var str3 = _g;
+		var str4 = _g;
+		var str5 = _g;
+		switch(_g) {
+		case "on_cardsuit_save_success":
+			this.showMessage("存檔成功");
+			this.enableSave(false);
+			break;
+		case "on_cardsuit_load":
+			Helper.showDeckList(notification.getBody().cardsuit,true);
+			this.enableAddDeck(true);
+			this.showAllCardback();
+			break;
+		case "on_facebook_login":
+			this.enableLogin(false);
+			this.showMessage("登入成功");
+			break;
+		default:
+			if(str == view_ViewController.do_enable_login) this.enableLogin(notification.getBody().enable); else if(str1 == view_ViewController.do_show_output) {
+				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else this.setOutput(notification.getBody().str);
+			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) this.showBigList(notification.getBody().game,notification.getBody().ary_showData); else if(str4 == view_ViewController.do_show_list) {
+				this.setPagPage(notification.getBody().total);
+				this.showList(notification.getBody().data);
+			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
+	}
+	,showAllCardback: function() {
+		this.mc_backContainer.find(".cardback").show();
+	}
+	,enableLogin: function(enable) {
+		if(enable) this.btn_login.linkbutton("enable"); else this.btn_login.linkbutton("disable");
+	}
+	,enableSave: function(enable) {
+		if(enable) this.btn_saveDeck.linkbutton("enable"); else this.btn_saveDeck.linkbutton("disable");
+	}
+	,enableAddDeck: function(enable) {
+		if(enable) this.btn_addDeck.linkbutton("enable"); else this.btn_addDeck.linkbutton("disable");
 	}
 	,alert: function(msg) {
 		this.j.messager.alert("提示",msg);
@@ -851,10 +1079,15 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			return true;
 		});
 	}
+	,showMessage: function(msg) {
+		this.j.messager.show({ title : "提示", msg : msg, timeout : 2000, showType : "slide"});
+	}
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
+String.__name__ = true;
+Array.__name__ = true;
 if(Array.prototype.map == null) Array.prototype.map = function(f) {
 	var a = [];
 	var _g1 = 0;
@@ -880,17 +1113,26 @@ var __map_reserved = {}
 Helper.j = $;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 model_ModelController.do_save_data = "do_save_data";
+model_ModelController.on_facebook_login = "on_facebook_login";
+model_ModelController.on_cardsuit_load = "on_cardsuit_load";
+model_ModelController.on_cardsuit_save_success = "on_cardsuit_save_success";
 view_ViewController.do_show_list = "do_show_list";
 view_ViewController.do_show_bigList = "do_show_bigList";
 view_ViewController.do_show_showDetail = "do_show_showDetail";
 view_ViewController.do_show_loading = "do_show_loading";
 view_ViewController.do_show_output = "do_show_output";
+view_ViewController.do_enable_login = "do_enable_login";
 view_ViewController.on_item_click = "on_item_click";
 view_ViewController.on_item_over = "on_item_over";
 view_ViewController.on_input_search_change = "on_input_search_change";
 view_ViewController.on_pag_page_change = "on_pag_page_change";
 view_ViewController.on_btn_output_click = "on_btn_output_click";
+view_ViewController.on_btn_login_click = "on_btn_login_click";
 view_ViewController.on_btn_gotoGroup_click = "on_btn_gotoGroup_click";
 view_ViewController.on_btn_gotoDeckManager_click = "on_btn_gotoDeckManager_click";
+view_ViewController.on_btn_addDeck_click = "on_btn_addDeck_click";
+view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

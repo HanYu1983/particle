@@ -19,14 +19,18 @@ class ViewController extends Mediator
 	public static var do_show_showDetail = 'do_show_showDetail';
 	public static var do_show_loading = 'do_show_loading';
 	public static var do_show_output = 'do_show_output';
+	public static var do_enable_login = 'do_enable_login';
 	
 	public static var on_item_click = 'on_item_click';
 	public static var on_item_over = 'on_item_over';
 	public static var on_input_search_change = 'on_input_search_change';
 	public static var on_pag_page_change = 'on_pag_page_change';
 	public static var on_btn_output_click = 'on_btn_output_click';
+	public static var on_btn_login_click = 'on_btn_login_click';
 	public static var on_btn_gotoGroup_click = 'on_btn_gotoGroup_click';
 	public static var on_btn_gotoDeckManager_click = 'on_btn_gotoDeckManager_click';
+	public static var on_btn_addDeck_click = 'on_btn_addDeck_click';
+	public static var on_btn_saveDeck_click = 'on_btn_saveDeck_click';
 	
 	var j:Dynamic = untyped __js__('$');
 	var mc_itemContainer:Dynamic;
@@ -38,6 +42,10 @@ class ViewController extends Mediator
 	var pag_page:Dynamic;
 	var btn_output:Dynamic;
 	var dia_output:Dynamic;
+	var btn_login:Dynamic;
+	var btn_addDeck:Dynamic;
+	var btn_saveDeck:Dynamic;
+	var mc_backContainer:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -51,7 +59,20 @@ class ViewController extends Mediator
 		slt_type = viewComponent.find( '#slt_type' );
 		pag_page = viewComponent.find( '#pag_page' );
 		btn_output = viewComponent.find( '#btn_output' );
+		btn_login = viewComponent.find( '#btn_login' );
+		btn_addDeck = viewComponent.find( '#btn_addDeck' );
+		btn_saveDeck = viewComponent.find( '#btn_saveDeck' );
 		dia_output = viewComponent.find( '#dia_output' );
+		mc_backContainer = viewComponent.find( '#mc_backContainer' );
+		
+		[for ( i in 0...49 ) i ].foreach( function( bid ) {
+			var useId = bid+1;
+			var url = '../common/images/card/cardback_' + useId + '.png';
+			var div = j("#tmpl_back").tmpl({id:useId, url:url });
+			div.hide();
+			mc_backContainer.append( div );
+			return true;
+		});
 		
 		input_search.textbox( {
 			onChange:function( nv, ov ) {
@@ -88,6 +109,18 @@ class ViewController extends Mediator
 		btn_output.click( function() {
 			sendNotification( on_btn_output_click );
 		});
+		
+		btn_login.click( function() {
+			sendNotification( on_btn_login_click );
+		});
+		
+		btn_addDeck.click( function() {
+			sendNotification( on_btn_addDeck_click );
+		});
+		
+		btn_saveDeck.click( function() {
+			sendNotification( on_btn_saveDeck_click );
+		});
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -97,13 +130,29 @@ class ViewController extends Mediator
 			do_show_bigList,
 			do_show_showDetail,
 			do_show_loading,
-			do_show_output
+			do_show_output,
+			do_enable_login,
+			ModelController.on_facebook_login,
+			ModelController.on_cardsuit_load,
+			ModelController.on_cardsuit_save_success
 		];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ModelController.on_cardsuit_save_success:
+				showMessage( '存檔成功' );
+				enableSave( false );
+			case ModelController.on_cardsuit_load:
+				Helper.showDeckList( notification.getBody().cardsuit, true );
+				enableAddDeck( true );
+				showAllCardback();
+			case ModelController.on_facebook_login:
+				enableLogin( false );
+				showMessage( '登入成功' );
+			case str if ( str == do_enable_login ):
+				enableLogin( notification.getBody().enable );
 			case str if ( str == do_show_output ):
 				if ( notification.getBody().str == null ) {
 					alert( '請選擇套牌哦!' );
@@ -119,6 +168,34 @@ class ViewController extends Mediator
 				showList( notification.getBody().data );
 			case str if ( str == do_show_showDetail ):
 				showDetail( notification.getBody().showDetail );
+		}
+	}
+	
+	function showAllCardback() {
+		mc_backContainer.find( '.cardback' ).show();
+	}
+	
+	function enableLogin( enable:Bool ) {
+		if ( enable ) {
+			btn_login.linkbutton( 'enable' );
+		}else {
+			btn_login.linkbutton( 'disable' );
+		}
+	}
+	
+	function enableSave( enable:Bool ) {
+		if ( enable ) {
+			btn_saveDeck.linkbutton( 'enable' );
+		}else {
+			btn_saveDeck.linkbutton( 'disable' );
+		}
+	}
+	
+	function enableAddDeck( enable:Bool ) {
+		if ( enable ) {
+			btn_addDeck.linkbutton( 'enable' );
+		}else {
+			btn_addDeck.linkbutton( 'disable' );
 		}
 	}
 	
@@ -216,7 +293,14 @@ class ViewController extends Mediator
 			mc_itemContainer.append( dom );
 			return true;
 		});
-		
-		
+	}
+	
+	function showMessage( msg ){
+		j.messager.show({
+			title:'提示',
+			msg: msg,
+			timeout:2000,
+			showType:'slide'
+		});
 	}
 }

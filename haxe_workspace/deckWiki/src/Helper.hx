@@ -1,5 +1,6 @@
 package;
 import haxe.Json;
+import js.Browser;
 
 using Lambda;
 using Reflect;
@@ -11,6 +12,46 @@ using StringTools;
 class Helper
 {
 	static var j:Dynamic = untyped __js__('$');
+	
+	public static function initFb( cb ) {
+		#if debug
+		untyped __js__('myapp.facebook.init')( '679171275511375', cb );
+		#else
+		untyped __js__('myapp.facebook.init')( '425311264344425', cb );
+		#end
+	}
+	
+	public static function loginFb( cb:String -> String -> Void ) {
+		untyped __js__( 'myapp.facebook.login' )( function( ret ){
+			cb( ret.authResponse.userID, ret.authResponse.accessToken );
+		});
+	}
+	
+	public static function getCardsuits( fbid, token, cb ) {
+		untyped __js__('cardSuit.load2')( fbid, token, handleModel( function( ret ){
+			cb( ret );
+		}));
+	}
+	
+	public static function saveDeck( fbid, token, model, cb ) {
+		untyped __js__('cardSuit.save2')( fbid, token, model, handleModel( function( ret ) {
+			cb( ret );
+		}));
+	}
+	
+	public static function showDeckList( model, sort ) {
+		untyped __js__('app.card.showDeckList')( model, sort );
+	}
+	
+	public static function addDeck( model ) {
+		untyped __js__('cardSuit.editCardSuit')( model, {
+			name: 'default',
+			game: "army",
+			cards:[]
+		});
+		showDeckList( model, false );
+	}
+	
 
 	public static function createItem( model:Dynamic ) {
 		model.url = getImageUrlByGameAndId( model.game, model.cards[0] );
@@ -69,6 +110,17 @@ class Helper
 			case 'control':'控制';
 			case 'disgust':'噁心';
 			case _:'';
+		}
+	}
+	
+	public static function handleModel( func ){
+		return function( err, ret ){
+			if( err != null ){
+				Browser.alert( err );
+				Browser.window.location.reload();
+			}else{
+				func( ret );
+			}
 		}
 	}
 }

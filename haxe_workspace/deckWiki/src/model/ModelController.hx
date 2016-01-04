@@ -17,11 +17,18 @@ class ModelController extends Mediator
 {
 	public static var do_save_data = 'do_save_data';
 	
+	public static var on_facebook_login = 'on_facebook_login';
+	public static var on_cardsuit_load = 'on_cardsuit_load';
+	public static var on_cardsuit_save_success = 'on_cardsuit_save_success';
+	
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
 	
+	var fbid:String;
+	var token:String;
 	var currentGame:String;
 	var currentOutputStr:String;
+	var currentCardsuit:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -39,6 +46,9 @@ class ModelController extends Mediator
 			ViewController.on_btn_output_click,
 			ViewController.on_btn_gotoDeckManager_click,
 			ViewController.on_btn_gotoGroup_click,
+			ViewController.on_btn_login_click,
+			ViewController.on_btn_addDeck_click,
+			ViewController.on_btn_saveDeck_click,
 			do_save_data
 		];
 	}
@@ -46,6 +56,57 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_btn_saveDeck_click:
+				sendNotification( ViewController.do_show_loading, { show:true } );
+				Helper.saveDeck( this.fbid, this.token, currentCardsuit, function( ret ) {
+					sendNotification( ViewController.do_show_loading, { show:false } );
+					sendNotification( on_cardsuit_save_success );
+				});
+			case ViewController.on_btn_addDeck_click:
+				Helper.addDeck( currentCardsuit );
+			case ViewController.on_btn_login_click:
+				sendNotification( ViewController.do_show_loading, { show:true } );
+				Helper.loginFb( function(fbid, token) {
+					this.fbid = fbid;
+					this.token = token;
+					sendNotification( on_facebook_login, { fbid:fbid, token:token } );
+					
+					Helper.getCardsuits( fbid, token, function( ret ) {
+						currentCardsuit = ret;
+						sendNotification( on_cardsuit_load, { cardsuit:currentCardsuit } );
+						sendNotification( ViewController.do_show_loading, { show:false } );
+					});
+					
+				});
+				
+				/*
+					*/
+					/*
+					
+					if( admin.beta ){
+						cardSuit.load2( fbid, token, handleModel( function( ret ){
+							
+							loadModel = ret;
+							app.card.showDeckList( loadModel, true );
+							
+							$('#btn_addDeck').linkbutton( 'enable' );
+							
+							mc_backContainer.find( '.cardback' ).show();
+							closeLoading();
+						}));
+					}else{
+						cardSuit.load( fbid, token, handleModel( function( ret ){
+							loadModel = ret;
+							app.card.showDeckList( loadModel );
+							$('#btn_addDeck').linkbutton( 'enable' );
+							
+							mc_backContainer.find( '.cardback' ).show();
+							closeLoading();
+						}));
+					}
+					*/
+				
+				
 			case ViewController.on_btn_gotoDeckManager_click:
 				switch( currentGame ) {
 					case 'yugioh':

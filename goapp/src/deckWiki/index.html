@@ -69,9 +69,42 @@ body{
 	cursor:pointer;
 	border:1px black solid;
 }
-
+.cardback{
+	position:relative;
+	width:80px;
+	height:110px;
+}
 </style>
 <body>
+	<script id="tmpl_back" type="jquery-x-tmpl">
+		<div class="hori cardback">
+			<img style="position:relative; width:100%; height:100%;" src=${url}>
+			<div style="position:absolute; width:100%; height:100%; top:0; left:0; background-color:black; opacity:.5;"></div>
+			<img style="position:absolute; width:100%; height:100%; top:0; left:0;" src="../common/images/card/sampleTxt.png"/>
+			<div style="position:relative; background-color:black; opacity:.5;">${id}</div>
+		</div>
+	</script>
+	<script id="tmpl_deck" type="jquery-x-tmpl">
+		<div id=${name} class="group">
+			<a id="btn_remove" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" ></a>
+			<select class="easyui-combobox" name="dept" style="width:120px;">
+				<option value="army">軍武gogogo</option>
+				<option value="crusade">Crusade</option>
+				<option value="yugioh">遊戲王</option>
+				<option value="sangoWar">三國志大戰</option>
+				<option value="sgs">三國殺陣面對決</option>
+				<option value="gundamWar">鋼彈大戰</option>
+				<option value="gundamWarN">鋼彈大戰NexA</option>
+				<option value="magic">魔法風雲會</option>
+				<option value="battleSpirits">戰魂</option>
+				<option value="dragonZ">七龍珠TCG</option>
+				<option value="ws">黑白雙翼</option>
+			</select>
+			<div class="hori"><input id="txt_name" class="easyui-textbox" style="width:100px"></div>
+			<div class="hori"><input id="txt_cards" class="easyui-textbox" style="width:200px"></div>
+			<div class="hori"><input id="txt_back" class="easyui-textbox" style="width:40px" value=${backId}></div>
+		</div>
+	</script>
 	<script id="tmpl_bigCard" type="jquery-x-tmpl">
 		<div cid=${id} class="big_card_root">
 			<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="../common/images/card/cardback_0.png"/>
@@ -170,6 +203,36 @@ body{
 		</div>
 	</script>
 	<div id="" class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'east',title:'自己',split:true" style="min-width:600px; width:600px; padding:10px;">
+			
+			<div class="group" style="text-align:center; margin-top:0px;">
+				<h1>牌組管理器</h1>
+				<div style="color:yellow">這個功能要登入facebook才可以使用</div>
+				<br>
+				<div class="hori">
+					<a href="#" id="btn_login" class="easyui-linkbutton" data-options="iconCls:'icon-fb-login',disabled:true" >登入</a>
+				</div>
+				<div class="hori">
+					<a id="btn_addDeck" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',disabled:true" >新增套牌</a>
+				</div>
+				<div class="hori">
+					<a id="btn_saveDeck" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save',disabled:true" >存檔</a>
+				</div>
+			</div>
+			<div id="mc_deckContainer" class="group" style="text-align:center; margin-top:60px; margin-bottom:100px; ">
+				<!-- by script -->
+			</div>
+			<div class="group" style="text-align:center; margin-top:0;">
+				<h1>牌背列表</h1>
+				<div id="mc_backContainer" class="group">
+					<div class="hori cardback">
+						<img style="position:relative; width:100%; height:100%;" src="../common/images/card/cardback_0.png"/>
+						<div style="position:absolute; width:100%; height:100%; top:0; left:0; "></div>
+						<div style="position:relative; background-color:black; opacity:.5;">0</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div data-options="region:'west',title:'列表',split:true" style="min-width:400px; width:400px; padding:10px;">
 			<div class="group horiCenter" style="margin-bottom:5px;">
 				<div>作者搜尋</div>
@@ -228,6 +291,7 @@ body{
 			</div>
 		</div>
 	</div>
+			
 	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
 	<script src="../common/js/lib/underscore/underscore-min.js"></script>
@@ -248,6 +312,11 @@ body{
 	<script src="../common/js/cardinfoloader.js"></script>
 	<script src="../common/js/cardsearch.js"></script>
 	<script src="../common/js/db2.js"></script>
+	<script src="../common/js/store.js"></script>	
+	<script src="../common/js/cardSuit.js"></script>	
+	<script src="../common/js/admin.js"></script>
+	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
+	<script src="js/app.card.js"></script>	
 	<script src="js/api.js"></script>
 	<script src="js/main.js"></script>
 	<script>

@@ -168,7 +168,7 @@ a{
 						<a id="btn_deckWikiLink" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
 					</div>
 					<div class="hori" style="width:83%">
-						<a id="btn_deckWiki" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >組牌危機</a>
+						<a id="btn_deckWiki" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >秀牌風雲</a>
 					</div>
 				</div>
 				<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
@@ -281,7 +281,7 @@ a{
 						<img src="images/004.jpg" class="hori showcase" />
 					</div>
 				</div>
-				
+				<!--
 				<div class="group" style="text-align:center; margin-top:60px;">
 					<h1>牌背列表</h1>
 					<div id="mc_backContainer" class="group">
@@ -304,33 +304,7 @@ a{
 					</div>
 				</div>
 				<div id="mc_deckContainer" class="group" style="text-align:center; margin-top:60px; margin-bottom:100px; ">
-					<!-- by script -->
-				</div>
-				<!--
-				<div class="group" style="text-align:center; margin-top:60px;">
-					<h1>卡牌風雲教學</h1>
-					<div><a href="https://www.youtube.com/watch?v=HqB0Itaplhc&index=4&list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">如何和朋友一起玩</a></div>
-				</div>
-				<div class="group" style="text-align:center; margin-top:60px;">
-					<h1>鋼彈大戰教學</h1>
-					<div>step1:</div>
-					<div><a href="https://www.youtube.com/watch?v=N4Z764wbSVM&index=17&list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">基本遊戲講解</a></div>
-				</div>
-				<div class="group" style="text-align:center; margin-top:60px;">
-					<h1>三國志大戰教學</h1>
-					<div>step1:</div>
-					<div><a href="https://www.youtube.com/watch?v=pOfcu9CNlfU&index=7&list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">開始前準備</a></div>
-					<div>step2:</div>
-					<div><a href="https://www.youtube.com/watch?v=yJNndNxCHPk&index=6&list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">國力配陣</a></div>
-					<div>step3:</div>
-					<div><a href="https://www.youtube.com/watch?v=StNFRH6BfeA&list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA&index=8">對戰</a></div>
-				</div>
-				<div class="group" style="text-align:center; margin-top:60px;">
-					<h1>其他</h1>
-					<div>
-						<a href="//www.youtube.com/watch?v=TX4Rn182urU&index=1&list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">更多影片</a>
-					</div>
-					<br/>
+					
 				</div>
 				-->
 			</div>
@@ -373,7 +347,7 @@ a{
 					haxe<br>
 					jquery easy ui<br>
 					<h1>產品描述</h1>
-					組牌危機是一款通用的集換式卡牌牌組搜尋器。可以讓玩家搜尋、分享自己所組的套牌的網頁。
+					秀牌風雲是一款通用的集換式卡牌牌組搜尋器。可以讓玩家登入、儲存、搜尋並且分享自己所組的套牌的網頁。
 				</div>
 				<div class="group" style="overflow:auto; margin-top:30px; ">
 					<div class="group" style="text-align:center;">
@@ -581,7 +555,9 @@ a{
 	}
 	
 	</script>
+	<!--
 	<script src="js/app.card.js"></script>	
+	-->
 	<script>
 	googleTracking.init( 'UA-55273266-3' );
 	
@@ -610,6 +586,7 @@ a{
 					$('#btn_login' ).linkbutton( 'disable' );
 					showMessage( '登入成功' );
 					
+					/*
 					fbid = ret.authResponse.userID;
 					token = ret.authResponse.accessToken;
 					
@@ -634,6 +611,7 @@ a{
 							closeLoading();
 						}));
 					}
+					*/
 				});
 				break;
 			case 'btn_addDeck':
