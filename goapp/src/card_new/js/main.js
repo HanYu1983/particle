@@ -238,7 +238,6 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 448, className : "Main", methodName : "handleResponse", customParams : [ret]});
 		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
 	};
 };
@@ -267,7 +266,6 @@ Main.prototype = {
 		case "onBtnLoginClick":
 			Main.openLoading("登入並讀取資料中...");
 			CallJs.myapp_facebook_login(function(ret) {
-				haxe_Log.trace(ret,{ fileName : "Main.hx", lineNumber : 173, className : "Main", methodName : "onHtmlClick"});
 				Main.fbid = ret.authResponse.userID;
 				Main.token = ret.authResponse.accessToken;
 				Main.j("#txt_id").textbox("setValue",Main.fbid);
@@ -529,11 +527,6 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -614,25 +607,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -1569,8 +1543,11 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			item6.lock(itemModel6.lock);
 		};
 		Lambda.foreach(ary_item,function(itemModel7) {
+			if(itemModel7 == null) return true;
+			var m = _g.facade.retrieveMediator(itemModel7.id);
+			if(m == null) return true;
 			var item7;
-			item7 = js_Boot.__cast(_g.facade.retrieveMediator(itemModel7.id) , per_vic_pureMVCref_tableGameModel_view_IItem);
+			item7 = js_Boot.__cast(m , per_vic_pureMVCref_tableGameModel_view_IItem);
 			var dom2 = _g.facade.retrieveMediator(itemModel7.id).getViewComponent();
 			if(apply) {
 				updateRotate(item7,dom2,itemModel7);
@@ -1995,7 +1972,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 				}
 			} catch( e ) {
 				if (e instanceof js__$Boot_HaxeError) e = e.val;
-				haxe_Log.trace(e,{ fileName : "MainController.hx", lineNumber : 611, className : "per.vic.pureMVCref.tableGameModel.controller.MainController", methodName : "deleteView"});
+				console.log(e);
 			}
 			return true;
 		});

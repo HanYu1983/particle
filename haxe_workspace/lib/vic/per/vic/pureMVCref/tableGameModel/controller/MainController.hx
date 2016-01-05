@@ -161,7 +161,10 @@ class MainController extends Mediator
 		}
 		
 		ary_item.foreach( function( itemModel:Dynamic ) {
-			var item:IItem = cast( facade.retrieveMediator( itemModel.id ), IItem );
+			if ( itemModel == null ) return true;
+			var m = facade.retrieveMediator( itemModel.id );
+			if ( m == null ) return true;
+			var item:IItem = cast( m, IItem );
 			var dom:Dynamic = facade.retrieveMediator( itemModel.id ).getViewComponent();
 			
 			if( apply ){

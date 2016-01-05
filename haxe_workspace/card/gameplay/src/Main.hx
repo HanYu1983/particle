@@ -170,8 +170,6 @@ class Main
 				openLoading( '登入並讀取資料中...' );
 				
 				CallJs.myapp_facebook_login( function( ret ) {
-					trace( ret );
-					
 					fbid = ret.authResponse.userID;
 					token = ret.authResponse.accessToken;
 					
@@ -445,7 +443,6 @@ class Main
 	
 	static function handleResponse( cb ) {
 		return function ( err, ret ) {
-			trace( err, ret );
 			if ( err != null ) {
 				#if debug
 				alert( err );
