@@ -83,6 +83,7 @@
 		<script>
 		$(function(){
 			var uiconfig = {
+				index: 4,
 				apps: [
 					{
 						"title":"余氏K線圖",
@@ -147,6 +148,9 @@
 						}
 					})(app))
 					tabs.append( dom )
+					if( parseInt(i) == config.index ){
+						dom.find( '#btn_show' ).trigger('click')
+					}
 				}
 			}
 			applyConfig($('body'), uiconfig)
