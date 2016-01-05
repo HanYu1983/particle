@@ -9,8 +9,8 @@
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 		</script>
-		<script src='js/lib/jquery/jquery-1.9.min.js'></script>
-		<script src='js/lib/purl.js'></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script src="../common/js/lib/purl.js"></script>	
 	</head>
 	<body>
 		<script>
@@ -18,7 +18,7 @@
 			document.write('<div id="fbcomment" class="fb-comments" data-href="'+href+'" data-width="100%" data-numposts="5" data-colorscheme="light"></div>')
 		}
 		var url = $.url(window.location.search)
-		var key = decodeURIComponent(url.param("key"))
+		var key = decodeURIComponent(url.param("url"))
 		appendComment(key)
 		</script>
 	</body>

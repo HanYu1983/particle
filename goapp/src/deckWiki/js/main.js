@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("679171275511375",cb);
+	myapp.facebook.init("425311264344425",cb);
 };
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
@@ -935,6 +935,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.input_searchDescribe = viewComponent.find("#input_searchDescribe");
 	this.dia_saveForm = viewComponent.find("#dia_saveForm");
 	this.mc_detail_panel = viewComponent.find("#mc_detail_panel");
+	this.iframe_comment = viewComponent.find("#iframe_comment");
 	this.dia_saveForm.dialog({ onClose : $bind(this,this.onCloseDetailForm)});
 	Lambda.foreach((function($this) {
 		var $r;
@@ -1030,12 +1031,17 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else this.setOutput(notification.getBody().str);
 			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) {
 				this.clickData = notification.getBody().clickData;
+				this.openFBComment(this.clickData.uid);
 				this.showBigList(notification.getBody().game,notification.getBody().ary_showData);
 			} else if(str4 == view_ViewController.do_show_list) {
 				this.setPagPage(notification.getBody().total);
 				this.showList(notification.getBody().data);
 			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
+	}
+	,openFBComment: function(uid) {
+		var url = "comment.html?url=" + window.location.origin + window.location.pathname + "?uid=" + uid;
+		this.iframe_comment.attr("src",url);
 	}
 	,onCloseDetailForm: function(e) {
 		this.dia_saveForm.find("#btn_confirm").off("click");
@@ -1285,5 +1291,3 @@ view_ViewController.on_btn_addDeck_click = "on_btn_addDeck_click";
 view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

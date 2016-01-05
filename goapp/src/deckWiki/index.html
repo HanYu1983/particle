@@ -296,9 +296,19 @@ body{
 			
 		</div>
 		<div data-options="region:'center'" style="">
-			<div id="mc_bigItemContainer" class="group">
-				
+			<div id="layout_main" class="easyui-layout" style="width:100%;height:100%;">
+				<div data-options="region:'north',title:'評論',split:true" style="height:300px;">
+					<iframe id="iframe_comment" style="width:100%; height:100%; background-color:lightgray;">
+						
+					</iframe>
+				</div>
+				<div data-options="region:'center',split:false" style="padding:10px;">
+					<div id="mc_bigItemContainer" class="group">
+						
+					</div>
+				</div>
 			</div>
+			
 		</div>
 		<div id="dia_output" class="easyui-dialog" title="匯出" data-options="closed:true,modal:true" style="width:530px;height:300px" >
 			<div class="group" style="text-align:center;">
