@@ -227,7 +227,7 @@ body{
 		</div>
 		<div data-options="region:'west',title:'列表',split:true" style="min-width:420px; width:420px;">
 			<div id="layout_main" class="easyui-layout" style="width:100%;height:100%;">
-				<div data-options="region:'center',split:true" style="padding:10px;">
+				<div data-options="region:'north',split:false" style="height:260px; padding:10px;">
 					<div class="group horiCenter" style="margin-bottom:5px;">
 						<div>facebookID搜尋</div>
 						<input id="input_searchId" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:80%">
@@ -266,6 +266,8 @@ body{
 					<div class="group horiCenter" style="margin-bottom:5px;">
 						<a id="btn_output" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" data-options="iconCls:'icon-save'">匯出</a>
 					</div>
+				</div>
+				<div data-options="region:'center',split:true" style="padding:10px;">
 					<div class="group horiCenter" style="margin-bottom:5px;">
 						<div class="hori">
 							<div id="pag_page" class="easyui-pagination" data-options="total:0,pageSize:20,layout:['first','links','last'],displayMsg:''"></div>
@@ -302,7 +304,7 @@ body{
 			<div class="group" style="text-align:center;">
 				<input id="input_output" class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 				<div class="hori" style="margin-top:10px;">
-					<a id="btn_gotoGroup" href="#" title="歡迎大家加入哦" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" >加入社團找牌咖</a>
+					<a id="btn_gotoGroup" href="#" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" >上善若水app</a>
 					<a id="btn_gotoDeckManager" href="#"  class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" data-options="iconCls:'icon-back'">回組牌風雲</a>
 				</div>
 			</div>

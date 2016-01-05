@@ -472,7 +472,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			}
 			break;
 		case "on_btn_gotoGroup_click":
-			window.open("https://www.facebook.com/groups/1521526761495948/","_blank");
+			window.open("https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/","_blank");
 			break;
 		case "on_btn_output_click":
 			this.sendNotification(view_ViewController.do_show_output,{ str : this.currentOutputStr});
@@ -995,6 +995,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		_g1.sendNotification(view_ViewController.on_btn_saveDeck_click,{ savedata : _g1.getSaveDataFromDom()});
 	});
 	this.hideCardBackContainer();
+	this.showAdminMessage();
 };
 view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -1132,6 +1133,9 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	}
 	,hideCardBackContainer: function() {
 		if(!Helper.isAdmin()) this.mc_backContainer.parent().hide();
+	}
+	,showAdminMessage: function() {
+		if(Helper.isAdmin()) this.alert("此網址僅供私下交流用，請勿公開分享!");
 	}
 	,showAllCardback: function() {
 		this.mc_backContainer.find(".cardback").show();

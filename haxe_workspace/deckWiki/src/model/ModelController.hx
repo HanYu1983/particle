@@ -83,7 +83,7 @@ class ModelController extends Mediator
 						Browser.window.open( '../card/manager_deck.html?game=' + currentGame, '_blank' );
 				}
 			case ViewController.on_btn_gotoGroup_click:
-				Browser.window.open( 'https://www.facebook.com/groups/1521526761495948/', '_blank' );
+				Browser.window.open( 'https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/', '_blank' );
 			case ViewController.on_btn_output_click:
 				sendNotification( ViewController.do_show_output, { str:currentOutputStr } );
 			case ViewController.on_pag_page_change:
