@@ -1986,10 +1986,16 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 	,deleteView: function(ary_receive) {
 		var _g = this;
 		Lambda.foreach(ary_receive,function(removeItem) {
-			var m = _g.facade.retrieveMediator(removeItem.id);
-			if(m != null) {
-				m.getViewComponent().remove();
-				_g.facade.removeMediator(m.getMediatorName());
+			try {
+				if(removeItem == null) return true;
+				var m = _g.facade.retrieveMediator(removeItem.id);
+				if(m != null) {
+					m.getViewComponent().remove();
+					_g.facade.removeMediator(m.getMediatorName());
+				}
+			} catch( e ) {
+				if (e instanceof js__$Boot_HaxeError) e = e.val;
+				haxe_Log.trace(e,{ fileName : "MainController.hx", lineNumber : 611, className : "per.vic.pureMVCref.tableGameModel.controller.MainController", methodName : "deleteView"});
 			}
 			return true;
 		});

@@ -600,10 +600,15 @@ class MainController extends Mediator
 	
 	function deleteView( ary_receive:Array<Dynamic> ) {
 		ary_receive.foreach( function( removeItem ) {
-			var m = facade.retrieveMediator( removeItem.id );
-			if ( m != null ) {
-				m.getViewComponent().remove();
-				facade.removeMediator( m.getMediatorName() );
+			try {
+				if ( removeItem == null ) return true;
+				var m = facade.retrieveMediator( removeItem.id );
+				if ( m != null ) {
+					m.getViewComponent().remove();
+					facade.removeMediator( m.getMediatorName() );
+				}
+			}catch ( e:Dynamic ) {
+				trace( e );
 			}
 			return true;
 		});
