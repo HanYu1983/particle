@@ -100,7 +100,8 @@ class ModelController extends Mediator
 			case ViewController.on_item_click:
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
-				var cards:Array<Dynamic> = findDataById( data, id ).cards;
+				var clickData:Dynamic = findDataById( data, id );
+				var cards:Array<Dynamic> = clickData.cards;
 				
 				currentGame = game;
 				currentOutputStr = Json.stringify( cards );
@@ -115,7 +116,7 @@ class ModelController extends Mediator
 						return retobj;
 					});
 					sendNotification( ViewController.do_show_loading, { show:false } );
-					sendNotification( ViewController.do_show_bigList, { game:game, ary_showData:ary_showData } );
+					sendNotification( ViewController.do_show_bigList, { clickData:clickData, game:game, ary_showData:ary_showData } );
 				});
 			case str if ( str == do_load_all_list ):
 				doLoadList();
@@ -158,7 +159,7 @@ class ModelController extends Mediator
 				case 'deckName':
 					filterDataByCheckNull( filterDataByDeckName, f );
 				case 'describe':
-				//	filterDataByCheckNull( filterDataByDescribe, f );
+					filterDataByCheckNull( filterDataByDescribe, f );
 				case 'author':
 					filterDataByCheckNull( filterDataByAuthor, f );
 				case 'game':
@@ -184,13 +185,13 @@ class ModelController extends Mediator
 	
 	function filterDataByDescribe( from:Array<Dynamic>, name:String ) {
 		return from.filter( function( obj ) {
-			return obj.describe.indexOf( name ) != -1;
+			return obj.desc.indexOf( name ) != -1;
 		});
 	}
 	
 	function filterDataByAuthor( from:Array<Dynamic>, author:String ) {
 		return from.filter( function( obj ) {
-			return obj.author.indexOf( author ) != -1;
+			return author == '' || obj.author == author;
 		});
 	}
 	
@@ -211,9 +212,11 @@ class ModelController extends Mediator
 			item.id = Helper.getUUID();
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
+			item.typeName = Helper.EnToCh( item.type );
+			item.desc = item.desc == null ? '' : item.desc;
 			return item;
 		});
-		trace( data );
+		
 		ary_result = data;
 	}
 }

@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("679171275511375",cb);
+	myapp.facebook.init("425311264344425",cb);
 };
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
@@ -494,7 +494,8 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_item_click":
 			var id1 = notification.getBody().id;
 			var game1 = notification.getBody().game;
-			var cards = this.findDataById(this.data,id1).cards;
+			var clickData = this.findDataById(this.data,id1);
+			var cards = clickData.cards;
 			this.currentGame = game1;
 			this.currentOutputStr = JSON.stringify(cards);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
@@ -507,7 +508,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 					return retobj;
 				});
 				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
-				_g1.sendNotification(view_ViewController.do_show_bigList,{ game : game1, ary_showData : ary_showData});
+				_g1.sendNotification(view_ViewController.do_show_bigList,{ clickData : clickData, game : game1, ary_showData : ary_showData});
 			});
 			break;
 		default:
@@ -551,6 +552,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				filterDataByCheckNull($bind(this,this.filterDataByDeckName),f1);
 				break;
 			case "describe":
+				filterDataByCheckNull($bind(this,this.filterDataByDescribe),f1);
 				break;
 			case "author":
 				filterDataByCheckNull($bind(this,this.filterDataByAuthor),f1);
@@ -577,12 +579,12 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,filterDataByDescribe: function(from,name) {
 		return from.filter(function(obj) {
-			return obj.describe.indexOf(name) != -1;
+			return obj.desc.indexOf(name) != -1;
 		});
 	}
 	,filterDataByAuthor: function(from,author) {
 		return from.filter(function(obj) {
-			return obj.author.indexOf(author) != -1;
+			return author == "" || obj.author == author;
 		});
 	}
 	,filterDataByGame: function(from,game) {
@@ -600,9 +602,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			item.id = Helper.getUUID();
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
+			item.typeName = Helper.EnToCh(item.type);
+			if(item.desc == null) item.desc = ""; else item.desc = item.desc;
 			return item;
 		});
-		console.log(this.data);
 		this.ary_result = this.data;
 	}
 });
@@ -930,6 +933,9 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.mc_deckContainer = viewComponent.find("#mc_deckContainer");
 	this.input_searchName = viewComponent.find("#input_searchName");
 	this.input_searchDescribe = viewComponent.find("#input_searchDescribe");
+	this.dia_saveForm = viewComponent.find("#dia_saveForm");
+	this.mc_detail_panel = viewComponent.find("#mc_detail_panel");
+	this.dia_saveForm.dialog({ onClose : $bind(this,this.onCloseDetailForm)});
 	Lambda.foreach((function($this) {
 		var $r;
 		var _g = [];
@@ -1021,11 +1027,33 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		default:
 			if(str == view_ViewController.do_enable_login) this.enableLogin(notification.getBody().enable); else if(str1 == view_ViewController.do_show_output) {
 				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else this.setOutput(notification.getBody().str);
-			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) this.showBigList(notification.getBody().game,notification.getBody().ary_showData); else if(str4 == view_ViewController.do_show_list) {
+			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) {
+				this.clickData = notification.getBody().clickData;
+				this.showBigList(notification.getBody().game,notification.getBody().ary_showData);
+			} else if(str4 == view_ViewController.do_show_list) {
 				this.setPagPage(notification.getBody().total);
 				this.showList(notification.getBody().data);
 			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
+	}
+	,onCloseDetailForm: function(e) {
+		this.dia_saveForm.find("#btn_confirm").off("click");
+	}
+	,showDetailForm: function(show,dom,name) {
+		var _g = this;
+		if(show) {
+			this.dia_saveForm.dialog("open");
+			this.dia_saveForm.find("#txt_name").html(name);
+			this.dia_saveForm.find("#slt_game").combobox("setValue",dom.attr("type"));
+			this.dia_saveForm.find("#txt_desc").textbox("setValue",dom.attr("desc"));
+			this.dia_saveForm.find("#btn_confirm").click(function() {
+				var deckType = _g.dia_saveForm.find("#slt_game").combobox("getValue");
+				var deckDesc = _g.dia_saveForm.find("#txt_desc").textbox("getValue");
+				dom.attr("type",deckType);
+				dom.attr("desc",deckDesc);
+				_g.showDetailForm(false);
+			});
+		} else this.dia_saveForm.dialog("close");
 	}
 	,showDeckList: function(retModel,sort) {
 		if(sort == null) sort = false;
@@ -1047,7 +1075,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			dom = _g.j(dom);
 			var cardstr = dom.find("#txt_cards").textbox("getValue");
 			cardstr = "[" + cardstr + "]";
-			savefile.cardSuit.push({ name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
+			savefile.cardSuit.push({ type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
 		return savefile;
 	}
@@ -1055,6 +1083,8 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		var _g = this;
 		var dom = this.j("#tmpl_deck").tmpl(deckModel);
 		this.mc_deckContainer.append(dom);
+		dom.attr("type",deckModel.type);
+		dom.attr("desc",deckModel.desc);
 		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public"), onClick : function() {
 			_g.enableSave(true);
 		}});
@@ -1064,12 +1094,18 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			_this.parent().remove();
 			_g.enableSave(true);
 		}});
+		dom.find("#btn_detail").linkbutton({ onClick : function() {
+			var _this1 = _g.j($(this));
+			var deckName = _this1.parent().find("#txt_name").textbox("getValue");
+			_g.showDetailForm(true,_this1.parent(),deckName);
+			_g.enableSave(true);
+		}});
 		dom.find(".easyui-combobox").combobox({ value : deckModel.game, onSelect : function() {
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-textbox").textbox({ onChange : function(nv,ov) {
-			var _this1 = $(this);
-			var _g1 = _this1.attr("id");
+			var _this2 = $(this);
+			var _g1 = _this2.attr("id");
 			switch(_g1) {
 			case "txt_cards":
 				try {
@@ -1078,7 +1114,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				} catch( e ) {
 					if (e instanceof js__$Boot_HaxeError) e = e.val;
 					_g.alert("格式輸入錯誤，請檢查");
-					_this1.textbox({ value : ""});
+					_this2.textbox({ value : ""});
 				}
 				break;
 			default:
@@ -1127,12 +1163,11 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		return { author : this.input_search.textbox("getValue"), deckName : this.input_searchName.textbox("getValue"), describe : this.input_searchDescribe.textbox("getValue"), game : this.slt_game.combobox("getValue"), type : this.slt_type.combobox("getValue")};
 	}
 	,showDetail: function(detail) {
-		this.mc_deckDetail.find("#mc_info1 > div").eq(0).html(detail.author);
-		this.mc_deckDetail.find("#mc_info1 > div").eq(1).html(detail.gameName);
-		this.mc_deckDetail.find("#mc_info1 > div").eq(2).html(detail.name);
-		this.mc_deckDetail.find("#mc_info1 > div").eq(3).html(detail.typeName);
-		this.mc_deckDetail.find("#mc_info2").html(detail.describe);
-		this.mc_deckDetail.find("img").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
+		this.mc_detail_panel.find("#txt_id").html(detail.username);
+		this.mc_detail_panel.find("#txt_name").html(detail.name);
+		this.mc_detail_panel.find("#txt_type").html(detail.typeName);
+		this.mc_detail_panel.find("#txt_desc").html(detail.desc);
+		this.mc_detail_panel.find("#img_title").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
 	}
 	,showBigList: function(game,ary_showData) {
 		var _g = this;
@@ -1145,7 +1180,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			_g.overListener(game);
 			return true;
 		});
-		this.viewComponent.find(".easyui-layout").layout("collapse","east");
+		this.viewComponent.find("#layout_main").layout("collapse","east");
 		googleTracking.event("showBigList:game=" + game);
 	}
 	,overListener: function(game) {
@@ -1177,6 +1212,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			dom.mouseout(function(e1) {
 				var dom2 = _g.j(e1.currentTarget);
 				dom2.css("border","1px solid gray");
+				if(_g.clickData != null) _g.showDetail(_g.clickData);
 			});
 			dom.click(function(e2) {
 				var dom3 = _g.j(e2.currentTarget);
@@ -1231,6 +1267,7 @@ view_ViewController.do_show_output = "do_show_output";
 view_ViewController.do_enable_login = "do_enable_login";
 view_ViewController.on_item_click = "on_item_click";
 view_ViewController.on_item_over = "on_item_over";
+view_ViewController.on_item_out = "on_item_out";
 view_ViewController.on_input_search_change = "on_input_search_change";
 view_ViewController.on_pag_page_change = "on_pag_page_change";
 view_ViewController.on_btn_output_click = "on_btn_output_click";
@@ -1241,5 +1278,3 @@ view_ViewController.on_btn_addDeck_click = "on_btn_addDeck_click";
 view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

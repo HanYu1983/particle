@@ -24,6 +24,7 @@ class ViewController extends Mediator
 	
 	public static var on_item_click = 'on_item_click';
 	public static var on_item_over = 'on_item_over';
+	public static var on_item_out = 'on_item_out';
 	public static var on_input_search_change = 'on_input_search_change';
 	public static var on_pag_page_change = 'on_pag_page_change';
 	public static var on_btn_output_click = 'on_btn_output_click';
@@ -50,6 +51,9 @@ class ViewController extends Mediator
 	var input_search:Dynamic;
 	var input_searchName:Dynamic;
 	var input_searchDescribe:Dynamic;
+	var dia_saveForm:Dynamic;
+	var mc_detail_panel:Dynamic;
+	var clickData:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -71,6 +75,12 @@ class ViewController extends Mediator
 		mc_deckContainer = viewComponent.find( '#mc_deckContainer' );
 		input_searchName = viewComponent.find( '#input_searchName' );
 		input_searchDescribe = viewComponent.find( '#input_searchDescribe' );
+		dia_saveForm = viewComponent.find( '#dia_saveForm' );
+		mc_detail_panel = viewComponent.find( '#mc_detail_panel' );
+		
+		dia_saveForm.dialog( {
+			onClose:onCloseDetailForm
+		});
 		
 		[for ( i in 0...49 ) i ].foreach( function( bid ) {
 			var useId = bid+1;
@@ -190,13 +200,36 @@ class ViewController extends Mediator
 				}
 			case str if( str == do_show_loading ):
 				showLoading( notification.getBody().show );
-			case str if( str == do_show_bigList ):
+			case str if ( str == do_show_bigList ):
+				clickData = notification.getBody().clickData;
 				showBigList( notification.getBody().game, notification.getBody().ary_showData );
 			case str if ( str == do_show_list ):
 				setPagPage( notification.getBody().total );
 				showList( notification.getBody().data );
 			case str if ( str == do_show_showDetail ):
 				showDetail( notification.getBody().showDetail );
+		}
+	}
+	
+	function onCloseDetailForm( e ) {
+		dia_saveForm.find( '#btn_confirm' ).off( 'click' );
+	}
+	
+	function showDetailForm( show:Bool, ?dom:Dynamic, ?name:String ) {
+		if ( show ) {
+			dia_saveForm.dialog( 'open' );
+			dia_saveForm.find( '#txt_name' ).html( name );
+			dia_saveForm.find( '#slt_game' ).combobox( 'setValue', dom.attr( 'type' ));
+			dia_saveForm.find( '#txt_desc' ).textbox( 'setValue', dom.attr( 'desc' ));
+			dia_saveForm.find( '#btn_confirm' ).click( function() {
+				var deckType = dia_saveForm.find( '#slt_game' ).combobox('getValue');
+				var deckDesc = dia_saveForm.find( '#txt_desc' ).textbox('getValue');
+				dom.attr( 'type', deckType );
+				dom.attr( 'desc', deckDesc );
+				showDetailForm( false );
+			});
+		}else {
+			dia_saveForm.dialog( 'close' );
 		}
 	}
 	
@@ -225,6 +258,8 @@ class ViewController extends Mediator
 			var cardstr = dom.find( '#txt_cards' ).textbox('getValue' );
 			cardstr = '[' + cardstr + ']';
 			savefile.cardSuit.push( {
+				type:dom.attr( 'type' ),
+				desc:dom.attr( 'desc' ),
 				name:dom.find( '#txt_name' ).textbox('getValue' ),
 				game:dom.find( '.easyui-combobox' ).combobox('getValue' ),
 				cards: Json.parse( cardstr ),
@@ -236,9 +271,11 @@ class ViewController extends Mediator
 	}
 	
 	function addDeck( deckModel:Dynamic ) {
-		
 		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
 		mc_deckContainer.append( dom );
+		
+		dom.attr( 'type', deckModel.type );
+		dom.attr( 'desc', deckModel.desc );
 		
 		dom.find( '#btn_public' ).linkbutton( {
 			selected: deckModel.field( 'public' ) == null ? false : deckModel.field( 'public' ),
@@ -255,6 +292,15 @@ class ViewController extends Mediator
 				enableSave( true );
 			}
 		});
+		dom.find( '#btn_detail' ).linkbutton( {
+			onClick:function() {
+				var _this = j( untyped __js__( '$(this)' ));
+				var deckName = _this.parent().find( '#txt_name' ).textbox('getValue' );
+				showDetailForm( true, _this.parent(), deckName );
+				enableSave( true );
+			}
+		});
+		
 		dom.find( '.easyui-combobox' ).combobox( {
 			value:deckModel.game,
 			onSelect:function() {
@@ -370,12 +416,12 @@ class ViewController extends Mediator
 	}
 	
 	function showDetail( detail:Dynamic ) {
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(0).html( detail.author );
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(1).html( detail.gameName );
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(2).html( detail.name );
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(3).html( detail.typeName );
-		mc_deckDetail.find( '#mc_info2' ).html( detail.describe );
-		mc_deckDetail.find( 'img' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
+		
+		mc_detail_panel.find( '#txt_id' ).html( detail.username );
+		mc_detail_panel.find( '#txt_name' ).html( detail.name );
+		mc_detail_panel.find( '#txt_type' ).html( detail.typeName );
+		mc_detail_panel.find( '#txt_desc' ).html( detail.desc );
+		mc_detail_panel.find( '#img_title' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
 	}
 	
 	function showBigList( game:String, ary_showData:Array<Dynamic> ) {
@@ -388,7 +434,7 @@ class ViewController extends Mediator
 			overListener( game );
 			return true;
 		});
-		viewComponent.find( '.easyui-layout' ).layout( 'collapse', 'east' );
+		viewComponent.find( '#layout_main' ).layout( 'collapse', 'east' );
 		untyped __js__( 'googleTracking.event' )( 'showBigList:game=' + game );
 	}
 	
@@ -421,6 +467,11 @@ class ViewController extends Mediator
 			dom.mouseout( function(e) {
 				var dom = j( e.currentTarget );
 				dom.css( 'border', '1px solid gray' );
+				
+				if ( clickData != null ) {
+					showDetail( clickData );
+				}
+				//sendNotification( on_item_out, { id:dom.attr('id'), game:dom.attr('game' ) } );
 			});
 			dom.click( function( e ) {
 				var dom = j(e.currentTarget );
