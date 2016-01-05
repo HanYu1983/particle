@@ -1,10 +1,373 @@
 <html>
+<head>
+	<meta charset="utf-8"/>
+	<title>上善若水app</title>
+	<!--page information for search engine-->
+	<meta name="title" content="上善若水app" />
+	<meta name="keyword" content="上善若水app,余氏k線圖,幽夢仙夢" />
+	<meta name="description" content="上善若水app" />
+	<link rel="image_src" href="../common/images/logo.jpg"/>
+	
+	<!--share information for fb-->
+	<meta property="og:description" content="上善若水app" />
+	<meta property="og:title" content="上善若水app" />
+	<meta property="og:url" content="http://particle-979.appspot.com/manager/index.html#"/>
+	<meta property="og:image" content="../common/images/logo.jpg" />
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
+	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+	<script type="text/javascript" src="../common/js/lib/han/particle.js"></script>
+	<script type="text/javascript" src="../common/js/lib/han/particleDrawer.js"></script>
+</head>
+<style>
+html, body{
+	position:absolute;
+	width:100%;
+	height:100%;
+}
+
+.btn_link
+{
+	position:relative;
+	width:97%;
+	//height:40px;
+}
+
+.btn_show
+{
+	width:100%; 
+	//height:40px;
+}
+
+.img_intro{
+	width:400px;
+}
+
+.group{
+	position:relative;
+	width:100%;
+}
+
+.hori{
+	position:relative;
+	display:inline-block;
+}
+
+.cardback{
+	position:relative;
+	width:80px;
+	height:110px;
+}
+
+.showcase{
+	width:600px;
+	outline:1px black solid;
+}
+
+a{
+	color:yellow;
+	font-size:16px;
+	text-decoration: none;
+}
+
+.refvideo{
+	width:32%;
+	margin-left:4px;
+}
+</style>
 	<body>
-		<container>
-			<tabs></tabs>
-			<content></content>
-		</container>
-		<script src='../common/js/lib/jquery-1.9.min.js'></script>
+		<script id="tmpl_subject" type="jquery-x-tmpl">
+			<div class="group">
+				<div class="hori" style="width:15%">
+					<a id="btn_link" href="#" target="_blank" class="easyui-linkbutton btn_link" data-options="iconCls:'icon-back'" ></a>
+				</div>
+				<div class="hori" style="width:83%">
+					<a id="btn_show" href="#" class="easyui-linkbutton btn_show" data-options="toggle:true,group:'g1',selected:false" >余氏k線圖</a>
+				</div>
+			</div>
+		</script>
+		<div class="easyui-layout" style="width:100%;height:100%;">
+			<div data-options="region:'west',title:'選單',split:false,collapsible:false" style="width:200px; min-width:200px;">
+				<div id="mc_subjectContainer" class="group">
+					<!--
+					<div class="group">
+						<div class="hori" style="width:15%">
+							<a id="btn_stockLink" href="#" class="easyui-linkbutton"  onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+						</div>
+						<div class="hori" style="width:83%">
+							<a id="btn_stock" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >余氏k線圖</a>
+						</div>
+					</div>
+					<div class="group">
+						<div class="hori" style="width:15%">
+							<a id="btn_particleLink"  href="#"  class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+						</div>
+						<div class="hori" style="width:83%">
+							<a id="btn_particle" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >幽夢仙境</a>
+						</div>
+					</div>
+					<div class="group">
+						<div class="hori" style="width:15%">
+							<a id="btn_cardLink" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+						</div>
+						<div class="hori" style="width:83%">
+							<a id="btn_card" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:true" >卡牌風雲</a>
+						</div>
+					</div>
+					<div class="group">
+						<div class="hori" style="width:15%">
+							<a id="btn_deckLink" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+						</div>
+						<div class="hori" style="width:83%">
+							<a id="btn_deck" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >組牌風雲</a>
+						</div>
+					</div>
+					<div class="group">
+						<div class="hori" style="width:15%">
+							<a id="btn_deckWikiLink" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+						</div>
+						<div class="hori" style="width:83%">
+							<a id="btn_deckWiki" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >秀牌風雲</a>
+						</div>
+					</div>
+					<a id="btn_team" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1'">開發人員</a>
+					<div class="group">
+						<div class="hori" style="width:15%">
+							<a id="btn_particleClojureLink"  href="#"  class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-back'" ></a>
+						</div>
+						<div class="hori" style="width:83%">
+							<a id="btn_particleClojure" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="toggle:true,group:'g1',selected:false" >幽夢幻境函數式語言版</a>
+						</div>
+					</div>
+					<div class="group" style="margin-top:60px;">
+						<a href="#" id="btn_login" class="easyui-linkbutton" data-options="iconCls:'icon-fb-login',disabled:true" onclick="onBtnClick(this)" >登入</a>
+						<a id="btn_about" href="#" class="easyui-linkbutton" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
+					</div>
+					-->
+				</div>
+			</div>
+			<div data-options="region:'center',title:'內容'" style="">
+				<div id="mc_showContainer" style="position:relative; width:100%; height:100%; ">
+				</div>
+				<!--
+				<div id="mc_stock" style="position:relative; width:100%; height:100%; ">
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>開發環境</h1>
+						google app engine<br>
+						haxe<br>
+						clojurescript<br>
+						javascript<br>
+						jquery easy ui<br>
+						<h1>產品描述</h1>
+						非常輕量級的網頁股票技術k線的觀察解決方案，可以追縱、筆記、學習指標用法等等，也可以一天一天的練習股票買賣點
+						<br>
+						<span style="color:yellow;">注意：無法抓到今日股價、K線圖左邊為最近日期、有些錯誤處理沒有處理，會有程序崩潰的情況。因為目前還在開發中，記錄有可能會刪除</span>
+						<br/>
+						不用安裝、有網路即可觀看
+					</div>
+					<div class="group" style="overflow:auto; margin-top:30px; ">
+						<div class="group" style="text-align:center;">
+							<img src="images/001.jpg" class="hori showcase" />
+						</div>
+					</div>
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>余氏k線圖教學</h1>
+						<div><a href="https://www.youtube.com/embed/HLbJIh-3siU?list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">基本操作說明</a></div>
+					</div>
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>其他</h1>
+						<div>
+							<a href="//www.youtube.com/watch?v=TX4Rn182urU&index=1&list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">更多影片</a>
+						</div>
+						<br/>
+					</div>
+				</div>
+				<div id="mc_particle" style="position:relative; width:100%; height:100%; ">
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>開發環境</h1>
+						google app engine<br>
+						haxe<br>
+						javascript<br>
+						jquery easy ui<br>
+						<h1>產品描述</h1>
+						傻瓜也能用的粒子系統！好用！<br>
+						<span style="color:yellow;">效能已優化、功能強大</span><br>
+						<span style="color:yellow;">本網站粒子特效均由幽夢仙境製作而來! 有拖拉效果、全螢幕效果</span>
+					</div>
+					<div class="group" style="overflow:auto; margin-top:30px; ">
+						<div class="group" style="text-align:center;">
+							<img src="images/002.jpg" class="hori showcase" />
+							<img src="images/003.jpg" class="hori showcase" />
+						</div>
+					</div>
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>幽夢仙境教學</h1>
+						<div><a href="https://www.youtube.com/embed/Oq7zQ7tPPgA?list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">基本操作說明</a></div>
+						<div><a href="https://www.youtube.com/embed/ntpmSkqPAD8?list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">幽夢仙境測試影片</a></div>
+						<div><a href="https://www.youtube.com/embed/wKAQg_WlAcY?list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">特效套用測試</a></div>
+					</div>
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>其他</h1>
+						<div>
+							<a href="//www.youtube.com/watch?v=TX4Rn182urU&index=1&list=PLcReQCVhkEm2HQEbO5YkSEd_LGjMrj0vA">更多影片</a>
+						</div>
+						<br/>
+					</div>
+				</div>
+				<div id="mc_particle_clojure" style="position:relative; width:100%; height:100%; ">
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>開發環境</h1>
+						google app engine<br>
+						haxe<br>
+						clojurescript<br>
+						javascript<br>
+						jqxWidget<br>
+						<h1>產品描述</h1>
+						函數式語言開發粒子系統的範例，可惜的是效能非常差
+					</div>
+				</div>
+				<div id="mc_card" style="position:relative; width:100%; height:100%; ">
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>開發環境</h1>
+						google app engine<br>
+						haxe<br>
+						javascript<br>
+						jquery easy ui<br>
+						<h1>產品描述</h1>
+						卡牌風雲是一款基於網際網路的卡牌遊玩平台，透過line, facebook manager等等的通話功能，可以很容易實現線上遊戲卡牌的功能
+						<br/>
+						目前收錄有：<span style="color:yellow">軍武gogogo</span>
+					</div>
+					<div class="group" style="overflow:auto; margin-top:30px; ">
+						<div class="group" style="text-align:center;">
+							<img src="images/004.jpg" class="hori showcase" />
+						</div>
+					</div>
+					
+				</div>
+				<div id="mc_deck" style="position:relative; width:100%; height:100%; ">
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>開發環境</h1>
+						google app engine<br>
+						javascript<br>
+						jquery easy ui<br>
+						<h1>產品描述</h1>
+						組牌風雲是一款通用的集換式卡牌搜尋組牌機。可以讓玩家輸入、輸出來組織自己的牌組。
+					</div>
+					<div class="group" style="overflow:auto; margin-top:30px; ">
+						<div class="group" style="text-align:center;">
+							<img src="images/005.jpg" class="hori showcase" />
+						</div>
+					</div>
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<div id="mc_game" class="group">
+							<a game="army" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=army'" style="width:130px;" data-options="">軍武gogogo</a>
+							<a game="gundamWar" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=gundamWar'" style="width:130px;" data-options="">鋼彈大戰</a>
+							<a game="gundamWarN" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=gundamWarN'" style="width:130px;" data-options="">鋼彈大戰NexA</a>
+							<a game="sangoWar" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=sangoWar'" style="width:130px;" data-options="">三國志大戰</a>
+							<a game="sgs" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=sgs'" style="width:130px;" data-options="">三國殺陣面對決</a>
+							<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會</a>
+							<a game="battleSpirits" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=battleSpirits'" style="width:130px;" data-options="">戰魂</a>
+							<a game="crusade" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=crusade'" style="width:130px;" data-options="">Crusade</a>
+							<a game="ws" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=ws'" style="width:130px;" data-options="">黑白雙翼</a>
+							<a game="dragonZ" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=dragonZ'" style="width:130px;" data-options="">七龍珠TCG</a>
+							<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=yugioh&lang=ch'" style="width:130px;" data-options="">遊戲王</a>
+							<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=yugioh&lang=en'" style="width:130px;" data-options="">遊戲王(英)</a>
+							<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='../card/manager_deck.html?game=yugioh&lang=jp'" style="width:130px;" data-options="">遊戲王(日)</a>
+						</div>
+					</div>
+				</div>
+				<div id="mc_deckWiki" style="position:relative; width:100%; height:100%; ">
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<h1>開發環境</h1>
+						google app engine<br>
+						haxe<br>
+						jquery easy ui<br>
+						<h1>產品描述</h1>
+						秀牌風雲是一款通用的集換式卡牌牌組搜尋器。可以讓玩家登入、儲存、搜尋並且分享自己所組的套牌的網頁。
+					</div>
+					<div class="group" style="overflow:auto; margin-top:30px; ">
+						<div class="group" style="text-align:center;">
+							<img src="images/006.jpg" class="hori showcase" />
+						</div>
+					</div>
+				</div>
+				<div id="mc_team" style="position:relative; width:100%; height:100%; display:none;">
+					<div class="group" style="text-align:center; margin-top:60px;">
+						<span style="font-size:20px;">余漢君 HanYu</span>
+						<br/>
+						<br/>
+						後端工程師
+						<br/>
+						主要負責上善若水app的技術研發、後台資料庫、server端管理、model端編寫
+						<br>
+						專長：golang/ clojurescript/ javascript
+						<br/>
+						<a href="//www.facebook.com/han.yu.100?fref=ufi">//www.facebook.com/han.yu.100?fref=ufi</a>
+					</div>
+					<div class="group" style="text-align:center; margin-top:40px;">
+						<span style="font-size:20px;">余漢平 VicYu</span>
+						<br/>
+						<br/>
+						前端工程師
+						<br/>
+						主要負責上善若水app的html、ui介面、前台編寫
+						<br>
+						專長：haxe/ as3/ javascript/ html/ css
+						<br/>
+						<a href="//www.facebook.com/vic.yu.14">//www.facebook.com/vic.yu.14</a>
+					</div>
+					
+					<div class="group" style="text-align:center; margin-top:40px;">
+						<span style="font-size:20px;">林竹君 Xiao Za</span>
+						<br/>
+						<br/>
+						美術設計師
+						<br/>
+						主要負責上善若水app需要美術圖形的部分
+						<br>
+						硬底子的美術實力
+						<br/>
+						<a href="//www.facebook.com/xiao.sa.5076">//www.facebook.com/xiao.sa.5076</a>
+					</div>
+				</div>
+				-->
+			</div>
+			<div id="dia_about" class="easyui-dialog" title="上善若水" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
+				<div class="group" style="position:relative; width:100%; text-align:center;">
+					<div class="hori" >
+						<img src="../common/images/logo.jpg" style="width:150px;">
+						<br/>
+						上善若水粉絲頁
+						<br/>
+						<a style="color:yellow; font-size:12px;" href="//www.facebook.com/pages/上善若水/1653920964852269" target="_blank">//www.facebook.com/pages/上善若水/1653920964852269</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="div" style="position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; overflow:hidden;">
+			<!-- by script -->
+		</div>
+		<div style="display:none;">
+			<img id='glow_128_128' src='../common/images/effect/glow_128_128.jpg'>
+			<img id='glow_png_128_128' src='../common/images/effect/glow_png_128_128.png'>
+			<img id='glow_color_png_128_128' src='../common/images/effect/glow_color_png_128_128.png'>
+			<img id='fire_128_128' src='../common/images/effect/fire_128_128.jpg'>
+			<img id='fire_png_128_128' src='../common/images/effect/fire_png_128_128.png'>
+			<img id='fire_color_png_128_128' src='../common/images/effect/fire_color_png_128_128.png'>
+			<img id='smoke_128_128' src='../common/images/effect/smoke_128_128.png'>
+			<img id='lead_32_32' src='../common/images/effect/lead_32_32.png'>
+			<img id='cornerGlow_256_256' src='../common/images/effect/cornerGlow_256_256.png'>
+		</div>
+		<script src="../common/js/admin.js"></script>	
 		<script>
 		$(function(){
 			var uiconfig = {
@@ -22,27 +385,32 @@
 				]
 			}
 			function applyConfig( dom, config ){
-				var tabs = dom.find('tabs')
-				var content = dom.find('content')
+				var tabs = dom.find('#mc_subjectContainer')
+				var content = dom.find('#mc_showContainer')
 				
 				for(var i in config.apps){
 					var app = config.apps[i]
-					tabs.append($('<a>goto app</a>').attr('href', app.link))
-					tabs.append(
-						$('<button></button>').html(app.title).click((function(app){
-							return function(){
-								$.ajax({
-									url : app.html,
-									success: function(data){
-										content.html(data)
-									}
-								})
-							}
-						})(app))
-					)
+					var dom = $('#tmpl_subject').tmpl();
+					dom.find( '.easyui-linkbutton' ).linkbutton();
+					
+					dom.find( '#btn_link' ).attr('href', app.link)
+					dom.find( '#btn_show' ).click( (function(app){
+						return function(){
+							$.ajax({
+								url : app.html,
+								success: function(data){
+									content.html(data)
+									content.find( '.easyui-linkbutton' ).linkbutton();
+									
+									admin.showHotGame(content.find('#mc_game'));
+								}
+							})
+						}
+					})(app))
+					tabs.append( dom )
 				}
 			}
-			applyConfig($('container'), uiconfig)
+			applyConfig($('body'), uiconfig)
 		})
 		</script>
 	</body>
