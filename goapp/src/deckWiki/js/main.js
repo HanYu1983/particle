@@ -930,6 +930,8 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.mc_deckContainer = viewComponent.find("#mc_deckContainer");
 	this.input_searchName = viewComponent.find("#input_searchName");
 	this.input_searchDescribe = viewComponent.find("#input_searchDescribe");
+	this.dia_saveForm = viewComponent.find("#dia_saveForm");
+	this.dia_saveForm.dialog();
 	Lambda.foreach((function($this) {
 		var $r;
 		var _g = [];
@@ -1027,6 +1029,22 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
 	}
+	,showDetailForm: function(dom,name,show) {
+		var _g = this;
+		if(show) {
+			this.dia_saveForm.dialog("open");
+			this.dia_saveForm.find("#txt_name").html(name);
+			this.dia_saveForm.find("#btn_confirm").click(function() {
+				var deckType = _g.dia_saveForm.find("#slt_game").combobox("getValue");
+				var deckDesc = _g.dia_saveForm.find("#txt_desc").textbox("getValue");
+				dom.attr("type",deckType);
+				dom.attr("desc",deckDesc);
+			});
+		} else {
+			this.dia_saveForm.dialog("close");
+			this.dia_saveForm.find("#btn_confirm").off("click");
+		}
+	}
 	,showDeckList: function(retModel,sort) {
 		if(sort == null) sort = false;
 		var _g = this;
@@ -1047,7 +1065,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			dom = _g.j(dom);
 			var cardstr = dom.find("#txt_cards").textbox("getValue");
 			cardstr = "[" + cardstr + "]";
-			savefile.cardSuit.push({ name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
+			savefile.cardSuit.push({ type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
 		return savefile;
 	}
@@ -1064,12 +1082,18 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			_this.parent().remove();
 			_g.enableSave(true);
 		}});
+		dom.find("#btn_detail").linkbutton({ onClick : function() {
+			var _this1 = _g.j($(this));
+			var deckName = _this1.parent().find("#txt_name").textbox("getValue");
+			_g.showDetailForm(dom,deckName,true);
+			_g.enableSave(true);
+		}});
 		dom.find(".easyui-combobox").combobox({ value : deckModel.game, onSelect : function() {
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-textbox").textbox({ onChange : function(nv,ov) {
-			var _this1 = $(this);
-			var _g1 = _this1.attr("id");
+			var _this2 = $(this);
+			var _g1 = _this2.attr("id");
 			switch(_g1) {
 			case "txt_cards":
 				try {
@@ -1078,7 +1102,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				} catch( e ) {
 					if (e instanceof js__$Boot_HaxeError) e = e.val;
 					_g.alert("格式輸入錯誤，請檢查");
-					_this1.textbox({ value : ""});
+					_this2.textbox({ value : ""});
 				}
 				break;
 			default:
@@ -1118,6 +1142,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.dia_output.find("#input_output").textbox("setValue",deckstr);
 	}
 	,showLoading: function(show) {
+		console.log("showLoading");
 		if(show) this.j.messager.progress({ msg : "讀取資料中，請稍等…"}); else this.j.messager.progress("close");
 	}
 	,setPagPage: function(total) {

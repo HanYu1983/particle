@@ -392,7 +392,6 @@ a{
 					var app = config.apps[i]
 					var dom = $('#tmpl_subject').tmpl();
 					dom.find( '.easyui-linkbutton' ).linkbutton();
-					
 					dom.find( '#btn_link' ).attr('href', app.link)
 					dom.find( '#btn_show' ).click( (function(app){
 						return function(){

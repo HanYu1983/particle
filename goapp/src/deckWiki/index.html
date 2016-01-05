@@ -263,7 +263,9 @@ body{
 					<option value="low_speed">後期</option>
 					<option value="balance">均衡</option>
 					<option value="control">控制</option>
+					<option value="damage">燒殺</option>
 					<option value="disgust">噁心</option>
+					<option value="heterodoxy">偏門</option>
 				</select>
 			</div>
 			<div class="group horiCenter" style="margin-bottom:5px;">
@@ -292,6 +294,42 @@ body{
 					<a id="btn_gotoDeckManager" href="#"  class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" data-options="iconCls:'icon-back'">回組牌風雲</a>
 				</div>
 			</div>
+		</div>
+		<div id="dia_saveForm" class="easyui-dialog" title="套牌詳細" data-options="closed:false,modal:true" style="width:300px; padding:10px">
+			<form name="form_save">
+				<div class="group" style="text-align:center">
+					<div id="txt_name" class="group horiCenter" style="margin-bottom:5px; color:yellow;"></div>
+					<div class="group" style="margin-bottom:5px;">
+						<div class="hori" style="width:60px;">
+							類型
+						</div>
+						<div class="hori">
+							<select id="slt_game" class="easyui-combobox" name="dept" style="width:160px;">
+								<option value="">不選擇</option>
+								<option value="high_speed">小快</option>
+								<option value="middle_speed">中速</option>
+								<option value="low_speed">後期</option>
+								<option value="balance">均衡</option>
+								<option value="control">控制</option>
+								<option value="damage">燒殺</option>
+								<option value="disgust">噁心</option>
+								<option value="heterodoxy">偏門</option>
+							</select>
+						</div>
+					</div>
+					<div class="group" style="margin-bottom:20px;">
+						<div class="hori" style="width:60px;">
+							說明
+						</div>
+						<div class="hori">
+							<input id="txt_desc" class="easyui-textbox" data-options="multiline:true" style="width:160px; height:100px;">
+						</div>
+					</div>
+					<div class="group" style="margin-bottom:5px;">
+						<a id="btn_confirm" href="#" class="easyui-linkbutton" style="width:100px;">確定</a>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 	

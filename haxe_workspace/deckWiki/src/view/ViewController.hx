@@ -50,6 +50,7 @@ class ViewController extends Mediator
 	var input_search:Dynamic;
 	var input_searchName:Dynamic;
 	var input_searchDescribe:Dynamic;
+	var dia_saveForm:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -71,6 +72,8 @@ class ViewController extends Mediator
 		mc_deckContainer = viewComponent.find( '#mc_deckContainer' );
 		input_searchName = viewComponent.find( '#input_searchName' );
 		input_searchDescribe = viewComponent.find( '#input_searchDescribe' );
+		dia_saveForm = viewComponent.find( '#dia_saveForm' );
+		dia_saveForm.dialog();
 		
 		[for ( i in 0...49 ) i ].foreach( function( bid ) {
 			var useId = bid+1;
@@ -200,6 +203,22 @@ class ViewController extends Mediator
 		}
 	}
 	
+	function showDetailForm( dom:Dynamic, name:String, show:Bool ) {
+		if ( show ) {
+			dia_saveForm.dialog( 'open' );
+			dia_saveForm.find( '#txt_name' ).html( name );
+			dia_saveForm.find( '#btn_confirm' ).click( function() {
+				var deckType = dia_saveForm.find( '#slt_game' ).combobox('getValue');
+				var deckDesc = dia_saveForm.find( '#txt_desc' ).textbox('getValue');
+				dom.attr( 'type', deckType );
+				dom.attr( 'desc', deckDesc );
+			});
+		}else {
+			dia_saveForm.dialog( 'close' );
+			dia_saveForm.find( '#btn_confirm' ).off( 'click' );
+		}
+	}
+	
 	function showDeckList( retModel:Dynamic, ?sort:Bool = false ) {
 		var oldtop = mc_deckContainer.parent().parent().scrollTop();
 		mc_deckContainer.empty();
@@ -225,6 +244,8 @@ class ViewController extends Mediator
 			var cardstr = dom.find( '#txt_cards' ).textbox('getValue' );
 			cardstr = '[' + cardstr + ']';
 			savefile.cardSuit.push( {
+				type:dom.attr( 'type' ),
+				desc:dom.attr( 'desc' ),
 				name:dom.find( '#txt_name' ).textbox('getValue' ),
 				game:dom.find( '.easyui-combobox' ).combobox('getValue' ),
 				cards: Json.parse( cardstr ),
@@ -236,7 +257,6 @@ class ViewController extends Mediator
 	}
 	
 	function addDeck( deckModel:Dynamic ) {
-		
 		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
 		mc_deckContainer.append( dom );
 		
@@ -255,6 +275,15 @@ class ViewController extends Mediator
 				enableSave( true );
 			}
 		});
+		dom.find( '#btn_detail' ).linkbutton( {
+			onClick:function() {
+				var _this = j( untyped __js__( '$(this)' ));
+				var deckName = _this.parent().find( '#txt_name' ).textbox('getValue' );
+				showDetailForm( dom, deckName, true );
+				enableSave( true );
+			}
+		});
+		
 		dom.find( '.easyui-combobox' ).combobox( {
 			value:deckModel.game,
 			onSelect:function() {
@@ -344,6 +373,7 @@ class ViewController extends Mediator
 	}
 	
 	function showLoading( show:Bool ) {
+		trace( 'showLoading' );
 		if ( show ) {
 			j.messager.progress( {
 				msg:'讀取資料中，請稍等…'
