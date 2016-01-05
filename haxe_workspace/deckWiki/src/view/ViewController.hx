@@ -2,6 +2,7 @@ package view;
 
 import haxe.Json;
 import haxe.Timer;
+import js.Browser;
 import model.ModelController;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
@@ -54,6 +55,7 @@ class ViewController extends Mediator
 	var dia_saveForm:Dynamic;
 	var mc_detail_panel:Dynamic;
 	var clickData:Dynamic;
+	var iframe_comment:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -77,6 +79,7 @@ class ViewController extends Mediator
 		input_searchDescribe = viewComponent.find( '#input_searchDescribe' );
 		dia_saveForm = viewComponent.find( '#dia_saveForm' );
 		mc_detail_panel = viewComponent.find( '#mc_detail_panel' );
+		iframe_comment = viewComponent.find( '#iframe_comment' );
 		
 		dia_saveForm.dialog( {
 			onClose:onCloseDetailForm
@@ -203,6 +206,7 @@ class ViewController extends Mediator
 				showLoading( notification.getBody().show );
 			case str if ( str == do_show_bigList ):
 				clickData = notification.getBody().clickData;
+				openFBComment( clickData.uid );
 				showBigList( notification.getBody().game, notification.getBody().ary_showData );
 			case str if ( str == do_show_list ):
 				setPagPage( notification.getBody().total );
@@ -210,6 +214,11 @@ class ViewController extends Mediator
 			case str if ( str == do_show_showDetail ):
 				showDetail( notification.getBody().showDetail );
 		}
+	}
+	
+	function openFBComment( uid:String ) {
+		var url = 'comment.html?url=' + Browser.window.location.origin + Browser.window.location.pathname + '?uid=' + uid;
+		iframe_comment.attr( 'src', url );
 	}
 	
 	function onCloseDetailForm( e ) {
@@ -259,6 +268,7 @@ class ViewController extends Mediator
 			var cardstr = dom.find( '#txt_cards' ).textbox('getValue' );
 			cardstr = '[' + cardstr + ']';
 			savefile.cardSuit.push( {
+				uid:dom.attr( 'uid' ),
 				type:dom.attr( 'type' ),
 				desc:dom.attr( 'desc' ),
 				name:dom.find( '#txt_name' ).textbox('getValue' ),
@@ -274,13 +284,16 @@ class ViewController extends Mediator
 	function addDeck( deckModel:Dynamic ) {
 		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
 		mc_deckContainer.append( dom );
-		
 		dom.attr( 'type', deckModel.type );
 		dom.attr( 'desc', deckModel.desc );
-		
+		dom.attr( 'uid', deckModel.uid );
 		dom.find( '#btn_public' ).linkbutton( {
 			selected: deckModel.field( 'public' ) == null ? false : deckModel.field( 'public' ),
 			onClick:function() {
+				var _this:Dynamic = j( untyped __js__( '$(this)' ));
+				if ( _this.parent().attr( 'uid' ) == '' || _this.parent().attr( 'uid' ) == null  ) {
+					_this.parent().attr( 'uid', Helper.getUUID() );
+				}
 				enableSave( true );
 			}
 		});

@@ -599,7 +599,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,oriDataToUseData: function(ori) {
 		this.data = ori.map(function(item) {
-			item.id = Helper.getUUID();
+			if(item.uid == null) item.id = Helper.getUUID(); else item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
 			item.typeName = Helper.EnToCh(item.type);
@@ -935,6 +935,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.input_searchDescribe = viewComponent.find("#input_searchDescribe");
 	this.dia_saveForm = viewComponent.find("#dia_saveForm");
 	this.mc_detail_panel = viewComponent.find("#mc_detail_panel");
+	this.iframe_comment = viewComponent.find("#iframe_comment");
 	this.dia_saveForm.dialog({ onClose : $bind(this,this.onCloseDetailForm)});
 	Lambda.foreach((function($this) {
 		var $r;
@@ -1030,12 +1031,17 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else this.setOutput(notification.getBody().str);
 			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) {
 				this.clickData = notification.getBody().clickData;
+				this.openFBComment(this.clickData.uid);
 				this.showBigList(notification.getBody().game,notification.getBody().ary_showData);
 			} else if(str4 == view_ViewController.do_show_list) {
 				this.setPagPage(notification.getBody().total);
 				this.showList(notification.getBody().data);
 			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
+	}
+	,openFBComment: function(uid) {
+		var url = "comment.html?url=" + window.location.origin + window.location.pathname + "?uid=" + uid;
+		this.iframe_comment.attr("src",url);
 	}
 	,onCloseDetailForm: function(e) {
 		this.dia_saveForm.find("#btn_confirm").off("click");
@@ -1076,7 +1082,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			dom = _g.j(dom);
 			var cardstr = dom.find("#txt_cards").textbox("getValue");
 			cardstr = "[" + cardstr + "]";
-			savefile.cardSuit.push({ type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
+			savefile.cardSuit.push({ uid : dom.attr("uid"), type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
 		return savefile;
 	}
@@ -1086,27 +1092,30 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.mc_deckContainer.append(dom);
 		dom.attr("type",deckModel.type);
 		dom.attr("desc",deckModel.desc);
+		dom.attr("uid",deckModel.uid);
 		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public"), onClick : function() {
+			var _this = _g.j($(this));
+			if(_this.parent().attr("uid") == "" || _this.parent().attr("uid") == null) _this.parent().attr("uid",Helper.getUUID());
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-linkbutton").linkbutton();
 		dom.find("#btn_remove").linkbutton({ onClick : function() {
-			var _this = _g.j($(this));
-			_this.parent().remove();
+			var _this1 = _g.j($(this));
+			_this1.parent().remove();
 			_g.enableSave(true);
 		}});
 		dom.find("#btn_detail").linkbutton({ onClick : function() {
-			var _this1 = _g.j($(this));
-			var deckName = _this1.parent().find("#txt_name").textbox("getValue");
-			_g.showDetailForm(true,_this1.parent(),deckName);
+			var _this2 = _g.j($(this));
+			var deckName = _this2.parent().find("#txt_name").textbox("getValue");
+			_g.showDetailForm(true,_this2.parent(),deckName);
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-combobox").combobox({ value : deckModel.game, onSelect : function() {
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-textbox").textbox({ onChange : function(nv,ov) {
-			var _this2 = $(this);
-			var _g1 = _this2.attr("id");
+			var _this3 = $(this);
+			var _g1 = _this3.attr("id");
 			switch(_g1) {
 			case "txt_cards":
 				try {
@@ -1115,7 +1124,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				} catch( e ) {
 					if (e instanceof js__$Boot_HaxeError) e = e.val;
 					_g.alert("格式輸入錯誤，請檢查");
-					_this2.textbox({ value : ""});
+					_this3.textbox({ value : ""});
 				}
 				break;
 			default:

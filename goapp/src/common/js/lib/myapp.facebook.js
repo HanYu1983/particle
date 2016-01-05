@@ -3,22 +3,13 @@ myapp.facebook = myapp.facebook || {};
 (function(){
 	
 	function init( appId, callback ){
-		window.fbAsyncInit = function() {
-			myapp.facebook.FB = FB;
-			FB.init({
-			  appId      : appId,
-			  xfbml      : true,
-			  version    : 'v2.2'
-			});
-			if(callback !=undefined)	callback();
-		};
-		
-		(function(d, s, id){
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) {return;}
-			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/en_US/sdk.js";
-			fjs.parentNode.insertBefore(js, fjs);
+		(function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = "//connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v2.5&appId=" + appId;
+		  fjs.parentNode.insertBefore(js, fjs);
+		  if(callback !=undefined)	callback();
 		}(document, 'script', 'facebook-jssdk'));
 	}
 	function login( callback ){

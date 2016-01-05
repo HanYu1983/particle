@@ -209,7 +209,7 @@ class ModelController extends Mediator
 	
 	function oriDataToUseData( ori ) {
 		data = ori.map( function( item ) {
-			item.id = Helper.getUUID();
+			item.id = item.uid == null ? Helper.getUUID() : item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
 			item.typeName = Helper.EnToCh( item.type );
