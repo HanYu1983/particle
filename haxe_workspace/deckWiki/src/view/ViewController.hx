@@ -24,6 +24,7 @@ class ViewController extends Mediator
 	
 	public static var on_item_click = 'on_item_click';
 	public static var on_item_over = 'on_item_over';
+	public static var on_item_out = 'on_item_out';
 	public static var on_input_search_change = 'on_input_search_change';
 	public static var on_pag_page_change = 'on_pag_page_change';
 	public static var on_btn_output_click = 'on_btn_output_click';
@@ -52,6 +53,7 @@ class ViewController extends Mediator
 	var input_searchDescribe:Dynamic;
 	var dia_saveForm:Dynamic;
 	var mc_detail_panel:Dynamic;
+	var clickData:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -103,7 +105,6 @@ class ViewController extends Mediator
 		
 		input_searchDescribe.textbox( {
 			onChange:function( nv, ov ) {
-				trace(nv );
 				sendNotification( on_input_search_change, { value:getSearchConditions() } );
 			}
 		});
@@ -199,7 +200,8 @@ class ViewController extends Mediator
 				}
 			case str if( str == do_show_loading ):
 				showLoading( notification.getBody().show );
-			case str if( str == do_show_bigList ):
+			case str if ( str == do_show_bigList ):
+				clickData = notification.getBody().clickData;
 				showBigList( notification.getBody().game, notification.getBody().ary_showData );
 			case str if ( str == do_show_list ):
 				setPagPage( notification.getBody().total );
@@ -420,13 +422,6 @@ class ViewController extends Mediator
 		mc_detail_panel.find( '#txt_type' ).html( detail.typeName );
 		mc_detail_panel.find( '#txt_desc' ).html( detail.desc );
 		mc_detail_panel.find( '#img_title' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
-		
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(0).html( detail.author );
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(1).html( detail.gameName );
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(2).html( detail.name );
-		mc_deckDetail.find( '#mc_info1 > div' ).eq(3).html( detail.typeName );
-		mc_deckDetail.find( '#mc_info2' ).html( detail.describe );
-		mc_deckDetail.find( 'img' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
 	}
 	
 	function showBigList( game:String, ary_showData:Array<Dynamic> ) {
@@ -472,6 +467,11 @@ class ViewController extends Mediator
 			dom.mouseout( function(e) {
 				var dom = j( e.currentTarget );
 				dom.css( 'border', '1px solid gray' );
+				
+				if ( clickData != null ) {
+					showDetail( clickData );
+				}
+				//sendNotification( on_item_out, { id:dom.attr('id'), game:dom.attr('game' ) } );
 			});
 			dom.click( function( e ) {
 				var dom = j(e.currentTarget );

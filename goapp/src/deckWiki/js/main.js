@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("679171275511375",cb);
+	myapp.facebook.init("425311264344425",cb);
 };
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
@@ -494,7 +494,8 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_item_click":
 			var id1 = notification.getBody().id;
 			var game1 = notification.getBody().game;
-			var cards = this.findDataById(this.data,id1).cards;
+			var clickData = this.findDataById(this.data,id1);
+			var cards = clickData.cards;
 			this.currentGame = game1;
 			this.currentOutputStr = JSON.stringify(cards);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
@@ -507,7 +508,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 					return retobj;
 				});
 				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
-				_g1.sendNotification(view_ViewController.do_show_bigList,{ game : game1, ary_showData : ary_showData});
+				_g1.sendNotification(view_ViewController.do_show_bigList,{ clickData : clickData, game : game1, ary_showData : ary_showData});
 			});
 			break;
 		default:
@@ -962,7 +963,6 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.input_searchDescribe.textbox({ onChange : function(nv2,ov2) {
-		console.log(nv2);
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.slt_game.combobox({ onChange : function(nv3,ov3) {
@@ -1027,7 +1027,10 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		default:
 			if(str == view_ViewController.do_enable_login) this.enableLogin(notification.getBody().enable); else if(str1 == view_ViewController.do_show_output) {
 				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else this.setOutput(notification.getBody().str);
-			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) this.showBigList(notification.getBody().game,notification.getBody().ary_showData); else if(str4 == view_ViewController.do_show_list) {
+			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) {
+				this.clickData = notification.getBody().clickData;
+				this.showBigList(notification.getBody().game,notification.getBody().ary_showData);
+			} else if(str4 == view_ViewController.do_show_list) {
 				this.setPagPage(notification.getBody().total);
 				this.showList(notification.getBody().data);
 			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
@@ -1165,12 +1168,6 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.mc_detail_panel.find("#txt_type").html(detail.typeName);
 		this.mc_detail_panel.find("#txt_desc").html(detail.desc);
 		this.mc_detail_panel.find("#img_title").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
-		this.mc_deckDetail.find("#mc_info1 > div").eq(0).html(detail.author);
-		this.mc_deckDetail.find("#mc_info1 > div").eq(1).html(detail.gameName);
-		this.mc_deckDetail.find("#mc_info1 > div").eq(2).html(detail.name);
-		this.mc_deckDetail.find("#mc_info1 > div").eq(3).html(detail.typeName);
-		this.mc_deckDetail.find("#mc_info2").html(detail.describe);
-		this.mc_deckDetail.find("img").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
 	}
 	,showBigList: function(game,ary_showData) {
 		var _g = this;
@@ -1215,6 +1212,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			dom.mouseout(function(e1) {
 				var dom2 = _g.j(e1.currentTarget);
 				dom2.css("border","1px solid gray");
+				if(_g.clickData != null) _g.showDetail(_g.clickData);
 			});
 			dom.click(function(e2) {
 				var dom3 = _g.j(e2.currentTarget);
@@ -1269,6 +1267,7 @@ view_ViewController.do_show_output = "do_show_output";
 view_ViewController.do_enable_login = "do_enable_login";
 view_ViewController.on_item_click = "on_item_click";
 view_ViewController.on_item_over = "on_item_over";
+view_ViewController.on_item_out = "on_item_out";
 view_ViewController.on_input_search_change = "on_input_search_change";
 view_ViewController.on_pag_page_change = "on_pag_page_change";
 view_ViewController.on_btn_output_click = "on_btn_output_click";
@@ -1279,5 +1278,3 @@ view_ViewController.on_btn_addDeck_click = "on_btn_addDeck_click";
 view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

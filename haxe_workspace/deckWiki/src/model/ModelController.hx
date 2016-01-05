@@ -100,7 +100,8 @@ class ModelController extends Mediator
 			case ViewController.on_item_click:
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
-				var cards:Array<Dynamic> = findDataById( data, id ).cards;
+				var clickData:Dynamic = findDataById( data, id );
+				var cards:Array<Dynamic> = clickData.cards;
 				
 				currentGame = game;
 				currentOutputStr = Json.stringify( cards );
@@ -115,7 +116,7 @@ class ModelController extends Mediator
 						return retobj;
 					});
 					sendNotification( ViewController.do_show_loading, { show:false } );
-					sendNotification( ViewController.do_show_bigList, { game:game, ary_showData:ary_showData } );
+					sendNotification( ViewController.do_show_bigList, { clickData:clickData, game:game, ary_showData:ary_showData } );
 				});
 			case str if ( str == do_load_all_list ):
 				doLoadList();
