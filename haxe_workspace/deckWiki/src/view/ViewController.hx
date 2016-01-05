@@ -51,6 +51,7 @@ class ViewController extends Mediator
 	var input_searchName:Dynamic;
 	var input_searchDescribe:Dynamic;
 	var dia_saveForm:Dynamic;
+	var mc_detail_panel:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -73,6 +74,8 @@ class ViewController extends Mediator
 		input_searchName = viewComponent.find( '#input_searchName' );
 		input_searchDescribe = viewComponent.find( '#input_searchDescribe' );
 		dia_saveForm = viewComponent.find( '#dia_saveForm' );
+		mc_detail_panel = viewComponent.find( '#mc_detail_panel' );
+		
 		dia_saveForm.dialog( {
 			onClose:onCloseDetailForm
 		});
@@ -411,6 +414,13 @@ class ViewController extends Mediator
 	}
 	
 	function showDetail( detail:Dynamic ) {
+		
+		mc_detail_panel.find( '#txt_id' ).html( detail.username );
+		mc_detail_panel.find( '#txt_name' ).html( detail.name );
+		mc_detail_panel.find( '#txt_type' ).html( detail.typeName );
+		mc_detail_panel.find( '#txt_desc' ).html( detail.desc );
+		mc_detail_panel.find( '#img_title' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
+		
 		mc_deckDetail.find( '#mc_info1 > div' ).eq(0).html( detail.author );
 		mc_deckDetail.find( '#mc_info1 > div' ).eq(1).html( detail.gameName );
 		mc_deckDetail.find( '#mc_info1 > div' ).eq(2).html( detail.name );

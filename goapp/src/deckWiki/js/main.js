@@ -933,6 +933,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.input_searchName = viewComponent.find("#input_searchName");
 	this.input_searchDescribe = viewComponent.find("#input_searchDescribe");
 	this.dia_saveForm = viewComponent.find("#dia_saveForm");
+	this.mc_detail_panel = viewComponent.find("#mc_detail_panel");
 	this.dia_saveForm.dialog({ onClose : $bind(this,this.onCloseDetailForm)});
 	Lambda.foreach((function($this) {
 		var $r;
@@ -1159,6 +1160,11 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		return { author : this.input_search.textbox("getValue"), deckName : this.input_searchName.textbox("getValue"), describe : this.input_searchDescribe.textbox("getValue"), game : this.slt_game.combobox("getValue"), type : this.slt_type.combobox("getValue")};
 	}
 	,showDetail: function(detail) {
+		this.mc_detail_panel.find("#txt_id").html(detail.username);
+		this.mc_detail_panel.find("#txt_name").html(detail.name);
+		this.mc_detail_panel.find("#txt_type").html(detail.typeName);
+		this.mc_detail_panel.find("#txt_desc").html(detail.desc);
+		this.mc_detail_panel.find("#img_title").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
 		this.mc_deckDetail.find("#mc_info1 > div").eq(0).html(detail.author);
 		this.mc_deckDetail.find("#mc_info1 > div").eq(1).html(detail.gameName);
 		this.mc_deckDetail.find("#mc_info1 > div").eq(2).html(detail.name);
