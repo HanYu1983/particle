@@ -599,12 +599,11 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,oriDataToUseData: function(ori) {
 		this.data = ori.map(function(item) {
-			item.id = item.uid;
+			if(item.uid == null) item.id = Helper.getUUID(); else item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
 			item.typeName = Helper.EnToCh(item.type);
 			if(item.desc == null) item.desc = ""; else item.desc = item.desc;
-			console.log(item.id);
 			return item;
 		});
 		this.ary_result = this.data;
