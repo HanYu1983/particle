@@ -59,6 +59,8 @@
 				</div>
 			</div>
 		</div>
+		<div id="dia_message" class="easyui-dialog" title="注意!" data-options="iconCls:'icon-help',closed:true" style="width:400px; height:200px; padding:10px"></div>
+		</div>
 		<div id="div" style="position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; overflow:hidden;">
 			<!-- by script -->
 		</div>
@@ -82,7 +84,10 @@
 		<script src="../common/js/admin.js"></script>	
 		<script>
 		$(function(){
+			admin.defaultMessageHandle('index', $('#dia_message'))
+			
 			var uiconfig = {
+				index: 4,
 				apps: [
 					{
 						"title":"余氏K線圖",
@@ -91,21 +96,21 @@
 					},
 					{
 						"title":"幽夢仙境",
-						"link":"../particle/index.html",
+						"link":"../particle/list.html",
 						"html":"intro/particle.html"
-					},
-					{
-						"title":"組牌風雲",
-						"link":"../card/manager.html?game=gundamWar",
-						"html":"intro/cardsearch.html",
-						"script": function(dom){
-							admin.showHotGame(dom.find('#mc_game'));
-						}
 					},
 					{
 						"title":"卡牌風雲",
 						"link":"../card/index.html",
 						"html":"intro/card.html"
+					},
+					{
+						"title":"組牌風雲",
+						"link":"../card/manager_deck.html?game=gundamWar",
+						"html":"intro/cardsearch.html",
+						"script": function(dom){
+							admin.showHotGame(dom.find('#mc_game'));
+						}
 					},
 					{
 						"title":"秀牌風雲",
@@ -147,6 +152,9 @@
 						}
 					})(app))
 					tabs.append( dom )
+					if( parseInt(i) == config.index ){
+						dom.find( '#btn_show' ).trigger('click')
+					}
 				}
 			}
 			applyConfig($('body'), uiconfig)
