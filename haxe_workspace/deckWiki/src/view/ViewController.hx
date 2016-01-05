@@ -160,6 +160,7 @@ class ViewController extends Mediator
 		});
 		
 		hideCardBackContainer();
+		showAdminMessage();
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -349,6 +350,11 @@ class ViewController extends Mediator
 	function hideCardBackContainer() {
 		if( !Helper.isAdmin() )
 			mc_backContainer.parent().hide();
+	}
+	
+	function showAdminMessage() {
+		if ( Helper.isAdmin() )
+			alert( '此網址僅供私下交流用，請勿公開分享!' );
 	}
 	
 	function showAllCardback() {
