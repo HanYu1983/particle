@@ -259,6 +259,7 @@ class ViewController extends Mediator
 			var cardstr = dom.find( '#txt_cards' ).textbox('getValue' );
 			cardstr = '[' + cardstr + ']';
 			savefile.cardSuit.push( {
+				uid:dom.attr( 'uid' ),
 				type:dom.attr( 'type' ),
 				desc:dom.attr( 'desc' ),
 				name:dom.find( '#txt_name' ).textbox('getValue' ),
@@ -274,13 +275,16 @@ class ViewController extends Mediator
 	function addDeck( deckModel:Dynamic ) {
 		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
 		mc_deckContainer.append( dom );
-		
 		dom.attr( 'type', deckModel.type );
 		dom.attr( 'desc', deckModel.desc );
-		
+		dom.attr( 'uid', deckModel.uid );
 		dom.find( '#btn_public' ).linkbutton( {
 			selected: deckModel.field( 'public' ) == null ? false : deckModel.field( 'public' ),
 			onClick:function() {
+				var _this:Dynamic = j( untyped __js__( '$(this)' ));
+				if ( _this.parent().attr( 'uid' ) == '' || _this.parent().attr( 'uid' ) == null  ) {
+					_this.parent().attr( 'uid', Helper.getUUID() );
+				}
 				enableSave( true );
 			}
 		});

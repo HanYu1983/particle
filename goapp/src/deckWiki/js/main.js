@@ -599,11 +599,12 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,oriDataToUseData: function(ori) {
 		this.data = ori.map(function(item) {
-			item.id = Helper.getUUID();
+			item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
 			item.typeName = Helper.EnToCh(item.type);
 			if(item.desc == null) item.desc = ""; else item.desc = item.desc;
+			console.log(item.id);
 			return item;
 		});
 		this.ary_result = this.data;
@@ -1076,7 +1077,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			dom = _g.j(dom);
 			var cardstr = dom.find("#txt_cards").textbox("getValue");
 			cardstr = "[" + cardstr + "]";
-			savefile.cardSuit.push({ type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
+			savefile.cardSuit.push({ uid : dom.attr("uid"), type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
 		return savefile;
 	}
@@ -1086,27 +1087,30 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.mc_deckContainer.append(dom);
 		dom.attr("type",deckModel.type);
 		dom.attr("desc",deckModel.desc);
+		dom.attr("uid",deckModel.uid);
 		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public"), onClick : function() {
+			var _this = _g.j($(this));
+			if(_this.parent().attr("uid") == "" || _this.parent().attr("uid") == null) _this.parent().attr("uid",Helper.getUUID());
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-linkbutton").linkbutton();
 		dom.find("#btn_remove").linkbutton({ onClick : function() {
-			var _this = _g.j($(this));
-			_this.parent().remove();
+			var _this1 = _g.j($(this));
+			_this1.parent().remove();
 			_g.enableSave(true);
 		}});
 		dom.find("#btn_detail").linkbutton({ onClick : function() {
-			var _this1 = _g.j($(this));
-			var deckName = _this1.parent().find("#txt_name").textbox("getValue");
-			_g.showDetailForm(true,_this1.parent(),deckName);
+			var _this2 = _g.j($(this));
+			var deckName = _this2.parent().find("#txt_name").textbox("getValue");
+			_g.showDetailForm(true,_this2.parent(),deckName);
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-combobox").combobox({ value : deckModel.game, onSelect : function() {
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-textbox").textbox({ onChange : function(nv,ov) {
-			var _this2 = $(this);
-			var _g1 = _this2.attr("id");
+			var _this3 = $(this);
+			var _g1 = _this3.attr("id");
 			switch(_g1) {
 			case "txt_cards":
 				try {
@@ -1115,7 +1119,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				} catch( e ) {
 					if (e instanceof js__$Boot_HaxeError) e = e.val;
 					_g.alert("格式輸入錯誤，請檢查");
-					_this2.textbox({ value : ""});
+					_this3.textbox({ value : ""});
 				}
 				break;
 			default:
