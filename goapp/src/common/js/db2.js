@@ -123,14 +123,7 @@ var db2 = db2 || {};
 		*/
 	}
 	
-	/**
-	data: {
-		FBID: string,
-		AccessToken: string,
-		Content: string,
-		Override: ""
-	}
-	*/
+	
 	function writefile( path, data, cb ){
 		pwritefile( basePath+path, data, cb )
 		/*
@@ -152,5 +145,9 @@ var db2 = db2 || {};
 	module.file = file
 	module.writefile = writefile
 	module.filelist = filelist
+	module.pfile = pfile
+	module.pwritefile = pwritefile
+	module.pfilelist = pfilelist
+	
 	
 }) (db2)
