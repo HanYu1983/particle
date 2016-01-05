@@ -37,17 +37,19 @@ class ViewController extends Mediator
 	var mc_itemContainer:Dynamic;
 	var mc_bigItemContainer:Dynamic;
 	var mc_deckDetail:Dynamic;
-	var input_search:Dynamic;
+	var mc_backContainer:Dynamic;
+	var mc_deckContainer:Dynamic;
+	var dia_output:Dynamic;
 	var slt_game:Dynamic;
 	var slt_type:Dynamic;
 	var pag_page:Dynamic;
 	var btn_output:Dynamic;
-	var dia_output:Dynamic;
 	var btn_login:Dynamic;
 	var btn_addDeck:Dynamic;
 	var btn_saveDeck:Dynamic;
-	var mc_backContainer:Dynamic;
-	var mc_deckContainer:Dynamic;
+	var input_search:Dynamic;
+	var input_searchName:Dynamic;
+	var input_searchDescribe:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -56,7 +58,7 @@ class ViewController extends Mediator
 		mc_itemContainer = viewComponent.find( '#mc_itemContainer' );
 		mc_bigItemContainer = viewComponent.find( '#mc_bigItemContainer' );
 		mc_deckDetail = viewComponent.find( '#mc_deckDetail' );
-		input_search = viewComponent.find( '#input_search' );
+		input_search = viewComponent.find( '#input_searchId' );
 		slt_game = viewComponent.find( '#slt_game' );
 		slt_type = viewComponent.find( '#slt_type' );
 		pag_page = viewComponent.find( '#pag_page' );
@@ -67,6 +69,8 @@ class ViewController extends Mediator
 		dia_output = viewComponent.find( '#dia_output' );
 		mc_backContainer = viewComponent.find( '#mc_backContainer' );
 		mc_deckContainer = viewComponent.find( '#mc_deckContainer' );
+		input_searchName = viewComponent.find( '#input_searchName' );
+		input_searchDescribe = viewComponent.find( '#input_searchDescribe' );
 		
 		[for ( i in 0...49 ) i ].foreach( function( bid ) {
 			var useId = bid+1;
@@ -78,6 +82,18 @@ class ViewController extends Mediator
 		});
 		
 		input_search.textbox( {
+			onChange:function( nv, ov ) {
+				sendNotification( on_input_search_change, { value:getSearchConditions() } );
+			}
+		});
+		
+		input_searchName.textbox( {
+			onChange:function( nv, ov ) {
+				sendNotification( on_input_search_change, { value:getSearchConditions() } );
+			}
+		});
+		
+		input_searchDescribe.textbox( {
 			onChange:function( nv, ov ) {
 				sendNotification( on_input_search_change, { value:getSearchConditions() } );
 			}
@@ -346,6 +362,8 @@ class ViewController extends Mediator
 	function getSearchConditions() {
 		return {
 			author:input_search.textbox('getValue' ),
+			deckName:input_searchName.textbox('getValue' ),
+			describe:input_searchDescribe.textbox('getValue' ),
 			game:slt_game.combobox( 'getValue' ),
 			type:slt_type.combobox( 'getValue' )
 		}

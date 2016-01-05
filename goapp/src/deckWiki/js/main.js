@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("425311264344425",cb);
+	myapp.facebook.init("679171275511375",cb);
 };
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
@@ -528,29 +528,38 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,filterByPage: function(from,page) {
 		if(page == null) page = 0;
-		var sid = page * 10;
+		var sid = page * 20;
 		var eid;
-		if(sid + 10 < from.length) eid = sid + 10; else eid = from.length;
+		if(sid + 20 < from.length) eid = sid + 20; else eid = from.length;
 		var _g = from.length;
 		var l = _g;
-		if(l < 10) return from.slice(0,from.length); else return from.slice(sid,eid);
+		if(l < 20) return from.slice(0,from.length); else return from.slice(sid,eid);
 	}
 	,multiSearch: function(value) {
+		var _g = this;
 		var ret = null;
-		var _g = 0;
-		var _g1 = Reflect.fields(value);
-		while(_g < _g1.length) {
-			var f = _g1[_g];
-			++_g;
-			switch(f) {
+		var filterDataByCheckNull = function(fn,f) {
+			if(ret == null) ret = fn(_g.data,Reflect.field(value,f)); else ret = fn(ret,Reflect.field(value,f));
+		};
+		var _g1 = 0;
+		var _g11 = Reflect.fields(value);
+		while(_g1 < _g11.length) {
+			var f1 = _g11[_g1];
+			++_g1;
+			switch(f1) {
+			case "deckName":
+				filterDataByCheckNull($bind(this,this.filterDataByDeckName),f1);
+				break;
+			case "describe":
+				break;
 			case "author":
-				if(ret == null) ret = this.filterDataByAuthor(this.data,Reflect.field(value,f)); else ret = this.filterDataByAuthor(ret,Reflect.field(value,f));
+				filterDataByCheckNull($bind(this,this.filterDataByAuthor),f1);
 				break;
 			case "game":
-				if(ret == null) ret = this.filterDataByGame(this.data,Reflect.field(value,f)); else ret = this.filterDataByGame(ret,Reflect.field(value,f));
+				filterDataByCheckNull($bind(this,this.filterDataByGame),f1);
 				break;
 			case "type":
-				if(ret == null) ret = this.filterDataByType(this.data,Reflect.field(value,f)); else ret = this.filterDataByType(ret,Reflect.field(value,f));
+				filterDataByCheckNull($bind(this,this.filterDataByType),f1);
 				break;
 			}
 		}
@@ -559,6 +568,16 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	,findDataById: function(from,id) {
 		return Lambda.find(from,function(item) {
 			return item.id == id;
+		});
+	}
+	,filterDataByDeckName: function(from,name) {
+		return from.filter(function(obj) {
+			return obj.name.indexOf(name) != -1;
+		});
+	}
+	,filterDataByDescribe: function(from,name) {
+		return from.filter(function(obj) {
+			return obj.describe.indexOf(name) != -1;
 		});
 	}
 	,filterDataByAuthor: function(from,author) {
@@ -583,6 +602,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			item.gameName = Helper.EnToCh(item.game);
 			return item;
 		});
+		console.log(this.data);
 		this.ary_result = this.data;
 	}
 });
@@ -897,7 +917,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.mc_itemContainer = viewComponent.find("#mc_itemContainer");
 	this.mc_bigItemContainer = viewComponent.find("#mc_bigItemContainer");
 	this.mc_deckDetail = viewComponent.find("#mc_deckDetail");
-	this.input_search = viewComponent.find("#input_search");
+	this.input_search = viewComponent.find("#input_searchId");
 	this.slt_game = viewComponent.find("#slt_game");
 	this.slt_type = viewComponent.find("#slt_type");
 	this.pag_page = viewComponent.find("#pag_page");
@@ -908,6 +928,8 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.dia_output = viewComponent.find("#dia_output");
 	this.mc_backContainer = viewComponent.find("#mc_backContainer");
 	this.mc_deckContainer = viewComponent.find("#mc_deckContainer");
+	this.input_searchName = viewComponent.find("#input_searchName");
+	this.input_searchDescribe = viewComponent.find("#input_searchDescribe");
 	Lambda.foreach((function($this) {
 		var $r;
 		var _g = [];
@@ -931,10 +953,16 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.input_search.textbox({ onChange : function(nv,ov) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
-	this.slt_game.combobox({ onChange : function(nv1,ov1) {
+	this.input_searchName.textbox({ onChange : function(nv1,ov1) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
-	this.slt_type.combobox({ onChange : function(nv2,ov2) {
+	this.input_searchDescribe.textbox({ onChange : function(nv2,ov2) {
+		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
+	}});
+	this.slt_game.combobox({ onChange : function(nv3,ov3) {
+		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
+	}});
+	this.slt_type.combobox({ onChange : function(nv4,ov4) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.pag_page.pagination({ onSelectPage : function(number,size) {
@@ -1096,7 +1124,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.pag_page.pagination("refresh",{ total : total});
 	}
 	,getSearchConditions: function() {
-		return { author : this.input_search.textbox("getValue"), game : this.slt_game.combobox("getValue"), type : this.slt_type.combobox("getValue")};
+		return { author : this.input_search.textbox("getValue"), deckName : this.input_searchName.textbox("getValue"), describe : this.input_searchDescribe.textbox("getValue"), game : this.slt_game.combobox("getValue"), type : this.slt_type.combobox("getValue")};
 	}
 	,showDetail: function(detail) {
 		this.mc_deckDetail.find("#mc_info1 > div").eq(0).html(detail.author);
@@ -1213,3 +1241,5 @@ view_ViewController.on_btn_addDeck_click = "on_btn_addDeck_click";
 view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map

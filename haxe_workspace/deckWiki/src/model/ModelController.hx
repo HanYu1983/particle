@@ -136,36 +136,35 @@ class ModelController extends Mediator
 	}
 	
 	function filterByPage( from, ?page:Int = 0 ) {
-		var sid = page * 10;
-		var eid = ( sid + 10 ) < from.length ? sid + 10 : from.length;
+		var sid = page * 20;
+		var eid = ( sid + 20 ) < from.length ? sid + 20 : from.length;
 		return switch( from.length ) {
-			case l if ( l < 10 ): from.slice( 0, from.length );
+			case l if ( l < 20 ): from.slice( 0, from.length );
 			case _: from.slice( sid, eid );
 		}
 	}
 	
 	function multiSearch( value:Dynamic ) {
 		var ret:Array<Dynamic> = null;
+		function filterDataByCheckNull( fn:Dynamic -> Dynamic -> Array<Dynamic>, f ) {
+			if ( ret == null ) {
+				ret = fn( data, value.field( f ) );
+			}else {
+				ret = fn( ret, value.field( f ) );
+			}
+		}
 		for ( f in value.fields() ) {
 			switch( f ) {
+				case 'deckName':
+					filterDataByCheckNull( filterDataByDeckName, f );
+				case 'describe':
+				//	filterDataByCheckNull( filterDataByDescribe, f );
 				case 'author':
-					if ( ret == null ) {
-						ret = filterDataByAuthor( data, value.field( f ) );
-					}else {
-						ret = filterDataByAuthor( ret, value.field( f ) );
-					}
+					filterDataByCheckNull( filterDataByAuthor, f );
 				case 'game':
-					if ( ret == null ) {
-						ret = filterDataByGame( data, value.field( f ) );
-					}else {
-						ret = filterDataByGame( ret, value.field( f ) );
-					}
+					filterDataByCheckNull( filterDataByGame, f );
 				case 'type':
-					if ( ret == null ) {
-						ret = filterDataByType( data, value.field( f ) );
-					}else {
-						ret = filterDataByType( ret, value.field( f ) );
-					}
+					filterDataByCheckNull( filterDataByType, f );
 			}
 		}
 		return ary_result = ret;
@@ -174,6 +173,18 @@ class ModelController extends Mediator
 	function findDataById( from:Array<Dynamic>, id ):Dynamic {
 		return from.find( function( item ) {
 			return item.id == id;
+		});
+	}
+	
+	function filterDataByDeckName( from:Array<Dynamic>, name:String ) {
+		return from.filter( function( obj ) {
+			return obj.name.indexOf( name ) != -1;
+		});
+	}
+	
+	function filterDataByDescribe( from:Array<Dynamic>, name:String ) {
+		return from.filter( function( obj ) {
+			return obj.describe.indexOf( name ) != -1;
 		});
 	}
 	
@@ -202,6 +213,7 @@ class ModelController extends Mediator
 			item.gameName = Helper.EnToCh( item.game );
 			return item;
 		});
+		trace( data );
 		ary_result = data;
 	}
 }

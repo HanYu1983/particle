@@ -190,16 +190,13 @@ body{
 		</div>
 	</script>
 	<script id="tmpl_item" type="jquery-x-tmpl">
-		<div id=${id} game=${game} class="hori" style="width:100%; height:60px; cursor:pointer; border:1px solid gray;">
+		<div id=${id} game=${game} class="hori" style="width:49%; height:60px; cursor:pointer; border:1px solid gray;">
 			<img class="hori" style="height:100%;" src=${url} />
-			<div id="mc_info1" class="hori" style="width:150px; vertical-align:top; margin-right:10px;">
+			<div id="mc_info1" class="hori" style="vertical-align:top; margin-right:10px;">
 				<div>${author}</div>
 				<div style="color:yellow;">${gameName}</div>
 				<div>${name}</div>
 				<div>${typeName}</div>
-			</div>
-			<div id="mc_info2" class="hori" style="width:150px; vertical-align:top;">
-				${describe}
 			</div>
 		</div>
 	</script>
@@ -236,8 +233,12 @@ body{
 		</div>
 		<div data-options="region:'west',title:'列表',split:true" style="min-width:420px; width:420px; padding:10px;">
 			<div class="group horiCenter" style="margin-bottom:5px;">
-				<div>作者搜尋</div>
-				<input id="input_search" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:100%">
+				<div>facebookID搜尋</div>
+				<input id="input_searchId" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:100%">
+				<div>套牌名稱搜尋</div>
+				<input id="input_searchName" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:100%">
+				<div>套牌描述搜尋</div>
+				<input id="input_searchDescribe" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:100%">
 				<div>遊戲搜尋</div>
 				<select id="slt_game" class="easyui-combobox" name="dept" style="width:100%;">
 					<option value="">不檢索</option>
@@ -269,7 +270,7 @@ body{
 			</div>
 			<div class="group horiCenter" style="margin-bottom:5px;">
 				<div class="hori">
-					<div id="pag_page" class="easyui-pagination" data-options="total:0,pageSize:10,layout:['first','links','last'],displayMsg:''"></div>
+					<div id="pag_page" class="easyui-pagination" data-options="total:0,pageSize:20,layout:['first','links','last'],displayMsg:''"></div>
 				</div>
 			</div>
 			<div id="mc_itemContainer" class="group">
