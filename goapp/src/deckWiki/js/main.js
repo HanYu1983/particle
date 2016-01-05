@@ -1040,7 +1040,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		}
 	}
 	,openFBComment: function(uid) {
-		var url = "comment.html?url=" + window.location.origin + window.location.pathname + "?uid=" + uid;
+		var url = "comment.html?url=" + "http://" + window.location.host + window.location.pathname + "?uid=" + uid;
 		this.iframe_comment.attr("src",url);
 	}
 	,onCloseDetailForm: function(e) {
