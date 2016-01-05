@@ -282,8 +282,8 @@ body{
 			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 			<div class="hori" style="margin-top:10px;">
 				<a id="btn" href="#" title="歡迎大家加入哦" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" onclick="app.view.onGoToClubClick();">加入社團找牌咖</a>
+				<a id="btn_gotoSet" href="#" title="去秀牌風雲輸入組好的牌組!" class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" onclick="app.view.onSetDeckClick()" data-options="iconCls:'icon-back'">去輸入牌組</a>
 				<a id="btn" href="#" title="匯入由此組牌機所輸出的文字來產生牌組" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
-				<a id="btn_gotoSet" href="#" title="去上善若水app的首頁，登入並輸入由此組牌機所產生的文字，來新增自己的套牌" class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" onclick="app.view.onSetDeckClick()" data-options="iconCls:'icon-back'">去輸入牌組</a>
 				<a id="btn_gotoGame" href="#" title="去卡牌風雲頁面使用臨時創建的功能，來測試由此組牌機所組出來的套牌" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onGotoGameClick()" data-options="iconCls:'icon-redo'">線上打牌去</a>
 			</div>
 		</div>
@@ -323,58 +323,6 @@ body{
 			</div>
 		</div>
 	</div>
-			<!--
-	<div id="dia_saveForm" class="easyui-dialog" title="組牌危機儲存填寫單" data-options="closed:true,modal:true" style="width:300px; padding:10px">
-		<form name="form_save">
-			<div class="group" style="text-align:center">
-				<div class="group" style="margin-bottom:5px;">
-					<div class="hori" style="width:60px;">
-						套牌名稱
-					</div>
-					<div class="hori">
-						<input name="name" type="text" placeholder="請輸入容易識別的名稱" />
-					</div>
-				</div>
-				<div class="group" style="margin-bottom:5px;">
-					<div class="hori" style="width:60px;">
-						個性簽名
-					</div>
-					<div class="hori">
-						<input name="author" type="text" placeholder="請輸入容易識別的名稱" />
-					</div>
-				</div>
-				<div class="group" style="margin-bottom:5px;">
-					<div class="hori" style="width:60px;">
-						說明
-					</div>
-					<div class="hori">
-						<textarea name="describe" type="text" style="height:100px;" placeholder="" ></textarea>
-					</div>
-				</div>
-				<div class="group" style="margin-bottom:20px;">
-					<div class="hori" style="width:60px;">
-						類型
-					</div>
-					<div class="hori">
-						<select name="type">
-							<option value=""></option>
-							<option value="high_speed">小快</option>
-							<option value="middle_speed">中速</option>
-							<option value="low_speed">後期</option>
-							<option value="balance">均衡</option>
-							<option value="control">控制</option>
-							<option value="disgust">噁心</option>
-						</select>
-					</div>
-				</div>
-				<div class="group" style="margin-bottom:5px;">
-					<a id="" href="#" class="easyui-linkbutton" onclick="app.view.onGotoWiki()" style="width:100px;" data-options="iconCls:'icon-back'">組牌危機</a>
-					<a id="" href="#" class="easyui-linkbutton" onclick="app.view.onSaveDeck()" style="width:100px;" data-options="iconCls:'icon-save'">儲存</a>
-				</div>
-			</div>
-		</form>
-	</div>
-				-->
 	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
 	<script src="../common/js/lib/underscore/underscore-min.js"></script>
 	<script src="../common/js/lib/async/async.js"></script>
@@ -1065,7 +1013,6 @@ body{
 	
 	if( game != 'army' ){
 		$('#btn_gotoGame' ).hide();
-		$('#btn_gotoSet' ).hide();
 	}
 	
 	var titlemapping = {
@@ -1414,12 +1361,12 @@ body{
 		
 		function onSetDeckClick(){
 			googleTracking.click( 'onSetDeckClick' );
-			window.open('https://particle-979.appspot.com/manager/index.html#');
+			window.open('../deckWiki/index.html');
 		}
 		
 		function onGotoGameClick(){
 			googleTracking.click( 'onGotoGameClick' );
-			window.open('https://particle-979.appspot.com/card/index.html#');
+			window.open('../card/index.html#');
 		}
 		
 		function onGoToClubClick(){
