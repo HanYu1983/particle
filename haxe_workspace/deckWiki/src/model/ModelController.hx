@@ -191,7 +191,7 @@ class ModelController extends Mediator
 	
 	function filterDataByAuthor( from:Array<Dynamic>, author:String ) {
 		return from.filter( function( obj ) {
-			return obj.author.indexOf( author ) != -1;
+			return author == '' || obj.author == author;
 		});
 	}
 	

@@ -584,7 +584,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,filterDataByAuthor: function(from,author) {
 		return from.filter(function(obj) {
-			return obj.author.indexOf(author) != -1;
+			return author == "" || obj.author == author;
 		});
 	}
 	,filterDataByGame: function(from,game) {
