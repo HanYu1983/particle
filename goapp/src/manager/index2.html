@@ -1,0 +1,49 @@
+<html>
+	<body>
+		<container>
+			<tabs></tabs>
+			<content></content>
+		</container>
+		<script src='../common/js/lib/jquery-1.9.min.js'></script>
+		<script>
+		$(function(){
+			var uiconfig = {
+				apps: [
+					{
+						"title":"test",
+						"link":"xxx.html",
+						"html":"app1.html"
+					},
+					{
+						"title":"test2",
+						"link":"xxx2.html",
+						"html":"app2.html"
+					}
+				]
+			}
+			function applyConfig( dom, config ){
+				var tabs = dom.find('tabs')
+				var content = dom.find('content')
+				
+				for(var i in config.apps){
+					var app = config.apps[i]
+					tabs.append($('<a>goto app</a>').attr('href', app.link))
+					tabs.append(
+						$('<button></button>').html(app.title).click((function(app){
+							return function(){
+								$.ajax({
+									url : app.html,
+									success: function(data){
+										content.html(data)
+									}
+								})
+							}
+						})(app))
+					)
+				}
+			}
+			applyConfig($('container'), uiconfig)
+		})
+		</script>
+	</body>
+</html>
