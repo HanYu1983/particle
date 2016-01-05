@@ -77,5 +77,4 @@ myapp.facebook = myapp.facebook || {};
 	myapp.facebook.getData = getData;
 	myapp.facebook.getMyData = getMyData;
 	myapp.facebook.shareWithLoginAndGetMe = shareWithLoginAndGetMe;
-	myapp.facebook.initFbPlugin = initFbPlugin;
 })();
