@@ -15,6 +15,38 @@ var admin = admin || {};
 		})
 	}
 	
+	function messageForMe(me, cb){
+		message(function(err, data){
+			if( err ){
+				cb( err )
+			} else {
+				var ret = []
+				for( var i in data ){
+					if( data[i].app == me ){
+						ret.push(data[i])
+					}
+				}
+				cb(null, ret)
+			}
+		})
+	}
+	
+	function defaultMessageHandle( me, dom ){
+		messageForMe(me, function(err,data){
+			if( err ){
+				alert( err )
+			} else {
+				if( data.length ){
+					var msg = data[0];
+					if( msg.level > 0 ){
+						dom.html( msg.Message );
+						dom.panel( 'open' );
+					}
+				}
+			}
+		})
+	}
+	
 	var ary_hotGame = ['sgs', 'magic', 'gundamWar'];
 	function showHotGame( dom ){
 		dom.find( 'a' ).each( function( id, dom ){
@@ -29,6 +61,8 @@ var admin = admin || {};
 	}
 	
 	module.message = message
+	module.messageForMe = messageForMe
+	module.defaultMessageHandle = defaultMessageHandle
 	module.showHotGame = showHotGame
 	module.admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	module.beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
