@@ -519,7 +519,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		var _g = this;
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		Helper.loadList(function(err,data) {
-			if(err == null) {
+			if(err != null) {
 				_g.sendNotification(model_ModelController.on_loadPublic_error,{ err : err});
 				return;
 			}

@@ -127,7 +127,7 @@ class ModelController extends Mediator
 	function doLoadList() {
 		sendNotification( ViewController.do_show_loading, { show:true } );
 		Helper.loadList( function( err, data:Array<Dynamic> ) {
-			if ( err == null ) {
+			if ( err != null ) {
 				sendNotification( on_loadPublic_error, {err:err} );
 				return;
 			}
