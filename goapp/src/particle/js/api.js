@@ -266,39 +266,34 @@ var api = api || {};
 	*/
 	function saveToServer( name, img, part, override, cb ){
 		async.parallel([
-			_.partial( store.saveParticle, {
-				Name: name + ".json",
-				Content: JSON.stringify( part ),
-				Override: override == true ? 'on' : 'off'
+			_.partial( db2.pwritefile, '../particledbfile2/root/particle/list/'+name+".json", {
+				Content: JSON.stringify( part )
 			}),
-			_.partial( store.saveParticle, {
-				Name: name + ".jpg",
-				Content: img.toDataURL().split( ',' )[1],
-				Override: override == true ? 'on' : 'off'
+			_.partial( db2.pwritefile, '../particledbfile2/root/particle/list/'+name+".jpg", {
+				Content: img.toDataURL().split( ',' )[1]
 			}),
 		], cb)
 	}
 	
 	function loadParticleList( offset, cnt, cb ){
-		store.loadParticleList({
-			Offset: offset,
-			Count: cnt
-		}, function( err, ret ){
+		db2.pfilelist('../particledbfile2/root/particle/list', null, function(err, ret){
 			if( err ){
 				cb( err )
 			} else {
 				var map = {}
 				for( var i in ret ){
 					var file = ret[i]
-					var key = file.Name.split('.')[0]
-					var ext = file.Name.split('.')[1]
+					var token = file.Name.split('/')
+					var filename = token[token.length-1]
+					var key = filename.split('.')[0]
+					var ext = filename.split('.')[1]
 					if( map[key] == undefined ){
 						map[key] = {}
 					}
 					if( ext == 'jpg' ){
-						map[key].img = store.getParticleImageUrl( file.Key )
+						map[key].img = '../particledbfile2/' + file.Name
 					} else if (ext == 'json'){
-						map[key].key = file.Key
+						map[key].key = key
 						map[key].time = file.Time
 					}
 				}
@@ -313,7 +308,11 @@ var api = api || {};
 				list.sort(function(a, b){return b.time-a.time});
 				cb( null, list )
 			}
-		})
+		} )
+	}
+	
+	function loadParticle(id, cb){
+		db2.pfile('../particledbfile2/root/particle/list/'+id+'.json', null, 'json', cb)
 	}
 	
 	
@@ -328,5 +327,6 @@ var api = api || {};
 	pkg.snapshot = snapshot
 	pkg.saveToServer = saveToServer
 	pkg.loadParticleList = loadParticleList
+	pkg.loadParticle = loadParticle
 	
 }) (api)

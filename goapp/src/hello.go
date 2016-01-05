@@ -89,6 +89,8 @@ func init() {
 	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
 	// 組牌危機用
 	http.HandleFunc("/deckwikidbfile2/", db2.Handler(appauth.User{Key: "deckWiki"}))
+	// 幽夢仙境用
+	http.HandleFunc("/particledbfile2/", db2.Handler(appauth.User{Key: "particle"}))
 	// 下載備份加清除。若有Clear參數，才會執行清除
 	http.HandleFunc("/admindbfile2/__archiveAndClear__", db2.HandleClearDataAndDownloadArchive)
 	// 觀看現在資料庫的備份狀態（資料列表）

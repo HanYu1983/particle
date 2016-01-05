@@ -34,17 +34,18 @@ var api = api || {};
 		return cardinfoloader.cardimageurl(game, id)
 	}
 	/*
-	data: {
-		Content: ""
-	}
-	*/
 	function save(id, data, cb){
 		db2.writefile( '../deckwikidbfile2/'+appid+'/list/'+id+'.json', data, cb )
 	}
+	function saveMessage(id, data, cb){
+		db2.writefile( '../deckwikidbfile2/'+appid+'/message/'+id+'.json', data, cb )
+	}
 	
-	/*
-	
+	function loadMessage(id, data, cb){
+		db2.filelist( '../deckwikidbfile2/'+appid+'/message/?Detail', null, cb)
+	}
 	*/
+	
 	function load(cb){
 		$.ajax({
 			url: '../fn/publicdeck',
@@ -58,19 +59,14 @@ var api = api || {};
 		})
 	}
 	
-	function saveMessage(id, data, cb){
-		db2.writefile( '../deckwikidbfile2/'+appid+'/message/'+id+'.json', data, cb )
-	}
 	
-	function loadMessage(id, data, cb){
-		db2.filelist( '../deckwikidbfile2/'+appid+'/message/?Detail', null, cb)
-	}
 	
 	module.cardInfo = cardInfo
 	module.cardimageurl = cardimageurl
-	module.save = save
 	module.load = load
+	/*
+	module.save = save
 	module.saveMessage = saveMessage
 	module.loadMessage = loadMessage
-
+	*/
 }) (api)
