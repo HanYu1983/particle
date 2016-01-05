@@ -175,6 +175,7 @@ class ViewController extends Mediator
 			do_show_loading,
 			do_show_output,
 			do_enable_login,
+			ModelController.on_loadPublic_error,
 			ModelController.on_facebook_login,
 			ModelController.on_cardsuit_load,
 			ModelController.on_cardsuit_save_success
@@ -184,6 +185,8 @@ class ViewController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ModelController.on_loadPublic_error:
+				alert( notification.getBody().err );
 			case ModelController.on_cardsuit_save_success:
 				showMessage( '存檔成功' );
 				enableSave( false );

@@ -20,6 +20,7 @@ class ModelController extends Mediator
 	public static var on_facebook_login = 'on_facebook_login';
 	public static var on_cardsuit_load = 'on_cardsuit_load';
 	public static var on_cardsuit_save_success = 'on_cardsuit_save_success';
+	public static var on_loadPublic_error = 'on_loadPublic_error';
 	
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
@@ -126,6 +127,10 @@ class ModelController extends Mediator
 	function doLoadList() {
 		sendNotification( ViewController.do_show_loading, { show:true } );
 		Helper.loadList( function( err, data:Array<Dynamic> ) {
+			if ( err == null ) {
+				sendNotification( on_loadPublic_error, {err:err} );
+				return;
+			}
 			doSetData( data );
 			sendNotification( ViewController.do_show_loading, { show:false } );
 		});

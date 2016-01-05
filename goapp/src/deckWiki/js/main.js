@@ -519,6 +519,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		var _g = this;
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		Helper.loadList(function(err,data) {
+			if(err == null) {
+				_g.sendNotification(model_ModelController.on_loadPublic_error,{ err : err});
+				return;
+			}
 			_g.doSetData(data);
 			_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
 		});
@@ -1002,7 +1006,7 @@ view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_enable_login,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success];
+		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_enable_login,model_ModelController.on_loadPublic_error,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -1013,6 +1017,9 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		var str4 = _g;
 		var str5 = _g;
 		switch(_g) {
+		case "on_loadPublic_error":
+			this.alert(notification.getBody().err);
+			break;
 		case "on_cardsuit_save_success":
 			this.showMessage("存檔成功");
 			this.enableSave(false);
@@ -1272,6 +1279,7 @@ model_ModelController.do_load_all_list = "do_load_all_list";
 model_ModelController.on_facebook_login = "on_facebook_login";
 model_ModelController.on_cardsuit_load = "on_cardsuit_load";
 model_ModelController.on_cardsuit_save_success = "on_cardsuit_save_success";
+model_ModelController.on_loadPublic_error = "on_loadPublic_error";
 view_ViewController.do_show_list = "do_show_list";
 view_ViewController.do_show_bigList = "do_show_bigList";
 view_ViewController.do_show_showDetail = "do_show_showDetail";
