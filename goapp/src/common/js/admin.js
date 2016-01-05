@@ -2,6 +2,8 @@ var admin = admin || {};
 
 (function(module){
 	
+	var version = '1.0';
+	
 	function message(cb){
 		$.ajax({
 			url:'../fn/message',
@@ -60,6 +62,7 @@ var admin = admin || {};
 		});
 	}
 	
+	module.version = version
 	module.message = message
 	module.messageForMe = messageForMe
 	module.defaultMessageHandle = defaultMessageHandle

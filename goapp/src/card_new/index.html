@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8"/>
-	<title>卡牌風雲1.0</title>
+	<title>卡牌風雲</title>
 	<!--page information for search engine-->
 	<meta name="title" content="卡牌風雲" />
 	<meta name="keyword" content="卡牌風雲,三國志大戰,集換式卡牌,線上卡牌,虛擬桌面" />
@@ -347,6 +347,8 @@ body{
     </div>
 	<script src="../common/js/admin.js"></script>	
 	<script>
+	
+	$('title').html( $('title').html() + admin.version );
 	
 	$( document ).ready(function() {
 		if( admin.admin ){
