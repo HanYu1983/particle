@@ -194,16 +194,15 @@ body{
 		<div id=${id} game=${game} class="hori" style="width:49%; height:60px; cursor:pointer; border:1px solid gray;">
 			<img class="hori" style="height:100%;" src=${url} />
 			<div id="mc_info1" class="hori" style="vertical-align:top; margin-right:10px;">
-				<div>${author}</div>
+				<!--<div>${author}</div>-->
 				<div style="color:yellow;">${gameName}</div>
 				<div>${name}</div>
 				<div>${typeName}</div>
 			</div>
 		</div>
 	</script>
-	<div id="" class="easyui-layout" style="width:100%;height:100%;">
+	<div id="layout_main" class="easyui-layout" style="width:100%;height:100%;">
 		<div data-options="region:'east',title:'自己',split:true" style="min-width:600px; width:600px; padding:10px;">
-			
 			<div class="group" style="text-align:center; margin-top:0px;">
 				<h1>牌組管理器</h1>
 				<div style="color:yellow">這個功能要登入facebook才可以使用</div>
@@ -295,7 +294,7 @@ body{
 				</div>
 			</div>
 		</div>
-		<div id="dia_saveForm" class="easyui-dialog" title="套牌詳細" data-options="closed:false,modal:true" style="width:300px; padding:10px">
+		<div id="dia_saveForm" class="easyui-dialog" title="套牌詳細" data-options="closed:true,modal:true" style="width:300px; padding:10px">
 			<form name="form_save">
 				<div class="group" style="text-align:center">
 					<div id="txt_name" class="group horiCenter" style="margin-bottom:5px; color:yellow;"></div>

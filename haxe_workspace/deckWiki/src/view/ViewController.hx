@@ -73,7 +73,9 @@ class ViewController extends Mediator
 		input_searchName = viewComponent.find( '#input_searchName' );
 		input_searchDescribe = viewComponent.find( '#input_searchDescribe' );
 		dia_saveForm = viewComponent.find( '#dia_saveForm' );
-		dia_saveForm.dialog();
+		dia_saveForm.dialog( {
+			onClose:onCloseDetailForm
+		});
 		
 		[for ( i in 0...49 ) i ].foreach( function( bid ) {
 			var useId = bid+1;
@@ -98,6 +100,7 @@ class ViewController extends Mediator
 		
 		input_searchDescribe.textbox( {
 			onChange:function( nv, ov ) {
+				trace(nv );
 				sendNotification( on_input_search_change, { value:getSearchConditions() } );
 			}
 		});
@@ -203,19 +206,25 @@ class ViewController extends Mediator
 		}
 	}
 	
-	function showDetailForm( dom:Dynamic, name:String, show:Bool ) {
+	function onCloseDetailForm( e ) {
+		dia_saveForm.find( '#btn_confirm' ).off( 'click' );
+	}
+	
+	function showDetailForm( show:Bool, ?dom:Dynamic, ?name:String ) {
 		if ( show ) {
 			dia_saveForm.dialog( 'open' );
 			dia_saveForm.find( '#txt_name' ).html( name );
+			dia_saveForm.find( '#slt_game' ).combobox( 'setValue', dom.attr( 'type' ));
+			dia_saveForm.find( '#txt_desc' ).textbox( 'setValue', dom.attr( 'desc' ));
 			dia_saveForm.find( '#btn_confirm' ).click( function() {
 				var deckType = dia_saveForm.find( '#slt_game' ).combobox('getValue');
 				var deckDesc = dia_saveForm.find( '#txt_desc' ).textbox('getValue');
 				dom.attr( 'type', deckType );
 				dom.attr( 'desc', deckDesc );
+				showDetailForm( false );
 			});
 		}else {
 			dia_saveForm.dialog( 'close' );
-			dia_saveForm.find( '#btn_confirm' ).off( 'click' );
 		}
 	}
 	
@@ -260,6 +269,9 @@ class ViewController extends Mediator
 		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
 		mc_deckContainer.append( dom );
 		
+		dom.attr( 'type', deckModel.type );
+		dom.attr( 'desc', deckModel.desc );
+		
 		dom.find( '#btn_public' ).linkbutton( {
 			selected: deckModel.field( 'public' ) == null ? false : deckModel.field( 'public' ),
 			onClick:function() {
@@ -279,7 +291,7 @@ class ViewController extends Mediator
 			onClick:function() {
 				var _this = j( untyped __js__( '$(this)' ));
 				var deckName = _this.parent().find( '#txt_name' ).textbox('getValue' );
-				showDetailForm( dom, deckName, true );
+				showDetailForm( true, _this.parent(), deckName );
 				enableSave( true );
 			}
 		});
@@ -373,7 +385,6 @@ class ViewController extends Mediator
 	}
 	
 	function showLoading( show:Bool ) {
-		trace( 'showLoading' );
 		if ( show ) {
 			j.messager.progress( {
 				msg:'讀取資料中，請稍等…'
@@ -418,7 +429,7 @@ class ViewController extends Mediator
 			overListener( game );
 			return true;
 		});
-		viewComponent.find( '.easyui-layout' ).layout( 'collapse', 'east' );
+		viewComponent.find( '#layout_main' ).layout( 'collapse', 'east' );
 		untyped __js__( 'googleTracking.event' )( 'showBigList:game=' + game );
 	}
 	

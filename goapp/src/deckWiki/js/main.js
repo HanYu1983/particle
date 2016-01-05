@@ -551,6 +551,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				filterDataByCheckNull($bind(this,this.filterDataByDeckName),f1);
 				break;
 			case "describe":
+				filterDataByCheckNull($bind(this,this.filterDataByDescribe),f1);
 				break;
 			case "author":
 				filterDataByCheckNull($bind(this,this.filterDataByAuthor),f1);
@@ -577,7 +578,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,filterDataByDescribe: function(from,name) {
 		return from.filter(function(obj) {
-			return obj.describe.indexOf(name) != -1;
+			return obj.desc.indexOf(name) != -1;
 		});
 	}
 	,filterDataByAuthor: function(from,author) {
@@ -600,9 +601,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			item.id = Helper.getUUID();
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
+			item.typeName = Helper.EnToCh(item.type);
+			if(item.desc == null) item.desc = ""; else item.desc = item.desc;
 			return item;
 		});
-		console.log(this.data);
 		this.ary_result = this.data;
 	}
 });
@@ -931,7 +933,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.input_searchName = viewComponent.find("#input_searchName");
 	this.input_searchDescribe = viewComponent.find("#input_searchDescribe");
 	this.dia_saveForm = viewComponent.find("#dia_saveForm");
-	this.dia_saveForm.dialog();
+	this.dia_saveForm.dialog({ onClose : $bind(this,this.onCloseDetailForm)});
 	Lambda.foreach((function($this) {
 		var $r;
 		var _g = [];
@@ -959,6 +961,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.input_searchDescribe.textbox({ onChange : function(nv2,ov2) {
+		console.log(nv2);
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.slt_game.combobox({ onChange : function(nv3,ov3) {
@@ -1029,21 +1032,24 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
 	}
-	,showDetailForm: function(dom,name,show) {
+	,onCloseDetailForm: function(e) {
+		this.dia_saveForm.find("#btn_confirm").off("click");
+	}
+	,showDetailForm: function(show,dom,name) {
 		var _g = this;
 		if(show) {
 			this.dia_saveForm.dialog("open");
 			this.dia_saveForm.find("#txt_name").html(name);
+			this.dia_saveForm.find("#slt_game").combobox("setValue",dom.attr("type"));
+			this.dia_saveForm.find("#txt_desc").textbox("setValue",dom.attr("desc"));
 			this.dia_saveForm.find("#btn_confirm").click(function() {
 				var deckType = _g.dia_saveForm.find("#slt_game").combobox("getValue");
 				var deckDesc = _g.dia_saveForm.find("#txt_desc").textbox("getValue");
 				dom.attr("type",deckType);
 				dom.attr("desc",deckDesc);
+				_g.showDetailForm(false);
 			});
-		} else {
-			this.dia_saveForm.dialog("close");
-			this.dia_saveForm.find("#btn_confirm").off("click");
-		}
+		} else this.dia_saveForm.dialog("close");
 	}
 	,showDeckList: function(retModel,sort) {
 		if(sort == null) sort = false;
@@ -1073,6 +1079,8 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		var _g = this;
 		var dom = this.j("#tmpl_deck").tmpl(deckModel);
 		this.mc_deckContainer.append(dom);
+		dom.attr("type",deckModel.type);
+		dom.attr("desc",deckModel.desc);
 		dom.find("#btn_public").linkbutton({ selected : Reflect.field(deckModel,"public") == null?false:Reflect.field(deckModel,"public"), onClick : function() {
 			_g.enableSave(true);
 		}});
@@ -1085,7 +1093,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		dom.find("#btn_detail").linkbutton({ onClick : function() {
 			var _this1 = _g.j($(this));
 			var deckName = _this1.parent().find("#txt_name").textbox("getValue");
-			_g.showDetailForm(dom,deckName,true);
+			_g.showDetailForm(true,_this1.parent(),deckName);
 			_g.enableSave(true);
 		}});
 		dom.find(".easyui-combobox").combobox({ value : deckModel.game, onSelect : function() {
@@ -1142,7 +1150,6 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.dia_output.find("#input_output").textbox("setValue",deckstr);
 	}
 	,showLoading: function(show) {
-		console.log("showLoading");
 		if(show) this.j.messager.progress({ msg : "讀取資料中，請稍等…"}); else this.j.messager.progress("close");
 	}
 	,setPagPage: function(total) {
@@ -1170,7 +1177,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			_g.overListener(game);
 			return true;
 		});
-		this.viewComponent.find(".easyui-layout").layout("collapse","east");
+		this.viewComponent.find("#layout_main").layout("collapse","east");
 		googleTracking.event("showBigList:game=" + game);
 	}
 	,overListener: function(game) {

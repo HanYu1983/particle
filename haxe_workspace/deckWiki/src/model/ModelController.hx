@@ -158,7 +158,7 @@ class ModelController extends Mediator
 				case 'deckName':
 					filterDataByCheckNull( filterDataByDeckName, f );
 				case 'describe':
-				//	filterDataByCheckNull( filterDataByDescribe, f );
+					filterDataByCheckNull( filterDataByDescribe, f );
 				case 'author':
 					filterDataByCheckNull( filterDataByAuthor, f );
 				case 'game':
@@ -184,7 +184,7 @@ class ModelController extends Mediator
 	
 	function filterDataByDescribe( from:Array<Dynamic>, name:String ) {
 		return from.filter( function( obj ) {
-			return obj.describe.indexOf( name ) != -1;
+			return obj.desc.indexOf( name ) != -1;
 		});
 	}
 	
@@ -211,9 +211,11 @@ class ModelController extends Mediator
 			item.id = Helper.getUUID();
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
+			item.typeName = Helper.EnToCh( item.type );
+			item.desc = item.desc == null ? '' : item.desc;
 			return item;
 		});
-		trace( data );
+		
 		ary_result = data;
 	}
 }
