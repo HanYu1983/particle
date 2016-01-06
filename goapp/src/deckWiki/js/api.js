@@ -3,6 +3,10 @@ var api = api || {};
 (function( module ){
 	
 	var appid = 'deckwiki'
+  var GOOGLE_CLIENT_ID = '36532962877-lrnkutm4n143dn8jb13017ljg6cg08hj.apps.googleusercontent.com';
+  // Set authorized scope.
+  var GOOGLE_SCOPES = ['https://www.googleapis.com/auth/analytics.readonly'];
+	var GA_ID = 'ga:109490266'
 	
 	var _cardInfo = {}
 	
@@ -33,18 +37,6 @@ var api = api || {};
 	function cardimageurl(game, id){
 		return cardinfoloader.cardimageurl(game, id)
 	}
-	/*
-	function save(id, data, cb){
-		db2.writefile( '../deckwikidbfile2/'+appid+'/list/'+id+'.json', data, cb )
-	}
-	function saveMessage(id, data, cb){
-		db2.writefile( '../deckwikidbfile2/'+appid+'/message/'+id+'.json', data, cb )
-	}
-	
-	function loadMessage(id, data, cb){
-		db2.filelist( '../deckwikidbfile2/'+appid+'/message/?Detail', null, cb)
-	}
-	*/
 	
 	function load(cb){
 		$.ajax({
@@ -59,14 +51,44 @@ var api = api || {};
 		})
 	}
 	
-	
+	function data(cb){
+		async.waterfall([
+			_.partial(
+				ygapi.authorize,
+				{
+					client_id: GOOGLE_CLIENT_ID,
+					scope: GOOGLE_SCOPES,
+					immediate: true
+				}
+			),
+			function(token,cb ){
+				ygapi.require('analytics', 'v3', cb)
+			},
+			_.partial( ygapi.get2, {
+				path: 'https://www.googleapis.com/analytics/v3/data/ga',
+				params: {
+					ids: GA_ID,
+					"start-date": 'today',
+					"end-date": 'today',
+					metrics: 'ga:totalEvents',
+					dimensions: 'ga:eventAction'
+				}
+			})
+		], function(err, data){
+			var info = {}
+			for( var i in data.rows ){
+				var row = data.rows[i]
+				var key = row[0]
+				var count = parseInt(row[1])
+				info[key] = count
+			}
+			cb(err, info)
+		})
+	}
 	
 	module.cardInfo = cardInfo
 	module.cardimageurl = cardimageurl
 	module.load = load
-	/*
-	module.save = save
-	module.saveMessage = saveMessage
-	module.loadMessage = loadMessage
-	*/
+	module.data = data
+
 }) (api)
