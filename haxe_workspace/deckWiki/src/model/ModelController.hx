@@ -49,6 +49,7 @@ class ModelController extends Mediator
 			ViewController.on_btn_login_click,
 			ViewController.on_btn_addDeck_click,
 			ViewController.on_btn_saveDeck_click,
+			ViewController.on_btn_share_deck_click,
 			do_load_all_list
 		];
 	}
@@ -56,6 +57,19 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_btn_share_deck_click:
+				var uid = notification.getBody().deckuid;
+				var shareobj = findDataById( ary_result, uid );
+				#if debug
+				var url = 'http://particle-979.appspot.com/deckWiki/index.html?uid=' + uid;
+				#else
+				var url = Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+				#end
+				var picture = 'http:' + Helper.getImageUrlByGameAndId( shareobj.game, shareobj.cards[0] );
+				sendNotification( ViewController.do_show_loading, { show:true } );
+				Helper.shareFb( shareobj.name, url, picture, shareobj.gameName, shareobj.desc, function( ret ) {
+					sendNotification( ViewController.do_show_loading, { show:false } );
+				});
 			case ViewController.on_btn_saveDeck_click:
 				sendNotification( ViewController.do_show_loading, { show:true } );
 				Helper.saveDeck( this.fbid, this.token, notification.getBody().savedata, function( ret ) {
@@ -106,19 +120,7 @@ class ModelController extends Mediator
 				
 				currentGame = game;
 				currentOutputStr = Json.stringify( cards );
-				
-				sendNotification( ViewController.do_show_loading, { show:true } );
-				Helper.loadDetail( game, function( data:Array<Dynamic> ) {
-					var ary_showData = cards.map( function( str:String ) {
-						str = str.replace( '.jpg', '' );
-						var retobj:Dynamic = data.find( function( oriData ) {
-							return ( oriData.id.indexOf( str ) != -1 );
-						});
-						return retobj;
-					});
-					sendNotification( ViewController.do_show_loading, { show:false } );
-					sendNotification( ViewController.do_show_bigList, { clickData:clickData, game:game, ary_showData:ary_showData } );
-				});
+				sendShowBigList( clickData );
 			case str if ( str == do_load_all_list ):
 				doLoadList();
 		}
@@ -127,12 +129,39 @@ class ModelController extends Mediator
 	function doLoadList() {
 		sendNotification( ViewController.do_show_loading, { show:true } );
 		Helper.loadList( function( err, data:Array<Dynamic> ) {
+			sendNotification( ViewController.do_show_loading, { show:false } );
+			
 			if ( err != null ) {
 				sendNotification( on_loadPublic_error, {err:err} );
 				return;
 			}
 			doSetData( data );
+			checkHashAndShow();
+		});
+	}
+	
+	function checkHashAndShow() {
+		if ( Helper.getUrlHash().uid != null && Helper.getUrlHash().uid.length != 0 ) {
+			var showData = findDataById( ary_result, Helper.getUrlHash().uid );
+			sendShowBigList( showData );
+		}
+	}
+	
+	function sendShowBigList( deck ) {
+		var cards = deck.cards;
+		var game = deck.game;
+		
+		sendNotification( ViewController.do_show_loading, { show:true } );
+		Helper.loadDetail( game, function( data:Array<Dynamic> ) {
+			var ary_showData = cards.map( function( str:String ) {
+				str = str.replace( '.jpg', '' );
+				var retobj:Dynamic = data.find( function( oriData ) {
+					return ( oriData.id.indexOf( str ) != -1 );
+				});
+				return retobj;
+			});
 			sendNotification( ViewController.do_show_loading, { show:false } );
+			sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_showData } );
 		});
 	}
 	

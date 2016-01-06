@@ -34,6 +34,7 @@ class ViewController extends Mediator
 	public static var on_btn_gotoDeckManager_click = 'on_btn_gotoDeckManager_click';
 	public static var on_btn_addDeck_click = 'on_btn_addDeck_click';
 	public static var on_btn_saveDeck_click = 'on_btn_saveDeck_click';
+	public static var on_btn_share_deck_click = 'on_btn_share_deck_click';
 	
 	var j:Dynamic = untyped __js__('$');
 	var mc_itemContainer:Dynamic;
@@ -92,6 +93,11 @@ class ViewController extends Mediator
 			div.hide();
 			mc_backContainer.append( div );
 			return true;
+		});
+		
+		mc_detail_panel.find( '#btn_share' ).click( function() {
+			var deckuid = mc_detail_panel.attr( 'uid' );
+			sendNotification( on_btn_share_deck_click, { deckuid:deckuid } );
 		});
 		
 		input_search.textbox( {
@@ -211,6 +217,7 @@ class ViewController extends Mediator
 				clickData = notification.getBody().clickData;
 				openFBComment( clickData.uid );
 				showBigList( notification.getBody().game, notification.getBody().ary_showData );
+				showDetail( notification.getBody().clickData );
 			case str if ( str == do_show_list ):
 				setPagPage( notification.getBody().total );
 				showList( notification.getBody().data );
@@ -438,12 +445,15 @@ class ViewController extends Mediator
 	}
 	
 	function showDetail( detail:Dynamic ) {
-		
-		mc_detail_panel.find( '#txt_id' ).html( detail.username );
-		mc_detail_panel.find( '#txt_name' ).html( detail.name );
-		mc_detail_panel.find( '#txt_type' ).html( detail.typeName );
-		mc_detail_panel.find( '#txt_desc' ).html( detail.desc );
-		mc_detail_panel.find( '#img_title' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
+		if ( detail != null ) {
+			mc_detail_panel.show();
+			mc_detail_panel.attr( 'uid', detail.id );
+			mc_detail_panel.find( '#txt_id' ).html( detail.username );
+			mc_detail_panel.find( '#txt_name' ).html( detail.name );
+			mc_detail_panel.find( '#txt_type' ).html( detail.typeName );
+			mc_detail_panel.find( '#txt_desc' ).html( detail.desc );
+			mc_detail_panel.find( '#img_title' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
+		}
 	}
 	
 	function showBigList( game:String, ary_showData:Array<Dynamic> ) {
@@ -489,11 +499,8 @@ class ViewController extends Mediator
 			dom.mouseout( function(e) {
 				var dom = j( e.currentTarget );
 				dom.css( 'border', '1px solid gray' );
-				
-				if ( clickData != null ) {
-					showDetail( clickData );
-				}
-				//sendNotification( on_item_out, { id:dom.attr('id'), game:dom.attr('game' ) } );
+				showDetail( clickData );
+				sendNotification( on_item_out, { id:dom.attr('id'), game:dom.attr('game' ) } );
 			});
 			dom.click( function( e ) {
 				var dom = j(e.currentTarget );

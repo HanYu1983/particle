@@ -3,6 +3,8 @@ var admin = admin || {};
 (function(module){
 	
 	var version = '1.0';
+	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
+	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
 	
 	function message(cb){
 		$.ajax({
@@ -67,7 +69,7 @@ var admin = admin || {};
 	module.messageForMe = messageForMe
 	module.defaultMessageHandle = defaultMessageHandle
 	module.showHotGame = showHotGame
-	module.admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
-	module.beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
+	module.admin = admin;
+	module.beta = beta;
 	
 }) (admin)

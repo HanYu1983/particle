@@ -20,18 +20,17 @@ myapp.facebook = myapp.facebook || {};
 			callback( res.status, res.authResponse, res );
 		});
 	}
-	function postMessageToMyboard( e, options ){
-			FB.ui({
-				method: 'feed', // 發布貼文
-				name: options.name,
-				link: options.link + '?id=' + e.id,
-				picture: options.picture,
-				caption: options.caption,
-				description: options.description
-			},function(response){
-			
-				options.callback( e, response );
-			});
+	function postMessageToMyboard( options ){
+		FB.ui({
+			method: 'feed', // 發布貼文
+			name: options.name,
+			link: options.link,
+			picture: options.picture,
+			caption: options.caption,
+			description: options.description
+		},function(response){
+			options.callback( response );
+		});
 	}
 	function getData( id, callback ){
 		FB.api(
@@ -49,26 +48,6 @@ myapp.facebook = myapp.facebook || {};
 			}
 		);
 	}
-	function shareWithLoginAndGetMe(options,error){
-		//FB.getLoginStatus( function( res ){
-		//	_status=res.status;
-		//	if(_status!="connected"){  
-				FB.login( function( res ){
-					if (res.authResponse) {
-						getMyData(function (e) {
-							postMessageToMyboard(e,options);
-						});
-					}else{
-						if( error != undefined )	error( res );
-					}
-				});	
-		//	}else{		
-		//		getMyData(function (e) {
-		//			postMessageToMyboard(e,options);
-		//		});
-		//	}			
-	//	});
-	}
 	
 	myapp.facebook.init = init;
 	myapp.facebook.login = login;
@@ -76,5 +55,5 @@ myapp.facebook = myapp.facebook || {};
 	myapp.facebook.postMessageToMyboard = postMessageToMyboard;
 	myapp.facebook.getData = getData;
 	myapp.facebook.getMyData = getMyData;
-	myapp.facebook.shareWithLoginAndGetMe = shareWithLoginAndGetMe;
+	
 })();

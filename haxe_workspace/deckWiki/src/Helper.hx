@@ -21,6 +21,21 @@ class Helper
 		#end
 	}
 	
+	public static function shareFb( name:String, link:String, picture:String, caption:String, description:String, cb:Dynamic -> Void ) {
+		untyped __js__('myapp.facebook.postMessageToMyboard')( {
+			name:name,
+			link:link,
+			picture:picture,
+			caption:caption,
+			description:description,
+			callback:cb
+		});
+	}
+	
+	public static function getUrlHash():Dynamic {
+		return untyped __js__( 'leo.utils.getHash' )();
+	}
+	
 	public static function loginFb( cb:String -> String -> Void ) {
 		untyped __js__( 'myapp.facebook.login' )( function( ret ){
 			cb( ret.authResponse.userID, ret.authResponse.accessToken );
