@@ -465,6 +465,10 @@ class ViewController extends Mediator
 			mc_detail_panel.find( '#txt_name' ).html( detail.name );
 			mc_detail_panel.find( '#txt_type' ).html( detail.typeName );
 			mc_detail_panel.find( '#txt_desc' ).html( detail.desc );
+			mc_detail_panel.find( '.shareTxt' ).eq(0).html( detail.viewCount );
+			mc_detail_panel.find( '.shareTxt' ).eq(1).html( detail.shareCount );
+			mc_detail_panel.find( '.shareTxt' ).eq(2).html( detail.outputCount );
+			
 			mc_detail_panel.find( '#img_title' ).attr( 'src', Helper.getImageUrlByGameAndId( detail.game, detail.cards[0] ));
 		}
 	}

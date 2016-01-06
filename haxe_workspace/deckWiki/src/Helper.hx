@@ -44,6 +44,10 @@ class Helper
 		untyped __js__( 'googleTracking.click' )( msg );
 	}
 	
+	public static function getTrackingCount( cb ) {
+		untyped __js__('api.data')( cb );
+	}
+	
 	public static function getMeta():Dynamic {
 		return untyped __js__('admin.getMeta')();
 	}

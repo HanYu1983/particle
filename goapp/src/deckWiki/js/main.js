@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("679171275511375",cb);
+	myapp.facebook.init("425311264344425",cb);
 };
 Helper.shareFb = function(name,link,picture,caption,description,cb) {
 	myapp.facebook.postMessageToMyboard({ name : name, link : link, picture : picture, caption : caption, description : description, callback : cb});
@@ -21,6 +21,9 @@ Helper.trackingEvent = function(msg) {
 };
 Helper.trackingClick = function(msg) {
 	googleTracking.click(msg);
+};
+Helper.getTrackingCount = function(cb) {
+	api.data(cb);
 };
 Helper.getMeta = function() {
 	return admin.getMeta();
@@ -213,9 +216,14 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_ModelController("ModelController"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	Helper.initFb(function() {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+		haxe_Timer.delay(function() {
+			Helper.getTrackingCount(function(err,data) {
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : data});
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+			});
+		},1000);
 	});
 };
 Math.__name__ = true;
@@ -279,6 +287,30 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe_Timer.__name__ = true;
+haxe_Timer.delay = function(f,time_ms) {
+	var t = new haxe_Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+};
+haxe_Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -454,17 +486,18 @@ model_ModelController.__name__ = true;
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,model_ModelController.do_load_all_list];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,model_ModelController.do_load_all_list,model_ModelController.do_save_count];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		var str = _g;
+		var str1 = _g;
 		switch(_g) {
 		case "on_btn_share_deck_click":
 			var uid = notification.getBody().deckuid;
 			var shareobj = this.findDataById(this.ary_result,uid);
-			var url = "http://particle-979.appspot.com/deckWiki/index.html?uid=" + uid;
+			var url = window.location.host + window.location.pathname + "?uid=" + uid;
 			var picture = "http:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.shareFb(Helper.getMeta().desc,url,picture,Helper.getMeta().name,shareobj.desc,function(ret) {
@@ -541,7 +574,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.sendShowBigList(clickData);
 			break;
 		default:
-			if(str == model_ModelController.do_load_all_list) this.doLoadList();
+			if(str == model_ModelController.do_save_count) this.countMap = notification.getBody().countMap; else if(str1 == model_ModelController.do_load_all_list) this.doLoadList();
 		}
 	}
 	,doLoadList: function() {
@@ -655,12 +688,19 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		});
 	}
 	,oriDataToUseData: function(ori) {
+		var _g = this;
 		this.data = ori.map(function(item) {
 			if(item.uid == null) item.id = Helper.getUUID(); else item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
 			item.typeName = Helper.EnToCh(item.type);
 			if(item.desc == null) item.desc = ""; else item.desc = item.desc;
+			item.viewCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
+			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
+			item.outputCount = Reflect.field(_g.countMap,"on_item_click:" + item.id);
+			if(item.viewCount == null) item.viewCount = 0;
+			if(item.shareCount == null) item.shareCount = 0;
+			if(item.outputCount == null) item.outputCount = 0;
 			return item;
 		});
 		this.ary_result = this.data;
@@ -1257,6 +1297,9 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			this.mc_detail_panel.find("#txt_name").html(detail.name);
 			this.mc_detail_panel.find("#txt_type").html(detail.typeName);
 			this.mc_detail_panel.find("#txt_desc").html(detail.desc);
+			this.mc_detail_panel.find(".shareTxt").eq(0).html(detail.viewCount);
+			this.mc_detail_panel.find(".shareTxt").eq(1).html(detail.shareCount);
+			this.mc_detail_panel.find(".shareTxt").eq(2).html(detail.outputCount);
 			this.mc_detail_panel.find("#img_title").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
 		}
 	}
@@ -1348,6 +1391,7 @@ var __map_reserved = {}
 Helper.j = $;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 model_ModelController.do_load_all_list = "do_load_all_list";
+model_ModelController.do_save_count = "do_save_count";
 model_ModelController.on_facebook_login = "on_facebook_login";
 model_ModelController.on_cardsuit_load = "on_cardsuit_load";
 model_ModelController.on_cardsuit_save_success = "on_cardsuit_save_success";
@@ -1374,5 +1418,3 @@ view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 view_ViewController.on_btn_share_deck_click = "on_btn_share_deck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map

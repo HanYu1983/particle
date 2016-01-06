@@ -16,6 +16,7 @@ using StringTools;
 class ModelController extends Mediator
 {
 	public static var do_load_all_list = 'do_load_all_list';
+	public static var do_save_count = 'do_save_count';
 	
 	public static var on_facebook_login = 'on_facebook_login';
 	public static var on_cardsuit_load = 'on_cardsuit_load';
@@ -25,6 +26,7 @@ class ModelController extends Mediator
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
 	
+	var countMap:Dynamic;
 	var fbid:String;
 	var token:String;
 	var currentGame:String;
@@ -52,7 +54,8 @@ class ModelController extends Mediator
 			ViewController.on_btn_addDeck_click,
 			ViewController.on_btn_saveDeck_click,
 			ViewController.on_btn_share_deck_click,
-			do_load_all_list
+			do_load_all_list,
+			do_save_count
 		];
 	}
 	
@@ -134,6 +137,8 @@ class ModelController extends Mediator
 				currentUid = id;
 				currentOutputStr = Json.stringify( cards );
 				sendShowBigList( clickData );
+			case str if ( str == do_save_count ):
+				this.countMap = notification.getBody().countMap;
 			case str if ( str == do_load_all_list ):
 				doLoadList();
 		}
@@ -260,6 +265,12 @@ class ModelController extends Mediator
 			item.gameName = Helper.EnToCh( item.game );
 			item.typeName = Helper.EnToCh( item.type );
 			item.desc = item.desc == null ? '' : item.desc;
+			item.viewCount = this.countMap.field( 'on_item_output:' + item.id );
+			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
+			item.outputCount = this.countMap.field( 'on_item_click:' + item.id );
+			if ( item.viewCount == null ) item.viewCount = 0;
+			if ( item.shareCount == null ) item.shareCount = 0;
+			if ( item.outputCount == null ) item.outputCount = 0;
 			return item;
 		});
 		
