@@ -6,6 +6,13 @@ var admin = admin || {};
 	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
 	
+	function getMeta(){
+		return {
+			name:'秀牌風雲',
+			desc:'秀出你的牌組! 發揮你的創意! 可以隨意組牌、抄牌、評論、分享的集換式卡片的牌組管理器!'
+		}
+	}
+	
 	function message(cb){
 		$.ajax({
 			url:'../fn/message',
@@ -69,6 +76,7 @@ var admin = admin || {};
 	module.messageForMe = messageForMe
 	module.defaultMessageHandle = defaultMessageHandle
 	module.showHotGame = showHotGame
+	module.getMeta = getMeta
 	module.admin = admin;
 	module.beta = beta;
 	

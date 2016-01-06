@@ -21,6 +21,7 @@ class ViewController extends Mediator
 	public static var do_show_showDetail = 'do_show_showDetail';
 	public static var do_show_loading = 'do_show_loading';
 	public static var do_show_output = 'do_show_output';
+	public static var do_show_alert = 'do_show_alert';
 	public static var do_enable_login = 'do_enable_login';
 	
 	public static var on_item_click = 'on_item_click';
@@ -29,6 +30,7 @@ class ViewController extends Mediator
 	public static var on_input_search_change = 'on_input_search_change';
 	public static var on_pag_page_change = 'on_pag_page_change';
 	public static var on_btn_output_click = 'on_btn_output_click';
+	public static var on_btn_self_click = 'on_btn_self_click';
 	public static var on_btn_login_click = 'on_btn_login_click';
 	public static var on_btn_gotoGroup_click = 'on_btn_gotoGroup_click';
 	public static var on_btn_gotoDeckManager_click = 'on_btn_gotoDeckManager_click';
@@ -47,6 +49,7 @@ class ViewController extends Mediator
 	var slt_type:Dynamic;
 	var pag_page:Dynamic;
 	var btn_output:Dynamic;
+	var btn_self:Dynamic;
 	var btn_login:Dynamic;
 	var btn_addDeck:Dynamic;
 	var btn_saveDeck:Dynamic;
@@ -70,6 +73,7 @@ class ViewController extends Mediator
 		slt_type = viewComponent.find( '#slt_type' );
 		pag_page = viewComponent.find( '#pag_page' );
 		btn_output = viewComponent.find( '#btn_output' );
+		btn_self = viewComponent.find( '#btn_self' );
 		btn_login = viewComponent.find( '#btn_login' );
 		btn_addDeck = viewComponent.find( '#btn_addDeck' );
 		btn_saveDeck = viewComponent.find( '#btn_saveDeck' );
@@ -149,6 +153,10 @@ class ViewController extends Mediator
 			sendNotification( on_btn_output_click );
 		});
 		
+		btn_self.click( function() {
+			sendNotification( on_btn_self_click );
+		});
+		
 		btn_login.linkbutton( {
 			onClick:function() {
 				sendNotification( on_btn_login_click );
@@ -181,6 +189,7 @@ class ViewController extends Mediator
 			do_show_showDetail,
 			do_show_loading,
 			do_show_output,
+			do_show_alert,
 			do_enable_login,
 			ModelController.on_loadPublic_error,
 			ModelController.on_facebook_login,
@@ -204,6 +213,8 @@ class ViewController extends Mediator
 			case ModelController.on_facebook_login:
 				enableLogin( false );
 				showMessage( '登入成功' );
+			case str if ( str == do_show_alert ):
+				alert( notification.getBody().alert );
 			case str if ( str == do_enable_login ):
 				enableLogin( notification.getBody().enable );
 			case str if ( str == do_show_output ):

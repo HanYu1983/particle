@@ -45,6 +45,7 @@ class ModelController extends Mediator
 			ViewController.on_input_search_change,
 			ViewController.on_pag_page_change,
 			ViewController.on_btn_output_click,
+			ViewController.on_btn_self_click,
 			ViewController.on_btn_gotoDeckManager_click,
 			ViewController.on_btn_gotoGroup_click,
 			ViewController.on_btn_login_click,
@@ -68,7 +69,7 @@ class ModelController extends Mediator
 				#end
 				var picture = 'http:' + Helper.getImageUrlByGameAndId( shareobj.game, shareobj.cards[0] );
 				sendNotification( ViewController.do_show_loading, { show:true } );
-				Helper.shareFb( shareobj.name, url, picture, shareobj.gameName, shareobj.desc, function( ret ) {
+				Helper.shareFb( Helper.getMeta().desc, url, picture, Helper.getMeta().name, shareobj.desc, function( ret ) {
 					sendNotification( ViewController.do_show_loading, { show:false } );
 				});
 			case ViewController.on_btn_saveDeck_click:
@@ -100,6 +101,16 @@ class ModelController extends Mediator
 				}
 			case ViewController.on_btn_gotoGroup_click:
 				Browser.window.open( 'https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/', '_blank' );
+			case ViewController.on_btn_self_click:
+				if ( this.fbid == null ) {
+					sendNotification( ViewController.do_show_alert, { alert:'請先登入facebook哦!' } );
+					return ;
+				}
+				var searchConditions:Dynamic = { 
+					author:this.fbid
+				};
+				var showData = multiSearch( searchConditions );
+				sendNotification( ViewController.do_show_list, { data:filterByPage( showData, 0 ), total: showData.length } );
 			case ViewController.on_btn_output_click:
 				sendNotification( ViewController.do_show_output, { uid:currentUid, str:currentOutputStr } );
 			case ViewController.on_pag_page_change:

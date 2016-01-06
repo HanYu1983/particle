@@ -44,6 +44,10 @@ class Helper
 		untyped __js__( 'googleTracking.click' )( msg );
 	}
 	
+	public static function getMeta():Dynamic {
+		return untyped __js__('admin.getMeta')();
+	}
+	
 	public static function loginFb( cb:String -> String -> Void ) {
 		untyped __js__( 'myapp.facebook.login' )( function( ret ){
 			cb( ret.authResponse.userID, ret.authResponse.accessToken );

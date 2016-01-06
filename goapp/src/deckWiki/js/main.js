@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("425311264344425",cb);
+	myapp.facebook.init("679171275511375",cb);
 };
 Helper.shareFb = function(name,link,picture,caption,description,cb) {
 	myapp.facebook.postMessageToMyboard({ name : name, link : link, picture : picture, caption : caption, description : description, callback : cb});
@@ -21,6 +21,9 @@ Helper.trackingEvent = function(msg) {
 };
 Helper.trackingClick = function(msg) {
 	googleTracking.click(msg);
+};
+Helper.getMeta = function() {
+	return admin.getMeta();
 };
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
@@ -451,7 +454,7 @@ model_ModelController.__name__ = true;
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,model_ModelController.do_load_all_list];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,model_ModelController.do_load_all_list];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -461,10 +464,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_btn_share_deck_click":
 			var uid = notification.getBody().deckuid;
 			var shareobj = this.findDataById(this.ary_result,uid);
-			var url = window.location.host + window.location.pathname + "?uid=" + uid;
+			var url = "http://particle-979.appspot.com/deckWiki/index.html?uid=" + uid;
 			var picture = "http:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
-			Helper.shareFb(shareobj.name,url,picture,shareobj.gameName,shareobj.desc,function(ret) {
+			Helper.shareFb(Helper.getMeta().desc,url,picture,Helper.getMeta().name,shareobj.desc,function(ret) {
 				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
 			});
 			break;
@@ -501,6 +504,15 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_btn_gotoGroup_click":
 			window.open("https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/","_blank");
 			break;
+		case "on_btn_self_click":
+			if(this.fbid == null) {
+				this.sendNotification(view_ViewController.do_show_alert,{ alert : "請先登入facebook哦!"});
+				return;
+			}
+			var searchConditions = { author : this.fbid};
+			var showData = this.multiSearch(searchConditions);
+			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData,0), total : showData.length});
+			break;
 		case "on_btn_output_click":
 			this.sendNotification(view_ViewController.do_show_output,{ uid : this.currentUid, str : this.currentOutputStr});
 			break;
@@ -509,9 +521,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(this.ary_result,page), total : this.ary_result.length});
 			break;
 		case "on_input_search_change":
-			var searchConditions = notification.getBody().value;
-			var showData = this.multiSearch(searchConditions);
-			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData,0), total : showData.length});
+			var searchConditions1 = notification.getBody().value;
+			var showData1 = this.multiSearch(searchConditions1);
+			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData1,0), total : showData1.length});
 			break;
 		case "on_item_over":
 			var id = notification.getBody().id;
@@ -970,6 +982,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.slt_type = viewComponent.find("#slt_type");
 	this.pag_page = viewComponent.find("#pag_page");
 	this.btn_output = viewComponent.find("#btn_output");
+	this.btn_self = viewComponent.find("#btn_self");
 	this.btn_login = viewComponent.find("#btn_login");
 	this.btn_addDeck = viewComponent.find("#btn_addDeck");
 	this.btn_saveDeck = viewComponent.find("#btn_saveDeck");
@@ -1035,6 +1048,9 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_output.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_output_click);
 	});
+	this.btn_self.click(function() {
+		_g1.sendNotification(view_ViewController.on_btn_self_click);
+	});
 	this.btn_login.linkbutton({ onClick : function() {
 		_g1.sendNotification(view_ViewController.on_btn_login_click);
 	}});
@@ -1052,7 +1068,7 @@ view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_enable_login,model_ModelController.on_loadPublic_error,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success];
+		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_show_alert,view_ViewController.do_enable_login,model_ModelController.on_loadPublic_error,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -1062,6 +1078,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		var str3 = _g;
 		var str4 = _g;
 		var str5 = _g;
+		var str6 = _g;
 		switch(_g) {
 		case "on_loadPublic_error":
 			this.alert(notification.getBody().err);
@@ -1080,20 +1097,20 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			this.showMessage("登入成功");
 			break;
 		default:
-			if(str == view_ViewController.do_enable_login) this.enableLogin(notification.getBody().enable); else if(str1 == view_ViewController.do_show_output) {
+			if(str == view_ViewController.do_show_alert) this.alert(notification.getBody().alert); else if(str1 == view_ViewController.do_enable_login) this.enableLogin(notification.getBody().enable); else if(str2 == view_ViewController.do_show_output) {
 				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else {
 					Helper.trackingEvent("on_item_output:" + Std.string(notification.getBody().uid));
 					this.setOutput(notification.getBody().str);
 				}
-			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) {
+			} else if(str3 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str4 == view_ViewController.do_show_bigList) {
 				this.clickData = notification.getBody().clickData;
 				this.openFBComment(this.clickData.uid);
 				this.showBigList(this.clickData.uid,notification.getBody().game,notification.getBody().ary_showData);
 				this.showDetail(notification.getBody().clickData);
-			} else if(str4 == view_ViewController.do_show_list) {
+			} else if(str5 == view_ViewController.do_show_list) {
 				this.setPagPage(notification.getBody().total);
 				this.showList(notification.getBody().data);
-			} else if(str5 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
+			} else if(str6 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
 	}
 	,openFBComment: function(uid) {
@@ -1340,6 +1357,7 @@ view_ViewController.do_show_bigList = "do_show_bigList";
 view_ViewController.do_show_showDetail = "do_show_showDetail";
 view_ViewController.do_show_loading = "do_show_loading";
 view_ViewController.do_show_output = "do_show_output";
+view_ViewController.do_show_alert = "do_show_alert";
 view_ViewController.do_enable_login = "do_enable_login";
 view_ViewController.on_item_click = "on_item_click";
 view_ViewController.on_item_over = "on_item_over";
@@ -1347,6 +1365,7 @@ view_ViewController.on_item_out = "on_item_out";
 view_ViewController.on_input_search_change = "on_input_search_change";
 view_ViewController.on_pag_page_change = "on_pag_page_change";
 view_ViewController.on_btn_output_click = "on_btn_output_click";
+view_ViewController.on_btn_self_click = "on_btn_self_click";
 view_ViewController.on_btn_login_click = "on_btn_login_click";
 view_ViewController.on_btn_gotoGroup_click = "on_btn_gotoGroup_click";
 view_ViewController.on_btn_gotoDeckManager_click = "on_btn_gotoDeckManager_click";
@@ -1355,3 +1374,5 @@ view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 view_ViewController.on_btn_share_deck_click = "on_btn_share_deck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map
