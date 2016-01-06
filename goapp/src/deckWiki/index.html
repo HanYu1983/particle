@@ -398,10 +398,15 @@ body{
 	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
 	<script src="js/api.js"></script>
 	<script src="js/main.js"></script>
-	<script src="https://apis.google.com/js/client.js?onload=authorize"></script>
+	
 	<script>
 		googleTracking.init( 'UA-55273266-3' );
 		$('title').html( $('title').html() + admin.version );
+		
+		function onGapiLoad( event ){
+			haxe.onHtmlClick('onGapiLoad', event );
+		}
 	</script>
+	<script src="https://apis.google.com/js/client.js?onload=onGapiLoad"></script>
 </body>
 </html>

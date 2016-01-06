@@ -22,8 +22,8 @@ Helper.trackingEvent = function(msg) {
 Helper.trackingClick = function(msg) {
 	googleTracking.click(msg);
 };
-Helper.getTrackingCount = function(cb) {
-	api.data(cb);
+Helper.getTrackingCount = function(event,cb) {
+	api.data(event,cb);
 };
 Helper.getMeta = function() {
 	return admin.getMeta();
@@ -215,16 +215,24 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new view_ViewController("ViewController",j("body")));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_ModelController("ModelController"));
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
-	Helper.initFb(function() {
-		haxe_Timer.delay(function() {
-			Helper.getTrackingCount(function(err,data) {
+	var initApp = function(event) {
+		Helper.initFb(function() {
+			Helper.getTrackingCount(event,function(err,data) {
 				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : data});
 				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
 				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
 				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
 			});
-		},1000);
-	});
+		});
+	};
+	var onHtmlClick = function(type,value) {
+		switch(type) {
+		case "onGapiLoad":
+			initApp(value);
+			break;
+		}
+	};
+	Reflect.setField(window,"haxe",{ onHtmlClick : onHtmlClick});
 };
 Math.__name__ = true;
 var Reflect = function() { };
@@ -236,6 +244,9 @@ Reflect.field = function(o,field) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		return null;
 	}
+};
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
 };
 Reflect.fields = function(o) {
 	var a = [];
@@ -287,30 +298,6 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Timer = function(time_ms) {
-	var me = this;
-	this.id = setInterval(function() {
-		me.run();
-	},time_ms);
-};
-haxe_Timer.__name__ = true;
-haxe_Timer.delay = function(f,time_ms) {
-	var t = new haxe_Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	};
-	return t;
-};
-haxe_Timer.prototype = {
-	stop: function() {
-		if(this.id == null) return;
-		clearInterval(this.id);
-		this.id = null;
-	}
-	,run: function() {
-	}
-};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
