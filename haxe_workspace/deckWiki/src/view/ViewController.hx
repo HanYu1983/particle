@@ -53,6 +53,7 @@ class ViewController extends Mediator
 	var btn_login:Dynamic;
 	var btn_addDeck:Dynamic;
 	var btn_saveDeck:Dynamic;
+	var btn_search:Dynamic;
 	var input_search:Dynamic;
 	var input_searchName:Dynamic;
 	var input_searchDescribe:Dynamic;
@@ -77,6 +78,7 @@ class ViewController extends Mediator
 		btn_login = viewComponent.find( '#btn_login' );
 		btn_addDeck = viewComponent.find( '#btn_addDeck' );
 		btn_saveDeck = viewComponent.find( '#btn_saveDeck' );
+		btn_search = viewComponent.find( '#btn_search' );
 		dia_output = viewComponent.find( '#dia_output' );
 		mc_backContainer = viewComponent.find( '#mc_backContainer' );
 		mc_deckContainer = viewComponent.find( '#mc_deckContainer' );
@@ -131,6 +133,12 @@ class ViewController extends Mediator
 		
 		slt_type.combobox( {
 			onChange:function( nv, ov ) {
+				sendNotification( on_input_search_change, { value:getSearchConditions() } );
+			}
+		});
+		
+		btn_search.linkbutton( {
+			onClick:function( nv, ov ) {
 				sendNotification( on_input_search_change, { value:getSearchConditions() } );
 			}
 		});

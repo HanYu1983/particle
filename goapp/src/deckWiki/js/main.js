@@ -1013,6 +1013,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_login = viewComponent.find("#btn_login");
 	this.btn_addDeck = viewComponent.find("#btn_addDeck");
 	this.btn_saveDeck = viewComponent.find("#btn_saveDeck");
+	this.btn_search = viewComponent.find("#btn_search");
 	this.dia_output = viewComponent.find("#dia_output");
 	this.mc_backContainer = viewComponent.find("#mc_backContainer");
 	this.mc_deckContainer = viewComponent.find("#mc_deckContainer");
@@ -1060,6 +1061,9 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.slt_type.combobox({ onChange : function(nv4,ov4) {
+		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
+	}});
+	this.btn_search.linkbutton({ onClick : function(nv5,ov5) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.pag_page.pagination({ onSelectPage : function(number,size) {
