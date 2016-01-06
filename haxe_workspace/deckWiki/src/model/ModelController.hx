@@ -136,18 +136,21 @@ class ModelController extends Mediator
 				return;
 			}
 			doSetData( data );
+			trace( data );
 			checkHashAndShow();
 		});
 	}
 	
 	function checkHashAndShow() {
 		if ( Helper.getUrlHash().uid != null && Helper.getUrlHash().uid.length != 0 ) {
-			var showData = findDataById( ary_result, Helper.getUrlHash().uid );
+			var showData = findDataById( data, Helper.getUrlHash().uid );
 			sendShowBigList( showData );
 		}
 	}
 	
 	function sendShowBigList( deck ) {
+		
+		trace( deck );
 		var cards = deck.cards;
 		var game = deck.game;
 		

@@ -530,17 +530,19 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				return;
 			}
 			_g.doSetData(data);
+			console.log(data);
 			_g.checkHashAndShow();
 		});
 	}
 	,checkHashAndShow: function() {
 		if(Helper.getUrlHash().uid != null && Helper.getUrlHash().uid.length != 0) {
-			var showData = this.findDataById(this.ary_result,Helper.getUrlHash().uid);
+			var showData = this.findDataById(this.data,Helper.getUrlHash().uid);
 			this.sendShowBigList(showData);
 		}
 	}
 	,sendShowBigList: function(deck) {
 		var _g = this;
+		console.log(deck);
 		var cards = deck.cards;
 		var game = deck.game;
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
