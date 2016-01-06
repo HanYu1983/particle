@@ -51,38 +51,43 @@ var api = api || {};
 		})
 	}
 	
-	function data(cb){
+	function data(event, cb){
+		var useImmdiate = event ? false : true;
 		async.waterfall([
 			_.partial(
 				ygapi.authorize,
 				{
 					client_id: GOOGLE_CLIENT_ID,
 					scope: GOOGLE_SCOPES,
-					immediate: true
+					immediate: useImmdiate
 				}
 			),
-			function(token,cb ){
+			function(token,cb){
 				ygapi.require('analytics', 'v3', cb)
 			},
 			_.partial( ygapi.get2, {
 				path: 'https://www.googleapis.com/analytics/v3/data/ga',
 				params: {
 					ids: GA_ID,
-					"start-date": 'today',
+					"start-date": '2014-08-01',
 					"end-date": 'today',
 					metrics: 'ga:totalEvents',
 					dimensions: 'ga:eventAction'
 				}
 			})
 		], function(err, data){
-			var info = {}
-			for( var i in data.rows ){
-				var row = data.rows[i]
-				var key = row[0]
-				var count = parseInt(row[1])
-				info[key] = count
+			if( err ){
+				cb( err )
+			} else {
+				var info = {}
+				for( var i in data.rows ){
+					var row = data.rows[i]
+					var key = row[0]
+					var count = parseInt(row[1])
+					info[key] = count
+				}
+				cb(null, info)
 			}
-			cb(err, info)
 		})
 	}
 	
