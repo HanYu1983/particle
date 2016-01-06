@@ -16,6 +16,12 @@ Helper.shareFb = function(name,link,picture,caption,description,cb) {
 Helper.getUrlHash = function() {
 	return leo.utils.getHash();
 };
+Helper.trackingEvent = function(msg) {
+	googleTracking.event(msg);
+};
+Helper.trackingClick = function(msg) {
+	googleTracking.click(msg);
+};
 Helper.loginFb = function(cb) {
 	myapp.facebook.login(function(ret) {
 		cb(ret.authResponse.userID,ret.authResponse.accessToken);
@@ -229,6 +235,11 @@ Reflect.fields = function(o) {
 		}
 	}
 	return a;
+};
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
 };
 var StringTools = function() { };
 StringTools.__name__ = true;
@@ -491,7 +502,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			window.open("https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/","_blank");
 			break;
 		case "on_btn_output_click":
-			this.sendNotification(view_ViewController.do_show_output,{ str : this.currentOutputStr});
+			this.sendNotification(view_ViewController.do_show_output,{ uid : this.currentUid, str : this.currentOutputStr});
 			break;
 		case "on_pag_page_change":
 			var page = Math.floor(notification.getBody().number - 1);
@@ -513,6 +524,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var clickData = this.findDataById(this.data,id1);
 			var cards = clickData.cards;
 			this.currentGame = game1;
+			this.currentUid = id1;
 			this.currentOutputStr = JSON.stringify(cards);
 			this.sendShowBigList(clickData);
 			break;
@@ -530,7 +542,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				return;
 			}
 			_g.doSetData(data);
-			console.log(data);
 			_g.checkHashAndShow();
 		});
 	}
@@ -542,7 +553,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,sendShowBigList: function(deck) {
 		var _g = this;
-		console.log(deck);
 		var cards = deck.cards;
 		var game = deck.game;
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
@@ -995,6 +1005,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.mc_detail_panel.find("#btn_share").click(function() {
 		var deckuid = _g1.mc_detail_panel.attr("uid");
 		_g1.sendNotification(view_ViewController.on_btn_share_deck_click,{ deckuid : deckuid});
+		Helper.trackingEvent("on_item_share:" + deckuid);
 	});
 	this.input_search.textbox({ onChange : function(nv,ov) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
@@ -1070,11 +1081,14 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			break;
 		default:
 			if(str == view_ViewController.do_enable_login) this.enableLogin(notification.getBody().enable); else if(str1 == view_ViewController.do_show_output) {
-				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else this.setOutput(notification.getBody().str);
+				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else {
+					Helper.trackingEvent("on_item_output:" + Std.string(notification.getBody().uid));
+					this.setOutput(notification.getBody().str);
+				}
 			} else if(str2 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str3 == view_ViewController.do_show_bigList) {
 				this.clickData = notification.getBody().clickData;
 				this.openFBComment(this.clickData.uid);
-				this.showBigList(notification.getBody().game,notification.getBody().ary_showData);
+				this.showBigList(this.clickData.uid,notification.getBody().game,notification.getBody().ary_showData);
 				this.showDetail(notification.getBody().clickData);
 			} else if(str4 == view_ViewController.do_show_list) {
 				this.setPagPage(notification.getBody().total);
@@ -1229,7 +1243,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			this.mc_detail_panel.find("#img_title").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
 		}
 	}
-	,showBigList: function(game,ary_showData) {
+	,showBigList: function(uid,game,ary_showData) {
 		var _g = this;
 		this.mc_bigItemContainer.empty();
 		Lambda.foreach(ary_showData,function(item) {
@@ -1241,7 +1255,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			return true;
 		});
 		this.viewComponent.find("#layout_main").layout("collapse","east");
-		googleTracking.event("showBigList:game=" + game);
+		Helper.trackingEvent("on_item_view:" + uid);
 	}
 	,overListener: function(game) {
 		var _g = this;

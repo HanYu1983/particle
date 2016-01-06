@@ -36,6 +36,14 @@ class Helper
 		return untyped __js__( 'leo.utils.getHash' )();
 	}
 	
+	public static function trackingEvent( msg ) {
+		untyped __js__( 'googleTracking.event' )( msg );
+	}
+	
+	public static function trackingClick( msg ) {
+		untyped __js__( 'googleTracking.click' )( msg );
+	}
+	
 	public static function loginFb( cb:String -> String -> Void ) {
 		untyped __js__( 'myapp.facebook.login' )( function( ret ){
 			cb( ret.authResponse.userID, ret.authResponse.accessToken );

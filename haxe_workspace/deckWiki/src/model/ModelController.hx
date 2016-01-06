@@ -28,6 +28,7 @@ class ModelController extends Mediator
 	var fbid:String;
 	var token:String;
 	var currentGame:String;
+	var currentUid:String;
 	var currentOutputStr:String;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -100,7 +101,7 @@ class ModelController extends Mediator
 			case ViewController.on_btn_gotoGroup_click:
 				Browser.window.open( 'https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/', '_blank' );
 			case ViewController.on_btn_output_click:
-				sendNotification( ViewController.do_show_output, { str:currentOutputStr } );
+				sendNotification( ViewController.do_show_output, { uid:currentUid, str:currentOutputStr } );
 			case ViewController.on_pag_page_change:
 				var page:Int = Math.floor( notification.getBody().number - 1 );
 				sendNotification( ViewController.do_show_list, { data:filterByPage( ary_result, page ), total: ary_result.length } );
@@ -119,6 +120,7 @@ class ModelController extends Mediator
 				var cards:Array<Dynamic> = clickData.cards;
 				
 				currentGame = game;
+				currentUid = id;
 				currentOutputStr = Json.stringify( cards );
 				sendShowBigList( clickData );
 			case str if ( str == do_load_all_list ):
@@ -136,7 +138,6 @@ class ModelController extends Mediator
 				return;
 			}
 			doSetData( data );
-			trace( data );
 			checkHashAndShow();
 		});
 	}
@@ -149,11 +150,8 @@ class ModelController extends Mediator
 	}
 	
 	function sendShowBigList( deck ) {
-		
-		trace( deck );
 		var cards = deck.cards;
 		var game = deck.game;
-		
 		sendNotification( ViewController.do_show_loading, { show:true } );
 		Helper.loadDetail( game, function( data:Array<Dynamic> ) {
 			var ary_showData = cards.map( function( str:String ) {

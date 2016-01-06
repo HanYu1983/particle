@@ -98,6 +98,7 @@ class ViewController extends Mediator
 		mc_detail_panel.find( '#btn_share' ).click( function() {
 			var deckuid = mc_detail_panel.attr( 'uid' );
 			sendNotification( on_btn_share_deck_click, { deckuid:deckuid } );
+			Helper.trackingEvent( 'on_item_share:' + deckuid );
 		});
 		
 		input_search.textbox( {
@@ -209,6 +210,7 @@ class ViewController extends Mediator
 				if ( notification.getBody().str == null ) {
 					alert( '請選擇套牌哦!' );
 				}else {
+					Helper.trackingEvent( 'on_item_output:' + notification.getBody().uid );
 					setOutput( notification.getBody().str );
 				}
 			case str if( str == do_show_loading ):
@@ -216,7 +218,7 @@ class ViewController extends Mediator
 			case str if ( str == do_show_bigList ):
 				clickData = notification.getBody().clickData;
 				openFBComment( clickData.uid );
-				showBigList( notification.getBody().game, notification.getBody().ary_showData );
+				showBigList( clickData.uid, notification.getBody().game, notification.getBody().ary_showData );
 				showDetail( notification.getBody().clickData );
 			case str if ( str == do_show_list ):
 				setPagPage( notification.getBody().total );
@@ -456,7 +458,7 @@ class ViewController extends Mediator
 		}
 	}
 	
-	function showBigList( game:String, ary_showData:Array<Dynamic> ) {
+	function showBigList( uid, game:String, ary_showData:Array<Dynamic> ) {
 		mc_bigItemContainer.empty();
 		ary_showData.foreach( function( item ) {
 			var dom = Helper.createDetail( game, item );
@@ -467,7 +469,7 @@ class ViewController extends Mediator
 			return true;
 		});
 		viewComponent.find( '#layout_main' ).layout( 'collapse', 'east' );
-		untyped __js__( 'googleTracking.event' )( 'showBigList:game=' + game );
+		Helper.trackingEvent( 'on_item_view:' + uid );
 	}
 	
 	function overListener( game ){
