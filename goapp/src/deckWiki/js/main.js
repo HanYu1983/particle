@@ -682,9 +682,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			item.gameName = Helper.EnToCh(item.game);
 			item.typeName = Helper.EnToCh(item.type);
 			if(item.desc == null) item.desc = ""; else item.desc = item.desc;
-			item.viewCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
+			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
 			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
-			item.outputCount = Reflect.field(_g.countMap,"on_item_click:" + item.id);
+			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
 			if(item.viewCount == null) item.viewCount = 0;
 			if(item.shareCount == null) item.shareCount = 0;
 			if(item.outputCount == null) item.outputCount = 0;

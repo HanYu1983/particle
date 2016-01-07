@@ -258,16 +258,17 @@ class ModelController extends Mediator
 		});
 	}
 	
-	function oriDataToUseData( ori ) {
+	function oriDataToUseData( ori:Array<Dynamic> ) {
+		
 		data = ori.map( function( item ) {
 			item.id = item.uid == null ? Helper.getUUID() : item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
 			item.typeName = Helper.EnToCh( item.type );
 			item.desc = item.desc == null ? '' : item.desc;
-			item.viewCount = this.countMap.field( 'on_item_output:' + item.id );
+			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
 			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
-			item.outputCount = this.countMap.field( 'on_item_click:' + item.id );
+			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );
 			if ( item.viewCount == null ) item.viewCount = 0;
 			if ( item.shareCount == null ) item.shareCount = 0;
 			if ( item.outputCount == null ) item.outputCount = 0;
