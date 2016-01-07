@@ -218,7 +218,6 @@ Main.main = function() {
 	var initApp = function(event) {
 		Helper.initFb(function() {
 			Helper.getTrackingCount(event,function(err,data) {
-				console.log(data);
 				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : data});
 				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
 				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
