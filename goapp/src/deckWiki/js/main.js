@@ -590,11 +590,19 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		Helper.loadDetail(game,function(data) {
 			var ary_showData = cards.map(function(str) {
-				str = StringTools.replace(str,".jpg","");
+				switch(game) {
+				case "sangoWar":
+					str = StringTools.replace(str,".jpg","");
+					break;
+				default:
+				}
 				var retobj = Lambda.find(data,function(oriData) {
-					return oriData.id.indexOf(str) != -1;
+					return oriData.id == str;
 				});
 				return retobj;
+			});
+			ary_showData = ary_showData.filter(function(item) {
+				return item != null;
 			});
 			_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
 			_g.sendNotification(view_ViewController.do_show_bigList,{ clickData : deck, game : game, ary_showData : ary_showData});

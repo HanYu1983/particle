@@ -170,12 +170,19 @@ class ModelController extends Mediator
 		var game = deck.game;
 		sendNotification( ViewController.do_show_loading, { show:true } );
 		Helper.loadDetail( game, function( data:Array<Dynamic> ) {
-			var ary_showData = cards.map( function( str:String ) {
-				str = str.replace( '.jpg', '' );
+			var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
+				switch( game ){
+					case 'sangoWar':
+						str = str.replace( '.jpg', '' );
+					default:
+				}
 				var retobj:Dynamic = data.find( function( oriData ) {
-					return ( oriData.id.indexOf( str ) != -1 );
+					return ( oriData.id == str );
 				});
 				return retobj;
+			});
+			ary_showData = ary_showData.filter( function( item ) {
+				return item != null;
 			});
 			sendNotification( ViewController.do_show_loading, { show:false } );
 			sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_showData } );
