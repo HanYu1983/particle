@@ -172,7 +172,6 @@ class Helper
 		return function( err, ret ){
 			if( err != null ){
 				Browser.alert( err );
-				Browser.window.location.reload();
 			}else{
 				func( ret );
 			}
