@@ -245,7 +245,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert(err); else cb(ret);
+		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -266,7 +266,7 @@ Main.prototype = {
 			Main.slide("正在等待對手...");
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
 			CallJs.api_invite(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds,function(err,data) {
-				haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 181, className : "Main", methodName : "onHtmlClick", customParams : [data]});
+				if(err != null) Main.alert(err);
 			});
 			break;
 		case "onBtnStartServer":
@@ -540,11 +540,6 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -625,25 +620,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
 		var cl = o.__class__;
@@ -846,7 +822,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		Main.selectOps(nv);
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv1,od) {
 		Main.changePlayer(nv1);
 	}});
 };
@@ -2035,7 +2011,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 				}
 			} catch( e ) {
 				if (e instanceof js__$Boot_HaxeError) e = e.val;
-				haxe_Log.trace(e,{ fileName : "MainController.hx", lineNumber : 623, className : "per.vic.pureMVCref.tableGameModel.controller.MainController", methodName : "deleteView"});
+				console.log(e);
 			}
 			return true;
 		});
@@ -2133,7 +2109,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert(err); else cb(ret);
+			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2423,5 +2399,3 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=main.js.map

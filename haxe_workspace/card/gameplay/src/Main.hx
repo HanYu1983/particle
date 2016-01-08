@@ -178,7 +178,7 @@ class Main
 				
 				Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
 				CallJs.api_invite( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
-					trace( err, data );
+					if ( err != null )	alert( err );
 				});
 				//Facade.getInstance().sendNotification( SocketController.sendMessage, {type:'invite', msg:SocketController.playerId + ',' + otherPlayerId } );
 			case 'onBtnStartServer':
