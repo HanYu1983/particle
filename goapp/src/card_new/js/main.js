@@ -152,8 +152,7 @@ Main.selectOps = function(ops) {
 };
 Main.setReceiveInvitation = function() {
 	CallJs.api_startReceiveInvitation(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds.join(","),function(err,data) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,{ inviteId : data});
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_UI.do_show_recevie,{ show : true, ops : data});
 	});
 };
 Main.saveOpponentToCookie = function(otherPlayerId) {
@@ -264,7 +263,7 @@ Main.prototype = {
 			Main.slide("正在等待對手...");
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
 			CallJs.api_invite(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds,function(err,data) {
-				haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 178, className : "Main", methodName : "onHtmlClick", customParams : [data]});
+				haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 177, className : "Main", methodName : "onHtmlClick", customParams : [data]});
 			});
 			break;
 		case "onBtnStartServer":
@@ -839,6 +838,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.mc_light = this.getViewComponent().find("#mc_light");
+	this.dia_invite = Main.j("#dia_invite");
 	this.combo_ops.combobox({ onChange : function(nv,ov) {
 		Main.selectOps(nv);
 	}});
@@ -851,10 +851,11 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click,mediator_UI.do_show_recevie];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
+		var str = _g;
 		switch(_g) {
 		case "on_socket_success":
 			this.onSocketSuccess();
@@ -888,6 +889,24 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		case "on_getSuit_success":
 			this.createComboDeck(notification.getBody().cardSuit);
 			break;
+		default:
+			if(str == mediator_UI.do_show_recevie) this.showReceive(notification.getBody().show,notification.getBody().ops);
+		}
+	}
+	,showReceive: function(show,ops) {
+		var _g = this;
+		if(show) {
+			this.dia_invite.dialog("open");
+			this.dia_invite.attr("ops",ops);
+			this.dia_invite.find("#txt_from").html(ops);
+			this.dia_invite.find("#btn_receive").click(function() {
+				_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,{ inviteId : _g.dia_invite.attr("ops")});
+				_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
+				_g.showReceive(false);
+			});
+		} else {
+			this.dia_invite.dialog("close");
+			this.dia_invite.find("#btn_receive").off("click");
 		}
 	}
 	,showOnlineOffline: function(show) {
@@ -2374,6 +2393,7 @@ Main.cardSuitsDetails = { };
 Main.cardSuitsDetailsIsLoading = { };
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
+mediator_UI.do_show_recevie = "do_show_recevie";
 mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 per_vic_pureMVCref_tableGameModel_Tool.j = $;
 per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "create_item";

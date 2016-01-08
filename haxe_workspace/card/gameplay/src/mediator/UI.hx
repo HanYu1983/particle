@@ -2,6 +2,7 @@ package mediator;
 
 import haxe.Timer;
 import js.html.Image;
+import js.html.rtc.IdentityAssertion;
 import model.Model;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
@@ -14,12 +15,15 @@ import per.vic.pureMVCref.tableGameModel.controller.SocketController;
  */
 class UI extends Mediator
 {
+	public static var do_show_recevie = 'do_show_recevie';
+	
 	public static var on_combo_deck_change = 'on_combo_deck_change';
 	//public static var on_op_change = 'on_op_change';
 	
 	var mc_detailContainer:Dynamic;
 	var combo_deck:Dynamic;
 	var combo_ops:Dynamic;
+	var dia_invite:Dynamic;
 	var mc_light:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -33,6 +37,7 @@ class UI extends Mediator
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		mc_light = getViewComponent().find( '#mc_light' );
+		dia_invite = Main.j( '#dia_invite' );
 		
 		combo_ops.combobox( {
 			onChange:function( nv, ov ) {
@@ -66,6 +71,7 @@ class UI extends Mediator
 					SocketController.on_searchComplete,
 					SocketController.on_heartbeat_event,
 					Main.on_createDeck_click,
+					do_show_recevie
 				];
 	}
 	
@@ -94,6 +100,25 @@ class UI extends Mediator
 				showCards( notification.getBody().ary_select );
 			case Main.on_getSuit_success:
 				createComboDeck( notification.getBody().cardSuit );
+			case str if ( str == do_show_recevie ):
+				showReceive( notification.getBody().show, notification.getBody().ops );
+			
+		}
+	}
+	
+	function showReceive( show:Bool, ?ops:String ) {
+		if ( show ) {
+			dia_invite.dialog( 'open' );
+			dia_invite.attr( 'ops', ops );
+			dia_invite.find( '#txt_from' ).html( ops );
+			dia_invite.find( '#btn_receive' ).click( function() {
+				sendNotification( MainController.on_been_invite, { inviteId:dia_invite.attr( 'ops' ) } );
+				sendNotification( SocketController.do_startHeartbeat );
+				showReceive( false );
+			});
+		}else {
+			dia_invite.dialog( 'close' );
+			dia_invite.find( '#btn_receive' ).off( 'click' );
 		}
 	}
 	

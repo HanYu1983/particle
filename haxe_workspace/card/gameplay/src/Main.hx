@@ -91,8 +91,10 @@ class Main
 	
 	public static function setReceiveInvitation() {
 		CallJs.api_startReceiveInvitation( SocketController.playerId, SocketController.otherPlayerIds.join(','), function( err, data ) {
-			Facade.getInstance().sendNotification( MainController.on_been_invite, { inviteId:data } );
-			Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
+			
+			Facade.getInstance().sendNotification( UI.do_show_recevie, {show:true, ops: data } );
+			//Facade.getInstance().sendNotification( MainController.on_been_invite, { inviteId:data } );
+			//Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
 		});
 	}
 	

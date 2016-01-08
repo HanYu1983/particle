@@ -356,9 +356,13 @@ body{
 		<div id="dia_alert" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 			此網址僅供私下交流用，請勿公開分享!
 		</div>
-				
-		<div id="dia_invite" class="easyui-dialog" title="邀戰通知" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
-			
+		<div id="dia_invite" class="easyui-dialog" title="邀戰通知" data-options="iconCls:'icon-help',closed:true" style="width:300px; height:150px; padding:10px">
+			<div class="group" style="text-align:center;">
+				<div id="txt_from" style="color:yellow;"></div>
+				<div style="font-size:20px; ">邀戰!!</div>
+				<br/>
+				<a id="btn_receive" href="#" class="easyui-linkbutton" style="width:100px; height:40px; " data-options="iconCls:'icon-ok', disabled:false">接受邀請</a>
+			</div>
 		</div>
     </div>
 	<script src="../common/js/admin.js"></script>	
