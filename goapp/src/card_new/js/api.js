@@ -476,7 +476,6 @@ var api = api || {};
 	}
 	 
 	function invite( selfName, targetNames, cb ){
-		console.log( selfName, targetNames );
 		var obj = {
 			type: 'invite',
 			msg: {
@@ -496,7 +495,7 @@ var api = api || {};
 		}
 		var from = obj.msg.from
 		var targetNames = obj.msg.to
-		invitationCb( [from].concat(targetNames) )
+		invitationCb( from, targetNames )
 	}
 	
 	var invitationCb = null
@@ -506,24 +505,18 @@ var api = api || {};
 			invitationCb = null
 		}
 		invitationCb = (function( selfName, currTargetNames ){
-			return function( recevieNames ){
-				console.log("recevieNames:", recevieNames)
-				
-				var ret = []
+			return function( fromName, recevieNames ){
+				var ret = [formName]
 				for( var i in recevieNames ){
-					if( recevieNames[i] != selfName ){
+					if( recevieNames[i].indexOf( selfName ) != 0 ){
 						ret.push( recevieNames[i] )
 					}
 				}
-				console.log("ret:", ret)
 				var str = ret.join(",")
-				console.log("str:", str)
 				if( str != currTargetNames ){
-					console.log("***:", str)
 					cb( null, str )
 					startReceiveInvitation( selfName, str, cb )
 				} else {
-					console.log(currTargetNames)
 					cb( '收到的名稱和目前的名稱一樣' )
 				}
 			}
