@@ -47,7 +47,7 @@ class Main
 		}, false);
 		
 		j( Browser.document ).ready( function() {
-			Facade.getInstance().registerMediator( new MainController( '', j( '#container_cards' ) ) );
+			Facade.getInstance().registerMediator( new MainController( null, j( '#container_cards' ) ) );
 			Facade.getInstance().registerMediator( new SocketController( 'SocketController' ) );
 			
 			Facade.getInstance().registerMediator( new Model( 'model' ));
@@ -175,7 +175,6 @@ class Main
 				}
 				
 				slide( '正在等待對手...' );
-				
 				Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
 				CallJs.api_invite( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
 					if ( err != null )	alert( err );

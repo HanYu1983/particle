@@ -41,13 +41,16 @@ class SocketController extends Mediator
 	
 	override public function listNotificationInterests():Array<String> 
 	{
-		return [ setOpponents, sendMessage, createPlayerSocket ];
+		return [ 	setOpponents, 
+					sendMessage, 
+					do_startHeartbeat,
+					createPlayerSocket ];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
-			case str if ( str == do_startHeartbeat ):
+			case str if( str == do_startHeartbeat ):
 				startHeartbeat();
 			case str if( str == sendMessage ):
 				var type = notification.getBody().type;

@@ -118,7 +118,7 @@ var Main = function() {
 		e.preventDefault();
 	},false);
 	Main.j(window.document).ready(function() {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController("",Main.j("#container_cards")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_MainController(null,Main.j("#container_cards")));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new per_vic_pureMVCref_tableGameModel_controller_SocketController("SocketController"));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_Model("model"));
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new mediator_UI("UI",Main.j(".easyui-layout")));
@@ -2046,7 +2046,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.__name__ = true;
 per_vic_pureMVCref_tableGameModel_controller_SocketController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket];
+		return [per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat,per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
