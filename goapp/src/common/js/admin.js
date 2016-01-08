@@ -2,7 +2,7 @@ var admin = admin || {};
 
 (function(module){
 	
-	var version = '1.04';
+	var version = '1.05';
 	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
 	
