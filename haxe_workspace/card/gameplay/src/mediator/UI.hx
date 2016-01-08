@@ -111,6 +111,10 @@ class UI extends Mediator
 			dia_invite.dialog( 'open' );
 			dia_invite.attr( 'ops', ops );
 			dia_invite.find( '#txt_from' ).html( ops.split(',')[0] );
+			var targetAry = ops.split(',');
+			targetAry.shift();
+			targetAry.unshift( '你' );
+			dia_invite.find( '#txt_output' ).html( targetAry.join(',') );
 			dia_invite.find( '#btn_receive' ).click( function() {
 				var opsstr:String = dia_invite.attr( 'ops' );
 				sendNotification( MainController.on_been_invite, { inviteId:opsstr } );

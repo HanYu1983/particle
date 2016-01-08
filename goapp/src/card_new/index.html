@@ -207,7 +207,7 @@ body{
 		<div class="ghost-select"><span></span></div>
 	</div>
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
-	<div id="mc_light" style="position:fixed; left:5px; bottom:5px; "></div>
+	<div id="mc_light" style="position:fixed; top:5px; right:385px;"></div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
         <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:500px;" >
@@ -354,12 +354,13 @@ body{
 		<div id="dia_alert" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 			此網址僅供私下交流用，請勿公開分享!
 		</div>
-		<div id="dia_invite" class="easyui-dialog" title="邀戰通知" data-options="iconCls:'icon-help',closed:true" style="width:300px; height:150px; padding:10px">
+		<div id="dia_invite" class="easyui-dialog" title="邀戰通知" data-options="iconCls:'icon-help',closed:true" style="width:300px; padding:10px">
 			<div class="group" style="text-align:center;">
 				<div id="txt_from" style="color:yellow;"></div>
-				<div style="font-size:20px; ">邀戰!!</div>
+				<div >要求連線對戰！要求對象：</div>
+				<div id="txt_output" style="color:yellow; font-size:20px; "></div>
 				<br/>
-				<a id="btn_receive" href="#" class="easyui-linkbutton" style="width:100px; height:40px; " data-options="iconCls:'icon-ok', disabled:false">接受邀請</a>
+				<a id="btn_receive" href="#" class="easyui-linkbutton" style="width:60px; height:40px; " data-options="iconCls:'icon-ok', disabled:false">連線</a>
 			</div>
 		</div>
     </div>

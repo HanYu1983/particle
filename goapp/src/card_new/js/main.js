@@ -878,6 +878,10 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			this.dia_invite.dialog("open");
 			this.dia_invite.attr("ops",ops);
 			this.dia_invite.find("#txt_from").html(ops.split(",")[0]);
+			var targetAry = ops.split(",");
+			targetAry.shift();
+			targetAry.unshift("你");
+			this.dia_invite.find("#txt_output").html(targetAry.join(","));
 			this.dia_invite.find("#btn_receive").click(function() {
 				var opsstr = _g.dia_invite.attr("ops");
 				_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,{ inviteId : opsstr});
