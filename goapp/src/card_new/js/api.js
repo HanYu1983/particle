@@ -379,6 +379,9 @@ var api = api || {};
 	
 	function handleMessage( obj ){
 		switch( obj.type ){
+		case 'invite':
+			receiveInvite( obj )
+			return true
 		case 'heartbeat':
 			replyHeartbeat( obj, function( err ){
 				if( err ){
@@ -445,41 +448,85 @@ var api = api || {};
 	}
 	
 	/**
-	開始心跳測試
+	開始心跳測試, 再呼叫一次可以取消之前的心跳測試
 	selfName: string
 	targetName: string
 	cb: function( success ){
 		success: bool 是否有心跳
 	}
 	*/
+	
+	var hbtid = null
 	function startHeartbeat( selfName, targetName, cb ){
+		stopHeartbeat()
 		sendHeartbeat( selfName, targetName, heartbeatTimeout, function( success ){
 			cb( success )
-			setTimeout( function(){
+			hbtid = setTimeout( function(){
 				startHeartbeat( selfName, targetName, cb )
 			}, heartbeatDuration)
 		})
 	} 
+	
+	function stopHeartbeat(){
+		if( hbtid != null ){
+			clearTimeout(hbtid)
+			hbtid = null
+		}
+	}
+	 
+	function invite( selfName, targetNames, cb ){
+		var obj = {
+			type: 'invite',
+			msg: {
+				from: selfName,
+				to: targetNames
+			}
+		}
+		for( var i in targetNames ){
+			var uid = targetNames[i]
+			channel.sendChannelMessage( uid, JSON.stringify(obj), cb )
+		}
+	}
+	
+	function receiveInvite( obj ){
+		if( invitationCb != null ){
+			return
+		}
+		var from = obj.msg.form
+		var targetNames = obj.msg.to
+		targetNames.push(form)
+		invitationCb( targetNames )
+	}
+	
+	var invitationCb = null
+	
+	function startReceiveInvitation( selfName, currTargetNames, cb ){
+		if( invitationCb != null ){
+			invitationCb = null
+		}
+		invitationCb = (function( selfName, currTargetNames ){
+			return function( recevieNames ){
+				var ret = []
+				for( var i in recevieNames ){
+					if( recevieNames[i] != selfName ){
+						ret.push( recevieNames[i] )
+					}
+				}
+				var str = ret.join(",")
+				if( str != currTargetNames ){
+					cb( null, str )
+				} else {
+					cb( '收到的名稱和目前的名稱一樣' )
+				}
+			}
+		}) ( selfName, currTargetNames )
+	}
 	
 	function sendMessageToSomeone( toId, type, msg ){
 		var jsonstr = JSON.stringify( {
 			type:type, 
 			msg:JSON.parse( JSON.stringify( msg ))
 		});
-		
-		//針對要encodeURIComponent的地方做，這個方法ok
-		/*
-		console.log( '{ type:"../common/images/createTable/yh/yh_03.jpg" }'.length );
-		jsonstr = JSON.stringify( {
-			type: encodeURIComponent( "../common/images/createTable/yh/yh_03.jpg" )
-		});
-		console.log( jsonstr.length );
-		*/
-		
-		/*
-		var compressstr = LZString.compress( encodeURLstr );
-		*/
-		
 		channel.sendChannelMessage( toId, jsonstr, handleResponse( function( ret ) {
 			
 		} ));
@@ -511,6 +558,8 @@ var api = api || {};
 	module.getCardSuit = getCardSuit
 	module.createChannel = createChannel
 	module.startHeartbeat = startHeartbeat
+	module.stopHeartbeat = stopHeartbeat
+	module.startReceiveInvitation = startReceiveInvitation
 	module.getCardImageWithPackageName = getCardImageWithPackageName
 	module.sendMessageToSomeone = sendMessageToSomeone
 	

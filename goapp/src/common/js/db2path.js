@@ -11,10 +11,8 @@ var db2path = db2path || {};
 	}
 	
 	var cardSuitJson = "root/user/{0}/cardSuit.json"
-	var userInfoJson = "root/user/{0}/userInfo.json"
 	
 	module.sf = sf
 	module.cardSuitJson = cardSuitJson
-	module.userInfoJson = userInfoJson
 	
 }) (db2path)
