@@ -22,8 +22,18 @@ Helper.trackingEvent = function(msg) {
 Helper.trackingClick = function(msg) {
 	googleTracking.click(msg);
 };
-Helper.getTrackingCount = function(event,cb) {
-	api.data(event,cb);
+Helper.getTrackingCount = function(cb) {
+	api.getAnalysticsData(cb);
+};
+Helper.authGoogle = function(useImmdiate,cb) {
+	api.authGoogle(useImmdiate,cb);
+};
+Helper.authGoogleAndGetData = function(useImmdiate,cb) {
+	Helper.authGoogle(useImmdiate,function(err,data) {
+		if(err == null) Helper.getTrackingCount(function(_err,_data) {
+			cb(_err,_data);
+		}); else cb(err,null);
+	});
 };
 Helper.getMeta = function() {
 	return admin.getMeta();
@@ -217,11 +227,17 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	var initApp = function(event) {
 		Helper.initFb(function() {
-			Helper.getTrackingCount(event,function(err,data) {
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : data});
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+			Helper.authGoogleAndGetData(true,function(err,data) {
+				if(err == null) {
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_auth,{ show : false});
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : data});
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+				} else {
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+				}
 			});
 		});
 	};
@@ -473,7 +489,7 @@ model_ModelController.__name__ = true;
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,model_ModelController.do_load_all_list,model_ModelController.do_save_count];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,view_ViewController.on_btn_seeCount_click,model_ModelController.do_load_all_list,model_ModelController.do_save_count];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -481,6 +497,16 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		var str = _g;
 		var str1 = _g;
 		switch(_g) {
+		case "on_btn_seeCount_click":
+			Helper.authGoogleAndGetData(false,function(err,data) {
+				if(err == null) {
+					_g1.doSaveCount(data);
+					_g1.pushCountToData();
+					_g1.doLoadList();
+					_g1.sendNotification(view_ViewController.do_show_auth,{ show : false});
+				} else _g1.sendNotification(view_ViewController.do_show_alert,{ alert : err});
+			});
+			break;
 		case "on_btn_share_deck_click":
 			var uid = notification.getBody().deckuid;
 			var shareobj = this.findDataById(this.ary_result,uid);
@@ -561,8 +587,11 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.sendShowBigList(clickData);
 			break;
 		default:
-			if(str == model_ModelController.do_save_count) this.countMap = notification.getBody().countMap; else if(str1 == model_ModelController.do_load_all_list) this.doLoadList();
+			if(str == model_ModelController.do_save_count) this.doSaveCount(notification.getBody().countMap); else if(str1 == model_ModelController.do_load_all_list) this.doLoadList();
 		}
+	}
+	,doSaveCount: function(map) {
+		this.countMap = map;
 	}
 	,doLoadList: function() {
 		var _g = this;
@@ -699,6 +728,15 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			return item;
 		});
 		this.ary_result = this.data;
+	}
+	,pushCountToData: function() {
+		var _g = this;
+		Lambda.foreach(this.data,function(item) {
+			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
+			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
+			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
+			return true;
+		});
 	}
 });
 var org_puremvc_haxe_interfaces_IController = function() { };
@@ -1086,7 +1124,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		_g1.sendNotification(view_ViewController.on_btn_gotoDeckManager_click);
 	});
 	this.btn_seeCount.click(function() {
-		console.log("G");
+		_g1.sendNotification(view_ViewController.on_btn_seeCount_click);
 	});
 	this.btn_output.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_output_click);
@@ -1111,7 +1149,7 @@ view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_show_alert,view_ViewController.do_enable_login,model_ModelController.on_loadPublic_error,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success];
+		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_show_alert,view_ViewController.do_enable_login,view_ViewController.do_show_auth,model_ModelController.on_loadPublic_error,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -1122,6 +1160,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		var str4 = _g;
 		var str5 = _g;
 		var str6 = _g;
+		var str7 = _g;
 		switch(_g) {
 		case "on_loadPublic_error":
 			this.alert(notification.getBody().err);
@@ -1140,20 +1179,20 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			this.showMessage("登入成功");
 			break;
 		default:
-			if(str == view_ViewController.do_show_alert) this.alert(notification.getBody().alert); else if(str1 == view_ViewController.do_enable_login) this.enableLogin(notification.getBody().enable); else if(str2 == view_ViewController.do_show_output) {
+			if(str == view_ViewController.do_show_alert) this.alert(notification.getBody().alert); else if(str1 == view_ViewController.do_show_auth) this.showAuth(notification.getBody().show); else if(str2 == view_ViewController.do_enable_login) this.enableLogin(notification.getBody().enable); else if(str3 == view_ViewController.do_show_output) {
 				if(notification.getBody().str == null) this.alert("請選擇套牌哦!"); else {
 					Helper.trackingEvent("on_item_output:" + Std.string(notification.getBody().uid));
 					this.setOutput(notification.getBody().str);
 				}
-			} else if(str3 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str4 == view_ViewController.do_show_bigList) {
+			} else if(str4 == view_ViewController.do_show_loading) this.showLoading(notification.getBody().show); else if(str5 == view_ViewController.do_show_bigList) {
 				this.clickData = notification.getBody().clickData;
 				this.openFBComment(this.clickData.uid);
 				this.showBigList(this.clickData.uid,notification.getBody().game,notification.getBody().ary_showData);
 				this.showDetail(notification.getBody().clickData);
-			} else if(str5 == view_ViewController.do_show_list) {
+			} else if(str6 == view_ViewController.do_show_list) {
 				this.setPagPage(notification.getBody().total);
 				this.showList(notification.getBody().data);
-			} else if(str6 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
+			} else if(str7 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
 	}
 	,openFBComment: function(uid) {
@@ -1162,6 +1201,9 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	}
 	,onCloseDetailForm: function(e) {
 		this.dia_saveForm.find("#btn_confirm").off("click");
+	}
+	,showAuth: function(show) {
+		if(show) this.btn_seeCount.show(); else this.btn_seeCount.hide();
 	}
 	,showDetailForm: function(show,dom,name) {
 		var _g = this;
@@ -1406,12 +1448,14 @@ view_ViewController.do_show_loading = "do_show_loading";
 view_ViewController.do_show_output = "do_show_output";
 view_ViewController.do_show_alert = "do_show_alert";
 view_ViewController.do_enable_login = "do_enable_login";
+view_ViewController.do_show_auth = "do_show_auth";
 view_ViewController.on_item_click = "on_item_click";
 view_ViewController.on_item_over = "on_item_over";
 view_ViewController.on_item_out = "on_item_out";
 view_ViewController.on_input_search_change = "on_input_search_change";
 view_ViewController.on_pag_page_change = "on_pag_page_change";
 view_ViewController.on_btn_output_click = "on_btn_output_click";
+view_ViewController.on_btn_seeCount_click = "on_btn_seeCount_click";
 view_ViewController.on_btn_self_click = "on_btn_self_click";
 view_ViewController.on_btn_login_click = "on_btn_login_click";
 view_ViewController.on_btn_gotoGroup_click = "on_btn_gotoGroup_click";

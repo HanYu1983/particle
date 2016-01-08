@@ -33,11 +33,18 @@ class Main
 				Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:false } );
 				Facade.getInstance().sendNotification( ViewController.do_enable_login, { enable:true } );
 				#else
-				Helper.getTrackingCount( event, function( err, data ) {
-					Facade.getInstance().sendNotification( ModelController.do_save_count, { countMap: data} );
-					Facade.getInstance().sendNotification( ModelController.do_load_all_list );
-					Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:false } );
-					Facade.getInstance().sendNotification( ViewController.do_enable_login, { enable:true } );
+				Helper.authGoogleAndGetData( true, function( err, data ) {
+					//err1: immediate_failed
+					if ( err == null ) {
+						Facade.getInstance().sendNotification( ViewController.do_show_auth, {show:false} );
+						Facade.getInstance().sendNotification( ModelController.do_save_count, { countMap: data} );
+						Facade.getInstance().sendNotification( ModelController.do_load_all_list );
+						Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:false } );
+						Facade.getInstance().sendNotification( ViewController.do_enable_login, { enable:true } );
+					}else {
+						Facade.getInstance().sendNotification( ModelController.do_load_all_list );
+						Facade.getInstance().sendNotification( ViewController.do_enable_login, { enable:true } );
+					}
 				});
 				#end
 			});

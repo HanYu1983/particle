@@ -44,8 +44,24 @@ class Helper
 		untyped __js__( 'googleTracking.click' )( msg );
 	}
 	
-	public static function getTrackingCount( event, cb ) {
-		untyped __js__('api.data')( event, cb );
+	public static function getTrackingCount( cb ) {
+		untyped __js__('api.getAnalysticsData')( cb );
+	}
+	
+	public static function authGoogle( useImmdiate, cb ) {
+		untyped __js__('api.authGoogle')( useImmdiate, cb );
+	}
+	
+	public static function authGoogleAndGetData( useImmdiate, cb ) {
+		authGoogle( useImmdiate, function( err, data ) {
+			if ( err == null ) {
+				getTrackingCount( function( _err, _data ) {
+					cb( _err, _data );
+				});
+			}else {
+				cb( err, null );
+			}
+		});
 	}
 	
 	public static function getMeta():Dynamic {
