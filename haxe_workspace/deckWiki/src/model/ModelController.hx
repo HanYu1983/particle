@@ -54,6 +54,7 @@ class ModelController extends Mediator
 			ViewController.on_btn_addDeck_click,
 			ViewController.on_btn_saveDeck_click,
 			ViewController.on_btn_share_deck_click,
+			ViewController.on_btn_seeCount_click,
 			do_load_all_list,
 			do_save_count
 		];
@@ -62,6 +63,17 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_btn_seeCount_click:
+				Helper.authGoogleAndGetData( false, function( err, data ) {
+					if ( err == null ) {
+						doSaveCount( data );
+						pushCountToData();
+						doLoadList();
+						sendNotification( ViewController.do_show_auth, { show:false } );
+					}else {
+						sendNotification( ViewController.do_show_alert, { alert:err } );
+					}
+				});
 			case ViewController.on_btn_share_deck_click:
 				var uid = notification.getBody().deckuid;
 				var shareobj = findDataById( ary_result, uid );
@@ -138,10 +150,15 @@ class ModelController extends Mediator
 				currentOutputStr = Json.stringify( cards );
 				sendShowBigList( clickData );
 			case str if ( str == do_save_count ):
-				this.countMap = notification.getBody().countMap;
+				doSaveCount( notification.getBody().countMap );
 			case str if ( str == do_load_all_list ):
 				doLoadList();
 		}
+	}
+	
+	
+	function doSaveCount( map ) {
+		this.countMap = map;
 	}
 	
 	function doLoadList() {
@@ -283,5 +300,14 @@ class ModelController extends Mediator
 		});
 		
 		ary_result = data;
+	}
+	
+	function pushCountToData() {
+		data.foreach( function( item ) {
+			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
+			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
+			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );
+			return true;
+		});
 	}
 }
