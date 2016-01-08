@@ -16,7 +16,8 @@ var db2 = db2 || {};
 				} else {
 					switch( dataType ){
 						case 'json':
-							cb( null, JSON.parse( ret ) )
+							var ret = JSON.parse( ret )
+							cb( ret.Error, ret )
 							break
 						default:
 							cb( null, ret )

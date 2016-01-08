@@ -233,7 +233,7 @@ var cardSuit = cardSuit || {};
 		if( err == "file not found" ){
 			cb( null, defaultModel() )
 		} else {
-			cb( null, ret)
+			cb( err, ret)
 		}
       })
   }

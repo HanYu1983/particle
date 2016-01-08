@@ -8,7 +8,7 @@ function $extend(from, fields) {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("425311264344425",cb);
+	myapp.facebook.init("679171275511375",cb);
 };
 Helper.shareFb = function(name,link,picture,caption,description,cb) {
 	myapp.facebook.postMessageToMyboard({ name : name, link : link, picture : picture, caption : caption, description : description, callback : cb});
