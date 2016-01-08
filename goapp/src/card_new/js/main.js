@@ -139,17 +139,15 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.selectOps = function(ops) {
+	console.log(ops);
 	try {
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds = ops.split(",");
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds);
 		Main.otherPlayerId = ops;
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
-		if( js_Boot.__instanceof(e,String) ) {
-			Main.otherPlayerId = ops;
-		} else throw(e);
+		Main.alert("對手欄位格式錯誤! 請檢查!");
 	}
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds);
-	Main.j("#btn_connect").linkbutton("enable");
 };
 Main.saveOpponentToCookie = function(otherPlayerId) {
 	if(HxOverrides.indexOf(Main.ary_ops,otherPlayerId,0) == -1) {
@@ -238,7 +236,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -251,14 +249,21 @@ Main.prototype = {
 	onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
-		case "onBtnStartServer":
+		case "onBtnInviteServer":
 			if(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId == "smart" || Main.otherPlayerId == "") {
-				Main.slide("請先登入並且輸入對手的id");
+				Main.slide("請先登入fb或者創建臨時id且並且填入對手");
 				return;
 			}
 			Main.slide("正在等待對手...");
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "invite", msg : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId + "," + Main.otherPlayerId});
+			break;
+		case "onBtnStartServer":
+			if(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId == "smart") {
+				Main.slide("請先登入fb或者創建臨時id");
+				return;
+			}
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId);
-			Main.saveOpponentToCookie(Main.otherPlayerId);
 			break;
 		case "onBtnNotLoginClick":
 			Main.j("#txt_id").textbox("setValue",Main.getId());
@@ -444,9 +449,6 @@ Main.prototype = {
 			Main.j("#btn_ws").linkbutton("select");
 			break;
 		}
-	}
-	,checkCanCreate: function() {
-		return per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId != "" && Main.otherPlayerId != "";
 	}
 	,chooseCardSuit: function(suitName) {
 		Main.cardSuit = Reflect.field(Main.cardSuits,suitName);
@@ -808,7 +810,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		Main.selectOps(nv);
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv1,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv1;
 	}});
 };
@@ -816,7 +818,7 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -826,6 +828,9 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "on_socket_error":
 			this.onSocketError();
+			break;
+		case "on_been_invite":
+			this.combo_ops.combobox("setValue",notification.getBody().inviteId);
 			break;
 		case "on_dice":
 			Main.showDiceMessage(notification.getBody().playerId,notification.getBody().dice);
@@ -1471,6 +1476,11 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		default:
 			var _g11 = notification.getType();
 			switch(_g11) {
+			case "invite":
+				var inviteId = notification.getBody();
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,{ inviteId : inviteId});
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
+				break;
 			case "dice":
 				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,notification.getBody());
 				break;
@@ -2012,16 +2022,38 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		var str = _g;
-		if(str == per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage) {
-			var type = notification.getBody().type;
-			var msg = notification.getBody().msg;
-			this.messageSocket(type,msg);
-		} else {
+		if(str == per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat) this.startHeartbeat(); else {
 			var str1 = _g;
-			if(str1 == per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents) this.ary_ops = notification.getBody().slice(); else {
+			if(str1 == per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage) {
+				var type = notification.getBody().type;
+				var msg = notification.getBody().msg;
+				this.messageSocket(type,msg);
+			} else {
 				var str2 = _g;
-				if(str2 == per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket) this.createSocket(notification.getBody());
+				if(str2 == per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents) this.ary_ops = notification.getBody().slice(); else {
+					var str3 = _g;
+					if(str3 == per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket) this.createSocket(notification.getBody());
+				}
 			}
+		}
+	}
+	,startHeartbeat: function() {
+		var _g2 = this;
+		var _g1 = 0;
+		var _g = per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var fn = (function(_i) {
+				return function(conn) {
+					per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIdsForCheck[_i] = conn;
+					per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = Lambda.fold(per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIdsForCheck,function(curr,first) {
+						return first && curr;
+					},true);
+					if(per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect) _g2.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete);
+					_g2.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,{ conn : per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect});
+				};
+			})(i);
+			CallJs.api_startHeartbeat(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds[i],fn);
 		}
 	}
 	,createSocket: function(id) {
@@ -2034,22 +2066,6 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 		api.createChannel(id,{ onopen : function() {
 			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = true;
 			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success);
-			var _g2 = 0;
-			var _g1 = per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds.length;
-			while(_g2 < _g1) {
-				var i = _g2++;
-				var fn = (function(_i) {
-					return function(conn) {
-						per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIdsForCheck[_i] = conn;
-						per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect = Lambda.fold(per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIdsForCheck,function(curr,first) {
-							return first && curr;
-						},true);
-						if(per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect) _g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete);
-						_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,{ conn : per_vic_pureMVCref_tableGameModel_controller_SocketController.isConntect});
-					};
-				})(i);
-				CallJs.api_startHeartbeat(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds[i],fn);
-			}
 		}, onmessage : function(json) {
 			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
 		}, onerror : onSocketError, onclose : onSocketError});
@@ -2064,7 +2080,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
+			if(err != null) js_Browser.alert(err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2330,12 +2346,14 @@ mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 per_vic_pureMVCref_tableGameModel_Tool.j = $;
 per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "create_item";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
+per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite = "on_been_invite";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_press = "on_press";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice = "on_dice";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents = "setOpponents";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage = "sendMessage";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket = "createPlayerSocket";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat = "do_startHeartbeat";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete = "on_searchComplete";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event = "on_heartbeat_event";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "smart";
@@ -2349,3 +2367,5 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=main.js.map

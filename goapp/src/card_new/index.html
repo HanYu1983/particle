@@ -5,7 +5,7 @@
 	<title>卡牌風雲</title>
 	<!--page information for search engine-->
 	<meta name="title" content="卡牌風雲" />
-	<meta name="keyword" content="卡牌風雲,三國志大戰,集換式卡牌,線上卡牌,虛擬桌面" />
+	<meta name="keyword" content="卡牌風雲,集換式卡牌,線上卡牌,虛擬桌面" />
 	<meta name="description" content="卡牌風雲" />
 	<link rel="image_src" href=""/>
 	
@@ -221,13 +221,25 @@ body{
 			</div>
 			<div class="group" style="text-align:center; margin-bottom:30px;">
 				<div>玩家:</div>
-				<input id="txt_id" class="easyui-textbox" style="width:153px;" />
+				<div>
+					<div class="hori">
+						<input id="txt_id" class="easyui-textbox" style="width:153px;" />
+					</div>
+					<div class="hori">
+						<a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="disabled:false">連線</a>
+					</div>
+				</div>
 				<div>對手:</div>
-				<select id="combo_ops" name="dept" style="width:150px;">
-				</select>
+				<div>
+					<div class="hori">
+						<select id="combo_ops" name="dept" style="width:150px;"></select>
+					</div>
+					<div class="hori">
+						<a id="btn_invite" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnInviteServer')"  data-options="disabled:false">邀戰</a>
+					</div>
+				</div>
 				<div style="margin-top:10px;">
 					<div id="mc_light" class="hori"></div>
-					<div class="hori"><a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="iconCls:'icon-add',disabled:false">開始連線</a></div>
 				</div>
 			</div>
 			<div class="group" style="text-align:center; margin-bottom:30px;">

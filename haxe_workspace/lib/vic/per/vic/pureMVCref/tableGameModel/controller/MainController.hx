@@ -23,6 +23,7 @@ class MainController extends Mediator
 {
 	public static var create_item = 'create_item';
 	public static var on_receiveMessage = 'on_receiveMessage';
+	public static var on_been_invite = 'on_been_invite';
 	
 	public static var on_select_cards = 'on_select_cards';
 	public static var on_press = 'on_press';
@@ -79,6 +80,12 @@ class MainController extends Mediator
 				sendNotification( SocketController.sendMessage, { type:'addItems', msg: ary_creates } );
 			case on_receiveMessage:
 				switch( notification.getType() ) {
+					case 'invite':
+						var inviteId = notification.getBody();
+						//SocketController.otherPlayerIds = inviteId.split( ',' );
+						
+						sendNotification( on_been_invite, { inviteId:inviteId } );
+						sendNotification( SocketController.do_startHeartbeat );
 					case 'dice':
 						sendNotification( on_dice, notification.getBody() );
 					case 'addItems':

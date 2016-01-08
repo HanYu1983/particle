@@ -77,15 +77,15 @@ class Main
 	
 	
 	public static function selectOps( ops:String ) {
+		trace( ops );
 		try{
 			SocketController.otherPlayerIds = ops.split(',');
+			Facade.getInstance().sendNotification( SocketController.setOpponents, SocketController.otherPlayerIds );
+//			j( '#btn_connect' ).linkbutton( 'enable' );
 			otherPlayerId = ops;
-		}catch ( e:String ) {
-			otherPlayerId = ops;
+		}catch ( e:Dynamic ) {
+			alert( '對手欄位格式錯誤! 請檢查!' );
 		}
-		
-		Facade.getInstance().sendNotification( SocketController.setOpponents, SocketController.otherPlayerIds );
-		j( '#btn_connect' ).linkbutton( 'enable' );
 	}
 	
 	
@@ -155,15 +155,31 @@ class Main
 	function onHtmlClick( type, ?params ) {
 		
 		switch( type ) {
+			case 'onBtnInviteServer':
+				if ( SocketController.playerId == 'smart' || otherPlayerId == '' ) {
+					slide( '請先登入fb或者創建臨時id且並且填入對手' );
+					return;
+				}
+				
+				slide( '正在等待對手...' );
+				
+				Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
+				Facade.getInstance().sendNotification( SocketController.sendMessage, {type:'invite', msg:SocketController.playerId + ',' + otherPlayerId } );
 			case 'onBtnStartServer':
+				/*
 				if ( SocketController.playerId == 'smart' || otherPlayerId == '' ) {
 					slide( '請先登入並且輸入對手的id' );
 					return;
 				}
 				
 				slide( '正在等待對手...' );
+				*/
+				if ( SocketController.playerId == 'smart' ) {
+					slide( '請先登入fb或者創建臨時id' );
+					return;
+				}
 				Facade.getInstance().sendNotification( SocketController.createPlayerSocket, SocketController.playerId );
-				saveOpponentToCookie( otherPlayerId );
+				//saveOpponentToCookie( otherPlayerId );
 			case 'onBtnNotLoginClick':
 				j( '#txt_id' ).textbox( 'setValue', getId() );
 			case 'onBtnLoginClick':
@@ -395,11 +411,11 @@ class Main
 			case 'ws':j( '#btn_ws' ).linkbutton( 'select' );
 		}
 	}
-	
+	/*
 	function checkCanCreate() {
 		return ( SocketController.playerId != '' && otherPlayerId != '' );
 	}
-	
+	*/
 	function chooseCardSuit( suitName ) {
 		cardSuit = Reflect.field( cardSuits, suitName ) ;
 		switch( cardSuit ) {

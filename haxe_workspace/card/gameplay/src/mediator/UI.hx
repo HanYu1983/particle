@@ -58,6 +58,7 @@ class UI extends Mediator
 		return [ 	
 					MainController.on_select_cards,
 					MainController.on_dice,
+					MainController.on_been_invite,
 					SocketController.on_socket_error,
 					SocketController.on_socket_success,
 					Main.on_getSuit_success,
@@ -75,6 +76,8 @@ class UI extends Mediator
 				onSocketSuccess();
 			case SocketController.on_socket_error:
 				onSocketError();
+			case MainController.on_been_invite:
+				combo_ops.combobox( 'setValue', notification.getBody().inviteId );
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
 			case Main.on_createDeck_click:
