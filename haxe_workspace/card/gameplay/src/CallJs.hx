@@ -8,6 +8,8 @@ package;
 						'getCookie',
 						'cardSuit.load2',
 						'cardSuit.defaultModel',
+						'api.invite',
+						'api.startReceiveInvitation',
 						'api.createUser',
 						'api.users',
 						'api.message',

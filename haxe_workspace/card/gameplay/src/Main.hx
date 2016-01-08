@@ -70,8 +70,9 @@ class Main
 			}else {
 				ary_ops = [];
 			}
+			
+			setReceiveInvitation();
 		});
-		
 		
 	}
 	
@@ -82,11 +83,18 @@ class Main
 			Facade.getInstance().sendNotification( SocketController.setOpponents, SocketController.otherPlayerIds );
 //			j( '#btn_connect' ).linkbutton( 'enable' );
 			otherPlayerId = ops;
+			setReceiveInvitation();
 		}catch ( e:Dynamic ) {
 			alert( '對手欄位格式錯誤! 請檢查!' );
 		}
 	}
 	
+	public static function setReceiveInvitation() {
+		CallJs.api_startReceiveInvitation( SocketController.playerId, SocketController.otherPlayerIds.join(','), function( err, data ) {
+			Facade.getInstance().sendNotification( MainController.on_been_invite, { inviteId:data } );
+			Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
+		});
+	}
 	
 	public static function saveOpponentToCookie( otherPlayerId ) {
 		if ( ary_ops.indexOf( otherPlayerId ) == -1 ) {
@@ -163,7 +171,10 @@ class Main
 				slide( '正在等待對手...' );
 				
 				Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
-				Facade.getInstance().sendNotification( SocketController.sendMessage, {type:'invite', msg:SocketController.playerId + ',' + otherPlayerId } );
+				CallJs.api_invite( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
+					trace( err, data );
+				});
+				//Facade.getInstance().sendNotification( SocketController.sendMessage, {type:'invite', msg:SocketController.playerId + ',' + otherPlayerId } );
 			case 'onBtnStartServer':
 				/*
 				if ( SocketController.playerId == 'smart' || otherPlayerId == '' ) {

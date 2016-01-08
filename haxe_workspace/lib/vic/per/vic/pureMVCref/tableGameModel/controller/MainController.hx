@@ -81,11 +81,13 @@ class MainController extends Mediator
 			case on_receiveMessage:
 				switch( notification.getType() ) {
 					case 'invite':
+						/*
 						var inviteId = notification.getBody();
 						//SocketController.otherPlayerIds = inviteId.split( ',' );
 						
 						sendNotification( on_been_invite, { inviteId:inviteId } );
 						sendNotification( SocketController.do_startHeartbeat );
+						*/
 					case 'dice':
 						sendNotification( on_dice, notification.getBody() );
 					case 'addItems':

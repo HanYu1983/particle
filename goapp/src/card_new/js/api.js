@@ -378,6 +378,7 @@ var api = api || {};
 	}
 	
 	function handleMessage( obj ){
+		console.log('handleMessage', obj)
 		switch( obj.type ){
 		case 'invite':
 			receiveInvite( obj )
@@ -475,6 +476,7 @@ var api = api || {};
 	}
 	 
 	function invite( selfName, targetNames, cb ){
+		console.log( selfName, targetNames );
 		var obj = {
 			type: 'invite',
 			msg: {
@@ -489,13 +491,12 @@ var api = api || {};
 	}
 	
 	function receiveInvite( obj ){
-		if( invitationCb != null ){
+		if( invitationCb == null ){
 			return
 		}
-		var from = obj.msg.form
+		var from = obj.msg.from
 		var targetNames = obj.msg.to
-		targetNames.push(form)
-		invitationCb( targetNames )
+		invitationCb( [from].concat(targetNames) )
 	}
 	
 	var invitationCb = null
@@ -506,16 +507,23 @@ var api = api || {};
 		}
 		invitationCb = (function( selfName, currTargetNames ){
 			return function( recevieNames ){
+				console.log("recevieNames:", recevieNames)
+				
 				var ret = []
 				for( var i in recevieNames ){
 					if( recevieNames[i] != selfName ){
 						ret.push( recevieNames[i] )
 					}
 				}
+				console.log("ret:", ret)
 				var str = ret.join(",")
+				console.log("str:", str)
 				if( str != currTargetNames ){
+					console.log("***:", str)
 					cb( null, str )
+					startReceiveInvitation( selfName, str, cb )
 				} else {
+					console.log(currTargetNames)
 					cb( '收到的名稱和目前的名稱一樣' )
 				}
 			}
@@ -562,5 +570,6 @@ var api = api || {};
 	module.startReceiveInvitation = startReceiveInvitation
 	module.getCardImageWithPackageName = getCardImageWithPackageName
 	module.sendMessageToSomeone = sendMessageToSomeone
+	module.invite = invite
 	
 }) (api)
