@@ -82,7 +82,8 @@ class Main
 	}
 	
 	public static function selectOps( ops:String ) {
-		try{
+		try {
+		trace( ops );	
 			SocketController.otherPlayerIds = ops.split(',');
 			Facade.getInstance().sendNotification( SocketController.setOpponents, SocketController.otherPlayerIds );
 //			j( '#btn_connect' ).linkbutton( 'enable' );
@@ -95,8 +96,14 @@ class Main
 	
 	public static function setReceiveInvitation() {
 		CallJs.api_startReceiveInvitation( SocketController.playerId, SocketController.otherPlayerIds.join(','), function( err, data ) {
-			
-			Facade.getInstance().sendNotification( UI.do_show_recevie, {show:true, ops: data } );
+			if ( err == '收到的名稱和目前的名稱一樣' ) {
+				//ignore
+				return;
+			} else if ( err != null ) {
+				trace(err);
+			} else {
+				Facade.getInstance().sendNotification( UI.do_show_recevie, {show:true, ops: data } );
+			}
 			//Facade.getInstance().sendNotification( MainController.on_been_invite, { inviteId:data } );
 			//Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
 		});

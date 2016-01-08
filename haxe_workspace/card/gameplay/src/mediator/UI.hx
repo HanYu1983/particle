@@ -38,6 +38,12 @@ class UI extends Mediator
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		mc_light = Main.j( '#mc_light' );
 		dia_invite = Main.j( '#dia_invite' );
+		dia_invite.find( '#btn_receive' ).click( function() {
+			var opsstr:String = dia_invite.attr( 'ops' );
+			sendNotification( MainController.on_been_invite, { inviteId:opsstr } );
+			sendNotification( SocketController.do_startHeartbeat );
+			showReceive( false );
+		});
 		
 		combo_ops.combobox( {
 			onChange:function( nv, ov ) {
@@ -107,6 +113,7 @@ class UI extends Mediator
 	}
 	
 	function showReceive( show:Bool, ?ops:String ) {
+		
 		if ( show ) {
 			dia_invite.dialog( 'open' );
 			dia_invite.attr( 'ops', ops );
@@ -115,15 +122,8 @@ class UI extends Mediator
 			targetAry.shift();
 			targetAry.unshift( '你' );
 			dia_invite.find( '#txt_output' ).html( targetAry.join(',') );
-			dia_invite.find( '#btn_receive' ).click( function() {
-				var opsstr:String = dia_invite.attr( 'ops' );
-				sendNotification( MainController.on_been_invite, { inviteId:opsstr } );
-				sendNotification( SocketController.do_startHeartbeat );
-				showReceive( false );
-			});
 		}else {
 			dia_invite.dialog( 'close' );
-			dia_invite.find( '#btn_receive' ).off( 'click' );
 		}
 	}
 	

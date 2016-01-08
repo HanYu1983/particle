@@ -378,7 +378,6 @@ var api = api || {};
 	}
 	
 	function handleMessage( obj ){
-		console.log('handleMessage', obj)
 		switch( obj.type ){
 		case 'invite':
 			receiveInvite( obj )
@@ -507,14 +506,11 @@ var api = api || {};
 		invitationCb = (function( selfName, currTargetNames ){
 			return function( fromName, recevieNames ){
 				var ret = [fromName]
-				console.log( selfName );
 				for( var i in recevieNames ){
-					console.log( recevieNames[i] );
 					if( recevieNames[i].indexOf( selfName ) != 0 ){
 						ret.push( recevieNames[i] )
 					}
 				}
-				console.log( ret );
 				var str = ret.join(",")
 				if( str != currTargetNames ){
 					cb( null, str )

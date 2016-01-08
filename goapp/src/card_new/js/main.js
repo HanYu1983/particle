@@ -144,6 +144,7 @@ Main.changePlayer = function(player) {
 };
 Main.selectOps = function(ops) {
 	try {
+		console.log(ops);
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds = ops.split(",");
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds);
 		Main.otherPlayerId = ops;
@@ -155,7 +156,7 @@ Main.selectOps = function(ops) {
 };
 Main.setReceiveInvitation = function() {
 	CallJs.api_startReceiveInvitation(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds.join(","),function(err,data) {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_UI.do_show_recevie,{ show : true, ops : data});
+		if(err == "收到的名稱和目前的名稱一樣") return; else if(err != null) console.log(err); else org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_UI.do_show_recevie,{ show : true, ops : data});
 	});
 };
 Main.saveOpponentToCookie = function(otherPlayerId) {
@@ -811,6 +812,7 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 	,__class__: org_puremvc_haxe_patterns_mediator_Mediator
 });
 var mediator_UI = function(mediatorName,viewComponent) {
+	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
@@ -818,6 +820,12 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.mc_light = Main.j("#mc_light");
 	this.dia_invite = Main.j("#dia_invite");
+	this.dia_invite.find("#btn_receive").click(function() {
+		var opsstr = _g.dia_invite.attr("ops");
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,{ inviteId : opsstr});
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
+		_g.showReceive(false);
+	});
 	this.combo_ops.combobox({ onChange : function(nv,ov) {
 		Main.selectOps(nv);
 	}});
@@ -873,7 +881,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		}
 	}
 	,showReceive: function(show,ops) {
-		var _g = this;
 		if(show) {
 			this.dia_invite.dialog("open");
 			this.dia_invite.attr("ops",ops);
@@ -882,16 +889,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			targetAry.shift();
 			targetAry.unshift("你");
 			this.dia_invite.find("#txt_output").html(targetAry.join(","));
-			this.dia_invite.find("#btn_receive").click(function() {
-				var opsstr = _g.dia_invite.attr("ops");
-				_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,{ inviteId : opsstr});
-				_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
-				_g.showReceive(false);
-			});
-		} else {
-			this.dia_invite.dialog("close");
-			this.dia_invite.find("#btn_receive").off("click");
-		}
+		} else this.dia_invite.dialog("close");
 	}
 	,showOnlineOffline: function(show) {
 		if(show) this.mc_light.css("background-color","green"); else this.mc_light.css("background-color","red");
