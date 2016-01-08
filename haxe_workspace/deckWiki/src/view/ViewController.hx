@@ -54,6 +54,7 @@ class ViewController extends Mediator
 	var btn_addDeck:Dynamic;
 	var btn_saveDeck:Dynamic;
 	var btn_search:Dynamic;
+	var btn_seeCount:Dynamic;
 	var input_search:Dynamic;
 	var input_searchName:Dynamic;
 	var input_searchDescribe:Dynamic;
@@ -79,6 +80,7 @@ class ViewController extends Mediator
 		btn_addDeck = viewComponent.find( '#btn_addDeck' );
 		btn_saveDeck = viewComponent.find( '#btn_saveDeck' );
 		btn_search = viewComponent.find( '#btn_search' );
+		btn_seeCount = viewComponent.find( '#btn_seeCount' );
 		dia_output = viewComponent.find( '#dia_output' );
 		mc_backContainer = viewComponent.find( '#mc_backContainer' );
 		mc_deckContainer = viewComponent.find( '#mc_deckContainer' );
@@ -155,6 +157,10 @@ class ViewController extends Mediator
 		});
 		dia_output.find( '#btn_gotoDeckManager' ).click( function() {
 			sendNotification( on_btn_gotoDeckManager_click );
+		});
+		
+		btn_seeCount.click( function() {
+			trace("G");
 		});
 		
 		btn_output.click( function() {

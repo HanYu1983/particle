@@ -1022,6 +1022,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_addDeck = viewComponent.find("#btn_addDeck");
 	this.btn_saveDeck = viewComponent.find("#btn_saveDeck");
 	this.btn_search = viewComponent.find("#btn_search");
+	this.btn_seeCount = viewComponent.find("#btn_seeCount");
 	this.dia_output = viewComponent.find("#dia_output");
 	this.mc_backContainer = viewComponent.find("#mc_backContainer");
 	this.mc_deckContainer = viewComponent.find("#mc_deckContainer");
@@ -1083,6 +1084,9 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	});
 	this.dia_output.find("#btn_gotoDeckManager").click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_gotoDeckManager_click);
+	});
+	this.btn_seeCount.click(function() {
+		console.log("G");
 	});
 	this.btn_output.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_output_click);
