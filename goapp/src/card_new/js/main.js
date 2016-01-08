@@ -139,7 +139,6 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.selectOps = function(ops) {
-	console.log(ops);
 	try {
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds = ops.split(",");
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds);

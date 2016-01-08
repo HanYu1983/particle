@@ -77,7 +77,6 @@ class Main
 	
 	
 	public static function selectOps( ops:String ) {
-		trace( ops );
 		try{
 			SocketController.otherPlayerIds = ops.split(',');
 			Facade.getInstance().sendNotification( SocketController.setOpponents, SocketController.otherPlayerIds );
