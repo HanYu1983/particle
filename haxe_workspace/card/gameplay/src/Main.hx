@@ -70,33 +70,30 @@ class Main
 			}else {
 				ary_ops = [];
 			}
-			
-			//setReceiveInvitation();
 		});
 		
 	}
 	
 	public static function changePlayer( player:String ) {
 		SocketController.playerId = player;
-		setReceiveInvitation();
 	}
 	
 	public static function selectOps( ops:String ) {
 		try {
-		trace( ops );	
 			SocketController.otherPlayerIds = ops.split(',');
 			Facade.getInstance().sendNotification( SocketController.setOpponents, SocketController.otherPlayerIds );
 //			j( '#btn_connect' ).linkbutton( 'enable' );
 			otherPlayerId = ops;
-			setReceiveInvitation();
 		}catch ( e:Dynamic ) {
 			alert( '對手欄位格式錯誤! 請檢查!' );
 		}
 	}
 	
-	public static function setReceiveInvitation() {
-		CallJs.api_startReceiveInvitation( SocketController.playerId, SocketController.otherPlayerIds.join(','), function( err, data ) {
+	public static function setReceiveInvitation( otherIds ) {
+		//CallJs.api_startReceiveInvitation( SocketController.playerId, , function( err, data ) {
+		CallJs.api_startReceiveInvitation( SocketController.playerId, otherIds, function( err, data ) {
 			if ( err == '收到的名稱和目前的名稱一樣' ) {
+				slide( '已經互相連線成功!' );
 				//ignore
 				return;
 			} else if ( err != null ) {
@@ -181,8 +178,9 @@ class Main
 					return;
 				}
 				
-				slide( '正在等待對手...' );
+			//	slide( '正在等待對手...' );
 				Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
+				setReceiveInvitation( SocketController.otherPlayerIds.join(',') );
 				CallJs.api_invite( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
 					if ( err != null )	alert( err );
 				});
@@ -200,6 +198,7 @@ class Main
 					slide( '請先登入fb或者創建臨時id' );
 					return;
 				}
+				setReceiveInvitation('');
 				Facade.getInstance().sendNotification( SocketController.createPlayerSocket, SocketController.playerId );
 				//saveOpponentToCookie( otherPlayerId );
 			case 'onBtnNotLoginClick':

@@ -140,23 +140,23 @@ var Main = function() {
 Main.__name__ = true;
 Main.changePlayer = function(player) {
 	per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = player;
-	Main.setReceiveInvitation();
 };
 Main.selectOps = function(ops) {
 	try {
-		console.log(ops);
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds = ops.split(",");
 		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.setOpponents,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds);
 		Main.otherPlayerId = ops;
-		Main.setReceiveInvitation();
 	} catch( e ) {
 		if (e instanceof js__$Boot_HaxeError) e = e.val;
 		Main.alert("對手欄位格式錯誤! 請檢查!");
 	}
 };
-Main.setReceiveInvitation = function() {
-	CallJs.api_startReceiveInvitation(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds.join(","),function(err,data) {
-		if(err == "收到的名稱和目前的名稱一樣") return; else if(err != null) console.log(err); else org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_UI.do_show_recevie,{ show : true, ops : data});
+Main.setReceiveInvitation = function(otherIds) {
+	CallJs.api_startReceiveInvitation(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,otherIds,function(err,data) {
+		if(err == "收到的名稱和目前的名稱一樣") {
+			Main.slide("已經互相連線成功!");
+			return;
+		} else if(err != null) console.log(err); else org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(mediator_UI.do_show_recevie,{ show : true, ops : data});
 	});
 };
 Main.saveOpponentToCookie = function(otherPlayerId) {
@@ -264,8 +264,8 @@ Main.prototype = {
 				Main.slide("請先登入fb或者創建臨時id且並且填入對手");
 				return;
 			}
-			Main.slide("正在等待對手...");
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
+			Main.setReceiveInvitation(per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds.join(","));
 			CallJs.api_invite(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds,function(err,data) {
 				if(err != null) Main.alert(err);
 			});
@@ -275,6 +275,7 @@ Main.prototype = {
 				Main.slide("請先登入fb或者創建臨時id");
 				return;
 			}
+			Main.setReceiveInvitation("");
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket,per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId);
 			break;
 		case "onBtnNotLoginClick":
