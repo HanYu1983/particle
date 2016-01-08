@@ -36,7 +36,7 @@ class UI extends Mediator
 		
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
-		mc_light = getViewComponent().find( '#mc_light' );
+		mc_light = Main.j( '#mc_light' );
 		dia_invite = Main.j( '#dia_invite' );
 		
 		combo_ops.combobox( {

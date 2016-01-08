@@ -837,7 +837,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
-	this.mc_light = this.getViewComponent().find("#mc_light");
+	this.mc_light = Main.j("#mc_light");
 	this.dia_invite = Main.j("#dia_invite");
 	this.combo_ops.combobox({ onChange : function(nv,ov) {
 		Main.selectOps(nv);
