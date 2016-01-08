@@ -13,6 +13,7 @@ var admin = admin || {};
 		}
 	}
 	
+	// ============== 訊息通知 ================ //
 	function message(cb){
 		$.ajax({
 			url:'../fn/message',
@@ -57,6 +58,8 @@ var admin = admin || {};
 			}
 		})
 	}
+	
+	// ============== 熱門遊戲設定 ================ //
 	
 	var ary_hotGame = ['sgs', 'magic', 'gundamWar'];
 	function showHotGame( dom ){

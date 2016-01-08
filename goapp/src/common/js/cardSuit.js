@@ -224,7 +224,7 @@ var cardSuit = cardSuit || {};
   
   function load2( fbid, token, cb ){
 	var path = db2path.sf( db2path.cardSuitJson, [fbid] )
-    db2.file( path, ///'root/user/'+fbid+'/cardSuit.json', 
+    db2.file( path,
       {
         FBID: fbid,
         AccessToken: token
@@ -241,7 +241,7 @@ var cardSuit = cardSuit || {};
   
   function save2( fbid, token, data, cb ){
 	var path = db2path.sf( db2path.cardSuitJson, [fbid] )
-    db2.writefile( path, //'root/user/'+fbid+'/cardSuit.json', 
+    db2.writefile( path,
       {
         FBID: fbid,
         AccessToken: token,
