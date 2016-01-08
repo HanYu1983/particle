@@ -71,11 +71,15 @@ class Main
 				ary_ops = [];
 			}
 			
-			setReceiveInvitation();
+			//setReceiveInvitation();
 		});
 		
 	}
 	
+	public static function changePlayer( player:String ) {
+		SocketController.playerId = player;
+		setReceiveInvitation();
+	}
 	
 	public static function selectOps( ops:String ) {
 		try{

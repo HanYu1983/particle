@@ -53,7 +53,7 @@ class UI extends Mediator
 			editable:false,
 			#end
 			onChange:function( nv, od ) {
-				SocketController.playerId = nv;
+				Main.changePlayer( nv );
 			}
 		});
 	}
@@ -110,9 +110,10 @@ class UI extends Mediator
 		if ( show ) {
 			dia_invite.dialog( 'open' );
 			dia_invite.attr( 'ops', ops );
-			dia_invite.find( '#txt_from' ).html( ops );
+			dia_invite.find( '#txt_from' ).html( ops.split(',')[0] );
 			dia_invite.find( '#btn_receive' ).click( function() {
-				sendNotification( MainController.on_been_invite, { inviteId:dia_invite.attr( 'ops' ) } );
+				var opsstr:String = dia_invite.attr( 'ops' );
+				sendNotification( MainController.on_been_invite, { inviteId:opsstr } );
 				sendNotification( SocketController.do_startHeartbeat );
 				showReceive( false );
 			});

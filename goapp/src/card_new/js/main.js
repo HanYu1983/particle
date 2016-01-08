@@ -135,10 +135,13 @@ var Main = function() {
 			Main.ary_ops = JSON.parse(CallJs.getCookie("otherPlayerId"));
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_receiveOps,{ ary_ops : Main.ary_ops});
 		} else Main.ary_ops = [];
-		Main.setReceiveInvitation();
 	});
 };
 Main.__name__ = true;
+Main.changePlayer = function(player) {
+	per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = player;
+	Main.setReceiveInvitation();
+};
 Main.selectOps = function(ops) {
 	try {
 		per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds = ops.split(",");
@@ -263,7 +266,7 @@ Main.prototype = {
 			Main.slide("正在等待對手...");
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
 			CallJs.api_invite(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds,function(err,data) {
-				haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 177, className : "Main", methodName : "onHtmlClick", customParams : [data]});
+				haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 181, className : "Main", methodName : "onHtmlClick", customParams : [data]});
 			});
 			break;
 		case "onBtnStartServer":
@@ -844,7 +847,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	}});
 	Main.j("#btn_connect").linkbutton();
 	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
-		per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = nv1;
+		Main.changePlayer(nv1);
 	}});
 };
 mediator_UI.__name__ = true;
@@ -898,9 +901,10 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		if(show) {
 			this.dia_invite.dialog("open");
 			this.dia_invite.attr("ops",ops);
-			this.dia_invite.find("#txt_from").html(ops);
+			this.dia_invite.find("#txt_from").html(ops.split(",")[0]);
 			this.dia_invite.find("#btn_receive").click(function() {
-				_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,{ inviteId : _g.dia_invite.attr("ops")});
+				var opsstr = _g.dia_invite.attr("ops");
+				_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,{ inviteId : opsstr});
 				_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
 				_g.showReceive(false);
 			});
