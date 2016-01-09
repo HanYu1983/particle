@@ -208,7 +208,7 @@ class ModelController extends Mediator
 	
 	function doSetData( data:Array<Dynamic> ) {
 		oriDataToUseData( data );
-		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length} );
+		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length, pageNumber:1} );
 	}
 	
 	function filterByPage( from, ?page:Int = 0 ) {
