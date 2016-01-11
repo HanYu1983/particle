@@ -192,14 +192,18 @@ class ModelController extends Mediator
 		sendNotification( ViewController.do_show_loading, { show:true } );
 		Helper.loadDetail( game, function( data:Array<Dynamic> ) {
 			var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
+				var retobj:Dynamic = null;
 				switch( game ){
 					case 'sangoWar':
 						str = str.replace( '.jpg', '' );
+						retobj = data.find( function( oriData ) {
+							return ( oriData.id.indexOf( str ) != -1 );
+						});
 					default:
+						retobj = data.find( function( oriData ) {
+							return ( oriData.id == str );
+						});
 				}
-				var retobj:Dynamic = data.find( function( oriData ) {
-					return ( oriData.id == str );
-				});
 				return retobj;
 			});
 			ary_showData = ary_showData.filter( function( item ) {

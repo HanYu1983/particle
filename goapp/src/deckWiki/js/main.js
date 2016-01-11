@@ -620,15 +620,19 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		Helper.loadDetail(game,function(data) {
 			var ary_showData = cards.map(function(str) {
+				var retobj = null;
 				switch(game) {
 				case "sangoWar":
 					str = StringTools.replace(str,".jpg","");
+					retobj = Lambda.find(data,function(oriData) {
+						return oriData.id.indexOf(str) != -1;
+					});
 					break;
 				default:
+					retobj = Lambda.find(data,function(oriData1) {
+						return oriData1.id == str;
+					});
 				}
-				var retobj = Lambda.find(data,function(oriData) {
-					return oriData.id == str;
-				});
 				return retobj;
 			});
 			ary_showData = ary_showData.filter(function(item) {
