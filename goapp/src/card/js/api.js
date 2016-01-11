@@ -215,7 +215,6 @@ var api = api || {};
 	/**
 	取得圖片路徑
 	pkgName: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
-	這個方法過時，轉移到common/js/cardinfoloader
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
 		switch( pkgName ){
@@ -380,6 +379,9 @@ var api = api || {};
 	
 	function handleMessage( obj ){
 		switch( obj.type ){
+		case 'invite':
+			receiveInvite( obj )
+			return true
 		case 'heartbeat':
 			replyHeartbeat( obj, function( err ){
 				if( err ){
@@ -446,24 +448,98 @@ var api = api || {};
 	}
 	
 	/**
-	開始心跳測試
+	開始心跳測試, 再呼叫一次可以取消之前的心跳測試
 	selfName: string
 	targetName: string
 	cb: function( success ){
 		success: bool 是否有心跳
 	}
 	*/
+	
+	var hbtid = null
 	function startHeartbeat( selfName, targetName, cb ){
+		stopHeartbeat()
 		sendHeartbeat( selfName, targetName, heartbeatTimeout, function( success ){
 			cb( success )
-			setTimeout( function(){
+			hbtid = setTimeout( function(){
 				startHeartbeat( selfName, targetName, cb )
 			}, heartbeatDuration)
 		})
 	} 
 	
-	function save(id, data, cb){
-		db2.writefile( '../deckwikidbfile2/deckwiki/list/'+id+'.json', data, cb )
+	function stopHeartbeat(){
+		if( hbtid != null ){
+			clearTimeout(hbtid)
+			hbtid = null
+		}
+	}
+	 
+	function invite( selfName, targetNames, cb ){
+		var obj = {
+			type: 'invite',
+			msg: {
+				from: selfName,
+				to: targetNames
+			}
+		}
+		for( var i in targetNames ){
+			var uid = targetNames[i]
+			channel.sendChannelMessage( uid, JSON.stringify(obj), cb )
+		}
+	}
+	
+	function receiveInvite( obj ){
+		if( invitationCb == null ){
+			return
+		}
+		var from = obj.msg.from
+		var targetNames = obj.msg.to
+		invitationCb( from, targetNames )
+	}
+	
+	var invitationCb = null
+	
+	function startReceiveInvitation( selfName, currTargetNames, cb ){
+		if( invitationCb != null ){
+			invitationCb = null
+		}
+		invitationCb = (function( selfName, currTargetNames ){
+			return function( fromName, recevieNames ){
+				var ret = [fromName]
+				for( var i in recevieNames ){
+					if( recevieNames[i].indexOf( selfName ) != 0 ){
+						ret.push( recevieNames[i] )
+					}
+				}
+				var str = ret.join(",")
+				if( str != currTargetNames ){
+					cb( null, str )
+					startReceiveInvitation( selfName, str, cb )
+				} else {
+					cb( '收到的名稱和目前的名稱一樣' )
+				}
+			}
+		}) ( selfName, currTargetNames )
+	}
+	
+	function sendMessageToSomeone( toId, type, msg ){
+		var jsonstr = JSON.stringify( {
+			type:type, 
+			msg:JSON.parse( JSON.stringify( msg ))
+		});
+		channel.sendChannelMessage( toId, jsonstr, handleResponse( function( ret ) {
+			
+		} ));
+	}
+	
+	function handleResponse( cb ) {
+		return function ( err, ret ) {
+			if ( err != null ) {
+				alert( '錯誤:' + err );
+			}else {
+				cb( ret );
+			}
+		}
 	}
 	
 	module.createUser = createUser
@@ -482,7 +558,10 @@ var api = api || {};
 	module.getCardSuit = getCardSuit
 	module.createChannel = createChannel
 	module.startHeartbeat = startHeartbeat
+	module.stopHeartbeat = stopHeartbeat
+	module.startReceiveInvitation = startReceiveInvitation
 	module.getCardImageWithPackageName = getCardImageWithPackageName
-	module.save = save
+	module.sendMessageToSomeone = sendMessageToSomeone
+	module.invite = invite
 	
 }) (api)

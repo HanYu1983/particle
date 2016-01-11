@@ -5,7 +5,7 @@
 	<title>卡牌風雲</title>
 	<!--page information for search engine-->
 	<meta name="title" content="卡牌風雲" />
-	<meta name="keyword" content="卡牌風雲,三國志大戰,集換式卡牌,線上卡牌,虛擬桌面" />
+	<meta name="keyword" content="卡牌風雲,集換式卡牌,線上卡牌,虛擬桌面" />
 	<meta name="description" content="卡牌風雲" />
 	<link rel="image_src" href=""/>
 	
@@ -87,8 +87,12 @@ body{
 	height:100%;
 	background-color:black;
 }
-.card_focus{
+
+.focus{
 	border:1px yellow solid;
+}
+.lock{
+	pointer-events:none;
 }
 
 .card_icons{
@@ -128,26 +132,45 @@ body{
 }
 </style>
 <script id="tmpl_card" type="jquery-x-tmpl">
-	<div id=${id} class="card_root elements">
+	<div id=${id} ondragstart="return false;" ondrop="return false;" class="card_root elements" style=width:${width}px;height:${height}px>
 		<div class="card">
-			<img style="position:relative; left:0; top:0; width:100%; height:100%;" src=${url}>
-			<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
-			<!--
-			<div style="position:absolute; left:0; top:0; width:100%; height:100%; background-color:black; opacity:.4;"></div>
-			-->
+			<img style="position:relative; left:0; top:0; width:100%; height:100%;" src=${extra[0]}>
 		</div>
 		<div class="card_back">
-			<img style="width:100%; height:100%;" src=${backurl} >
-		</div style="position:relative; width:100%; height:100%; ">
-			<img id="img_relate" style="position:absolute; top:0; right:0; width:25px;" src="images/Eye.png"/>
-			<img id="img_owner" style="position:absolute; top:0; left:0; width:20px;" src="images/Host.png"/>
-		<!--
-		<div style="position:absolute; left:0; top:0; ">
-			<img id="img_relate" style="position:absolute; top:0; left:0; width:20px;" src="images/Eye.png"/>
-			<img id="img_owner" style="position:absolute; top:0; right:0; width:20px;" src="images/Host.png"/>
-			<img id="img_back" class="card_icons" src="../common/images/icons/credit_card.png"/>
+			<img style="width:100%; height:100%;" src=${extra[1]}>
 		</div>
-		-->
+		<img id="img_viewer" class="hide" style="position:absolute; top:0; right:0; width:25px;" src="../common/images/card/Eye.png"/>
+		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
+		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
+		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
+	</div>
+</script>
+<script id="tmpl_sequence" type="jquery-x-tmpl">
+	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
+		<div id="mc_seqs" style="position:relative; top:0; left:0; width:100%; height:100%;">
+			{{each(i,url) extra}}
+				<img style="position:relative; top:0; left:0; width:100%; height:100%;" src=${url} />
+			{{/each}}
+		</div>
+		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
+	</div>
+</script>
+<script id="tmpl_token" type="jquery-x-tmpl">
+	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
+		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />
+		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
+		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
+	</div>
+</script>
+<script id="tmpl_data" type="jquery-x-tmpl">
+	<div id=${id} ondragstart="return false;" ondrop="return false;" class="card_root elements" style=width:${width}px;height:${height}px>
+		<div class="card" style="word-wrap: break-word; font-size:8px;">
+			____{{html extra[0]}}
+		</div>
+		<div class="card_back"></div>
+		<img id="img_viewer" class="hide" style="position:absolute; top:0; right:0; width:25px;" src="../common/images/card/Eye.png"/>
+		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
+		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
 		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
 	</div>
 </script>
@@ -156,18 +179,23 @@ body{
 		<div class="background"></div>
 		<div style="position:absolute; top:0; left:0; color:white; opacity:.5;">
 			<div>當持有者和觀察者是同一個人的時候，即使牌面向下，觀察者依然可以看見牌</div>
+			<div>拖拉滑鼠-框選物件</div>
+			<div>滑鼠左鍵-點選物件</div>
+			<div>ctrl+滑鼠左鍵 or ctrl+拖拉滑鼠-加減選物件</div>
 			<div>Q-洗牌</div>
 			<div>W-反向</div>
 			<div>E-把同樣的牌放在一起並排列</div>
-			<div>A-移動</div>
-			<div>滑鼠右鍵-移動</div>
+			<div>A or 滑鼠右鍵-移動</div>
 			<div>S-展開/合起</div>
-			<div>D-選擇所有自己的牌</div>
+			<div>D or ctrl+A-選擇所有自己的牌</div>
 			<div>F-翻面</div>
 			<div>Z-左轉牌面</div>
 			<div>X-右轉牌面</div>
+			<div>L-鎖定當前物件</div>
+			<div>K-解鎖所有物件</div>
 			<div>C-設定持有者</div>
 			<div>V-設定觀察者</div>
+			<div>R-執行動作</div>
 			<div>T-擲骰</div>
 			<div>I-黃色指示物</div>
 			<div>O-綠色指示物</div>
@@ -179,10 +207,11 @@ body{
 		<div class="ghost-select"><span></span></div>
 	</div>
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
+	<div id="mc_light" style="position:fixed; top:5px; right:385px;"></div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:430px;" >
-			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:10px;">
+        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:500px;" >
+			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div class="hori">
 					<a id="btn_notLogin" href="#" title="不需要登入就可以使用預組套牌跟朋友連線對戰哦!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnNotLoginClick')" data-options="iconCls:'icon-fire2'">創建臨時ID</a>
 					<a id="btn_login" href="#" title="登入fb，使用自己的套牌跟朋友連線對戰!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
@@ -191,35 +220,45 @@ body{
 					<a id="btn_about" href="#" title="關於上善若水&卡牌遊戲規則" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
 				</div>
 			</div>
-			<div class="group" style="text-align:center; margin-bottom:10px;">
-				<div>玩家:</div>
-				<input id="txt_id" class="easyui-textbox" style="width:153px;" />
-				<div>對手:</div>
-				<select id="combo_ops" name="dept" style="width:150px;">
-				</select>
-				<div style="margin-top:10px;">
-					<div id="mc_light" class="hori"></div>
-					<div class="hori"><a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="iconCls:'icon-add',disabled:false">開始連線</a></div>
+			<div class="group" style="text-align:center; margin-bottom:30px;">
+				<div>
+					<div class="hori">玩家</div>
+					<div class="hori">
+						<input id="txt_id" class="easyui-textbox" style="width:150px;" />
+					</div>
+					<div class="hori">
+						<a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="disabled:false">連線</a>
+					</div>
+				</div>
+				<div>
+					<div class="hori">對手</div>
+					<div class="hori">
+						<select id="combo_ops" name="dept" style="width:150px;"></select>
+					</div>
+					<div class="hori">
+						<a id="btn_invite" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnInviteServer')"  data-options="disabled:false">邀戰</a>
+					</div>
 				</div>
 			</div>
-			<div class="group" style="text-align:center; margin-bottom:10px;">
-				<div class="hori"><a href="#" class="easyui-linkbutton" style="width:100px;" public="false" onclick="onHtmlClick('onShaClick')">三國殺</a></div>
-				<div class="hori"><a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onPokerClick')">撲克牌</a></div>
-				<div class="hori"><a href="#" title="每種顏色各二十個的指示物套包，要創建單個指示物可以按 I, O, P" class="easyui-linkbutton easyui-tooltip" style="width:100px;" onclick="onHtmlClick('onTokenClick')">指示物套組</a></div>
-			</div>
-			<div class="group" style="text-align:center; margin-bottom:10px;">
+			<div class="group" style="text-align:center; margin-bottom:30px;">
+				<div class="group" style="margin-bottom:30px;">
+					<a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onPokerClick')">撲克牌</a>
+					<a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onConcreteDiceClick')">骰子套組</a>
+					<a href="#" title="每種顏色各二十個的指示物套包，要創建單個指示物可以按 I, O, P" class="easyui-linkbutton easyui-tooltip" style="width:100px;" onclick="onHtmlClick('onTokenClick')">指示物套組</a>
+					<a href="#" class="easyui-linkbutton" style="width:100px;" public="false" onclick="onHtmlClick('onShaClick')">三國殺</a>
+				</div>
 				<div id="mc_btnGame" class="group" style="margin-top:5px; margin-bottom:5px;">
-					<a href="#" id="btn_army" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadArmyClick')" style="width:100px;" data-options="toggle:true,group:'g1',selected:false">軍武gogogo</a>
-					<a href="#" id="btn_gundam" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">鋼彈大戰</a>
-					<a href="#" id="btn_gundamN" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarNClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">鋼彈大戰NexA</a>
-					<a href="#" id="btn_magic" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadMagicClick')" style="width:100px;"  public="false" data-options="toggle:true,group:'g1',selected:false">魔法風雲會</a>
-					<a href="#" id="btn_sango" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSangoWarClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">三國志大戰</a>
-					<a href="#" id="btn_sgs" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSgsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">三國殺陣面對決</a>
-					<a href="#" id="btn_yugioh" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadYugiohClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false,iconCls:'icon-fire2'">遊戲王</a>
-					<a href="#" id="btn_battleSpirits" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadBattleSpiritsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">戰魂</a>
-					<a href="#" id="btn_crusade" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadCrusadeClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">Crusade</a>
-					<a href="#" id="btn_dragonZ" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadDragonZClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">七龍珠TCG</a>
-					<a href="#" id="btn_ws" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadWsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">黑白雙翼</a>
+					<a href="#" game="army" id="btn_army" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadArmyClick')" style="width:100px;" data-options="toggle:true,group:'g1',selected:false">軍武gogogo</a>
+					<a href="#" game="gundamWar" id="btn_gundam" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">鋼彈大戰</a>
+					<a href="#" game="gundamWarN" id="btn_gundamN" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarNClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">鋼彈大戰NexA</a>
+					<a href="#" game="magic" id="btn_magic" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadMagicClick')" style="width:100px;"  public="false" data-options="toggle:true,group:'g1',selected:false">魔法風雲會</a>
+					<a href="#" game="sangoWar" id="btn_sango" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSangoWarClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">三國志大戰</a>
+					<a href="#" game="sgs" id="btn_sgs" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadSgsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">陣面對決</a>
+					<a href="#" game="yugioh" id="btn_yugioh" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadYugiohClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">遊戲王</a>
+					<a href="#" game="battleSpirits" id="btn_battleSpirits" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadBattleSpiritsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">戰魂</a>
+					<a href="#" game="crusade" id="btn_crusade" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadCrusadeClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">Crusade</a>
+					<a href="#" game="dragonZ" id="btn_dragonZ" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadDragonZClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">七龍珠TCG</a>
+					<a href="#" game="ws" id="btn_ws" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadWsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">黑白雙翼</a>
 				</div>
 			</div>
 			<div class="group" style="text-align:center;">
@@ -236,6 +275,14 @@ body{
 				</div>
 				<div class="hori">
 					<a href="#" onclick="onHtmlClick('onBtnCustomDeck')" title="創建臨時用的套牌" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時套牌</a>
+				</div>
+			</div>
+			<div class="group" style="text-align:center;">
+				<div class="hori">
+					<select id="txt_table" class="easyui-textbox" name="state" style="width:100px;"></select>
+				</div>
+				<div class="hori">
+					<a href="#" onclick="onHtmlClick('onBtnTableDeck')" title="創建臨時用的桌遊" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時桌遊</a>
 				</div>
 			</div>
 		</div>
@@ -307,12 +354,20 @@ body{
 		<div id="dia_alert" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 			此網址僅供私下交流用，請勿公開分享!
 		</div>
-		<div id="dia_message" class="easyui-dialog" title="注意!" data-options="iconCls:'icon-help',closed:true" style="width:400px; height:200px; padding:10px"></div>
+		<div id="dia_invite" class="easyui-dialog" title="邀戰通知" data-options="iconCls:'icon-help',closed:true" style="width:300px; padding:10px">
+			<div class="group" style="text-align:center;">
+				<div id="txt_from" style="color:yellow;"></div>
+				<div >要求連線對戰！要求對象：</div>
+				<div id="txt_output" style="color:yellow;"></div>
+				<br/>
+				<a id="btn_receive" href="#" class="easyui-linkbutton" style="width:60px; height:40px; " data-options="iconCls:'icon-ok', disabled:false">連線</a>
+			</div>
+		</div>
     </div>
 	<script src="../common/js/admin.js"></script>	
 	<script>
 	
-	
+	$('title').html( $('title').html() + admin.version );
 	
 	$( document ).ready(function() {
 		if( admin.admin ){
@@ -320,21 +375,11 @@ body{
 			setTimeout( function(){
 				$('#dia_alert').panel( 'close' );
 			}, 5000 );
-			
-			admin.message(function(err,data){
-				var ary_showMessage = _.filter( data, function( msgobj ){
-					return msgobj.app == 'card';
-				});
-				
-				var msg = ary_showMessage[0];
-				if( msg.level != 0 ){
-					$('#dia_message').html( msg.Message );
-					$('#dia_message').panel( 'open' );
-				}
-			})
 		}else{
 			$('[public=false]').hide();
 		}
+		
+		admin.showHotGame($('#mc_btnGame'));
 	});
 	
 	googleTracking.init( 'UA-55273266-3' );
@@ -354,11 +399,13 @@ body{
 	</script>
 	<script type="text/javascript" src="/_ah/channel/jsapi"></script>
 	<script type="text/javascript" src="../common/js/channel.js"></script>
+	<script src="../common/js/db2.js"></script>	
+	<script src="../common/js/db2path.js"></script>	
 	<script src="../common/js/store.js"></script>	
 	<script src="../common/js/cardSuit.js"></script>	
 	<script src='js/api.js'></script>
-	<script src="js/config.js"></script>
-	<script src="js/main.js"></script>
+	<script src="js/config.js?v=20160108"></script>
+	<script src="js/main.js?v=20160108"></script>
 	
 </body>
 </html>
