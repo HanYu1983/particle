@@ -251,7 +251,7 @@ class ViewController extends Mediator
 				showBigList( clickData.uid, notification.getBody().game, notification.getBody().ary_showData );
 				showDetail( notification.getBody().clickData );
 			case str if ( str == do_show_list ):
-				setPagPage( notification.getBody().total );
+				setPagPage( notification.getBody().total, notification.getBody().pageNumber );
 				showList( notification.getBody().data );
 			case str if ( str == do_show_showDetail ):
 				showDetail( notification.getBody().showDetail );
@@ -469,10 +469,17 @@ class ViewController extends Mediator
 		}
 	}
 	
-	function setPagPage( total ){
-		pag_page.pagination( 'refresh', {
-			total:total
-		});
+	function setPagPage( total, pageNumber ) {
+		if ( pageNumber != null ) {
+			pag_page.pagination( 'refresh', {
+				total:total,
+				pageNumber:pageNumber
+			});
+		}else{
+			pag_page.pagination( 'refresh', {
+				total:total
+			});
+		}
 	}
 	
 	function getSearchConditions() {

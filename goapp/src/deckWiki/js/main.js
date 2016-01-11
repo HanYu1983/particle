@@ -636,7 +636,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,doSetData: function(data) {
 		this.oriDataToUseData(data);
-		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length});
+		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length, pageNumber : 1});
 	}
 	,filterByPage: function(from,page) {
 		if(page == null) page = 0;
@@ -1187,7 +1187,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 				this.showBigList(this.clickData.uid,notification.getBody().game,notification.getBody().ary_showData);
 				this.showDetail(notification.getBody().clickData);
 			} else if(str6 == view_ViewController.do_show_list) {
-				this.setPagPage(notification.getBody().total);
+				this.setPagPage(notification.getBody().total,notification.getBody().pageNumber);
 				this.showList(notification.getBody().data);
 			} else if(str7 == view_ViewController.do_show_showDetail) this.showDetail(notification.getBody().showDetail);
 		}
@@ -1325,8 +1325,8 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	,showLoading: function(show) {
 		if(show) this.j.messager.progress({ msg : "讀取資料中，請稍等…"}); else this.j.messager.progress("close");
 	}
-	,setPagPage: function(total) {
-		this.pag_page.pagination("refresh",{ total : total});
+	,setPagPage: function(total,pageNumber) {
+		if(pageNumber != null) this.pag_page.pagination("refresh",{ total : total, pageNumber : pageNumber}); else this.pag_page.pagination("refresh",{ total : total});
 	}
 	,getSearchConditions: function() {
 		return { author : this.input_search.textbox("getValue"), deckName : this.input_searchName.textbox("getValue"), describe : this.input_searchDescribe.textbox("getValue"), game : this.slt_game.combobox("getValue"), type : this.slt_type.combobox("getValue")};
