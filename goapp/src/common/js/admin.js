@@ -51,6 +51,7 @@ var admin = admin || {};
 				if( data.length ){
 					var msg = data[0];
 					if( msg.level > 0 ){
+						console.log( dom.panel );
 						dom.html( msg.Message );
 						dom.panel( 'open' );
 					}

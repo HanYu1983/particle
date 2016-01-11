@@ -9,9 +9,14 @@ import (
 func MessageConfig(w http.ResponseWriter, r *http.Request) {
 	config := []map[string]interface{}{
 		map[string]interface{}{
-			"app":     "card",
+			"app":     "card_admin",
 			"level":   3,
-			"Message": "<h1>目前正在測試新系統，舊系統將不在維護，請先至<a href='../card_new/index.html?admin=nimda'>開測區<a/>來遊玩。並請隨時注意社團資訊</h1>",
+			"Message": "<h1>此網址僅供私下交流用，請勿公開分享!</h1>",
+		},
+		map[string]interface{}{
+			"app":     "deckWiki_admin",
+			"level":   3,
+			"Message": "<h1>此網址僅供私下交流用，請勿公開分享!</h1>",
 		},
 	}
 	jsonstr, _ := json.Marshal(config)

@@ -1144,7 +1144,6 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		_g1.sendNotification(view_ViewController.on_btn_saveDeck_click,{ savedata : _g1.getSaveDataFromDom()});
 	});
 	this.hideCardBackContainer();
-	this.showAdminMessage();
 };
 view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -1302,9 +1301,6 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	}
 	,hideCardBackContainer: function() {
 		if(!Helper.isAdmin()) this.mc_backContainer.parent().hide();
-	}
-	,showAdminMessage: function() {
-		if(Helper.isAdmin()) this.alert("此網址僅供私下交流用，請勿公開分享!");
 	}
 	,showAllCardback: function() {
 		this.mc_backContainer.find(".cardback").show();
