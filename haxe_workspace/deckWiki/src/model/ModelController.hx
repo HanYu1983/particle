@@ -55,6 +55,7 @@ class ModelController extends Mediator
 			ViewController.on_btn_saveDeck_click,
 			ViewController.on_btn_share_deck_click,
 			ViewController.on_btn_seeCount_click,
+			ViewController.on_btn_getShareLink_click,
 			do_load_all_list,
 			do_save_count
 		];
@@ -63,6 +64,10 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_btn_getShareLink_click:
+				var uid = notification.getBody().deckuid;
+				var url = Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+				sendNotification( ViewController.do_show_alert, { alert:url } );
 			case ViewController.on_btn_seeCount_click:
 				Helper.authGoogleAndGetData( false, function( err, data ) {
 					if ( err == null ) {
@@ -144,7 +149,6 @@ class ModelController extends Mediator
 				var game = notification.getBody().game;
 				var clickData:Dynamic = findDataById( data, id );
 				var cards:Array<Dynamic> = clickData.cards;
-				
 				currentGame = game;
 				currentUid = id;
 				currentOutputStr = Json.stringify( cards );

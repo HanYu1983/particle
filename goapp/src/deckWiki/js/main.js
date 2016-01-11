@@ -486,7 +486,7 @@ model_ModelController.__name__ = true;
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,view_ViewController.on_btn_seeCount_click,model_ModelController.do_load_all_list,model_ModelController.do_save_count];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,view_ViewController.on_btn_seeCount_click,view_ViewController.on_btn_getShareLink_click,model_ModelController.do_load_all_list,model_ModelController.do_save_count];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -494,6 +494,11 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		var str = _g;
 		var str1 = _g;
 		switch(_g) {
+		case "on_btn_getShareLink_click":
+			var uid = notification.getBody().deckuid;
+			var url = window.location.host + window.location.pathname + "?uid=" + uid;
+			this.sendNotification(view_ViewController.do_show_alert,{ alert : url});
+			break;
 		case "on_btn_seeCount_click":
 			Helper.authGoogleAndGetData(false,function(err,data) {
 				if(err == null) {
@@ -505,12 +510,12 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			});
 			break;
 		case "on_btn_share_deck_click":
-			var uid = notification.getBody().deckuid;
-			var shareobj = this.findDataById(this.ary_result,uid);
-			var url = window.location.host + window.location.pathname + "?uid=" + uid;
+			var uid1 = notification.getBody().deckuid;
+			var shareobj = this.findDataById(this.ary_result,uid1);
+			var url1 = window.location.host + window.location.pathname + "?uid=" + uid1;
 			var picture = "http:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
-			Helper.shareFb(Helper.getMeta().desc,url,picture,Helper.getMeta().name,shareobj.desc,function(ret) {
+			Helper.shareFb(Helper.getMeta().desc,url1,picture,Helper.getMeta().name,shareobj.desc,function(ret) {
 				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
 			});
 			break;
@@ -1066,6 +1071,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_saveDeck = viewComponent.find("#btn_saveDeck");
 	this.btn_search = viewComponent.find("#btn_search");
 	this.btn_seeCount = viewComponent.find("#btn_seeCount");
+	this.btn_getShareLink = viewComponent.find("#btn_getShareLink");
 	this.dia_output = viewComponent.find("#dia_output");
 	this.mc_backContainer = viewComponent.find("#mc_backContainer");
 	this.mc_deckContainer = viewComponent.find("#mc_deckContainer");
@@ -1130,6 +1136,10 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	});
 	this.btn_seeCount.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_seeCount_click);
+	});
+	this.btn_getShareLink.click(function() {
+		var deckuid1 = _g1.mc_detail_panel.attr("uid");
+		_g1.sendNotification(view_ViewController.on_btn_getShareLink_click,{ deckuid : deckuid1});
 	});
 	this.btn_output.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_output_click);
@@ -1457,6 +1467,7 @@ view_ViewController.on_input_search_change = "on_input_search_change";
 view_ViewController.on_pag_page_change = "on_pag_page_change";
 view_ViewController.on_btn_output_click = "on_btn_output_click";
 view_ViewController.on_btn_seeCount_click = "on_btn_seeCount_click";
+view_ViewController.on_btn_getShareLink_click = "on_btn_getShareLink_click";
 view_ViewController.on_btn_self_click = "on_btn_self_click";
 view_ViewController.on_btn_login_click = "on_btn_login_click";
 view_ViewController.on_btn_gotoGroup_click = "on_btn_gotoGroup_click";
