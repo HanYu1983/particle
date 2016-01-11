@@ -611,6 +611,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,sendShowBigList: function(deck) {
 		var _g = this;
+		if(deck == null) {
+			this.sendNotification(view_ViewController.do_show_alert,{ alert : "這個套牌作者已經停止分享囉!"});
+			return;
+		}
 		var cards = deck.cards;
 		var game = deck.game;
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});

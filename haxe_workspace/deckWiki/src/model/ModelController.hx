@@ -183,6 +183,10 @@ class ModelController extends Mediator
 	}
 	
 	function sendShowBigList( deck ) {
+		if ( deck == null ) {
+			sendNotification( ViewController.do_show_alert, { alert:'這個套牌作者已經停止分享囉!' } );
+			return;
+		}
 		var cards = deck.cards;
 		var game = deck.game;
 		sendNotification( ViewController.do_show_loading, { show:true } );
