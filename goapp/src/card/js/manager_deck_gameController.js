@@ -36,7 +36,12 @@ var gameController = {};
 				}
 				break;
 			case 'sangoWar':
-				sangoWar.load( "../common/txt/sangoList.txt", onLoadGameCallback);
+				if ( lang == 'jp' ){
+					sangoWar.load("../common/txt/sangoList.txt", onLoadGameCallback)
+				} else if ( lang == 'ch' ){
+					sangoWar.loadCh( "../common/txt/sangoList/", onLoadGameCallback);
+				}
+				
 				break;
 			case 'magic':
 				magic.load( "../common/txt/magicList.xml", onLoadGameCallback);

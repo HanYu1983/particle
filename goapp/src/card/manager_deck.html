@@ -86,9 +86,9 @@ body{
 			<div game="sangoWar">${cname}</div>
 			<div game="sangoWar">${atype}/${atype2}</div>
 			<div game="sangoWar">${ability}</div>
-			<div game="sangoWar">${content}</div>
+			<div game="sangoWar">{{html content}}</div>
 			<br/>
-			<div game="sangoWar">${counter}</div>
+			<div game="sangoWar">{{html counter}}</div>
 			
 			<div game="yugioh">${id}</div>
 			<div game="yugioh">${race}</div>
@@ -910,7 +910,41 @@ body{
 			]
 		},
 		sangoWar:{
-			'default':[
+			'jp':[
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:3, val:{name:'ntype', items:['蜀','魏','呉','漢','群','他']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:3,val:{name:'ctype', items:['武将','武将/兵隊','計略','キャンペーン']}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5']}},
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:1,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:1, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[	{type:'label', val:'武力以上'},
+					{type:'select', span:3,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}},
+					{type:'label',val:'武力以下'},
+					{type:'select', span:3, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}}],
+				[	{type:'label', val:'攻城'},
+					{type:'select', span:1,val:{name:'acity', items:['1','2']}},
+					{type:'label',val:'兵種'},
+					{type:'select', span:1, val:{name:'atype', items:['槍兵','騎兵','弓兵','歩兵','象兵']}},
+					{type:'label', val:'特徵'},
+					{type:'select',span:3,val:{name:'symbol', items:['計略/戦闘','計略/メイン','女性','南蛮・女性','魏五将','仙人','五虎将','軍師','黄巾','兵隊','旗本四天王','君主','賢女','西園八校尉','十常侍']}}
+				],
+				[	{type:'label', val:'特殊規則'},
+					{type:'checkbox', span:7,val:{name:'', items:["長槍","貫通","乱舞","奇襲","回避","先駆","走射","支援","連弩","戦象","強進","突撃","威圧","決起","憂国","国防","募兵","外交","伏兵","援軍","防柵","補佐","舞闘","覚醒","同盟"]}}],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:7,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:7,val:{name:'rule'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:7,val:{name:'id'}}]
+			],
+			'ch':[
 				[	{type:'label', val:'勢力'},
 					{type:'select', span:3, val:{name:'ntype', items:['蜀','魏','呉','漢','群','他']}},
 					{type:'label',val:'卡片種類'},
