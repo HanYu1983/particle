@@ -110,187 +110,72 @@ body{
 .hide{
 	display:none;
 }
+.group > .hori{
+	margin-right:10px;
+}
 </style>
-<script id="tmpl_card" type="jquery-x-tmpl">
-	<div id=${id} ondragstart="return false;" ondrop="return false;" class="card_root elements" style=width:${width}px;height:${height}px>
-		<div class="card">
-			<img style="position:relative; left:0; top:0; width:100%; height:100%;" src=${extra[0]}>
-		</div>
-		<div class="card_back">
-			<img style="width:100%; height:100%;" src=${extra[1]} >
-		</div>
-		<img id="img_viewer" class="hide" style="position:absolute; top:0; right:0; width:25px;" src="../common/images/card/Eye.png"/>
-		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
-		<div id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; color:white;">lock</div>
-		<!--
-		<div id="txt_viewer" class="hide" style="position:absolute; top:20px; left:0; color:white; ">v</div>
-		<div id="txt_owner" class="hide" style="position:absolute; top:40px; left:0; color:white; ">o</div>
-		-->
-		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
-	</div>
-</script>
-<script id="tmpl_sequence" type="jquery-x-tmpl">
-	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
-		<div id="mc_seqs" style="position:relative; top:0; left:0; width:100%; height:100%;">
-			{{each(i,url) extra}}
-				<img style="position:relative; top:0; left:0; width:100%; height:100%;" src=${url} />
-			{{/each}}
-		</div>
-		<div id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; color:white; ">lock</div>
-	</div>
-</script>
-<script id="tmpl_token" type="jquery-x-tmpl">
-	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
-		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />
-		<div id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; color:white; ">lock</div>
-	</div>
-</script>
-<script id="tmpl_data" type="jquery-x-tmpl">
-	<div id=${id} ondragstart="return false;" ondrop="return false;" class="card_root elements" style=width:${width}px;height:${height}px>
-		<div class="card" style="word-wrap: break-word">
-			{{html extra[0]}}
-		</div>
-		<div class="card_back"></div>
-		<img id="img_viewer" class="hide" style="position:absolute; top:0; right:0; width:25px;" src="../common/images/card/Eye.png"/>
-		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
-		<div id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; color:white;">lock</div>
-		<div id="mc_see" style="position:absolute; top:0; left:0;  width:100%; height:100%; background-color: red; opacity:.4; display:none"></div>
-	</div>
-</script>
 <body>
-	<div style="position:relative; width:100%; height:3000px; left:0; top:0; ">
-		<div class="background"></div>
-		<div style="position:absolute; top:0; left:0; color:white; opacity:.5;">
-			<div>當持有者和觀察者是同一個人的時候，即使牌面向下，觀察者依然可以看見牌</div>
-			<div>Q-洗牌</div>
-			<div>W-反向</div>
-			<div>E-把同樣的牌放在一起並排列</div>
-			<div>A-移動</div>
-			<div>滑鼠右鍵-移動</div>
-			<div>S-展開/合起</div>
-			<div>D-選擇所有自己的牌</div>
-			<div>F-翻面</div>
-			<div>Z-左轉牌面</div>
-			<div>X-右轉牌面</div>
-			<div>C-設定持有者</div>
-			<div>V-設定觀察者</div>
-			<div>T-擲骰</div>
-			<div>I-黃色指示物</div>
-			<div>O-綠色指示物</div>
-			<div>P-紅色指示物</div>
-			<div>H-移除</div>
+	<div>
+		<table class="easyui-datagrid">
+			<thead>
+				<tr>
+					<th data-options="field:'uid'">uid</th>
+					<th data-options="field:'count'">數目</th>
+					<th data-options="field:'width'">寬度</th>
+					<th data-options="field:'height'">高度</th>
+					<th data-options="field:'value1'">參數1</th>
+					<th data-options="field:'value2'">參數2</th>
+					<th data-options="field:'value3'">參數3</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+	<div style="width:100%;height:100%;">
+		<div id="aa" class="easyui-accordion" data-options="multiple:true" style="width:100%;">
+			<div title="道具" style="padding:10px; ">
+				<div class="group">
+					<div class="hori">
+						<select id="cc" class="easyui-combobox" name="dept">
+							<option value="data">資料類</option>
+							<option value="">卡片類</option>
+							<option>骰子類</option>
+							<option>棋子類</option>
+						</select>
+					</div>
+					<div class="hori">
+						數目
+						<input type="text" class="easyui-numberbox" value="1" data-options="min:1,precision:0" style="width:60px;">
+					</div>
+					<div class="hori">
+						寬度
+						<input type="text" class="easyui-numberbox" value="100" data-options="min:10,precision:0" style="width:60px;">
+					</div>
+					<div class="hori">
+						高度
+						<input type="text" class="easyui-numberbox" value="100" data-options="min:10,precision:0" style="width:60px;">
+					</div>
+					<div class="hori">
+						參數1
+						<input type="text" class="easyui-textbox"  style="width:300px;">
+					</div>
+					<div class="hori">
+						參數2
+						<input type="text" class="easyui-textbox"  style="width:300px;">
+					</div>
+					<div class="hori">
+						參數3
+						<input type="text" class="easyui-textbox"  style="width:300px;">
+					</div>
+				</div>
+				<div class="group">
+					
+				</div>
+			</div>
 		</div>
 	</div>
-	<div style="position:absolute; top:0; left:0; width:100%; height:3000px;" id="grid">
-		<div class="ghost-select"><span></span></div>
-	</div>
-	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
-	
-	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:430px;" >
-			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:10px;">
-				<div class="hori">
-					<a id="btn_notLogin" href="#" title="不需要登入就可以使用預組套牌跟朋友連線對戰哦!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnNotLoginClick')" data-options="iconCls:'icon-fire2'">創建臨時ID</a>
-					<a id="btn_login" href="#" title="登入fb，使用自己的套牌跟朋友連線對戰!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
-				</div>
-				<div class="hori">
-					<a id="btn_about" href="#" title="關於上善若水&卡牌遊戲規則" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
-				</div>
-			</div>
-			<div class="group" style="text-align:center; margin-bottom:10px;">
-				<div>玩家:</div>
-				<input id="txt_id" class="easyui-textbox" style="width:153px;" />
-				<div>對手:</div>
-				<select id="combo_ops" name="dept" style="width:150px;">
-				</select>
-				<div style="margin-top:10px;">
-					<div id="mc_light" class="hori"></div>
-					<div class="hori"><a id="btn_connect" href="#" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="iconCls:'icon-add',disabled:false">開始連線</a></div>
-				</div>
-			</div>
-			<div class="group" style="text-align:center; margin-bottom:10px;">
-				<div class="hori"><a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onBtnPokerClick')">撲克牌</a></div>
-				<div class="hori"><a href="#" title="每種顏色各二十個的指示物套包，要創建單個指示物可以按 I, O, P" class="easyui-linkbutton easyui-tooltip" style="width:100px;" onclick="onHtmlClick('onTokenClick')">指示物套組</a></div>
-			</div>
-			
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<select id="combo_deck" class="easyui-combobox" name="state" style="width:100px;"></select>
-				</div>
-				<div class="hori">
-					<a href="#" onclick="onHtmlClick('onBtnCreateDeck')" title="對手有了之後，所創建的卡牌對手才會收到哦" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-ok', disabled:false">創建套牌</a>
-				</div>
-			</div>
-		</div>
-		<div data-options="region:'center'">
-			<div id="mc_detailContainer" style="position:relative; width:100%">
-				<!-- create by script -->
-			</div>
-        </div>
-		<div id="dia_about" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
-			<div class="group" style="position:relative; width:100%; text-align:center;">
-				<div class="hori" >
-					上善若水APP
-					<br/>
-					<img src="../common/images/logo.jpg" width="100" height="100">
-					<br/>
-				</div>
-			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//www.facebook.com/pages/上善若水/1653920964852269" target="_blank">上善若水粉絲頁</a>
-				</div>
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/manager/index.html#" target="_blank">上善若水官網&牌組管理器</a>
-				</div>
-			</div>
-			<br/>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=sangoWar" target="_blank">三國志大戰組牌機</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//forum.gamer.com.tw/C.php?bsn=10095&snA=9647&tnum=605" target="_blank">三國志大戰規則</a>	
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//sangokushi-taisen-tcg.segataiwan.com.tw/cardlist.php" target="_blank">三國志大戰卡表</a>
-				</div>
-			</div>
-			<br/>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=gundamWar" target="_blank">鋼彈大戰組牌機</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//www11.atwiki.jp/gundamwar/" target="_blank">鋼彈大戰規則</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//www.shiner96500.com/cards/gundamwar/main.php" target="_blank">鋼彈大戰卡表</a>
-				</div>
-			</div>
-			<br/>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=yugioh&lang=ch" target="_blank">遊戲王組牌機</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//zh.wikipedia.org/wiki/%E9%81%8A%E6%88%B2%E7%8E%8B%E9%9B%86%E6%8F%9B%E7%B4%99%E7%89%8C%E9%81%8A%E6%88%B2" target="_blank">遊戲王規則</a>
-				</div>
-			</div>
-			<br/>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a style="color:yellow" href="//particle-979.appspot.com/card/manager_deck.html?game=magic" target="_blank">魔法風雲會組牌機</a>
-				</div>
-				<div class="hori">
-					<a style="color:white" href="//zh.wikipedia.org/zh-tw/%E9%AD%94%E6%B3%95%E9%A2%A8%E9%9B%B2%E6%9C%83%E8%A6%8F%E5%89%87" target="_blank">魔法風雲會規則</a>
-				</div>
-			</div>
-		</div>
-		<div id="dia_alert" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="font-size:20px; padding:10px">
-			此網址僅供私下交流用，請勿公開分享!
-		</div>
-    </div>
 	<script>
 	//googleTracking.init( 'UA-55273266-3' );
 	

@@ -34,6 +34,11 @@ var api = api || {};
 		})
 	}
 	
+	function hasInfo( game ){
+		if( _cardInfo[game] == undefined ) return false;
+		return ( _cardInfo[game].state() == 'resolved' );
+	}
+	
 	function cardimageurl(game, id){
 		return cardinfoloader.cardimageurl(game, id)
 	}
@@ -138,6 +143,7 @@ var api = api || {};
 	}
 	
 	module.cardInfo = cardInfo
+	module.hasInfo = hasInfo
 	module.cardimageurl = cardimageurl
 	module.load = load
 	//module.data = data

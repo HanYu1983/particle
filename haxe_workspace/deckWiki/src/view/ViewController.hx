@@ -32,6 +32,7 @@ class ViewController extends Mediator
 	public static var on_pag_page_change = 'on_pag_page_change';
 	public static var on_btn_output_click = 'on_btn_output_click';
 	public static var on_btn_seeCount_click = 'on_btn_seeCount_click';
+	public static var on_btn_getShareLink_click = 'on_btn_getShareLink_click';
 	public static var on_btn_self_click = 'on_btn_self_click';
 	public static var on_btn_login_click = 'on_btn_login_click';
 	public static var on_btn_gotoGroup_click = 'on_btn_gotoGroup_click';
@@ -57,6 +58,7 @@ class ViewController extends Mediator
 	var btn_saveDeck:Dynamic;
 	var btn_search:Dynamic;
 	var btn_seeCount:Dynamic;
+	var btn_getShareLink:Dynamic;
 	var input_search:Dynamic;
 	var input_searchName:Dynamic;
 	var input_searchDescribe:Dynamic;
@@ -83,6 +85,7 @@ class ViewController extends Mediator
 		btn_saveDeck = viewComponent.find( '#btn_saveDeck' );
 		btn_search = viewComponent.find( '#btn_search' );
 		btn_seeCount = viewComponent.find( '#btn_seeCount' );
+		btn_getShareLink = viewComponent.find( '#btn_getShareLink' );
 		dia_output = viewComponent.find( '#dia_output' );
 		mc_backContainer = viewComponent.find( '#mc_backContainer' );
 		mc_deckContainer = viewComponent.find( '#mc_deckContainer' );
@@ -163,6 +166,11 @@ class ViewController extends Mediator
 		
 		btn_seeCount.click( function() {
 			sendNotification( on_btn_seeCount_click );
+		});
+		
+		btn_getShareLink.click( function() {
+			var deckuid = mc_detail_panel.attr( 'uid' );
+			sendNotification( on_btn_getShareLink_click, {deckuid:deckuid} );
 		});
 		
 		btn_output.click( function() {
@@ -505,13 +513,23 @@ class ViewController extends Mediator
 	function showBigList( uid, game:String, ary_showData:Array<Dynamic> ) {
 		mc_bigItemContainer.empty();
 		ary_showData.foreach( function( item ) {
-			var dom = Helper.createDetail( game, item );
+			var dom:Dynamic = Helper.createDetail( game, item );
+			if ( item.noData != null && item.noData ) {
+				dom.tooltip( {
+					position: 'top',
+					content: '點擊取得詳細資料!'
+				});
+				dom.click( function() {
+					dom.tooltip( 'hide' );
+					sendNotification( on_item_click, { id:uid, game:game, doLoad:true } );
+				});
+			}
 			dom.find('#mc_detail > div[game=' + game + ']').hide();
 			dom.find('#mc_black').hide();
 			mc_bigItemContainer.append( dom );
-			overListener( game );
 			return true;
 		});
+		overListener( game );
 		viewComponent.find( '#layout_main' ).layout( 'collapse', 'east' );
 		Helper.trackingEvent( 'on_item_view:' + uid );
 	}
@@ -550,7 +568,7 @@ class ViewController extends Mediator
 			});
 			dom.click( function( e ) {
 				var dom = j(e.currentTarget );
-				sendNotification( on_item_click, { id:dom.attr('id'), game:dom.attr('game' ) } );
+				sendNotification( on_item_click, { id:dom.attr('id'), game:dom.attr('game' ), doLoad:false } );
 			});
 			
 			mc_itemContainer.append( dom );

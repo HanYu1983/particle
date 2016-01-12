@@ -6,13 +6,13 @@
 	<!--page information for search engine-->
 	<meta name="title" content="秀牌風雲" />
 	<meta name="keyword" content="秀牌風雲,集換式卡牌" />
-	<meta name="description" content="秀牌風雲" />
+	<meta name="description" content="秀出你的牌組! 發揮你的創意! 可以隨意組牌、抄牌、評論、分享的集換式卡牌的牌組管理器!" />
 	<link rel="image_src" href=""/>
 	
 	<!--share information for fb-->
-	<meta property="og:description" content="秀牌風雲" />
 	<meta property="og:title" content="秀牌風雲" />
-	<meta property="og:url" content="http://particle-979.appspot.com/deckWiki/index.html"/>
+	<meta property="og:description" content="秀出你的牌組! 發揮你的創意! 可以隨意組牌、抄牌、評論、分享的集換式卡牌的牌組管理器!" />
+	<meta property="og:url" content="//particle-979.appspot.com/deckWiki/index.html"/>
 	
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
@@ -300,9 +300,13 @@ body{
 								<div class="hori">
 									<div>觀看<span class="shareTxt"></span>分享<span class="shareTxt"></span>匯出<span class="shareTxt"></span></div>
 								</div>
-								<div class="hori" style="position:relative; top:6px; vertical-align:bottom;">
-									<img id="btn_share" style="cursor:pointer;" src="../common/images/other/fbshare.png"></img>
+								<div class="hori" style="position:relative; top:6px;  vertical-align:bottom;">
+									<img id="btn_share" style="cursor:pointer; height:32px;" src="../common/images/other/fbshare.png"></img>
 								</div>
+								<div class="hori" style="position:relative; vertical-align:bottom;">
+									<a id="btn_getShareLink" title="取得分享網址" class="easyui-linkbutton easyui-tooltip" style="height:30px" data-options="iconCls:'icon-search'"></a>
+								</div>
+								
 							</div>
 							
 						</div>

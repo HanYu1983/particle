@@ -115,6 +115,10 @@ class Helper
 		});
 	}
 	
+	public static function hasDetail( game:String ) {
+		return untyped __js__('api.hasInfo')( game );
+	}
+	
 	public static function loadList( cb ) {
 		untyped __js__('api.load')( cb );
 	}

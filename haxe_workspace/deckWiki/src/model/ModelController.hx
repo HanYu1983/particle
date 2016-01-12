@@ -55,6 +55,7 @@ class ModelController extends Mediator
 			ViewController.on_btn_saveDeck_click,
 			ViewController.on_btn_share_deck_click,
 			ViewController.on_btn_seeCount_click,
+			ViewController.on_btn_getShareLink_click,
 			do_load_all_list,
 			do_save_count
 		];
@@ -63,6 +64,10 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_btn_getShareLink_click:
+				var uid = notification.getBody().deckuid;
+				var url = Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+				sendNotification( ViewController.do_show_alert, { alert:url } );
 			case ViewController.on_btn_seeCount_click:
 				Helper.authGoogleAndGetData( false, function( err, data ) {
 					if ( err == null ) {
@@ -142,13 +147,14 @@ class ModelController extends Mediator
 			case ViewController.on_item_click:
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
+				var doLoad = notification.getBody().doLoad;
 				var clickData:Dynamic = findDataById( data, id );
 				var cards:Array<Dynamic> = clickData.cards;
 				
 				currentGame = game;
 				currentUid = id;
 				currentOutputStr = Json.stringify( cards );
-				sendShowBigList( clickData );
+				sendShowBigList( clickData, doLoad );
 			case str if ( str == do_save_count ):
 				doSaveCount( notification.getBody().countMap );
 			case str if ( str == do_load_all_list ):
@@ -182,32 +188,61 @@ class ModelController extends Mediator
 		}
 	}
 	
-	function sendShowBigList( deck ) {
+	function sendShowBigList( deck, ?load = false ) {
 		if ( deck == null ) {
 			sendNotification( ViewController.do_show_alert, { alert:'這個套牌作者已經停止分享囉!' } );
 			return;
 		}
+		loadDetail( deck, load );
+	}
+	
+	function loadDetail( deck, ?load = false ) {
 		var cards = deck.cards;
 		var game = deck.game;
-		sendNotification( ViewController.do_show_loading, { show:true } );
-		Helper.loadDetail( game, function( data:Array<Dynamic> ) {
-			var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
-				switch( game ){
-					case 'sangoWar':
-						str = str.replace( '.jpg', '' );
-					default:
-				}
-				var retobj:Dynamic = data.find( function( oriData ) {
-					return ( oriData.id == str );
-				});
-				return retobj;
-			});
-			ary_showData = ary_showData.filter( function( item ) {
+		
+		function onLoadSuccess( ary_send ) {
+			var ary_send = ary_send.filter( function( item ) {
 				return item != null;
 			});
 			sendNotification( ViewController.do_show_loading, { show:false } );
-			sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_showData } );
-		});
+			sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_send } );
+		}
+		
+		if ( load ) {
+			sendNotification( ViewController.do_show_loading, { show:true } );
+			Helper.loadDetail( game, function( data:Array<Dynamic> ) {
+				var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
+					var retobj:Dynamic = null;
+					switch( game ){
+						case 'sangoWar':
+							str = str.replace( '.jpg', '' );
+							retobj = data.find( function( oriData ) {
+								return ( oriData.id.indexOf( str ) != -1 );
+							});
+						default:
+							retobj = data.find( function( oriData ) {
+								return ( oriData.id == str );
+							});
+					}
+					return retobj;
+				});
+				onLoadSuccess( ary_showData );
+			});
+		}else {
+			if ( Helper.hasDetail( game )) {
+				loadDetail( deck, true );
+				return;
+			}
+			var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
+				return switch( game ){
+					case 'sangoWar':
+						{ id: str.replace( '.jpg', '' ), noData:true };
+					default:
+						{ id: str, noData:true };
+				}
+			});
+			onLoadSuccess( ary_showData );
+		}
 	}
 	
 	function doSetData( data:Array<Dynamic> ) {

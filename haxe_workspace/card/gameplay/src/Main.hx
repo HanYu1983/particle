@@ -184,6 +184,7 @@ class Main
 				CallJs.api_invite( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
 					if ( err != null )	alert( err );
 				});
+				saveOpponentToCookie( otherPlayerId );
 				//Facade.getInstance().sendNotification( SocketController.sendMessage, {type:'invite', msg:SocketController.playerId + ',' + otherPlayerId } );
 			case 'onBtnStartServer':
 				/*
@@ -200,7 +201,7 @@ class Main
 				}
 				setReceiveInvitation('');
 				Facade.getInstance().sendNotification( SocketController.createPlayerSocket, SocketController.playerId );
-				//saveOpponentToCookie( otherPlayerId );
+				
 			case 'onBtnNotLoginClick':
 				j( '#txt_id' ).textbox( 'setValue', getId() );
 			case 'onBtnLoginClick':
