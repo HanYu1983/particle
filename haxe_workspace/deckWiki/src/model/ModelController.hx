@@ -149,8 +149,8 @@ class ModelController extends Mediator
 				var game = notification.getBody().game;
 				var doLoad = notification.getBody().doLoad;
 				var clickData:Dynamic = findDataById( data, id );
+				if ( clickData == null ) return;
 				var cards:Array<Dynamic> = clickData.cards;
-				
 				currentGame = game;
 				currentUid = id;
 				currentOutputStr = Json.stringify( cards );

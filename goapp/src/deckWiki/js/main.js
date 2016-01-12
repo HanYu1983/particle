@@ -586,6 +586,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var game1 = notification.getBody().game;
 			var doLoad = notification.getBody().doLoad;
 			var clickData = this.findDataById(this.data,id1);
+			if(clickData == null) return;
 			var cards = clickData.cards;
 			this.currentGame = game1;
 			this.currentUid = id1;
