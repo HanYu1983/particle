@@ -36,10 +36,10 @@ var gameController = {};
 				}
 				break;
 			case 'sangoWar':
-				if ( lang == 'jp' ){
-					sangoWar.load("../common/txt/sangoList.txt", onLoadGameCallback)
-				} else if ( lang == 'ch' ){
+				if ( lang == 'ch' ){
 					sangoWar.loadCh( "../common/txt/sangoList/", onLoadGameCallback);
+				} else {
+					sangoWar.load("../common/txt/sangoList.txt", onLoadGameCallback)
 				}
 				
 				break;
