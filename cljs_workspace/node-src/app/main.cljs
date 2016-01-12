@@ -1,5 +1,6 @@
 (ns app.main
   (:require
+    [app.basic]
     [test.getSangoCard]
     [test.getMagicCard]
     [test.getGundamCard]
@@ -27,6 +28,9 @@
           (.demand (array "c"))
           (aget "argv"))]
     (condp = (.-c argv)
+      "parse"
+      (app.basic/main (.-f argv))
+    
       "downloadUrl2"
       (.waterfall async
         (array
