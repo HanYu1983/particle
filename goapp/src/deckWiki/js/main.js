@@ -65,6 +65,9 @@ Helper.loadDetail = function(game,cb) {
 		cb(data);
 	});
 };
+Helper.hasDetail = function(game) {
+	return api.hasInfo(game);
+};
 Helper.loadList = function(cb) {
 	api.load(cb);
 };
@@ -657,6 +660,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				onLoadSuccess(ary_showData);
 			});
 		} else {
+			if(Helper.hasDetail(game)) {
+				this.loadDetail(deck,true);
+				return;
+			}
 			var ary_showData1 = cards.map(function(str1) {
 				switch(game) {
 				case "sangoWar":

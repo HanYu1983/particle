@@ -229,6 +229,10 @@ class ModelController extends Mediator
 				onLoadSuccess( ary_showData );
 			});
 		}else {
+			if ( Helper.hasDetail( game )) {
+				loadDetail( deck, true );
+				return;
+			}
 			var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
 				return switch( game ){
 					case 'sangoWar':
