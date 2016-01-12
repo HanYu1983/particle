@@ -615,37 +615,56 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		}
 	}
 	,sendShowBigList: function(deck) {
-		var _g = this;
 		if(deck == null) {
 			this.sendNotification(view_ViewController.do_show_alert,{ alert : "這個套牌作者已經停止分享囉!"});
 			return;
 		}
+		this.loadDetail(deck);
+	}
+	,loadDetail: function(deck,load) {
+		if(load == null) load = false;
+		var _g = this;
 		var cards = deck.cards;
 		var game = deck.game;
-		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
-		Helper.loadDetail(game,function(data) {
-			var ary_showData = cards.map(function(str) {
-				var retobj = null;
-				switch(game) {
-				case "sangoWar":
-					str = StringTools.replace(str,".jpg","");
-					retobj = Lambda.find(data,function(oriData) {
-						return oriData.id.indexOf(str) != -1;
-					});
-					break;
-				default:
-					retobj = Lambda.find(data,function(oriData1) {
-						return oriData1.id == str;
-					});
-				}
-				return retobj;
-			});
-			ary_showData = ary_showData.filter(function(item) {
+		var onLoadSuccess = function(ary_send) {
+			var ary_send1 = ary_send.filter(function(item) {
 				return item != null;
 			});
 			_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
-			_g.sendNotification(view_ViewController.do_show_bigList,{ clickData : deck, game : game, ary_showData : ary_showData});
-		});
+			_g.sendNotification(view_ViewController.do_show_bigList,{ clickData : deck, game : game, ary_showData : ary_send1});
+		};
+		if(load) {
+			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
+			Helper.loadDetail(game,function(data) {
+				var ary_showData = cards.map(function(str) {
+					var retobj = null;
+					switch(game) {
+					case "sangoWar":
+						str = StringTools.replace(str,".jpg","");
+						retobj = Lambda.find(data,function(oriData) {
+							return oriData.id.indexOf(str) != -1;
+						});
+						break;
+					default:
+						retobj = Lambda.find(data,function(oriData1) {
+							return oriData1.id == str;
+						});
+					}
+					return retobj;
+				});
+				onLoadSuccess(ary_showData);
+			});
+		} else {
+			var ary_showData1 = cards.map(function(str1) {
+				switch(game) {
+				case "sangoWar":
+					return { id : StringTools.replace(str1,".jpg","")};
+				default:
+					return { id : str1};
+				}
+			});
+			onLoadSuccess(ary_showData1);
+		}
 	}
 	,doSetData: function(data) {
 		this.oriDataToUseData(data);

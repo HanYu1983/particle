@@ -191,31 +191,52 @@ class ModelController extends Mediator
 			sendNotification( ViewController.do_show_alert, { alert:'這個套牌作者已經停止分享囉!' } );
 			return;
 		}
+		loadDetail( deck );
+	}
+	
+	function loadDetail( deck, ?load = false ) {
 		var cards = deck.cards;
 		var game = deck.game;
-		sendNotification( ViewController.do_show_loading, { show:true } );
-		Helper.loadDetail( game, function( data:Array<Dynamic> ) {
-			var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
-				var retobj:Dynamic = null;
-				switch( game ){
-					case 'sangoWar':
-						str = str.replace( '.jpg', '' );
-						retobj = data.find( function( oriData ) {
-							return ( oriData.id.indexOf( str ) != -1 );
-						});
-					default:
-						retobj = data.find( function( oriData ) {
-							return ( oriData.id == str );
-						});
-				}
-				return retobj;
-			});
-			ary_showData = ary_showData.filter( function( item ) {
+		
+		function onLoadSuccess( ary_send ) {
+			var ary_send = ary_send.filter( function( item ) {
 				return item != null;
 			});
 			sendNotification( ViewController.do_show_loading, { show:false } );
-			sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_showData } );
-		});
+			sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_send } );
+		}
+		
+		if ( load ) {
+			sendNotification( ViewController.do_show_loading, { show:true } );
+			Helper.loadDetail( game, function( data:Array<Dynamic> ) {
+				var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
+					var retobj:Dynamic = null;
+					switch( game ){
+						case 'sangoWar':
+							str = str.replace( '.jpg', '' );
+							retobj = data.find( function( oriData ) {
+								return ( oriData.id.indexOf( str ) != -1 );
+							});
+						default:
+							retobj = data.find( function( oriData ) {
+								return ( oriData.id == str );
+							});
+					}
+					return retobj;
+				});
+				onLoadSuccess( ary_showData );
+			});
+		}else {
+			var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
+				return switch( game ){
+					case 'sangoWar':
+						{ id: str.replace( '.jpg', '' ) };
+					default:
+						{ id:str };
+				}
+			});
+			onLoadSuccess( ary_showData );
+		}
 	}
 	
 	function doSetData( data:Array<Dynamic> ) {
