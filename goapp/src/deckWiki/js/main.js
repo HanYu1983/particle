@@ -581,12 +581,13 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_item_click":
 			var id1 = notification.getBody().id;
 			var game1 = notification.getBody().game;
+			var doLoad = notification.getBody().doLoad;
 			var clickData = this.findDataById(this.data,id1);
 			var cards = clickData.cards;
 			this.currentGame = game1;
 			this.currentUid = id1;
 			this.currentOutputStr = JSON.stringify(cards);
-			this.sendShowBigList(clickData);
+			this.sendShowBigList(clickData,doLoad);
 			break;
 		default:
 			if(str == model_ModelController.do_save_count) this.doSaveCount(notification.getBody().countMap); else if(str1 == model_ModelController.do_load_all_list) this.doLoadList();
@@ -614,12 +615,13 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.sendShowBigList(showData);
 		}
 	}
-	,sendShowBigList: function(deck) {
+	,sendShowBigList: function(deck,load) {
+		if(load == null) load = false;
 		if(deck == null) {
 			this.sendNotification(view_ViewController.do_show_alert,{ alert : "這個套牌作者已經停止分享囉!"});
 			return;
 		}
-		this.loadDetail(deck);
+		this.loadDetail(deck,load);
 	}
 	,loadDetail: function(deck,load) {
 		if(load == null) load = false;
@@ -658,9 +660,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var ary_showData1 = cards.map(function(str1) {
 				switch(game) {
 				case "sangoWar":
-					return { id : StringTools.replace(str1,".jpg","")};
+					return { id : StringTools.replace(str1,".jpg",""), noData : true};
 				default:
-					return { id : str1};
+					return { id : str1, noData : true};
 				}
 			});
 			onLoadSuccess(ary_showData1);
@@ -1383,12 +1385,19 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.mc_bigItemContainer.empty();
 		Lambda.foreach(ary_showData,function(item) {
 			var dom = Helper.createDetail(game,item);
+			if(item.noData != null && item.noData) {
+				dom.tooltip({ position : "top", content : "點擊取得詳細資料!"});
+				dom.click(function() {
+					dom.tooltip("hide");
+					_g.sendNotification(view_ViewController.on_item_click,{ id : uid, game : game, doLoad : true});
+				});
+			}
 			dom.find("#mc_detail > div[game=" + game + "]").hide();
 			dom.find("#mc_black").hide();
 			_g.mc_bigItemContainer.append(dom);
-			_g.overListener(game);
 			return true;
 		});
+		this.overListener(game);
 		this.viewComponent.find("#layout_main").layout("collapse","east");
 		Helper.trackingEvent("on_item_view:" + uid);
 	}
@@ -1426,7 +1435,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			});
 			dom.click(function(e2) {
 				var dom3 = _g.j(e2.currentTarget);
-				_g.sendNotification(view_ViewController.on_item_click,{ id : dom3.attr("id"), game : dom3.attr("game")});
+				_g.sendNotification(view_ViewController.on_item_click,{ id : dom3.attr("id"), game : dom3.attr("game"), doLoad : false});
 			});
 			_g.mc_itemContainer.append(dom);
 			return true;

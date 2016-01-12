@@ -147,12 +147,14 @@ class ModelController extends Mediator
 			case ViewController.on_item_click:
 				var id = notification.getBody().id;
 				var game = notification.getBody().game;
+				var doLoad = notification.getBody().doLoad;
 				var clickData:Dynamic = findDataById( data, id );
 				var cards:Array<Dynamic> = clickData.cards;
+				
 				currentGame = game;
 				currentUid = id;
 				currentOutputStr = Json.stringify( cards );
-				sendShowBigList( clickData );
+				sendShowBigList( clickData, doLoad );
 			case str if ( str == do_save_count ):
 				doSaveCount( notification.getBody().countMap );
 			case str if ( str == do_load_all_list ):
@@ -186,12 +188,12 @@ class ModelController extends Mediator
 		}
 	}
 	
-	function sendShowBigList( deck ) {
+	function sendShowBigList( deck, ?load = false ) {
 		if ( deck == null ) {
 			sendNotification( ViewController.do_show_alert, { alert:'這個套牌作者已經停止分享囉!' } );
 			return;
 		}
-		loadDetail( deck );
+		loadDetail( deck, load );
 	}
 	
 	function loadDetail( deck, ?load = false ) {
@@ -230,9 +232,9 @@ class ModelController extends Mediator
 			var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
 				return switch( game ){
 					case 'sangoWar':
-						{ id: str.replace( '.jpg', '' ) };
+						{ id: str.replace( '.jpg', '' ), noData:true };
 					default:
-						{ id:str };
+						{ id: str, noData:true };
 				}
 			});
 			onLoadSuccess( ary_showData );
