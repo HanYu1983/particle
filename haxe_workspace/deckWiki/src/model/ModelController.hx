@@ -25,7 +25,9 @@ class ModelController extends Mediator
 	
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
-	var appData:Dynamic = { };
+	var appData:Dynamic = { 
+		ary_read:[]
+	};
 	
 	var countMap:Dynamic;
 	var fbid:String;
@@ -106,15 +108,18 @@ class ModelController extends Mediator
 					this.fbid = fbid;
 					this.token = token;
 					Helper.loadRead( this.fbid, this.token, function( err, _readData ) {
-						trace( '_readData', _readData );
-						if ( err != null ) {
-							sendNotification( ViewController.do_show_alert, { alert:err } );
-							return;
-						}
+						if( switch( err ) {
+							case 'file not found',null:false;
+							case e:
+								sendNotification( ViewController.do_show_alert, { alert:err } );
+								true;
+							
+						} ) return;
+						
 						if ( _readData != null ) {
 							appData = _readData;
 						}
-						trace( 'appData', appData );
+						
 						setDataRead();
 						sendNotification( on_facebook_login, { fbid:fbid, token:token } );
 						sendNotification( ViewController.do_show_list, { data:ary_result, total: ary_result.length } );
@@ -278,7 +283,7 @@ class ModelController extends Mediator
 	}
 	
 	function setDataRead() {
-		if ( appData.ary_read == null ) return;
+		if ( this.fbid == null ) return;
 		data.foreach( function( item ) {
 			item.read = appData.ary_read.indexOf( item.id ) != -1;
 			return true;

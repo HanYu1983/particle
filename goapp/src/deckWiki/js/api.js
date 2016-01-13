@@ -111,11 +111,7 @@ var api = api || {};
       },
       'json',
       function( err, ret ){
-			if( err == "file not found" ){
-			  cb( null, null )
-			} else {
-			  cb( err, ret )
-			}
+			cb( err, ret )
       })
   }
 
