@@ -631,7 +631,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			}
 			if(checkHash) Helper.loadRead(function(err1,readData) {
 				if(readData != null) _g.ary_read = JSON.parse(readData);
-				_g.doSetData(data,true);
+				_g.doSetData(data);
 				_g.checkHashAndShow();
 			}); else _g.doSetData(data);
 		});
@@ -707,10 +707,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			onLoadSuccess(ary_showData1);
 		}
 	}
-	,doSetData: function(data,setRead) {
-		if(setRead == null) setRead = false;
+	,doSetData: function(data) {
 		this.oriDataToUseData(data);
-		if(setRead) this.setDataRead();
+		this.setDataRead();
 		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length, pageNumber : 1});
 	}
 	,setDataRead: function() {
@@ -1431,6 +1430,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	}
 	,showBigList: function(uid,game,ary_showData) {
 		var _g = this;
+		this.mc_itemContainer.find("[id=" + uid + "]").find("#mc_readInfo").hide();
 		this.mc_bigItemContainer.empty();
 		Lambda.foreach(ary_showData,function(item) {
 			var dom = Helper.createDetail(game,item);
@@ -1484,7 +1484,6 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			});
 			dom.click(function(e2) {
 				var dom3 = _g.j(e2.currentTarget);
-				dom3.find("#mc_readInfo").hide();
 				_g.sendNotification(view_ViewController.on_item_click,{ id : dom3.attr("id"), game : dom3.attr("game"), doLoad : false});
 			});
 			if(item.read != null) {

@@ -185,8 +185,7 @@ class ModelController extends Mediator
 					if ( readData != null ) {
 						ary_read = Json.parse( readData );
 					}
-					
-					doSetData( data, true );
+					doSetData( data );
 					checkHashAndShow();
 				});
 			}else {
@@ -274,9 +273,9 @@ class ModelController extends Mediator
 		}
 	}
 	
-	function doSetData( data:Array<Dynamic>, ?setRead = false ) {
+	function doSetData( data:Array<Dynamic> ) {
 		oriDataToUseData( data );
-		if( setRead ) setDataRead();
+		setDataRead();
 		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length, pageNumber:1} );
 	}
 	

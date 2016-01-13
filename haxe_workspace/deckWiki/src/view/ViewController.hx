@@ -512,6 +512,8 @@ class ViewController extends Mediator
 	}
 	
 	function showBigList( uid, game:String, ary_showData:Array<Dynamic> ) {
+		mc_itemContainer.find( '[id=' + uid + ']' ).find( '#mc_readInfo' ).hide();
+		
 		mc_bigItemContainer.empty();
 		ary_showData.foreach( function( item ) {
 			var dom:Dynamic = Helper.createDetail( game, item );
@@ -569,7 +571,6 @@ class ViewController extends Mediator
 			});
 			dom.click( function( e ) {
 				var dom = j(e.currentTarget );
-				dom.find( '#mc_readInfo' ).hide();
 				sendNotification( on_item_click, { id:dom.attr('id'), game:dom.attr('game' ), doLoad:false } );
 			});
 			
