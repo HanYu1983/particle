@@ -266,7 +266,7 @@ class ViewController extends Mediator
 	}
 	
 	function openFBComment( uid:String ) {
-		var url = 'comment.html?url=' + 'http://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+		var url = 'comment.html?url=' + 'https://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
 		iframe_comment.attr( 'src', url );
 	}
 	
