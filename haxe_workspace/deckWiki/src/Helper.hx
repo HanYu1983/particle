@@ -119,12 +119,12 @@ class Helper
 		return untyped __js__('api.hasInfo')( game );
 	}
 	
-	public static function loadRead( fbid, token, cb ) {
-		untyped __js__('api.loadRead')( fbid, token, cb );
+	public static function loadRead( cb ) {
+		untyped __js__('api.loadRead')( cb );
 	}
 	
-	public static function saveRead( fbid, token, data, cb ) {
-		untyped __js__('api.saveRead')( fbid, token, data, cb );
+	public static function saveRead( data, cb ) {
+		untyped __js__('api.saveRead')( data, cb );
 	}
 	
 	public static function loadList( cb ) {

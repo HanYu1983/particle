@@ -102,29 +102,17 @@ var api = api || {};
 		})
 	}
 	
-  function loadRead( fbid, token, cb ){
-    var path = db2path.sf( db2path.userInfoJson, [fbid] )
-    db2.file( path,
-      {
-        FBID: fbid,
-        AccessToken: token
-      },
-      'json',
-      function( err, ret ){
-			cb( err, ret )
-      })
+  function loadRead( cb ){
+	  if( window.localStorage.getItem('readinfo') == null ){
+		  cb( 'file not found' )
+	  } else {
+		  cb( null, window.localStorage.getItem('readinfo') )
+	  }
   }
 
-  function saveRead( fbid, token, data, cb ){
-	var path = db2path.sf( db2path.userInfoJson, [fbid] )
-    db2.writefile( path,
-      {
-        FBID: fbid,
-        AccessToken: token,
-        Content: JSON.stringify(data),
-        Override: true
-      },
-      cb)
+  function saveRead( data, cb ){
+	  window.localStorage.setItem('readinfo', data)
+	  cb()
   }
 	
 	module.cardInfo = cardInfo

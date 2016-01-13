@@ -17,6 +17,7 @@ class ModelController extends Mediator
 {
 	public static var do_load_all_list = 'do_load_all_list';
 	public static var do_save_count = 'do_save_count';
+	//public static var do_save_read = 'do_save_read';
 	
 	public static var on_facebook_login = 'on_facebook_login';
 	public static var on_cardsuit_load = 'on_cardsuit_load';
@@ -25,9 +26,7 @@ class ModelController extends Mediator
 	
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
-	var appData:Dynamic = { 
-		ary_read:[]
-	};
+	var ary_read = [];
 	
 	var countMap:Dynamic;
 	var fbid:String;
@@ -107,26 +106,11 @@ class ModelController extends Mediator
 				Helper.loginFb( function(fbid, token) {
 					this.fbid = fbid;
 					this.token = token;
-					Helper.loadRead( this.fbid, this.token, function( err, _readData ) {
-						if( switch( err ) {
-							case 'file not found',null:false;
-							case e:
-								sendNotification( ViewController.do_show_alert, { alert:err } );
-								true;
-							
-						} ) return;
-						
-						if ( _readData != null ) {
-							appData = _readData;
-						}
-						
-						setDataRead();
-						sendNotification( on_facebook_login, { fbid:fbid, token:token } );
-						sendNotification( ViewController.do_show_list, { data:ary_result, total: ary_result.length } );
-						Helper.getCardsuits( fbid, token, function( ret ) {
-							sendNotification( on_cardsuit_load, { cardsuit:ret } );
-							sendNotification( ViewController.do_show_loading, { show:false } );
-						});
+					
+					sendNotification( on_facebook_login, { fbid:fbid, token:token } );
+					Helper.getCardsuits( fbid, token, function( ret ) {
+						sendNotification( on_cardsuit_load, { cardsuit:ret } );
+						sendNotification( ViewController.do_show_loading, { show:false } );
 					});
 				});
 			case ViewController.on_btn_gotoDeckManager_click:
@@ -172,6 +156,8 @@ class ModelController extends Mediator
 				currentUid = id;
 				currentOutputStr = Json.stringify( cards );
 				sendShowBigList( clickData, doLoad );
+		//	case str if ( str == do_save_read ):
+				//setDataRead( notification.getBody().readData );
 			case str if ( str == do_save_count ):
 				doSaveCount( notification.getBody().countMap );
 			case str if ( str == do_load_all_list ):
@@ -186,14 +172,26 @@ class ModelController extends Mediator
 	
 	function doLoadList( ?checkHash = false ) {
 		sendNotification( ViewController.do_show_loading, { show:true } );
+		
 		Helper.loadList( function( err, data:Array<Dynamic> ) {
 			sendNotification( ViewController.do_show_loading, { show:false } );
 			if ( err != null ) {
 				sendNotification( on_loadPublic_error, {err:err} );
 				return;
 			}
-			doSetData( data );
-			if( checkHash ) checkHashAndShow();
+			
+			if ( checkHash ) {
+				Helper.loadRead( function( err, readData ) {
+					if ( readData != null ) {
+						ary_read = Json.parse( readData );
+					}
+					
+					doSetData( data, true );
+					checkHashAndShow();
+				});
+			}else {
+				doSetData( data );
+			}
 		});
 	}
 	
@@ -223,9 +221,9 @@ class ModelController extends Mediator
 				return item != null;
 			});
 			
-			if ( appData.ary_read != null && appData.ary_read.indexOf( deck.id ) == -1 ) {
-				appData.ary_read.push( deck.id );
-				Helper.saveRead( this.fbid, this.token, appData, function( err, appSaveRet ) {
+			if ( ary_read != null && ary_read.indexOf( deck.id ) == -1 ) {
+				ary_read.push( deck.id );
+				Helper.saveRead( Json.stringify( ary_read ), function( err, appSaveRet ) {
 					if ( err != null ) {
 						sendNotification( ViewController.do_show_alert, { alert:err } );
 					}else {
@@ -276,16 +274,15 @@ class ModelController extends Mediator
 		}
 	}
 	
-	function doSetData( data:Array<Dynamic> ) {
+	function doSetData( data:Array<Dynamic>, ?setRead = false ) {
 		oriDataToUseData( data );
-		setDataRead();
+		if( setRead ) setDataRead();
 		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length, pageNumber:1} );
 	}
 	
 	function setDataRead() {
-		if ( this.fbid == null ) return;
 		data.foreach( function( item ) {
-			item.read = appData.ary_read.indexOf( item.id ) != -1;
+			item.read = ary_read.indexOf( item.id ) != -1;
 			return true;
 		});
 	}

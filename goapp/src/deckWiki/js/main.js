@@ -68,11 +68,11 @@ Helper.loadDetail = function(game,cb) {
 Helper.hasDetail = function(game) {
 	return api.hasInfo(game);
 };
-Helper.loadRead = function(fbid,token,cb) {
-	api.loadRead(fbid,token,cb);
+Helper.loadRead = function(cb) {
+	api.loadRead(cb);
 };
-Helper.saveRead = function(fbid,token,data,cb) {
-	api.saveRead(fbid,token,data,cb);
+Helper.saveRead = function(data,cb) {
+	api.saveRead(data,cb);
 };
 Helper.loadList = function(cb) {
 	api.load(cb);
@@ -153,6 +153,18 @@ HxOverrides.substr = function(s,pos,len) {
 		if(pos < 0) pos = 0;
 	} else if(len < 0) len = s.length + len - pos;
 	return s.substr(pos,len);
+};
+HxOverrides.indexOf = function(a,obj,i) {
+	var len = a.length;
+	if(i < 0) {
+		i += len;
+		if(i < 0) i = 0;
+	}
+	while(i < len) {
+		if(a[i] === obj) return i;
+		i++;
+	}
+	return -1;
 };
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
@@ -489,7 +501,7 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 	}
 });
 var model_ModelController = function(mediatorName,viewComponent) {
-	this.appData = { ary_read : []};
+	this.ary_read = [];
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
 model_ModelController.__name__ = true;
@@ -542,36 +554,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			Helper.loginFb(function(fbid,token) {
 				_g1.fbid = fbid;
 				_g1.token = token;
-				Helper.loadRead(_g1.fbid,_g1.token,function(err1,_readData) {
-					if((function($this) {
-						var $r;
-						var e = err1;
-						$r = err1 == null?false:(function($this) {
-							var $r;
-							switch(err1) {
-							case "file not found":
-								$r = false;
-								break;
-							default:
-								$r = (function($this) {
-									var $r;
-									_g1.sendNotification(view_ViewController.do_show_alert,{ alert : err1});
-									$r = true;
-									return $r;
-								}($this));
-							}
-							return $r;
-						}($this));
-						return $r;
-					}(this))) return;
-					if(_readData != null) _g1.appData = _readData;
-					_g1.setDataRead();
-					_g1.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
-					_g1.sendNotification(view_ViewController.do_show_list,{ data : _g1.ary_result, total : _g1.ary_result.length});
-					Helper.getCardsuits(fbid,token,function(ret2) {
-						_g1.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : ret2});
-						_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
-					});
+				_g1.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
+				Helper.getCardsuits(fbid,token,function(ret2) {
+					_g1.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : ret2});
+					_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
 				});
 			});
 			break;
@@ -643,8 +629,11 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				_g.sendNotification(model_ModelController.on_loadPublic_error,{ err : err});
 				return;
 			}
-			_g.doSetData(data);
-			if(checkHash) _g.checkHashAndShow();
+			if(checkHash) Helper.loadRead(function(err1,readData) {
+				if(readData != null) _g.ary_read = JSON.parse(readData);
+				_g.doSetData(data,true);
+				_g.checkHashAndShow();
+			}); else _g.doSetData(data);
 		});
 	}
 	,checkHashAndShow: function() {
@@ -671,9 +660,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var ary_send1 = ary_send.filter(function(item) {
 				return item != null;
 			});
-			if(_g.appData.ary_read != null && _g.appData.ary_read.indexOf(deck.id) == -1) {
-				_g.appData.ary_read.push(deck.id);
-				Helper.saveRead(_g.fbid,_g.token,_g.appData,function(err,appSaveRet) {
+			if(_g.ary_read != null && HxOverrides.indexOf(_g.ary_read,deck.id,0) == -1) {
+				_g.ary_read.push(deck.id);
+				Helper.saveRead(JSON.stringify(_g.ary_read),function(err,appSaveRet) {
 					if(err != null) _g.sendNotification(view_ViewController.do_show_alert,{ alert : err}); else {
 						_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
 						_g.sendNotification(view_ViewController.do_show_bigList,{ clickData : deck, game : game, ary_showData : ary_send1});
@@ -718,16 +707,16 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			onLoadSuccess(ary_showData1);
 		}
 	}
-	,doSetData: function(data) {
+	,doSetData: function(data,setRead) {
+		if(setRead == null) setRead = false;
 		this.oriDataToUseData(data);
-		this.setDataRead();
+		if(setRead) this.setDataRead();
 		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length, pageNumber : 1});
 	}
 	,setDataRead: function() {
 		var _g = this;
-		if(this.fbid == null) return;
 		Lambda.foreach(this.data,function(item) {
-			item.read = _g.appData.ary_read.indexOf(item.id) != -1;
+			item.read = HxOverrides.indexOf(_g.ary_read,item.id,0) != -1;
 			return true;
 		});
 	}
@@ -1512,6 +1501,9 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
+if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
+	return Array.prototype.indexOf.call(a,o,i);
+};
 String.__name__ = true;
 Array.__name__ = true;
 if(Array.prototype.map == null) Array.prototype.map = function(f) {
