@@ -265,11 +265,13 @@ var api = api || {};
 	記錄到server
 	*/
 	function saveToServer( name, img, part, override, cb ){
+		var path = db2path.sf( db2path.oneParticleInfo, [name] )
+		var imagePath = db2path.sf( db2path.oneParticleImage, [name] )
 		async.parallel([
-			_.partial( db2.pwritefile, '../particledbfile2/root/particle/list/'+name+".json", {
+			_.partial( db2.pwritefile, '../particledbfile2/' + path, {
 				Content: JSON.stringify( part )
 			}),
-			_.partial( db2.pwritefile, '../particledbfile2/root/particle/list/'+name+".jpg", {
+			_.partial( db2.pwritefile, '../particledbfile2/' + imagePath, {
 				Content: img.toDataURL().split( ',' )[1]
 			}),
 		], cb)
