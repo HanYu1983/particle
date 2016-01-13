@@ -631,7 +631,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			}
 			if(checkHash) Helper.loadRead(function(err1,readData) {
 				if(readData != null) _g.ary_read = JSON.parse(readData);
-				_g.doSetData(data,true);
+				_g.doSetData(data);
 				_g.checkHashAndShow();
 			}); else _g.doSetData(data);
 		});
@@ -707,10 +707,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			onLoadSuccess(ary_showData1);
 		}
 	}
-	,doSetData: function(data,setRead) {
-		if(setRead == null) setRead = false;
+	,doSetData: function(data) {
 		this.oriDataToUseData(data);
-		if(setRead) this.setDataRead();
+		this.setDataRead();
 		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length, pageNumber : 1});
 	}
 	,setDataRead: function() {
