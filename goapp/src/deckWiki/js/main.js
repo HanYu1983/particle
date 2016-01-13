@@ -1351,6 +1351,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			if(_this.parent().attr("uid") == "" || _this.parent().attr("uid") == null) _this.parent().attr("uid",Helper.getUUID());
 			_g.enableSave(true);
 		}});
+		dom.find(".easyui-tooltip").tooltip({ position : "top"});
 		dom.find(".easyui-linkbutton").linkbutton();
 		dom.find("#btn_remove").linkbutton({ onClick : function() {
 			var _this1 = _g.j($(this));

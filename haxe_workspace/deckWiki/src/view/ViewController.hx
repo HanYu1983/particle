@@ -356,6 +356,7 @@ class ViewController extends Mediator
 			}
 		});
 		
+		dom.find( '.easyui-tooltip' ).tooltip({position:'top'});
 		dom.find( '.easyui-linkbutton' ).linkbutton();
 		dom.find( '#btn_remove' ).linkbutton( {
 			onClick:function() {
