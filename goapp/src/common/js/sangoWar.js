@@ -99,7 +99,53 @@ var sangoWar = sangoWar || {};
 		return id.substring( 0, id.indexOf("(") ) + ".jpg"
 	}
 	
+	function loadCh( path, cb ){
+		var fns = 
+			_.chain(_.range(1, 111))
+				.map(function(i){
+					return path + i + ".json"
+				})
+				.map(function(path){
+					return function(cb){
+						$.ajax({
+							url: path,
+							dataType:'json',
+							success:function(data){
+								cb(null, data)
+							},
+							error: function(xhr, res, err){
+								cb(err)
+							}
+						})
+					}
+				}).value()
+		async.parallel(fns, function(err, datas){
+			var list = _.reduce(datas, function(all, curr){
+				return all.concat(curr)
+			}, [])
+			list = _.map(list, function(info){
+				return {
+					id:info[1],
+					rare:info[0],
+					ntype:"",
+					ctype:"",
+					cname:info[2],
+					atype:info[3],
+					atype2:info[4],
+					cost:info[5],
+					acity:parseInt(info[6]),
+					power:parseInt(info[7].replace("+", "")),
+					ability:info[8],
+					content:info[9],
+					counter:info[10]
+				}
+			})
+			cb(err, list)
+		})
+	}
+	
 	module.load = load
+	module.loadCh = loadCh
 	module.csv2json = csv2json
 	module.formatKey = formatKey
 	

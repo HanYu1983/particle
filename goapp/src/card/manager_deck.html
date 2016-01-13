@@ -86,9 +86,9 @@ body{
 			<div game="sangoWar">${cname}</div>
 			<div game="sangoWar">${atype}/${atype2}</div>
 			<div game="sangoWar">${ability}</div>
-			<div game="sangoWar">${content}</div>
+			<div game="sangoWar">{{html content}}</div>
 			<br/>
-			<div game="sangoWar">${counter}</div>
+			<div game="sangoWar">{{html counter}}</div>
 			
 			<div game="yugioh">${id}</div>
 			<div game="yugioh">${race}</div>
@@ -434,7 +434,7 @@ body{
 			default:[
 				[
 					{type:'label', val:'系列'},
-					{type:'select', span:1, val:{name:'set', items:['初阵','群星','缔盟','权倾']}},
+					{type:'select', span:1, val:{name:'set', items:['初阵','群星','缔盟','权倾','异军']}},
 					{type:'label', val:'勢力'},
 					{type:'select', span:1, val:{name:'color', items:['魏','蜀','吴','群','中立']}},
 					{type:'label', val:'卡片種類'},
@@ -1036,19 +1036,25 @@ body{
 	
 	
 	var lang = leo.utils.getHash().lang
+	/*
 	var tmplName = game
 	if( lang ){
 		tmplName = [tmplName, lang].join('_')
 	}else{
 		lang = 'default';
 	}
+	*/
 	
 	var cardlist;
 	var itemId = 0;
 	var form_container = $('#form_container' );
-	var tmpl_form = $('#tmpl_' + tmplName + 'Form' );
+	//var tmpl_form = $('#tmpl_' + tmplName + 'Form' );
+	var table = tmplAry[game][lang]
+	if( table == null ){
+		table = tmplAry[game]["default"]
+	}
 	
-	form_container.append( parseToTable( tmplAry[game][lang] ) );
+	form_container.append( parseToTable( table ) );
 	gameController.loadCardData( game, lang, onLoadGameCallback );
 	
 	$.messager.progress({text:'讀取資料中…'}); 

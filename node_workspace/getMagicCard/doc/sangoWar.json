@@ -1,0 +1,5 @@
+{
+  "dir":"doc/sangoWar/",
+  "outputDir":"/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/sangoList/",
+  "pattern":"<p class=\"tit\"><span>(.*?)<\\/span><span>(.*?)<\\/span>[\\s\\S]*?<th>卡片名稱<\\/th>[\\s]*<td colspan=\"3\">(.*?)<\\/td>[\\s\\S]*?<th>種別<\\/th>[\\s]*<td colspan=\"3\">(.*?)<\\/td>[\\s\\S]*?<th>兵種<\\/th>[\\s]*<td colspan=\"3\">(.*?)<\\/td>[\\s\\S]*?<th>特技<\\/th>[\\s\\S]*?<td>(.*?)<\\/td>[\\s\\S]*?<td>(.*?)<\\/td>[\\s\\S]*?<td>(.*?)<\\/td>[\\s\\S]*?<td>(.*?)<\\/td>[\\s\\S]*?卡片內文[\\s\\S]*?<td colspan=\"5\">([\\s\\S]*?)<\\/td>[\\s\\S]*?反擊計略效果[\\s\\S]*?<td colspan=\"3\">(.*?)<\\/td>"
+}

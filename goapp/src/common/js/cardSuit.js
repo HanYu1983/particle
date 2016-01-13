@@ -191,6 +191,7 @@ var cardSuit = cardSuit || {};
     model: {}
   }
   */
+  /*
   function load( fbid, token, cb ){
     store.load({
       FBID: fbid,
@@ -221,9 +222,9 @@ var cardSuit = cardSuit || {};
       cb( err, ret )
     })
   }
-  
+  */
   function load2( fbid, token, cb ){
-	var path = db2path.sf( db2path.cardSuitJson, [fbid] )
+    var path = db2path.sf( db2path.cardSuitJson, [fbid] )
     db2.file( path,
       {
         FBID: fbid,
@@ -231,11 +232,11 @@ var cardSuit = cardSuit || {};
       },
       'json',
       function( err, ret ){
-		if( err == "file not found" ){
-			cb( null, defaultModel() )
-		} else {
-			cb( err, ret)
-		}
+        if( err == "file not found" ){
+          cb( null, defaultModel() )
+        } else {
+          cb( err, ret)
+        }
       })
   }
   
@@ -254,8 +255,10 @@ var cardSuit = cardSuit || {};
   module.defaultModel = defaultModel
   module.editCardSuit = editCardSuit
   module.removeCardSuit = removeCardSuit
+  /*
   module.load = load
   module.save = save
+  */
   module.load2 = load2
   module.save2 = save2
   
