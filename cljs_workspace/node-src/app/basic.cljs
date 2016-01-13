@@ -4,9 +4,10 @@
     [clojure.string :as str]))
 
 (def rx (js/require "rx"))
+(def script (js/require "./script.js"))
 
-(defn parseFile [pattern [filepath filecontent]]
-  (let [data (map rest (re-seq pattern filecontent))]
+(defn parseFile [pattern scriptFn [filepath filecontent]]
+  (let [data (map (comp js->clj scriptFn clj->js rest) (re-seq pattern filecontent))]
     (->
       (.just rx.Observable [filepath data]))))
 
@@ -18,8 +19,10 @@
           dir "dir"
           outputDir "outputDir"
           pattern "pattern"
-          script "script"
-        } cfg]
+          s "script"
+        } cfg
+        scriptFn
+        (or (aget script s) identity)]
     (.subscribe
       (->
         (.just rx.Observable dir)
@@ -27,7 +30,7 @@
         (.map 
           #(str dir %))
         (.flatMap fns/readfile)
-        (.flatMap (partial parseFile (re-pattern pattern)))
+        (.flatMap (partial parseFile (re-pattern pattern) scriptFn))
         (.flatMap
           (fn [[filepath data]]
             (.log js/console (count data))

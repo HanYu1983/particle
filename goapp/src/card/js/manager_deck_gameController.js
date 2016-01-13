@@ -782,7 +782,26 @@ var gameController = {};
 				fns.push( sangoCostGe( "cost", parseInt(v) ))
 				break
 			case "ctype":
-				fns.push( cardsearch.attrEq( "ctype", v ) )
+				if( v == '武将' ){
+					fns.push( 
+						cardsearch.not( 
+							cardsearch.or([
+								cardsearch.attrEq( "atype", '兵隊' ),
+								cardsearch.attrEq( "atype", '計略' ),
+								cardsearch.attrEq( "atype", '列伝' ),
+								cardsearch.attrEq( "atype", '奥義' )
+							])
+						))
+				} else if ( v == 'キャンペーン' ){
+					fns.push( 
+						cardsearch.and([
+							cardsearch.attrEq( "atype", "-" ),
+							cardsearch.attrEq( "atype2", "-" )
+						])
+					)
+				} else {
+					fns.push( cardsearch.attrEq( "atype", v ) )
+				}
 				break
 			case "ntype":
 				fns.push( cardsearch.attrEq( "ntype", v ) )
