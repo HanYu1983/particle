@@ -245,12 +245,18 @@ class ModelController extends Mediator
 						case 'sangoWar':
 							str = str.replace( '.jpg', '' );
 							retobj = data.find( function( oriData ) {
-								return ( oriData.id.indexOf( str ) != -1 );
+								return ( oriData.id.indexOf( str ) == 0 );
 							});
 						default:
 							retobj = data.find( function( oriData ) {
 								return ( oriData.id == str );
 							});
+					}
+					retobj = data.find( function( oriData ) {
+						return ( oriData.id == str );
+					});
+					if ( retobj == null ) {
+						retobj = { id:str, content:'暫時沒有資料!' }; 
 					}
 					return retobj;
 				});

@@ -680,7 +680,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				case "sangoWar":
 					str = StringTools.replace(str,".jpg","");
 					retobj = Lambda.find(data,function(oriData) {
-						return oriData.id.indexOf(str) != -1;
+						return oriData.id.indexOf(str) == 0;
 					});
 					break;
 				default:
@@ -688,6 +688,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 						return oriData1.id == str;
 					});
 				}
+				retobj = Lambda.find(data,function(oriData2) {
+					return oriData2.id == str;
+				});
+				if(retobj == null) retobj = { id : str, content : "暫時沒有資料!"};
 				return retobj;
 			});
 			onLoadSuccess(ary_showData);
