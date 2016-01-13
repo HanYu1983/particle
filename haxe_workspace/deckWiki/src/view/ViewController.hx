@@ -568,8 +568,14 @@ class ViewController extends Mediator
 			});
 			dom.click( function( e ) {
 				var dom = j(e.currentTarget );
+				dom.find( '#mc_readInfo' ).hide();
 				sendNotification( on_item_click, { id:dom.attr('id'), game:dom.attr('game' ), doLoad:false } );
 			});
+			
+			if ( item.read != null ) {
+				if ( !item.read ) dom.find( '#mc_readInfo' ).show();
+				else dom.find( '#mc_readInfo' ).hide();
+			}
 			
 			mc_itemContainer.append( dom );
 			return true;

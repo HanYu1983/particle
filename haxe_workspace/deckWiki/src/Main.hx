@@ -25,6 +25,8 @@ class Main
 		Facade.getInstance().registerMediator( new ModelController( 'ModelController' ) );
 		Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:true } );
 		
+		
+		
 		function initApp( event ) {
 			Helper.initFb( function() {
 				#if debug

@@ -68,6 +68,12 @@ Helper.loadDetail = function(game,cb) {
 Helper.hasDetail = function(game) {
 	return api.hasInfo(game);
 };
+Helper.loadRead = function(fbid,token,cb) {
+	api.loadRead(fbid,token,cb);
+};
+Helper.saveRead = function(fbid,token,data,cb) {
+	api.saveRead(fbid,token,data,cb);
+};
 Helper.loadList = function(cb) {
 	api.load(cb);
 };
@@ -483,6 +489,7 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 	}
 });
 var model_ModelController = function(mediatorName,viewComponent) {
+	this.appData = { };
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 };
 model_ModelController.__name__ = true;
@@ -535,10 +542,19 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			Helper.loginFb(function(fbid,token) {
 				_g1.fbid = fbid;
 				_g1.token = token;
-				_g1.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
-				Helper.getCardsuits(fbid,token,function(ret2) {
-					_g1.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : ret2});
-					_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
+				Helper.loadRead(_g1.fbid,_g1.token,function(err1,_readData) {
+					if(err1 != null) {
+						_g1.sendNotification(view_ViewController.do_show_alert,{ alert : err1});
+						return;
+					}
+					if(_readData != null) _g1.appData = _readData;
+					_g1.setDataRead();
+					_g1.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
+					_g1.sendNotification(view_ViewController.do_show_list,{ data : _g1.ary_result, total : _g1.ary_result.length});
+					Helper.getCardsuits(fbid,token,function(ret2) {
+						_g1.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : ret2});
+						_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
+					});
 				});
 			});
 			break;
@@ -594,13 +610,14 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.sendShowBigList(clickData,doLoad);
 			break;
 		default:
-			if(str == model_ModelController.do_save_count) this.doSaveCount(notification.getBody().countMap); else if(str1 == model_ModelController.do_load_all_list) this.doLoadList();
+			if(str == model_ModelController.do_save_count) this.doSaveCount(notification.getBody().countMap); else if(str1 == model_ModelController.do_load_all_list) this.doLoadList(true);
 		}
 	}
 	,doSaveCount: function(map) {
 		this.countMap = map;
 	}
-	,doLoadList: function() {
+	,doLoadList: function(checkHash) {
+		if(checkHash == null) checkHash = false;
 		var _g = this;
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		Helper.loadList(function(err,data) {
@@ -610,7 +627,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				return;
 			}
 			_g.doSetData(data);
-			_g.checkHashAndShow();
+			if(checkHash) _g.checkHashAndShow();
 		});
 	}
 	,checkHashAndShow: function() {
@@ -630,37 +647,45 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	,loadDetail: function(deck,load) {
 		if(load == null) load = false;
 		var _g = this;
+		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		var cards = deck.cards;
 		var game = deck.game;
 		var onLoadSuccess = function(ary_send) {
 			var ary_send1 = ary_send.filter(function(item) {
 				return item != null;
 			});
-			_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
-			_g.sendNotification(view_ViewController.do_show_bigList,{ clickData : deck, game : game, ary_showData : ary_send1});
-		};
-		if(load) {
-			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
-			Helper.loadDetail(game,function(data) {
-				var ary_showData = cards.map(function(str) {
-					var retobj = null;
-					switch(game) {
-					case "sangoWar":
-						str = StringTools.replace(str,".jpg","");
-						retobj = Lambda.find(data,function(oriData) {
-							return oriData.id.indexOf(str) != -1;
-						});
-						break;
-					default:
-						retobj = Lambda.find(data,function(oriData1) {
-							return oriData1.id == str;
-						});
+			if(_g.appData.ary_read != null && _g.appData.ary_read.indexOf(deck.id) == -1) {
+				_g.appData.ary_read.push(deck.id);
+				Helper.saveRead(_g.fbid,_g.token,_g.appData,function(err,appSaveRet) {
+					if(err != null) _g.sendNotification(view_ViewController.do_show_alert,{ alert : err}); else {
+						_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
+						_g.sendNotification(view_ViewController.do_show_bigList,{ clickData : deck, game : game, ary_showData : ary_send1});
 					}
-					return retobj;
 				});
-				onLoadSuccess(ary_showData);
+			} else {
+				_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
+				_g.sendNotification(view_ViewController.do_show_bigList,{ clickData : deck, game : game, ary_showData : ary_send1});
+			}
+		};
+		if(load) Helper.loadDetail(game,function(data) {
+			var ary_showData = cards.map(function(str) {
+				var retobj = null;
+				switch(game) {
+				case "sangoWar":
+					str = StringTools.replace(str,".jpg","");
+					retobj = Lambda.find(data,function(oriData) {
+						return oriData.id.indexOf(str) != -1;
+					});
+					break;
+				default:
+					retobj = Lambda.find(data,function(oriData1) {
+						return oriData1.id == str;
+					});
+				}
+				return retobj;
 			});
-		} else {
+			onLoadSuccess(ary_showData);
+		}); else {
 			if(Helper.hasDetail(game)) {
 				this.loadDetail(deck,true);
 				return;
@@ -678,7 +703,16 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,doSetData: function(data) {
 		this.oriDataToUseData(data);
+		this.setDataRead();
 		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length, pageNumber : 1});
+	}
+	,setDataRead: function() {
+		var _g = this;
+		if(this.appData.ary_read == null) return;
+		Lambda.foreach(this.data,function(item) {
+			item.read = _g.appData.ary_read.indexOf(item.id) != -1;
+			return true;
+		});
 	}
 	,filterByPage: function(from,page) {
 		if(page == null) page = 0;
@@ -1443,8 +1477,12 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			});
 			dom.click(function(e2) {
 				var dom3 = _g.j(e2.currentTarget);
+				dom3.find("#mc_readInfo").hide();
 				_g.sendNotification(view_ViewController.on_item_click,{ id : dom3.attr("id"), game : dom3.attr("game"), doLoad : false});
 			});
+			if(item.read != null) {
+				if(!item.read) dom.find("#mc_readInfo").show(); else dom.find("#mc_readInfo").hide();
+			}
 			_g.mc_itemContainer.append(dom);
 			return true;
 		});

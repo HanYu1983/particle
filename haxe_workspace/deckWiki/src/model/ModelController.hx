@@ -25,6 +25,7 @@ class ModelController extends Mediator
 	
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
+	var appData:Dynamic = { };
 	
 	var countMap:Dynamic;
 	var fbid:String;
@@ -104,13 +105,22 @@ class ModelController extends Mediator
 				Helper.loginFb( function(fbid, token) {
 					this.fbid = fbid;
 					this.token = token;
-					sendNotification( on_facebook_login, { fbid:fbid, token:token } );
-					
-					Helper.getCardsuits( fbid, token, function( ret ) {
-						sendNotification( on_cardsuit_load, { cardsuit:ret } );
-						sendNotification( ViewController.do_show_loading, { show:false } );
+					Helper.loadRead( this.fbid, this.token, function( err, _readData ) {
+						if ( err != null ) {
+							sendNotification( ViewController.do_show_alert, { alert:err } );
+							return;
+						}
+						if ( _readData != null ) {
+							appData = _readData;
+						}
+						setDataRead();
+						sendNotification( on_facebook_login, { fbid:fbid, token:token } );
+						sendNotification( ViewController.do_show_list, { data:ary_result, total: ary_result.length } );
+						Helper.getCardsuits( fbid, token, function( ret ) {
+							sendNotification( on_cardsuit_load, { cardsuit:ret } );
+							sendNotification( ViewController.do_show_loading, { show:false } );
+						});
 					});
-					
 				});
 			case ViewController.on_btn_gotoDeckManager_click:
 				switch( currentGame ) {
@@ -158,7 +168,7 @@ class ModelController extends Mediator
 			case str if ( str == do_save_count ):
 				doSaveCount( notification.getBody().countMap );
 			case str if ( str == do_load_all_list ):
-				doLoadList();
+				doLoadList( true );
 		}
 	}
 	
@@ -167,17 +177,16 @@ class ModelController extends Mediator
 		this.countMap = map;
 	}
 	
-	function doLoadList() {
+	function doLoadList( ?checkHash = false ) {
 		sendNotification( ViewController.do_show_loading, { show:true } );
 		Helper.loadList( function( err, data:Array<Dynamic> ) {
 			sendNotification( ViewController.do_show_loading, { show:false } );
-			
 			if ( err != null ) {
 				sendNotification( on_loadPublic_error, {err:err} );
 				return;
 			}
 			doSetData( data );
-			checkHashAndShow();
+			if( checkHash ) checkHashAndShow();
 		});
 	}
 	
@@ -197,6 +206,8 @@ class ModelController extends Mediator
 	}
 	
 	function loadDetail( deck, ?load = false ) {
+		sendNotification( ViewController.do_show_loading, { show:true } );
+		
 		var cards = deck.cards;
 		var game = deck.game;
 		
@@ -204,12 +215,25 @@ class ModelController extends Mediator
 			var ary_send = ary_send.filter( function( item ) {
 				return item != null;
 			});
-			sendNotification( ViewController.do_show_loading, { show:false } );
-			sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_send } );
+			
+			if ( appData.ary_read != null && appData.ary_read.indexOf( deck.id ) == -1 ) {
+				appData.ary_read.push( deck.id );
+				Helper.saveRead( this.fbid, this.token, appData, function( err, appSaveRet ) {
+					if ( err != null ) {
+						sendNotification( ViewController.do_show_alert, { alert:err } );
+					}else {
+						sendNotification( ViewController.do_show_loading, { show:false } );
+						sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_send } );
+					}
+				});
+			}else {
+				sendNotification( ViewController.do_show_loading, { show:false } );
+				sendNotification( ViewController.do_show_bigList, { clickData:deck, game:game, ary_showData:ary_send } );
+			}
 		}
 		
 		if ( load ) {
-			sendNotification( ViewController.do_show_loading, { show:true } );
+			
 			Helper.loadDetail( game, function( data:Array<Dynamic> ) {
 				var ary_showData:Array<Dynamic> = cards.map( function( str:String ) {
 					var retobj:Dynamic = null;
@@ -247,7 +271,16 @@ class ModelController extends Mediator
 	
 	function doSetData( data:Array<Dynamic> ) {
 		oriDataToUseData( data );
+		setDataRead();
 		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length, pageNumber:1} );
+	}
+	
+	function setDataRead() {
+		if ( appData.ary_read == null ) return;
+		data.foreach( function( item ) {
+			item.read = appData.ary_read.indexOf( item.id ) != -1;
+			return true;
+		});
 	}
 	
 	function filterByPage( from, ?page:Int = 0 ) {
