@@ -320,6 +320,11 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -373,6 +378,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -543,11 +567,13 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				_g1.fbid = fbid;
 				_g1.token = token;
 				Helper.loadRead(_g1.fbid,_g1.token,function(err1,_readData) {
+					haxe_Log.trace("_readData",{ fileName : "ModelController.hx", lineNumber : 109, className : "model.ModelController", methodName : "handleNotification", customParams : [_readData]});
 					if(err1 != null) {
 						_g1.sendNotification(view_ViewController.do_show_alert,{ alert : err1});
 						return;
 					}
 					if(_readData != null) _g1.appData = _readData;
+					haxe_Log.trace("appData",{ fileName : "ModelController.hx", lineNumber : 117, className : "model.ModelController", methodName : "handleNotification", customParams : [_g1.appData]});
 					_g1.setDataRead();
 					_g1.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
 					_g1.sendNotification(view_ViewController.do_show_list,{ data : _g1.ary_result, total : _g1.ary_result.length});
