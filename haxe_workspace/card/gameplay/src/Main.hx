@@ -148,7 +148,7 @@ class Main
 				case 'yugioh':
 					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( game ) );
 				case 'sangoWar':
-					CallJs.sangoWar_load( "../common/txt/sangoList.txt", onLoadGameCallback( game ) );
+					CallJs.sangoWar_loadCh( "../common/txt/sangoList/", onLoadGameCallback( game ) );
 			}
 		}
 	}

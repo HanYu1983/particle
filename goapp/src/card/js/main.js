@@ -205,7 +205,7 @@ Main.loadDetail = function(game) {
 		CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(game));
 		break;
 	case "sangoWar":
-		CallJs.sangoWar_load("../common/txt/sangoList.txt",Main.onLoadGameCallback(game));
+		CallJs.sangoWar_loadCh("../common/txt/sangoList/",Main.onLoadGameCallback(game));
 		break;
 	}
 };
@@ -2354,7 +2354,7 @@ CallJs.myapp_facebook_login = myapp.facebook.login;
 CallJs.myapp_facebook_init = myapp.facebook.init;
 CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;
 CallJs.yugioh_load = yugioh.load;
-CallJs.sangoWar_load = sangoWar.load;
+CallJs.sangoWar_loadCh = sangoWar.loadCh;
 CallJs.gundamWar_load = gundamWar.load;
 CallJs.gundamWarN_load = gundamWarN.load;
 CallJs.battleSpirits_load = battleSpirits.load;
