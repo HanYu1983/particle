@@ -281,6 +281,7 @@ class ModelController extends Mediator
 	
 	function doSetData( data:Array<Dynamic> ) {
 		oriDataToUseData( data );
+		pushCountToData();
 		setDataRead();
 		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length, pageNumber:1} );
 	}
@@ -364,27 +365,25 @@ class ModelController extends Mediator
 	}
 	
 	function oriDataToUseData( ori:Array<Dynamic> ) {
-		
-		data = ori.map( function( item ) {
+		data = ori.fold( function( item:Dynamic, first:Array<Dynamic> ) {
+			if ( item.uid == null ) return first;
 			item.id = item.uid == null ? Helper.getUUID() : item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
 			item.typeName = Helper.EnToCh( item.type );
 			item.desc = item.desc == null ? '' : item.desc;
-			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
-			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
-			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );
-			if ( item.viewCount == null ) item.viewCount = 0;
-			if ( item.shareCount == null ) item.shareCount = 0;
-			if ( item.outputCount == null ) item.outputCount = 0;
-			return item;
-		});
+			first.push( item );
+			return first;
+		}, []);
 		
 		ary_result = data;
 	}
 	
 	function pushCountToData() {
 		data.foreach( function( item ) {
+			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
+			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
+			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );
 			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
 			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
 			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );

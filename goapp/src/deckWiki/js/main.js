@@ -183,6 +183,14 @@ Lambda.foreach = function(it,f) {
 	}
 	return true;
 };
+Lambda.fold = function(it,f,first) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		first = f(x,first);
+	}
+	return first;
+};
 Lambda.find = function(it,f) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -713,6 +721,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,doSetData: function(data) {
 		this.oriDataToUseData(data);
+		this.pushCountToData();
 		this.setDataRead();
 		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length, pageNumber : 1});
 	}
@@ -794,26 +803,24 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		});
 	}
 	,oriDataToUseData: function(ori) {
-		var _g = this;
-		this.data = ori.map(function(item) {
+		this.data = Lambda.fold(ori,function(item,first) {
+			if(item.uid == null) return first;
 			if(item.uid == null) item.id = Helper.getUUID(); else item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
 			item.typeName = Helper.EnToCh(item.type);
 			if(item.desc == null) item.desc = ""; else item.desc = item.desc;
-			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
-			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
-			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
-			if(item.viewCount == null) item.viewCount = 0;
-			if(item.shareCount == null) item.shareCount = 0;
-			if(item.outputCount == null) item.outputCount = 0;
-			return item;
-		});
+			first.push(item);
+			return first;
+		},[]);
 		this.ary_result = this.data;
 	}
 	,pushCountToData: function() {
 		var _g = this;
 		Lambda.foreach(this.data,function(item) {
+			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
+			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
+			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
 			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
 			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
 			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
@@ -1509,16 +1516,6 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 };
 String.__name__ = true;
 Array.__name__ = true;
-if(Array.prototype.map == null) Array.prototype.map = function(f) {
-	var a = [];
-	var _g1 = 0;
-	var _g = this.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		a[i] = f(this[i]);
-	}
-	return a;
-};
 if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 	var a1 = [];
 	var _g11 = 0;
