@@ -816,7 +816,17 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "content", v ))
 				break
 			case "symbol":
-				fns.push( cardsearch.attrEq( "atype", v ) )
+				if( v == '計略/メイン' ){
+					fns.push( 
+						cardsearch.or([
+							cardsearch.attrEq( "atype", v ),
+							cardsearch.attrEq( "atype", '計略/主要' )
+						])
+					)
+				} else {
+					fns.push( cardsearch.attrEq( "atype", v ) )
+				}
+				
 				break
 			default:
 				if( v == "on" ){
