@@ -187,15 +187,24 @@ body{
 	</script>
 	<script id="tmpl_item" type="jquery-x-tmpl">
 		<div id=${id} game=${game} class="hori" style="position:relative; width:49%; height:60px; cursor:pointer; border:1px solid gray;">
-			<img class="hori" style="height:100%;" src=${url} />
-			<div id="mc_info1" class="hori" style="vertical-align:top; margin-right:10px;">
-				<!--<div>${author}</div>-->
-				<div style="color:yellow;">${gameName}</div>
-				<div>${name}</div>
-				<div>${typeName}</div>
-				<div style="position:absolute; right:0; bottom:0;">觀<span class="shareTxt">${viewCount}</span>享<span class="shareTxt">${shareCount}</span>匯<span class="shareTxt">${outputCount}</span></div>
+			<div style="position:relative; width:100%; height:100%; top:0; left:0;">
+				<img class="hori" style="height:100%;" src=${url} />
+				<div id="mc_info1" class="hori" style="vertical-align:top; margin-right:10px;">
+					<!--<div>${author}</div>-->
+					<div style="color:yellow;">${gameName}</div>
+					<div>${name}</div>
+					<div>${typeName}</div>
+					<div style="position:absolute; right:0; bottom:0;">觀<span class="shareTxt">${viewCount}</span>享<span class="shareTxt">${shareCount}</span>匯<span class="shareTxt">${outputCount}</span></div>
+				</div>
+			</div>
+			<div id="mc_readInfo" class="hide" style="position:absolute; top:0; left:0; width:100%; height:100%;">
+				<div style="position:relative; top:0; left:0; width:100%; height:100%; background-color:black; opacity:.5;"></div>
+				<div style="position:absolute; top:0; left:0; width:100%;">
+					<div class="hori" style="position:relative; width:100%; text-align:center; height:60px; line-height:60px;">未讀</div>
+				</div>
 			</div>
 		</div>
+		
 	</script>
 	<div id="layout_main" class="easyui-layout" style="width:100%;height:100%;">
 		<div data-options="region:'east',title:'自己',split:true" style="min-width:600px; width:600px; padding:10px;">
