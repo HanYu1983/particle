@@ -283,7 +283,7 @@ class ModelController extends Mediator
 		oriDataToUseData( data );
 		pushCountToData();
 		setDataRead();
-		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length, pageNumber:1} );
+		sendNotification( ViewController.do_show_list, {data:filterByPage( ary_result, 0 ), total:ary_result.length, pageNumber:1} );
 	}
 	
 	function setDataRead() {
@@ -366,7 +366,6 @@ class ModelController extends Mediator
 	
 	function oriDataToUseData( ori:Array<Dynamic> ) {
 		data = ori.fold( function( item:Dynamic, first:Array<Dynamic> ) {
-			trace( item );
 			if ( item.uid == null ) return first;
 			item.id = item.uid;
 			item.author = item.username;
@@ -376,9 +375,6 @@ class ModelController extends Mediator
 			first.push( item );
 			return first;
 		}, []);
-		
-		trace( ary_result );
-		
 		ary_result = data;
 	}
 	

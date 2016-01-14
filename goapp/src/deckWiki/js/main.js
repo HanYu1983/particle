@@ -723,7 +723,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		this.oriDataToUseData(data);
 		this.pushCountToData();
 		this.setDataRead();
-		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length, pageNumber : 1});
+		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(this.ary_result,0), total : this.ary_result.length, pageNumber : 1});
 	}
 	,setDataRead: function() {
 		var _g = this;
@@ -804,7 +804,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,oriDataToUseData: function(ori) {
 		this.data = Lambda.fold(ori,function(item,first) {
-			console.log(item);
 			if(item.uid == null) return first;
 			item.id = item.uid;
 			item.author = item.username;
@@ -814,7 +813,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			first.push(item);
 			return first;
 		},[]);
-		console.log(this.ary_result);
 		this.ary_result = this.data;
 	}
 	,pushCountToData: function() {
