@@ -68,7 +68,7 @@ class ModelController extends Mediator
 		switch( notification.getName() ) {
 			case ViewController.on_btn_getShareLink_click:
 				var uid = notification.getBody().deckuid;
-				var url = Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+				var url = 'https://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
 				sendNotification( ViewController.do_show_alert, { alert:url } );
 			case ViewController.on_btn_seeCount_click:
 				Helper.authGoogleAndGetData( false, function( err, data ) {
@@ -85,11 +85,11 @@ class ModelController extends Mediator
 				var uid = notification.getBody().deckuid;
 				var shareobj = findDataById( ary_result, uid );
 				#if debug
-				var url = 'http://particle-979.appspot.com/deckWiki/index.html?uid=' + uid;
+				var url = 'https://particle-979.appspot.com/deckWiki/index.html?uid=' + uid;
 				#else
-				var url = Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+				var url = 'https://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
 				#end
-				var picture = 'http:' + Helper.getImageUrlByGameAndId( shareobj.game, shareobj.cards[0] );
+				var picture = 'https:' + Helper.getImageUrlByGameAndId( shareobj.game, shareobj.cards[0] );
 				sendNotification( ViewController.do_show_loading, { show:true } );
 				Helper.shareFb( Helper.getMeta().desc, url, picture, Helper.getMeta().name, shareobj.desc, function( ret ) {
 					sendNotification( ViewController.do_show_loading, { show:false } );

@@ -526,7 +526,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		switch(_g) {
 		case "on_btn_getShareLink_click":
 			var uid = notification.getBody().deckuid;
-			var url = window.location.host + window.location.pathname + "?uid=" + uid;
+			var url = "https://" + window.location.host + window.location.pathname + "?uid=" + uid;
 			this.sendNotification(view_ViewController.do_show_alert,{ alert : url});
 			break;
 		case "on_btn_seeCount_click":
@@ -542,8 +542,8 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_btn_share_deck_click":
 			var uid1 = notification.getBody().deckuid;
 			var shareobj = this.findDataById(this.ary_result,uid1);
-			var url1 = window.location.host + window.location.pathname + "?uid=" + uid1;
-			var picture = "http:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
+			var url1 = "https://" + window.location.host + window.location.pathname + "?uid=" + uid1;
+			var picture = "https:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.shareFb(Helper.getMeta().desc,url1,picture,Helper.getMeta().name,shareobj.desc,function(ret) {
 				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
