@@ -804,8 +804,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,oriDataToUseData: function(ori) {
 		this.data = Lambda.fold(ori,function(item,first) {
+			console.log(item);
 			if(item.uid == null) return first;
-			if(item.uid == null) item.id = Helper.getUUID(); else item.id = item.uid;
+			item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
 			item.typeName = Helper.EnToCh(item.type);
@@ -813,6 +814,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			first.push(item);
 			return first;
 		},[]);
+		console.log(this.ary_result);
 		this.ary_result = this.data;
 	}
 	,pushCountToData: function() {
@@ -821,9 +823,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
 			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
 			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
-			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
-			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
-			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
+			if(item.viewCount == null) item.viewCount = 0;
+			if(item.shareCount == null) item.shareCount = 0;
+			if(item.outputCount == null) item.outputCount = 0;
 			return true;
 		});
 	}

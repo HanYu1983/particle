@@ -366,8 +366,9 @@ class ModelController extends Mediator
 	
 	function oriDataToUseData( ori:Array<Dynamic> ) {
 		data = ori.fold( function( item:Dynamic, first:Array<Dynamic> ) {
+			trace( item );
 			if ( item.uid == null ) return first;
-			item.id = item.uid == null ? Helper.getUUID() : item.uid;
+			item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
 			item.typeName = Helper.EnToCh( item.type );
@@ -375,6 +376,8 @@ class ModelController extends Mediator
 			first.push( item );
 			return first;
 		}, []);
+		
+		trace( ary_result );
 		
 		ary_result = data;
 	}
@@ -384,9 +387,9 @@ class ModelController extends Mediator
 			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
 			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
 			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );
-			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
-			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
-			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );
+			if ( item.viewCount == null ) item.viewCount = 0;
+			if ( item.shareCount == null ) item.shareCount = 0;
+			if ( item.outputCount == null ) item.outputCount = 0;
 			return true;
 		});
 	}
