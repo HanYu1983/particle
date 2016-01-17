@@ -617,7 +617,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var cards = clickData.cards;
 			this.currentGame = game1;
 			this.currentUid = id1;
-			this.currentOutputStr = JSON.stringify(cards);
 			this.sendShowBigList(clickData,doLoad);
 			break;
 		default:
@@ -664,6 +663,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		var cards = deck.cards;
 		var game = deck.game;
+		this.currentOutputStr = JSON.stringify(cards);
 		var onLoadSuccess = function(ary_send) {
 			var ary_send1 = ary_send.filter(function(item) {
 				return item != null;

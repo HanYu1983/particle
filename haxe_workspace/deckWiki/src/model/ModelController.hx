@@ -154,7 +154,7 @@ class ModelController extends Mediator
 				var cards:Array<Dynamic> = clickData.cards;
 				currentGame = game;
 				currentUid = id;
-				currentOutputStr = Json.stringify( cards );
+				//currentOutputStr = Json.stringify( cards );
 				sendShowBigList( clickData, doLoad );
 		//	case str if ( str == do_save_read ):
 				//setDataRead( notification.getBody().readData );
@@ -214,6 +214,8 @@ class ModelController extends Mediator
 		
 		var cards = deck.cards;
 		var game = deck.game;
+		
+		currentOutputStr = Json.stringify( cards );
 		
 		function onLoadSuccess( ary_send ) {
 			var ary_send = ary_send.filter( function( item ) {
