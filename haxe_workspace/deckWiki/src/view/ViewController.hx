@@ -323,7 +323,8 @@ class ViewController extends Mediator
 		};
 		mc_deckContainer.children().each( function( id, dom ) {
 			dom = j( dom );
-			var cardstr = dom.find( '#txt_cards' ).textbox('getValue' );
+			var cardstr:String = dom.find( '#txt_cards' ).textbox('getValue' );
+			cardstr = ~/\\t/g.replace( cardstr, '' ); //format tab
 			cardstr = '[' + cardstr + ']';
 			savefile.cardSuit.push( {
 				uid:dom.attr( 'uid' ),

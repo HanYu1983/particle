@@ -5,6 +5,16 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var EReg = function(r,opt) {
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+};
+EReg.__name__ = true;
+EReg.prototype = {
+	replace: function(s,by) {
+		return s.replace(this.r,by);
+	}
+};
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
@@ -1333,6 +1343,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.mc_deckContainer.children().each(function(id,dom) {
 			dom = _g.j(dom);
 			var cardstr = dom.find("#txt_cards").textbox("getValue");
+			cardstr = new EReg("\\\\t","g").replace(cardstr,"");
 			cardstr = "[" + cardstr + "]";
 			savefile.cardSuit.push({ uid : dom.attr("uid"), type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
