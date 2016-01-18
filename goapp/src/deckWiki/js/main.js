@@ -678,6 +678,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var ary_send1 = ary_send.filter(function(item) {
 				return item != null;
 			});
+			deck.read = true;
 			if(_g.ary_read != null && HxOverrides.indexOf(_g.ary_read,deck.id,0) == -1) {
 				_g.ary_read.push(deck.id);
 				Helper.saveRead(JSON.stringify(_g.ary_read),function(err,appSaveRet) {

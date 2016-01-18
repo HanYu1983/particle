@@ -222,6 +222,7 @@ class ModelController extends Mediator
 				return item != null;
 			});
 			
+			deck.read = true;
 			if ( ary_read != null && ary_read.indexOf( deck.id ) == -1 ) {
 				ary_read.push( deck.id );
 				Helper.saveRead( Json.stringify( ary_read ), function( err, appSaveRet ) {
