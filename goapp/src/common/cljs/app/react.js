@@ -4,5 +4,3 @@ goog.require('cljs.core');
 goog.require('cljs.core.async');
 goog.require('cljs.core.async');
 goog.require('cljs.core.async');
-app.react.onTick = cljs.core.async.chan.call(null);
-app.react.onImage = cljs.core.async.chan.call(null);

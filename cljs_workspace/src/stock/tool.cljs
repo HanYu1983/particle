@@ -3,7 +3,7 @@
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
     [cljs.core.async :refer [>! <! close! chan]]
-    [clojure.string :as str]))
+    [clojure.string :as s]))
 
 (defn content [url]
   (let [ret (chan)]
@@ -38,7 +38,7 @@
           volume 
           (->
             (.-vo json)
-            (str/replace #"M" "")
+            (.replace #"M" "")  ;有時候無法使用clojure內建的replace，所以改用js自帶的
             (js/parseFloat)
             (* 1000000))]
       [date (.-op json) (.-hi json) (.-lo json) (.-l_fix json) volume])
@@ -49,7 +49,7 @@
   (go
     (let [url (goog-finance-info-url id)
           [err content] (<! (content url))
-          content (str/replace content #"//" "")]
+          content (.replace content #"//" "")]
       (if err
         [err]
         [nil (parse-info content)]))))
@@ -83,7 +83,7 @@
             re-pattern)
           (->
             content
-            (str/replace #"\n" " ")))]
+            (.replace #"\n" " ")))]
     (for
       [
         [_ date close high low open volume]
@@ -126,14 +126,15 @@
           (rest pass2))
           
         ; 2014/12/27的量有問題所以過濾掉
+        ; 2015/12/28的量也有問題，所以先不管這個過濾
         pass4
         (filter
-          (fn [[d o h l c v]]
-            (let [date (js/Date. (* d 1000))]
-              (or 
-                (not= (.getFullYear date) 2014)
-                (not= (.getMonth date) (dec 12))
-                (not= (.getDate date) 27))))
+          (fn [[d o h l c v]] true)
+            ;(let [date (js/Date. (* d 1000))]
+            ;  (or 
+            ;    (not= (.getFullYear date) 2014)
+            ;    (not= (.getMonth date) (dec 12))
+            ;    (not= (.getDate date) 27))))
           pass3)
           
         ; 將豪秒變為微秒建立Date物件，使用它的時間字串
@@ -188,13 +189,13 @@
             re-pattern)
           (->
             content
-            (str/replace #"\n" "")))]
+            (.replace #"\n" "")))]
     (for
       [
         [_ date open high low close volume]
         infos
       ]
-      [date (js/parseFloat open) (js/parseFloat high) (js/parseFloat low) (js/parseFloat close) (-> volume (str/replace #"," "") js/parseInt)])))
+      [date (js/parseFloat open) (js/parseFloat high) (js/parseFloat low) (js/parseFloat close) (-> volume (.replace #"," "") js/parseInt)])))
 
 ; num最高為200
 (defn goog-historical-info [all id startdate start num]
