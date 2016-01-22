@@ -79,7 +79,7 @@ class UI extends Mediator
 					SocketController.on_searchComplete,
 					SocketController.on_heartbeat_event,
 					Main.on_createDeck_click,
-					Main.on_save_load_click,
+					Main.on_save_click,
 					do_show_recevie
 				];
 	}
@@ -95,7 +95,7 @@ class UI extends Mediator
 				combo_ops.combobox( 'setValue', notification.getBody().inviteId );
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
-			case Main.on_save_load_click:
+			case Main.on_save_click:
 				trace( notification.getBody().str );
 				txt_savestr.textbox( { value:notification.getBody().str } );
 			case Main.on_createDeck_click:

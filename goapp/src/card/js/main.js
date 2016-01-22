@@ -259,9 +259,14 @@ Main.prototype = {
 	onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
+		case "onBtnLoadClick":
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_load_click);
+			break;
+		case "onBtnRecordClick":
+			break;
 		case "onBtnSaveClick":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,{ callback : function(str) {
-				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_save_load_click,{ str : str});
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_save_click,{ str : str});
 			}});
 			break;
 		case "onBtnInviteServer":
@@ -846,7 +851,7 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click,Main.on_save_load_click,mediator_UI.do_show_recevie];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click,Main.on_save_click,mediator_UI.do_show_recevie];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -864,7 +869,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		case "on_dice":
 			Main.showDiceMessage(notification.getBody().playerId,notification.getBody().dice);
 			break;
-		case "on_save_load_click":
+		case "on_save_click":
 			console.log(notification.getBody().str);
 			this.txt_savestr.textbox({ value : notification.getBody().str});
 			break;
@@ -2381,7 +2386,8 @@ CallJs.googleTracking_click = googleTracking.click;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
-Main.on_save_load_click = "on_save_load_click";
+Main.on_save_click = "on_save_click";
+Main.on_load_click = "on_load_click";
 Main.j = $;
 Main.fbid = "";
 Main.token = "";

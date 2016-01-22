@@ -25,7 +25,8 @@ class Main
 	public static var on_getSuit_success = 'on_getSuit_success';
 	public static var on_createDeck_click = 'on_createDeck_click';
 	public static var on_receiveOps = 'on_receiveOps';
-	public static var on_save_load_click = 'on_save_load_click';
+	public static var on_save_click = 'on_save_click';
+	public static var on_load_click = 'on_load_click';
 
 	public static var j:Dynamic = untyped __js__('$');
 	
@@ -173,10 +174,13 @@ class Main
 	function onHtmlClick( type, ?params ) {
 		
 		switch( type ) {
+			case 'onBtnLoadClick':
+				Facade.getInstance().sendNotification( on_load_click );
+			case 'onBtnRecordClick':
 			case 'onBtnSaveClick':
 				Facade.getInstance().sendNotification( MainController.do_getItemsString, {
 					callback:function( str ) {
-						Facade.getInstance().sendNotification( on_save_load_click, { str:str } );
+						Facade.getInstance().sendNotification( on_save_click, { str:str } );
 					}
 				} );
 			case 'onBtnInviteServer':
