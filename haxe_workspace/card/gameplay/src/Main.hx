@@ -177,6 +177,8 @@ class Main
 			case 'onBtnLoadClick':
 				Facade.getInstance().sendNotification( on_load_click );
 			case 'onBtnRecordClick':
+				//'public':dom.find( '#btn_public' ).hasClass( 'l-btn-selected' )
+				//trace( j('#btn_record' ).hasClass( 'l-btn-selected' ) );
 			case 'onBtnSaveClick':
 				Facade.getInstance().sendNotification( MainController.do_getItemsString, {
 					callback:function( str ) {

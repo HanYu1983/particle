@@ -831,6 +831,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.txt_savestr = this.getViewComponent().find("#txt_savestr");
+	this.btn_record = this.getViewComponent().find("#btn_record");
 	this.mc_light = Main.j("#mc_light");
 	this.dia_invite = Main.j("#dia_invite");
 	this.dia_invite.find("#btn_receive").click(function() {
@@ -841,6 +842,10 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	});
 	this.combo_ops.combobox({ onChange : function(nv,ov) {
 		Main.selectOps(nv);
+	}});
+	this.btn_record.linkbutton({ onClick : function() {
+		var record = _g.btn_record.hasClass("l-btn-selected");
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,{ record : record});
 	}});
 	Main.j("#btn_connect").linkbutton();
 	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
@@ -854,7 +859,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click,Main.on_save_click,Main.on_load_click,mediator_UI.do_show_recevie];
 	}
 	,handleNotification: function(notification) {
-		var _g2 = this;
+		var _g1 = this;
 		var _g = notification.getName();
 		var str = _g;
 		switch(_g) {
@@ -874,19 +879,14 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			var loadstr = this.txt_savestr.textbox("getValue");
 			var ary_cmds = JSON.parse(loadstr);
 			ary_cmds.forEach(function(cmd) {
-				var _g1 = cmd.type;
-				switch(_g1) {
-				case "addItems":
-					_g2.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,cmd.msg);
-					break;
-				default:
-				}
+				console.log(cmd.type);
+				_g1.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,cmd.msg,cmd.type);
 				return true;
 			});
 			this.txt_savestr.textbox("setValue","");
 			break;
 		case "on_save_click":
-			this.txt_savestr.textbox({ value : notification.getBody().str});
+			console.log(notification.getBody().str);
 			break;
 		case "on_createDeck_click":
 			this.closeNorthPanel();
@@ -1494,6 +1494,8 @@ per_vic_pureMVCref_tableGameModel_Tool.alert = function(msg) {
 	per_vic_pureMVCref_tableGameModel_Tool.j.messager.alert("錯誤",msg);
 };
 var per_vic_pureMVCref_tableGameModel_controller_MainController = function(mediatorName,viewComponent) {
+	this.ary_record = null;
+	this.isRecord = false;
 	this.isCtrl = false;
 	this.isList = false;
 	this.pos_mouse = [0,0];
@@ -1514,12 +1516,14 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.__name__ = true;
 per_vic_pureMVCref_tableGameModel_controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
-		var on_receiveMessage = _g;
+		var str = _g;
+		var str1 = _g;
+		var str2 = _g;
 		switch(_g) {
 		case "on_item_lock":
 			var div = notification.getBody().view;
@@ -1531,46 +1535,100 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.onSelectItems(div1,true,this.isCtrl);
 			this.zsorting();
 			break;
-		case "do_getItemsString":
-			var callback = notification.getBody().callback;
-			var saveobj = [{ type : "addItems", msg : this.ary_allItem}];
-			callback(JSON.stringify(saveobj));
-			break;
-		case "do_create_item":
-			var ary_creates = notification.getBody();
-			Lambda.foreach(ary_creates,function(c) {
-				_g1.createItem(c);
-				return true;
-			});
-			this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
-			break;
-		default:
-			var _g11 = notification.getType();
-			switch(_g11) {
-			case "invite":
-				break;
-			case "dice":
-				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,notification.getBody());
-				break;
-			case "addItems":
-				var tempItems = notification.getBody();
-				Lambda.foreach(tempItems,function(c1) {
-					_g1.createItem(c1);
+		case "on_sendMessage":
+			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
+				var callback = notification.getBody().callback;
+				var retobj;
+				var _g11 = this.ary_record;
+				if(_g11 == null) retobj = this.getFirstStepRecord(); else switch(_g11.length) {
+				default:
+					retobj = this.ary_record;
+				}
+				callback(JSON.stringify(retobj));
+			} else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+				var ary_creates = notification.getBody();
+				Lambda.foreach(ary_creates,function(c) {
+					_g1.createItem(c);
 					return true;
 				});
-				break;
-			case "deleteItem":
-				var localModel = this.receiveItemToLocalModel(notification.getBody());
-				this.deleteModel(localModel);
-				this.deleteView(localModel);
-				break;
-			case "applyTransform":
-				var needApply;
-				if(notification.getBody().applyValue == null) needApply = true; else needApply = notification.getBody().applyValue;
-				if(needApply) this.updateView(this.updateModel(notification.getBody().ary_item),notification.getBody().zs); else this.updateView(notification.getBody().ary_item,notification.getBody().zs,needApply);
-				break;
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else this.saveToRecord(notification.getBody());
+			break;
+		case "on_receiveMessage":
+			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
+				var callback1 = notification.getBody().callback;
+				var retobj1;
+				var _g12 = this.ary_record;
+				if(_g12 == null) retobj1 = this.getFirstStepRecord(); else switch(_g12.length) {
+				default:
+					retobj1 = this.ary_record;
+				}
+				callback1(JSON.stringify(retobj1));
+			} else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+				var ary_creates1 = notification.getBody();
+				Lambda.foreach(ary_creates1,function(c) {
+					_g1.createItem(c);
+					return true;
+				});
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates1});
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else {
+				this.saveToRecord(notification.getBody());
+				var _g13 = notification.getType();
+				switch(_g13) {
+				case "invite":
+					break;
+				case "dice":
+					this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,notification.getBody());
+					break;
+				case "addItems":
+					var tempItems = notification.getBody();
+					Lambda.foreach(tempItems,function(c1) {
+						_g1.createItem(c1);
+						return true;
+					});
+					break;
+				case "deleteItem":
+					var localModel = this.receiveItemToLocalModel(notification.getBody());
+					this.deleteModel(localModel);
+					this.deleteView(localModel);
+					break;
+				case "applyTransform":
+					var needApply;
+					if(notification.getBody().applyValue == null) needApply = true; else needApply = notification.getBody().applyValue;
+					if(needApply) this.updateView(this.updateModel(notification.getBody().ary_item),notification.getBody().zs); else this.updateView(notification.getBody().ary_item,notification.getBody().zs,needApply);
+					break;
+				}
 			}
+			break;
+		default:
+			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
+				var callback2 = notification.getBody().callback;
+				var retobj2;
+				var _g14 = this.ary_record;
+				if(_g14 == null) retobj2 = this.getFirstStepRecord(); else switch(_g14.length) {
+				default:
+					retobj2 = this.ary_record;
+				}
+				callback2(JSON.stringify(retobj2));
+			} else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+				var ary_creates2 = notification.getBody();
+				Lambda.foreach(ary_creates2,function(c) {
+					_g1.createItem(c);
+					return true;
+				});
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates2});
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record);
 		}
+	}
+	,saveToRecord: function(record) {
+		if(this.ary_record != null) this.ary_record.push(record);
+	}
+	,getFirstStepRecord: function() {
+		return [{ type : "addItems", msg : this.ary_allItem}];
+	}
+	,setRecord: function(r) {
+		this.isRecord = r;
+		if(this.isRecord) this.ary_record = []; else this.ary_record = null;
 	}
 	,updateModel: function(ary_receive) {
 		var _g = this;
@@ -2135,10 +2193,11 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 			per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage = true;
 			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success);
 		}, onmessage : function(json) {
-			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,json.msg,json.type);
+			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,json.msg,json.type);
 		}, onerror : onSocketError, onclose : onSocketError});
 	}
 	,messageSocket: function(type,msg) {
+		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_sendMessage,{ type : type, msg : msg});
 		if(!per_vic_pureMVCref_tableGameModel_controller_SocketController.isCanSendMessage) return;
 		if(this.ary_ops == null) return;
 		Lambda.foreach(this.ary_ops,function(op) {
@@ -2419,7 +2478,7 @@ mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 per_vic_pureMVCref_tableGameModel_Tool.j = $;
 per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item = "do_create_item";
 per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString = "do_getItemsString";
-per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
+per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record = "do_start_record";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite = "on_been_invite";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_press = "on_press";
@@ -2430,6 +2489,8 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.createPlayerSocket
 per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat = "do_startHeartbeat";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete = "on_searchComplete";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event = "on_heartbeat_event";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.on_sendMessage = "on_sendMessage";
+per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage = "on_receiveMessage";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId = "smart";
 per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIds = [];
 per_vic_pureMVCref_tableGameModel_controller_SocketController.otherPlayerIdsForCheck = [];

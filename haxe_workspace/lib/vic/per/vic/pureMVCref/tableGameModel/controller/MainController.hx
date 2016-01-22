@@ -23,8 +23,9 @@ class MainController extends Mediator
 {
 	public static var do_create_item = 'do_create_item';
 	public static var do_getItemsString = 'do_getItemsString';
+	public static var do_start_record = 'do_start_record';
 	
-	public static var on_receiveMessage = 'on_receiveMessage';
+	//public static var on_receiveMessage = 'on_receiveMessage';
 	public static var on_been_invite = 'on_been_invite';
 	public static var on_select_cards = 'on_select_cards';
 	public static var on_press = 'on_press';
@@ -35,6 +36,8 @@ class MainController extends Mediator
 	var pos_mouse = [0, 0];
 	var isList = false;
 	var isCtrl = false;
+	var isRecord = false;
+	var ary_record:Array<Dynamic> = null;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -55,7 +58,9 @@ class MainController extends Mediator
 	{
 		return [ 	do_create_item, 
 					do_getItemsString,
-					on_receiveMessage,
+					SocketController.on_sendMessage,
+					SocketController.on_receiveMessage,
+					do_start_record,
 					BasicItem.on_item_click,
 					BasicItem.on_item_lock
 					];
@@ -73,18 +78,26 @@ class MainController extends Mediator
 				var div:Dynamic = notification.getBody();
 				onSelectItems( div, true, isCtrl );
 				zsorting();
-			case 'do_getItemsString':
+			case str if( str == do_getItemsString ):
 				var callback = notification.getBody().callback;
-				var saveobj = [ { type:'addItems', msg: ary_allItem } ];
-				callback( Json.stringify( saveobj ) );
-			case 'do_create_item':
+				var retobj = switch( ary_record ) {
+					case null: getFirstStepRecord();
+					case _: ary_record;
+				}
+				callback( Json.stringify( retobj ) );
+			case str if( str == do_create_item ):
 				var ary_creates:Array<Dynamic> = notification.getBody();
 				ary_creates.foreach( function( c:Dynamic ) {
 					createItem( c );
 					return true;
 				});
 				sendNotification( SocketController.sendMessage, { type:'addItems', msg: ary_creates } );
-			case on_receiveMessage:
+			case str if( str == do_start_record ):
+				setRecord( notification.getBody().record );
+			case SocketController.on_sendMessage:
+				saveToRecord( notification.getBody() );
+			case SocketController.on_receiveMessage:
+				saveToRecord( notification.getBody() );
 				switch( notification.getType() ) {
 					case 'invite':
 						/*
@@ -115,6 +128,23 @@ class MainController extends Mediator
 						}
 						
 				}
+		}
+	}
+	
+	function saveToRecord( record ){
+		if ( ary_record != null ) ary_record.push( record );
+	}
+	
+	function getFirstStepRecord() {
+		return [ { type:'addItems', msg: ary_allItem } ];
+	}
+	
+	function setRecord( r ) {
+		isRecord = r;
+		if ( isRecord ) {
+			ary_record = [];
+		}else {
+			ary_record = null;
 		}
 	}
 	

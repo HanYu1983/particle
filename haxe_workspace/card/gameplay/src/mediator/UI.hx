@@ -28,6 +28,7 @@ class UI extends Mediator
 	var combo_deck:Dynamic;
 	var combo_ops:Dynamic;
 	var txt_savestr:Dynamic;
+	var btn_record:Dynamic;
 	var dia_invite:Dynamic;
 	var mc_light:Dynamic;
 
@@ -42,6 +43,7 @@ class UI extends Mediator
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		txt_savestr = getViewComponent().find( '#txt_savestr' );
+		btn_record = getViewComponent().find( '#btn_record' );
 		mc_light = Main.j( '#mc_light' );
 		dia_invite = Main.j( '#dia_invite' );
 		dia_invite.find( '#btn_receive' ).click( function() {
@@ -54,6 +56,13 @@ class UI extends Mediator
 		combo_ops.combobox( {
 			onChange:function( nv, ov ) {
 				Main.selectOps( nv );
+			}
+		});
+		
+		btn_record.linkbutton( {
+			onClick:function() {
+				var record = btn_record.hasClass( 'l-btn-selected' );
+				sendNotification( MainController.do_start_record, { record:record } );
 			}
 		});
 		
@@ -104,16 +113,21 @@ class UI extends Mediator
 				var loadstr = txt_savestr.textbox( 'getValue' );
 				var ary_cmds = Json.parse( loadstr );
 				ary_cmds.forEach( function( cmd ) {
+					trace( cmd.type );
+					sendNotification( SocketController.on_receiveMessage, cmd.msg, cmd.type );
+					/*
 					switch( cmd.type ) {
 						case 'addItems':
 							sendNotification( MainController.do_create_item, cmd.msg );
 						case _:
-					}
+							sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
+					}*/
 					return true;
 				});
 				txt_savestr.textbox( 'setValue', '' );
 			case Main.on_save_click:
-				txt_savestr.textbox( { value: notification.getBody().str } );
+				trace( notification.getBody().str );
+				//txt_savestr.textbox( { value: notification.getBody().str } );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
 			case SocketController.on_heartbeat_event:
