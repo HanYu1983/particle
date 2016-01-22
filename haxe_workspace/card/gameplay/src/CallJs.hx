@@ -27,7 +27,7 @@ package;
 						'myapp.facebook.init',
 						'leo.utils.initRectSelect',
 						'yugioh.load',
-						'sangoWar.load',
+						'sangoWar.loadCh',
 						'gundamWar.load',
 						'gundamWarN.load',
 						'battleSpirits.load',

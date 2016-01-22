@@ -68,7 +68,7 @@ class ModelController extends Mediator
 		switch( notification.getName() ) {
 			case ViewController.on_btn_getShareLink_click:
 				var uid = notification.getBody().deckuid;
-				var url = Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+				var url = 'https://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
 				sendNotification( ViewController.do_show_alert, { alert:url } );
 			case ViewController.on_btn_seeCount_click:
 				Helper.authGoogleAndGetData( false, function( err, data ) {
@@ -85,11 +85,11 @@ class ModelController extends Mediator
 				var uid = notification.getBody().deckuid;
 				var shareobj = findDataById( ary_result, uid );
 				#if debug
-				var url = 'http://particle-979.appspot.com/deckWiki/index.html?uid=' + uid;
+				var url = 'https://particle-979.appspot.com/deckWiki/index.html?uid=' + uid;
 				#else
-				var url = Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+				var url = 'https://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
 				#end
-				var picture = 'http:' + Helper.getImageUrlByGameAndId( shareobj.game, shareobj.cards[0] );
+				var picture = 'https:' + Helper.getImageUrlByGameAndId( shareobj.game, shareobj.cards[0] );
 				sendNotification( ViewController.do_show_loading, { show:true } );
 				Helper.shareFb( Helper.getMeta().desc, url, picture, Helper.getMeta().name, shareobj.desc, function( ret ) {
 					sendNotification( ViewController.do_show_loading, { show:false } );
@@ -154,7 +154,7 @@ class ModelController extends Mediator
 				var cards:Array<Dynamic> = clickData.cards;
 				currentGame = game;
 				currentUid = id;
-				currentOutputStr = Json.stringify( cards );
+				//currentOutputStr = Json.stringify( cards );
 				sendShowBigList( clickData, doLoad );
 		//	case str if ( str == do_save_read ):
 				//setDataRead( notification.getBody().readData );
@@ -215,11 +215,14 @@ class ModelController extends Mediator
 		var cards = deck.cards;
 		var game = deck.game;
 		
+		currentOutputStr = Json.stringify( cards );
+		
 		function onLoadSuccess( ary_send ) {
 			var ary_send = ary_send.filter( function( item ) {
 				return item != null;
 			});
 			
+			deck.read = true;
 			if ( ary_read != null && ary_read.indexOf( deck.id ) == -1 ) {
 				ary_read.push( deck.id );
 				Helper.saveRead( Json.stringify( ary_read ), function( err, appSaveRet ) {
@@ -245,12 +248,18 @@ class ModelController extends Mediator
 						case 'sangoWar':
 							str = str.replace( '.jpg', '' );
 							retobj = data.find( function( oriData ) {
-								return ( oriData.id.indexOf( str ) != -1 );
+								return ( oriData.id.indexOf( str ) == 0 );
 							});
 						default:
 							retobj = data.find( function( oriData ) {
 								return ( oriData.id == str );
 							});
+					}
+					retobj = data.find( function( oriData ) {
+						return ( oriData.id == str );
+					});
+					if ( retobj == null ) {
+						retobj = { id:str, content:'暫時沒有資料!' }; 
 					}
 					return retobj;
 				});
@@ -275,8 +284,9 @@ class ModelController extends Mediator
 	
 	function doSetData( data:Array<Dynamic> ) {
 		oriDataToUseData( data );
+		pushCountToData();
 		setDataRead();
-		sendNotification( ViewController.do_show_list, {data:filterByPage( data, 0 ), total:data.length, pageNumber:1} );
+		sendNotification( ViewController.do_show_list, {data:filterByPage( ary_result, 0 ), total:ary_result.length, pageNumber:1} );
 	}
 	
 	function setDataRead() {
@@ -358,22 +368,16 @@ class ModelController extends Mediator
 	}
 	
 	function oriDataToUseData( ori:Array<Dynamic> ) {
-		
-		data = ori.map( function( item ) {
-			item.id = item.uid == null ? Helper.getUUID() : item.uid;
+		data = ori.fold( function( item:Dynamic, first:Array<Dynamic> ) {
+			if ( item.uid == null ) return first;
+			item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
 			item.typeName = Helper.EnToCh( item.type );
 			item.desc = item.desc == null ? '' : item.desc;
-			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
-			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
-			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );
-			if ( item.viewCount == null ) item.viewCount = 0;
-			if ( item.shareCount == null ) item.shareCount = 0;
-			if ( item.outputCount == null ) item.outputCount = 0;
-			return item;
-		});
-		
+			first.push( item );
+			return first;
+		}, []);
 		ary_result = data;
 	}
 	
@@ -382,6 +386,9 @@ class ModelController extends Mediator
 			item.viewCount = this.countMap.field( 'on_item_view:' + item.id );
 			item.shareCount = this.countMap.field( 'on_item_share:' + item.id );
 			item.outputCount = this.countMap.field( 'on_item_output:' + item.id );
+			if ( item.viewCount == null ) item.viewCount = 0;
+			if ( item.shareCount == null ) item.shareCount = 0;
+			if ( item.outputCount == null ) item.outputCount = 0;
 			return true;
 		});
 	}

@@ -266,7 +266,7 @@ class ViewController extends Mediator
 	}
 	
 	function openFBComment( uid:String ) {
-		var url = 'comment.html?url=' + 'http://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
+		var url = 'comment.html?url=' + 'https://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
 		iframe_comment.attr( 'src', url );
 	}
 	
@@ -323,7 +323,8 @@ class ViewController extends Mediator
 		};
 		mc_deckContainer.children().each( function( id, dom ) {
 			dom = j( dom );
-			var cardstr = dom.find( '#txt_cards' ).textbox('getValue' );
+			var cardstr:String = dom.find( '#txt_cards' ).textbox('getValue' );
+			cardstr = ~/\\t/g.replace( cardstr, '' ); //format tab
 			cardstr = '[' + cardstr + ']';
 			savefile.cardSuit.push( {
 				uid:dom.attr( 'uid' ),

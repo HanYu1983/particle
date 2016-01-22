@@ -125,7 +125,7 @@ var sangoWar = sangoWar || {};
 			}, [])
 			list = _.map(list, function(info){
 				return {
-					id:info[1],
+					id:info[1].replace(/\t/g, ''),
 					rare:info[0],
 					ntype:info[5][2],
 					ctype:"",

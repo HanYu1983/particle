@@ -5,6 +5,16 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var EReg = function(r,opt) {
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+};
+EReg.__name__ = true;
+EReg.prototype = {
+	replace: function(s,by) {
+		return s.replace(this.r,by);
+	}
+};
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
@@ -182,6 +192,14 @@ Lambda.foreach = function(it,f) {
 		if(!f(x)) return false;
 	}
 	return true;
+};
+Lambda.fold = function(it,f,first) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		first = f(x,first);
+	}
+	return first;
 };
 Lambda.find = function(it,f) {
 	var $it0 = $iterator(it)();
@@ -518,7 +536,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		switch(_g) {
 		case "on_btn_getShareLink_click":
 			var uid = notification.getBody().deckuid;
-			var url = window.location.host + window.location.pathname + "?uid=" + uid;
+			var url = "https://" + window.location.host + window.location.pathname + "?uid=" + uid;
 			this.sendNotification(view_ViewController.do_show_alert,{ alert : url});
 			break;
 		case "on_btn_seeCount_click":
@@ -534,8 +552,8 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_btn_share_deck_click":
 			var uid1 = notification.getBody().deckuid;
 			var shareobj = this.findDataById(this.ary_result,uid1);
-			var url1 = window.location.host + window.location.pathname + "?uid=" + uid1;
-			var picture = "http:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
+			var url1 = "https://" + window.location.host + window.location.pathname + "?uid=" + uid1;
+			var picture = "https:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.shareFb(Helper.getMeta().desc,url1,picture,Helper.getMeta().name,shareobj.desc,function(ret) {
 				_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
@@ -609,7 +627,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var cards = clickData.cards;
 			this.currentGame = game1;
 			this.currentUid = id1;
-			this.currentOutputStr = JSON.stringify(cards);
 			this.sendShowBigList(clickData,doLoad);
 			break;
 		default:
@@ -656,10 +673,12 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		var cards = deck.cards;
 		var game = deck.game;
+		this.currentOutputStr = JSON.stringify(cards);
 		var onLoadSuccess = function(ary_send) {
 			var ary_send1 = ary_send.filter(function(item) {
 				return item != null;
 			});
+			deck.read = true;
 			if(_g.ary_read != null && HxOverrides.indexOf(_g.ary_read,deck.id,0) == -1) {
 				_g.ary_read.push(deck.id);
 				Helper.saveRead(JSON.stringify(_g.ary_read),function(err,appSaveRet) {
@@ -680,7 +699,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				case "sangoWar":
 					str = StringTools.replace(str,".jpg","");
 					retobj = Lambda.find(data,function(oriData) {
-						return oriData.id.indexOf(str) != -1;
+						return oriData.id.indexOf(str) == 0;
 					});
 					break;
 				default:
@@ -688,6 +707,10 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 						return oriData1.id == str;
 					});
 				}
+				retobj = Lambda.find(data,function(oriData2) {
+					return oriData2.id == str;
+				});
+				if(retobj == null) retobj = { id : str, content : "暫時沒有資料!"};
 				return retobj;
 			});
 			onLoadSuccess(ary_showData);
@@ -709,8 +732,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 	}
 	,doSetData: function(data) {
 		this.oriDataToUseData(data);
+		this.pushCountToData();
 		this.setDataRead();
-		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(data,0), total : data.length, pageNumber : 1});
+		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(this.ary_result,0), total : this.ary_result.length, pageNumber : 1});
 	}
 	,setDataRead: function() {
 		var _g = this;
@@ -790,21 +814,16 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		});
 	}
 	,oriDataToUseData: function(ori) {
-		var _g = this;
-		this.data = ori.map(function(item) {
-			if(item.uid == null) item.id = Helper.getUUID(); else item.id = item.uid;
+		this.data = Lambda.fold(ori,function(item,first) {
+			if(item.uid == null) return first;
+			item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
 			item.typeName = Helper.EnToCh(item.type);
 			if(item.desc == null) item.desc = ""; else item.desc = item.desc;
-			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
-			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
-			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
-			if(item.viewCount == null) item.viewCount = 0;
-			if(item.shareCount == null) item.shareCount = 0;
-			if(item.outputCount == null) item.outputCount = 0;
-			return item;
-		});
+			first.push(item);
+			return first;
+		},[]);
 		this.ary_result = this.data;
 	}
 	,pushCountToData: function() {
@@ -813,6 +832,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			item.viewCount = Reflect.field(_g.countMap,"on_item_view:" + item.id);
 			item.shareCount = Reflect.field(_g.countMap,"on_item_share:" + item.id);
 			item.outputCount = Reflect.field(_g.countMap,"on_item_output:" + item.id);
+			if(item.viewCount == null) item.viewCount = 0;
+			if(item.shareCount == null) item.shareCount = 0;
+			if(item.outputCount == null) item.outputCount = 0;
 			return true;
 		});
 	}
@@ -1278,7 +1300,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		}
 	}
 	,openFBComment: function(uid) {
-		var url = "comment.html?url=" + "http://" + window.location.host + window.location.pathname + "?uid=" + uid;
+		var url = "comment.html?url=" + "https://" + window.location.host + window.location.pathname + "?uid=" + uid;
 		this.iframe_comment.attr("src",url);
 	}
 	,onCloseDetailForm: function(e) {
@@ -1322,6 +1344,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		this.mc_deckContainer.children().each(function(id,dom) {
 			dom = _g.j(dom);
 			var cardstr = dom.find("#txt_cards").textbox("getValue");
+			cardstr = new EReg("\\\\t","g").replace(cardstr,"");
 			cardstr = "[" + cardstr + "]";
 			savefile.cardSuit.push({ uid : dom.attr("uid"), type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), 'public' : dom.find("#btn_public").hasClass("l-btn-selected")});
 		});
@@ -1505,16 +1528,6 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 };
 String.__name__ = true;
 Array.__name__ = true;
-if(Array.prototype.map == null) Array.prototype.map = function(f) {
-	var a = [];
-	var _g1 = 0;
-	var _g = this.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		a[i] = f(this[i]);
-	}
-	return a;
-};
 if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 	var a1 = [];
 	var _g11 = 0;
