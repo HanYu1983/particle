@@ -210,7 +210,7 @@ body{
 	<div id="mc_light" style="position:fixed; top:5px; right:385px;"></div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:500px;" >
+        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:520px;" >
 			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div class="hori">
 					<a id="btn_notLogin" href="#" title="不需要登入就可以使用預組套牌跟朋友連線對戰哦!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnNotLoginClick')" data-options="iconCls:'icon-fire2'">創建臨時ID</a>
@@ -283,6 +283,11 @@ body{
 				</div>
 				<div class="hori">
 					<a href="#" onclick="onHtmlClick('onBtnTableDeck')" title="創建臨時用的桌遊" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時桌遊</a>
+				</div>
+			</div>
+			<div class="group" style="text-align:center;">
+				<div class="hori">
+					<a href="#" onclick="onHtmlClick('onBtnSaveClick')" title="把當下的狀態儲存起來，下次可以繼續玩" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-save', disabled:false">記錄/讀取</a>
 				</div>
 			</div>
 		</div>
@@ -390,6 +395,7 @@ body{
 	function getCookie( key ){
 		return $.cookie( key );
 	}
+	
 	
 	function removeCookie( key ){
 		$.removeCookie( key );

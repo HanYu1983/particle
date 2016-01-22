@@ -21,10 +21,11 @@ using Reflect;
  */
 class MainController extends Mediator
 {
-	public static var create_item = 'create_item';
+	public static var do_create_item = 'do_create_item';
+	public static var do_getItemsString = 'do_getItemsString';
+	
 	public static var on_receiveMessage = 'on_receiveMessage';
 	public static var on_been_invite = 'on_been_invite';
-	
 	public static var on_select_cards = 'on_select_cards';
 	public static var on_press = 'on_press';
 	public static var on_dice = 'on_dice';
@@ -52,7 +53,8 @@ class MainController extends Mediator
 	
 	override public function listNotificationInterests():Array<String> 
 	{
-		return [ 	create_item, 
+		return [ 	do_create_item, 
+					do_getItemsString,
 					on_receiveMessage,
 					BasicItem.on_item_click,
 					BasicItem.on_item_lock
@@ -71,7 +73,10 @@ class MainController extends Mediator
 				var div:Dynamic = notification.getBody();
 				onSelectItems( div, true, isCtrl );
 				zsorting();
-			case 'create_item':
+			case 'do_getItemsString':
+				var callback = notification.getBody().callback;
+				callback( Json.stringify( ary_allItem ));
+			case 'do_create_item':
 				var ary_creates:Array<Dynamic> = notification.getBody();
 				ary_creates.foreach( function( c:Dynamic ) {
 					createItem( c );

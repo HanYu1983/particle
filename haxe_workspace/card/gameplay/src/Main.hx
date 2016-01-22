@@ -25,6 +25,7 @@ class Main
 	public static var on_getSuit_success = 'on_getSuit_success';
 	public static var on_createDeck_click = 'on_createDeck_click';
 	public static var on_receiveOps = 'on_receiveOps';
+	public static var on_save_load_click = 'on_save_load_click';
 
 	public static var j:Dynamic = untyped __js__('$');
 	
@@ -172,29 +173,25 @@ class Main
 	function onHtmlClick( type, ?params ) {
 		
 		switch( type ) {
+			case 'onBtnSaveClick':
+				Facade.getInstance().sendNotification( MainController.do_getItemsString, {
+					callback:function( str ) {
+						Facade.getInstance().sendNotification( on_save_load_click, { str:str } );
+					}
+				} );
 			case 'onBtnInviteServer':
 				if ( SocketController.playerId == 'smart' || otherPlayerId == '' ) {
 					slide( '請先登入fb或者創建臨時id且並且填入對手' );
 					return;
 				}
 				
-			//	slide( '正在等待對手...' );
 				Facade.getInstance().sendNotification( SocketController.do_startHeartbeat );
 				setReceiveInvitation( SocketController.otherPlayerIds.join(',') );
 				CallJs.api_invite( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
 					if ( err != null )	alert( err );
 				});
 				saveOpponentToCookie( otherPlayerId );
-				//Facade.getInstance().sendNotification( SocketController.sendMessage, {type:'invite', msg:SocketController.playerId + ',' + otherPlayerId } );
 			case 'onBtnStartServer':
-				/*
-				if ( SocketController.playerId == 'smart' || otherPlayerId == '' ) {
-					slide( '請先登入並且輸入對手的id' );
-					return;
-				}
-				
-				slide( '正在等待對手...' );
-				*/
 				if ( SocketController.playerId == 'smart' ) {
 					slide( '請先登入fb或者創建臨時id' );
 					return;
@@ -401,7 +398,7 @@ class Main
 	}
 	
 	static function createItem( ary_data ) {
-		Facade.getInstance().sendNotification( MainController.create_item, Tool.createItemFromData( ary_data ));
+		Facade.getInstance().sendNotification( MainController.do_create_item, Tool.createItemFromData( ary_data ));
 	}
 	
 	function prepareCardsuit( inputCardsuit:Array<Dynamic> ) {

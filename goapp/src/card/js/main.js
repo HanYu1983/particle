@@ -223,7 +223,7 @@ Main.getCardDetailById = function(game,cid) {
 	});
 };
 Main.createItem = function(ary_data) {
-	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,per_vic_pureMVCref_tableGameModel_Tool.createItemFromData(ary_data));
+	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,per_vic_pureMVCref_tableGameModel_Tool.createItemFromData(ary_data));
 };
 Main.showDiceMessage = function(id,dice) {
 	Main.slide("玩家 " + id + " 擲了 " + dice + " 點",4000);
@@ -259,6 +259,11 @@ Main.prototype = {
 	onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
+		case "onBtnSaveClick":
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,{ callback : function(str) {
+				org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_save_load_click,{ str : str});
+			}});
+			break;
 		case "onBtnInviteServer":
 			if(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId == "smart" || Main.otherPlayerId == "") {
 				Main.slide("請先登入fb或者創建臨時id且並且填入對手");
@@ -348,9 +353,9 @@ Main.prototype = {
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
 			break;
 		case "onBtnTableDeck":
-			var str = Main.j("#txt_table").textbox("getValue");
+			var str1 = Main.j("#txt_table").textbox("getValue");
 			try {
-				var obj_table = JSON.parse(str);
+				var obj_table = JSON.parse(str1);
 				Lambda.foreach(obj_table,function(item) {
 					item.owner = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId;
 					return true;
@@ -362,10 +367,10 @@ Main.prototype = {
 			}
 			break;
 		case "onBtnCustomDeck":
-			var str1 = Main.j("#txt_custom").textbox("getValue");
-			str1 = "[" + str1 + "]";
+			var str2 = Main.j("#txt_custom").textbox("getValue");
+			str2 = "[" + str2 + "]";
 			try {
-				var createobj = JSON.parse(str1);
+				var createobj = JSON.parse(str2);
 				Main.createItem(per_vic_pureMVCref_tableGameModel_Tool.createDataFromDeck({ backId : "0", cards : createobj, game : Main.currentSelect},per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId));
 			} catch( e1 ) {
 				if (e1 instanceof js__$Boot_HaxeError) e1 = e1.val;
@@ -840,7 +845,7 @@ mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click,mediator_UI.do_show_recevie];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click,Main.on_save_load_click,mediator_UI.do_show_recevie];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -857,6 +862,9 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "on_dice":
 			Main.showDiceMessage(notification.getBody().playerId,notification.getBody().dice);
+			break;
+		case "on_save_load_click":
+			console.log(notification.getBody().str);
 			break;
 		case "on_createDeck_click":
 			this.closeNorthPanel();
@@ -1484,7 +1492,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.__name__ = true;
 per_vic_pureMVCref_tableGameModel_controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -1501,7 +1509,11 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.onSelectItems(div1,true,this.isCtrl);
 			this.zsorting();
 			break;
-		case "create_item":
+		case "do_getItemsString":
+			var callback = notification.getBody().callback;
+			callback(JSON.stringify(this.ary_allItem));
+			break;
+		case "do_create_item":
 			var ary_creates = notification.getBody();
 			Lambda.foreach(ary_creates,function(c) {
 				_g1.createItem(c);
@@ -2367,6 +2379,7 @@ CallJs.googleTracking_click = googleTracking.click;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
+Main.on_save_load_click = "on_save_load_click";
 Main.j = $;
 Main.fbid = "";
 Main.token = "";
@@ -2380,7 +2393,8 @@ org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_UI.do_show_recevie = "do_show_recevie";
 mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 per_vic_pureMVCref_tableGameModel_Tool.j = $;
-per_vic_pureMVCref_tableGameModel_controller_MainController.create_item = "create_item";
+per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item = "do_create_item";
+per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString = "do_getItemsString";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_receiveMessage = "on_receiveMessage";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite = "on_been_invite";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
