@@ -825,6 +825,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
+	this.txt_savestr = this.getViewComponent().find("#txt_savestr");
 	this.mc_light = Main.j("#mc_light");
 	this.dia_invite = Main.j("#dia_invite");
 	this.dia_invite.find("#btn_receive").click(function() {
@@ -865,6 +866,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "on_save_load_click":
 			console.log(notification.getBody().str);
+			this.txt_savestr.textbox({ value : notification.getBody().str});
 			break;
 		case "on_createDeck_click":
 			this.closeNorthPanel();

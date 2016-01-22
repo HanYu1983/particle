@@ -23,6 +23,7 @@ class UI extends Mediator
 	var mc_detailContainer:Dynamic;
 	var combo_deck:Dynamic;
 	var combo_ops:Dynamic;
+	var txt_savestr:Dynamic;
 	var dia_invite:Dynamic;
 	var mc_light:Dynamic;
 
@@ -36,6 +37,7 @@ class UI extends Mediator
 		
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
+		txt_savestr = getViewComponent().find( '#txt_savestr' );
 		mc_light = Main.j( '#mc_light' );
 		dia_invite = Main.j( '#dia_invite' );
 		dia_invite.find( '#btn_receive' ).click( function() {
@@ -95,6 +97,7 @@ class UI extends Mediator
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
 			case Main.on_save_load_click:
 				trace( notification.getBody().str );
+				txt_savestr.textbox( { value:notification.getBody().str } );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
 			case SocketController.on_heartbeat_event:

@@ -264,30 +264,27 @@ body{
 			<div class="group" style="text-align:center;">
 				<div class="hori">
 					<select id="combo_deck" class="easyui-combobox" name="state" style="width:100px;"></select>
-				</div>
-				<div class="hori">
 					<a href="#" onclick="onHtmlClick('onBtnCreateDeck')" title="對手有了之後，所創建的卡牌對手才會收到哦" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-ok', disabled:false">創建套牌</a>
 				</div>
 			</div>
 			<div class="group" style="text-align:center;">
 				<div class="hori">
 					<select id="txt_custom" class="easyui-textbox" name="state" style="width:100px;"></select>
-				</div>
-				<div class="hori">
 					<a href="#" onclick="onHtmlClick('onBtnCustomDeck')" title="創建臨時用的套牌" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時套牌</a>
 				</div>
 			</div>
 			<div class="group" style="text-align:center;">
 				<div class="hori">
 					<select id="txt_table" class="easyui-textbox" name="state" style="width:100px;"></select>
-				</div>
-				<div class="hori">
 					<a href="#" onclick="onHtmlClick('onBtnTableDeck')" title="創建臨時用的桌遊" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時桌遊</a>
 				</div>
 			</div>
 			<div class="group" style="text-align:center;">
 				<div class="hori">
-					<a href="#" onclick="onHtmlClick('onBtnSaveClick')" title="把當下的狀態儲存起來，下次可以繼續玩" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-save', disabled:false">記錄/讀取</a>
+					<a href="#" onclick="onHtmlClick('onBtnSaveClick')" title="把當下的狀態儲存起來，下次可以繼續玩" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false">匯出</a>
+					<a href="#" onclick="onHtmlClick('onBtnSaveClick')" title="把當下的狀態儲存起來，下次可以繼續玩" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false">錄製</a>
+					<select id="txt_savestr" class="easyui-textbox" name="state" style="width:100px;"></select>
+					<a href="#" onclick="onHtmlClick('onBtnSaveClick')" title="把當下的狀態儲存起來，下次可以繼續玩" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false">匯入</a>
 				</div>
 			</div>
 		</div>
