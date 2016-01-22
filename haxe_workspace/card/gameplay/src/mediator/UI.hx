@@ -1,5 +1,6 @@
 package mediator;
 
+import haxe.Json;
 import haxe.Timer;
 import js.html.Image;
 import js.html.rtc.IdentityAssertion;
@@ -9,6 +10,9 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 import per.vic.pureMVCref.tableGameModel.controller.MainController;
 import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 
+using Lambda;
+using Reflect;
+using StringTools;
 /**
  * ...
  * @author vic
@@ -80,6 +84,7 @@ class UI extends Mediator
 					SocketController.on_heartbeat_event,
 					Main.on_createDeck_click,
 					Main.on_save_click,
+					Main.on_load_click,
 					do_show_recevie
 				];
 	}
@@ -95,9 +100,20 @@ class UI extends Mediator
 				combo_ops.combobox( 'setValue', notification.getBody().inviteId );
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
+			case Main.on_load_click:
+				var loadstr = txt_savestr.textbox( 'getValue' );
+				var ary_cmds = Json.parse( loadstr );
+				ary_cmds.forEach( function( cmd ) {
+					switch( cmd.type ) {
+						case 'addItems':
+							sendNotification( MainController.do_create_item, cmd.msg );
+						case _:
+					}
+					return true;
+				});
+				txt_savestr.textbox( 'setValue', '' );
 			case Main.on_save_click:
-				trace( notification.getBody().str );
-				txt_savestr.textbox( { value:notification.getBody().str } );
+				txt_savestr.textbox( { value: notification.getBody().str } );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
 			case SocketController.on_heartbeat_event:

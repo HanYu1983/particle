@@ -75,7 +75,8 @@ class MainController extends Mediator
 				zsorting();
 			case 'do_getItemsString':
 				var callback = notification.getBody().callback;
-				callback( Json.stringify( ary_allItem ));
+				var saveobj = [ { type:'addItems', msg: ary_allItem } ];
+				callback( Json.stringify( saveobj ) );
 			case 'do_create_item':
 				var ary_creates:Array<Dynamic> = notification.getBody();
 				ary_creates.foreach( function( c:Dynamic ) {
@@ -290,11 +291,11 @@ class MainController extends Mediator
 				actionModel();
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_A, 3:
-				if ( isCtrl ) {
-					selectMyItem();
-				}else {
+				//if ( isCtrl ) {
+				//	selectMyItem();
+				//}else {
 					moveModel();
-				}
+				//}
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_X:
 				rotateModel( 90 );
