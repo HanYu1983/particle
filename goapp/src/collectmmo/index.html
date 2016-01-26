@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Collectmmo</title>
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="description" content="" />
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/metro/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/mobile.css">  
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.mobile.js"></script> 
+</head>
+<style>
+.group{
+	position:relative;
+	width:100%;
+}
+.hori{
+	display:inline-block;
+}
+.hori_center{
+	text-align:center;
+}
+
+.tile{
+	position:relative;
+	width:13%;
+	height:45px;
+	background-color:yellow;
+	border:1px solid gray;
+	box-sizing: border-box;
+}
+.actionButton{
+	width:23%;
+	height:35px;
+}
+.itemButton{
+	width:40px;
+	height:90%;
+}
+.item{
+	position:relative;
+	width:100%;
+	height:35px;
+	border:1px solid gray;
+	box-sizing: border-box;
+}
+</style>
+<body>
+	<div class="easyui-navpanel">
+        <header>
+            <div class="m-toolbar">
+                <span class="m-title">收集遊戲介面測試</span>
+            </div>
+        </header>
+        <div class="easyui-accordion" data-options="multiple:true,selected:1" fit="false" border="false">
+			<div title="移動">
+				<div class="group hori_center">
+					<a class="easyui-linkbutton actionButton" outline="true">西</a>
+					<a class="easyui-linkbutton actionButton" outline="true">北</a> 
+					<a class="easyui-linkbutton actionButton" outline="true">南</a> 
+					<a class="easyui-linkbutton actionButton" outline="true">東</a> 
+				</div>
+			</div>
+            <div title="地圖">
+				<div id="mc_tileContainer" class="group hori_center" >
+				</div>
+            </div>
+            <div title="場景" >
+				<div class="group hori_center" >
+					<div class="item hori">
+						<div style="position:relative; left:0; top:0; width:100px;">藥草</div>
+						<div style="position:absolute; right:0; top:0; height:100%;">
+							<a class="easyui-linkbutton itemButton" outline="true">撿起</a>
+							<a class="easyui-linkbutton itemButton" outline="true">觀察</a>
+						</div>
+					</div>
+					
+					<div class="item hori">
+						<div style="position:relative; left:0; top:0; width:100px;">劍</div>
+						<div style="position:absolute; right:0; top:0; height:100%;">
+							<a class="easyui-linkbutton itemButton" outline="true">撿起</a>
+							<a class="easyui-linkbutton itemButton" outline="true">觀察</a>
+						</div>
+					</div>
+					
+					<div class="item hori">
+						<div style="position:relative; left:0; top:0; width:100px;">武器店</div>
+						<div style="position:absolute; right:0; top:0; height:100%;">
+							<a class="easyui-linkbutton itemButton" outline="true">進入</a>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			<div title="背包" >
+				<div class="group hori_center" >
+					<div class="item hori">
+						<div style="position:relative; left:0; top:0; width:100px;">藥草</div>
+						<div style="position:absolute; right:0; top:0; height:100%;">
+							<a class="easyui-linkbutton itemButton" outline="true">使用</a>
+							<a class="easyui-linkbutton itemButton" outline="true">分解</a>
+							<a class="easyui-linkbutton itemButton" outline="true">丟棄</a>
+							<a class="easyui-linkbutton itemButton" outline="true">觀察</a>
+						</div>
+					</div>
+					
+					<div class="item hori">
+						<div style="position:relative; left:0; top:0; width:100px;">火劍</div>
+						<div style="position:absolute; right:0; top:0; height:100%;">
+							<a class="easyui-linkbutton itemButton" outline="true">裝備</a>
+							<a class="easyui-linkbutton itemButton" outline="true">分解</a>
+							<a class="easyui-linkbutton itemButton" outline="true">丟棄</a>
+							<a class="easyui-linkbutton itemButton" outline="true">觀察</a>
+						</div>
+					</div>
+					
+					<div class="item hori">
+						<div style="position:relative; left:0; top:0; width:100px;">劍</div>
+						<div style="position:absolute; right:0; top:0; height:100%;">
+							<a class="easyui-linkbutton itemButton" outline="true">解下</a>
+							<a class="easyui-linkbutton itemButton" outline="true">觀察</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div title="狀態" >
+				<div class="group hori_center" style="font-size:16px;">
+					<div>HP: 100</div>
+					<div>STR: 4</div>
+				</div>
+			</div>
+			<div title="熟練度" >
+				<div class="group hori_center" style="font-size:16px;">
+					<div>HP: 100</div>
+					<div>STR: 4</div>
+				</div>
+			</div>
+        </div>
+    </div>
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+	<!--
+	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
+	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+	-->
+	<script>
+	var mc_tileContainer = $('#mc_tileContainer' );
+	_.each( _.range( 49 ), function( id ){
+		mc_tileContainer.append( '<div class="tile hori"></div>' );
+	});
+	</script>
+	<script src="js/main.js"></script>
+</body>
+</html>
