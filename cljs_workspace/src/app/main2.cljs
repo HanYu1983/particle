@@ -8,7 +8,7 @@
     [gl.mesh :as mesh]
     [gl.shader :as shader]
     [tool.particle :as part]))
-    
+    (comment
 (def cacheTex (memoize gltex/texture))
     
 (defn draw2D [canvas]
@@ -193,3 +193,4 @@
   
   
 (main)
+)

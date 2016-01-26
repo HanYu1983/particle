@@ -12,7 +12,7 @@
     [app.react :as rx]
     [tool.particle :as part]))
       
-  
+    (comment
 (def cacheTex (memoize gltex/texture))
       
 (defn draw [canvas {ps :ps :as ctx}]
@@ -276,3 +276,4 @@
   (comment "end main"))
 
 (main)
+)
