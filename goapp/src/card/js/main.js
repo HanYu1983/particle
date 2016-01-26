@@ -954,6 +954,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			var game = card.extra[2];
 			var cardId = card.extra[0];
 			var url = Main.getCardImageUrlWithPackage(game,cardId);
+			if(url == null) url = "../common/images/card/cardback_0.png";
 			var div = Main.j("<div></div>");
 			div.css("position","relative");
 			var img = Main.j("<img></img>");
@@ -1059,6 +1060,11 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 						str += detail.desc;
 						break;
 					}
+				} else if(game == null) {
+					str = card.extra[0];
+					str += "<br/>";
+					str += card.extra[1];
+				} else switch(game) {
 				}
 				detaildiv.html(str);
 				div.append(detaildiv);
