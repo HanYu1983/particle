@@ -351,11 +351,19 @@ Main.prototype = {
 			var str = Main.j("#txt_table").textbox("getValue");
 			try {
 				var obj_table = JSON.parse(str);
-				Lambda.foreach(obj_table,function(item) {
-					item.owner = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId;
-					return true;
-				});
-				Main.createItem(obj_table);
+				var ary_create = Lambda.fold(obj_table,function(curr,first) {
+					if(curr.count == null) curr.count = 1;
+					var _g1 = 0;
+					var _g2 = curr.count;
+					while(_g1 < _g2) {
+						var i = _g1++;
+						var copycurr = JSON.parse(JSON.stringify(curr));
+						copycurr.owner = per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId;
+						first.push(copycurr);
+					}
+					return first;
+				},[]);
+				Main.createItem(ary_create);
 			} catch( e ) {
 				if (e instanceof js__$Boot_HaxeError) e = e.val;
 				Main.alert("輸入格式錯誤哦，請檢查!");
@@ -375,15 +383,15 @@ Main.prototype = {
 		case "onConcreteDiceClick":
 			var ary_data = ((function($this) {
 				var $r;
-				var _g1 = [];
+				var _g3 = [];
 				{
 					var _g11 = 0;
 					while(_g11 < 6) {
-						var i = _g11++;
-						_g1.push(i);
+						var i1 = _g11++;
+						_g3.push(i1);
 					}
 				}
-				$r = _g1;
+				$r = _g3;
 				return $r;
 			}(this))).map(function(idstr) {
 				return { extra : ["../common/images/createTable/other/dice_01.png","../common/images/createTable/other/dice_02.png","../common/images/createTable/other/dice_03.png","../common/images/createTable/other/dice_04.png","../common/images/createTable/other/dice_05.png","../common/images/createTable/other/dice_06.png"], pos : [100,100], type : "sequence", width : 50, height : 50};
