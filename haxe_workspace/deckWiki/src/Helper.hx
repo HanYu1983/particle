@@ -106,7 +106,11 @@ class Helper
 
 	public static function createItem( model:Dynamic ) {
 		model.url = getImageUrlByGameAndId( model.game, model.cards[0] );
-		return j('#tmpl_item' ).tmpl( model );
+		var copymodel:Dynamic = Json.parse( Json.stringify( model ) );
+		if ( copymodel.name.length > 15 ) {
+			copymodel.name = copymodel.name.substr( 0, 15 ) + '…';
+		}
+		return j('#tmpl_item' ).tmpl( copymodel );
 	}
 	
 	public static function loadDetail( game:String, cb ) {

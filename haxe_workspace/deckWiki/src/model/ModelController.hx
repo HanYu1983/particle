@@ -23,6 +23,7 @@ class ModelController extends Mediator
 	public static var on_cardsuit_load = 'on_cardsuit_load';
 	public static var on_cardsuit_save_success = 'on_cardsuit_save_success';
 	public static var on_loadPublic_error = 'on_loadPublic_error';
+	public static var on_copy_success = 'on_copy_success';
 	
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
@@ -58,6 +59,7 @@ class ModelController extends Mediator
 			ViewController.on_btn_share_deck_click,
 			ViewController.on_btn_seeCount_click,
 			ViewController.on_btn_getShareLink_click,
+			ViewController.on_btn_copy_click,
 			do_load_all_list,
 			do_save_count
 		];
@@ -66,6 +68,15 @@ class ModelController extends Mediator
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ViewController.on_btn_copy_click:
+				var deckuid = notification.getBody().deckuid;
+				if ( this.fbid == null ) {
+					loginFb( function() {
+						copyDeckToMyAccount( deckuid );
+					});
+				}else {
+					copyDeckToMyAccount( deckuid );
+				}
 			case ViewController.on_btn_getShareLink_click:
 				var uid = notification.getBody().deckuid;
 				var url = 'https://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
@@ -102,17 +113,7 @@ class ModelController extends Mediator
 					doLoadList();
 				});
 			case ViewController.on_btn_login_click:
-				sendNotification( ViewController.do_show_loading, { show:true } );
-				Helper.loginFb( function(fbid, token) {
-					this.fbid = fbid;
-					this.token = token;
-					
-					sendNotification( on_facebook_login, { fbid:fbid, token:token } );
-					Helper.getCardsuits( fbid, token, function( ret ) {
-						sendNotification( on_cardsuit_load, { cardsuit:ret } );
-						sendNotification( ViewController.do_show_loading, { show:false } );
-					});
-				});
+				loginFb();
 			case ViewController.on_btn_gotoDeckManager_click:
 				switch( currentGame ) {
 					case 'yugioh':
@@ -124,14 +125,12 @@ class ModelController extends Mediator
 				Browser.window.open( 'https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/', '_blank' );
 			case ViewController.on_btn_self_click:
 				if ( this.fbid == null ) {
-					sendNotification( ViewController.do_show_alert, { alert:'請先登入facebook哦!' } );
-					return ;
+					loginFb( function() {
+						showMyShareDeck();
+					});
+				}else {
+					showMyShareDeck();
 				}
-				var searchConditions:Dynamic = { 
-					author:this.fbid
-				};
-				var showData = multiSearch( searchConditions );
-				sendNotification( ViewController.do_show_list, { data:filterByPage( showData, 0 ), total: showData.length } );
 			case ViewController.on_btn_output_click:
 				var deckuid = notification.getBody().deckuid;
 				var cards = findDataById( data, deckuid ).cards;
@@ -167,6 +166,34 @@ class ModelController extends Mediator
 		}
 	}
 	
+	function showMyShareDeck() {
+		var searchConditions:Dynamic = { 
+			author:this.fbid
+		};
+		var showData = multiSearch( searchConditions );
+		sendNotification( ViewController.do_show_list, { data:filterByPage( showData, 0 ), total: showData.length } );
+	}
+	
+	function copyDeckToMyAccount( deckuid:String ) {
+		var deck = findDataById( data, deckuid );
+		sendNotification( on_copy_success, { game:deck.game, name:deck.name, cards:deck.cards } );
+	}
+	
+	function loginFb( ?cb:Void -> Void ) {
+		sendNotification( ViewController.do_show_loading, { show:true } );
+		Helper.loginFb( function(fbid, token) {
+			this.fbid = fbid;
+			this.token = token;
+			
+			sendNotification( on_facebook_login, { fbid:fbid, token:token } );
+			Helper.getCardsuits( fbid, token, function( ret ) {
+				sendNotification( on_cardsuit_load, { cardsuit:ret } );
+				sendNotification( ViewController.do_show_loading, { show:false } );
+				
+				if ( cb != null ) cb();
+			});
+		});
+	}
 	
 	function doSaveCount( map ) {
 		this.countMap = map;

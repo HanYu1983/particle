@@ -18,7 +18,7 @@ EReg.prototype = {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("679171275511375",cb);
+	myapp.facebook.init("425311264344425",cb);
 };
 Helper.shareFb = function(name,link,picture,caption,description,cb) {
 	myapp.facebook.postMessageToMyboard({ name : name, link : link, picture : picture, caption : caption, description : description, callback : cb});
@@ -68,7 +68,9 @@ Helper.saveDeck = function(fbid,token,model,cb) {
 };
 Helper.createItem = function(model) {
 	model.url = Helper.getImageUrlByGameAndId(model.game,model.cards[0]);
-	return Helper.j("#tmpl_item").tmpl(model);
+	var copymodel = JSON.parse(JSON.stringify(model));
+	if(copymodel.name.length > 15) copymodel.name = Std.string(copymodel.name.substr(0,15)) + "…";
+	return Helper.j("#tmpl_item").tmpl(copymodel);
 };
 Helper.loadDetail = function(game,cb) {
 	api.cardInfo(game,function(err,data) {
@@ -185,6 +187,14 @@ HxOverrides.iter = function(a) {
 };
 var Lambda = function() { };
 Lambda.__name__ = true;
+Lambda.has = function(it,elt) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var x = $it0.next();
+		if(x == elt) return true;
+	}
+	return false;
+};
 Lambda.foreach = function(it,f) {
 	var $it0 = $iterator(it)();
 	while( $it0.hasNext() ) {
@@ -263,10 +273,18 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	var initApp = function(event) {
 		Helper.initFb(function() {
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : { 'onBtnCreateDeck' : 10, 'onBtnCustomDeck' : 4, 'onBtnLoadArmyClick' : 1, 'onBtnLoadGundamWarClick' : 2, 'onBtnLoadGundamWarNClick' : 1, 'onBtnLoadYugiohClick' : 2, 'onBtnLoginClick' : 2, 'onBtnStartServer' : 2, 'onClearClick' : 1, 'onResetClick' : 2, 'onSaveClick' : 5, 'onSearchClick' : 61, 'on_item_click:111ba71c-b7d6-4fdc-9b60-5807b2685dab' : 1, 'on_item_click:7ed72294-5223-46b3-98f9-75b2223cfbb1' : 1, 'on_item_output:111ba71c-b7d6-4fdc-9b60-5807b2685dab' : 1, 'on_item_share:048a31dc-2b0c-4905-a65c-852453848255' : 2, 'on_item_share:111ba71c-b7d6-4fdc-9b60-5807b2685dab' : 1, 'on_item_share:7ed72294-5223-46b3-98f9-75b2223cfbb1' : 5, 'on_item_view:048a31dc-2b0c-4905-a65c-852453848255' : 3, 'on_item_view:111ba71c-b7d6-4fdc-9b60-5807b2685dab' : 3, 'on_item_view:7ed72294-5223-46b3-98f9-75b2223cfbb1' : 45, 'showBigList:game=crusade' : 8, 'showBigList:game=dragonZ' : 5, 'showBigList:game=gundamWar' : 33, 'showBigList:game=gundamWarN' : 4, 'showBigList:game=magic' : 5, 'showBigList:game=sangoWar' : 14, 'showBigList:game=sgs' : 39, 'showBigList:game=ws' : 4, 'showBigList:game=yugioh' : 17}});
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+			Helper.authGoogleAndGetData(true,function(err,data) {
+				if(err == null) {
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_auth,{ show : false});
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : data});
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+				} else {
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
+				}
+			});
 		});
 	};
 	var onHtmlClick = function(type,value) {
@@ -518,7 +536,7 @@ model_ModelController.__name__ = true;
 model_ModelController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,view_ViewController.on_btn_seeCount_click,view_ViewController.on_btn_getShareLink_click,model_ModelController.do_load_all_list,model_ModelController.do_save_count];
+		return [view_ViewController.on_item_click,view_ViewController.on_item_over,view_ViewController.on_input_search_change,view_ViewController.on_pag_page_change,view_ViewController.on_btn_output_click,view_ViewController.on_btn_self_click,view_ViewController.on_btn_gotoDeckManager_click,view_ViewController.on_btn_gotoGroup_click,view_ViewController.on_btn_login_click,view_ViewController.on_btn_addDeck_click,view_ViewController.on_btn_saveDeck_click,view_ViewController.on_btn_share_deck_click,view_ViewController.on_btn_seeCount_click,view_ViewController.on_btn_getShareLink_click,view_ViewController.on_btn_copy_click,model_ModelController.do_load_all_list,model_ModelController.do_save_count];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -526,6 +544,12 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		var str = _g;
 		var str1 = _g;
 		switch(_g) {
+		case "on_btn_copy_click":
+			var deckuid = notification.getBody().deckuid;
+			if(this.fbid == null) this.loginFb(function() {
+				_g1.copyDeckToMyAccount(deckuid);
+			}); else this.copyDeckToMyAccount(deckuid);
+			break;
 		case "on_btn_getShareLink_click":
 			var uid = notification.getBody().deckuid;
 			var url = "https://" + window.location.host + window.location.pathname + "?uid=" + uid;
@@ -544,7 +568,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_btn_share_deck_click":
 			var uid1 = notification.getBody().deckuid;
 			var shareobj = this.findDataById(this.ary_result,uid1);
-			var url1 = "https://particle-979.appspot.com/deckWiki/index.html?uid=" + uid1;
+			var url1 = "https://" + window.location.host + window.location.pathname + "?uid=" + uid1;
 			var picture = "https:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.shareFb(Helper.getMeta().desc,url1,picture,Helper.getMeta().name,shareobj.desc,function(ret) {
@@ -560,16 +584,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			});
 			break;
 		case "on_btn_login_click":
-			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
-			Helper.loginFb(function(fbid,token) {
-				_g1.fbid = fbid;
-				_g1.token = token;
-				_g1.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
-				Helper.getCardsuits(fbid,token,function(ret2) {
-					_g1.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : ret2});
-					_g1.sendNotification(view_ViewController.do_show_loading,{ show : false});
-				});
-			});
+			this.loginFb();
 			break;
 		case "on_btn_gotoDeckManager_click":
 			var _g11 = this.currentGame;
@@ -585,27 +600,23 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			window.open("https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/","_blank");
 			break;
 		case "on_btn_self_click":
-			if(this.fbid == null) {
-				this.sendNotification(view_ViewController.do_show_alert,{ alert : "請先登入facebook哦!"});
-				return;
-			}
-			var searchConditions = { author : this.fbid};
-			var showData = this.multiSearch(searchConditions);
-			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData,0), total : showData.length});
+			if(this.fbid == null) this.loginFb(function() {
+				_g1.showMyShareDeck();
+			}); else this.showMyShareDeck();
 			break;
 		case "on_btn_output_click":
-			var deckuid = notification.getBody().deckuid;
-			var cards = this.findDataById(this.data,deckuid).cards;
-			this.sendNotification(view_ViewController.do_show_output,{ uid : deckuid, str : JSON.stringify(cards)});
+			var deckuid1 = notification.getBody().deckuid;
+			var cards = this.findDataById(this.data,deckuid1).cards;
+			this.sendNotification(view_ViewController.do_show_output,{ uid : deckuid1, str : JSON.stringify(cards)});
 			break;
 		case "on_pag_page_change":
 			var page = Math.floor(notification.getBody().number - 1);
 			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(this.ary_result,page), total : this.ary_result.length});
 			break;
 		case "on_input_search_change":
-			var searchConditions1 = notification.getBody().value;
-			var showData1 = this.multiSearch(searchConditions1);
-			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData1,0), total : showData1.length});
+			var searchConditions = notification.getBody().value;
+			var showData = this.multiSearch(searchConditions);
+			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData,0), total : showData.length});
 			break;
 		case "on_item_over":
 			var id = notification.getBody().id;
@@ -626,6 +637,29 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		default:
 			if(str == model_ModelController.do_save_count) this.doSaveCount(notification.getBody().countMap); else if(str1 == model_ModelController.do_load_all_list) this.doLoadList(true);
 		}
+	}
+	,showMyShareDeck: function() {
+		var searchConditions = { author : this.fbid};
+		var showData = this.multiSearch(searchConditions);
+		this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData,0), total : showData.length});
+	}
+	,copyDeckToMyAccount: function(deckuid) {
+		var deck = this.findDataById(this.data,deckuid);
+		this.sendNotification(model_ModelController.on_copy_success,{ game : deck.game, name : deck.name, cards : deck.cards});
+	}
+	,loginFb: function(cb) {
+		var _g = this;
+		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
+		Helper.loginFb(function(fbid,token) {
+			_g.fbid = fbid;
+			_g.token = token;
+			_g.sendNotification(model_ModelController.on_facebook_login,{ fbid : fbid, token : token});
+			Helper.getCardsuits(fbid,token,function(ret) {
+				_g.sendNotification(model_ModelController.on_cardsuit_load,{ cardsuit : ret});
+				_g.sendNotification(view_ViewController.do_show_loading,{ show : false});
+				if(cb != null) cb();
+			});
+		});
 	}
 	,doSaveCount: function(map) {
 		this.countMap = map;
@@ -1156,6 +1190,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_search = viewComponent.find("#btn_search");
 	this.btn_seeCount = viewComponent.find("#btn_seeCount");
 	this.btn_getShareLink = viewComponent.find("#btn_getShareLink");
+	this.btn_copy = viewComponent.find("#btn_copy");
 	this.dia_output = viewComponent.find("#dia_output");
 	this.mc_backContainer = viewComponent.find("#mc_backContainer");
 	this.mc_deckContainer = viewComponent.find("#mc_deckContainer");
@@ -1221,14 +1256,19 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.btn_seeCount.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_seeCount_click);
 	});
-	this.btn_getShareLink.click(function() {
+	this.btn_copy.click(function() {
 		var deckuid1 = _g1.mc_detail_panel.attr("uid");
-		Helper.trackingEvent("on_item_share:" + deckuid1);
-		_g1.sendNotification(view_ViewController.on_btn_getShareLink_click,{ deckuid : deckuid1});
+		_g1.sendNotification(view_ViewController.on_btn_copy_click,{ deckuid : deckuid1});
+		Helper.trackingEvent("on_item_output:" + deckuid1);
+	});
+	this.btn_getShareLink.click(function() {
+		var deckuid2 = _g1.mc_detail_panel.attr("uid");
+		Helper.trackingEvent("on_item_share:" + deckuid2);
+		_g1.sendNotification(view_ViewController.on_btn_getShareLink_click,{ deckuid : deckuid2});
 	});
 	this.btn_output.click(function() {
-		var deckuid2 = _g1.mc_detail_panel.attr("uid");
-		_g1.sendNotification(view_ViewController.on_btn_output_click,{ deckuid : deckuid2});
+		var deckuid3 = _g1.mc_detail_panel.attr("uid");
+		_g1.sendNotification(view_ViewController.on_btn_output_click,{ deckuid : deckuid3});
 	});
 	this.btn_self.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_self_click);
@@ -1249,7 +1289,7 @@ view_ViewController.__name__ = true;
 view_ViewController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_show_alert,view_ViewController.do_enable_login,view_ViewController.do_show_auth,model_ModelController.on_loadPublic_error,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success];
+		return [view_ViewController.do_show_list,view_ViewController.do_show_bigList,view_ViewController.do_show_showDetail,view_ViewController.do_show_loading,view_ViewController.do_show_output,view_ViewController.do_show_alert,view_ViewController.do_enable_login,view_ViewController.do_show_auth,model_ModelController.on_loadPublic_error,model_ModelController.on_facebook_login,model_ModelController.on_cardsuit_load,model_ModelController.on_cardsuit_save_success,model_ModelController.on_copy_success];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -1262,6 +1302,13 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		var str6 = _g;
 		var str7 = _g;
 		switch(_g) {
+		case "on_copy_success":
+			var name = notification.getBody().name;
+			var cards = notification.getBody().cards;
+			var game = notification.getBody().game;
+			this.addDeck({ game : game, name : name, backId : "0", cards : cards});
+			this.enableSave(true);
+			break;
 		case "on_loadPublic_error":
 			this.alert(notification.getBody().err);
 			break;
@@ -1334,8 +1381,22 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 		});
 		this.mc_deckContainer.parent().parent().scrollTop(oldtop);
 	}
+	,checkSameName: function() {
+		var _g = this;
+		var ary_hasName = [];
+		this.mc_deckContainer.children().each(function(id,dom) {
+			dom = _g.j(dom);
+			var deckname = dom.find("#txt_name").textbox("getValue");
+			if(Lambda.has(ary_hasName,deckname)) {
+				deckname += "_" + Helper.getUUID();
+				dom.find("#txt_name").textbox("setValue",deckname);
+			}
+			ary_hasName.push(deckname);
+		});
+	}
 	,getSaveDataFromDom: function() {
 		var _g = this;
+		this.checkSameName();
 		var savefile = { cardSuit : []};
 		this.mc_deckContainer.children().each(function(id,dom) {
 			dom = _g.j(dom);
@@ -1544,6 +1605,7 @@ model_ModelController.on_facebook_login = "on_facebook_login";
 model_ModelController.on_cardsuit_load = "on_cardsuit_load";
 model_ModelController.on_cardsuit_save_success = "on_cardsuit_save_success";
 model_ModelController.on_loadPublic_error = "on_loadPublic_error";
+model_ModelController.on_copy_success = "on_copy_success";
 view_ViewController.do_show_list = "do_show_list";
 view_ViewController.do_show_bigList = "do_show_bigList";
 view_ViewController.do_show_showDetail = "do_show_showDetail";
@@ -1560,6 +1622,7 @@ view_ViewController.on_pag_page_change = "on_pag_page_change";
 view_ViewController.on_btn_output_click = "on_btn_output_click";
 view_ViewController.on_btn_seeCount_click = "on_btn_seeCount_click";
 view_ViewController.on_btn_getShareLink_click = "on_btn_getShareLink_click";
+view_ViewController.on_btn_copy_click = "on_btn_copy_click";
 view_ViewController.on_btn_self_click = "on_btn_self_click";
 view_ViewController.on_btn_login_click = "on_btn_login_click";
 view_ViewController.on_btn_gotoGroup_click = "on_btn_gotoGroup_click";
@@ -1569,5 +1632,3 @@ view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 view_ViewController.on_btn_share_deck_click = "on_btn_share_deck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=main.js.map
