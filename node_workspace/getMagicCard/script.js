@@ -6,26 +6,56 @@ function dbc2sbc(s){
 }
 
 function sangoWar(info){
+	var id = info[1]
 	var cost = info[5]
 	cost = dbc2sbc(cost).replace(/\s/g, "")
 	
-	var colorValues = "緑赤青紫黒"
+	// 先預設為type=1的格式
+	var type = 1
+	// 非九鼎大呂, 15彈之前是用type=0的格式
+	if( id.search(/DR-/) == -1 && id.search(/15-/) == -1){
+		type = 0
+	}
+	
 	var countryValues = "蜀魏呉漢群"
-	var costAry = [0, 0, '他']
-	for( var i =0; i<cost.length; i+=2 ){
-		var color = cost.charAt(i)
-		var amount = parseInt(cost.charAt(i+1))
-		if( color != '*' ){
-			if( colorValues.indexOf(color) != -1 ){
-				costAry[0] = amount
-				costAry[2] = countryValues.charAt(colorValues.indexOf(color))
-			} else {
-				costAry[1] = amount
+	var colorValues = "緑赤青紫黒"
+	
+	switch(type){
+	default:
+		{
+			var costAry = [0, 0, '他']
+			for( var i =0; i<cost.length; i+=2 ){
+				var color = cost.charAt(i)
+				var amount = parseInt(cost.charAt(i+1))
+				if( color != '*' ){
+					if( colorValues.indexOf(color) != -1 ){
+						costAry[0] = amount
+						costAry[2] = countryValues.charAt(colorValues.indexOf(color))
+					} else {
+						costAry[1] = amount
+					}
+				}
 			}
+			info[5] = costAry
+			return info
+		}
+	case 1:
+		{
+			var map2 = "①②③④⑤"
+			var costAry = [0, 0, '他']
+			for( var k in cost ){
+				var c = cost[k]
+				if( map2.indexOf( c ) != -1 ){
+					costAry[1] = map2.indexOf( c ) + 1
+				} else {
+					costAry[0] ++
+					costAry[2] = countryValues.charAt(colorValues.indexOf(c))
+				}
+			}
+			info[5] = costAry
+			return info
 		}
 	}
-	info[5] = costAry
-	return info
 }
 
 
