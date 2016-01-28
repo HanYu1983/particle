@@ -133,7 +133,9 @@ class ModelController extends Mediator
 				var showData = multiSearch( searchConditions );
 				sendNotification( ViewController.do_show_list, { data:filterByPage( showData, 0 ), total: showData.length } );
 			case ViewController.on_btn_output_click:
-				sendNotification( ViewController.do_show_output, { uid:currentUid, str:currentOutputStr } );
+				var deckuid = notification.getBody().deckuid;
+				var cards = findDataById( data, deckuid ).cards;
+				sendNotification( ViewController.do_show_output, { uid:deckuid, str:Json.stringify( cards ) } );
 			case ViewController.on_pag_page_change:
 				var page:Int = Math.floor( notification.getBody().number - 1 );
 				sendNotification( ViewController.do_show_list, { data:filterByPage( ary_result, page ), total: ary_result.length } );

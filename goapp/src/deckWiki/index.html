@@ -281,7 +281,9 @@ body{
 						<a id="btn_search" href="#" class="easyui-linkbutton" style="width:40px; height:40px;" data-options="iconCls:'icon-search'"></a>
 						<a id="btn_seeCount" href="#" title="認證google身份以觀看統計資料" class="easyui-linkbutton easyui-tooltip c5" style="width:90px; height:40px;">觀看統計</a>
 						<a id="btn_self" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" data-options="iconCls:'icon-search'">我分享的</a>
+						<!--
 						<a id="btn_output" href="#" class="easyui-linkbutton" style="width:90px; height:40px;" data-options="iconCls:'icon-save'">匯出</a>
+						-->
 					</div>
 				</div>
 				<div data-options="region:'center',split:true" style="padding:10px;">
@@ -306,18 +308,25 @@ body{
 							<br/>
 							<div id="txt_desc" style="word-wrap: break-word;" ></div>
 							<div style="position:absolute; right:0; bottom:0;">
-								<div class="hori">
+								<div style="text-align:right;">
 									<div>點擊<span class="shareTxt"></span>分享<span class="shareTxt"></span>匯出<span class="shareTxt"></span></div>
 								</div>
-								<div class="hori" style="position:relative; top:6px;  vertical-align:bottom;">
-									<img id="btn_share" style="cursor:pointer; height:32px;" src="../common/images/other/fbshare.png"></img>
-								</div>
-								<div class="hori" style="position:relative; vertical-align:bottom;">
-									<a id="btn_getShareLink" title="取得分享網址" class="easyui-linkbutton easyui-tooltip" style="height:30px" data-options="iconCls:'icon-search'"></a>
+								<div>
+									<div class="hori" style="position:relative; top:6px;  vertical-align:bottom;">
+										<img id="btn_share" title="分享到自己的塗鴉牆上" class="easyui-tooltip" style="cursor:pointer; height:32px;" src="../common/images/other/fbshare.png"></img>
+									</div>
+									<div class="hori" style="position:relative; vertical-align:bottom;">
+										<a id="btn_getShareLink" title="取得分享網址" class="easyui-linkbutton easyui-tooltip" style="height:30px" data-options="iconCls:'icon-search'"></a>
+									</div>
+									<div class="hori" style="position:relative; vertical-align:bottom;">
+										<a id="btn_output" title="取得套牌代碼，就可以到組牌風雲修改哦" class="easyui-linkbutton easyui-tooltip" style="height:30px" >匯出</a>
+									</div>
+									<div class="hori" style="position:relative; vertical-align:bottom;">
+										<a id="btn_copy" title="取得這副套牌的副本並且記錄在自己的帳號裡" class="easyui-linkbutton easyui-tooltip" style="height:30px" >收錄</a>
+									</div>
 								</div>
 								
 							</div>
-							
 						</div>
 					</div>
 				</div>
@@ -344,8 +353,8 @@ body{
 			<div class="group" style="text-align:center;">
 				<input id="input_output" class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
 				<div class="hori" style="margin-top:10px;">
-					<a id="btn_gotoGroup" href="#" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" >上善若水app</a>
-					<a id="btn_gotoDeckManager" href="#"  class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" data-options="iconCls:'icon-back'">回組牌風雲</a>
+					<a id="btn_gotoGroup" href="#" style="width:100px; height:40px;"  class="easyui-linkbutton" >上善若水app</a>
+					<a id="btn_gotoDeckManager" href="#" title="復製代碼之後，到組牌風雲調整這副套牌"  class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" data-options="iconCls:'icon-back'">組牌風雲</a>
 				</div>
 			</div>
 		</div>

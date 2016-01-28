@@ -170,11 +170,13 @@ class ViewController extends Mediator
 		
 		btn_getShareLink.click( function() {
 			var deckuid = mc_detail_panel.attr( 'uid' );
+			Helper.trackingEvent( 'on_item_share:' + deckuid );
 			sendNotification( on_btn_getShareLink_click, {deckuid:deckuid} );
 		});
 		
 		btn_output.click( function() {
-			sendNotification( on_btn_output_click );
+			var deckuid = mc_detail_panel.attr( 'uid' );
+			sendNotification( on_btn_output_click, { deckuid:deckuid} );
 		});
 		
 		btn_self.click( function() {

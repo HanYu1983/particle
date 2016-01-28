@@ -18,7 +18,7 @@ EReg.prototype = {
 var Helper = function() { };
 Helper.__name__ = true;
 Helper.initFb = function(cb) {
-	myapp.facebook.init("425311264344425",cb);
+	myapp.facebook.init("679171275511375",cb);
 };
 Helper.shareFb = function(name,link,picture,caption,description,cb) {
 	myapp.facebook.postMessageToMyboard({ name : name, link : link, picture : picture, caption : caption, description : description, callback : cb});
@@ -263,18 +263,10 @@ Main.main = function() {
 	org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : true});
 	var initApp = function(event) {
 		Helper.initFb(function() {
-			Helper.authGoogleAndGetData(true,function(err,data) {
-				if(err == null) {
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_auth,{ show : false});
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : data});
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
-				} else {
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
-					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
-				}
-			});
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_save_count,{ countMap : { 'onBtnCreateDeck' : 10, 'onBtnCustomDeck' : 4, 'onBtnLoadArmyClick' : 1, 'onBtnLoadGundamWarClick' : 2, 'onBtnLoadGundamWarNClick' : 1, 'onBtnLoadYugiohClick' : 2, 'onBtnLoginClick' : 2, 'onBtnStartServer' : 2, 'onClearClick' : 1, 'onResetClick' : 2, 'onSaveClick' : 5, 'onSearchClick' : 61, 'on_item_click:111ba71c-b7d6-4fdc-9b60-5807b2685dab' : 1, 'on_item_click:7ed72294-5223-46b3-98f9-75b2223cfbb1' : 1, 'on_item_output:111ba71c-b7d6-4fdc-9b60-5807b2685dab' : 1, 'on_item_share:048a31dc-2b0c-4905-a65c-852453848255' : 2, 'on_item_share:111ba71c-b7d6-4fdc-9b60-5807b2685dab' : 1, 'on_item_share:7ed72294-5223-46b3-98f9-75b2223cfbb1' : 5, 'on_item_view:048a31dc-2b0c-4905-a65c-852453848255' : 3, 'on_item_view:111ba71c-b7d6-4fdc-9b60-5807b2685dab' : 3, 'on_item_view:7ed72294-5223-46b3-98f9-75b2223cfbb1' : 45, 'showBigList:game=crusade' : 8, 'showBigList:game=dragonZ' : 5, 'showBigList:game=gundamWar' : 33, 'showBigList:game=gundamWarN' : 4, 'showBigList:game=magic' : 5, 'showBigList:game=sangoWar' : 14, 'showBigList:game=sgs' : 39, 'showBigList:game=ws' : 4, 'showBigList:game=yugioh' : 17}});
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_ModelController.do_load_all_list);
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_show_loading,{ show : false});
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_ViewController.do_enable_login,{ enable : true});
 		});
 	};
 	var onHtmlClick = function(type,value) {
@@ -552,7 +544,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		case "on_btn_share_deck_click":
 			var uid1 = notification.getBody().deckuid;
 			var shareobj = this.findDataById(this.ary_result,uid1);
-			var url1 = "https://" + window.location.host + window.location.pathname + "?uid=" + uid1;
+			var url1 = "https://particle-979.appspot.com/deckWiki/index.html?uid=" + uid1;
 			var picture = "https:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.shareFb(Helper.getMeta().desc,url1,picture,Helper.getMeta().name,shareobj.desc,function(ret) {
@@ -602,7 +594,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.sendNotification(view_ViewController.do_show_list,{ data : this.filterByPage(showData,0), total : showData.length});
 			break;
 		case "on_btn_output_click":
-			this.sendNotification(view_ViewController.do_show_output,{ uid : this.currentUid, str : this.currentOutputStr});
+			var deckuid = notification.getBody().deckuid;
+			var cards = this.findDataById(this.data,deckuid).cards;
+			this.sendNotification(view_ViewController.do_show_output,{ uid : deckuid, str : JSON.stringify(cards)});
 			break;
 		case "on_pag_page_change":
 			var page = Math.floor(notification.getBody().number - 1);
@@ -624,7 +618,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var doLoad = notification.getBody().doLoad;
 			var clickData = this.findDataById(this.data,id1);
 			if(clickData == null) return;
-			var cards = clickData.cards;
+			var cards1 = clickData.cards;
 			this.currentGame = game1;
 			this.currentUid = id1;
 			this.sendShowBigList(clickData,doLoad);
@@ -1229,10 +1223,12 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	});
 	this.btn_getShareLink.click(function() {
 		var deckuid1 = _g1.mc_detail_panel.attr("uid");
+		Helper.trackingEvent("on_item_share:" + deckuid1);
 		_g1.sendNotification(view_ViewController.on_btn_getShareLink_click,{ deckuid : deckuid1});
 	});
 	this.btn_output.click(function() {
-		_g1.sendNotification(view_ViewController.on_btn_output_click);
+		var deckuid2 = _g1.mc_detail_panel.attr("uid");
+		_g1.sendNotification(view_ViewController.on_btn_output_click,{ deckuid : deckuid2});
 	});
 	this.btn_self.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_self_click);
@@ -1573,3 +1569,5 @@ view_ViewController.on_btn_saveDeck_click = "on_btn_saveDeck_click";
 view_ViewController.on_btn_share_deck_click = "on_btn_share_deck_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
+
+//# sourceMappingURL=main.js.map
