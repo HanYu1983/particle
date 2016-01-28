@@ -164,7 +164,8 @@ class ViewController extends Mediator
 			sendNotification( on_btn_gotoGroup_click );
 		});
 		dia_output.find( '#btn_gotoDeckManager' ).click( function() {
-			sendNotification( on_btn_gotoDeckManager_click );
+			var deckuid = mc_detail_panel.attr( 'uid' );
+			sendNotification( on_btn_gotoDeckManager_click, { deckuid:deckuid } );
 		});
 		
 		btn_seeCount.click( function() {

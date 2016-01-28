@@ -115,7 +115,11 @@ class ModelController extends Mediator
 			case ViewController.on_btn_login_click:
 				loginFb();
 			case ViewController.on_btn_gotoDeckManager_click:
-				switch( currentGame ) {
+				var deckuid = notification.getBody().deckuid;
+				var deck = findDataById( data, deckuid );
+				switch( deck.game ) {
+					case 'sangoWar':
+						Browser.window.open( '../card/manager_deck.html?game=sangoWar&lang=ch', '_blank' );
 					case 'yugioh':
 						Browser.window.open( '../card/manager_deck.html?game=yugioh&lang=ch', '_blank' );
 					case _:

@@ -587,8 +587,13 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			this.loginFb();
 			break;
 		case "on_btn_gotoDeckManager_click":
-			var _g11 = this.currentGame;
+			var deckuid1 = notification.getBody().deckuid;
+			var deck = this.findDataById(this.data,deckuid1);
+			var _g11 = deck.game;
 			switch(_g11) {
+			case "sangoWar":
+				window.open("../card/manager_deck.html?game=sangoWar&lang=ch","_blank");
+				break;
 			case "yugioh":
 				window.open("../card/manager_deck.html?game=yugioh&lang=ch","_blank");
 				break;
@@ -605,9 +610,9 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			}); else this.showMyShareDeck();
 			break;
 		case "on_btn_output_click":
-			var deckuid1 = notification.getBody().deckuid;
-			var cards = this.findDataById(this.data,deckuid1).cards;
-			this.sendNotification(view_ViewController.do_show_output,{ uid : deckuid1, str : JSON.stringify(cards)});
+			var deckuid2 = notification.getBody().deckuid;
+			var cards = this.findDataById(this.data,deckuid2).cards;
+			this.sendNotification(view_ViewController.do_show_output,{ uid : deckuid2, str : JSON.stringify(cards)});
 			break;
 		case "on_pag_page_change":
 			var page = Math.floor(notification.getBody().number - 1);
@@ -1251,24 +1256,25 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		_g1.sendNotification(view_ViewController.on_btn_gotoGroup_click);
 	});
 	this.dia_output.find("#btn_gotoDeckManager").click(function() {
-		_g1.sendNotification(view_ViewController.on_btn_gotoDeckManager_click);
+		var deckuid1 = _g1.mc_detail_panel.attr("uid");
+		_g1.sendNotification(view_ViewController.on_btn_gotoDeckManager_click,{ deckuid : deckuid1});
 	});
 	this.btn_seeCount.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_seeCount_click);
 	});
 	this.btn_copy.click(function() {
-		var deckuid1 = _g1.mc_detail_panel.attr("uid");
-		_g1.sendNotification(view_ViewController.on_btn_copy_click,{ deckuid : deckuid1});
-		Helper.trackingEvent("on_item_output:" + deckuid1);
+		var deckuid2 = _g1.mc_detail_panel.attr("uid");
+		_g1.sendNotification(view_ViewController.on_btn_copy_click,{ deckuid : deckuid2});
+		Helper.trackingEvent("on_item_output:" + deckuid2);
 	});
 	this.btn_getShareLink.click(function() {
-		var deckuid2 = _g1.mc_detail_panel.attr("uid");
-		Helper.trackingEvent("on_item_share:" + deckuid2);
-		_g1.sendNotification(view_ViewController.on_btn_getShareLink_click,{ deckuid : deckuid2});
+		var deckuid3 = _g1.mc_detail_panel.attr("uid");
+		Helper.trackingEvent("on_item_share:" + deckuid3);
+		_g1.sendNotification(view_ViewController.on_btn_getShareLink_click,{ deckuid : deckuid3});
 	});
 	this.btn_output.click(function() {
-		var deckuid3 = _g1.mc_detail_panel.attr("uid");
-		_g1.sendNotification(view_ViewController.on_btn_output_click,{ deckuid : deckuid3});
+		var deckuid4 = _g1.mc_detail_panel.attr("uid");
+		_g1.sendNotification(view_ViewController.on_btn_output_click,{ deckuid : deckuid4});
 	});
 	this.btn_self.click(function() {
 		_g1.sendNotification(view_ViewController.on_btn_self_click);
