@@ -598,7 +598,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 				window.open("../card/manager_deck.html?game=yugioh&lang=ch","_blank");
 				break;
 			default:
-				window.open("../card/manager_deck.html?game=" + this.currentGame,"_blank");
+				window.open("../card/manager_deck.html?game=" + deck.game,"_blank");
 			}
 			break;
 		case "on_btn_gotoGroup_click":
@@ -634,9 +634,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var doLoad = notification.getBody().doLoad;
 			var clickData = this.findDataById(this.data,id1);
 			if(clickData == null) return;
-			var cards1 = clickData.cards;
-			this.currentGame = game1;
-			this.currentUid = id1;
 			this.sendShowBigList(clickData,doLoad);
 			break;
 		default:
@@ -706,7 +703,6 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 		this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 		var cards = deck.cards;
 		var game = deck.game;
-		this.currentOutputStr = JSON.stringify(cards);
 		var onLoadSuccess = function(ary_send) {
 			var ary_send1 = ary_send.filter(function(item) {
 				return item != null;
@@ -741,7 +737,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 					});
 				}
 				retobj = Lambda.find(data,function(oriData2) {
-					return oriData2.id == str;
+					return oriData2.id.indexOf(str) == 0;
 				});
 				if(retobj == null) retobj = { id : str, content : "暫時沒有資料!"};
 				return retobj;

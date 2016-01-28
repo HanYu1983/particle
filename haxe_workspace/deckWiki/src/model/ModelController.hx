@@ -32,9 +32,9 @@ class ModelController extends Mediator
 	var countMap:Dynamic;
 	var fbid:String;
 	var token:String;
-	var currentGame:String;
-	var currentUid:String;
-	var currentOutputStr:String;
+	//var currentGame:String;
+	//var currentUid:String;
+	//var currentOutputStr:String;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -123,7 +123,7 @@ class ModelController extends Mediator
 					case 'yugioh':
 						Browser.window.open( '../card/manager_deck.html?game=yugioh&lang=ch', '_blank' );
 					case _:
-						Browser.window.open( '../card/manager_deck.html?game=' + currentGame, '_blank' );
+						Browser.window.open( '../card/manager_deck.html?game=' + deck.game, '_blank' );
 				}
 			case ViewController.on_btn_gotoGroup_click:
 				Browser.window.open( 'https://www.facebook.com/%E4%B8%8A%E5%96%84%E8%8B%A5%E6%B0%B4app-1653920964852269/', '_blank' );
@@ -156,9 +156,9 @@ class ModelController extends Mediator
 				var doLoad = notification.getBody().doLoad;
 				var clickData:Dynamic = findDataById( data, id );
 				if ( clickData == null ) return;
-				var cards:Array<Dynamic> = clickData.cards;
-				currentGame = game;
-				currentUid = id;
+			//	var cards:Array<Dynamic> = clickData.cards;
+			//	currentGame = game;
+			//	currentUid = id;
 				//currentOutputStr = Json.stringify( cards );
 				sendShowBigList( clickData, doLoad );
 		//	case str if ( str == do_save_read ):
@@ -248,7 +248,7 @@ class ModelController extends Mediator
 		var cards = deck.cards;
 		var game = deck.game;
 		
-		currentOutputStr = Json.stringify( cards );
+		//currentOutputStr = Json.stringify( cards );
 		
 		function onLoadSuccess( ary_send ) {
 			var ary_send = ary_send.filter( function( item ) {
@@ -289,7 +289,7 @@ class ModelController extends Mediator
 							});
 					}
 					retobj = data.find( function( oriData ) {
-						return ( oriData.id == str );
+						return ( oriData.id.indexOf( str ) == 0 );
 					});
 					if ( retobj == null ) {
 						retobj = { id:str, content:'暫時沒有資料!' }; 
