@@ -1308,6 +1308,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			var game = notification.getBody().game;
 			this.addDeck({ game : game, name : name, backId : "0", cards : cards});
 			this.enableSave(true);
+			this.alert("收錄成功，別忘了按儲存按鈕哦!");
 			break;
 		case "on_loadPublic_error":
 			this.alert(notification.getBody().err);
