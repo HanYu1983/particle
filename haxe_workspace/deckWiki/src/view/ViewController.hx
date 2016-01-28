@@ -248,7 +248,7 @@ class ViewController extends Mediator
 					cards:cards
 				} );
 				enableSave( true );
-				alert( '收錄成功，別忘了按儲存按鈕哦!' );
+				showMessage( '收錄成功，別忘了按儲存按鈕哦!' );
 			case ModelController.on_loadPublic_error:
 				alert( notification.getBody().err );
 			case ModelController.on_cardsuit_save_success:
