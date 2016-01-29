@@ -213,6 +213,17 @@ class ViewController extends Mediator
 			sendNotification( on_btn_saveDeck_click, { savedata:getSaveDataFromDom() } );
 		});
 		
+		viewComponent.find( '#layout_main' ).layout( {
+			onCollapse:function() {
+				trace( 'onCollapse' );
+				viewComponent.find( '#layout_main' ).attr( 'expand', false );
+			},
+			onExpand:function() {
+				trace( 'onCollapse' );
+				viewComponent.find( '#layout_main' ).attr( 'expand', true );
+			}
+		});
+		
 		hideCardBackContainer();
 	}
 	
@@ -249,6 +260,7 @@ class ViewController extends Mediator
 					cards:cards
 				} );
 				enableSave( true );
+				showManagerPanel( true );
 				showMessage( '收錄成功，別忘了按儲存按鈕哦!' );
 			case ModelController.on_loadPublic_error:
 				alert( notification.getBody().err );
@@ -573,8 +585,18 @@ class ViewController extends Mediator
 			return true;
 		});
 		overListener( game );
-		viewComponent.find( '#layout_main' ).layout( 'collapse', 'east' );
+		showManagerPanel( false );
 		Helper.trackingEvent( 'on_item_view:' + uid );
+	}
+	
+	function showManagerPanel( show ) {
+		if ( show ) {
+			if( viewComponent.find( '#layout_main' ).attr( 'expand' ) == null || !viewComponent.find( '#layout_main' ).attr( 'expand' ) ){
+				viewComponent.find( '#layout_main' ).layout( 'expand', 'east' );
+			}
+		}else {
+			viewComponent.find( '#layout_main' ).layout( 'collapse', 'east' );
+		}
 	}
 	
 	function overListener( game ){
