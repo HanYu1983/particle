@@ -164,7 +164,7 @@ class Helper
 			case 'sangoWar':'三國志大戰';
 			case 'sgs':'三國殺陣面對決';
 			case 'magic':'魔法風雲會';
-			case 'battleSpirit':'戰魂';
+			case 'battleSpirits':'戰魂';
 			case 'crusade':'Crusade';
 			case 'ws':'黑白雙翼';
 			case 'dragonZ':'七龍珠TCG';

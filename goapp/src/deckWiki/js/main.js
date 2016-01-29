@@ -121,7 +121,7 @@ Helper.EnToCh = function(en) {
 		return "三國殺陣面對決";
 	case "magic":
 		return "魔法風雲會";
-	case "battleSpirit":
+	case "battleSpirits":
 		return "戰魂";
 	case "crusade":
 		return "Crusade";
