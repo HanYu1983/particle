@@ -1278,10 +1278,8 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		_g1.sendNotification(view_ViewController.on_btn_saveDeck_click,{ savedata : _g1.getSaveDataFromDom()});
 	});
 	viewComponent.find("#layout_main").layout({ onCollapse : function() {
-		console.log("onCollapse");
 		viewComponent.find("#layout_main").attr("expand",false);
 	}, onExpand : function() {
-		console.log("onCollapse");
 		viewComponent.find("#layout_main").attr("expand",true);
 	}});
 	this.hideCardBackContainer();
@@ -1535,7 +1533,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	}
 	,showManagerPanel: function(show) {
 		if(show) {
-			if(this.viewComponent.find("#layout_main").attr("expand") == null || !this.viewComponent.find("#layout_main").attr("expand")) this.viewComponent.find("#layout_main").layout("expand","east");
+			if(this.viewComponent.find("#layout_main").attr("expand") == null || this.viewComponent.find("#layout_main").attr("expand") == "false") this.viewComponent.find("#layout_main").layout("expand","east");
 		} else this.viewComponent.find("#layout_main").layout("collapse","east");
 	}
 	,overListener: function(game) {

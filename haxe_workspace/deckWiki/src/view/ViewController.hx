@@ -215,11 +215,9 @@ class ViewController extends Mediator
 		
 		viewComponent.find( '#layout_main' ).layout( {
 			onCollapse:function() {
-				trace( 'onCollapse' );
 				viewComponent.find( '#layout_main' ).attr( 'expand', false );
 			},
 			onExpand:function() {
-				trace( 'onCollapse' );
 				viewComponent.find( '#layout_main' ).attr( 'expand', true );
 			}
 		});
@@ -591,7 +589,7 @@ class ViewController extends Mediator
 	
 	function showManagerPanel( show ) {
 		if ( show ) {
-			if( viewComponent.find( '#layout_main' ).attr( 'expand' ) == null || !viewComponent.find( '#layout_main' ).attr( 'expand' ) ){
+			if ( viewComponent.find( '#layout_main' ).attr( 'expand' ) == null || viewComponent.find( '#layout_main' ).attr( 'expand' ) == 'false' ) {
 				viewComponent.find( '#layout_main' ).layout( 'expand', 'east' );
 			}
 		}else {
