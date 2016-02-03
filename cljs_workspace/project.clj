@@ -25,4 +25,15 @@
         :pretty-print false
       }
     }
+    {
+      :source-paths ["node-lang"]
+      :compiler {
+        :output-to "../node_workspace/lang/main.js"
+        :output-dir "../node_workspace/lang/"
+        :target :nodejs
+        ; 不要用advanced，不然不能跑
+        :optimizations :simple  
+        :pretty-print false
+      }
+    }
     ]})
