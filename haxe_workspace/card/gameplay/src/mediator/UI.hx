@@ -256,6 +256,8 @@ class UI extends Mediator
 						case 'gundamWarN':
 							str += detail.info_2;
 							str += '<br/>';
+							str += detail.trans;
+							str += '<br/>';
 							str += detail.info_12;
 						case 'magic':
 							str += detail.id;
