@@ -1,0 +1,5 @@
+{
+  "dir":"doc/magic/",
+  "outputDir":"/Users/hanyu/Documents/big_workspace/particle/goapp/src/common/txt/magicList/",
+  "pattern":"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" align=\"center\" style=\"margin: 0 0 0.5em 0;\">[\\s\\S]*?<span style=\"font-size: 1.5em;\">[\\s\\S]*?<a.*?>(.*?)<\/a>[\\s\\S]*?<\/span>[\\s\\S]*?<p>(\\W+)? ?(.*?),[\\s\\S]*?([\\dA-Z]+)\\s\\((\\d)\\)[\\s\\S]*?<p class=\"ctext\"><b>([\\s\\S]*?)<\/b><\/p>[\\s\\S]*?en.gif[\\s\\S]*?<a.+?>(.*?)<\/a>"
+}
