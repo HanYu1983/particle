@@ -101,7 +101,7 @@ var sangoWar = sangoWar || {};
 	
 	function loadCh( path, cb ){
 		var fns = 
-			_.chain(_.range(1, 125))
+			_.chain(_.range(1, 126))
 				.map(function(i){
 					return path + i + ".json"
 				})
