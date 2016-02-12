@@ -5,6 +5,7 @@ var admin = admin || {};
 	var version = '1.083';
 	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
+	var cardbackCount = 51;
 	
 	function getMeta(){
 		return {
@@ -82,5 +83,6 @@ var admin = admin || {};
 	module.getMeta = getMeta
 	module.admin = admin;
 	module.beta = beta;
+	module.cardbackCount = cardbackCount;
 	
 }) (admin)
