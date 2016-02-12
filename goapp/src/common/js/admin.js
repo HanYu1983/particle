@@ -7,6 +7,8 @@ var admin = admin || {};
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
 	var cardbackCount = 51;
 	
+	addVerToTitle();
+	
 	function getMeta(){
 		return {
 			name:'秀牌風雲',
@@ -73,6 +75,10 @@ var admin = admin || {};
 				});
 			}
 		});
+	}
+	
+	function addVerToTitle(){
+		$('title').html( $('title').html() + version );
 	}
 	
 	module.version = version
