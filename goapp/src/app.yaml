@@ -4,6 +4,8 @@ runtime: go
 api_version: go1
 default_expiration: "7d"
 handlers:
+- url: /collectmmo
+  static_dir: collectmmo
 - url: /tableGameCreator
   static_dir: tableGameCreator
 - url: /manager

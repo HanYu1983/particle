@@ -266,11 +266,16 @@ class Main
 				var str:String = j( "#txt_table" ).textbox( 'getValue' );
 				try {
 					var obj_table:Array<Dynamic> = Json.parse( str );
-					obj_table.foreach( function( item ) {
-						item.owner = SocketController.playerId;
-						return true;
-					});
-					createItem( obj_table );
+					var ary_create:Array<Dynamic> = obj_table.fold( function( curr, first:Array<Dynamic> ) {
+						if ( curr.count == null ) curr.count = 1;
+						for ( i in 0...curr.count ) {
+							var copycurr = Json.parse( Json.stringify( curr ));
+							copycurr.owner = SocketController.playerId;
+							first.push( copycurr );
+						}
+						return first;
+					}, []);
+					createItem( ary_create );
 				}catch ( e:Dynamic ) {
 					alert( '輸入格式錯誤哦，請檢查!' );
 				}

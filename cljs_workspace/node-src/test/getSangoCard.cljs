@@ -17,23 +17,11 @@
 ; 若specPackage設為nil的話，則使用上面的設定
 (def specPackage
   [
-    ["cardinfo.php?id=120&page=2" ""]
-    ["cardinfo.php?id=120&page=3" ""]
-    ["cardinfo.php?id=120&page=4" ""]
-    ["cardinfo.php?id=120&page=5" ""]
-    
-    ["cardinfo.php?id=28&page=1" ""]
-    ["cardinfo.php?id=22&page=1" ""]
-    ["cardinfo.php?id=29&page=1" ""]
-    ["cardinfo.php?id=24&page=1" ""]
-    ["cardinfo.php?id=30&page=1" ""]
-    ["cardinfo.php?id=27&page=1" ""]
-    
-    ["cardinfo.php?id=95&page=1" ""]
-    ["cardinfo.php?id=96&page=1" ""]
-    ["cardinfo.php?id=97&page=1" ""]
-    ["cardinfo.php?id=98&page=1" ""]
-    ["cardinfo.php?id=99&page=1" ""]
+    ["cardinfo.php?id=149&page=1" ""]
+    ["cardinfo.php?id=150&page=1" ""]
+    ["cardinfo.php?id=151&page=1" ""]
+    ["cardinfo.php?id=152&page=1" ""]
+    ["cardinfo.php?id=153&page=1" ""]
   ])
 
 (defn parseGroup [content]
@@ -69,9 +57,7 @@
   (let [ids
         (re-seq
           (->
-            ;(str "<span>([\\d|-]+)<\\/span>")
-            ;(str "<span>[ANVPR]+-\\d+<\\/span>")
-            (str "<span>([ANVPRCPOS]+-\\d+)\\(?[\\d-]*\\)?<\\/span>")
+            (str "<span>([ANVPRCPOSD\\d]*-\\d+)\\(?[\\d-]*\\)?<\\/span>")
             re-pattern)
           content)
         imgsrcs

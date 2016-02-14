@@ -1,188 +1,194 @@
 [
 	{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
+		"count": 6,
 		"extra":[
-			"T-34 坦克 7/13 這張卡一回合生產不受一張限制"
+			"T-34 坦克 2/1 這張卡一回合生產不受一張限制。這張卡不受到牌阻3張的限制"
 		]
 	},
 	{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count": 3,
+		"extra":[
+			"休伊 直升機 0/3 這張卡在場時，步兵不會被破壞"
+		]
+	},{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":3,
+		"extra":[
+			"AH-1 直升機 2/1 這張卡進場時，指定一支敵陸軍破壞"
+		]
+	},{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":3,
+		"extra":[
+			"步兵戰鬥車 裝甲車 1/1 這張卡可以丟棄一張手牌，指定一支敵坦克破壞"
+		]
+	},{
+		"type":"data",
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
 		"extra":[
-			"CH-60 直升機 5/5 這張卡在場時，步兵不會被破壞"
+			"梅卡瓦 坦克 3/2 步兵被攻擊時可以發動，這張卡代替那張步兵進入傷害計算。這卡破壞時，可以將棄庫回收一張步兵"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
 		"extra":[
-			"AH-1 直升機 20/5 這張卡進場時，指定一支敵陸軍破壞"
+			"炮塔 建物 2/1 這張卡指定交戰對象為坦克的時候，戰鬥力變成3/1"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
-		"extra":[
-			"步兵戰鬥車 裝甲車 5/10 這張卡可以丟棄一張手牌，指定一支敵坦克破壞"
-		]
-	},{
-		"type":"data",
-		"width":100,
-		"height":150,
-		"pos":[100,100],
-		"back":true,
-		"lock":false,
-		"owner":"smart",
-		"extra":[
-			"梅卡瓦 坦克 10/10 步兵被攻擊時可以發動，這張卡代替那張步兵進入傷害計算。這卡破壞時，可以將棄庫回收一張步兵"
-		]
-	},{
-		"type":"data",
-		"width":100,
-		"height":150,
-		"pos":[100,100],
-		"back":true,
-		"lock":false,
-		"owner":"smart",
-		"extra":[
-			"炮塔 建物 0/10 這張卡指定交戰對象為場克的時候，防守力變成20"
-		]
-	},{
-		"type":"data",
-		"width":100,
-		"height":150,
-		"pos":[100,100],
-		"back":true,
-		"lock":false,
-		"owner":"smart",
 		"extra":[
 			"地雷 戰術 這張卡在敵軍攻擊時可以發動，破壞一張敵軍陸軍"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"extra":[
+			"雷達站 建物 0/0 敵方回合時並且敵方使用戰術時可以發動，支付一張手牌，無效那個戰術"
+		]
+	},{
+		"type":"data",
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
 		"owner":"smart",
 		"extra":[
-			"雷達站 建物 0/10 敵方回合時並且敵方使用戰術時可以發動，支付一張手牌，無效那個戰術"
+			"豹式 坦克 3/1 一回合一次發動，攻防值交換"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
 		"extra":[
-			"豹式 坦克 15/5 一回合一次發動，攻防值交換"
+			"大和號戰艦 戰艦 5/5 這張卡不能被船指定為交戰對象，這卡張和空軍交戰時，戰力變為0/0"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
 		"extra":[
-			"大和號戰艦 戰艦 40/40 這張卡不能被船指定為交戰對象，這卡張和空軍交戰時，戰力變為0/0"
+			"馬奇諾防線 建物 0/5 支付3, 這張卡不能迎擊。這個能力只能非持有者能使用"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
 		"extra":[
-			"馬奇諾防線 建物 0/30"
+			"閃擊戰 戰術 將敵方所有建物不能迎擊"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
-		"extra":[
-			"閃擊戰 戰術 將敵方所有建物變為攻擊狀態"
-		]
-	},{
-		"type":"data",
-		"width":100,
-		"height":150,
-		"pos":[100,100],
-		"back":true,
-		"lock":false,
-		"owner":"smart",
+		"count":3,
 		"extra":[
 			"地獄火飛彈 戰術 自軍直升機在場時可以使用，破壞敵軍所有陸軍"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
 		"extra":[
 			"回收 戰術 從棄庫回收一張卡"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
 		"extra":[
 			"臨時加裝 戰術 這張卡可以將棄庫的一張卡用來支付級費用"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
 		"extra":[
-			"核子發電廠 建物 0/10 自軍抽牌階段可以多抽一張。這張卡被破壞時，給自己受到20傷害"
+			"核子發電廠 建物 0/3 自軍抽牌階段可以多抽一張。這張卡被破壞時，給自己受到5傷害"
 		]
 	},{
 		"type":"data",
-		"width":100,
-		"height":150,
+		"width":50,
+		"height":75,
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"owner":"smart",
+		"count":6,
 		"extra":[
-			"飛彈兵 步兵 20/5 這張卡的交戰對象只能是陸軍"
+			"飛彈兵 步兵 3/1 這張卡的交戰對象只能是陸軍"
+		]
+	},{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":6,
+		"extra":[
+			"步槍兵 步兵 2/1"
 		]
 	}
 ]
+爸密碼
+3700420238

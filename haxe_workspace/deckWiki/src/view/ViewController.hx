@@ -33,6 +33,7 @@ class ViewController extends Mediator
 	public static var on_btn_output_click = 'on_btn_output_click';
 	public static var on_btn_seeCount_click = 'on_btn_seeCount_click';
 	public static var on_btn_getShareLink_click = 'on_btn_getShareLink_click';
+	public static var on_btn_copy_click = 'on_btn_copy_click';
 	public static var on_btn_self_click = 'on_btn_self_click';
 	public static var on_btn_login_click = 'on_btn_login_click';
 	public static var on_btn_gotoGroup_click = 'on_btn_gotoGroup_click';
@@ -59,6 +60,7 @@ class ViewController extends Mediator
 	var btn_search:Dynamic;
 	var btn_seeCount:Dynamic;
 	var btn_getShareLink:Dynamic;
+	var btn_copy:Dynamic;
 	var input_search:Dynamic;
 	var input_searchName:Dynamic;
 	var input_searchDescribe:Dynamic;
@@ -86,6 +88,7 @@ class ViewController extends Mediator
 		btn_search = viewComponent.find( '#btn_search' );
 		btn_seeCount = viewComponent.find( '#btn_seeCount' );
 		btn_getShareLink = viewComponent.find( '#btn_getShareLink' );
+		btn_copy = viewComponent.find( '#btn_copy' );
 		dia_output = viewComponent.find( '#dia_output' );
 		mc_backContainer = viewComponent.find( '#mc_backContainer' );
 		mc_deckContainer = viewComponent.find( '#mc_deckContainer' );
@@ -99,7 +102,8 @@ class ViewController extends Mediator
 			onClose:onCloseDetailForm
 		});
 		
-		[for ( i in 0...49 ) i ].foreach( function( bid ) {
+		var cardbackCount = untyped __js__('admin.cardbackCount' );
+		[for ( i in 0...cardbackCount ) i ].foreach( function( bid ) {
 			var useId = bid+1;
 			var url = '../common/images/card/cardback_' + useId + '.png';
 			var div = j("#tmpl_back").tmpl({id:useId, url:url });
@@ -161,20 +165,29 @@ class ViewController extends Mediator
 			sendNotification( on_btn_gotoGroup_click );
 		});
 		dia_output.find( '#btn_gotoDeckManager' ).click( function() {
-			sendNotification( on_btn_gotoDeckManager_click );
+			var deckuid = mc_detail_panel.attr( 'uid' );
+			sendNotification( on_btn_gotoDeckManager_click, { deckuid:deckuid } );
 		});
 		
 		btn_seeCount.click( function() {
 			sendNotification( on_btn_seeCount_click );
 		});
 		
+		btn_copy.click( function() {
+			var deckuid = mc_detail_panel.attr( 'uid' );
+			sendNotification( on_btn_copy_click, { deckuid:deckuid } );
+			Helper.trackingEvent( 'on_item_output:' + deckuid );
+		});
+		
 		btn_getShareLink.click( function() {
 			var deckuid = mc_detail_panel.attr( 'uid' );
+			Helper.trackingEvent( 'on_item_share:' + deckuid );
 			sendNotification( on_btn_getShareLink_click, {deckuid:deckuid} );
 		});
 		
 		btn_output.click( function() {
-			sendNotification( on_btn_output_click );
+			var deckuid = mc_detail_panel.attr( 'uid' );
+			sendNotification( on_btn_output_click, { deckuid:deckuid} );
 		});
 		
 		btn_self.click( function() {
@@ -201,6 +214,15 @@ class ViewController extends Mediator
 			sendNotification( on_btn_saveDeck_click, { savedata:getSaveDataFromDom() } );
 		});
 		
+		viewComponent.find( '#layout_main' ).layout( {
+			onCollapse:function() {
+				viewComponent.find( '#layout_main' ).attr( 'expand', false );
+			},
+			onExpand:function() {
+				viewComponent.find( '#layout_main' ).attr( 'expand', true );
+			}
+		});
+		
 		hideCardBackContainer();
 	}
 	
@@ -218,13 +240,27 @@ class ViewController extends Mediator
 			ModelController.on_loadPublic_error,
 			ModelController.on_facebook_login,
 			ModelController.on_cardsuit_load,
-			ModelController.on_cardsuit_save_success
+			ModelController.on_cardsuit_save_success,
+			ModelController.on_copy_success
 		];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case ModelController.on_copy_success:
+				var name = notification.getBody().name;
+				var cards = notification.getBody().cards;
+				var game = notification.getBody().game;
+				addDeck( { 
+					game:game,
+					name:name,
+					backId:'0',
+					cards:cards
+				} );
+				enableSave( true );
+				showManagerPanel( true );
+				showMessage( '收錄成功，別忘了按儲存按鈕哦!' );
 			case ModelController.on_loadPublic_error:
 				alert( notification.getBody().err );
 			case ModelController.on_cardsuit_save_success:
@@ -317,7 +353,21 @@ class ViewController extends Mediator
 		mc_deckContainer.parent().parent().scrollTop( oldtop );
 	}
 	
+	function checkSameName() {
+		var ary_hasName = [];
+		mc_deckContainer.children().each( function( id, dom:Dynamic ) {
+			dom = j( dom );
+			var deckname = dom.find( '#txt_name' ).textbox('getValue' );
+			if ( ary_hasName.has( deckname )) {
+				deckname += '_' + Helper.getUUID();
+				dom.find( '#txt_name' ).textbox('setValue', deckname  ); 
+			}
+			ary_hasName.push( deckname );
+		});
+	}
+	
 	function getSaveDataFromDom() {
+		checkSameName();
 		var savefile = { 
 			cardSuit:[]
 		};
@@ -534,8 +584,18 @@ class ViewController extends Mediator
 			return true;
 		});
 		overListener( game );
-		viewComponent.find( '#layout_main' ).layout( 'collapse', 'east' );
+		showManagerPanel( false );
 		Helper.trackingEvent( 'on_item_view:' + uid );
+	}
+	
+	function showManagerPanel( show ) {
+		if ( show ) {
+			if ( viewComponent.find( '#layout_main' ).attr( 'expand' ) == null || viewComponent.find( '#layout_main' ).attr( 'expand' ) == 'false' ) {
+				viewComponent.find( '#layout_main' ).layout( 'expand', 'east' );
+			}
+		}else {
+			viewComponent.find( '#layout_main' ).layout( 'collapse', 'east' );
+		}
 	}
 	
 	function overListener( game ){

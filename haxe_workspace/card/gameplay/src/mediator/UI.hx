@@ -225,6 +225,7 @@ class UI extends Mediator
 			var game = card.extra[2];
 			var cardId = card.extra[0];
 			var url = Main.getCardImageUrlWithPackage( game, cardId );
+			if ( url == null ) url = '../common/images/card/cardback_0.png';
 			var div = Main.j( '<div></div>' );
 			div.css( 'position', 'relative' );
 			
@@ -237,7 +238,6 @@ class UI extends Mediator
 				img.css( 'width', '100%' );
 			});
 			div.append( img );
-			
 			
 			var img2 = Main.j( '<img></img>' );
 			img2.attr( 'src', 'images/sampleTxt.png' );
@@ -292,6 +292,8 @@ class UI extends Mediator
 						case 'gundamWarN':
 							str += detail.info_2;
 							str += '<br/>';
+							str += detail.trans;
+							str += '<br/>';
 							str += detail.info_12;
 						case 'magic':
 							str += detail.id;
@@ -324,20 +326,20 @@ class UI extends Mediator
 							str += '<br/>';
 							str += detail.desc;
 					}
+				}else {
+					switch( game ) {
+						//data type card
+						case null:
+							str = card.extra[0];
+							str += '<br/>';
+							str += card.extra[1];
+					}
 				}
 				detaildiv.html( str );
 				div.append( detaildiv );
 			}
 			
 			mc_detailContainer.append( div );
-			/*
-			var img = Main.j( '<img></img>' );
-			img.attr( 'src', url );
-			img.load( function() {
-				img.css( 'width', '100%' );
-			});
-			mc_detailContainer.append( img );
-			*/
 		}
 	}
 	

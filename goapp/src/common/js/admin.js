@@ -2,9 +2,12 @@ var admin = admin || {};
 
 (function(module){
 	
-	var version = '1.07';
+	var version = '1.083';
 	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
+	var cardbackCount = 51;
+	
+	addVerToTitle();
 	
 	function getMeta(){
 		return {
@@ -51,7 +54,6 @@ var admin = admin || {};
 				if( data.length ){
 					var msg = data[0];
 					if( msg.level > 0 ){
-						console.log( dom.panel );
 						dom.html( msg.Message );
 						dom.panel( 'open' );
 					}
@@ -75,6 +77,10 @@ var admin = admin || {};
 		});
 	}
 	
+	function addVerToTitle(){
+		$('title').html( $('title').html() + version );
+	}
+	
 	module.version = version
 	module.message = message
 	module.messageForMe = messageForMe
@@ -83,5 +89,6 @@ var admin = admin || {};
 	module.getMeta = getMeta
 	module.admin = admin;
 	module.beta = beta;
+	module.cardbackCount = cardbackCount;
 	
 }) (admin)

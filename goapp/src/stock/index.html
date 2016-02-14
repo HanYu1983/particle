@@ -239,20 +239,27 @@ body{
 			<div data-options="iconCls:'icon-remove'">Delete</div>
 			-->
 		</div>
-    </div>
+		
+		<div id="dia_message" class="easyui-dialog" title="注意!" data-options="iconCls:'icon-help',closed:true" style="text-align:center;width:500px;padding:10px"></div>
+		</div>
+	</div>
 	<script type="text/javascript" src="../common/js/lib/async.js"></script>
 	<script type="text/javascript" src="../common/js/lib/rx.all.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/three.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/underscore-min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/date.js"></script>
+	<script type="text/javascript" src="../common/js/db2.js"></script>
+	<script type="text/javascript" src="../common/js/db2path.js"></script>
 	<script type="text/javascript" src="../common/cljs/goog/base.js"></script>
 	<script type="text/javascript" src="../common/cljs/cljs.js"></script>	
 	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript" src="js/api.js"></script>
+	<script src="../common/js/admin.js"></script>	
 	<script type="text/javascript">
 	googleTracking.init( 'UA-55273266-3' );
 	goog.require("app.stock.main")
+	admin.defaultMessageHandle( 'stock', $('#dia_message') );
 	</script>
 	<script type="text/javascript" src="js/haxe.js"></script>
 </body>
