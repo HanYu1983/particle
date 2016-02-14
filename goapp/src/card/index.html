@@ -131,6 +131,12 @@ body{
 	display:none;
 }
 </style>
+<script id="tmpl_singleMessage" type="jquery-x-tmpl">
+	<div class="group">
+		<div id="txt_messageId" style="color:yellow;">${id}</div>
+		<div id="txt_message" style="width:300px; word-wrap: break-word;">${msg}</div>
+	</div>
+</script>
 <script id="tmpl_card" type="jquery-x-tmpl">
 	<div id=${id} ondragstart="return false;" ondrop="return false;" class="card_root elements" style=width:${width}px;height:${height}px>
 		<div class="card">
@@ -354,6 +360,20 @@ body{
 				</div>
 				<div class="hori">
 					<a style="color:white" href="//zh.wikipedia.org/zh-tw/%E9%AD%94%E6%B3%95%E9%A2%A8%E9%9B%B2%E6%9C%83%E8%A6%8F%E5%89%87" target="_blank">魔法風雲會規則</a>
+				</div>
+			</div>
+		</div>
+		<div id="dia_chat" class="easyui-dialog" title="簡易聊天室" data-options="closed:false,collapsible:true,resizable:true" style="padding:10px">
+			<div id="mc_message" class="group" style="width:300px; background-color:">
+				<!-- by script -->
+			</div>
+			<div class="group" style="text-align:center;">
+				<input id="txt_messageInput" class="easyui-textbox" data-options="multiline:true" style="width:300px">
+			</div>
+			<div class="group" style="text-align:center; margin-top:10px;">
+				<div class="hori">
+					<a id="btn_clearMessage" href="#" class="easyui-linkbutton" style="width:60px; height:40px; " data-options="iconCls:'icon-clear'">清除</a>
+					<a id="btn_sendMessage" href="#" class="easyui-linkbutton" style="width:60px; height:40px; " data-options="iconCls:'icon-ok'">送出</a>
 				</div>
 			</div>
 		</div>
