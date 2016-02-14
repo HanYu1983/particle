@@ -246,7 +246,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert(err); else cb(ret);
+		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -856,7 +856,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,{ record : record});
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv1,od) {
 		Main.changePlayer(nv1);
 	}});
 };
@@ -885,16 +885,20 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			break;
 		case "on_load_click":
 			var loadstr = this.txt_savestr.textbox("getValue");
-			var ary_cmds = JSON.parse(loadstr);
-			ary_cmds.forEach(function(cmd) {
-				console.log(cmd.type);
-				_g1.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,cmd.msg,cmd.type);
-				return true;
-			});
-			this.txt_savestr.textbox("setValue","");
+			try {
+				var ary_cmds = JSON.parse(loadstr);
+				ary_cmds.forEach(function(cmd) {
+					_g1.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,cmd.msg,cmd.type);
+					return true;
+				});
+				this.txt_savestr.textbox("setValue","");
+			} catch( error ) {
+				if (error instanceof js__$Boot_HaxeError) error = error.val;
+				Main.alert("格式不對哦!");
+			}
 			break;
 		case "on_save_click":
-			console.log(notification.getBody().str);
+			this.txt_savestr.textbox({ value : notification.getBody().str});
 			break;
 		case "on_createDeck_click":
 			this.closeNorthPanel();
@@ -2223,7 +2227,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert(err); else cb(ret);
+			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2518,5 +2522,3 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=main.js.map

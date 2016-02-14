@@ -111,23 +111,27 @@ class UI extends Mediator
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
 			case Main.on_load_click:
 				var loadstr = txt_savestr.textbox( 'getValue' );
-				var ary_cmds = Json.parse( loadstr );
-				ary_cmds.forEach( function( cmd ) {
-					trace( cmd.type );
-					sendNotification( SocketController.on_receiveMessage, cmd.msg, cmd.type );
-					/*
-					switch( cmd.type ) {
-						case 'addItems':
-							sendNotification( MainController.do_create_item, cmd.msg );
-						case _:
-							sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
-					}*/
-					return true;
-				});
-				txt_savestr.textbox( 'setValue', '' );
+				try{
+					var ary_cmds = Json.parse( loadstr );
+					ary_cmds.forEach( function( cmd ) {
+						//trace( cmd.type );
+						sendNotification( SocketController.on_receiveMessage, cmd.msg, cmd.type );
+						/*
+						switch( cmd.type ) {
+							case 'addItems':
+								sendNotification( MainController.do_create_item, cmd.msg );
+							case _:
+								sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
+						}*/
+						return true;
+					});
+					txt_savestr.textbox( 'setValue', '' );
+				}catch ( error:Dynamic ) {
+					Main.alert( '格式不對哦!' );
+				}
 			case Main.on_save_click:
-				trace( notification.getBody().str );
-				//txt_savestr.textbox( { value: notification.getBody().str } );
+				//trace( notification.getBody().str );
+				txt_savestr.textbox( { value: notification.getBody().str } );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
 			case SocketController.on_heartbeat_event:
