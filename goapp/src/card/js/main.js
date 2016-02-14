@@ -233,7 +233,7 @@ Main.getCardImageUrlWithPackage = function(select,key) {
 };
 Main.slide = function(msg,time) {
 	if(time == null) time = 2000;
-	Main.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide"});
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide", style : { left : "", top : "", bottom : 0}});
 };
 Main.alert = function(msg) {
 	Main.j.messager.alert("錯誤",msg);
@@ -246,7 +246,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -836,6 +836,22 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
+	this.mc_messagePanel = this.getViewComponent().find("#mc_messagePanel");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
+	this.addSingleMessage("abc","asdgg");
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.txt_savestr = this.getViewComponent().find("#txt_savestr");
@@ -856,7 +872,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,{ record : record});
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv1,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
 		Main.changePlayer(nv1);
 	}});
 };
@@ -923,6 +939,11 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		default:
 			if(str == mediator_UI.do_show_recevie) this.showReceive(notification.getBody().show,notification.getBody().ops);
 		}
+	}
+	,addSingleMessage: function(id,msg) {
+		var mc_message = this.mc_messagePanel.find("#mc_message");
+		var msgdom = Main.j("#tmpl_singleMessage").tmpl({ id : id, msg : msg});
+		mc_message.append(msgdom);
 	}
 	,showReceive: function(show,ops) {
 		if(show) {
@@ -2227,7 +2248,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
+			if(err != null) js_Browser.alert(err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2522,3 +2543,5 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=main.js.map

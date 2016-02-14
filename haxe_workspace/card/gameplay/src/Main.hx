@@ -468,7 +468,12 @@ class Main
 			title:'提示',
 			msg: msg,
 			timeout:time,
-			showType:'slide'
+			showType:'slide',
+			style:{
+				left:'',
+				top: '',
+				bottom:0,
+			}
 		});
 	}
 	

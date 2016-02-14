@@ -31,6 +31,9 @@ class UI extends Mediator
 	var btn_record:Dynamic;
 	var dia_invite:Dynamic;
 	var mc_light:Dynamic;
+	
+	//chat
+	var mc_messagePanel:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -39,6 +42,23 @@ class UI extends Mediator
 		getViewComponent().layout();
 		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
+		mc_messagePanel = getViewComponent().find( '#mc_messagePanel' );
+		
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
+		addSingleMessage( 'abc', 'asdgg' );
 		
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
@@ -150,6 +170,15 @@ class UI extends Mediator
 				showReceive( notification.getBody().show, notification.getBody().ops );
 			
 		}
+	}
+	
+	function addSingleMessage( id, msg ) {
+		var mc_message = mc_messagePanel.find( '#mc_message' );
+		var msgdom = Main.j( '#tmpl_singleMessage' ).tmpl( {
+			id:id,
+			msg:msg
+		} );
+		mc_message.append( msgdom );
 	}
 	
 	function showReceive( show:Bool, ?ops:String ) {
