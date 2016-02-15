@@ -146,14 +146,14 @@ class UI extends Mediator
 					var ary_cmds = Json.parse( loadstr );
 					ary_cmds.forEach( function( cmd ) {
 						//trace( cmd.type );
-						sendNotification( SocketController.on_receiveMessage, cmd.msg, cmd.type );
-						/*
+						//sendNotification( SocketController.on_receiveMessage, cmd.msg, cmd.type );
+						
 						switch( cmd.type ) {
 							case 'addItems':
 								sendNotification( MainController.do_create_item, cmd.msg );
-							case _:
-								sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
-						}*/
+							//case _:
+							//	sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
+						}
 						return true;
 					});
 					txt_savestr.textbox( 'setValue', '' );

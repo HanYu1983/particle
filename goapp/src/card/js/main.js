@@ -254,7 +254,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert(err); else cb(ret);
+		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -878,7 +878,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,{ record : record});
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv2,od) {
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv2,od) {
 		Main.changePlayer(nv2);
 	}});
 };
@@ -889,13 +889,13 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,Main.on_createDeck_click,Main.on_save_click,Main.on_load_click,mediator_UI.do_show_recevie,mediator_UI.do_show_chat];
 	}
 	,handleNotification: function(notification) {
-		var _g1 = this;
+		var _g2 = this;
 		var _g = notification.getName();
 		var str = _g;
 		switch(_g) {
 		case "on_receiveMessage":
-			var _g11 = notification.getType();
-			switch(_g11) {
+			var _g1 = notification.getType();
+			switch(_g1) {
 			case "chat":
 				var id = notification.getBody().id;
 				var msg = notification.getBody().msg;
@@ -920,7 +920,12 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			try {
 				var ary_cmds = JSON.parse(loadstr);
 				ary_cmds.forEach(function(cmd) {
-					_g1.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,cmd.msg,cmd.type);
+					var _g11 = cmd.type;
+					switch(_g11) {
+					case "addItems":
+						_g2.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,cmd.msg);
+						break;
+					}
 					return true;
 				});
 				this.txt_savestr.textbox("setValue","");
@@ -2274,7 +2279,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert(err); else cb(ret);
+			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2573,5 +2578,3 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=main.js.map
