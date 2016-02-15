@@ -25,6 +25,7 @@ class MainController extends Mediator
 	public static var do_getItemsString = 'do_getItemsString';
 	public static var do_start_record = 'do_start_record';
 	public static var do_enable_command = 'do_enable_command';
+	public static var do_update_view = 'do_update_view';
 	
 	//public static var on_receiveMessage = 'on_receiveMessage';
 	public static var on_been_invite = 'on_been_invite';
@@ -64,6 +65,7 @@ class MainController extends Mediator
 					SocketController.on_receiveMessage,
 					do_start_record,
 					do_enable_command,
+					do_update_view,
 					BasicItem.on_item_click,
 					BasicItem.on_item_lock
 					];
@@ -90,6 +92,9 @@ class MainController extends Mediator
 					case _: ary_record;
 				}
 				callback( Json.stringify( retobj ) );
+			case str if ( str == do_update_view ):
+				updateView( ary_allItem );
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: { ary_item:ary_allItem, zs:false } } );
 			case str if( str == do_create_item ):
 				var ary_creates:Array<Dynamic> = notification.getBody();
 				ary_creates.foreach( function( c:Dynamic ) {
@@ -106,14 +111,6 @@ class MainController extends Mediator
 				switch( notification.getType() ) {
 					case 'chat':
 						//let UI.hx to receive this cmd
-					case 'invite':
-						/*
-						var inviteId = notification.getBody();
-						//SocketController.otherPlayerIds = inviteId.split( ',' );
-						
-						sendNotification( on_been_invite, { inviteId:inviteId } );
-						sendNotification( SocketController.do_startHeartbeat );
-						*/
 					case 'dice':
 						sendNotification( on_dice, notification.getBody() );
 					case 'addItems':
@@ -266,6 +263,7 @@ class MainController extends Mediator
 		}
 		item.viewComponent.css( 'left', model.pos[0] + 'px' );
 		item.viewComponent.css( 'top', model.pos[1] + 'px' );
+		//cast( item, IItem ).rotate( model.deg, model.deg );
 		
 		facade.registerMediator( item );
 		viewComponent.append( item.viewComponent );

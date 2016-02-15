@@ -254,7 +254,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -861,6 +861,12 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.txt_savestr = this.getViewComponent().find("#txt_savestr");
+	this.txt_savestr.find("input").focus(function() {
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,{ enable : false});
+	});
+	this.txt_savestr.find("input").focusout(function() {
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,{ enable : true});
+	});
 	this.btn_record = this.getViewComponent().find("#btn_record");
 	this.mc_light = Main.j("#mc_light");
 	this.dia_invite = Main.j("#dia_invite");
@@ -878,7 +884,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,{ record : record});
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv2,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv2,od) {
 		Main.changePlayer(nv2);
 	}});
 };
@@ -924,6 +930,9 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 					switch(_g11) {
 					case "addItems":
 						_g2.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,cmd.msg);
+						haxe_Timer.delay(function() {
+							_g2.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_update_view);
+						},1000);
 						break;
 					}
 					return true;
@@ -1584,7 +1593,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.__name__ = true;
 per_vic_pureMVCref_tableGameModel_controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,per_vic_pureMVCref_tableGameModel_controller_MainController.do_update_view,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -1593,6 +1602,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		var str1 = _g;
 		var str2 = _g;
 		var str3 = _g;
+		var str4 = _g;
 		switch(_g) {
 		case "on_item_lock":
 			var div = notification.getBody().view;
@@ -1614,14 +1624,17 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 					retobj = this.ary_record;
 				}
 				callback(JSON.stringify(retobj));
-			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_update_view) {
+				this.updateView(this.ary_allItem);
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_allItem, zs : false}});
+			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
 				var ary_creates = notification.getBody();
 				Lambda.foreach(ary_creates,function(c) {
 					_g1.createItem(c);
 					return true;
 				});
 				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
-			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else this.saveToRecord(notification.getBody());
+			} else if(str4 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else this.saveToRecord(notification.getBody());
 			break;
 		case "on_receiveMessage":
 			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command) this.isEnableCommand = notification.getBody().enable; else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
@@ -1633,20 +1646,21 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 					retobj1 = this.ary_record;
 				}
 				callback1(JSON.stringify(retobj1));
-			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_update_view) {
+				this.updateView(this.ary_allItem);
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_allItem, zs : false}});
+			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
 				var ary_creates1 = notification.getBody();
 				Lambda.foreach(ary_creates1,function(c) {
 					_g1.createItem(c);
 					return true;
 				});
 				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates1});
-			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else {
+			} else if(str4 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else {
 				this.saveToRecord(notification.getBody());
 				var _g13 = notification.getType();
 				switch(_g13) {
 				case "chat":
-					break;
-				case "invite":
 					break;
 				case "dice":
 					this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,notification.getBody());
@@ -1681,14 +1695,17 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 					retobj2 = this.ary_record;
 				}
 				callback2(JSON.stringify(retobj2));
-			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_update_view) {
+				this.updateView(this.ary_allItem);
+				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "applyTransform", msg : { ary_item : this.ary_allItem, zs : false}});
+			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
 				var ary_creates2 = notification.getBody();
 				Lambda.foreach(ary_creates2,function(c) {
 					_g1.createItem(c);
 					return true;
 				});
 				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates2});
-			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record);
+			} else if(str4 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record);
 		}
 	}
 	,saveToRecord: function(record) {
@@ -2279,7 +2296,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
+			if(err != null) js_Browser.alert(err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2555,6 +2572,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item = "do
 per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString = "do_getItemsString";
 per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record = "do_start_record";
 per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command = "do_enable_command";
+per_vic_pureMVCref_tableGameModel_controller_MainController.do_update_view = "do_update_view";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite = "on_been_invite";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_press = "on_press";
@@ -2578,3 +2596,5 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=main.js.map

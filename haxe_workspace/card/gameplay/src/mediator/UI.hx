@@ -65,6 +65,14 @@ class UI extends Mediator
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		txt_savestr = getViewComponent().find( '#txt_savestr' );
+		txt_savestr.find( 'input' ).focus( function() {
+			sendNotification( MainController.do_enable_command, { enable:false } );
+		});
+		
+		txt_savestr.find( 'input' ).focusout( function() {
+			sendNotification( MainController.do_enable_command, { enable:true } );
+		});
+		
 		btn_record = getViewComponent().find( '#btn_record' );
 		mc_light = Main.j( '#mc_light' );
 		dia_invite = Main.j( '#dia_invite' );
@@ -151,6 +159,9 @@ class UI extends Mediator
 						switch( cmd.type ) {
 							case 'addItems':
 								sendNotification( MainController.do_create_item, cmd.msg );
+								Timer.delay( function() {
+									sendNotification( MainController.do_update_view );
+								}, 1000 );
 							//case _:
 							//	sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
 						}
