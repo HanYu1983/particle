@@ -24,6 +24,7 @@ class MainController extends Mediator
 	public static var do_create_item = 'do_create_item';
 	public static var do_getItemsString = 'do_getItemsString';
 	public static var do_start_record = 'do_start_record';
+	public static var do_enable_command = 'do_enable_command';
 	
 	//public static var on_receiveMessage = 'on_receiveMessage';
 	public static var on_been_invite = 'on_been_invite';
@@ -37,6 +38,7 @@ class MainController extends Mediator
 	var isList = false;
 	var isCtrl = false;
 	var isRecord = false;
+	var isEnableCommand = true;
 	var ary_record:Array<Dynamic> = null;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
@@ -61,6 +63,7 @@ class MainController extends Mediator
 					SocketController.on_sendMessage,
 					SocketController.on_receiveMessage,
 					do_start_record,
+					do_enable_command,
 					BasicItem.on_item_click,
 					BasicItem.on_item_lock
 					];
@@ -78,6 +81,8 @@ class MainController extends Mediator
 				var div:Dynamic = notification.getBody();
 				onSelectItems( div, true, isCtrl );
 				zsorting();
+			case str if ( str == do_enable_command ):
+				isEnableCommand = notification.getBody().enable;
 			case str if( str == do_getItemsString ):
 				var callback = notification.getBody().callback;
 				var retobj = switch( ary_record ) {
@@ -99,6 +104,8 @@ class MainController extends Mediator
 			case SocketController.on_receiveMessage:
 				saveToRecord( notification.getBody() );
 				switch( notification.getType() ) {
+					case 'chat':
+						//let UI.hx to receive this cmd
 					case 'invite':
 						/*
 						var inviteId = notification.getBody();
@@ -279,6 +286,7 @@ class MainController extends Mediator
 	}
 	
 	function onBodyKeyUp( e ) {
+		if ( !isEnableCommand ) return;
 		sendNotification( on_press, null, e.which );
 		
 		switch( Std.parseInt( e.which ) ) {

@@ -246,7 +246,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert(err); else cb(ret);
+		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -837,21 +837,19 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	this.getViewComponent().layout();
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.mc_messagePanel = this.getViewComponent().find("#mc_messagePanel");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
-	this.addSingleMessage("abc","asdgg");
+	this.mc_messagePanel.find("#txt_messageInput").textbox({ onChange : function(nv,ov) {
+		if(nv != "") {
+			_g.mc_messagePanel.find("#txt_messageInput").textbox("setValue","");
+			_g.addSingleMessage(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,nv);
+			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "chat", msg : { id : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, msg : nv}});
+		}
+	}});
+	this.mc_messagePanel.find("input").focus(function() {
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,{ enable : false});
+	});
+	this.mc_messagePanel.find("input").focusout(function() {
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,{ enable : true});
+	});
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.txt_savestr = this.getViewComponent().find("#txt_savestr");
@@ -864,29 +862,39 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.do_startHeartbeat);
 		_g.showReceive(false);
 	});
-	this.combo_ops.combobox({ onChange : function(nv,ov) {
-		Main.selectOps(nv);
+	this.combo_ops.combobox({ onChange : function(nv1,ov1) {
+		Main.selectOps(nv1);
 	}});
 	this.btn_record.linkbutton({ onClick : function() {
 		var record = _g.btn_record.hasClass("l-btn-selected");
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,{ record : record});
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv1,od) {
-		Main.changePlayer(nv1);
+	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv2,od) {
+		Main.changePlayer(nv2);
 	}});
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,Main.on_createDeck_click,Main.on_save_click,Main.on_load_click,mediator_UI.do_show_recevie];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards,per_vic_pureMVCref_tableGameModel_controller_MainController.on_dice,per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_error,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_socket_success,Main.on_getSuit_success,Main.on_receiveOps,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_searchComplete,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_heartbeat_event,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,Main.on_createDeck_click,Main.on_save_click,Main.on_load_click,mediator_UI.do_show_recevie,mediator_UI.do_show_chat];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
 		var _g = notification.getName();
 		var str = _g;
 		switch(_g) {
+		case "on_receiveMessage":
+			var _g11 = notification.getType();
+			switch(_g11) {
+			case "chat":
+				var id = notification.getBody().id;
+				var msg = notification.getBody().msg;
+				this.addSingleMessage(id,msg);
+				break;
+			}
+			break;
 		case "on_socket_success":
 			this.onSocketSuccess();
 			break;
@@ -1536,6 +1544,7 @@ per_vic_pureMVCref_tableGameModel_Tool.alert = function(msg) {
 };
 var per_vic_pureMVCref_tableGameModel_controller_MainController = function(mediatorName,viewComponent) {
 	this.ary_record = null;
+	this.isEnableCommand = true;
 	this.isRecord = false;
 	this.isCtrl = false;
 	this.isList = false;
@@ -1557,7 +1566,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.__name__ = true;
 per_vic_pureMVCref_tableGameModel_controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
+		return [per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item,per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_sendMessage,per_vic_pureMVCref_tableGameModel_controller_SocketController.on_receiveMessage,per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click,per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock];
 	}
 	,handleNotification: function(notification) {
 		var _g1 = this;
@@ -1565,6 +1574,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		var str = _g;
 		var str1 = _g;
 		var str2 = _g;
+		var str3 = _g;
 		switch(_g) {
 		case "on_item_lock":
 			var div = notification.getBody().view;
@@ -1577,7 +1587,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			this.zsorting();
 			break;
 		case "on_sendMessage":
-			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
+			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command) this.isEnableCommand = notification.getBody().enable; else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
 				var callback = notification.getBody().callback;
 				var retobj;
 				var _g11 = this.ary_record;
@@ -1586,17 +1596,17 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 					retobj = this.ary_record;
 				}
 				callback(JSON.stringify(retobj));
-			} else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
 				var ary_creates = notification.getBody();
 				Lambda.foreach(ary_creates,function(c) {
 					_g1.createItem(c);
 					return true;
 				});
 				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates});
-			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else this.saveToRecord(notification.getBody());
+			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else this.saveToRecord(notification.getBody());
 			break;
 		case "on_receiveMessage":
-			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
+			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command) this.isEnableCommand = notification.getBody().enable; else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
 				var callback1 = notification.getBody().callback;
 				var retobj1;
 				var _g12 = this.ary_record;
@@ -1605,17 +1615,19 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 					retobj1 = this.ary_record;
 				}
 				callback1(JSON.stringify(retobj1));
-			} else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
 				var ary_creates1 = notification.getBody();
 				Lambda.foreach(ary_creates1,function(c) {
 					_g1.createItem(c);
 					return true;
 				});
 				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates1});
-			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else {
+			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record); else {
 				this.saveToRecord(notification.getBody());
 				var _g13 = notification.getType();
 				switch(_g13) {
+				case "chat":
+					break;
 				case "invite":
 					break;
 				case "dice":
@@ -1642,7 +1654,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			}
 			break;
 		default:
-			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
+			if(str == per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command) this.isEnableCommand = notification.getBody().enable; else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString) {
 				var callback2 = notification.getBody().callback;
 				var retobj2;
 				var _g14 = this.ary_record;
@@ -1651,14 +1663,14 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 					retobj2 = this.ary_record;
 				}
 				callback2(JSON.stringify(retobj2));
-			} else if(str1 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
+			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item) {
 				var ary_creates2 = notification.getBody();
 				Lambda.foreach(ary_creates2,function(c) {
 					_g1.createItem(c);
 					return true;
 				});
 				this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "addItems", msg : ary_creates2});
-			} else if(str2 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record);
+			} else if(str3 == per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record) this.setRecord(notification.getBody().record);
 		}
 	}
 	,saveToRecord: function(record) {
@@ -1787,6 +1799,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 		}
 	}
 	,onBodyKeyUp: function(e) {
+		if(!this.isEnableCommand) return;
 		this.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.on_press,null,e.which);
 		var _g = Std.parseInt(e.which);
 		if(_g != null) switch(_g) {
@@ -2248,7 +2261,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert(err); else cb(ret);
+			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2515,11 +2528,13 @@ Main.cardSuitsDetailsIsLoading = { };
 js_Boot.__toStr = {}.toString;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 mediator_UI.do_show_recevie = "do_show_recevie";
+mediator_UI.do_show_chat = "do_show_chat";
 mediator_UI.on_combo_deck_change = "on_combo_deck_change";
 per_vic_pureMVCref_tableGameModel_Tool.j = $;
 per_vic_pureMVCref_tableGameModel_controller_MainController.do_create_item = "do_create_item";
 per_vic_pureMVCref_tableGameModel_controller_MainController.do_getItemsString = "do_getItemsString";
 per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record = "do_start_record";
+per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command = "do_enable_command";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_been_invite = "on_been_invite";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_select_cards = "on_select_cards";
 per_vic_pureMVCref_tableGameModel_controller_MainController.on_press = "on_press";
@@ -2543,5 +2558,3 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=main.js.map

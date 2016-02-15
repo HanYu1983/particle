@@ -20,6 +20,7 @@ using StringTools;
 class UI extends Mediator
 {
 	public static var do_show_recevie = 'do_show_recevie';
+	public static var do_show_chat = 'do_show_chat';
 	
 	public static var on_combo_deck_change = 'on_combo_deck_change';
 	//public static var on_op_change = 'on_op_change';
@@ -43,22 +44,23 @@ class UI extends Mediator
 		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
 		mc_messagePanel = getViewComponent().find( '#mc_messagePanel' );
+		mc_messagePanel.find( '#txt_messageInput' ).textbox( {
+			onChange:function(nv, ov) {
+				if( nv != '' ){
+					mc_messagePanel.find( '#txt_messageInput' ).textbox( 'setValue', '' );
+					addSingleMessage( SocketController.playerId, nv );
+					sendNotification( SocketController.sendMessage, { type:'chat', msg: { id:SocketController.playerId, msg:nv } } );
+				}
+			}
+		});
 		
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
-		addSingleMessage( 'abc', 'asdgg' );
+		mc_messagePanel.find( 'input' ).focus( function() {
+			sendNotification( MainController.do_enable_command, { enable:false } );
+		});
+		
+		mc_messagePanel.find( 'input' ).focusout( function() {
+			sendNotification( MainController.do_enable_command, { enable:true } );
+		});
 		
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
@@ -111,16 +113,25 @@ class UI extends Mediator
 					Main.on_receiveOps,
 					SocketController.on_searchComplete,
 					SocketController.on_heartbeat_event,
+					SocketController.on_receiveMessage,
 					Main.on_createDeck_click,
 					Main.on_save_click,
 					Main.on_load_click,
-					do_show_recevie
+					do_show_recevie,
+					do_show_chat
 				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case SocketController.on_receiveMessage:
+				switch( notification.getType() ) {
+					case 'chat':
+						var id = notification.getBody().id;
+						var msg = notification.getBody().msg;
+						addSingleMessage( id, msg );
+				}
 			case SocketController.on_socket_success:
 				onSocketSuccess();
 			case SocketController.on_socket_error:
