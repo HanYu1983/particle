@@ -1201,12 +1201,13 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.mc_detail_panel = viewComponent.find("#mc_detail_panel");
 	this.iframe_comment = viewComponent.find("#iframe_comment");
 	this.dia_saveForm.dialog({ onClose : $bind(this,this.onCloseDetailForm)});
+	var cardbackCount = admin.cardbackCount;
 	Lambda.foreach((function($this) {
 		var $r;
 		var _g = [];
 		{
 			var _g11 = 0;
-			while(_g11 < 49) {
+			while(_g11 < cardbackCount) {
 				var i = _g11++;
 				_g.push(i);
 			}

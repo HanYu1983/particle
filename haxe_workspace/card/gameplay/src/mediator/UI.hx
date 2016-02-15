@@ -1,5 +1,6 @@
 package mediator;
 
+import haxe.Json;
 import haxe.Timer;
 import js.html.Image;
 import js.html.rtc.IdentityAssertion;
@@ -9,6 +10,9 @@ import org.puremvc.haxe.patterns.mediator.Mediator;
 import per.vic.pureMVCref.tableGameModel.controller.MainController;
 import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 
+using Lambda;
+using Reflect;
+using StringTools;
 /**
  * ...
  * @author vic
@@ -16,6 +20,7 @@ import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 class UI extends Mediator
 {
 	public static var do_show_recevie = 'do_show_recevie';
+	public static var do_show_chat = 'do_show_chat';
 	
 	public static var on_combo_deck_change = 'on_combo_deck_change';
 	//public static var on_op_change = 'on_op_change';
@@ -23,8 +28,13 @@ class UI extends Mediator
 	var mc_detailContainer:Dynamic;
 	var combo_deck:Dynamic;
 	var combo_ops:Dynamic;
+	var txt_savestr:Dynamic;
+	var btn_record:Dynamic;
 	var dia_invite:Dynamic;
 	var mc_light:Dynamic;
+	
+	//chat
+	var mc_messagePanel:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -33,9 +43,37 @@ class UI extends Mediator
 		getViewComponent().layout();
 		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
+		mc_messagePanel = getViewComponent().find( '#mc_messagePanel' );
+		mc_messagePanel.find( '#txt_messageInput' ).textbox( {
+			onChange:function(nv, ov) {
+				if( nv != '' ){
+					mc_messagePanel.find( '#txt_messageInput' ).textbox( 'setValue', '' );
+					addSingleMessage( SocketController.playerId, nv );
+					sendNotification( SocketController.sendMessage, { type:'chat', msg: { id:SocketController.playerId, msg:nv } } );
+				}
+			}
+		});
+		
+		mc_messagePanel.find( 'input' ).focus( function() {
+			sendNotification( MainController.do_enable_command, { enable:false } );
+		});
+		
+		mc_messagePanel.find( 'input' ).focusout( function() {
+			sendNotification( MainController.do_enable_command, { enable:true } );
+		});
 		
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
+		txt_savestr = getViewComponent().find( '#txt_savestr' );
+		txt_savestr.find( 'input' ).focus( function() {
+			sendNotification( MainController.do_enable_command, { enable:false } );
+		});
+		
+		txt_savestr.find( 'input' ).focusout( function() {
+			sendNotification( MainController.do_enable_command, { enable:true } );
+		});
+		
+		btn_record = getViewComponent().find( '#btn_record' );
 		mc_light = Main.j( '#mc_light' );
 		dia_invite = Main.j( '#dia_invite' );
 		dia_invite.find( '#btn_receive' ).click( function() {
@@ -48,6 +86,13 @@ class UI extends Mediator
 		combo_ops.combobox( {
 			onChange:function( nv, ov ) {
 				Main.selectOps( nv );
+			}
+		});
+		
+		btn_record.linkbutton( {
+			onClick:function() {
+				var record = btn_record.hasClass( 'l-btn-selected' );
+				sendNotification( MainController.do_start_record, { record:record } );
 			}
 		});
 		
@@ -76,14 +121,25 @@ class UI extends Mediator
 					Main.on_receiveOps,
 					SocketController.on_searchComplete,
 					SocketController.on_heartbeat_event,
+					SocketController.on_receiveMessage,
 					Main.on_createDeck_click,
-					do_show_recevie
+					Main.on_save_click,
+					Main.on_load_click,
+					do_show_recevie,
+					do_show_chat
 				];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
+			case SocketController.on_receiveMessage:
+				switch( notification.getType() ) {
+					case 'chat':
+						var id = notification.getBody().id;
+						var msg = notification.getBody().msg;
+						addSingleMessage( id, msg );
+				}
 			case SocketController.on_socket_success:
 				onSocketSuccess();
 			case SocketController.on_socket_error:
@@ -92,6 +148,32 @@ class UI extends Mediator
 				combo_ops.combobox( 'setValue', notification.getBody().inviteId );
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
+			case Main.on_load_click:
+				var loadstr = txt_savestr.textbox( 'getValue' );
+				try{
+					var ary_cmds = Json.parse( loadstr );
+					ary_cmds.forEach( function( cmd ) {
+						//trace( cmd.type );
+						//sendNotification( SocketController.on_receiveMessage, cmd.msg, cmd.type );
+						
+						switch( cmd.type ) {
+							case 'addItems':
+								sendNotification( MainController.do_create_item, cmd.msg );
+								Timer.delay( function() {
+									sendNotification( MainController.do_update_view );
+								}, 1000 );
+							//case _:
+							//	sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
+						}
+						return true;
+					});
+					txt_savestr.textbox( 'setValue', '' );
+				}catch ( error:Dynamic ) {
+					Main.alert( '格式不對哦!' );
+				}
+			case Main.on_save_click:
+				//trace( notification.getBody().str );
+				txt_savestr.textbox( { value: notification.getBody().str } );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
 			case SocketController.on_heartbeat_event:
@@ -110,6 +192,15 @@ class UI extends Mediator
 				showReceive( notification.getBody().show, notification.getBody().ops );
 			
 		}
+	}
+	
+	function addSingleMessage( id, msg ) {
+		var mc_message = mc_messagePanel.find( '#mc_message' );
+		var msgdom = Main.j( '#tmpl_singleMessage' ).tmpl( {
+			id:id + ' : ' + Date.now().toString(),
+			msg:msg
+		} );
+		mc_message.prepend( msgdom );
 	}
 	
 	function showReceive( show:Bool, ?ops:String ) {

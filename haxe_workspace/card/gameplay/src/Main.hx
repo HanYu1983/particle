@@ -25,6 +25,8 @@ class Main
 	public static var on_getSuit_success = 'on_getSuit_success';
 	public static var on_createDeck_click = 'on_createDeck_click';
 	public static var on_receiveOps = 'on_receiveOps';
+	public static var on_save_click = 'on_save_click';
+	public static var on_load_click = 'on_load_click';
 
 	public static var j:Dynamic = untyped __js__('$');
 	
@@ -172,6 +174,17 @@ class Main
 	function onHtmlClick( type, ?params ) {
 		
 		switch( type ) {
+			case 'onBtnLoadClick':
+				Facade.getInstance().sendNotification( on_load_click );
+			case 'onBtnRecordClick':
+				//'public':dom.find( '#btn_public' ).hasClass( 'l-btn-selected' )
+				//trace( j('#btn_record' ).hasClass( 'l-btn-selected' ) );
+			case 'onBtnSaveClick':
+				Facade.getInstance().sendNotification( MainController.do_getItemsString, {
+					callback:function( str ) {
+						Facade.getInstance().sendNotification( on_save_click, { str:str } );
+					}
+				} );
 			case 'onBtnInviteServer':
 				if ( SocketController.playerId == 'smart' || otherPlayerId == '' ) {
 					slide( '請先登入fb或者創建臨時id且並且填入對手' );
@@ -185,14 +198,6 @@ class Main
 				});
 				saveOpponentToCookie( otherPlayerId );
 			case 'onBtnStartServer':
-				/*
-				if ( SocketController.playerId == 'smart' || otherPlayerId == '' ) {
-					slide( '請先登入並且輸入對手的id' );
-					return;
-				}
-				
-				slide( '正在等待對手...' );
-				*/
 				if ( SocketController.playerId == 'smart' ) {
 					slide( '請先登入fb或者創建臨時id' );
 					return;
@@ -404,7 +409,7 @@ class Main
 	}
 	
 	static function createItem( ary_data ) {
-		Facade.getInstance().sendNotification( MainController.create_item, Tool.createItemFromData( ary_data ));
+		Facade.getInstance().sendNotification( MainController.do_create_item, Tool.createItemFromData( ary_data ));
 	}
 	
 	function prepareCardsuit( inputCardsuit:Array<Dynamic> ) {
@@ -463,7 +468,12 @@ class Main
 			title:'提示',
 			msg: msg,
 			timeout:time,
-			showType:'slide'
+			showType:'slide',
+			style:{
+				left:'',
+				top: '',
+				bottom:0,
+			}
 		});
 	}
 	

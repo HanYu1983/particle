@@ -21,10 +21,14 @@ using Reflect;
  */
 class MainController extends Mediator
 {
-	public static var create_item = 'create_item';
-	public static var on_receiveMessage = 'on_receiveMessage';
-	public static var on_been_invite = 'on_been_invite';
+	public static var do_create_item = 'do_create_item';
+	public static var do_getItemsString = 'do_getItemsString';
+	public static var do_start_record = 'do_start_record';
+	public static var do_enable_command = 'do_enable_command';
+	public static var do_update_view = 'do_update_view';
 	
+	//public static var on_receiveMessage = 'on_receiveMessage';
+	public static var on_been_invite = 'on_been_invite';
 	public static var on_select_cards = 'on_select_cards';
 	public static var on_press = 'on_press';
 	public static var on_dice = 'on_dice';
@@ -34,6 +38,9 @@ class MainController extends Mediator
 	var pos_mouse = [0, 0];
 	var isList = false;
 	var isCtrl = false;
+	var isRecord = false;
+	var isEnableCommand = true;
+	var ary_record:Array<Dynamic> = null;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -52,8 +59,13 @@ class MainController extends Mediator
 	
 	override public function listNotificationInterests():Array<String> 
 	{
-		return [ 	create_item, 
-					on_receiveMessage,
+		return [ 	do_create_item, 
+					do_getItemsString,
+					SocketController.on_sendMessage,
+					SocketController.on_receiveMessage,
+					do_start_record,
+					do_enable_command,
+					do_update_view,
 					BasicItem.on_item_click,
 					BasicItem.on_item_lock
 					];
@@ -71,23 +83,34 @@ class MainController extends Mediator
 				var div:Dynamic = notification.getBody();
 				onSelectItems( div, true, isCtrl );
 				zsorting();
-			case 'create_item':
+			case str if ( str == do_enable_command ):
+				isEnableCommand = notification.getBody().enable;
+			case str if( str == do_getItemsString ):
+				var callback = notification.getBody().callback;
+				var retobj = switch( ary_record ) {
+					case null: getFirstStepRecord();
+					case _: ary_record;
+				}
+				callback( Json.stringify( retobj ) );
+			case str if ( str == do_update_view ):
+				updateView( ary_allItem );
+				sendNotification( SocketController.sendMessage, { type:'applyTransform', msg: { ary_item:ary_allItem, zs:false } } );
+			case str if( str == do_create_item ):
 				var ary_creates:Array<Dynamic> = notification.getBody();
 				ary_creates.foreach( function( c:Dynamic ) {
 					createItem( c );
 					return true;
 				});
 				sendNotification( SocketController.sendMessage, { type:'addItems', msg: ary_creates } );
-			case on_receiveMessage:
+			case str if( str == do_start_record ):
+				setRecord( notification.getBody().record );
+			case SocketController.on_sendMessage:
+				saveToRecord( notification.getBody() );
+			case SocketController.on_receiveMessage:
+				saveToRecord( notification.getBody() );
 				switch( notification.getType() ) {
-					case 'invite':
-						/*
-						var inviteId = notification.getBody();
-						//SocketController.otherPlayerIds = inviteId.split( ',' );
-						
-						sendNotification( on_been_invite, { inviteId:inviteId } );
-						sendNotification( SocketController.do_startHeartbeat );
-						*/
+					case 'chat':
+						//let UI.hx to receive this cmd
 					case 'dice':
 						sendNotification( on_dice, notification.getBody() );
 					case 'addItems':
@@ -109,6 +132,23 @@ class MainController extends Mediator
 						}
 						
 				}
+		}
+	}
+	
+	function saveToRecord( record ){
+		if ( ary_record != null ) ary_record.push( record );
+	}
+	
+	function getFirstStepRecord() {
+		return [ { type:'addItems', msg: ary_allItem } ];
+	}
+	
+	function setRecord( r ) {
+		isRecord = r;
+		if ( isRecord ) {
+			ary_record = [];
+		}else {
+			ary_record = null;
 		}
 	}
 	
@@ -223,6 +263,7 @@ class MainController extends Mediator
 		}
 		item.viewComponent.css( 'left', model.pos[0] + 'px' );
 		item.viewComponent.css( 'top', model.pos[1] + 'px' );
+		//cast( item, IItem ).rotate( model.deg, model.deg );
 		
 		facade.registerMediator( item );
 		viewComponent.append( item.viewComponent );
@@ -243,6 +284,7 @@ class MainController extends Mediator
 	}
 	
 	function onBodyKeyUp( e ) {
+		if ( !isEnableCommand ) return;
 		sendNotification( on_press, null, e.which );
 		
 		switch( Std.parseInt( e.which ) ) {
@@ -285,11 +327,11 @@ class MainController extends Mediator
 				actionModel();
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_A, 3:
-				if ( isCtrl ) {
-					selectMyItem();
-				}else {
+				//if ( isCtrl ) {
+				//	selectMyItem();
+				//}else {
 					moveModel();
-				}
+				//}
 				updateView( ary_select );
 			case KeyboardEvent.DOM_VK_X:
 				rotateModel( 90 );

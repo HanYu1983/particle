@@ -102,7 +102,8 @@ class ViewController extends Mediator
 			onClose:onCloseDetailForm
 		});
 		
-		[for ( i in 0...49 ) i ].foreach( function( bid ) {
+		var cardbackCount = untyped __js__('admin.cardbackCount' );
+		[for ( i in 0...cardbackCount ) i ].foreach( function( bid ) {
 			var useId = bid+1;
 			var url = '../common/images/card/cardback_' + useId + '.png';
 			var div = j("#tmpl_back").tmpl({id:useId, url:url });

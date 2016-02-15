@@ -20,6 +20,8 @@ class SocketController extends Mediator
 	
 	public static var on_searchComplete = 'on_searchComplete';
 	public static var on_heartbeat_event = 'on_heartbeat_event';
+	public static var on_sendMessage = 'on_sendMessage';
+	public static var on_receiveMessage = 'on_receiveMessage';
 	
 	public static var playerId:String = 'smart';
 	public static var otherPlayerIds:Array<String> = [];
@@ -95,7 +97,7 @@ class SocketController extends Mediator
 				sendNotification( on_socket_success );
 			},
 			onmessage: function( json ) {
-				sendNotification( MainController.on_receiveMessage, json.msg, json.type );
+				sendNotification( on_receiveMessage, json.msg, json.type );
 			},
 			onerror: onSocketError,
 			onclose: onSocketError
@@ -103,6 +105,8 @@ class SocketController extends Mediator
 	}
 	
 	function messageSocket( type, msg ) {
+		sendNotification( on_sendMessage, { type:type, msg:msg } );
+		
 		if ( !isCanSendMessage ) return;
 		if ( ary_ops == null ) return;
 		
