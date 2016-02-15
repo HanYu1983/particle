@@ -186,10 +186,10 @@ class UI extends Mediator
 	function addSingleMessage( id, msg ) {
 		var mc_message = mc_messagePanel.find( '#mc_message' );
 		var msgdom = Main.j( '#tmpl_singleMessage' ).tmpl( {
-			id:id,
+			id:id + ' : ' + Date.now().toString(),
 			msg:msg
 		} );
-		mc_message.append( msgdom );
+		mc_message.prepend( msgdom );
 	}
 	
 	function showReceive( show:Bool, ?ops:String ) {

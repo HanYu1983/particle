@@ -9,6 +9,14 @@ var CallJs = function() { };
 CallJs.__name__ = true;
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
+HxOverrides.dateStr = function(date) {
+	var m = date.getMonth() + 1;
+	var d = date.getDate();
+	var h = date.getHours();
+	var mi = date.getMinutes();
+	var s = date.getSeconds();
+	return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d < 10?"0" + d:"" + d) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+};
 HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
 	if(x != x) return undefined;
@@ -246,7 +254,7 @@ Main.closeLoading = function() {
 };
 Main.handleResponse = function(cb) {
 	return function(err,ret) {
-		if(err != null) Main.alert("錯誤:" + err); else cb(ret);
+		if(err != null) Main.alert(err); else cb(ret);
 	};
 };
 Main.main = function() {
@@ -870,7 +878,7 @@ var mediator_UI = function(mediatorName,viewComponent) {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_start_record,{ record : record});
 	}});
 	Main.j("#btn_connect").linkbutton();
-	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv2,od) {
+	Main.j("#txt_id").textbox({ editable : true, onChange : function(nv2,od) {
 		Main.changePlayer(nv2);
 	}});
 };
@@ -950,8 +958,13 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 	}
 	,addSingleMessage: function(id,msg) {
 		var mc_message = this.mc_messagePanel.find("#mc_message");
-		var msgdom = Main.j("#tmpl_singleMessage").tmpl({ id : id, msg : msg});
-		mc_message.append(msgdom);
+		var msgdom = Main.j("#tmpl_singleMessage").tmpl({ id : id + " : " + (function($this) {
+			var $r;
+			var _this = new Date();
+			$r = HxOverrides.dateStr(_this);
+			return $r;
+		}(this)), msg : msg});
+		mc_message.prepend(msgdom);
 	}
 	,showReceive: function(show,ops) {
 		if(show) {
@@ -2261,7 +2274,7 @@ per_vic_pureMVCref_tableGameModel_controller_SocketController.prototype = $exten
 	}
 	,handleResponse: function(cb) {
 		return function(err,ret) {
-			if(err != null) js_Browser.alert("錯誤:" + err); else cb(ret);
+			if(err != null) js_Browser.alert(err); else cb(ret);
 		};
 	}
 	,__class__: per_vic_pureMVCref_tableGameModel_controller_SocketController
@@ -2449,6 +2462,8 @@ if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 String.prototype.__class__ = String;
 String.__name__ = true;
 Array.__name__ = true;
+Date.prototype.__class__ = Date;
+Date.__name__ = ["Date"];
 var Int = { __name__ : ["Int"]};
 var Dynamic = { __name__ : ["Dynamic"]};
 var Float = Number;
@@ -2558,3 +2573,5 @@ per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_click = "on_item_click"
 per_vic_pureMVCref_tableGameModel_view_BasicItem.on_item_lock = "on_item_lock";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=main.js.map
