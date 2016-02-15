@@ -20,7 +20,6 @@ using StringTools;
 class UI extends Mediator
 {
 	public static var do_show_recevie = 'do_show_recevie';
-	public static var do_show_chat = 'do_show_chat';
 	
 	public static var on_combo_deck_change = 'on_combo_deck_change';
 	//public static var on_op_change = 'on_op_change';
@@ -125,8 +124,7 @@ class UI extends Mediator
 					Main.on_createDeck_click,
 					Main.on_save_click,
 					Main.on_load_click,
-					do_show_recevie,
-					do_show_chat
+					do_show_recevie
 				];
 	}
 	
@@ -139,6 +137,7 @@ class UI extends Mediator
 						var id = notification.getBody().id;
 						var msg = notification.getBody().msg;
 						addSingleMessage( id, msg );
+						Main.slide( id + '說:' + msg );
 				}
 			case SocketController.on_socket_success:
 				onSocketSuccess();
