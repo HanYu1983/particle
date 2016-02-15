@@ -20,6 +20,8 @@
           outputDir "outputDir"
           pattern "pattern"
           s "script"
+          offset "offset"
+          cnt "count"
         } cfg
         scriptFn
         (or (aget script s) identity)]
@@ -27,6 +29,8 @@
       (->
         (.just rx.Observable dir)
         (.flatMap fns/readdir)
+        (.skip offset)
+        (.take cnt)
         (.map 
           #(str dir %))
         (.flatMap fns/readfile)

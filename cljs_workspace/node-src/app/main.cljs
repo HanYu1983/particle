@@ -81,7 +81,7 @@
       "downloadUrl"
       (.waterfall async
         (array
-          (partial t/getFile "config/crusade.json")
+          (partial t/getFile (.-f argv))
           (fn [file cb]
             (let [config (.parse js/JSON file)
                   type (.-type config)

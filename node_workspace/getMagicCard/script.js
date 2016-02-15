@@ -58,7 +58,26 @@ function sangoWar(info){
 	}
 }
 
+/*
+	[
+		"族群暴君谢迪西",
+		"传奇生物～那伽／祭师 3/3, \n          1UBG (4)\n          ",
+		"每当族群暴君谢迪西进战场或攻击时，将你牌库顶的三张牌置入你的坟墓场。<br><br>每当一张或数张生物牌从你的牌库置入你的坟墓场时，将一个2/2黑色灵俑衍生生物放进战场。",
+		"Sidisi, Brood Tyrant"
+	],
+*/
+function magic(info){
+	var ret = /(\W+)? ?(\d)?\/?(\d)?,?([\s\S]*)/.exec(info[1])
+	/*
+	if( ret[4] != null ){
+		ret[4] = /(\d?\w)+? /.exec(ret[4])
+	}
+	*/
+	info[1] = ret
+	return info
+}
 
 module.exports = {
-	sangoWar: sangoWar
+	sangoWar: sangoWar,
+	magic: magic
 }

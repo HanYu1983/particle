@@ -76,6 +76,7 @@ func init() {
 
 	// 測試用
 	http.HandleFunc("/welcome/", welcome)
+	http.HandleFunc("/welcome2/", welcome2)
 	//http.HandleFunc("/testfn/zip", TestZip)
 	//http.HandleFunc("/testfn/memento", Memento)
 	//http.HandleFunc("/testfn/readfile", TestReadFile)
@@ -112,9 +113,23 @@ func welcome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "OAuth Authorization header required", http.StatusUnauthorized)
 		return
 	}
-	if !u.Admin {
-		http.Error(w, "Admin login only", http.StatusUnauthorized)
+	/*
+		if !u.Admin {
+			http.Error(w, "Admin login only", http.StatusUnauthorized)
+			return
+		}*/
+	fmt.Fprintf(w, `Welcome, admin user %#v!`, u)
+}
+
+func welcome2(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "text/html; charset=utf-8")
+	ctx := appengine.NewContext(r)
+	u := user.Current(ctx)
+	if u == nil {
+		url, _ := user.LoginURL(ctx, "/")
+		fmt.Fprintf(w, `<a href="%s">Sign in or register</a>`, url)
 		return
 	}
-	fmt.Fprintf(w, `Welcome, admin user %s!`, u)
+	url, _ := user.LogoutURL(ctx, "/")
+	fmt.Fprintf(w, `Welcome, %s! (<a href="%s">sign out</a>)`, u, url)
 }

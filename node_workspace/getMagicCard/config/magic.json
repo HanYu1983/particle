@@ -1,0 +1,7 @@
+{
+  "type": "range",
+  "value": [1, 62],
+  "pattern": "http://magiccards.info/query?q=%28e%3Acns%2Fcn+or+e%3Amm2%2Fcn+or+e%3Ac15%2Fcn+or+e%3Ac14%2Fcn+or+e%3A9eb%2Fcn+or+e%3Ap3k%2Fcn+or+e%3Augin%2Fcn%29&s=cname&v=card&p=%d",
+  "dir": "output/magic/",
+  "delay": 2000
+}
