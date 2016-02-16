@@ -75,7 +75,48 @@ var magic = magic || {};
 		return id.substring( 0, id.indexOf("(") ) + ".jpg"
 	}
 	
+	function loadCh( path, cb ){
+		var fns = 
+			_.chain(_.range(1, 550))
+				.map(function(i){
+					return path + i + ".json"
+				})
+				.map(function(path){
+					return function(cb){
+						$.ajax({
+							url: path,
+							dataType:'json',
+							success:function(data){
+								cb(null, data)
+							},
+							error: function(xhr, res, err){
+								cb(err)
+							}
+						})
+					}
+				}).value()
+		async.parallel(fns, function(err, datas){
+			var list = _.reduce(datas, function(all, curr){
+				return all.concat(curr)
+			}, [])
+			list = _.map(list, function(info){
+				return {
+					id:info[3],
+					type:info[4],
+					name:info[0],
+					cost:info[7],
+					allcost:info[8],
+					text:info[2],
+					atk:info[5],
+					def:info[6]
+				}
+			})
+			cb(err, list)
+		})
+	}
+	
 	module.load = load
+	module.loadCh = loadCh
 	module.formatKey = formatKey
 	
 }) ( magic )

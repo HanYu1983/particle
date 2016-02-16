@@ -38,7 +38,6 @@ var cardinfoloader = {} || cardinfoloader;
 				}
 				break;
 			case 'sangoWar':
-				
 				if ( lang == 'ch' ){
 					sangoWar.loadCh( "../common/txt/sangoList/", onLoadGameCallback);
 				} else {
@@ -47,7 +46,12 @@ var cardinfoloader = {} || cardinfoloader;
 			//	sangoWar.load( "../common/txt/sangoList.txt", onLoadGameCallback);
 				break;
 			case 'magic':
-				magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
+				if ( lang == 'ch' ){
+					magic.loadCh( "../common/txt/magicList/", onLoadGameCallback);
+				} else {
+					magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
+				}
+				//magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
 				break;
 		}
 	}

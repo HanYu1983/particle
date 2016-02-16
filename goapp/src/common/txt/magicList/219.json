@@ -1,242 +1,222 @@
 [
 	[
 		"Counterintelligence",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2UU (4)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2UU (4)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2UU (4)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Counterintelligence"
+		"Counterintelligence",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2UU",
+		4
 	],
 	[
 		"Cunning Advisor",
-		[
-			"<span class=\"missing\">(Missing!)</span> 1/1, \n          3B (4)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 1/1, \n          3B (4)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 1/1, \n          3B (4)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Cunning Advisor"
+		"Cunning Advisor",
+		"class=\"missing\">(Missing!)</span>",
+		1,
+		1,
+		"3B",
+		4
 	],
 	[
 		"Deception",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2B (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2B (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2B (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Deception"
+		"Deception",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2B",
+		3
 	],
 	[
 		"Desert Sandstorm",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Desert Sandstorm"
+		"Desert Sandstorm",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2R",
+		3
 	],
 	[
 		"Desperate Charge",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2B (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2B (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2B (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Desperate Charge"
+		"Desperate Charge",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2B",
+		3
 	],
 	[
 		"Diaochan, Artful Beauty",
-		[
-			"<span class=\"missing\">(Missing!)</span> 1/1, \n          3R (4)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 1/1, \n          3R (4)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 1/1, \n          3R (4)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Diaochan, Artful Beauty"
+		"Diaochan, Artful Beauty",
+		"class=\"missing\">(Missing!)</span>",
+		1,
+		1,
+		"3R",
+		4
 	],
 	[
 		"Dong Zhou, the Tyrant",
-		[
-			"<span class=\"missing\">(Missing!)</span> 3/3, \n          4R (5)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 3/3, \n          4R (5)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 3/3, \n          4R (5)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Dong Zhou, the Tyrant"
+		"Dong Zhou, the Tyrant",
+		"class=\"missing\">(Missing!)</span>",
+		3,
+		3,
+		"4R",
+		5
 	],
 	[
 		"Eightfold Maze",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2W (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2W (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2W (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Eightfold Maze"
+		"Eightfold Maze",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2W",
+		3
 	],
 	[
 		"Empty City Ruse",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          W (1)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          W (1)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          W (1)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Empty City Ruse"
+		"Empty City Ruse",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"W",
+		1
 	],
 	[
 		"Eunuchs' Intrigues",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Eunuchs' Intrigues"
+		"Eunuchs' Intrigues",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2R",
+		3
 	],
 	[
 		"Exhaustion",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2U (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2U (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2U (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Exhaustion"
+		"Exhaustion",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2U",
+		3
 	],
 	[
 		"Extinguish",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          1U (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          1U (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          1U (2)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Extinguish"
+		"Extinguish",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"1U",
+		2
 	],
 	[
 		"False Defeat",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          3W (4)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          3W (4)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          3W (4)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"False Defeat"
+		"False Defeat",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"3W",
+		4
 	],
 	[
 		"False Mourning",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          G (1)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          G (1)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          G (1)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"False Mourning"
+		"False Mourning",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"G",
+		1
 	],
 	[
 		"Famine",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          3BB (5)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          3BB (5)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          3BB (5)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Famine"
+		"Famine",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"3BB",
+		5
 	],
 	[
 		"Fire Ambush",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          1R (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          1R (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          1R (2)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Fire Ambush"
+		"Fire Ambush",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"1R",
+		2
 	],
 	[
 		"Fire Bowman",
-		[
-			"<span class=\"missing\">(Missing!)</span> 1/1, \n          R (1)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 1/1, \n          R (1)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 1/1, \n          R (1)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Fire Bowman"
+		"Fire Bowman",
+		"class=\"missing\">(Missing!)</span>",
+		1,
+		1,
+		"R",
+		1
 	],
 	[
 		"Flanking Troops",
-		[
-			"<span class=\"missing\">(Missing!)</span> 2/2, \n          2WW (4)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 2/2, \n          2WW (4)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 2/2, \n          2WW (4)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Flanking Troops"
+		"Flanking Troops",
+		"class=\"missing\">(Missing!)</span>",
+		2,
+		2,
+		"2WW",
+		4
 	],
 	[
 		"Forced Retreat",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2U (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2U (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2U (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Forced Retreat"
+		"Forced Retreat",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2U",
+		3
 	],
 	[
 		"Forest Bear",
-		[
-			"<span class=\"missing\">(Missing!)</span> 2/2, \n          1G (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 2/2, \n          1G (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 2/2, \n          1G (2)\n          ",
 		"</b></p>\n        <div class=\"oo\">\n          <span>Creature — Bear 2/2</span><br>\n          <p class=\"otext\"><b>",
-		"Forest Bear"
+		"Forest Bear",
+		"class=\"missing\">(Missing!)</span>",
+		2,
+		2,
+		"1G",
+		2
 	]
 ]

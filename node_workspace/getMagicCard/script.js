@@ -67,13 +67,28 @@ function sangoWar(info){
 	],
 */
 function magic(info){
-	var ret = /(\W+)? ?(\d)?\/?(\d)?,?([\s\S]*)/.exec(info[1])
-	/*
-	if( ret[4] != null ){
-		ret[4] = /(\d?\w)+? /.exec(ret[4])
+	var ret = /([^ ]*)? ?(.)?\/?(.)?,[\s\S]+?([^\s].*) \((\d)\)/.exec(info[1])
+	//info[1] = ret
+	if( ret != null ){
+		for( var i = 1; i< ret.length; ++i ){
+			info.push(ret[i])
+		}
 	}
-	*/
-	info[1] = ret
+	try{
+		info[5] = parseInt(info[5])
+	}catch(e){
+		info[5] = 0
+	}
+	try{
+		info[6] = parseInt(info[6])
+	}catch(e){
+		info[6] = 0
+	}
+	try{
+		info[8] = parseInt(info[8])
+	}catch(e){
+		info[8] = 0
+	}
 	return info
 }
 

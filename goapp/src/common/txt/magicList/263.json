@@ -1,242 +1,222 @@
 [
 	[
 		"Stalking Tiger",
-		[
-			"<span class=\"missing\">(Missing!)</span> 3/3, \n          3G (4)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 3/3, \n          3G (4)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 3/3, \n          3G (4)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Stalking Tiger"
+		"Stalking Tiger",
+		"class=\"missing\">(Missing!)</span>",
+		3,
+		3,
+		"3G",
+		4
 	],
 	[
 		"Stolen Grain",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          4BB (6)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          4BB (6)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          4BB (6)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Stolen Grain"
+		"Stolen Grain",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"4BB",
+		6
 	],
 	[
 		"Stone Catapult",
-		[
-			"<span class=\"missing\">(Missing!)</span> 1/2, \n          4B (5)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 1/2, \n          4B (5)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 1/2, \n          4B (5)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Stone Catapult"
+		"Stone Catapult",
+		"class=\"missing\">(Missing!)</span>",
+		1,
+		2,
+		"4B",
+		5
 	],
 	[
 		"Stone Rain",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2R (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Stone Rain"
+		"Stone Rain",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2R",
+		3
 	],
 	[
 		"Strategic Planning",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          1U (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          1U (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          1U (2)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Strategic Planning"
+		"Strategic Planning",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"1U",
+		2
 	],
 	[
 		"Straw Soldiers",
-		[
-			"<span class=\"missing\">(Missing!)</span> 1/3, \n          1U (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 1/3, \n          1U (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 1/3, \n          1U (2)\n          ",
 		"</b></p>\n        <div class=\"oo\">\n          <span>Creature — Scarecrow Soldier 1/3</span><br>\n          <p class=\"otext\"><b>",
-		"Straw Soldiers"
+		"Straw Soldiers",
+		"class=\"missing\">(Missing!)</span>",
+		1,
+		3,
+		"1U",
+		2
 	],
 	[
 		"Sun Ce, Young Conquerer",
-		[
-			"<span class=\"missing\">(Missing!)</span> 3/3, \n          3UU (5)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 3/3, \n          3UU (5)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 3/3, \n          3UU (5)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Sun Ce, Young Conquerer"
+		"Sun Ce, Young Conquerer",
+		"class=\"missing\">(Missing!)</span>",
+		3,
+		3,
+		"3UU",
+		5
 	],
 	[
 		"Sun Quan, Lord of Wu",
-		[
-			"<span class=\"missing\">(Missing!)</span> 4/4, \n          4UU (6)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 4/4, \n          4UU (6)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 4/4, \n          4UU (6)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Sun Quan, Lord of Wu"
+		"Sun Quan, Lord of Wu",
+		"class=\"missing\">(Missing!)</span>",
+		4,
+		4,
+		"4UU",
+		6
 	],
 	[
 		"Taoist Hermit",
-		[
-			"<span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Taoist Hermit"
+		"Taoist Hermit",
+		"class=\"missing\">(Missing!)</span>",
+		2,
+		2,
+		"2G",
+		3
 	],
 	[
 		"Taoist Mystic",
-		[
-			"<span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Taoist Mystic"
+		"Taoist Mystic",
+		"class=\"missing\">(Missing!)</span>",
+		2,
+		2,
+		"2G",
+		3
 	],
 	[
 		"Taunting Challenge",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          1GG (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          1GG (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          1GG (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Taunting Challenge"
+		"Taunting Challenge",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"1GG",
+		3
 	],
 	[
 		"Three Visits",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          1G (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          1G (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          1G (2)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Three Visits"
+		"Three Visits",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"1G",
+		2
 	],
 	[
 		"Trained Cheetah",
-		[
-			"<span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 2/2, \n          2G (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Trained Cheetah"
+		"Trained Cheetah",
+		"class=\"missing\">(Missing!)</span>",
+		2,
+		2,
+		"2G",
+		3
 	],
 	[
 		"Trained Jackal",
-		[
-			"<span class=\"missing\">(Missing!)</span> 1/2, \n          G (1)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 1/2, \n          G (1)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 1/2, \n          G (1)\n          ",
 		"</b></p>\n        <div class=\"oo\">\n          <span>Creature — Hound 1/2</span><br>\n          <p class=\"otext\"><b>",
-		"Trained Jackal"
+		"Trained Jackal",
+		"class=\"missing\">(Missing!)</span>",
+		1,
+		2,
+		"G",
+		1
 	],
 	[
 		"Trip Wire",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2G (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2G (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2G (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Trip Wire"
+		"Trip Wire",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2G",
+		3
 	],
 	[
 		"Virtuous Charge",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          2W (3)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          2W (3)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          2W (3)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Virtuous Charge"
+		"Virtuous Charge",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"2W",
+		3
 	],
 	[
 		"Volunteer Militia",
-		[
-			"<span class=\"missing\">(Missing!)</span> 1/2, \n          W (1)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 1/2, \n          W (1)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 1/2, \n          W (1)\n          ",
 		"</b></p>\n        <div class=\"oo\">\n          <span>Creature — Human Soldier 1/2</span><br>\n          <p class=\"otext\"><b>",
-		"Volunteer Militia"
+		"Volunteer Militia",
+		"class=\"missing\">(Missing!)</span>",
+		1,
+		2,
+		"W",
+		1
 	],
 	[
 		"Warrior's Oath",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          RR (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          RR (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          RR (2)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Warrior's Oath"
+		"Warrior's Oath",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"RR",
+		2
 	],
 	[
 		"Warrior's Stand",
-		[
-			"<span class=\"missing\">(Missing!)</span>, \n          1W (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span>, \n          1W (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span>, \n          1W (2)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Warrior's Stand"
+		"Warrior's Stand",
+		"class=\"missing\">(Missing!)</span>",
+		null,
+		null,
+		"1W",
+		2
 	],
 	[
 		"Wei Ambush Force",
-		[
-			"<span class=\"missing\">(Missing!)</span> 1/1, \n          1B (2)\n          ",
-			"<",
-			null,
-			null,
-			"span class=\"missing\">(Missing!)</span> 1/1, \n          1B (2)\n          "
-		],
+		"<span class=\"missing\">(Missing!)</span> 1/1, \n          1B (2)\n          ",
 		"<span class=\"missing\">(Missing!)</span>",
-		"Wei Ambush Force"
+		"Wei Ambush Force",
+		"class=\"missing\">(Missing!)</span>",
+		1,
+		1,
+		"1B",
+		2
 	]
 ]

@@ -1,5 +1,6 @@
 var gameController = {};
 (function( module ){
+	/*
 	function loadCardData( game, lang, onLoadGameCallback ){
 		switch( game ){
 			case 'ws':
@@ -48,6 +49,7 @@ var gameController = {};
 				break;
 		}
 	}
+	*/
 	
 	function getCardUrl( game, card ){
 		switch( game ){
@@ -1047,7 +1049,7 @@ var gameController = {};
 		return fns
 	}
 	
-	module.loadCardData = loadCardData;
+	module.loadCardData = cardinfoloader.load
 	module.getCardUrl = getCardUrl;
 	module.getQueryStr = getQueryStr;
 
