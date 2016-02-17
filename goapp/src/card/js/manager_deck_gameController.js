@@ -592,7 +592,7 @@ var gameController = {};
 			case 'gsign':
 				fns.push( (function( v ){
 					return function( obj ){
-						return obj["info_23"] == v
+						return obj["info_6"] == v
 					}
 				})( v ))
 				break;
