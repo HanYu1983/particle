@@ -468,12 +468,14 @@ class Main
 			title:'提示',
 			msg: msg,
 			timeout:time,
-			showType:'slide',
+			showType:'slide'
+			//default right bottom
+			/*,
 			style:{
 				left:'',
 				top: '',
 				bottom:0,
-			}
+			}*/
 		});
 	}
 	

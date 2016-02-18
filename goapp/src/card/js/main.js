@@ -241,7 +241,7 @@ Main.getCardImageUrlWithPackage = function(select,key) {
 };
 Main.slide = function(msg,time) {
 	if(time == null) time = 2000;
-	Main.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide", style : { left : "", top : "", bottom : 0}});
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide"});
 };
 Main.alert = function(msg) {
 	Main.j.messager.alert("錯誤",msg);
@@ -1113,6 +1113,8 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 						break;
 					case "gundamWarN":
 						str += detail.info_2;
+						str += "<br/>";
+						str += detail.info_11;
 						str += "<br/>";
 						str += detail.trans;
 						str += "<br/>";
