@@ -3,9 +3,15 @@ var magic = magic || {};
 ( function( module ) {
 	
 	function parseCost( cost ){
-		cost = cost.replace(/\//g, "")
-		var colorStr = 'WBRUG'
 		var costary = [0,0,0,0,0,0]
+		if( cost == null ){
+			return costary
+		}
+		cost = cost.replace(/\//g, "")
+		if( cost == null ){
+			return costary
+		}
+		var colorStr = 'WBRUG'
 		for( var i in cost ){
 			var c = cost[i]
 			var idx = colorStr.indexOf(c)
@@ -101,14 +107,14 @@ var magic = magic || {};
 			}, [])
 			list = _.map(list, function(info){
 				return {
+					name:info[0],
+					text:info[2],
 					id:info[3],
 					type:info[4],
-					name:info[0],
-					cost:info[7],
-					allcost:info[8],
-					text:info[2],
 					atk:info[5],
-					def:info[6]
+					def:info[6],
+					manacost: parseCost(info[7]),
+					cmc:info[8]
 				}
 			})
 			cb(err, list)
