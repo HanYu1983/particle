@@ -100,7 +100,6 @@ body{
 			<div game="magic">${id}</div>
 			<div game="magic">${name}</div>
 			<div game="magic">${type}</div>
-			<div game="magic">{{html text}}</div>
 			
 			<div game="gundamWar">${id}</div>
 			<div game="gundamWar">${name}</div>
@@ -320,7 +319,8 @@ body{
 				<a game="sangoWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar&lang=ch'" style="width:130px;" data-options="">三國志大戰</a>
 				<a game="sangoWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar'" style="width:130px;" data-options="">三國志大戰(日)</a>
 				<a game="sgs" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sgs'" style="width:130px;" data-options="">三國殺陣面對決</a>
-				<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會</a>
+				<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic&lang=ch'" style="width:130px;" data-options="">魔法風雲會</a>
+				<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會(英)</a>
 				<a game="battleSpirits" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=battleSpirits'" style="width:130px;" data-options="">戰魂</a>
 				<a game="crusade" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=crusade'" style="width:130px;" data-options="">Crusade</a>
 				<a game="ws" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=ws'" style="width:130px;" data-options="">黑白雙翼</a>
@@ -848,7 +848,52 @@ body{
 					{type:'select', span:2, val:{name:'def_1', items:['0','1','2','3','4','5','6','7','8','9']}},
 					{type:'label', val:'防守力以下'},
 					{type:'select', span:2, val:{name:'def_2', items:['0','1','2','3','4','5','6','7','8','9']}}],
-				[{type:'label', val:'能力'},{type:'checkbox', span:11,val:{name:'', items:["Deathtouch","Defender","First strike","Double strike","Flash","Flying","Haste","Hexproof","Protection from white","Protection from blue","Protection from black","Protection from red","Protection from green","Reach","Trample","Vigilance"]}}],
+				[{type:'label', val:'能力'},{type:'checkbox', span:11,val:{name:'', items:["Cipher","Hexproof","Indestructible","Morph","Protection","Protection from all colors","Protection from Arcane","Protection from artifacts","Protection from black","Protection from blue","Protection from colored spells","Protection from creatures","Protection from enchantments","Protection from everthing","Protection from green","Protection from instants","Protection from lands","Protection from monocolored","Protection from multicolored","Protection from red","Protection from snow","Protection from the chosen player","Protection from white","Reinforce","Undying","Flanking","Haunt","Overload","Shadow","Absorb","Champion","Entwine","Landwalk","Forestwalk","Islandwalk","Mountainwalk","Plainswalk","Swampwalk","Nonbasic landwalk","Legendary landwalk","Snow landwalk","Dredge","Echo","Flashback","Flying","Gravestorm","Madness","Recover","Replicate","Storm","Affinity","Buyback","Fortify","Wither","Evoke","Living Weapon","Soulbond","Sunburst","Annihilator","Banding","Changeling","Delve","Evolve","Graft","Poisonous","Trample","Vigilance","Fear","Frenzy","Rampage","Aura Swap","Cumulative Upkeep","Double Strike","Epic","Persist","Prowess","Ripple","Haste","Hidden Agenda","Horsemanship","Equip","Unearth","Cascade","Extort","Infect","Miracle","Fuse","Ninjutsu","Bestow","Bloodthirst","Deathtouch","Defender","Exalted","Flash","Level Up","Phasing","Prowl","Scavenge","Devour","Modular","Provoke","Rebound","Splice","Totem Armor","Unleash","Bushido","Intimidate","Shroud","Conspire","Cycling","Fading","First Strike","Lifelink","Manifest","Offering","Vanishing","Dash","Dethrone","Forecast","Hideaway","Outlast","Suspend","Reach","Transfigure","Transmute","Amplify","Battle Cry","Convoke","Kicker","Populate","Retrace","Soulshift","Split Second","Tribute"]}}],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}]
+			],
+			'ch':[
+				[
+					{type:'label', val:'白以上'},{type:'select', val:{name:'white_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'白以下'},{type:'select', val:{name:'white_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'藍以上'},{type:'select', val:{name:'blue_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'藍以下'},{type:'select', val:{name:'blue_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'綠以上'},{type:'select', val:{name:'green_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'綠以下'},{type:'select', val:{name:'green_2', items:['0','1','2','3','4','5']}}
+				],
+				[
+					{type:'label', val:'紅以上'},{type:'select', val:{name:'red_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'紅以下'},{type:'select', val:{name:'red_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'黑以上'},{type:'select', val:{name:'black_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'黑以下'},{type:'select', val:{name:'black_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'總cost以上'},{type:'select', val:{name:'all_1', items:['0','1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'總cost以下'},{type:'select', val:{name:'all_2', items:['0','1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[
+					{type:'label', val:'系列(無法用)'},
+					{type:'select', span:2, val:{name:'set', items:["4E","5E","6E","7E","8E","9E","10E","ALA","ALP","AVR","ARB","AP","AL","AN","BNG","BFZ","BOK","C13","C14","C15","CNS","CMD","CS","CHK","CHR","DTK","DGM","DKA","DI","DS","DK","KTK","JU","JOU","MR","MOR","MBS","MI","MM","MM2","MMA","M10","M11","M12","M13","M14","M15","EXP","EVE","EX","FRF","FE","FUT","ORI","ON","OD","GTC","GP","THS","TS","TO","TP","PC","PC2","PTK","PO","PO2","PR","NPH","ISD","IN","SHM","SOM","SOK","SC","SH","S99","RTR","ROE","RAV","WWK","LE","UN","UD","UL","US","VI","LG"]}},
+					{type:'label', val:'基本種類'},
+					{type:'select', span:2, val:{name:'ctype', items:['传奇']}},
+					{type:'label', val:'種類'},
+					{type:'select', span:2, val:{name:'ctype2', items:['地','生物','瞬间','法术','结界','神器','神器生物']}},
+				],
+				[	{type:'label', val:'攻擊力以上'},
+					{type:'select', span:2, val:{name:'atk_1', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'攻擊力以下'},
+					{type:'select', span:2, val:{name:'atk_2', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'防守力以上'},
+					{type:'select', span:2, val:{name:'def_1', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'防守力以下'},
+					{type:'select', span:2, val:{name:'def_2', items:['0','1','2','3','4','5','6','7','8','9']}}],
+				[{type:'label', val:'能力'},{type:'checkbox', span:11,val:{name:'', items:["暗码","辟邪","不灭","变身","保护","反五色保护","反古咒保护","反神器保护","反黑保护","反蓝保护","反有色咒语保护","反生物保护",
+"反结界保护","反一切保护","反绿保护","反瞬间保护","反地保护","反单色保护","反多色保护","反红保护","反雪境保护","反牌手保护",
+"反白保护","补强","不息","侧面攻击","缠身","超载","次元幽影","抵受","夺冠","打包","地行者","树林行者","海岛行者","山脉行者",
+"平原行者","沼泽行者","非基本地行者","传奇地行者","雪境地行者","发掘","返响","返照","飞行","坟场风暴","疯魔","复还","覆诵",
+"风暴","共鸣","购回","构工","干枯","呼魂","活化武器","魂系","辉映","歼灭","结合","化形","掘穴","进化","接殖","剧毒","践踏","警戒",
+"恐惧","狂热","狂暴","灵气转换","累积维持","连击","历传","留存","灵技","涟动","敏捷","秘案","马术","佩带","破坟","倾曳","敲诈",
+"侵染","奇迹","融咒","忍术","神授","嗜血","死触","守军","颂威","闪现","升级","时间跳跃","伺机","食腐","吞噬","套件","挑拨",
+"弹回","通联","替身甲","脱缰","武士道","威吓","帷幕","协力","循环","消退","先攻","系命","显化","献祭","消逝","掩袭","义勇","预报","掩蔽",
+"延生","延缓","延势","易形","易质","增强","战嚎","召集","增幅","殖民","追溯","转生","转瞬","致敬"]}}],
 				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
 				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}]
 			]
