@@ -1114,6 +1114,8 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 					case "gundamWarN":
 						str += detail.info_2;
 						str += "<br/>";
+						str += detail.info_11;
+						str += "<br/>";
 						str += detail.trans;
 						str += "<br/>";
 						str += detail.info_12;
