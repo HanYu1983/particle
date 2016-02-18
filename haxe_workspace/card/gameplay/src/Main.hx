@@ -129,7 +129,9 @@ class Main
 	public static function loadDetail( game:String ) {
 		if ( cardSuitsDetailsIsLoading.field( game ) != null ) return;
 		cardSuitsDetailsIsLoading.setField( game, true );
-		if( cardSuitsDetails.field( game ) == null ){
+		if ( cardSuitsDetails.field( game ) == null ) {
+			CallJs.cardinfoloader_load( game, 'ch', onLoadGameCallback( game ) );
+			/*
 			switch( game ) {
 				case 'ws':
 					CallJs.ws_load( "../common/txt/wsList/", onLoadGameCallback( game ) );
@@ -152,6 +154,7 @@ class Main
 				case 'sangoWar':
 					CallJs.sangoWar_loadCh( "../common/txt/sangoList/", onLoadGameCallback( game ) );
 			}
+			*/
 		}
 	}
 	

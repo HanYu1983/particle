@@ -36,7 +36,8 @@ package;
 						'crusade.load',
 						'ws.load',
 						'magic.load',
-						'googleTracking.click'
+						'googleTracking.click',
+						'cardinfoloader.load'
 					]))
 
 class CallJs{}

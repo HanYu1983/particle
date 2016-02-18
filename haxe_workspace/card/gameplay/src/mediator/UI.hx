@@ -352,7 +352,7 @@ class UI extends Mediator
 							str += '<br/>';
 							str += detail.info_12;
 						case 'magic':
-							str += detail.id;
+							str += detail.name + '(' + detail.id + ')';
 							str += '<br/>';
 							str += detail.text;
 						case 'battleSpirits':

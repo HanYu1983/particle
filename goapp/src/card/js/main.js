@@ -184,38 +184,7 @@ Main.createSelfDeck = function(deckId) {
 Main.loadDetail = function(game) {
 	if(Reflect.field(Main.cardSuitsDetailsIsLoading,game) != null) return;
 	Main.cardSuitsDetailsIsLoading[game] = true;
-	if(Reflect.field(Main.cardSuitsDetails,game) == null) switch(game) {
-	case "ws":
-		CallJs.ws_load("../common/txt/wsList/",Main.onLoadGameCallback(game));
-		break;
-	case "sgs":
-		CallJs.sgs_load("../common/txt/sgsList.json",Main.onLoadGameCallback(game));
-		break;
-	case "dragonZ":
-		CallJs.dragonZ_load("../common/txt/dragonZList.json",Main.onLoadGameCallback(game));
-		break;
-	case "crusade":
-		CallJs.crusade_load("../common/txt/crusadeList/",Main.onLoadGameCallback(game));
-		break;
-	case "battleSpirits":
-		CallJs.battleSpirits_load("../common/txt/battleSpiritsList/",Main.onLoadGameCallback(game));
-		break;
-	case "magic":
-		CallJs.magic_load("../common/txt/magicList.xml",Main.onLoadGameCallback(game));
-		break;
-	case "gundamWar":
-		CallJs.gundamWar_load("../common/txt/gundamWarList.json",Main.onLoadGameCallback(game));
-		break;
-	case "gundamWarN":
-		CallJs.gundamWarN_load("../common/txt/gundamWarNexAList/",Main.onLoadGameCallback(game));
-		break;
-	case "yugioh":
-		CallJs.yugioh_load("../common/txt/yugiohListCh.json",Main.onLoadGameCallback(game));
-		break;
-	case "sangoWar":
-		CallJs.sangoWar_loadCh("../common/txt/sangoList/",Main.onLoadGameCallback(game));
-		break;
-	}
+	if(Reflect.field(Main.cardSuitsDetails,game) == null) CallJs.cardinfoloader_load(game,"ch",Main.onLoadGameCallback(game));
 };
 Main.onLoadGameCallback = function(game) {
 	return function(err,_cardlist) {
@@ -1121,7 +1090,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 						str += detail.info_12;
 						break;
 					case "magic":
-						str += detail.id;
+						str += detail.name + "(" + detail.id + ")";
 						str += "<br/>";
 						str += detail.text;
 						break;
@@ -2552,6 +2521,7 @@ CallJs.crusade_load = crusade.load;
 CallJs.ws_load = ws.load;
 CallJs.magic_load = magic.load;
 CallJs.googleTracking_click = googleTracking.click;
+CallJs.cardinfoloader_load = cardinfoloader.load;
 Main.on_getSuit_success = "on_getSuit_success";
 Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
