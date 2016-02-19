@@ -247,7 +247,7 @@ class MainController extends Mediator
 				var parseData = Json.parse( Json.stringify( model ) );
 				parseData.extra = [ 
 					untyped __js__('api.getCardImageWithPackageName')( model.extra[2], model.extra[0] ),
-					'../common/images/card/cardback_' + model.extra[1]  + '.png'
+					'../common/images/card/cardback_' + model.extra[1]  + '.jpg'
 				];	
 				item = new CardItem( model.id, Tool.createItemDiv( model.type, parseData ) );
 			case 'sequence':

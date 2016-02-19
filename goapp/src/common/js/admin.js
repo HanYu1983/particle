@@ -2,10 +2,10 @@ var admin = admin || {};
 
 (function(module){
 	
-	var version = '1.10';
+	var version = '1.11';
 	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
-	var cardbackCount = 51;
+	var cardbackCount = 56;
 	
 	addVerToTitle();
 	
