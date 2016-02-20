@@ -141,8 +141,12 @@ Helper.EnToCh = function(en) {
 		return "均衡";
 	case "control":
 		return "控制";
+	case "damage":
+		return "燒殺";
 	case "disgust":
 		return "噁心";
+	case "heterodoxy":
+		return "偏門";
 	default:
 		return "";
 	}
