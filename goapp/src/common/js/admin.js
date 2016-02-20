@@ -64,7 +64,7 @@ var admin = admin || {};
 	
 	// ============== 熱門遊戲設定 ================ //
 	
-	var ary_hotGame = ['sgs', 'magic', 'gundamWar'];
+	var ary_hotGame = ['sgs', 'sangoWar', 'battleSpirits','gundamWarN'];
 	function showHotGame( dom ){
 		dom.find( 'a' ).each( function( id, dom ){
 			dom = $(dom);
