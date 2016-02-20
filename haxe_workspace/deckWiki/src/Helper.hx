@@ -175,7 +175,9 @@ class Helper
 			case 'low_speed':'後期';
 			case 'balance':'均衡';
 			case 'control':'控制';
+			case 'damage':'燒殺';
 			case 'disgust':'噁心';
+			case 'heterodoxy':'偏門';
 			case _:'';
 		}
 	}

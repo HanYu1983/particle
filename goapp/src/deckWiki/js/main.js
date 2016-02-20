@@ -141,8 +141,12 @@ Helper.EnToCh = function(en) {
 		return "均衡";
 	case "control":
 		return "控制";
+	case "damage":
+		return "燒殺";
 	case "disgust":
 		return "噁心";
+	case "heterodoxy":
+		return "偏門";
 	default:
 		return "";
 	}
@@ -1216,7 +1220,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 		return $r;
 	}(this)),function(bid) {
 		var useId = bid + 1;
-		var url = "../common/images/card/cardback_" + useId + ".png";
+		var url = "../common/images/card/cardback_" + useId + ".jpg";
 		var div = _g1.j("#tmpl_back").tmpl({ id : useId, url : url});
 		div.hide();
 		_g1.mc_backContainer.append(div);

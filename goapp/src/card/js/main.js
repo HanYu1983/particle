@@ -1773,7 +1773,7 @@ per_vic_pureMVCref_tableGameModel_controller_MainController.prototype = $extend(
 			break;
 		case "card":
 			var parseData = JSON.parse(JSON.stringify(model));
-			parseData.extra = [api.getCardImageWithPackageName(model.extra[2],model.extra[0]),"../common/images/card/cardback_" + model.extra[1] + ".png"];
+			parseData.extra = [api.getCardImageWithPackageName(model.extra[2],model.extra[0]),"../common/images/card/cardback_" + model.extra[1] + ".jpg"];
 			item = new per_vic_pureMVCref_tableGameModel_view_CardItem(model.id,per_vic_pureMVCref_tableGameModel_Tool.createItemDiv(model.type,parseData));
 			break;
 		case "sequence":

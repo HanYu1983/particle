@@ -131,30 +131,6 @@ class Main
 		cardSuitsDetailsIsLoading.setField( game, true );
 		if ( cardSuitsDetails.field( game ) == null ) {
 			CallJs.cardinfoloader_load( game, 'ch', onLoadGameCallback( game ) );
-			/*
-			switch( game ) {
-				case 'ws':
-					CallJs.ws_load( "../common/txt/wsList/", onLoadGameCallback( game ) );
-				case 'sgs':
-					CallJs.sgs_load( "../common/txt/sgsList.json", onLoadGameCallback( game ) );
-				case 'dragonZ':
-					CallJs.dragonZ_load( "../common/txt/dragonZList.json", onLoadGameCallback( game ) );
-				case 'crusade':
-					CallJs.crusade_load( "../common/txt/crusadeList/", onLoadGameCallback( game ) );
-				case 'battleSpirits':
-					CallJs.battleSpirits_load( "../common/txt/battleSpiritsList/", onLoadGameCallback( game ) );
-				case 'magic':
-					CallJs.magic_load( "../common/txt/magicList.xml", onLoadGameCallback( game ) );
-				case 'gundamWar':
-					CallJs.gundamWar_load( "../common/txt/gundamWarList.json", onLoadGameCallback( game ) );
-				case 'gundamWarN':
-					CallJs.gundamWarN_load( "../common/txt/gundamWarNexAList/", onLoadGameCallback( game ) );
-				case 'yugioh':
-					CallJs.yugioh_load("../common/txt/yugiohListCh.json", onLoadGameCallback( game ) );
-				case 'sangoWar':
-					CallJs.sangoWar_loadCh( "../common/txt/sangoList/", onLoadGameCallback( game ) );
-			}
-			*/
 		}
 	}
 	
