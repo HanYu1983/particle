@@ -7,6 +7,10 @@ type Tree struct {
 	Links []LinkTo
 }
 
+var (
+	NullNode = Node(-10000)
+)
+
 func AppendLayer(layer []Node, curridx int) ([]Node, []LinkTo, int) {
 	var newLayer []Node
 	var links []LinkTo
@@ -66,26 +70,30 @@ func CreateDuelTree(cnt int) Tree {
 }
 
 // 找出下一層節點
-func ForwardNode(tree Tree, node Node) *Node {
+func ForwardNode(tree Tree, node Node) Node {
 	for _, currlink := range tree.Links {
 		if currlink[0] == node {
-			return &currlink[1]
+			return currlink[1]
 		}
 	}
-	return nil
+	return NullNode
 }
 
 // 找出相隣節點
 func NextNodes(tree Tree, node Node) []Node {
 	forward := ForwardNode(tree, node)
-	if forward == nil {
+	if forward == NullNode {
 		return nil
 	}
 	var nodes []Node
 	for _, currlink := range tree.Links {
-		if currlink[1] == *forward && currlink[0] != node {
+		if currlink[1] == forward && currlink[0] != node {
 			nodes = append(nodes, currlink[0])
 		}
 	}
 	return nodes
+}
+
+func IsTopOfTree(tree Tree, node Node) bool {
+	return len(tree.Nodes)-1 == int(node)
 }
