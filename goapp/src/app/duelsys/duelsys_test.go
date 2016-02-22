@@ -85,7 +85,7 @@ func TestDuel(t *testing.T) {
 
 	var duelName = "天下一武道會第一屆"
 	CreateDuel(&dc, duelName, time.Now(), time.Now())
-	ctx.Infof("%#v", dc)
+
 	if len(dc.Duels) != 1 {
 		t.Fatal("必須有一個比賽")
 	}
@@ -104,4 +104,10 @@ func TestDuel(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	err = AddPeople(&dc, duelName, han)
+	if err != ErrPeopleAlreadyAdd {
+		t.Fatal("必須回傳已加入錯誤")
+	}
+
+	ctx.Infof("%#v", dc)
 }

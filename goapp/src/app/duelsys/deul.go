@@ -6,7 +6,8 @@ import (
 )
 
 type People struct {
-	Name string
+	Name     string
+	Position Node
 }
 
 type Duel struct {
@@ -23,14 +24,17 @@ type DuelContext struct {
 
 var (
 	ErrDuelNotFound     = errors.New("duel not found")
-	ErrAlreadyChecked   = errors.New("already checked")
+	ErrNoTarget         = errors.New("no target")
 	ErrTargetNotAlready = errors.New("target not already")
+	ErrPeopleAlreadyAdd = errors.New("people already add")
 )
 
 func GetDuel(dc *DuelContext, name *string) *Duel {
-	for _, duel := range dc.Duels {
+	for idx, duel := range dc.Duels {
 		if duel.Name == *name {
-			return &duel
+			// 不能這樣寫，會回傳複製品的地址
+			// return &duel
+			return &dc.Duels[idx]
 		}
 	}
 	return nil
@@ -54,7 +58,25 @@ func AddPeople(dc *DuelContext, duelname string, people People) error {
 	if duel == nil {
 		return ErrDuelNotFound
 	}
+	for _, p := range duel.Peoples {
+		if p == people {
+			return ErrPeopleAlreadyAdd
+		}
+	}
 	duel.Peoples = append(duel.Peoples, people)
+	StartDuel(dc, duelname)
+	return nil
+}
+
+func StartDuel(dc *DuelContext, duelname string) error {
+	duel := GetDuel(dc, &duelname)
+	if duel == nil {
+		return ErrDuelNotFound
+	}
+	duel.DuelTree = CreateDuelTree(len(duel.Peoples))
+	for idx, _ := range duel.Peoples {
+		duel.Peoples[idx].Position = duel.DuelTree.Nodes[idx]
+	}
 	return nil
 }
 
@@ -63,7 +85,7 @@ func AssignWinner(dc *DuelContext, duelname string, position Node, target string
 	if duel == nil {
 		return ErrDuelNotFound
 	}
-	duel.NodeInfo[position].Winner[target] = true
+	duel.NodeInfo[position].Winner[target] = win
 	return nil
 }
 
@@ -103,5 +125,5 @@ func DuelTarget(dc *DuelContext, duelname string, position Node) (string, error)
 			return duel.NodeInfo[node].Name, nil
 		}
 	}
-	return "", ErrAlreadyChecked
+	return "", ErrNoTarget
 }
