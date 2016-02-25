@@ -217,7 +217,6 @@ body{
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
 	<div style="position:fixed; top:5px; right:385px;">
 		<div id="mc_light" class="hori"></div>
-    <input id="swich_chat" class="easyui-switchbutton" data-options="onText:'閉聊',offText:'開聊'">
 	</div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
@@ -306,26 +305,26 @@ body{
 				<!-- create by script -->
 			</div>
         </div>
-		<div style="position:fixed; right:5px; bottom:5px; ">
-			<input id="swich_chat" class="easyui-switchbutton">
-		</div>
-		<div id="dia_chat" class="easyui-dialog" title="簡易聊天室" data-options="resizable:true, collapsible:true, closable:false, closed:true" style="min-height:400px; min-width:400px; height:400px; height:400px; padding:10px">
-			<div id="mc_message" class="group" style="width:100%; height:80%; overflow:auto; background-color:gray;">
+		<div id="mc_messagePanel" data-options="region:'south', title:'簡易聊天室',split:true" style="height:200px; min-height:200px; " >
+			<div id="mc_message" class="group" style="width:100%; height:60%; min-height:90px; overflow:auto; background-color:gray;">
 				<!-- by script -->
 			</div>
-			<div id="mc_quickButton" class="group" style="text-align:center; margin-top:10px;">
-				<a id="btn_isCounter" href="#" class="easyui-linkbutton"  >要康不？</a>
-				<a id="btn_isMyTurn" href="#" class="easyui-linkbutton"  >換我嗎？</a>
-				<a id="btn_yes" href="#" class="easyui-linkbutton"  >是</a>
-				<a id="btn_no" href="#" class="easyui-linkbutton"  >否</a>
-				<a id="btn_turnEnd" href="#" class="easyui-linkbutton"  >結束</a>
-			</div>
-			<div class="group" style="text-align:center; margin-top:3px; ">
-				<div class="hori">
-					<input id="txt_messageInput" class="easyui-textbox" data-options="multiline:false" style="width:200px">
-					<a id="btn_sendMessage" href="#" class="easyui-linkbutton" style="width:60px;" data-options="iconCls:'icon-ok'">送出</a>
+			<div class="group" style="position:absolute; bottom:5px;">
+				<div id="mc_quickButton" class="group" style="text-align:center; margin-top:10px;">
+					<a id="btn_isCounter" href="#" class="easyui-linkbutton"  >要康不？</a>
+					<a id="btn_isMyTurn" href="#" class="easyui-linkbutton"  >換我嗎？</a>
+					<a id="btn_yes" href="#" class="easyui-linkbutton"  >是</a>
+					<a id="btn_no" href="#" class="easyui-linkbutton"  >否</a>
+					<a id="btn_turnEnd" href="#" class="easyui-linkbutton"  >結束</a>
+				</div>
+				<div class="group" style="text-align:center; margin-top:3px; ">
+					<div class="hori">
+						<input id="txt_messageInput" class="easyui-textbox" data-options="multiline:false" style="width:200px">
+						<a id="btn_sendMessage" href="#" class="easyui-linkbutton" style="width:60px;" data-options="iconCls:'icon-ok'">送出</a>
+					</div>
 				</div>
 			</div>
+			
 		</div>
 		<div id="dia_about" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 			<div class="group" style="position:relative; width:100%; text-align:center;">

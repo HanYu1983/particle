@@ -35,7 +35,7 @@ class UI extends Mediator
 	
 	//chat
 	var mc_messagePanel:Dynamic;
-	var swich_chat:Dynamic;
+	//var swich_chat:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -43,18 +43,16 @@ class UI extends Mediator
 		
 		getViewComponent().layout();
 		
-		Main.j( 'body' ).keyup( onBodyKeyUp );
-		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
-		
+		/*
 		swich_chat = Main.j( '#swich_chat' );
 		swich_chat.switchbutton( {
 			onChange:function( checked ){
 				showChatPanel( checked );
 			}
 		});
-		
-		mc_messagePanel = Main.j( '#dia_chat' );
+		*/
+		mc_messagePanel = getViewComponent().find( '#mc_messagePanel' );
 		mc_messagePanel.attr( 'isOpen', 0 );
 		mc_messagePanel.find( '#txt_messageInput' ).textbox( {
 			onChange:function(nv, ov) {
@@ -221,30 +219,15 @@ class UI extends Mediator
 			
 		}
 	}
-	
+	/*
 	function showChatPanel( show ) {
 		if ( show ) {
 			mc_messagePanel.dialog( 'open' );
-			//mc_messagePanel.attr( 'isOpen', 1 );
 		}else {
 			mc_messagePanel.dialog( 'close' );
-			//mc_messagePanel.attr( 'isOpen', 0 );
 		}
 	}
-	
-	function onBodyKeyUp( e ) {
-		/*
-		switch( e.which ) {
-			case KeyboardEvent.:
-				if ( mc_messagePanel.attr( 'isOpen' ) == 0 ) {
-					mc_messagePanel.dialog( 'open' );
-					mc_messagePanel.attr( 'isOpen', 1 );
-				}else {
-					mc_messagePanel.dialog( 'close' );
-					mc_messagePanel.attr( 'isOpen', 0 );
-				}
-		}*/
-	}
+	*/
 	
 	function addSingleMessage( id, msg ) {
 		var mc_message = mc_messagePanel.find( '#mc_message' );
@@ -252,6 +235,9 @@ class UI extends Mediator
 			id:id + ' : ' + Date.now().toString(),
 			msg:msg
 		} );
+		if ( id == SocketController.playerId ) {
+			msgdom.find( '#txt_message' ).css( 'color', 'lightblue' );
+		}
 		mc_message.prepend( msgdom );
 	}
 	
