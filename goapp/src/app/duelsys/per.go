@@ -30,7 +30,7 @@ func GetDuelContext(ctx appengine.Context) (DuelContext, error) {
 	return dc, nil
 }
 
-type ModifyFn func(ctx appengine.Context, dc DuelContext) DuelContext
+type ModifyFn func(ctx appengine.Context, dc *DuelContext) error
 
 func Swap(ctx appengine.Context, fn ModifyFn) error {
 	return tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
@@ -43,7 +43,10 @@ func Swap(ctx appengine.Context, fn ModifyFn) error {
 			return err
 		}
 
-		dc = fn(ctx, dc)
+		err = fn(ctx, &dc)
+		if err != nil {
+			return err
+		}
 		_, err = datastore.Put(ctx, key, dc)
 		if err != nil {
 			return err
