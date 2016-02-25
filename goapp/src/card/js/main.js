@@ -985,6 +985,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			$r = HxOverrides.dateStr(_this);
 			return $r;
 		}(this)), msg : msg});
+		if(id == per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId) msgdom.find("#txt_message").css("color","lightblue");
 		mc_message.prepend(msgdom);
 	}
 	,showReceive: function(show,ops) {

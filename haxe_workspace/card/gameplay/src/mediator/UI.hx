@@ -252,6 +252,9 @@ class UI extends Mediator
 			id:id + ' : ' + Date.now().toString(),
 			msg:msg
 		} );
+		if ( id == SocketController.playerId ) {
+			msgdom.find( '#txt_message' ).css( 'color', 'lightblue' );
+		}
 		mc_message.prepend( msgdom );
 	}
 	
