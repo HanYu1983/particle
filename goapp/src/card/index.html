@@ -215,7 +215,10 @@ body{
 		<div class="ghost-select"><span></span></div>
 	</div>
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
-	<div id="mc_light" style="position:fixed; top:5px; right:385px;"></div>
+	<div style="position:fixed; top:5px; right:385px;">
+		<div id="mc_light" class="hori"></div>
+    <input id="swich_chat" class="easyui-switchbutton" data-options="onText:'閉聊',offText:'開聊'">
+	</div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
         <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:520px;" >
@@ -303,8 +306,8 @@ body{
 				<!-- create by script -->
 			</div>
         </div>
-		<div style="position:fixed; right:385px; bottom:5px; ">
-			<input id="swich_chat" class="easyui-switchbutton" data-options="onText:'閉聊',offText:'開聊'">
+		<div style="position:fixed; right:5px; bottom:5px; ">
+			<input id="swich_chat" class="easyui-switchbutton">
 		</div>
 		<div id="dia_chat" class="easyui-dialog" title="簡易聊天室" data-options="resizable:true, collapsible:true, closable:false, closed:true" style="min-height:400px; min-width:400px; height:400px; height:400px; padding:10px">
 			<div id="mc_message" class="group" style="width:100%; height:80%; overflow:auto; background-color:gray;">
