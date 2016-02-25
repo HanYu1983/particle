@@ -813,13 +813,39 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
-	this.mc_messagePanel = this.getViewComponent().find("#mc_messagePanel");
+	this.mc_messagePanel = Main.j("#dia_chat");
 	this.mc_messagePanel.find("#txt_messageInput").textbox({ onChange : function(nv,ov) {
 		if(nv != "") {
 			_g.mc_messagePanel.find("#txt_messageInput").textbox("setValue","");
 			_g.addSingleMessage(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,nv);
 			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "chat", msg : { id : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, msg : nv}});
 		}
+	}});
+	this.mc_messagePanel.find("#mc_quickButton > a").linkbutton({ onClick : function() {
+		var buttonself = this;
+		var msg;
+		var _g1 = buttonself.id;
+		switch(_g1) {
+		case "btn_isCounter":
+			msg = "尊貴的閣下，請問你要康這張牌嗎？";
+			break;
+		case "btn_isMyTurn":
+			msg = "到我了嗎？我的朋友。";
+			break;
+		case "btn_yes":
+			msg = "是，親愛的伙伴!";
+			break;
+		case "btn_no":
+			msg = "否。";
+			break;
+		case "btn_turnEnd":
+			msg = "趟~印度！";
+			break;
+		default:
+			msg = "";
+		}
+		_g.addSingleMessage(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,msg);
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "chat", msg : { id : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, msg : msg}});
 	}});
 	this.mc_messagePanel.find("input").focus(function() {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,{ enable : false});

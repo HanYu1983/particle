@@ -42,7 +42,7 @@ class UI extends Mediator
 		getViewComponent().layout();
 		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
-		mc_messagePanel = getViewComponent().find( '#mc_messagePanel' );
+		mc_messagePanel = Main.j( '#dia_chat' );
 		mc_messagePanel.find( '#txt_messageInput' ).textbox( {
 			onChange:function(nv, ov) {
 				if( nv != '' ){
@@ -50,6 +50,22 @@ class UI extends Mediator
 					addSingleMessage( SocketController.playerId, nv );
 					sendNotification( SocketController.sendMessage, { type:'chat', msg: { id:SocketController.playerId, msg:nv } } );
 				}
+			}
+		});
+		
+		mc_messagePanel.find( '#mc_quickButton > a' ).linkbutton( {
+			onClick:function() {
+				var buttonself = untyped __js__('this' );
+				var msg = switch( buttonself.id ) {
+					case 'btn_isCounter': '尊貴的閣下，請問你要康這張牌嗎？';
+					case 'btn_isMyTurn': '到我了嗎？我的朋友。';
+					case 'btn_yes': '是，親愛的伙伴!';
+					case 'btn_no': '否。';
+					case 'btn_turnEnd': '趟~印度！';
+					case _:'';
+				}
+				addSingleMessage( SocketController.playerId, msg );
+				sendNotification( SocketController.sendMessage, { type:'chat', msg: { id:SocketController.playerId, msg:msg } } );
 			}
 		});
 		
