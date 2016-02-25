@@ -3,6 +3,7 @@ package mediator;
 import haxe.Json;
 import haxe.Timer;
 import js.html.Image;
+import js.html.KeyboardEvent;
 import js.html.rtc.IdentityAssertion;
 import model.Model;
 import org.puremvc.haxe.interfaces.INotification;
@@ -34,6 +35,7 @@ class UI extends Mediator
 	
 	//chat
 	var mc_messagePanel:Dynamic;
+	var swich_chat:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -41,8 +43,19 @@ class UI extends Mediator
 		
 		getViewComponent().layout();
 		
+		Main.j( 'body' ).keyup( onBodyKeyUp );
+		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
+		
+		swich_chat = Main.j( '#swich_chat' );
+		swich_chat.switchbutton( {
+			onChange:function( checked ){
+				showChatPanel( checked );
+			}
+		});
+		
 		mc_messagePanel = Main.j( '#dia_chat' );
+		mc_messagePanel.attr( 'isOpen', 0 );
 		mc_messagePanel.find( '#txt_messageInput' ).textbox( {
 			onChange:function(nv, ov) {
 				if( nv != '' ){
@@ -207,6 +220,30 @@ class UI extends Mediator
 				showReceive( notification.getBody().show, notification.getBody().ops );
 			
 		}
+	}
+	
+	function showChatPanel( show ) {
+		if ( show ) {
+			mc_messagePanel.dialog( 'open' );
+			//mc_messagePanel.attr( 'isOpen', 1 );
+		}else {
+			mc_messagePanel.dialog( 'close' );
+			//mc_messagePanel.attr( 'isOpen', 0 );
+		}
+	}
+	
+	function onBodyKeyUp( e ) {
+		/*
+		switch( e.which ) {
+			case KeyboardEvent.:
+				if ( mc_messagePanel.attr( 'isOpen' ) == 0 ) {
+					mc_messagePanel.dialog( 'open' );
+					mc_messagePanel.attr( 'isOpen', 1 );
+				}else {
+					mc_messagePanel.dialog( 'close' );
+					mc_messagePanel.attr( 'isOpen', 0 );
+				}
+		}*/
 	}
 	
 	function addSingleMessage( id, msg ) {

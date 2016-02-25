@@ -134,7 +134,7 @@ body{
 <script id="tmpl_singleMessage" type="jquery-x-tmpl">
 	<div class="group">
 		<div id="txt_messageId" style="padding-left:5px; color:yellow;">${id}</div>
-		<div id="txt_message" style="padding-left:10px; padding-right:10px; width:94%; word-wrap: break-word;">${msg}</div>
+		<div id="txt_message" style="font-size:20px; padding-left:10px; padding-right:10px; width:94%; word-wrap: break-word;">${msg}</div>
 	</div>
 </script>
 <script id="tmpl_card" type="jquery-x-tmpl">
@@ -303,7 +303,10 @@ body{
 				<!-- create by script -->
 			</div>
         </div>
-		<div id="dia_chat" class="easyui-dialog" title="簡易聊天室" data-options="resizable:true, collapsible:true, closed:false" style="min-height:400px; min-width:400px; height:400px; height:400px; padding:10px">
+		<div style="position:fixed; right:385px; bottom:5px; ">
+			<input id="swich_chat" class="easyui-switchbutton" data-options="onText:'閉聊',offText:'開聊'">
+		</div>
+		<div id="dia_chat" class="easyui-dialog" title="簡易聊天室" data-options="resizable:true, collapsible:true, closable:false, closed:true" style="min-height:400px; min-width:400px; height:400px; height:400px; padding:10px">
 			<div id="mc_message" class="group" style="width:100%; height:80%; overflow:auto; background-color:gray;">
 				<!-- by script -->
 			</div>
