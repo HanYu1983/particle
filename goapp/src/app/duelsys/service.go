@@ -8,7 +8,7 @@ import (
 )
 
 //TODO 加入訊息觀察者
-func CreateChannel(w http.ResponseWriter, r *http.Request) {
+func Serve_CreateChannel(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
 	})
@@ -27,7 +27,7 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 }
 
 //TODO 擴播訊息
-func SendChannelMessage(w http.ResponseWriter, r *http.Request) {
+func Serve_SendChannelMessage(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
 	})
@@ -35,20 +35,27 @@ func SendChannelMessage(w http.ResponseWriter, r *http.Request) {
 
 	form, err := tool.ReadAjaxPost(r)
 	tool.Assert(tool.IfError(err))
-
 	tool.Assert(tool.ParameterIsNotExist(form, "Message"))
 
 	msg := form["Message"][0]
 
+	err = Notify(ctx, msg)
+	tool.Assert(tool.IfError(err))
+
+	tool.Output(w, nil, nil)
+}
+
+func Notify(ctx appengine.Context, msg string) error {
 	//TODO 取得觀察者列表
 	var names []string
-
 	// 擴播
 	for _, name := range names {
-		err = channel.SendJSON(ctx, name, msg)
-		tool.Assert(tool.IfError(err))
+		err := channel.SendJSON(ctx, name, msg)
+		if err != nil {
+			return err
+		}
 	}
-	tool.Output(w, nil, nil)
+	return nil
 }
 
 //TODO 取得比賽列表
@@ -65,9 +72,12 @@ func Serve_AddPeople(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		//TODO 發送即使訊息
 		return nil
 	})
+	//TODO 推播訊息
+	if err != nil {
+		Notify(ctx, "")
+	}
 	var _ = err
 }
 
