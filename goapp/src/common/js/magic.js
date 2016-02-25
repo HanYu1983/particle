@@ -109,7 +109,7 @@ var magic = magic || {};
 				return {
 					name:info[0],
 					text:info[2],
-					pkg:info[3],
+					"set":info[3],
 					id:info[4],
 					type:info[5],
 					atk:info[6],
