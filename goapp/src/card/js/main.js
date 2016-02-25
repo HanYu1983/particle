@@ -812,14 +812,46 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
+	Main.j("body").keyup($bind(this,this.onBodyKeyUp));
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
-	this.mc_messagePanel = this.getViewComponent().find("#mc_messagePanel");
+	this.swich_chat = Main.j("#swich_chat");
+	this.swich_chat.switchbutton({ onChange : function(checked) {
+		_g.showChatPanel(checked);
+	}});
+	this.mc_messagePanel = Main.j("#dia_chat");
+	this.mc_messagePanel.attr("isOpen",0);
 	this.mc_messagePanel.find("#txt_messageInput").textbox({ onChange : function(nv,ov) {
 		if(nv != "") {
 			_g.mc_messagePanel.find("#txt_messageInput").textbox("setValue","");
 			_g.addSingleMessage(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,nv);
 			_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "chat", msg : { id : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, msg : nv}});
 		}
+	}});
+	this.mc_messagePanel.find("#mc_quickButton > a").linkbutton({ onClick : function() {
+		var buttonself = this;
+		var msg;
+		var _g1 = buttonself.id;
+		switch(_g1) {
+		case "btn_isCounter":
+			msg = "尊貴的閣下，請問你要康這張牌嗎？";
+			break;
+		case "btn_isMyTurn":
+			msg = "到我了嗎？我的朋友。";
+			break;
+		case "btn_yes":
+			msg = "是，親愛的伙伴!";
+			break;
+		case "btn_no":
+			msg = "否。";
+			break;
+		case "btn_turnEnd":
+			msg = "趟~印度！";
+			break;
+		default:
+			msg = "";
+		}
+		_g.addSingleMessage(per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId,msg);
+		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_SocketController.sendMessage,{ type : "chat", msg : { id : per_vic_pureMVCref_tableGameModel_controller_SocketController.playerId, msg : msg}});
 	}});
 	this.mc_messagePanel.find("input").focus(function() {
 		_g.sendNotification(per_vic_pureMVCref_tableGameModel_controller_MainController.do_enable_command,{ enable : false});
@@ -939,6 +971,11 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		default:
 			if(str == mediator_UI.do_show_recevie) this.showReceive(notification.getBody().show,notification.getBody().ops);
 		}
+	}
+	,showChatPanel: function(show) {
+		if(show) this.mc_messagePanel.dialog("open"); else this.mc_messagePanel.dialog("close");
+	}
+	,onBodyKeyUp: function(e) {
 	}
 	,addSingleMessage: function(id,msg) {
 		var mc_message = this.mc_messagePanel.find("#mc_message");
