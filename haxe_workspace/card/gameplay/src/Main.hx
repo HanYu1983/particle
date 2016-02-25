@@ -449,12 +449,12 @@ class Main
 			timeout:time,
 			showType:'slide'
 			//default right bottom
-			/*,
+			,
 			style:{
-				left:'',
+				left:'45%',
 				top: '',
 				bottom:0,
-			}*/
+			}
 		});
 	}
 	

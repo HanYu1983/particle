@@ -210,7 +210,7 @@ Main.getCardImageUrlWithPackage = function(select,key) {
 };
 Main.slide = function(msg,time) {
 	if(time == null) time = 2000;
-	Main.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide"});
+	Main.j.messager.show({ title : "提示", msg : msg, timeout : time, showType : "slide", style : { left : "45%", top : "", bottom : 0}});
 };
 Main.alert = function(msg) {
 	Main.j.messager.alert("錯誤",msg);
@@ -812,13 +812,8 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
-	Main.j("body").keyup($bind(this,this.onBodyKeyUp));
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
-	this.swich_chat = Main.j("#swich_chat");
-	this.swich_chat.switchbutton({ onChange : function(checked) {
-		_g.showChatPanel(checked);
-	}});
-	this.mc_messagePanel = Main.j("#dia_chat");
+	this.mc_messagePanel = this.getViewComponent().find("#mc_messagePanel");
 	this.mc_messagePanel.attr("isOpen",0);
 	this.mc_messagePanel.find("#txt_messageInput").textbox({ onChange : function(nv,ov) {
 		if(nv != "") {
@@ -971,11 +966,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 		default:
 			if(str == mediator_UI.do_show_recevie) this.showReceive(notification.getBody().show,notification.getBody().ops);
 		}
-	}
-	,showChatPanel: function(show) {
-		if(show) this.mc_messagePanel.dialog("open"); else this.mc_messagePanel.dialog("close");
-	}
-	,onBodyKeyUp: function(e) {
 	}
 	,addSingleMessage: function(id,msg) {
 		var mc_message = this.mc_messagePanel.find("#mc_message");
