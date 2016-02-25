@@ -2,8 +2,54 @@ package duelsys
 
 import (
 	"appengine"
+	"appengine/channel"
+	"lib/tool"
 	"net/http"
 )
+
+//TODO 加入訊息觀察者
+func CreateChannel(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+
+	r.ParseForm()
+	tool.Assert(tool.ParameterIsNotExist(r.Form, "Name"))
+
+	name := r.Form["Name"][0]
+	tok, err := channel.Create(ctx, name)
+	tool.Assert(tool.IfError(err))
+
+	//TODO 加入觀察者列表
+
+	tool.Output(w, tok, nil)
+}
+
+//TODO 擴播訊息
+func SendChannelMessage(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+
+	form, err := tool.ReadAjaxPost(r)
+	tool.Assert(tool.IfError(err))
+
+	tool.Assert(tool.ParameterIsNotExist(form, "Message"))
+
+	msg := form["Message"][0]
+
+	//TODO 取得觀察者列表
+	var names []string
+
+	// 擴播
+	for _, name := range names {
+		err = channel.SendJSON(ctx, name, msg)
+		tool.Assert(tool.IfError(err))
+	}
+	tool.Output(w, nil, nil)
+}
 
 //TODO 取得比賽列表
 
@@ -19,6 +65,7 @@ func Serve_AddPeople(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
+		//TODO 發送即使訊息
 		return nil
 	})
 	var _ = err
