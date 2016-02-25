@@ -4,6 +4,9 @@ var cardinfoloader = {} || cardinfoloader;
 	
 	function load( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'sengoku':
+				sengoku.load( "../common/txt/sengokuList/", onLoadGameCallback)
+				break;
 			case 'ws':
 				ws.load( "../common/txt/wsList/", onLoadGameCallback)
 				break;
@@ -68,6 +71,8 @@ var cardinfoloader = {} || cardinfoloader;
 			return '../common/images/poker/' +id + '.jpg'
 		case 'other':
 			return '../common/images/card/' +id + '.png'
+		case 'sengoku':
+			return '//storage.googleapis.com/particle-resources/cardPackage/sengoku/'+ id+ '_web.jpg'
 		case 'ws':
 			return '//storage.googleapis.com/particle-resources/cardPackage/ws/' +id	
 		case 'sgs':
