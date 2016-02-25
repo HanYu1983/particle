@@ -109,12 +109,13 @@ var magic = magic || {};
 				return {
 					name:info[0],
 					text:info[2],
-					id:info[3],
-					type:info[4],
-					atk:info[5],
-					def:info[6],
-					manacost: parseCost(info[7]),
-					cmc:info[8]
+					"set":info[3],
+					id:info[4],
+					type:info[5],
+					atk:info[6],
+					def:info[7],
+					manacost: parseCost(info[8]),
+					cmc:info[9]
 				}
 			})
 			cb(err, list)

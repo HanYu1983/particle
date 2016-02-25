@@ -74,20 +74,14 @@ function magic(info){
 			info.push(ret[i])
 		}
 	}
-	try{
-		info[5] = parseInt(info[5])
-	}catch(e){
-		info[5] = 0
-	}
-	try{
-		info[6] = parseInt(info[6])
-	}catch(e){
-		info[6] = 0
-	}
-	try{
-		info[8] = parseInt(info[8])
-	}catch(e){
-		info[8] = 0
+	var ints = [6,7,9]
+	for(var p in ints){
+		var i = ints[p]
+		try{
+			info[i] = parseInt(info[i])
+		}catch(e){
+			info[i] = 0
+		}
 	}
 	return info
 }
