@@ -89,6 +89,14 @@ body{
 			<div game="sangoWar">{{html content}}</div>
 			<br/>
 			<div game="sangoWar">{{html counter}}</div>
+
+			<div game="sengoku">${id}</div>
+			<div game="sengoku">${cname}</div>
+			<div game="sengoku">${atype}/${atype2}</div>
+			<div game="sengoku">${ability}</div>
+			<div game="sengoku">{{html content}}</div>
+			<br/>
+			<div game="sengoku">{{html counter}}</div>
 			
 			<div game="yugioh">${id}</div>
 			<div game="yugioh">${race}</div>
@@ -179,6 +187,10 @@ body{
 			<div game="sangoWar">${cname}</div>
 			<div game="sangoWar">${atype}/${atype2}</div>
 			<div game="sangoWar">${ctype}</div>
+
+			<div game="sengoku">${cname}</div>
+			<div game="sengoku">${atype}/${atype2}</div>
+			<div game="sengoku">${ctype}</div>
 			
 			<div game="yugioh">${name}</div>
 			<div game="yugioh">level ${level}</div>
@@ -315,11 +327,11 @@ body{
 	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="width:480px; padding:10px">
 		<div class="group" style="position:relative; width:100%; text-align:center;">
 			<div class="group">
-				<a game="army" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=army'" style="width:130px;" data-options="">軍武gogogo</a>
-				<a game="gundamWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWar'" style="width:130px;" data-options="">鋼彈大戰</a>
-				<a game="gundamWarN" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWarN'" style="width:130px;" data-options="">鋼彈大戰NexA</a>
+				<a game="sengoku" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sengoku'" style="width:130px;" data-options="">戰國大戰</a>
 				<a game="sangoWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar&lang=ch'" style="width:130px;" data-options="">三國志大戰</a>
 				<a game="sangoWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar'" style="width:130px;" data-options="">三國志大戰(日)</a>
+				<a game="gundamWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWar'" style="width:130px;" data-options="">鋼彈大戰</a>
+				<a game="gundamWarN" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWarN'" style="width:130px;" data-options="">鋼彈大戰NexA</a>
 				<a game="sgs" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sgs'" style="width:130px;" data-options="">三國殺陣面對決</a>
 				<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic&lang=ch'" style="width:130px;" data-options="">魔法風雲會</a>
 				<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會(英)</a>
@@ -330,6 +342,7 @@ body{
 				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=ch'" style="width:130px;" data-options="">遊戲王</a>
 				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=en'" style="width:130px;" data-options="">遊戲王(英)</a>
 				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=jp'" style="width:130px;" data-options="">遊戲王(日)</a>
+				<a game="army" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=army'" style="width:130px;" data-options="">軍武gogogo</a>
 			</div>
 		</div>
 	</div>
@@ -349,6 +362,7 @@ body{
 	<script src='../common/js/crusade.js'></script>
 	<script src='../common/js/dragonZ.js'></script>
 	<script src='../common/js/ws.js'></script>
+	<script src='../common/js/sengoku.js'></script>
 	<script src='../common/js/sgs.js'></script>
 	<script src="../common/js/cardsearch.js"></script>	
 	<script src="../common/js/admin.js"></script>	
@@ -391,6 +405,9 @@ body{
 			<div game="battleSpirits">稀有度: ${info_13}</div>
 			*/
 	var tmplAry = {
+		sengoku:{
+			default:[]
+		},
 		ws:{
 			default:[
 				[
@@ -1084,7 +1101,8 @@ body{
 		crusade: 'Crusade',
 		dragonZ: '七龍珠TCG',
 		sgs: '三國殺陣面對決',
-		ws: '黑白雙翼'
+		ws: '黑白雙翼',
+		sengoku: '戰國大戰'
 	}
 	$('title').html(titlemapping[game] + '-組牌風雲' );
 	

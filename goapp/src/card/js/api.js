@@ -217,6 +217,8 @@ var api = api || {};
 	pkgName: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
+		return cardinfoloader.cardimageurl( pkgName, id )
+		/*
 		switch( pkgName ){
 		case 'sanguosha':
 			return '../common/images/sanguosha/' +id + '.jpg'
@@ -247,6 +249,7 @@ var api = api || {};
 		case 'magic':
 			return '//storage.googleapis.com/particle-resources/cardPackage/magic/' +encodeURIComponent( id )+ '.jpg'
 		}
+		*/
 	}
 	
 	/**
