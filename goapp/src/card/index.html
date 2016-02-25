@@ -305,23 +305,26 @@ body{
 				<!-- create by script -->
 			</div>
         </div>
-		<div id="mc_messagePanel" data-options="region:'south', title:'簡易聊天室',split:true" style="height:310px;" >
-			<div id="mc_message" class="group" style="width:100%; height:200px; overflow:auto; background-color:gray;">
+		<div id="mc_messagePanel" data-options="region:'south', title:'簡易聊天室',split:true" style="height:200px; min-height:200px; " >
+			<div id="mc_message" class="group" style="width:100%; height:60%; min-height:90px; overflow:auto; background-color:gray;">
 				<!-- by script -->
 			</div>
-			<div id="mc_quickButton" class="group" style="text-align:center; margin-top:10px;">
-				<a id="btn_isCounter" href="#" class="easyui-linkbutton"  >要康不？</a>
-				<a id="btn_isMyTurn" href="#" class="easyui-linkbutton"  >換我嗎？</a>
-				<a id="btn_yes" href="#" class="easyui-linkbutton"  >是</a>
-				<a id="btn_no" href="#" class="easyui-linkbutton"  >否</a>
-				<a id="btn_turnEnd" href="#" class="easyui-linkbutton"  >結束</a>
-			</div>
-			<div class="group" style="text-align:center; margin-top:3px; ">
-				<div class="hori">
-					<input id="txt_messageInput" class="easyui-textbox" data-options="multiline:false" style="width:200px">
-					<a id="btn_sendMessage" href="#" class="easyui-linkbutton" style="width:60px;" data-options="iconCls:'icon-ok'">送出</a>
+			<div class="group" style="position:absolute; bottom:5px;">
+				<div id="mc_quickButton" class="group" style="text-align:center; margin-top:10px;">
+					<a id="btn_isCounter" href="#" class="easyui-linkbutton"  >要康不？</a>
+					<a id="btn_isMyTurn" href="#" class="easyui-linkbutton"  >換我嗎？</a>
+					<a id="btn_yes" href="#" class="easyui-linkbutton"  >是</a>
+					<a id="btn_no" href="#" class="easyui-linkbutton"  >否</a>
+					<a id="btn_turnEnd" href="#" class="easyui-linkbutton"  >結束</a>
+				</div>
+				<div class="group" style="text-align:center; margin-top:3px; ">
+					<div class="hori">
+						<input id="txt_messageInput" class="easyui-textbox" data-options="multiline:false" style="width:200px">
+						<a id="btn_sendMessage" href="#" class="easyui-linkbutton" style="width:60px;" data-options="iconCls:'icon-ok'">送出</a>
+					</div>
 				</div>
 			</div>
+			
 		</div>
 		<div id="dia_about" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 			<div class="group" style="position:relative; width:100%; text-align:center;">
