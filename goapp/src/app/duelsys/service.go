@@ -5,6 +5,7 @@ import (
 	"appengine/channel"
 	"lib/tool"
 	"net/http"
+	"time"
 )
 
 //TODO 加入訊息觀察者
@@ -58,7 +59,60 @@ func Notify(ctx appengine.Context, msg string) error {
 	return nil
 }
 
-//TODO 取得比賽列表
+//TODO 建立比賽
+func Serve_CreateDuel(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	r.ParseForm()
+	form := r.Form
+	tool.Assert(tool.ParameterIsNotExist(form, "DuelName"))
+	tool.Assert(tool.ParameterIsNotExist(form, "OpenDate"))
+	tool.Assert(tool.ParameterIsNotExist(form, "CloseDate"))
+
+	duelName := form["DuelName"][0]
+
+	const shortForm = "2006-Jan-02"
+	openDate, err := time.Parse(shortForm, form["OpenDate"][0])
+	tool.Assert(tool.IfError(err))
+	closeDate, err := time.Parse(shortForm, form["CloseDate"][0])
+	tool.Assert(tool.IfError(err))
+
+	ctx := appengine.NewContext(r)
+	err = Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+		err := CreateDuel(dc, duelName, openDate, closeDate)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	tool.Assert(tool.IfError(err))
+	Notify(ctx, "")
+	tool.Output(w, nil, nil)
+}
+
+//TODO 取得比賽本文
+func Serve_GetDuelContext(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+	//dc, err := GetDuelContext(ctx)
+	//tool.Assert(tool.IfError(err))
+
+	dc := DuelContext{}
+	var duelName = "天下一武道會第一屆"
+	CreateDuel(&dc, duelName, time.Now(), time.Now())
+	GetDuel(&dc, &duelName)
+	han := People{
+		Name: "han",
+	}
+	AddPeople(&dc, duelName, han)
+	ctx.Infof("%#v", dc)
+	tool.Output(w, dc, nil)
+	//tool.Output(w, "test", nil)
+}
 
 // 參加比賽，同名參賽者無法加入一次以上(ErrPeopleAlreadyAdd)
 func Serve_AddPeople(w http.ResponseWriter, r *http.Request) {

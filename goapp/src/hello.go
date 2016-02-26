@@ -3,6 +3,7 @@ package hello
 import (
 	"app"
 	"app/cardInfo"
+	"app/duelsys"
 	"appengine"
 	"appengine/user"
 	"fmt"
@@ -100,6 +101,9 @@ func init() {
 	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
 	// 新舊資料庫整合（舊方法移除後移除）
 	http.HandleFunc("/temp/dbtodb2", app.Dbtodb2)
+	// 比賽風雲
+	http.HandleFunc("/fn/duelsys/duelcontext", duelsys.Serve_GetDuelContext)
+	http.HandleFunc("/fn/duelsys/createduel", duelsys.Serve_CreateDuel)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

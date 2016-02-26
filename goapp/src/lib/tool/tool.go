@@ -176,8 +176,13 @@ func Output(w http.ResponseWriter, info, err interface{}) {
 		"Info":  info,
 		"Error": err,
 	}
-	jsonstr, _ := json.Marshal(ret)
-	fmt.Fprintf(w, "%s", string(jsonstr))
+	jsonstr, err := json.Marshal(ret)
+	if err != nil {
+		fmt.Fprintf(w, "%s", err)
+	} else {
+		fmt.Fprintf(w, "%s", string(jsonstr))
+	}
+
 }
 
 func WithTransaction(ctx appengine.Context, retry int, fn func(c appengine.Context) error) error {

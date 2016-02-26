@@ -15,7 +15,7 @@ type Duel struct {
 	Peoples  []People
 	Date     [2]time.Time
 	DuelTree Tree
-	NodeInfo map[Node]NodeInfo
+	NodeInfo map[Node]NodeInfo // 使用Node當Key在json.Marchal時會遇到json: unsupported type
 }
 
 type DuelContext struct {
