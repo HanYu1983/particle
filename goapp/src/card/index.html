@@ -258,6 +258,8 @@ body{
 					<a href="#" class="easyui-linkbutton" style="width:100px;" public="false" onclick="onHtmlClick('onShaClick')">三國殺</a>
 				</div>
 				<div id="mc_btnGame" class="group" style="margin-top:5px; margin-bottom:5px;">
+					<!-- by script -->
+					<!--
 					<a href="#" game="army" id="btn_army" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadArmyClick')" style="width:100px;" data-options="toggle:true,group:'g1',selected:false">軍武gogogo</a>
 					<a href="#" game="gundamWar" id="btn_gundam" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">鋼彈大戰</a>
 					<a href="#" game="gundamWarN" id="btn_gundamN" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadGundamWarNClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">鋼彈NexA</a>
@@ -269,6 +271,7 @@ body{
 					<a href="#" game="crusade" id="btn_crusade" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadCrusadeClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">Crusade</a>
 					<a href="#" game="dragonZ" id="btn_dragonZ" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadDragonZClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">七龍珠TCG</a>
 					<a href="#" game="ws" id="btn_ws" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadWsClick')" style="width:100px;" public="false"  data-options="toggle:true,group:'g1',selected:false">黑白雙翼</a>
+						-->
 				</div>
 			</div>
 			<div class="group" style="text-align:center;">
@@ -403,6 +406,23 @@ body{
 	<script src="../common/js/admin.js"></script>	
 	<script>
 	
+	(function(){
+		var mc_btnGame = $('#mc_btnGame' );
+		_.each( admin.ary_games, function( game ){
+			var dom = $('<a game="' + game.game + '" id="btn_' + army + '" class="easyui-linkbutton" style="width:100px;" >' + game.name + '</a>');
+			dom.attr( 'data-options', "toggle:true,group:'g1',selected:false" );
+			dom.attr( 'public', game.public );
+			dom.click( function(){
+				var togame = $(this).attr( 'game' );
+				onHtmlClick('onBtnLoadGameClick', togame )
+			});
+			if( game.hot ){
+				dom.linkbutton({ iconCls: 'icon-fire2' });
+			}
+			mc_btnGame.append( dom );
+		});
+	})();
+	
 	$( document ).ready(function() {
 		if( admin.admin ){
 			admin.defaultMessageHandle( 'card_admin', $('#dia_message') );
@@ -411,7 +431,6 @@ body{
 			$('[public=false]').hide();
 		}
 		
-		admin.showHotGame($('#mc_btnGame'));
 	});
 	
 	googleTracking.init( 'UA-55273266-3' );

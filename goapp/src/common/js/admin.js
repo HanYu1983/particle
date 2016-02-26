@@ -78,18 +78,18 @@ var admin = admin || {};
 	}
 	*/
 	var ary_games = [
-		{ game:'army', name:'軍武gogogo', hot:false },
-		{ game:'gundamWar', name:'鋼彈大戰', hot:false },
-		{ game:'gundamWarN', name:'鋼彈大戰NexA', hot:true },
-		{ game:'sengoku', name:'戰國大戰', hot:false },
-		{ game:'sangoWar', name:'三國志大戰', hot:true },
-		{ game:'sgs', name:'三國殺陣面對決', hot:true },
-		{ game:'magic', name:'魔法風雲會', hot:false },
-		{ game:'battleSpirits', name:'戰魂', hot:true },
-		{ game:'crusade', name:'Crusade', hot:false },
-		{ game:'ws', name:'黑白雙翼', hot:false },
-		{ game:'dragonZ', name:'七龍珠TCG', hot:false },
-		{ game:'yugioh', name:'遊戲王', hot:false }
+		{ game:'army', name:'軍武gogogo', hot:false, 'public':true },
+		{ game:'gundamWar', name:'鋼彈大戰', hot:false, 'public':false },
+		{ game:'gundamWarN', name:'鋼彈NexA', hot:true, 'public':false },
+		{ game:'sengoku', name:'戰國大戰', hot:false, 'public':false },
+		{ game:'sangoWar', name:'三國志大戰', hot:true, 'public':false },
+		{ game:'sgs', name:'陣面對決', hot:true, 'public':false },
+		{ game:'magic', name:'魔法風雲會', hot:false, 'public':false },
+		{ game:'battleSpirits', name:'戰魂', hot:true, 'public':false },
+		{ game:'crusade', name:'Crusade', hot:false, 'public':false },
+		{ game:'ws', name:'黑白雙翼', hot:false, 'public':false },
+		{ game:'dragonZ', name:'七龍珠TCG', hot:false, 'public':false },
+		{ game:'yugioh', name:'遊戲王', hot:false, 'public':true }
 	];
 	
 	function addVerToTitle(){
