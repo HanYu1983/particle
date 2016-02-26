@@ -150,9 +150,12 @@ class Main
 		});
 	}
 	
-	function onHtmlClick( type, ?params ) {
+	function onHtmlClick( type:String, ?params ) {
 		
 		switch( type ) {
+			case 'onBtnLoadGameClick':
+				currentSelect = params;
+				chooseCardSuit( params );
 			case 'onBtnLoadClick':
 				Facade.getInstance().sendNotification( on_load_click );
 			case 'onBtnRecordClick':
@@ -203,6 +206,7 @@ class Main
 						closeLoading();
 					}));
 				});
+				/*
 			case 'onBtnLoadMagicClick':
 				currentSelect = 'magic';
 				chooseCardSuit( 'magic' );
@@ -239,6 +243,7 @@ class Main
 			case 'onBtnLoadSgsClick':
 				currentSelect = 'sgs';
 				chooseCardSuit( 'sgs' );
+				*/
 			case 'onBtnCreateDeck':
 				Facade.getInstance().sendNotification( on_createDeck_click );
 			case 'onBtnTableDeck':

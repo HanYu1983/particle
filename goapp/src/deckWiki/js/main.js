@@ -1240,7 +1240,7 @@ var view_ViewController = function(mediatorName,viewComponent) {
 	this.input_searchDescribe.textbox({ onChange : function(nv2,ov2) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
-	this.slt_game.combobox({ onChange : function(nv3,ov3) {
+	this.slt_game.combobox({ valueField : "game", textField : "name", data : [{ game : "", name : "不檢索"}].concat(admin.ary_games), onChange : function(nv3,ov3) {
 		_g1.sendNotification(view_ViewController.on_input_search_change,{ value : _g1.getSearchConditions()});
 	}});
 	this.slt_type.combobox({ onChange : function(nv4,ov4) {
@@ -1423,6 +1423,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 	}
 	,addDeck: function(deckModel) {
 		var _g = this;
+		deckModel.games = admin.ary_games;
 		var dom = this.j("#tmpl_deck").tmpl(deckModel);
 		this.mc_deckContainer.append(dom);
 		dom.attr("type",deckModel.type);

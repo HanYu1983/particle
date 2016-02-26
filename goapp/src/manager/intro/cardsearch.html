@@ -13,21 +13,18 @@
 </div>
 <div class="group" style="text-align:center; margin-top:60px;">
 	<div id="mc_game" class="group">
-		<a game="army" href="../card/manager_deck.html?game=army" class="easyui-linkbutton" style="width:130px;" target="_blank">軍武gogogo</a>
-		<a game="gundamWar" href="../card/manager_deck.html?game=gundamWar" class="easyui-linkbutton" style="width:130px;" target="_blank">鋼彈大戰</a>
-		<a game="gundamWarN" href="../card/manager_deck.html?game=gundamWarN" class="easyui-linkbutton" style="width:130px;" target="_blank">鋼彈大戰NexA</a>
-		<a game="sengoku" href="../card/manager_deck.html?game=sengoku" class="easyui-linkbutton" style="width:130px;" target="_blank">戰國大戰(日)</a>
-		<a game="sangoWar" href="../card/manager_deck.html?game=sangoWar&lang=ch" class="easyui-linkbutton" style="width:130px;" target="_blank">三國志大戰</a>
-		<a game="sangoWar" href="../card/manager_deck.html?game=sangoWar&lang=jp" class="easyui-linkbutton" style="width:130px;" target="_blank">三國志大戰(日)</a>
-		<a game="sgs" href="../card/manager_deck.html?game=sgs" class="easyui-linkbutton" style="width:130px;" target="_blank">三國殺陣面對決</a>
-		<a game="magic" href="../card/manager_deck.html?game=magic&lang=ch" class="easyui-linkbutton" style="width:130px;" target="_blank">魔法風雲會</a>
-		<a game="magic" href="../card/manager_deck.html?game=magic" class="easyui-linkbutton" style="width:130px;" target="_blank">魔法風雲會(英)</a>
-		<a game="battleSpirits" href="../card/manager_deck.html?game=battleSpirits" class="easyui-linkbutton" style="width:130px;" target="_blank">戰魂</a>
-		<a game="crusade" href="../card/manager_deck.html?game=crusade" class="easyui-linkbutton" style="width:130px;" target="_blank">Crusade</a>
-		<a game="ws" href="../card/manager_deck.html?game=ws" class="easyui-linkbutton" style="width:130px;" target="_blank">黑白雙翼</a>
-		<a game="dragonZ" href="../card/manager_deck.html?game=dragonZ" class="easyui-linkbutton" style="width:130px;" target="_blank">七龍珠TCG</a>
-		<a game="yugioh" href="../card/manager_deck.html?game=yugioh&lang=ch" class="easyui-linkbutton" style="width:130px;" target="_blank">遊戲王</a>
-		<a game="yugioh" href="../card/manager_deck.html?game=yugioh&lang=en" class="easyui-linkbutton" style="width:130px;" target="_blank">遊戲王(英)</a>
-		<a game="yugioh" href="../card/manager_deck.html?game=yugioh&lang=jp" class="easyui-linkbutton" style="width:130px;" target="_blank">遊戲王(日)</a>
+		<!-- by script -->
 	</div>
 </div>
+<script>
+(function(){
+	var mc_game = $('#mc_game' );
+	_.each( admin.ary_games, function( game ){
+		var dom = $('<a game="' + game.game + '" href="../card/manager_deck.html?game=' + game.game + '&lang=ch" class="easyui-linkbutton" style="width:130px;" target="_blank">' + game.name + '</a>');
+		if( game.hot ){
+			dom.linkbutton({ iconCls: 'icon-fire2' });
+		}
+		mc_game.append( dom );
+	});
+})();
+</script>

@@ -236,6 +236,10 @@ Main.prototype = {
 	onHtmlClick: function(type,params) {
 		var _g = this;
 		switch(type) {
+		case "onBtnLoadGameClick":
+			Main.currentSelect = params;
+			this.chooseCardSuit(params);
+			break;
 		case "onBtnLoadClick":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_load_click);
 			break;
@@ -282,54 +286,6 @@ Main.prototype = {
 					Main.closeLoading();
 				}));
 			});
-			break;
-		case "onBtnLoadMagicClick":
-			Main.currentSelect = "magic";
-			this.chooseCardSuit("magic");
-			break;
-		case "onBtnLoadFighterClick":
-			Main.currentSelect = "fighter";
-			this.chooseCardSuit("fighter");
-			break;
-		case "onBtnLoadArmyClick":
-			Main.currentSelect = "army";
-			this.chooseCardSuit("army");
-			break;
-		case "onBtnLoadGundamWarClick":
-			Main.currentSelect = "gundamWar";
-			this.chooseCardSuit("gundamWar");
-			break;
-		case "onBtnLoadGundamWarNClick":
-			Main.currentSelect = "gundamWarN";
-			this.chooseCardSuit("gundamWarN");
-			break;
-		case "onBtnLoadSangoWarClick":
-			Main.currentSelect = "sangoWar";
-			this.chooseCardSuit("sangoWar");
-			break;
-		case "onBtnLoadYugiohClick":
-			Main.currentSelect = "yugioh";
-			this.chooseCardSuit("yugioh");
-			break;
-		case "onBtnLoadBattleSpiritsClick":
-			Main.currentSelect = "battleSpirits";
-			this.chooseCardSuit("battleSpirits");
-			break;
-		case "onBtnLoadCrusadeClick":
-			Main.currentSelect = "crusade";
-			this.chooseCardSuit("crusade");
-			break;
-		case "onBtnLoadDragonZClick":
-			Main.currentSelect = "dragonZ";
-			this.chooseCardSuit("dragonZ");
-			break;
-		case "onBtnLoadWsClick":
-			Main.currentSelect = "ws";
-			this.chooseCardSuit("ws");
-			break;
-		case "onBtnLoadSgsClick":
-			Main.currentSelect = "sgs";
-			this.chooseCardSuit("sgs");
 			break;
 		case "onBtnCreateDeck":
 			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(Main.on_createDeck_click);
