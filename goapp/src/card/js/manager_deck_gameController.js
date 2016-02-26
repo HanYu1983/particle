@@ -62,6 +62,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'sengoku':
+				return sengokuQuerystring2fns( str );
 			case 'ws':
 				return wsQuerystring2fns( str )
 			case 'sgs':
@@ -743,6 +745,105 @@ var gameController = {};
 			}
 			return false
 		}
+	}
+	
+	/*
+	id:info[1],
+					cname:info[2],
+					set:info[4],
+					color:info[5],
+					atype:info[8],
+					atype2:info[9],
+					cost:info[10],
+					power:info[12],
+					city:info[13],
+					ability:info[14],
+					rarity:info[15],
+					content:info[16],
+					counter:info[17]
+					*/
+	// 戰國大戰尋找方法實做
+	function sengokuQuerystring2fns( qstr ){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+			case 'cid':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
+			case "id":
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break
+			case "acity":
+				fns.push( cardsearch.attrEq( "acity", parseInt(v) ) )
+				break
+			case "atype":
+				fns.push( cardsearch.attrEq( "atype2", v ) )
+				break
+			case "card_name":
+				fns.push( cardsearch.attrEq( "cname", v ) )
+				break
+			case "costAll_2":
+				fns.push( sangoCostLe( "costA", parseInt(v) ))
+				break
+			case "costAll_1":
+				fns.push( sangoCostGe( "costA", parseInt(v) ))
+				break
+			case "cost_2":
+				fns.push( sangoCostLe( "cost", parseInt(v) ))
+				break
+			case "cost_1":
+				fns.push( sangoCostGe( "cost", parseInt(v) ))
+				break
+			case "ctype":
+				if( v == '武将' ){
+					fns.push( 
+						cardsearch.not( 
+							cardsearch.or([
+								cardsearch.attrEq( "atype", '兵隊' ),
+								cardsearch.attrEq( "atype", '計略' ),
+								cardsearch.attrEq( "atype", '列伝' ),
+								cardsearch.attrEq( "atype", '奥義' )
+							])
+						))
+				} else if ( v == 'キャンペーン' ){
+					fns.push( 
+						cardsearch.and([
+							cardsearch.attrEq( "atype", "-" ),
+							cardsearch.attrEq( "atype2", "-" )
+						])
+					)
+				} else {
+					fns.push( cardsearch.attrEq( "atype", v ) )
+				}
+				break
+			case "ntype":
+				fns.push( cardsearch.attrEq( "color", v ) )
+				break
+			case "power_2":
+				fns.push( cardsearch.attrLe( "power", parseInt(v) ))
+				break
+			case "power_1":
+				fns.push( cardsearch.attrGe( "power", parseInt(v) ))
+				break
+			case "rule":
+				fns.push( cardsearch.attrEq( "content", v ))
+				break
+			case "symbol":
+				fns.push( cardsearch.attrEq( "symbol", v ) )
+				break
+			default:
+				if( v == "on" ){
+					fns.push( cardsearch.attrEq( "ability", k ))
+				}
+			}
+		}
+		return fns
 	}
 	
 	// 三國尋找方法實做

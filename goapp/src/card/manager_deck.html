@@ -91,7 +91,9 @@ body{
 			<div game="sangoWar">{{html counter}}</div>
 
 			<div game="sengoku">${id}</div>
+			<div game="sengoku">${set}</div>
 			<div game="sengoku">${cname}</div>
+			<div game="sengoku">${cost}</div>
 			<div game="sengoku">${atype}/${atype2}</div>
 			<div game="sengoku">${ability}</div>
 			<div game="sengoku">{{html content}}</div>
@@ -386,9 +388,48 @@ body{
 			<div game="battleSpirits">${info_42}</div>
 			<div game="battleSpirits">稀有度: ${info_13}</div>
 			*/
+			
+			
+			
+
+
 	var tmplAry = {
 		sengoku:{
-			default:[]
+			default:[
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:3, val:{name:'ntype', items:['蒼','紅','翠']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:3,val:{name:'ctype', items:['武将','計略']}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5']}},
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:1,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:1, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[	{type:'label', val:'武力以上'},
+					{type:'select', span:3,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}},
+					{type:'label',val:'武力以下'},
+					{type:'select', span:3, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}}],
+				[	{type:'label', val:'攻城'},
+					{type:'select', span:1,val:{name:'acity', items:['1','2']}},
+					{type:'label',val:'兵種'},
+					{type:'select', span:1, val:{name:'atype', items:['計略/メイン','計略/戦闘','騎馬隊','槍足軽','鉄砲隊','足軽','竜騎馬','砲兵']}},
+					{type:'label', val:'特徵'},
+					{type:'select',span:3,val:{name:'symbol', items:['軍師','主君','女性','徳川四天王','美濃三人衆','北条五色備','毛利三兄弟','賤ヶ岳七本槍']}}
+				],
+				[	{type:'label', val:'特殊規則'},
+					{type:'checkbox', span:7,val:{name:'', items:['防柵','貫通','奇襲','制圧','焙烙','長槍','盾槍','舞踊','忍','三葵','一領','罠','日輪','置計']}}],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:7,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:7,val:{name:'rule'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:7,val:{name:'id'}}
+				]
+			]
 		},
 		ws:{
 			default:[
