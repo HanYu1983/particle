@@ -391,6 +391,7 @@ class ViewController extends Mediator
 	}
 	
 	function addDeck( deckModel:Dynamic ) {
+		deckModel.games = untyped __js__( 'admin.ary_games' );
 		var dom:Dynamic = j("#tmpl_deck" ).tmpl( deckModel );
 		mc_deckContainer.append( dom );
 		dom.attr( 'type', deckModel.type );

@@ -85,17 +85,9 @@ body{
 			<a id="btn_public" href="#" title="要用新增套牌的方式，對其他人而言，才會是全新的未讀狀態哦!" class="easyui-linkbutton easyui-tooltip" data-options="toggle:true">分享</a>
 			<a id="btn_detail" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit'"></a>
 			<select class="easyui-combobox" name="dept" style="width:120px;">
-				<option value="army">軍武gogogo</option>
-				<option value="crusade">Crusade</option>
-				<option value="yugioh">遊戲王</option>
-				<option value="sangoWar">三國志大戰</option>
-				<option value="sgs">三國殺陣面對決</option>
-				<option value="gundamWar">鋼彈大戰</option>
-				<option value="gundamWarN">鋼彈大戰NexA</option>
-				<option value="magic">魔法風雲會</option>
-				<option value="battleSpirits">戰魂</option>
-				<option value="dragonZ">七龍珠TCG</option>
-				<option value="ws">黑白雙翼</option>
+				{{each games}}
+				<option value=${game}>${name}</option>
+				{{/each}}
 			</select>
 			<div class="hori"><input id="txt_name" class="easyui-textbox" style="width:100px"></div>
 			<div class="hori"><input id="txt_cards" class="easyui-textbox" style="width:150px"></div>
