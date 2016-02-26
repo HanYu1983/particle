@@ -77,6 +77,11 @@ var admin = admin || {};
 		});
 	}
 	*/
+	
+	/*
+		hot: 轟轟轟
+		public: 設定要不要在正式網址中出現
+	*/
 	var ary_games = [
 		{ game:'army', name:'軍武gogogo', hot:false, 'public':true },
 		{ game:'gundamWar', name:'鋼彈大戰', hot:false, 'public':false },
