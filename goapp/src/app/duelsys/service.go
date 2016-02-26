@@ -98,20 +98,9 @@ func Serve_GetDuelContext(w http.ResponseWriter, r *http.Request) {
 		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
-	//dc, err := GetDuelContext(ctx)
-	//tool.Assert(tool.IfError(err))
-
-	dc := DuelContext{}
-	var duelName = "天下一武道會第一屆"
-	CreateDuel(&dc, duelName, time.Now(), time.Now())
-	GetDuel(&dc, &duelName)
-	han := People{
-		Name: "han",
-	}
-	AddPeople(&dc, duelName, han)
-	ctx.Infof("%#v", dc)
+	dc, err := GetDuelContext(ctx)
+	tool.Assert(tool.IfError(err))
 	tool.Output(w, dc, nil)
-	//tool.Output(w, "test", nil)
 }
 
 // 參加比賽，同名參賽者無法加入一次以上(ErrPeopleAlreadyAdd)
