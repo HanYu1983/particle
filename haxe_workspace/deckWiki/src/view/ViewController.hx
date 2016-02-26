@@ -137,6 +137,9 @@ class ViewController extends Mediator
 		});
 		
 		slt_game.combobox( {
+			valueField: 'game',
+			textField: 'name',
+			data: [{game:'', name:'不檢索'}].concat( untyped __js__( 'admin.ary_games' )),
 			onChange:function( nv, ov ) {
 				sendNotification( on_input_search_change, { value:getSearchConditions() } );
 			}
