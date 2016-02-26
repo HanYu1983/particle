@@ -326,23 +326,8 @@ body{
 	</div>
 	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="width:480px; padding:10px">
 		<div class="group" style="position:relative; width:100%; text-align:center;">
-			<div class="group">
-				<a game="sengoku" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sengoku'" style="width:130px;" data-options="">戰國大戰(日)</a>
-				<a game="sangoWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar&lang=ch'" style="width:130px;" data-options="">三國志大戰</a>
-				<a game="sangoWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sangoWar'" style="width:130px;" data-options="">三國志大戰(日)</a>
-				<a game="gundamWar" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWar'" style="width:130px;" data-options="">鋼彈大戰</a>
-				<a game="gundamWarN" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=gundamWarN'" style="width:130px;" data-options="">鋼彈大戰NexA</a>
-				<a game="sgs" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=sgs'" style="width:130px;" data-options="">三國殺陣面對決</a>
-				<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic&lang=ch'" style="width:130px;" data-options="">魔法風雲會</a>
-				<a game="magic" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=magic'" style="width:130px;" data-options="">魔法風雲會(英)</a>
-				<a game="battleSpirits" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=battleSpirits'" style="width:130px;" data-options="">戰魂</a>
-				<a game="crusade" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=crusade'" style="width:130px;" data-options="">Crusade</a>
-				<a game="ws" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=ws'" style="width:130px;" data-options="">黑白雙翼</a>
-				<a game="dragonZ" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=dragonZ'" style="width:130px;" data-options="">七龍珠TCG</a>
-				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=ch'" style="width:130px;" data-options="">遊戲王</a>
-				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=en'" style="width:130px;" data-options="">遊戲王(英)</a>
-				<a game="yugioh" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=yugioh&lang=jp'" style="width:130px;" data-options="">遊戲王(日)</a>
-				<a game="army" href="#" class="easyui-linkbutton" onclick="window.location.href='manager_deck.html?game=army'" style="width:130px;" data-options="">軍武gogogo</a>
+			<div id="mc_game" class="group">
+				<!-- by script -->
 			</div>
 		</div>
 	</div>
@@ -373,25 +358,22 @@ body{
 	<script src="js/manager_deck_gameController.js"></script>
 	<script>
 	googleTracking.init( 'UA-55273266-3' );
-	admin.showHotGame($('#dia_others'));
-		  /*
-		  <!--
-					<option value="ZDK">ZDK</option>
-					<option value="CFX">CFX</option>
-					<option value="LW">LW</option>
-					<option value="CSTD">CSTD</option>
-					<option value="FD">FD</option>
-					<option value="PS">PS</option>
-					<option value="NE">NE</option>
-					<option value="P3K">P3K</option>
-					<option value="WL">WL</option>
-					<option value="HL">HL</option>
-					<option value="IA">IA</option>
-					<option value="RV">RV</option>
-					<option value="AQ">AQ</option>
-					<option value="BE">BE</option>
-					-->
-		*/
+	
+	(function(){
+		var mc_game = $('#mc_game' );
+		_.each( admin.ary_games, function( game ){
+			var dom = $('<a game="' + game.game + '" href="#" class="easyui-linkbutton" style="width:130px;">' + game.name + '</a>');
+			dom.click( function(){
+				var togame = $(this).attr( 'game' );
+				window.open( 'manager_deck.html?game=' + togame );
+			});
+			if( game.hot ){
+				dom.linkbutton({ iconCls: 'icon-fire2' });
+			}
+			mc_game.append( dom );
+		});
+	})();
+	
 		
 		/*
 			<div game="battleSpirits">系統: ${info_25}</div>
