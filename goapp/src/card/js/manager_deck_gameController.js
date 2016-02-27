@@ -780,7 +780,7 @@ var gameController = {};
 				fns.push( cardsearch.attrEq( "id", v ) )
 				break
 			case "acity":
-				fns.push( cardsearch.attrEq( "acity", parseInt(v) ) )
+				fns.push( cardsearch.attrEq( "city", v ) )
 				break
 			case "atype":
 				fns.push( cardsearch.attrEq( "atype2", v ) )

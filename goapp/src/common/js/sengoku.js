@@ -2,6 +2,20 @@ var sengoku = sengoku || {};
 
 (function( module ){
 	
+	function parseCost( text ){
+		var map2 = "①②③④⑤"
+		var ret = [0, 0]
+		for( var k in text ){
+			var c = text[k]
+			if( map2.indexOf( c ) != -1 ){
+				ret[1] = map2.indexOf( c ) + 1
+			} else {
+				ret[0] ++
+			}
+		}
+		return ret
+	}
+	
 	function load( path, cb ){
 		var fns = 
 			_.chain(_.range(1, 2))
@@ -54,7 +68,7 @@ var sengoku = sengoku || {};
 					color:info[6],
 					atype:info[8],
 					atype2:info[9],
-					cost:info[10],
+					cost:parseCost( info[10] ),
 					ability:info[11],
 					power:info[12],
 					city:info[13],
