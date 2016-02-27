@@ -1031,6 +1031,13 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				if(detail != null) {
 					str = "";
 					switch(game) {
+					case "sengoku":
+						str += detail.cname + " " + detail.atype;
+						str += "<br/>";
+						str += detail.content;
+						str += "<br/>";
+						str += detail.counter;
+						break;
 					case "ws":
 						str += detail.id;
 						str += "<br/>";
