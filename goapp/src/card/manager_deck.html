@@ -367,7 +367,7 @@ body{
 			var dom = $('<a game="' + game.game + '" href="#" class="easyui-linkbutton" style="width:130px;">' + game.name + '</a>');
 			dom.click( function(){
 				var togame = $(this).attr( 'game' );
-				window.open( 'manager_deck.html?game=' + togame );
+				window.open( 'manager_deck.html?game=' + togame + '&lang=ch' );
 			});
 			if( game.hot ){
 				dom.linkbutton({ iconCls: 'icon-fire2' });
