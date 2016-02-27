@@ -15,7 +15,7 @@ type Duel struct {
 	Peoples  []People
 	Date     [2]time.Time
 	DuelTree Tree
-	NodeInfo map[Node]NodeInfo
+	NodeInfo map[string]NodeInfo //注意，要json化的話key一定要是string
 }
 
 type DuelContext struct {
@@ -55,7 +55,7 @@ func CreateDuel(dc *DuelContext, name string, openDate time.Time, closeDate time
 	}
 	duel.Date[0] = openDate
 	duel.Date[1] = closeDate
-	duel.NodeInfo = map[Node]NodeInfo{}
+	duel.NodeInfo = map[string]NodeInfo{}
 	dc.Duels = append(dc.Duels, duel)
 	return nil
 }
@@ -84,7 +84,7 @@ func StartDuel(dc *DuelContext, duelname string) error {
 	for idx, _ := range duel.Peoples {
 		position := duel.DuelTree.Nodes[idx]
 		duel.Peoples[idx].Position = position
-		duel.NodeInfo[position] = NodeInfo{Name: duel.Peoples[idx].Name, Winner: map[string]bool{}}
+		duel.NodeInfo[position.ToString()] = NodeInfo{Name: duel.Peoples[idx].Name, Winner: map[string]bool{}}
 	}
 	return nil
 }
@@ -94,7 +94,7 @@ func AssignWinner(dc *DuelContext, duelname string, position Node, target string
 	if duel == nil {
 		return ErrDuelNotFound
 	}
-	duel.NodeInfo[position].Winner[target] = win
+	duel.NodeInfo[position.ToString()].Winner[target] = win
 	return nil
 }
 
@@ -110,8 +110,8 @@ func CheckWinnerMatch(dc *DuelContext, duelname string, position Node, target No
 	if duel == nil {
 		return 0, ErrDuelNotFound
 	}
-	win1, has1 := duel.NodeInfo[position].Winner[duel.NodeInfo[target].Name]
-	win2, has2 := duel.NodeInfo[target].Winner[duel.NodeInfo[position].Name]
+	win1, has1 := duel.NodeInfo[position.ToString()].Winner[duel.NodeInfo[target.ToString()].Name]
+	win2, has2 := duel.NodeInfo[target.ToString()].Winner[duel.NodeInfo[position.ToString()].Name]
 	if has1 == false && has2 == false {
 		return BothDidntAssign, nil
 	}
@@ -131,7 +131,7 @@ func DuelTargetName(dc *DuelContext, duelname string, position Node) (string, er
 	}
 	nodes := NextNodes(duel.DuelTree, position)
 	for _, node := range nodes {
-		if duel.NodeInfo[node].Name == "" {
+		if duel.NodeInfo[node.ToString()].Name == "" {
 			return "", ErrTargetNotAlready
 		}
 	}
@@ -144,7 +144,7 @@ func DuelTargetName(dc *DuelContext, duelname string, position Node) (string, er
 			return "", err
 		}
 		if check != WinnerIsMatch {
-			return duel.NodeInfo[node].Name, nil
+			return duel.NodeInfo[node.ToString()].Name, nil
 		}
 	}
 	return "", ErrNoTarget
@@ -185,9 +185,9 @@ func PeopleForward(dc *DuelContext, duelname string, winnerName string) error {
 	}
 
 	winnerInDuel.Position = fwdNode
-	info := duel.NodeInfo[fwdNode]
+	info := duel.NodeInfo[fwdNode.ToString()]
 	info.Name = winnerName
-	duel.NodeInfo[fwdNode] = info
+	duel.NodeInfo[fwdNode.ToString()] = info
 
 	return nil
 }

@@ -11,6 +11,10 @@ var (
 	NullNode = Node(-10000)
 )
 
+func (node Node) ToString() string {
+	return string(node)
+}
+
 func AppendLayer(layer []Node, curridx int) ([]Node, []LinkTo, int) {
 	var newLayer []Node
 	var links []LinkTo
