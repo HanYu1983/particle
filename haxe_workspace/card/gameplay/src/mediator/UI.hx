@@ -2,6 +2,7 @@ package mediator;
 
 import haxe.Json;
 import haxe.Timer;
+import js.Browser;
 import js.html.Image;
 import js.html.KeyboardEvent;
 import js.html.rtc.IdentityAssertion;
@@ -35,7 +36,9 @@ class UI extends Mediator
 	
 	//chat
 	var mc_messagePanel:Dynamic;
-	//var swich_chat:Dynamic;
+	
+	var isShowNotify = false;
+	var browserNotify = null;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -44,14 +47,7 @@ class UI extends Mediator
 		getViewComponent().layout();
 		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
-		/*
-		swich_chat = Main.j( '#swich_chat' );
-		swich_chat.switchbutton( {
-			onChange:function( checked ){
-				showChatPanel( checked );
-			}
-		});
-		*/
+		
 		mc_messagePanel = getViewComponent().find( '#mc_messagePanel' );
 		mc_messagePanel.attr( 'isOpen', 0 );
 		mc_messagePanel.find( '#txt_messageInput' ).textbox( {
@@ -133,6 +129,19 @@ class UI extends Mediator
 				Main.changePlayer( nv );
 			}
 		});
+		
+		Main.j( Browser.window ).blur( function() {
+			isShowNotify = true;
+		});
+		
+		Main.j( Browser.window ).focus( function() {
+			isShowNotify = false;
+			
+			if ( browserNotify != null ) {
+				browserNotify.close();
+				browserNotify = null;
+			}
+		});
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -165,6 +174,9 @@ class UI extends Mediator
 						var msg = notification.getBody().msg;
 						addSingleMessage( id, msg );
 						Main.slide( id + '說:' + msg );
+				}
+				if ( isShowNotify && ( browserNotify == null ) ) {
+					browserNotify = untyped __js__('google.notify')('你的對戰卡友動作囉! 趕快回去卡牌風雲應戰吧', '../common/images/logo.jpg');
 				}
 			case SocketController.on_socket_success:
 				onSocketSuccess();

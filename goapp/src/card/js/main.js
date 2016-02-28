@@ -765,6 +765,8 @@ org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe
 	,__class__: org_puremvc_haxe_patterns_mediator_Mediator
 });
 var mediator_UI = function(mediatorName,viewComponent) {
+	this.browserNotify = null;
+	this.isShowNotify = false;
 	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
@@ -839,6 +841,16 @@ var mediator_UI = function(mediatorName,viewComponent) {
 	Main.j("#txt_id").textbox({ editable : false, onChange : function(nv2,od) {
 		Main.changePlayer(nv2);
 	}});
+	Main.j(window).blur(function() {
+		_g.isShowNotify = true;
+	});
+	Main.j(window).focus(function() {
+		_g.isShowNotify = false;
+		if(_g.browserNotify != null) {
+			_g.browserNotify.close();
+			_g.browserNotify = null;
+		}
+	});
 };
 mediator_UI.__name__ = true;
 mediator_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -861,6 +873,7 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 				Main.slide(id + "說:" + msg);
 				break;
 			}
+			if(this.isShowNotify && this.browserNotify == null) this.browserNotify = google.notify("你的對戰卡友動作囉! 趕快回去卡牌風雲應戰吧","../common/images/logo.jpg");
 			break;
 		case "on_socket_success":
 			this.onSocketSuccess();
