@@ -189,13 +189,25 @@ func Serve_GetDuelContext(w http.ResponseWriter, r *http.Request) {
 
 // 參加比賽，同名參賽者無法加入一次以上(ErrPeopleAlreadyAdd)
 func Serve_AddPeople(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	r.ParseForm()
+	form := r.Form
+
+	AssertParametersNotMatch(map[string]string{
+		"Name": "string",
+	}, form)
+
+	name := form["Name"][0]
+
 	ctx := appengine.NewContext(r)
 	err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
 		//TODO 判斷Duel的期間是不是報名期間
 
 		// 加入參賽者
 		var p People
-		err := AddPeople(dc, "xxx", p)
+		err := AddPeople(dc, name, p)
 		if err != nil {
 			return err
 		}
@@ -205,12 +217,15 @@ func Serve_AddPeople(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Notify(ctx, "")
 	}
-	var _ = err
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, nil, nil)
 }
 
 //TODO 取得對戰玩家的名字配對列表
 func Serve_DuelTargetNamePairList(w http.ResponseWriter, r *http.Request) {
-
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
 }
 
 //TODO 指定比賽結果
