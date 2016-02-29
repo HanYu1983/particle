@@ -104,6 +104,7 @@ func init() {
 	// 比賽風雲
 	http.HandleFunc("/fn/duelsys/duelcontext", duelsys.Serve_GetDuelContext)
 	http.HandleFunc("/fn/duelsys/createduel", duelsys.Serve_CreateDuel)
+	http.HandleFunc("/fn/duelsys/deleteduel", duelsys.Serve_DeleteDuel)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

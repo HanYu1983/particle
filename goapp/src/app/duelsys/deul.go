@@ -16,6 +16,7 @@ type Duel struct {
 	Date     [2]time.Time
 	DuelTree Tree
 	NodeInfo map[string]NodeInfo //注意，要json化的話key一定要是string
+	Deleted  bool
 }
 
 type DuelContext struct {
@@ -57,6 +58,15 @@ func CreateDuel(dc *DuelContext, name string, openDate time.Time, closeDate time
 	duel.Date[1] = closeDate
 	duel.NodeInfo = map[string]NodeInfo{}
 	dc.Duels = append(dc.Duels, duel)
+	return nil
+}
+
+func DeleteDuel(dc *DuelContext, duelname string) error {
+	duel := GetDuel(dc, &duelname)
+	if duel == nil {
+		return ErrDuelNotFound
+	}
+	duel.Deleted = true
 	return nil
 }
 
