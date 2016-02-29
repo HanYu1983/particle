@@ -21,7 +21,7 @@ func DuelContextKey(ctx appengine.Context) *datastore.Key {
 
 // 因為要存入的DuelContext有datastore不支援的巢狀slice（應該是循環引用問題），所以要先序列化成平面字串，所以創造這個Wrapper
 type TempWrapper struct {
-	Jsonstr string
+	Jsonstr []byte
 }
 
 func GetDuelContext(ctx appengine.Context) (DuelContext, error) {
@@ -35,8 +35,11 @@ func GetDuelContext(ctx appengine.Context) (DuelContext, error) {
 		return DuelContext{}, err
 	}
 	// 再解回DuelContext
+	if len(wrapper.Jsonstr) == 0 {
+		return DuelContext{}, err
+	}
 	var dc DuelContext
-	err = json.Unmarshal([]byte(wrapper.Jsonstr), &dc)
+	err = json.Unmarshal(wrapper.Jsonstr, &dc)
 	return dc, err
 }
 
@@ -59,7 +62,7 @@ func Swap(ctx appengine.Context, fn ModifyFn) error {
 
 		// 包裝
 		wrapper := TempWrapper{
-			Jsonstr: string(code),
+			Jsonstr: code,
 		}
 
 		key := DuelContextKey(ctx)
