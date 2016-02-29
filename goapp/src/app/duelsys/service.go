@@ -229,5 +229,57 @@ func Serve_DuelTargetNamePairList(w http.ResponseWriter, r *http.Request) {
 }
 
 //TODO 指定比賽結果
+func Serve_AsignWinner(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	r.ParseForm()
+	form := r.Form
+
+	AssertParametersNotMatch(map[string]string{
+		"Name":   "string",
+		"Target": "string",
+		"Win":    "bool",
+	}, form)
+
+	//name := form["Name"][0]
+
+	ctx := appengine.NewContext(r)
+	err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+
+		return nil
+	})
+	//TODO 推播訊息
+	if err != nil {
+		Notify(ctx, "")
+	}
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, nil, nil)
+}
 
 //TODO 取得比賽結果的狀態
+func Serve_WinState(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	r.ParseForm()
+	form := r.Form
+
+	AssertParametersNotMatch(map[string]string{
+		"Name": "string",
+	}, form)
+
+	//name := form["Name"][0]
+
+	ctx := appengine.NewContext(r)
+	err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+
+		return nil
+	})
+	//TODO 推播訊息
+	if err != nil {
+		Notify(ctx, "")
+	}
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, nil, nil)
+}
