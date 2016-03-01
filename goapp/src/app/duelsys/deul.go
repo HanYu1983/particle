@@ -170,7 +170,7 @@ func GetPeople(dc *DuelContext, duelname string, name string) (People, error) {
 			return people, nil
 		}
 	}
-	return EmptyPeople, nil
+	return EmptyPeople, ErrPeopleNotFound
 }
 
 func PeopleForward(dc *DuelContext, duelname string, winnerName string) error {

@@ -14,10 +14,11 @@ import (
 
 func AssertParametersNotMatch(cfg map[string]string, form url.Values) {
 	for k, v := range cfg {
-		a := strings.Index(k, "?")
 		k2 := strings.Replace(k, "?", "", 1)
-		k2 = strings.Replace(k, "*", "", 1)
-		k2 = strings.Replace(k, "+", "", 1)
+		k2 = strings.Replace(k2, "*", "", 1)
+		k2 = strings.Replace(k2, "+", "", 1)
+
+		a := strings.Index(k, "?")
 		if a != -1 {
 			if len(form[k2]) > 1 {
 				panic(fmt.Sprintf("%s has more then one", k2))
@@ -33,7 +34,8 @@ func AssertParametersNotMatch(cfg map[string]string, form url.Values) {
 		if c != -1 {
 			// ignore
 		}
-		if a+b+c == -1 {
+
+		if a+b+c == -3 {
 			if len(form[k2]) == 0 {
 				panic(fmt.Sprintf("%s not exits", k2))
 			}
@@ -41,11 +43,19 @@ func AssertParametersNotMatch(cfg map[string]string, form url.Values) {
 		if len(form[k2]) > 0 {
 			// check type
 			switch v {
+			case "bool":
+				for _, str := range form[k2] {
+					_, err := strconv.ParseBool(str)
+					if err != nil {
+						panic(fmt.Sprintf("%v is not boolean", k2))
+					}
+				}
+				break
 			case "int":
 				for _, str := range form[k2] {
 					_, err := strconv.ParseInt(str, 10, 32)
 					if err != nil {
-						panic(err)
+						panic(fmt.Sprintf("%v is not int", k2))
 					}
 				}
 				break
@@ -53,16 +63,18 @@ func AssertParametersNotMatch(cfg map[string]string, form url.Values) {
 				for _, str := range form[k2] {
 					_, err := strconv.ParseInt(str, 10, 64)
 					if err != nil {
-						panic(err)
+						panic(fmt.Sprintf("%v is not int64", k2))
 					}
 				}
+				break
 			case "stime":
 				for _, str := range form[k2] {
 					_, err := time.Parse("2006-Jan-02", str)
 					if err != nil {
-						panic(err)
+						panic(fmt.Sprintf("%v is not time", k2))
 					}
 				}
+				break
 			}
 		}
 	}
@@ -196,9 +208,11 @@ func Serve_AddPeople(w http.ResponseWriter, r *http.Request) {
 	form := r.Form
 
 	AssertParametersNotMatch(map[string]string{
-		"Name": "string",
+		"DuelName": "string",
+		"Name":     "string",
 	}, form)
 
+	duelName := form["DuelName"][0]
 	name := form["Name"][0]
 
 	ctx := appengine.NewContext(r)
@@ -206,8 +220,10 @@ func Serve_AddPeople(w http.ResponseWriter, r *http.Request) {
 		//TODO 判斷Duel的期間是不是報名期間
 
 		// 加入參賽者
-		var p People
-		err := AddPeople(dc, name, p)
+		p := People{
+			Name: name,
+		}
+		err := AddPeople(dc, duelName, p)
 		if err != nil {
 			return err
 		}
@@ -228,36 +244,7 @@ func Serve_DuelTargetNamePairList(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-//TODO 指定比賽結果
-func Serve_AsignWinner(w http.ResponseWriter, r *http.Request) {
-	defer tool.Recover(func(err error) {
-		tool.Output(w, nil, err.Error())
-	})
-	r.ParseForm()
-	form := r.Form
-
-	AssertParametersNotMatch(map[string]string{
-		"Name":   "string",
-		"Target": "string",
-		"Win":    "bool",
-	}, form)
-
-	//name := form["Name"][0]
-
-	ctx := appengine.NewContext(r)
-	err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
-
-		return nil
-	})
-	//TODO 推播訊息
-	if err != nil {
-		Notify(ctx, "")
-	}
-	tool.Assert(tool.IfError(err))
-	tool.Output(w, nil, nil)
-}
-
-//TODO 取得比賽結果的狀態
+// 取得比賽結果的狀態
 func Serve_WinState(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
@@ -266,15 +253,65 @@ func Serve_WinState(w http.ResponseWriter, r *http.Request) {
 	form := r.Form
 
 	AssertParametersNotMatch(map[string]string{
-		"Name": "string",
+		"DuelName": "string",
+		"Name":     "string",
+		"Target":   "string",
 	}, form)
 
-	//name := form["Name"][0]
+	duelName := form["DuelName"][0]
+	name := form["Name"][0]
+	target := form["Target"][0]
 
 	ctx := appengine.NewContext(r)
-	err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+	dc, err := GetDuelContext(ctx)
+	tool.Assert(tool.IfError(err))
 
-		return nil
+	meInDuel, err := GetPeople(&dc, duelName, name)
+	tool.Assert(tool.IfError(err))
+
+	targetInDuel, err := GetPeople(&dc, duelName, target)
+	tool.Assert(tool.IfError(err))
+
+	check, err := CheckWinnerMatch(&dc, duelName, meInDuel.Position, targetInDuel.Position)
+	tool.Assert(tool.IfError(err))
+
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, check, nil)
+}
+
+// 指定比賽結果
+func Serve_AssignWinner(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+
+	r.ParseForm()
+	form := r.Form
+
+	AssertParametersNotMatch(map[string]string{
+		"DuelName": "string",
+		"Name":     "string",
+		"Target":   "string",
+		"Win":      "bool",
+	}, form)
+
+	duelName := form["DuelName"][0]
+	name := form["Name"][0]
+	target := form["Target"][0]
+	win, _ := strconv.ParseBool(form["Win"][0])
+
+	err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+		meInDuel, err := GetPeople(dc, duelName, name)
+		if err != nil {
+			return err
+		}
+		targetInDuel, err := GetPeople(dc, duelName, target)
+		if err != nil {
+			return err
+		}
+		err = AssignWinner(dc, duelName, meInDuel.Position, targetInDuel.Name, win)
+		return err
 	})
 	//TODO 推播訊息
 	if err != nil {

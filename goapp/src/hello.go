@@ -105,6 +105,9 @@ func init() {
 	http.HandleFunc("/fn/duelsys/duelcontext", duelsys.Serve_GetDuelContext)
 	http.HandleFunc("/fn/duelsys/createduel", duelsys.Serve_CreateDuel)
 	http.HandleFunc("/fn/duelsys/deleteduel", duelsys.Serve_DeleteDuel)
+	http.HandleFunc("/fn/duelsys/addpeople", duelsys.Serve_AddPeople)
+	http.HandleFunc("/fn/duelsys/assignwin", duelsys.Serve_AssignWinner)
+	http.HandleFunc("/fn/duelsys/winstate", duelsys.Serve_WinState)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
