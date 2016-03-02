@@ -45,6 +45,10 @@
 </style>
 	<script>
 	
+	//http://localhost:8080/fn/duelsys/talk?Talk=%E6%AF%94%E8%B3%BD%E6%9C%AC%E6%96%87
+	
+	
+	
 	var ary_datas = [100, 200, 400, 40];
 	var max = d3.max( ary_datas );
 	var linear = d3.scale.linear().domain( [0, max] ).range( [0, 200] );
@@ -77,6 +81,8 @@
 	//.attr( 'class', 'axis' )
 	//.attr( 'transform', 'translate(20,130)' )
 	.call( axis );
+	
+	
 	
 	
 	/*
