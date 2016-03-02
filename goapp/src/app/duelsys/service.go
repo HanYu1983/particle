@@ -257,7 +257,7 @@ func Serve_AssignWinner(w http.ResponseWriter, r *http.Request) {
 var (
 	cmds = []Command{
 		Command{
-			regexp.MustCompile("建立(.*)比賽。期間從(.*)到(.*)"),
+			regexp.MustCompile("建立(.+)比賽。期間從(.+)到(.+)"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 
 				duelName := input[1]
@@ -278,7 +278,7 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("刪除(.*)比賽"),
+			regexp.MustCompile("刪除(.+)比賽"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 
 				duelName := input[1]
@@ -374,12 +374,6 @@ var (
 				})
 
 				return nil, err
-			},
-		},
-		Command{
-			regexp.MustCompile("比賽本文"),
-			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
-				return GetDuelContext(ctx)
 			},
 		},
 		Command{

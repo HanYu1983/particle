@@ -36,7 +36,7 @@ func GetDuelContext(ctx appengine.Context) (DuelContext, error) {
 	}
 	// 再解回DuelContext
 	if len(wrapper.Jsonstr) == 0 {
-		return DuelContext{}, err
+		return DuelContext{}, nil
 	}
 	var dc DuelContext
 	err = json.Unmarshal(wrapper.Jsonstr, &dc)
