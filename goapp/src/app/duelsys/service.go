@@ -377,12 +377,6 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("比賽本文"),
-			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
-				return GetDuelContext(ctx)
-			},
-		},
-		Command{
 			regexp.MustCompile("(.+)比賽的(.+)選手升格"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 				return nil, nil
