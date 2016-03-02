@@ -13,6 +13,8 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
+	"time"
 )
 
 func TemplateWithFile(key string, path string) *template.Template {
@@ -126,6 +128,74 @@ func ParameterIsNotExist(v url.Values, key string) func() (bool, string) {
 			return true, fmt.Sprintf("no parameter [%s]", key)
 		} else {
 			return false, ""
+		}
+	}
+}
+
+func AssertParametersNotMatch(cfg map[string]string, form url.Values) {
+	for k, v := range cfg {
+		k2 := strings.Replace(k, "?", "", 1)
+		k2 = strings.Replace(k2, "*", "", 1)
+		k2 = strings.Replace(k2, "+", "", 1)
+
+		a := strings.Index(k, "?")
+		if a != -1 {
+			if len(form[k2]) > 1 {
+				panic(fmt.Sprintf("%s has more then one", k2))
+			}
+		}
+		b := strings.Index(k, "+")
+		if b != -1 {
+			if len(form[k2]) == 0 {
+				panic(fmt.Sprintf("%s not exist", k2))
+			}
+		}
+		c := strings.Index(k, "*")
+		if c != -1 {
+			// ignore
+		}
+
+		if a+b+c == -3 {
+			if len(form[k2]) == 0 {
+				panic(fmt.Sprintf("%s not exits", k2))
+			}
+		}
+		if len(form[k2]) > 0 {
+			// check type
+			switch v {
+			case "bool":
+				for _, str := range form[k2] {
+					_, err := strconv.ParseBool(str)
+					if err != nil {
+						panic(fmt.Sprintf("%v is not boolean", k2))
+					}
+				}
+				break
+			case "int":
+				for _, str := range form[k2] {
+					_, err := strconv.ParseInt(str, 10, 32)
+					if err != nil {
+						panic(fmt.Sprintf("%v is not int", k2))
+					}
+				}
+				break
+			case "int64":
+				for _, str := range form[k2] {
+					_, err := strconv.ParseInt(str, 10, 64)
+					if err != nil {
+						panic(fmt.Sprintf("%v is not int64", k2))
+					}
+				}
+				break
+			case "stime":
+				for _, str := range form[k2] {
+					_, err := time.Parse("2006-Jan-02", str)
+					if err != nil {
+						panic(fmt.Sprintf("%v is not time", k2))
+					}
+				}
+				break
+			}
 		}
 	}
 }

@@ -3,82 +3,15 @@ package duelsys
 import (
 	"appengine"
 	"appengine/channel"
-	"fmt"
+	_ "fmt"
 	"lib/tool"
 	"net/http"
-	"net/url"
+	_ "net/url"
+	"regexp"
 	"strconv"
-	"strings"
+	_ "strings"
 	"time"
 )
-
-func AssertParametersNotMatch(cfg map[string]string, form url.Values) {
-	for k, v := range cfg {
-		k2 := strings.Replace(k, "?", "", 1)
-		k2 = strings.Replace(k2, "*", "", 1)
-		k2 = strings.Replace(k2, "+", "", 1)
-
-		a := strings.Index(k, "?")
-		if a != -1 {
-			if len(form[k2]) > 1 {
-				panic(fmt.Sprintf("%s has more then one", k2))
-			}
-		}
-		b := strings.Index(k, "+")
-		if b != -1 {
-			if len(form[k2]) == 0 {
-				panic(fmt.Sprintf("%s not exist", k2))
-			}
-		}
-		c := strings.Index(k, "*")
-		if c != -1 {
-			// ignore
-		}
-
-		if a+b+c == -3 {
-			if len(form[k2]) == 0 {
-				panic(fmt.Sprintf("%s not exits", k2))
-			}
-		}
-		if len(form[k2]) > 0 {
-			// check type
-			switch v {
-			case "bool":
-				for _, str := range form[k2] {
-					_, err := strconv.ParseBool(str)
-					if err != nil {
-						panic(fmt.Sprintf("%v is not boolean", k2))
-					}
-				}
-				break
-			case "int":
-				for _, str := range form[k2] {
-					_, err := strconv.ParseInt(str, 10, 32)
-					if err != nil {
-						panic(fmt.Sprintf("%v is not int", k2))
-					}
-				}
-				break
-			case "int64":
-				for _, str := range form[k2] {
-					_, err := strconv.ParseInt(str, 10, 64)
-					if err != nil {
-						panic(fmt.Sprintf("%v is not int64", k2))
-					}
-				}
-				break
-			case "stime":
-				for _, str := range form[k2] {
-					_, err := time.Parse("2006-Jan-02", str)
-					if err != nil {
-						panic(fmt.Sprintf("%v is not time", k2))
-					}
-				}
-				break
-			}
-		}
-	}
-}
 
 //TODO 加入訊息觀察者
 func Serve_CreateChannel(w http.ResponseWriter, r *http.Request) {
@@ -139,7 +72,7 @@ func Serve_CreateDuel(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	form := r.Form
 
-	AssertParametersNotMatch(map[string]string{
+	tool.AssertParametersNotMatch(map[string]string{
 		"DuelName":  "string",
 		"OpenDate":  "stime",
 		"CloseDate": "stime",
@@ -172,7 +105,7 @@ func Serve_DeleteDuel(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	form := r.Form
 
-	AssertParametersNotMatch(map[string]string{
+	tool.AssertParametersNotMatch(map[string]string{
 		"DuelName": "string",
 	}, form)
 
@@ -207,7 +140,7 @@ func Serve_AddPeople(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	form := r.Form
 
-	AssertParametersNotMatch(map[string]string{
+	tool.AssertParametersNotMatch(map[string]string{
 		"DuelName": "string",
 		"Name":     "string",
 	}, form)
@@ -252,7 +185,7 @@ func Serve_WinState(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	form := r.Form
 
-	AssertParametersNotMatch(map[string]string{
+	tool.AssertParametersNotMatch(map[string]string{
 		"DuelName": "string",
 		"Name":     "string",
 		"Target":   "string",
@@ -289,7 +222,7 @@ func Serve_AssignWinner(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	form := r.Form
 
-	AssertParametersNotMatch(map[string]string{
+	tool.AssertParametersNotMatch(map[string]string{
 		"DuelName": "string",
 		"Name":     "string",
 		"Target":   "string",
@@ -319,4 +252,156 @@ func Serve_AssignWinner(w http.ResponseWriter, r *http.Request) {
 	}
 	tool.Assert(tool.IfError(err))
 	tool.Output(w, nil, nil)
+}
+
+var (
+	cmds = []Command{
+		Command{
+			regexp.MustCompile("建立(.*)比賽。期間從(.*)到(.*)"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+
+				duelName := input[0]
+
+				const shortForm = "2006-Jan-02"
+				openDate, _ := time.Parse(shortForm, input[1])
+				closeDate, _ := time.Parse(shortForm, input[2])
+
+				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+					err := CreateDuel(dc, duelName, openDate, closeDate)
+					if err != nil {
+						return err
+					}
+					return nil
+				})
+
+				return nil, err
+			},
+		},
+		Command{
+			regexp.MustCompile("刪除名稱為(.*)的比賽"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+
+				duelName := input[0]
+				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+					err := DeleteDuel(dc, duelName)
+					if err != nil {
+						return err
+					}
+					return nil
+				})
+
+				return nil, err
+			},
+		},
+		Command{
+			regexp.MustCompile("比賽本文"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				return GetDuelContext(ctx)
+			},
+		},
+		Command{
+			regexp.MustCompile("(.+)要參加(.+)比賽"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				duelName := input[2]
+				name := input[1]
+
+				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+					//TODO 判斷Duel的期間是不是報名期間
+
+					// 加入參賽者
+					p := People{
+						Name: name,
+					}
+					err := AddPeople(dc, duelName, p)
+					if err != nil {
+						return err
+					}
+					return nil
+				})
+
+				return nil, err
+			},
+		},
+		Command{
+			regexp.MustCompile("確認(.+)比賽的(.+)選手和(.+)選手的比賽結果"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				duelName := input[1]
+				name := input[2]
+				target := input[3]
+
+				dc, err := GetDuelContext(ctx)
+				if err != nil {
+					return nil, err
+				}
+				meInDuel, err := GetPeople(&dc, duelName, name)
+				if err != nil {
+					return nil, err
+				}
+				targetInDuel, err := GetPeople(&dc, duelName, target)
+				if err != nil {
+					return nil, err
+				}
+				check, err := CheckWinnerMatch(&dc, duelName, meInDuel.Position, targetInDuel.Position)
+				if err != nil {
+					return nil, err
+				}
+				return check, err
+			},
+		},
+		Command{
+			regexp.MustCompile("(.+)比賽的(.+)選手([勝|負])(.+)選手"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				duelName := input[1]
+				name := input[2]
+				target := input[4]
+
+				var win bool
+				if input[3] == "勝" {
+					win = true
+				}
+
+				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+					meInDuel, err := GetPeople(dc, duelName, name)
+					if err != nil {
+						return err
+					}
+					targetInDuel, err := GetPeople(dc, duelName, target)
+					if err != nil {
+						return err
+					}
+					err = AssignWinner(dc, duelName, meInDuel.Position, targetInDuel.Name, win)
+					return err
+				})
+
+				return nil, err
+			},
+		},
+		Command{
+			regexp.MustCompile("比賽本文"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				return GetDuelContext(ctx)
+			},
+		},
+	}
+)
+
+func Server_Talk(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+
+	r.ParseForm()
+	form := r.Form
+
+	tool.AssertParametersNotMatch(map[string]string{
+		"Talk": "string",
+	}, form)
+
+	talk := form["Talk"][0]
+
+	result, err := ExecuteCommand(cmds, ctx, w, r, talk)
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, result, nil)
+
 }
