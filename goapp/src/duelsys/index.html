@@ -29,76 +29,59 @@
 		
 	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
-<body>
-	<style>
+<style>
 .axis path,
 .axis line{
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
 }
 
 .axis text {
-    font-family: sans-serif;
-    font-size: 11px;
+	font-family: sans-serif;
+	font-size: 11px;
 }
 </style>
+<body>
+	
 	<script>
 	
 	//http://localhost:8080/fn/duelsys/talk?Talk=%E6%AF%94%E8%B3%BD%E6%9C%AC%E6%96%87
 	
+	var width = 400;
+	var height = 400;
+	var dataset = [20, 30, 10, 4, 299];
+	var pie = d3.layout.pie();
+	var piedata = pie( dataset );
+	var svg = d3.select( 'body' )
+	.append( 'svg' ).attr( 'width', width ).attr( 'height', height );
 	
+	var outr = 150;
+	var innr = 0;
 	
-	var ary_datas = [100, 200, 400, 40];
-	var max = d3.max( ary_datas );
-	var linear = d3.scale.linear().domain( [0, max] ).range( [0, 200] );
+	var arc = d3.svg.arc()
+	.innerRadius( innr )
+	.outerRadius( outr );
 	
-	d3.select( 'body' )
-	.append( 'svg' )
-	.selectAll( 'rect' )
-	.data( ary_datas )
+	var arcs = svg.selectAll('g')
+	.data( piedata )
 	.enter()
-	.append( 'rect' )
-	.attr( 'x', 20 )
-	.attr( 'y', function( d, i ){
-		return i * 25;
+	.append( 'g' )
+	.attr( 'transform', "translate("+ (width/2) +","+ (width/2) +")");
+	
+	var color = d3.scale.category10();
+	
+	arcs.append( 'path' )
+	.attr( 'fill', function( d, i ){
+		return color( i );
 	})
-	.attr("width",function(d){
-		console.log( 'ori: ' + d );
-		console.log( linear( d ) );
-        return linear( d );
-    })
-    .attr("height",23)
-    .attr("fill","steelblue");
+	.attr( 'd', function( d ){
+		console.log( arc( d ));
+		return arc( d );
+	});
 	
-	var axis = d3.svg.axis()
-	.scale( linear )
-	.orient( 'bottom' )
-	.ticks( 7 );
-	
-	var svg = d3.select('svg');
-	svg.append( 'g' )
-	//.attr( 'class', 'axis' )
-	//.attr( 'transform', 'translate(20,130)' )
-	.call( axis );
-	
-	
-	
-	
-	/*
-	var ary_data = [100, 300, 400 ];
-	
-	d3.select( '.chart' )
-	.selectAll( 'div' )
-	.data( ary_data )
-	.enter().append( 'div' )
-	.style( 'width', function(d, i ){ return i; } )
-	.text( function(d, i ){ return i; } );
-	
-	function changeValue(){
-		ary_data[0] = 500;
-		console.log( ary_data );
-	}*/
+	console.log( piedata );
+	console.log( arc );
 	</script>
 
 	<script src="js/main.js"></script>
