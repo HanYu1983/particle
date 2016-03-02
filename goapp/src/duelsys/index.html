@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title></title>
+	<!--page information for search engine-->
+	<meta name="title" content="" />
+	<meta name="keyword" content="卡牌風雲,集換式卡牌,線上卡牌,虛擬桌面" />
+	<meta name="description" content="卡牌風雲" />
+	<link rel="image_src" href=""/>
+	
+	<!--share information for fb-->
+	<meta property="og:description" content="" />
+	<meta property="og:title" content="" />
+	<meta property="og:url" content="http://particle-979.appspot.com/card/index.html#"/>
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		
+	<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
+		
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		
+	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+	<style>
+.axis path,
+.axis line{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+</style>
+	<script>
+	
+	var ary_datas = [100, 200, 400, 40];
+	var max = d3.max( ary_datas );
+	var linear = d3.scale.linear().domain( [0, max] ).range( [0, 200] );
+	
+	d3.select( 'body' )
+	.append( 'svg' )
+	.selectAll( 'rect' )
+	.data( ary_datas )
+	.enter()
+	.append( 'rect' )
+	.attr( 'x', 20 )
+	.attr( 'y', function( d, i ){
+		return i * 25;
+	})
+	.attr("width",function(d){
+		console.log( 'ori: ' + d );
+		console.log( linear( d ) );
+        return linear( d );
+    })
+    .attr("height",23)
+    .attr("fill","steelblue");
+	
+	var axis = d3.svg.axis()
+	.scale( linear )
+	.orient( 'bottom' )
+	.ticks( 7 );
+	
+	var svg = d3.select('svg');
+	svg.append( 'g' )
+	//.attr( 'class', 'axis' )
+	//.attr( 'transform', 'translate(20,130)' )
+	.call( axis );
+	
+	
+	/*
+	var ary_data = [100, 300, 400 ];
+	
+	d3.select( '.chart' )
+	.selectAll( 'div' )
+	.data( ary_data )
+	.enter().append( 'div' )
+	.style( 'width', function(d, i ){ return i; } )
+	.text( function(d, i ){ return i; } );
+	
+	function changeValue(){
+		ary_data[0] = 500;
+		console.log( ary_data );
+	}*/
+	</script>
+
+	<script src="js/main.js"></script>
+</body>
+</html>
