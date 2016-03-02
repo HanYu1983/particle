@@ -260,11 +260,11 @@ var (
 			regexp.MustCompile("建立(.*)比賽。期間從(.*)到(.*)"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 
-				duelName := input[0]
+				duelName := input[1]
 
 				const shortForm = "2006-Jan-02"
-				openDate, _ := time.Parse(shortForm, input[1])
-				closeDate, _ := time.Parse(shortForm, input[2])
+				openDate, _ := time.Parse(shortForm, input[2])
+				closeDate, _ := time.Parse(shortForm, input[3])
 
 				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
 					err := CreateDuel(dc, duelName, openDate, closeDate)
@@ -278,10 +278,10 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("刪除名稱為(.*)的比賽"),
+			regexp.MustCompile("刪除(.*)比賽"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 
-				duelName := input[0]
+				duelName := input[1]
 				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
 					err := DeleteDuel(dc, duelName)
 					if err != nil {
@@ -380,6 +380,12 @@ var (
 			regexp.MustCompile("比賽本文"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 				return GetDuelContext(ctx)
+			},
+		},
+		Command{
+			regexp.MustCompile("(.+)比賽的(.+)選手升格"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				return nil, nil
 			},
 		},
 	}
