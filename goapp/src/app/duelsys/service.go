@@ -3,12 +3,13 @@ package duelsys
 import (
 	"appengine"
 	"appengine/channel"
+	"errors"
 	_ "fmt"
 	"lib/tool"
 	"net/http"
 	_ "net/url"
 	"regexp"
-	"strconv"
+	_ "strconv"
 	_ "strings"
 	"time"
 )
@@ -64,6 +65,7 @@ func Notify(ctx appengine.Context, msg string) error {
 	return nil
 }
 
+/*
 // 建立比賽
 func Serve_CreateDuel(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
@@ -253,21 +255,30 @@ func Serve_AssignWinner(w http.ResponseWriter, r *http.Request) {
 	tool.Assert(tool.IfError(err))
 	tool.Output(w, nil, nil)
 }
-
+*/
 var (
 	cmds = []Command{
 		Command{
-			regexp.MustCompile("建立(.+)比賽。期間從(.+)到(.+)"),
+			regexp.MustCompile("建立(.+)比賽。期間從(.+)到(.+)。報名日期(.+)。"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 
 				duelName := input[1]
 
 				const shortForm = "2006-Jan-02"
-				openDate, _ := time.Parse(shortForm, input[2])
-				closeDate, _ := time.Parse(shortForm, input[3])
-
-				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
-					err := CreateDuel(dc, duelName, openDate, closeDate)
+				openDate, err := time.Parse(shortForm, input[2])
+				if err != nil {
+					return nil, err
+				}
+				closeDate, err := time.Parse(shortForm, input[3])
+				if err != nil {
+					return nil, err
+				}
+				addDate, err := time.Parse(shortForm, input[4])
+				if err != nil {
+					return nil, err
+				}
+				err = Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+					err := CreateDuel(dc, duelName, addDate, openDate, closeDate)
 					if err != nil {
 						return err
 					}
@@ -306,7 +317,19 @@ var (
 				name := input[1]
 
 				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
-					//TODO 判斷Duel的期間是不是報名期間
+
+					duel := GetDuel(dc, &duelName)
+					if duel == nil {
+						return ErrDuelNotFound
+					}
+
+					if time.Now().Before(duel.Date[0]) {
+						return errors.New("比賽還沒開始")
+					}
+
+					if time.Now().After(duel.Date[1]) {
+						return errors.New("報名時間已經結束")
+					}
 
 					// 加入參賽者
 					p := People{

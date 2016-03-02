@@ -102,12 +102,6 @@ func init() {
 	// 新舊資料庫整合（舊方法移除後移除）
 	http.HandleFunc("/temp/dbtodb2", app.Dbtodb2)
 	// 比賽風雲
-	http.HandleFunc("/fn/duelsys/duelcontext", duelsys.Serve_GetDuelContext)
-	http.HandleFunc("/fn/duelsys/createduel", duelsys.Serve_CreateDuel)
-	http.HandleFunc("/fn/duelsys/deleteduel", duelsys.Serve_DeleteDuel)
-	http.HandleFunc("/fn/duelsys/addpeople", duelsys.Serve_AddPeople)
-	http.HandleFunc("/fn/duelsys/assignwin", duelsys.Serve_AssignWinner)
-	http.HandleFunc("/fn/duelsys/winstate", duelsys.Serve_WinState)
 	http.HandleFunc("/fn/duelsys/talk", duelsys.Server_Talk)
 }
 

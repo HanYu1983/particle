@@ -84,7 +84,7 @@ func TestDuel(t *testing.T) {
 	var dc DuelContext
 
 	var duelName = "天下一武道會第一屆"
-	CreateDuel(&dc, duelName, time.Now(), time.Now())
+	CreateDuel(&dc, duelName, time.Now(), time.Now(), time.Now())
 
 	if len(dc.Duels) != 1 {
 		t.Fatal("必須有一個比賽")
