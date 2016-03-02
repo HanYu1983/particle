@@ -26,28 +26,52 @@
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-		
+	<!--
 	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		-->
 </head>
 <style>
-.axis path,
-.axis line{
-	fill: none;
-	stroke: black;
-	shape-rendering: crispEdges;
+.group{
+	position:relative;
+	width:100%;
 }
-
-.axis text {
-	font-family: sans-serif;
-	font-size: 11px;
+.hori{
+	display:inline-block;
+}
+.hori_center{
+	text-align:center;
+}
+.raceItem{
+	width:100%;
+	height:60px;
+	border:1px solid gray;
 }
 </style>
 <body>
-	
+	<script id="tmpl_race" type="jquery-x-tmpl">
+		{{each Duels}}
+		<div id=${Name} class='raceItem'>
+			<div>${Name}</div>
+			<div>${Date[0]}</div>
+			<div>${Date[1]}</div>
+		</div>
+		{{/each}}
+	</script>
+	<div id="layout_main" class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'north',title:'North Title',split:true" style="height:100px;"></div>
+		<div data-options="region:'south',title:'South Title',split:true" style="height:100px;"></div>
+		<div data-options="region:'east',title:'East',split:true" style="width:100px;"></div>
+		<div data-options="region:'west',title:'West',split:true" style="width:300px;">
+			<div id="mc_raceContainer" class="group">
+				
+			</div>
+		</div>
+		<div data-options="region:'center',title:'center title'" style="padding:5px;background:#eee;"></div>
+	</div>
 	<script>
 	
 	//http://localhost:8080/fn/duelsys/talk?Talk=%E6%AF%94%E8%B3%BD%E6%9C%AC%E6%96%87
-	
+	/*
 	var width = 400;
 	var height = 400;
 	var dataset = [20, 30, 10, 4, 299];
@@ -82,8 +106,9 @@
 	
 	console.log( piedata );
 	console.log( arc );
+	*/
 	</script>
-
+	<script src='js/api.js'></script>
 	<script src="js/main.js"></script>
 </body>
 </html>
