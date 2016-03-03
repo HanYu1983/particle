@@ -13,7 +13,7 @@ type People struct {
 type Duel struct {
 	Name     string
 	Peoples  []People
-	Date     [2]time.Time
+	Date     [3]time.Time
 	DuelTree Tree
 	NodeInfo map[string]NodeInfo //注意，要json化的話key一定要是string
 	Deleted  bool
@@ -47,15 +47,16 @@ func GetDuel(dc *DuelContext, name *string) *Duel {
 	return nil
 }
 
-func CreateDuel(dc *DuelContext, name string, openDate time.Time, closeDate time.Time) error {
+func CreateDuel(dc *DuelContext, name string, startDate time.Time, openDate time.Time, closeDate time.Time) error {
 	if GetDuel(dc, &name) != nil {
 		return errors.New("duelname exist!")
 	}
 	duel := Duel{
 		Name: name,
 	}
-	duel.Date[0] = openDate
-	duel.Date[1] = closeDate
+	duel.Date[0] = startDate
+	duel.Date[1] = openDate
+	duel.Date[2] = closeDate
 	duel.NodeInfo = map[string]NodeInfo{}
 	dc.Duels = append(dc.Duels, duel)
 	return nil
