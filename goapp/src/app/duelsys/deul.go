@@ -77,7 +77,7 @@ func AddPeople(dc *DuelContext, duelname string, people People) error {
 		return ErrDuelNotFound
 	}
 	for _, p := range duel.Peoples {
-		if p == people {
+		if p.Name == people.Name {
 			return ErrPeopleAlreadyAdd
 		}
 	}
