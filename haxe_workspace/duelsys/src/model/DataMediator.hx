@@ -29,13 +29,19 @@ class DataMediator extends Mediator
 		return [ 
 			do_get_duelContext,
 			UIMediator.on_race_click,
-			UIMediator.on_race_join_click
+			UIMediator.on_race_join_click,
+			UIMediator.on_race_time_setting
 		];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName()) {
+			case UIMediator.on_race_time_setting:
+				var name = notification.getBody().name;
+				var startTime = notification.getBody().startTime;
+				var endTime = notification.getBody().endTime;
+				createDuel( 'abc', startTime, endTime );
 			case UIMediator.on_race_join_click:
 				var duelId = notification.getBody().duelId;
 				joinDuel( 'a_people', duelId );
@@ -47,6 +53,18 @@ class DataMediator extends Mediator
 			case str if ( str == do_get_duelContext ):
 				getDuelContext();
 		}
+	}
+	
+	function createDuel( name:String, startTime:Array<String>, endTime:Array<String> ) {
+		
+		function createTimeStr( time:Array<String> ):String {
+			return time[3] + '-' + time[0] + '-' + time[2];
+		}
+		
+		Helper.talk( Talk.createDuel, function( ret:Dynamic ) {
+			trace( ret );
+		}, [ name, createTimeStr( startTime ), createTimeStr( endTime ) ] );
+		//["Thu", "Mar", "03", "2016", "10:58:30", "GMT+0800", "(台北標準時間)"]
 	}
 	
 	function joinDuel( playerId:String, duelId:String ) {

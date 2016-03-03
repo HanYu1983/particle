@@ -18,9 +18,11 @@ class UIMediator extends Mediator
 	
 	public static var on_race_click = 'on_race_click';
 	public static var on_race_join_click = 'on_race_join_click';
+	public static var on_race_time_setting = 'on_race_time_setting';
 	
 	var mc_raceContainer:Dynamic;
 	var mc_detailContainer:Dynamic;
+	var win_create:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -28,6 +30,23 @@ class UIMediator extends Mediator
 	
 		mc_raceContainer = viewComponent.find( '#mc_raceContainer' );
 		mc_detailContainer = viewComponent.find( '#mc_detailContainer' );
+		win_create = Jslib.j( '#win_create' );
+		
+		win_create.find( '.easyui-calendar' ).calendar( {
+			onChange:function( newDate, oldDate ) {
+				var self = untyped __js__( 'this' );
+				var startTime:String = untyped __js__( 'new Date' )();
+				var endTime:String = untyped __js__( 'new Date' )();
+				switch( self.id ) {
+					case 'cal_start':
+						startTime = newDate;
+					case 'cal_end':
+						endTime = newDate;
+				}
+				sendNotification( on_race_time_setting, { name:'abc', startTime:new String( startTime ).split( ' ' ), endTime:new String( endTime ).split( ' ' ) } );
+			}
+		});
+		
 	}
 	
 	override public function listNotificationInterests():Array<String> 

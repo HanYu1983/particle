@@ -362,12 +362,18 @@ model_DataMediator.__name__ = true;
 model_DataMediator.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_DataMediator.do_get_duelContext,view_UIMediator.on_race_click,view_UIMediator.on_race_join_click];
+		return [model_DataMediator.do_get_duelContext,view_UIMediator.on_race_click,view_UIMediator.on_race_join_click,view_UIMediator.on_race_time_setting];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		var str = _g;
 		switch(_g) {
+		case "on_race_time_setting":
+			var name = notification.getBody().name;
+			var startTime = notification.getBody().startTime;
+			var endTime = notification.getBody().endTime;
+			this.createDuel("abc",startTime,endTime);
+			break;
 		case "on_race_join_click":
 			var duelId = notification.getBody().duelId;
 			this.joinDuel("a_people",duelId);
@@ -381,6 +387,14 @@ model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediat
 		default:
 			if(str == model_DataMediator.do_get_duelContext) this.getDuelContext();
 		}
+	}
+	,createDuel: function(name,startTime,endTime) {
+		var createTimeStr = function(time) {
+			return time[3] + "-" + time[0] + "-" + time[2];
+		};
+		Helper.talk(Talk.createDuel,function(ret) {
+			console.log(ret);
+		},[name,createTimeStr(startTime),createTimeStr(endTime)]);
 	}
 	,joinDuel: function(playerId,duelId) {
 		Helper.talk(Talk.addPeople,function(ret) {
@@ -707,9 +721,26 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 var per_vic_js_Jslib = function() { };
 per_vic_js_Jslib.__name__ = true;
 var view_UIMediator = function(mediatorName,viewComponent) {
+	var _g = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.mc_raceContainer = viewComponent.find("#mc_raceContainer");
 	this.mc_detailContainer = viewComponent.find("#mc_detailContainer");
+	this.win_create = per_vic_js_Jslib.j("#win_create");
+	this.win_create.find(".easyui-calendar").calendar({ onChange : function(newDate,oldDate) {
+		var self = this;
+		var startTime = new Date();
+		var endTime = new Date();
+		var _g1 = self.id;
+		switch(_g1) {
+		case "cal_start":
+			startTime = newDate;
+			break;
+		case "cal_end":
+			endTime = newDate;
+			break;
+		}
+		_g.sendNotification(view_UIMediator.on_race_time_setting,{ name : "abc", startTime : new String(startTime).split(" "), endTime : new String(endTime).split(" ")});
+	}});
 };
 view_UIMediator.__name__ = true;
 view_UIMediator.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
@@ -771,6 +802,7 @@ view_UIMediator.do_setRaces = "do_setRaces";
 view_UIMediator.do_showDuelDetail = "do_showDuelDetail";
 view_UIMediator.on_race_click = "on_race_click";
 view_UIMediator.on_race_join_click = "on_race_join_click";
+view_UIMediator.on_race_time_setting = "on_race_time_setting";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 
