@@ -259,7 +259,7 @@ func Serve_AssignWinner(w http.ResponseWriter, r *http.Request) {
 var (
 	cmds = []Command{
 		Command{
-			regexp.MustCompile("建立(.+)比賽。期間從(.+)到(.+)。報名日期(.+)。"),
+			regexp.MustCompile("建立(.+)比賽。期間從(.+)到(.+)。報名日期(.+)"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 
 				duelName := input[1]
@@ -346,7 +346,7 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("確認(.+)比賽的(.+)選手和(.+)選手的比賽結果"),
+			regexp.MustCompile("確認(.+)比賽的(.+)決鬥者和(.+)決鬥者的比賽結果"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 				duelName := input[1]
 				name := input[2]
@@ -372,7 +372,7 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("(.+)比賽的(.+)選手([勝|負])(.+)選手"),
+			regexp.MustCompile("(.+)比賽的(.+)決鬥者([勝|負])(.+)決鬥者"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 				duelName := input[1]
 				name := input[2]
@@ -400,9 +400,55 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("(.+)比賽的(.+)選手升格"),
+			regexp.MustCompile("(.+)比賽的(.+)決鬥者升格"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
-				return nil, nil
+				duelName := input[1]
+				name := input[2]
+
+				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+					meInDuel, err := GetPeople(dc, duelName, name)
+					if err != nil {
+						return err
+					}
+					_, err = DuelTargetName(dc, duelName, meInDuel.Position)
+					if err != ErrNoTarget {
+						return errors.New("你的對手還沒被擊敗!")
+					}
+					isWinner, err := IsWinner(dc, duelName, meInDuel.Position)
+					if err != nil {
+						return err
+					}
+					if isWinner == false {
+						return errors.New("你是敗北的決鬥者!")
+					}
+					err = PeopleForward(dc, duelName, meInDuel.Name)
+					return err
+				})
+
+				return nil, err
+			},
+		},
+		Command{
+			regexp.MustCompile("(.+)比賽的(.+)決鬥者的決鬥對象是誰？"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				duelName := input[1]
+				name := input[2]
+
+				dc, err := GetDuelContext(ctx)
+				if err != nil {
+					return nil, err
+				}
+
+				peopleInDuel, err := GetPeople(&dc, duelName, name)
+				if err != nil {
+					return nil, err
+				}
+
+				targets, err := DuelTargetName(&dc, duelName, peopleInDuel.Position)
+				if err != nil {
+					return nil, err
+				}
+				return targets, nil
 			},
 		},
 	}

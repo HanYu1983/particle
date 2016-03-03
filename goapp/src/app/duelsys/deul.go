@@ -77,7 +77,7 @@ func AddPeople(dc *DuelContext, duelname string, people People) error {
 		return ErrDuelNotFound
 	}
 	for _, p := range duel.Peoples {
-		if p == people {
+		if p.Name == people.Name {
 			return ErrPeopleAlreadyAdd
 		}
 	}
@@ -212,4 +212,19 @@ func Power(dc *DuelContext, duelname string, position Node) (int, error) {
 		return 1, nil
 	}
 	return 0, nil
+}
+
+func IsWinner(dc *DuelContext, duelname string, position Node) (bool, error) {
+	duel := GetDuel(dc, &duelname)
+	if duel == nil {
+		return false, ErrDuelNotFound
+	}
+
+	for _, win := range duel.NodeInfo[position.ToString()].Winner {
+		if win == false {
+			return false, nil
+		}
+	}
+
+	return true, nil
 }

@@ -19,10 +19,12 @@ var api = api || {};
 	}
 	
 	module.talk = talk
-	module.createDuel = "建立%s比賽。期間從%s到%s"	//期間的格式為yyyy-Jan-dd
+	module.createDuel = "建立(.+)比賽。期間從(.+)到(.+)。報名日期(.+)"	//期間的格式為yyyy-Jan-dd
 	module.duelContext = "比賽本文"
-	module.addPeople = "%s要參加%s比賽"
-	module.winState = "確認%s比賽的%s選手和%s選手的比賽結果"
-	module.assignWinner = "%s比賽的%s選手([勝|負])%s選手"
+	module.addPeople = "(.+)要參加(.+)比賽"
+	module.winState = "確認(.+)比賽的(.+)決鬥者和(.+)決鬥者的比賽結果"
+	module.assignWinner = "(.+)比賽的(.+)決鬥者([勝|負])(.+)決鬥者"
+	module.forward = "(.+)比賽的(.+)決鬥者升格"
+	module.whoistarget = "(.+)比賽的(.+)決鬥者的決鬥對象是誰？"
 	
 }) (api)
