@@ -68,10 +68,12 @@ Helper.talk = function(cmd,cb,values) {
 	});
 };
 Helper.formatString = function(oristr,reg,values) {
-	return reg.map(oristr,function(e) {
+	var retstr = reg.map(oristr,function(e) {
 		if(values.length == 0) throw new js__$Boot_HaxeError("not enough value!");
 		return values.shift();
 	});
+	console.log(retstr);
+	return retstr;
 };
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
@@ -133,10 +135,9 @@ var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
 	per_vic_js_Jslib.j("body").ready(function() {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new view_UI("",per_vic_js_Jslib.j("#layout_main")));
-		Helper.talk(Talk.duelContext,function(ret) {
-			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(view_UI.do_setRaces,ret);
-		});
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new view_UIMediator("",per_vic_js_Jslib.j("#layout_main")));
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_DataMediator());
+		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_DataMediator.do_get_duelContext);
 	});
 };
 Math.__name__ = true;
@@ -312,6 +313,93 @@ js_Browser.__name__ = true;
 js_Browser.alert = function(v) {
 	window.alert(js_Boot.__string_rec(v,""));
 };
+var org_puremvc_haxe_interfaces_INotifier = function() { };
+org_puremvc_haxe_interfaces_INotifier.__name__ = true;
+var org_puremvc_haxe_patterns_observer_Notifier = function() {
+	this.facade = org_puremvc_haxe_patterns_facade_Facade.getInstance();
+};
+org_puremvc_haxe_patterns_observer_Notifier.__name__ = true;
+org_puremvc_haxe_patterns_observer_Notifier.__interfaces__ = [org_puremvc_haxe_interfaces_INotifier];
+org_puremvc_haxe_patterns_observer_Notifier.prototype = {
+	sendNotification: function(notificationName,body,type) {
+		this.facade.sendNotification(notificationName,body,type);
+	}
+};
+var org_puremvc_haxe_interfaces_IMediator = function() { };
+org_puremvc_haxe_interfaces_IMediator.__name__ = true;
+var org_puremvc_haxe_patterns_mediator_Mediator = function(mediatorName,viewComponent) {
+	org_puremvc_haxe_patterns_observer_Notifier.call(this);
+	if(mediatorName != null) this.mediatorName = mediatorName; else this.mediatorName = org_puremvc_haxe_patterns_mediator_Mediator.NAME;
+	if(viewComponent != null) this.viewComponent = viewComponent;
+};
+org_puremvc_haxe_patterns_mediator_Mediator.__name__ = true;
+org_puremvc_haxe_patterns_mediator_Mediator.__interfaces__ = [org_puremvc_haxe_interfaces_IMediator];
+org_puremvc_haxe_patterns_mediator_Mediator.__super__ = org_puremvc_haxe_patterns_observer_Notifier;
+org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe_patterns_observer_Notifier.prototype,{
+	getMediatorName: function() {
+		return this.mediatorName;
+	}
+	,setViewComponent: function(viewComponent) {
+		this.viewComponent = viewComponent;
+	}
+	,getViewComponent: function() {
+		return this.viewComponent;
+	}
+	,listNotificationInterests: function() {
+		return [];
+	}
+	,handleNotification: function(notification) {
+	}
+	,onRegister: function() {
+	}
+	,onRemove: function() {
+	}
+});
+var model_DataMediator = function(mediatorName,viewComponent) {
+	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
+};
+model_DataMediator.__name__ = true;
+model_DataMediator.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+	listNotificationInterests: function() {
+		return [model_DataMediator.do_get_duelContext,view_UIMediator.on_race_click,view_UIMediator.on_race_join_click];
+	}
+	,handleNotification: function(notification) {
+		var _g = notification.getName();
+		var str = _g;
+		switch(_g) {
+		case "on_race_join_click":
+			var duelId = notification.getBody().duelId;
+			this.joinDuel("a_people",duelId);
+			break;
+		case "on_race_click":
+			var id = notification.getBody().id;
+			var duel = this.getDuelByName(id);
+			console.log(duel);
+			this.sendNotification(view_UIMediator.do_showDuelDetail,{ duel : duel});
+			break;
+		default:
+			if(str == model_DataMediator.do_get_duelContext) this.getDuelContext();
+		}
+	}
+	,joinDuel: function(playerId,duelId) {
+		Helper.talk(Talk.addPeople,function(ret) {
+			console.log(ret);
+		},[playerId,duelId]);
+	}
+	,getDuelContext: function() {
+		var _g = this;
+		Helper.talk(Talk.duelContext,function(ret) {
+			_g.datas = ret;
+			_g.sendNotification(view_UIMediator.do_setRaces,_g.datas);
+		});
+	}
+	,getDuelByName: function(name) {
+		return this.datas.Duels.find(function(duel) {
+			return duel.Name == name;
+		});
+	}
+});
 var org_puremvc_haxe_interfaces_IController = function() { };
 org_puremvc_haxe_interfaces_IController.__name__ = true;
 var org_puremvc_haxe_core_Controller = function() {
@@ -482,12 +570,8 @@ var org_puremvc_haxe_interfaces_ICommand = function() { };
 org_puremvc_haxe_interfaces_ICommand.__name__ = true;
 var org_puremvc_haxe_interfaces_IFacade = function() { };
 org_puremvc_haxe_interfaces_IFacade.__name__ = true;
-var org_puremvc_haxe_interfaces_IMediator = function() { };
-org_puremvc_haxe_interfaces_IMediator.__name__ = true;
 var org_puremvc_haxe_interfaces_INotification = function() { };
 org_puremvc_haxe_interfaces_INotification.__name__ = true;
-var org_puremvc_haxe_interfaces_INotifier = function() { };
-org_puremvc_haxe_interfaces_INotifier.__name__ = true;
 var org_puremvc_haxe_interfaces_IObserver = function() { };
 org_puremvc_haxe_interfaces_IObserver.__name__ = true;
 var org_puremvc_haxe_interfaces_IProxy = function() { };
@@ -564,44 +648,6 @@ org_puremvc_haxe_patterns_facade_Facade.prototype = {
 		if(this.view != null) this.view.notifyObservers(notification);
 	}
 };
-var org_puremvc_haxe_patterns_observer_Notifier = function() {
-	this.facade = org_puremvc_haxe_patterns_facade_Facade.getInstance();
-};
-org_puremvc_haxe_patterns_observer_Notifier.__name__ = true;
-org_puremvc_haxe_patterns_observer_Notifier.__interfaces__ = [org_puremvc_haxe_interfaces_INotifier];
-org_puremvc_haxe_patterns_observer_Notifier.prototype = {
-	sendNotification: function(notificationName,body,type) {
-		this.facade.sendNotification(notificationName,body,type);
-	}
-};
-var org_puremvc_haxe_patterns_mediator_Mediator = function(mediatorName,viewComponent) {
-	org_puremvc_haxe_patterns_observer_Notifier.call(this);
-	if(mediatorName != null) this.mediatorName = mediatorName; else this.mediatorName = org_puremvc_haxe_patterns_mediator_Mediator.NAME;
-	if(viewComponent != null) this.viewComponent = viewComponent;
-};
-org_puremvc_haxe_patterns_mediator_Mediator.__name__ = true;
-org_puremvc_haxe_patterns_mediator_Mediator.__interfaces__ = [org_puremvc_haxe_interfaces_IMediator];
-org_puremvc_haxe_patterns_mediator_Mediator.__super__ = org_puremvc_haxe_patterns_observer_Notifier;
-org_puremvc_haxe_patterns_mediator_Mediator.prototype = $extend(org_puremvc_haxe_patterns_observer_Notifier.prototype,{
-	getMediatorName: function() {
-		return this.mediatorName;
-	}
-	,setViewComponent: function(viewComponent) {
-		this.viewComponent = viewComponent;
-	}
-	,getViewComponent: function() {
-		return this.viewComponent;
-	}
-	,listNotificationInterests: function() {
-		return [];
-	}
-	,handleNotification: function(notification) {
-	}
-	,onRegister: function() {
-	}
-	,onRemove: function() {
-	}
-});
 var org_puremvc_haxe_patterns_observer_Notification = function(name,body,type) {
 	this.name = name;
 	if(body != null) this.body = body;
@@ -660,29 +706,51 @@ org_puremvc_haxe_patterns_observer_Observer.prototype = {
 };
 var per_vic_js_Jslib = function() { };
 per_vic_js_Jslib.__name__ = true;
-var view_UI = function(mediatorName,viewComponent) {
+var view_UIMediator = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.mc_raceContainer = viewComponent.find("#mc_raceContainer");
+	this.mc_detailContainer = viewComponent.find("#mc_detailContainer");
 };
-view_UI.__name__ = true;
-view_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
-view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
+view_UIMediator.__name__ = true;
+view_UIMediator.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
+view_UIMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [view_UI.do_setRaces];
+		return [view_UIMediator.do_setRaces,view_UIMediator.do_showDuelDetail];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
 		var str = _g;
-		if(str == view_UI.do_setRaces) this.setRaces(notification.getBody());
+		if(str == view_UIMediator.do_showDuelDetail) {
+			var duel = notification.getBody().duel;
+			this.setDetail(duel);
+		} else {
+			var str1 = _g;
+			if(str1 == view_UIMediator.do_setRaces) this.setRaces(notification.getBody());
+		}
+	}
+	,setDetail: function(duel) {
+		var _g1 = this;
+		var dom = per_vic_js_Jslib.j("#tmpl_detail").tmpl(duel);
+		this.mc_detailContainer.empty().append(dom);
+		this.mc_detailContainer.find(".easyui-linkbutton").linkbutton({ onClick : function(e) {
+			var btn = $(this);
+			var duelId = btn.parent().attr("id");
+			var _g = btn.attr("id");
+			switch(_g) {
+			case "btn_join":
+				_g1.sendNotification(view_UIMediator.on_race_join_click,{ duelId : duelId});
+				break;
+			}
+		}});
 	}
 	,setRaces: function(info) {
+		var _g = this;
 		var doms = per_vic_js_Jslib.j("#tmpl_race").tmpl(info);
-		this.mc_raceContainer.append(doms);
+		this.mc_raceContainer.empty().append(doms);
 		this.mc_raceContainer.find(".raceItem").click(function(e) {
-			console.log(e.currentTarget);
 			var dom = per_vic_js_Jslib.j(e.currentTarget);
 			var id = dom.attr("id");
-			console.log(id);
+			_g.sendNotification(view_UIMediator.on_race_click,{ id : id});
 		});
 	}
 });
@@ -697,8 +765,12 @@ Talk.addPeople = api.addPeople;
 Talk.winState = api.winState;
 Talk.assignWinner = api.assignWinner;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
+model_DataMediator.do_get_duelContext = "do_get_duelContext";
 per_vic_js_Jslib.j = $;
-view_UI.do_setRaces = "do_setRaces";
+view_UIMediator.do_setRaces = "do_setRaces";
+view_UIMediator.do_showDuelDetail = "do_showDuelDetail";
+view_UIMediator.on_race_click = "on_race_click";
+view_UIMediator.on_race_join_click = "on_race_join_click";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
 

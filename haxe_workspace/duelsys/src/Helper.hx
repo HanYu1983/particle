@@ -20,9 +20,11 @@ class Helper
 	}
 	
 	static function formatString( oristr:String, reg:EReg, values:Array<Dynamic> ) {
-		return reg.map( oristr, function( e ) {
+		var retstr = reg.map( oristr, function( e ) {
 			if ( values.length == 0 ) throw 'not enough value!';
 			return values.shift();
 		});
+		trace( retstr );
+		return retstr;
 	}
 }

@@ -1,9 +1,10 @@
 package;
 
 import js.Lib;
+import model.DataMediator;
 import org.puremvc.haxe.patterns.facade.Facade;
 import per.vic.js.Jslib;
-import view.UI;
+import view.UIMediator;
 
 /**
  * ...
@@ -15,14 +16,11 @@ class Main
 	static function main()
 	{
 		Jslib.j( 'body' ).ready( function() {
-			Facade.getInstance().registerMediator( new UI( '', Jslib.j( '#layout_main' )) );
+			Facade.getInstance().registerMediator( new UIMediator( '', Jslib.j( '#layout_main' )) );
+			Facade.getInstance().registerMediator( new DataMediator() );
 			
-			Helper.talk( Talk.duelContext, function( ret:Dynamic ) {
-				Facade.getInstance().sendNotification( UI.do_setRaces, ret );
-				
-			});
+			Facade.getInstance().sendNotification( DataMediator.do_get_duelContext );
 		});
-		
 		
 	}
 	
