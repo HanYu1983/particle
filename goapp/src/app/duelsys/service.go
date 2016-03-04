@@ -346,6 +346,37 @@ var (
 			},
 		},
 		Command{
+			regexp.MustCompile("(.+)要取消參加(.+)比賽"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				duelName := input[2]
+				name := input[1]
+
+				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+
+					duel := GetDuel(dc, &duelName)
+					if duel == nil {
+						return ErrDuelNotFound
+					}
+
+					if time.Now().After(duel.Date[1]) {
+						return errors.New("報名時間已經結束")
+					}
+
+					// 加入參賽者
+					p := People{
+						Name: name,
+					}
+					err := DeletePeople(dc, duelName, p)
+					if err != nil {
+						return err
+					}
+					return nil
+				})
+
+				return nil, err
+			},
+		},
+		Command{
 			regexp.MustCompile("確認(.+)比賽的(.+)決鬥者和(.+)決鬥者的比賽結果"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
 				duelName := input[1]

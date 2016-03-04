@@ -82,10 +82,26 @@ func AddPeople(dc *DuelContext, duelname string, people People) error {
 		}
 	}
 	duel.Peoples = append(duel.Peoples, people)
-	StartDuel(dc, duelname)
-	return nil
+	return StartDuel(dc, duelname)
 }
 
+func DeletePeople(dc *DuelContext, duelname string, people People) error {
+	duel := GetDuel(dc, &duelname)
+	if duel == nil {
+		return ErrDuelNotFound
+	}
+
+	for idx, p := range duel.Peoples {
+		if p.Name == people.Name {
+			duel.Peoples = append(duel.Peoples[:idx], duel.Peoples[idx+1:]...)
+			break
+		}
+	}
+
+	return StartDuel(dc, duelname)
+}
+
+// 初使化比賽：建立決鬥樹、分配決鬥者位置。這個方法會在每一位決鬥者參賽時自動呼叫
 func StartDuel(dc *DuelContext, duelname string) error {
 	duel := GetDuel(dc, &duelname)
 	if duel == nil {
