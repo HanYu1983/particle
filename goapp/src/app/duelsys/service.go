@@ -323,11 +323,16 @@ var (
 						return ErrDuelNotFound
 					}
 
-					if time.Now().Before(duel.Date[0]) {
+					taiwan, err := time.LoadLocation("Asia/Taipei")
+					if err != nil {
+						return err
+					}
+
+					if time.Now().In(taiwan).Before(duel.Date[0]) {
 						return errors.New("比賽還沒開始")
 					}
 
-					if time.Now().After(duel.Date[1]) {
+					if time.Now().In(taiwan).After(duel.Date[1]) {
 						return errors.New("報名時間已經結束")
 					}
 
@@ -335,11 +340,8 @@ var (
 					p := People{
 						Name: name,
 					}
-					err := AddPeople(dc, duelName, p)
-					if err != nil {
-						return err
-					}
-					return nil
+					err = AddPeople(dc, duelName, p)
+					return err
 				})
 
 				return nil, err
@@ -358,7 +360,12 @@ var (
 						return ErrDuelNotFound
 					}
 
-					if time.Now().After(duel.Date[1]) {
+					taiwan, err := time.LoadLocation("Asia/Taipei")
+					if err != nil {
+						return err
+					}
+
+					if time.Now().In(taiwan).After(duel.Date[1]) {
 						return errors.New("報名時間已經結束")
 					}
 
@@ -366,11 +373,8 @@ var (
 					p := People{
 						Name: name,
 					}
-					err := DeletePeople(dc, duelName, p)
-					if err != nil {
-						return err
-					}
-					return nil
+					err = DeletePeople(dc, duelName, p)
+					return err
 				})
 
 				return nil, err
