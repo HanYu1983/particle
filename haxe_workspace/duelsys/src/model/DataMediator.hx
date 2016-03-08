@@ -17,6 +17,9 @@ class DataMediator extends Mediator
 	
 	var datas:Dynamic;
 	var currentDuelId:String;
+	
+	var fb_id:String;
+	var fb_token:String;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -31,13 +34,19 @@ class DataMediator extends Mediator
 			UIMediator.on_race_click,
 			UIMediator.on_race_join_click,
 			UIMediator.on_race_delete_click,
-			UIMediator.on_race_time_setting
+			UIMediator.on_race_time_setting,
+			UIMediator.on_facebook_login_click
 		];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName()) {
+			case UIMediator.on_facebook_login_click:
+				Helper.loginFb( function( uid, token ) {
+					fb_id = uid;
+					fb_token = token;
+				});
 			case UIMediator.on_race_time_setting:
 				var name = notification.getBody().name;
 				var startTime = notification.getBody().startTime;
@@ -48,8 +57,12 @@ class DataMediator extends Mediator
 				var duelId = notification.getBody().duelId;
 				deleteDuel( duelId );
 			case UIMediator.on_race_join_click:
+				if ( fb_id == null ) {
+					trace( '還沒有登入' );
+					return; 
+				}
 				var duelId = notification.getBody().duelId;
-				joinDuel( 'a_people', duelId );
+				joinDuel( fb_id, duelId );
 				joinDuel( 'b_people', duelId );
 				joinDuel( 'c_people', duelId );
 				joinDuel( 'd_people', duelId );

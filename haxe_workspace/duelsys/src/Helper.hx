@@ -8,6 +8,35 @@ import js.RegExp;
  */
 class Helper
 {
+	public static function initFb( cb ) {
+		#if debug
+		untyped __js__('myapp.facebook.init')( '679171275511375', cb );
+		#else
+		untyped __js__('myapp.facebook.init')( '425311264344425', cb );
+		#end
+	}
+	
+	public static function shareFb( name:String, link:String, picture:String, caption:String, description:String, cb:Dynamic -> Void ) {
+		untyped __js__('myapp.facebook.postMessageToMyboard')( {
+			name:name,
+			link:link,
+			picture:picture,
+			caption:caption,
+			description:description,
+			callback:cb
+		});
+	}
+	
+	public static function loginFb( cb:String -> String -> Void ) {
+		untyped __js__( 'myapp.facebook.login' )( function( ret ){
+			cb( ret.authResponse.userID, ret.authResponse.accessToken );
+		});
+	}
+	
+	public static function getUUID() {
+		return untyped __js__('leo.utils.generateUUID')();
+	}
+	
 	public static function drawTree( nodes, links, dom ) {
 		trace( links );
 		untyped __js__( 'app.drawTree' )( untyped __js__( 'app.dataToTreeData' )(nodes, links), dom );

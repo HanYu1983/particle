@@ -20,11 +20,13 @@ class UIMediator extends Mediator
 	public static var on_race_click = 'on_race_click';
 	public static var on_race_join_click = 'on_race_join_click';
 	public static var on_race_delete_click = 'on_race_delete_click';
+	public static var on_facebook_login_click = 'on_facebook_login_click';
 	public static var on_race_time_setting = 'on_race_time_setting';
 	
 	var mc_raceContainer:Dynamic;
 	var mc_detailContainer:Dynamic;
 	var btn_create:Dynamic;
+	var btn_login:Dynamic;
 	
 	//detail
 	var btn_delete:Dynamic;
@@ -49,6 +51,13 @@ class UIMediator extends Mediator
 				startTime = endTime = signTime = nowTime;
 				
 				win_create.find( '.easyui-calendar' ).calendar( { current: startTime } );
+			}
+		});
+		
+		btn_login = viewComponent.find( '#btn_login' );
+		btn_login.linkbutton( {
+			onClick:function() {
+				sendNotification( on_facebook_login_click );
 			}
 		});
 		
@@ -135,6 +144,15 @@ class UIMediator extends Mediator
 		if ( duel.DuelTree.Links != null ) {
 			Helper.drawTree( replaceData.Nodes, replaceData.Links, dom.find( 'svg' )[0] );
 		}
+		
+		//test
+		/*
+		trace( duel ); 
+		
+		Helper.talk( Talk.whoistarget, function( ret ) {
+			trace( ret );
+		}, [ duel.Name, duel.Peoples[5].Name ] );
+		*/
 	}
 	
 	function setRaces( info:Dynamic ) {

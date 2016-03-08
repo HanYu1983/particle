@@ -63,28 +63,42 @@ EReg.prototype = {
 };
 var Helper = function() { };
 Helper.__name__ = true;
+Helper.initFb = function(cb) {
+	myapp.facebook.init("679171275511375",cb);
+};
+Helper.shareFb = function(name,link,picture,caption,description,cb) {
+	myapp.facebook.postMessageToMyboard({ name : name, link : link, picture : picture, caption : caption, description : description, callback : cb});
+};
+Helper.loginFb = function(cb) {
+	myapp.facebook.login(function(ret) {
+		cb(ret.authResponse.userID,ret.authResponse.accessToken);
+	});
+};
+Helper.getUUID = function() {
+	return leo.utils.generateUUID();
+};
 Helper.drawTree = function(nodes,links,dom) {
-	haxe_Log.trace(links,{ fileName : "Helper.hx", lineNumber : 12, className : "Helper", methodName : "drawTree"});
+	haxe_Log.trace(links,{ fileName : "Helper.hx", lineNumber : 41, className : "Helper", methodName : "drawTree"});
 	app.drawTree(app.dataToTreeData(nodes,links),dom);
 };
 Helper.talk = function(cmd,cb,values) {
 	api.talk(Helper.formatString(cmd,new EReg("\\(\\.\\+\\)","gm"),values),function(err,ret) {
-		haxe_Log.trace(err,{ fileName : "Helper.hx", lineNumber : 18, className : "Helper", methodName : "talk", customParams : [err == null]});
+		haxe_Log.trace(err,{ fileName : "Helper.hx", lineNumber : 47, className : "Helper", methodName : "talk", customParams : [err == null]});
 		if(err == null) {
 			if(cb != null) cb(ret);
 		} else {
-			haxe_Log.trace("DcCC",{ fileName : "Helper.hx", lineNumber : 22, className : "Helper", methodName : "talk"});
+			haxe_Log.trace("DcCC",{ fileName : "Helper.hx", lineNumber : 51, className : "Helper", methodName : "talk"});
 			js_Browser.alert(err);
 		}
 	});
 };
 Helper.formatString = function(oristr,reg,values) {
-	haxe_Log.trace(values,{ fileName : "Helper.hx", lineNumber : 29, className : "Helper", methodName : "formatString"});
+	haxe_Log.trace(values,{ fileName : "Helper.hx", lineNumber : 58, className : "Helper", methodName : "formatString"});
 	var retstr = reg.map(oristr,function(e) {
 		if(values.length == 0) throw new js__$Boot_HaxeError("not enough value!");
 		return values.shift();
 	});
-	haxe_Log.trace(retstr,{ fileName : "Helper.hx", lineNumber : 34, className : "Helper", methodName : "formatString"});
+	haxe_Log.trace(retstr,{ fileName : "Helper.hx", lineNumber : 63, className : "Helper", methodName : "formatString"});
 	return retstr;
 };
 var HxOverrides = function() { };
@@ -164,9 +178,11 @@ var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
 	per_vic_js_Jslib.j("body").ready(function() {
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new view_UIMediator("",per_vic_js_Jslib.j("#layout_main")));
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_DataMediator());
-		org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_DataMediator.do_get_duelContext);
+		Helper.initFb(function() {
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new view_UIMediator("",per_vic_js_Jslib.j("#layout_main")));
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().registerMediator(new model_DataMediator());
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification(model_DataMediator.do_get_duelContext);
+		});
 	});
 };
 Math.__name__ = true;
@@ -415,12 +431,19 @@ model_DataMediator.__name__ = true;
 model_DataMediator.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_DataMediator.do_get_duelContext,view_UIMediator.on_race_click,view_UIMediator.on_race_join_click,view_UIMediator.on_race_delete_click,view_UIMediator.on_race_time_setting];
+		return [model_DataMediator.do_get_duelContext,view_UIMediator.on_race_click,view_UIMediator.on_race_join_click,view_UIMediator.on_race_delete_click,view_UIMediator.on_race_time_setting,view_UIMediator.on_facebook_login_click];
 	}
 	,handleNotification: function(notification) {
+		var _g1 = this;
 		var _g = notification.getName();
 		var str = _g;
 		switch(_g) {
+		case "on_facebook_login_click":
+			Helper.loginFb(function(uid,token) {
+				_g1.fb_id = uid;
+				_g1.fb_token = token;
+			});
+			break;
 		case "on_race_time_setting":
 			var name = notification.getBody().name;
 			var startTime = notification.getBody().startTime;
@@ -433,8 +456,12 @@ model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediat
 			this.deleteDuel(duelId);
 			break;
 		case "on_race_join_click":
+			if(this.fb_id == null) {
+				haxe_Log.trace("還沒有登入",{ fileName : "DataMediator.hx", lineNumber : 61, className : "model.DataMediator", methodName : "handleNotification"});
+				return;
+			}
 			var duelId1 = notification.getBody().duelId;
-			this.joinDuel("a_people",duelId1);
+			this.joinDuel(this.fb_id,duelId1);
 			this.joinDuel("b_people",duelId1);
 			this.joinDuel("c_people",duelId1);
 			this.joinDuel("d_people",duelId1);
@@ -444,7 +471,7 @@ model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediat
 		case "on_race_click":
 			this.currentDuelId = notification.getBody().id;
 			var duel = this.getDuelByName(this.currentDuelId);
-			haxe_Log.trace(duel,{ fileName : "DataMediator.hx", lineNumber : 61, className : "model.DataMediator", methodName : "handleNotification"});
+			haxe_Log.trace(duel,{ fileName : "DataMediator.hx", lineNumber : 74, className : "model.DataMediator", methodName : "handleNotification"});
 			this.sendNotification(view_UIMediator.do_showDuelDetail,{ duel : duel});
 			break;
 		default:
@@ -461,7 +488,7 @@ model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediat
 		},[name,createTimeStr(startTime),createTimeStr(endTime),createTimeStr(signTime)]);
 	}
 	,deleteDuel: function(duelId) {
-		haxe_Log.trace("delete",{ fileName : "DataMediator.hx", lineNumber : 82, className : "model.DataMediator", methodName : "deleteDuel", customParams : [duelId]});
+		haxe_Log.trace("delete",{ fileName : "DataMediator.hx", lineNumber : 95, className : "model.DataMediator", methodName : "deleteDuel", customParams : [duelId]});
 	}
 	,joinDuel: function(playerId,duelId) {
 		var _g = this;
@@ -804,6 +831,10 @@ var view_UIMediator = function(mediatorName,viewComponent) {
 		_g.startTime = _g.endTime = _g.signTime = nowTime;
 		_g.win_create.find(".easyui-calendar").calendar({ current : _g.startTime});
 	}});
+	this.btn_login = viewComponent.find("#btn_login");
+	this.btn_login.linkbutton({ onClick : function() {
+		_g.sendNotification(view_UIMediator.on_facebook_login_click);
+	}});
 	this.win_create = per_vic_js_Jslib.j("#win_create");
 	this.win_create.find("#btn_create").linkbutton({ onClick : function() {
 		var duelName = _g.win_create.find("#txt_name").textbox("getValue");
@@ -896,6 +927,9 @@ Talk.duelContext = api.duelContext;
 Talk.addPeople = api.addPeople;
 Talk.winState = api.winState;
 Talk.assignWinner = api.assignWinner;
+Talk.forward = api.forward;
+Talk.whoistarget = api.whoistarget;
+Talk.deletePeople = api.deletePeople;
 org_puremvc_haxe_patterns_mediator_Mediator.NAME = "Mediator";
 model_DataMediator.do_get_duelContext = "do_get_duelContext";
 per_vic_js_Jslib.j = $;
@@ -904,6 +938,7 @@ view_UIMediator.do_showDuelDetail = "do_showDuelDetail";
 view_UIMediator.on_race_click = "on_race_click";
 view_UIMediator.on_race_join_click = "on_race_join_click";
 view_UIMediator.on_race_delete_click = "on_race_delete_click";
+view_UIMediator.on_facebook_login_click = "on_facebook_login_click";
 view_UIMediator.on_race_time_setting = "on_race_time_setting";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
