@@ -26,5 +26,6 @@ var api = api || {};
 	module.assignWinner = "(.+)比賽的(.+)決鬥者([勝|負])(.+)決鬥者"
 	module.forward = "(.+)比賽的(.+)決鬥者升格"
 	module.whoistarget = "(.+)比賽的(.+)決鬥者的決鬥對象是誰？"
+	module.deletePeople = "(.+)要取消參加(.+)比賽"
 	
 }) (api)

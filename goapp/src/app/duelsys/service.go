@@ -323,11 +323,16 @@ var (
 						return ErrDuelNotFound
 					}
 
-					if time.Now().Before(duel.Date[0]) {
+					taiwan, err := time.LoadLocation("Asia/Taipei")
+					if err != nil {
+						return err
+					}
+
+					if time.Now().In(taiwan).Before(duel.Date[0]) {
 						return errors.New("比賽還沒開始")
 					}
 
-					if time.Now().After(duel.Date[1]) {
+					if time.Now().In(taiwan).After(duel.Date[1]) {
 						return errors.New("報名時間已經結束")
 					}
 
@@ -335,11 +340,41 @@ var (
 					p := People{
 						Name: name,
 					}
-					err := AddPeople(dc, duelName, p)
+					err = AddPeople(dc, duelName, p)
+					return err
+				})
+
+				return nil, err
+			},
+		},
+		Command{
+			regexp.MustCompile("(.+)要取消參加(.+)比賽"),
+			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) (interface{}, error) {
+				duelName := input[2]
+				name := input[1]
+
+				err := Swap(ctx, func(ctx appengine.Context, dc *DuelContext) error {
+
+					duel := GetDuel(dc, &duelName)
+					if duel == nil {
+						return ErrDuelNotFound
+					}
+
+					taiwan, err := time.LoadLocation("Asia/Taipei")
 					if err != nil {
 						return err
 					}
-					return nil
+
+					if time.Now().In(taiwan).After(duel.Date[1]) {
+						return errors.New("報名時間已經結束")
+					}
+
+					// 加入參賽者
+					p := People{
+						Name: name,
+					}
+					err = DeletePeople(dc, duelName, p)
+					return err
 				})
 
 				return nil, err

@@ -122,16 +122,33 @@ func TestDuel(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if hanInDuel == EmptyPeople {
-		t.Fatal("han必須存在於參賽者名單")
-	}
 
 	vicInDuel, err := GetPeople(&dc, duelName, "vic")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if hanInDuel == EmptyPeople {
-		t.Fatal("vic必須存在於參賽者名單")
+
+	// vic取消參賽
+	err = DeletePeople(&dc, duelName, vicInDuel)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	vicInDuel, err = GetPeople(&dc, duelName, "vic")
+	if err != ErrPeopleNotFound {
+		t.Fatal("vic必須不在參賽者名單中")
+	}
+
+	// vic再次參賽
+	err = AddPeople(&dc, duelName, vic)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// vic重新參賽後必須再次取得名單中的vic
+	vicInDuel, err = GetPeople(&dc, duelName, "vic")
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	hansTarget, err := DuelTargetName(&dc, duelName, hanInDuel.Position)
