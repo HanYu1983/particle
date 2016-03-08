@@ -111,45 +111,49 @@ func Delete(ctx appengine.Context, filename string) error {
 	return err
 }
 
+func WriteFileWithoutTransaction(ctx appengine.Context, filename string, content []byte, owner string, override bool) error {
+	// 取出若已存在的檔案
+	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
+	var list []DBFile
+	keys, err := q.GetAll(ctx, &list)
+	if err != nil {
+		return err
+	}
+
+	// 處理檔案已存在
+	if len(keys) > 0 {
+		if override == false {
+			return ErrFileExist
+		}
+	}
+
+	// 若檔案已存在，取得原檔案
+	var key *datastore.Key
+	var file DBFile
+	if len(keys) > 0 {
+		key = keys[0]
+		file = list[0]
+	}
+
+	file.Name = filename
+	file.Content = content
+	file.Owner = owner
+	file.Time = time.Now().Unix()
+
+	if key == nil {
+		key = datastore.NewIncompleteKey(ctx, Kind, AncestorKey(ctx))
+	}
+
+	_, err = datastore.Put(ctx, key, &file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func WriteFile(ctx appengine.Context, filename string, content []byte, owner string, override bool) error {
 	err := tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
-		// 取出若已存在的檔案
-		q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
-		var list []DBFile
-		keys, err := q.GetAll(ctx, &list)
-		if err != nil {
-			return err
-		}
-
-		// 處理檔案已存在
-		if len(keys) > 0 {
-			if override == false {
-				return ErrFileExist
-			}
-		}
-
-		// 若檔案已存在，取得原檔案
-		var key *datastore.Key
-		var file DBFile
-		if len(keys) > 0 {
-			key = keys[0]
-			file = list[0]
-		}
-
-		file.Name = filename
-		file.Content = content
-		file.Owner = owner
-		file.Time = time.Now().Unix()
-
-		if key == nil {
-			key = datastore.NewIncompleteKey(ctx, Kind, AncestorKey(ctx))
-		}
-
-		_, err = datastore.Put(ctx, key, &file)
-		if err != nil {
-			return err
-		}
-		return nil
+		return WriteFileWithoutTransaction(ctx, filename, content, owner, override)
 	})
 	return err
 }
