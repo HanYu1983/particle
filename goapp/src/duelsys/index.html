@@ -26,9 +26,9 @@
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-	<!--
+	
 	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-		-->
+		
 </head>
 <style>
 .group{
@@ -46,6 +46,24 @@
 	height:60px;
 	border:1px solid gray;
 }
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+
 </style>
 <body>
 	<script id="tmpl_race" type="jquery-x-tmpl">
@@ -64,7 +82,9 @@
 			{{each Peoples}}
 			<div>${Name}</div>
 			{{/each}}
+			<svg></svg>
 			<a id="btn_join" class="easyui-linkbutton">join</a>
+			<a id="btn_delete" class="easyui-linkbutton">delete</a>
 		</div>
 	</script>
 	<div id="layout_main" class="easyui-layout" style="width:100%;height:100%;">
@@ -73,7 +93,7 @@
 		<div data-options="region:'east',title:'East',split:true" style="width:100px;"></div>
 		<div data-options="region:'west',title:'West',split:true" style="width:300px;">
 			<div class="group">
-				<a id="btn_create" onclick="$('#win_create').window('open');" class="easyui-linkbutton">create</a>
+				<a id="btn_create" class="easyui-linkbutton">create</a>
 			</div>
 			<div id="mc_raceContainer" class="group">
 				<!-- by script -->
@@ -83,12 +103,13 @@
 			
 			<div id="mc_detailContainer" class="group">
 				<!-- by script -->
+				
 			</div>
 		</div>
 	</div>
-	<div id="win_create" class="easyui-window" title="My Window" style="width:600px;height:400px" data-options="iconCls:'icon-save',modal:true">
+	<div id="win_create" class="easyui-window" title="My Window" style="width:600px;height:400px" data-options="iconCls:'icon-save',modal:true,closed:true">
 		<div class="group hori_center">
-			<input class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px">
+			<input id="txt_name" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px">
 			<div class="group">
 				<div class="hori">
 					<div id="cal_start" class="easyui-calendar" style="width:180px;height:180px;"></div>
@@ -96,54 +117,106 @@
 				<div class="hori">
 					<div id="cal_end" class="easyui-calendar" style="width:180px;height:180px;"></div>
 				</div>
+				<div class="hori">
+					<div id="cal_sign" class="easyui-calendar" style="width:180px;height:180px;"></div>
+				</div>
 			</div>
-			
+			<a id="btn_create" class="easyui-linkbutton">create</a>
 		</div>
 	</div>
+	
 	<script>
 	
-	//http://localhost:8080/fn/duelsys/talk?Talk=%E6%AF%94%E8%B3%BD%E6%9C%AC%E6%96%87
-	/*
-	var width = 400;
-	var height = 400;
-	var dataset = [20, 30, 10, 4, 299];
-	var pie = d3.layout.pie();
-	var piedata = pie( dataset );
-	var svg = d3.select( 'body' )
-	.append( 'svg' ).attr( 'width', width ).attr( 'height', height );
+	var app = app || {};
+	(function( module ){
 	
-	var outr = 150;
-	var innr = 0;
-	
-	var arc = d3.svg.arc()
-	.innerRadius( innr )
-	.outerRadius( outr );
-	
-	var arcs = svg.selectAll('g')
-	.data( piedata )
-	.enter()
-	.append( 'g' )
-	.attr( 'transform', "translate("+ (width/2) +","+ (width/2) +")");
-	
-	var color = d3.scale.category10();
-	
-	arcs.append( 'path' )
-	.attr( 'fill', function( d, i ){
-		return color( i );
-	})
-	.attr( 'd', function( d ){
-		console.log( arc( d ));
-		return arc( d );
-	});
-	
-	console.log( piedata );
-	console.log( arc );
-	*/
+		//from backend
+		function dataToTreeData( nodes, links ){
+			var hasobj = {};
+			_.each( links, function( link ){
+				var curr = link[0];
+				var par = link[1];
+				if( hasobj[curr] == null ){
+					hasobj[curr] = { name:link[0] };
+				}
+				if( hasobj[par] == null ){
+					hasobj[par] = { name:link[1], children:[] };
+				}
+				hasobj[par].children.push( hasobj[curr] );
+			});
+			return hasobj[nodes.slice().pop()];
+		}
+		/*
+		function getD3Tree( width, height ){
+			var width = ( width == undefined ? 500 : width );
+			var height = ( height == undefined ? 500 : height );
+			var tree = d3.layout.tree()
+			.size( [ width, height - 200] );
+			return tree;
+		}
+		*/
+		function drawTree( data, dom, width, height ){
+			var width = ( width == undefined ? 500 : width );
+			var height = ( height == undefined ? 500 : height );
+			
+			var tree = d3.layout.tree()
+			.size( [ width, height - 200] );
+			
+			var diagonal = d3.svg.diagonal()
+			.projection( function( d ){ return [ d.y, d.x ]; } );
+			
+			var svg = d3.select( dom )
+			.attr( 'width', width )
+			.attr( 'height', height )
+			.append( 'g' );
+			
+			var nodes = tree.nodes( data );
+			var links = tree.links( nodes );
+			
+			var link = svg.selectAll( '.link' )
+			.data( links )
+			.enter()
+			.append( 'path' )
+			.attr( 'class', 'link' )
+			.attr( 'd', diagonal );
+			
+			var node = svg.selectAll( '.node' )
+			.data( nodes )
+			.enter()
+			.append( 'g' )
+			.attr( 'class', 'node' )
+			.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+			 
+			node.append( 'circle' )
+			.attr( 'r', 4.5 );
+			
+			node.append("text")
+			.attr("dx", function(d) { return d.children ? -8 : 8; })
+			.attr("dy", 3)
+			.style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+			.text(function(d) { return d.name; });
+		}
+		
+		module.dataToTreeData = dataToTreeData;
+		module.drawTree = drawTree;
+	//	module.getD3Tree = getD3Tree;
+	})( app );
 	</script>
 	<script src="../common/js/admin.js"></script>	
 	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
 	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>
 	<script src='js/api.js'></script>
 	<script src="js/main.js"></script>
+		
+	<script>
+	
+	//example
+	/*
+	var ns = [0,1,2,3,4,5,6,7,8,9];
+	var ls = [[0,6],[1,6],[2,7],[3,7],[4,8],[5,8],[6,9],[7,9],[8,9]];
+	app.drawTree( app.dataToTreeData(ns, ls), $('svg')[0] );
+	*/
+	</script>
 </body>
 </html>

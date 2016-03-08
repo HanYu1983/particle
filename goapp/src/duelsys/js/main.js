@@ -17,6 +17,9 @@ EReg.prototype = {
 		this.r.s = s;
 		return this.r.m != null;
 	}
+	,matched: function(n) {
+		if(this.r.m != null && n >= 0 && n < this.r.m.length) return this.r.m[n]; else throw new js__$Boot_HaxeError("EReg::matched");
+	}
 	,matchedPos: function() {
 		if(this.r.m == null) throw new js__$Boot_HaxeError("No string matched");
 		return { pos : this.r.m.index, len : this.r.m[0].length};
@@ -60,19 +63,28 @@ EReg.prototype = {
 };
 var Helper = function() { };
 Helper.__name__ = true;
+Helper.drawTree = function(nodes,links,dom) {
+	haxe_Log.trace(links,{ fileName : "Helper.hx", lineNumber : 12, className : "Helper", methodName : "drawTree"});
+	app.drawTree(app.dataToTreeData(nodes,links),dom);
+};
 Helper.talk = function(cmd,cb,values) {
-	api.talk(Helper.formatString(cmd,new EReg("%s","gm"),values),function(err,ret) {
+	api.talk(Helper.formatString(cmd,new EReg("\\(\\.\\+\\)","gm"),values),function(err,ret) {
+		haxe_Log.trace(err,{ fileName : "Helper.hx", lineNumber : 18, className : "Helper", methodName : "talk", customParams : [err == null]});
 		if(err == null) {
 			if(cb != null) cb(ret);
-		} else js_Browser.alert(err);
+		} else {
+			haxe_Log.trace("DcCC",{ fileName : "Helper.hx", lineNumber : 22, className : "Helper", methodName : "talk"});
+			js_Browser.alert(err);
+		}
 	});
 };
 Helper.formatString = function(oristr,reg,values) {
+	haxe_Log.trace(values,{ fileName : "Helper.hx", lineNumber : 29, className : "Helper", methodName : "formatString"});
 	var retstr = reg.map(oristr,function(e) {
 		if(values.length == 0) throw new js__$Boot_HaxeError("not enough value!");
 		return values.shift();
 	});
-	console.log(retstr);
+	haxe_Log.trace(retstr,{ fileName : "Helper.hx", lineNumber : 34, className : "Helper", methodName : "formatString"});
 	return retstr;
 };
 var HxOverrides = function() { };
@@ -85,6 +97,23 @@ HxOverrides.substr = function(s,pos,len) {
 		if(pos < 0) pos = 0;
 	} else if(len < 0) len = s.length + len - pos;
 	return s.substr(pos,len);
+};
+HxOverrides.iter = function(a) {
+	return { cur : 0, arr : a, hasNext : function() {
+		return this.cur < this.arr.length;
+	}, next : function() {
+		return this.arr[this.cur++];
+	}};
+};
+var Lambda = function() { };
+Lambda.__name__ = true;
+Lambda.find = function(it,f) {
+	var $it0 = $iterator(it)();
+	while( $it0.hasNext() ) {
+		var v = $it0.next();
+		if(f(v)) return v;
+	}
+	return null;
 };
 var List = function() {
 	this.length = 0;
@@ -187,6 +216,11 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -240,6 +274,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -362,7 +415,7 @@ model_DataMediator.__name__ = true;
 model_DataMediator.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return [model_DataMediator.do_get_duelContext,view_UIMediator.on_race_click,view_UIMediator.on_race_join_click,view_UIMediator.on_race_time_setting];
+		return [model_DataMediator.do_get_duelContext,view_UIMediator.on_race_click,view_UIMediator.on_race_join_click,view_UIMediator.on_race_delete_click,view_UIMediator.on_race_time_setting];
 	}
 	,handleNotification: function(notification) {
 		var _g = notification.getName();
@@ -372,40 +425,59 @@ model_DataMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediat
 			var name = notification.getBody().name;
 			var startTime = notification.getBody().startTime;
 			var endTime = notification.getBody().endTime;
-			this.createDuel("abc",startTime,endTime);
+			var signTime = notification.getBody().signTime;
+			this.createDuel(name,startTime,endTime,signTime);
+			break;
+		case "on_race_delete_click":
+			var duelId = notification.getBody().duelId;
+			this.deleteDuel(duelId);
 			break;
 		case "on_race_join_click":
-			var duelId = notification.getBody().duelId;
-			this.joinDuel("a_people",duelId);
+			var duelId1 = notification.getBody().duelId;
+			this.joinDuel("a_people",duelId1);
+			this.joinDuel("b_people",duelId1);
+			this.joinDuel("c_people",duelId1);
+			this.joinDuel("d_people",duelId1);
+			this.joinDuel("e_people",duelId1);
+			this.joinDuel("f_people",duelId1);
 			break;
 		case "on_race_click":
-			var id = notification.getBody().id;
-			var duel = this.getDuelByName(id);
-			console.log(duel);
+			this.currentDuelId = notification.getBody().id;
+			var duel = this.getDuelByName(this.currentDuelId);
+			haxe_Log.trace(duel,{ fileName : "DataMediator.hx", lineNumber : 61, className : "model.DataMediator", methodName : "handleNotification"});
 			this.sendNotification(view_UIMediator.do_showDuelDetail,{ duel : duel});
 			break;
 		default:
 			if(str == model_DataMediator.do_get_duelContext) this.getDuelContext();
 		}
 	}
-	,createDuel: function(name,startTime,endTime) {
+	,createDuel: function(name,startTime,endTime,signTime) {
+		var _g = this;
 		var createTimeStr = function(time) {
-			return time[3] + "-" + time[0] + "-" + time[2];
+			return time[3] + "-" + time[1] + "-" + time[2];
 		};
 		Helper.talk(Talk.createDuel,function(ret) {
-			console.log(ret);
-		},[name,createTimeStr(startTime),createTimeStr(endTime)]);
+			_g.getDuelContext();
+		},[name,createTimeStr(startTime),createTimeStr(endTime),createTimeStr(signTime)]);
+	}
+	,deleteDuel: function(duelId) {
+		haxe_Log.trace("delete",{ fileName : "DataMediator.hx", lineNumber : 82, className : "model.DataMediator", methodName : "deleteDuel", customParams : [duelId]});
 	}
 	,joinDuel: function(playerId,duelId) {
+		var _g = this;
 		Helper.talk(Talk.addPeople,function(ret) {
-			console.log(ret);
+			_g.getDuelContext(function() {
+				var duel = _g.getDuelByName(_g.currentDuelId);
+				if(duel != null) _g.sendNotification(view_UIMediator.do_showDuelDetail,{ duel : duel});
+			});
 		},[playerId,duelId]);
 	}
-	,getDuelContext: function() {
+	,getDuelContext: function(cb) {
 		var _g = this;
 		Helper.talk(Talk.duelContext,function(ret) {
 			_g.datas = ret;
 			_g.sendNotification(view_UIMediator.do_setRaces,_g.datas);
+			if(cb != null) cb();
 		});
 	}
 	,getDuelByName: function(name) {
@@ -725,21 +797,33 @@ var view_UIMediator = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.mc_raceContainer = viewComponent.find("#mc_raceContainer");
 	this.mc_detailContainer = viewComponent.find("#mc_detailContainer");
+	this.btn_create = viewComponent.find("#btn_create");
+	this.btn_create.linkbutton({ onClick : function() {
+		_g.win_create.window("open");
+		var nowTime = new Date();
+		_g.startTime = _g.endTime = _g.signTime = nowTime;
+		_g.win_create.find(".easyui-calendar").calendar({ current : _g.startTime});
+	}});
 	this.win_create = per_vic_js_Jslib.j("#win_create");
+	this.win_create.find("#btn_create").linkbutton({ onClick : function() {
+		var duelName = _g.win_create.find("#txt_name").textbox("getValue");
+		_g.sendNotification(view_UIMediator.on_race_time_setting,{ name : duelName, startTime : new String(_g.startTime).split(" "), endTime : new String(_g.endTime).split(" "), signTime : new String(_g.signTime).split(" ")});
+		_g.win_create.window("close");
+	}});
 	this.win_create.find(".easyui-calendar").calendar({ onChange : function(newDate,oldDate) {
 		var self = this;
-		var startTime = new Date();
-		var endTime = new Date();
 		var _g1 = self.id;
 		switch(_g1) {
 		case "cal_start":
-			startTime = newDate;
+			_g.startTime = newDate;
 			break;
 		case "cal_end":
-			endTime = newDate;
+			_g.endTime = newDate;
+			break;
+		case "cal_sign":
+			_g.signTime = newDate;
 			break;
 		}
-		_g.sendNotification(view_UIMediator.on_race_time_setting,{ name : "abc", startTime : new String(startTime).split(" "), endTime : new String(endTime).split(" ")});
 	}});
 };
 view_UIMediator.__name__ = true;
@@ -763,7 +847,7 @@ view_UIMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.
 		var _g1 = this;
 		var dom = per_vic_js_Jslib.j("#tmpl_detail").tmpl(duel);
 		this.mc_detailContainer.empty().append(dom);
-		this.mc_detailContainer.find(".easyui-linkbutton").linkbutton({ onClick : function(e) {
+		this.mc_detailContainer.find(".easyui-linkbutton").linkbutton({ onClick : function(e1) {
 			var btn = $(this);
 			var duelId = btn.parent().attr("id");
 			var _g = btn.attr("id");
@@ -771,8 +855,24 @@ view_UIMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.
 			case "btn_join":
 				_g1.sendNotification(view_UIMediator.on_race_join_click,{ duelId : duelId});
 				break;
+			case "btn_delete":
+				_g1.sendNotification(view_UIMediator.on_race_delete_click,{ duelId : duelId});
+				break;
 			}
 		}});
+		var replaceData = (function(oriobj,peopleMap) {
+			var retstr = JSON.stringify(oriobj);
+			var reg = new EReg("(\\d+)","g");
+			retstr = reg.map(retstr,function(e) {
+				var nowPosition = reg.matched(0);
+				var p1 = Lambda.find(peopleMap,function(p) {
+					return p.Position == nowPosition;
+				});
+				if(p1 == null) return "\"未決: " + nowPosition + "\""; else return "\"" + Std.string(p1.Name) + "\"";
+			});
+			return JSON.parse(retstr);
+		})(duel.DuelTree,duel.Peoples);
+		if(duel.DuelTree.Links != null) Helper.drawTree(replaceData.Nodes,replaceData.Links,dom.find("svg")[0]);
 	}
 	,setRaces: function(info) {
 		var _g = this;
@@ -785,6 +885,7 @@ view_UIMediator.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.
 		});
 	}
 });
+function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 String.__name__ = true;
@@ -802,6 +903,7 @@ view_UIMediator.do_setRaces = "do_setRaces";
 view_UIMediator.do_showDuelDetail = "do_showDuelDetail";
 view_UIMediator.on_race_click = "on_race_click";
 view_UIMediator.on_race_join_click = "on_race_join_click";
+view_UIMediator.on_race_delete_click = "on_race_delete_click";
 view_UIMediator.on_race_time_setting = "on_race_time_setting";
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

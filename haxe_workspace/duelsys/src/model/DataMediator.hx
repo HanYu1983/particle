@@ -15,8 +15,8 @@ class DataMediator extends Mediator
 {
 	public static var do_get_duelContext = 'do_get_duelContext';
 	
-	
 	var datas:Dynamic;
+	var currentDuelId:String;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -30,6 +30,7 @@ class DataMediator extends Mediator
 			do_get_duelContext,
 			UIMediator.on_race_click,
 			UIMediator.on_race_join_click,
+			UIMediator.on_race_delete_click,
 			UIMediator.on_race_time_setting
 		];
 	}
@@ -41,13 +42,22 @@ class DataMediator extends Mediator
 				var name = notification.getBody().name;
 				var startTime = notification.getBody().startTime;
 				var endTime = notification.getBody().endTime;
-				createDuel( 'abc', startTime, endTime );
+				var signTime = notification.getBody().signTime;
+				createDuel( name, startTime, endTime, signTime );
+			case UIMediator.on_race_delete_click:
+				var duelId = notification.getBody().duelId;
+				deleteDuel( duelId );
 			case UIMediator.on_race_join_click:
 				var duelId = notification.getBody().duelId;
 				joinDuel( 'a_people', duelId );
+				joinDuel( 'b_people', duelId );
+				joinDuel( 'c_people', duelId );
+				joinDuel( 'd_people', duelId );
+				joinDuel( 'e_people', duelId );
+				joinDuel( 'f_people', duelId );
 			case UIMediator.on_race_click:
-				var id = notification.getBody().id;
-				var duel = getDuelByName( id );
+				currentDuelId = notification.getBody().id;
+				var duel = getDuelByName( currentDuelId );
 				trace( duel );
 				sendNotification( UIMediator.do_showDuelDetail, { duel:duel } );
 			case str if ( str == do_get_duelContext ):
@@ -55,28 +65,40 @@ class DataMediator extends Mediator
 		}
 	}
 	
-	function createDuel( name:String, startTime:Array<String>, endTime:Array<String> ) {
+	function createDuel( name:String, startTime:Array<String>, endTime:Array<String>, signTime:Array<String> ) {
 		
 		function createTimeStr( time:Array<String> ):String {
-			return time[3] + '-' + time[0] + '-' + time[2];
+			return time[3] + '-' + time[1] + '-' + time[2];
 		}
 		
 		Helper.talk( Talk.createDuel, function( ret:Dynamic ) {
-			trace( ret );
-		}, [ name, createTimeStr( startTime ), createTimeStr( endTime ) ] );
+			getDuelContext();
+		}, [ name, createTimeStr( startTime ), createTimeStr( endTime ), createTimeStr( signTime ) ] );
 		//["Thu", "Mar", "03", "2016", "10:58:30", "GMT+0800", "(台北標準時間)"]
+	}
+	
+	function deleteDuel( duelId:String ) {
+		//delete 
+		trace( 'delete', duelId );
 	}
 	
 	function joinDuel( playerId:String, duelId:String ) {
 		Helper.talk( Talk.addPeople, function( ret:Dynamic ) {
-			trace( ret );
+			getDuelContext( function() {
+				var duel = getDuelByName( currentDuelId );
+				if ( duel != null ) {
+					sendNotification( UIMediator.do_showDuelDetail, { duel:duel } );
+				}
+			});
 		}, [ playerId, duelId ] );
 	}
 	
-	function getDuelContext() {
+	function getDuelContext( ?cb:Void -> Void ) {
 		Helper.talk( Talk.duelContext, function( ret:Dynamic ) {
 			datas = ret;
 			sendNotification( UIMediator.do_setRaces, datas );
+			
+			if ( cb != null ) cb();
 		});
 	}
 	
