@@ -155,7 +155,7 @@ func TestDuel(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if hansTarget != "vic" {
+	if hansTarget[0] != "vic" {
 		t.Fatal("han的對手必須是vic")
 	}
 	check, _ := CheckWinnerMatch(&dc, duelName, hanInDuel.Position, vicInDuel.Position)

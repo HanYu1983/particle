@@ -192,11 +192,12 @@
 							var duel = ctx.duelctx.Duels[ctx.selectidx]
 							var pf = purl('?'+ $('#addpeopleform').serialize()).data.param.query
 							var af = purl('?'+ $('#assignwinform').serialize()).data.param.query
-							api.talk(duel.Name+'比賽的'+pf.name+'決鬥者的決鬥對象是誰？', function(err, target){
+							api.talk(duel.Name+'比賽的'+pf.name+'決鬥者的決鬥對象是誰？', function(err, targets){
 								if( err ){
 									alert(err)
 								} else {
-									react.observeWithOnApi('assignwin', duel.Name+'比賽的'+pf.name+'決鬥者'+af.win+target+'決鬥者')
+									console.log(targets)
+									//react.observeWithOnApi('assignwin', duel.Name+'比賽的'+pf.name+'決鬥者'+af.win+target+'決鬥者')
 								}
 							})
 						}
