@@ -1,0 +1,254 @@
+<html>
+	<head>
+		<title>
+		</title>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+	</head>
+	<body>
+		<duelsys>
+			createduel:
+			<form id='createduelform'>
+				<input name='duelname' value='a4'>
+				<input name='start' value='2016-Mar-10'>
+				<input name='open' value='2016-Mar-18'>
+				<input name='close' value='2016-Mar-20'>
+			</form>
+			<br>
+			people:
+			<form id='addpeopleform'>
+				<input name='name' value='han'>
+			</form>
+			
+			<form id='assignwinform'>
+				<select name='win'>
+					<option>勝</option>
+					<option>負</option>
+				</select>
+			</form>
+			
+			<button id='createduel'>create duel</button>
+			<button id='deleteduel'>delete duel</button>
+			<button id='addpeople'>add people</button>
+			<button id='deletepeople'>delete people</button>
+			<button id='assignwin'>assignwin</button>
+			<button id='forward'>forward</button>
+			<button id='update'>update</button>
+			<div id='duels'></div>
+			<div id='duelcontent' style='border:1px solid'></div>
+		</duelsys>
+		
+		<script type='x-jquery-tmpl' id='tmpl_duelcontent'>
+			<div>
+				Name:${Name}<br>
+				Date:${Date}<br>
+				Peoples:
+				{{each Peoples}}
+					${Name}:${Position},
+				{{/each}}<br>
+			</div>
+		</script>
+		<script type='x-jquery-tmpl' id='tmpl_duel'>
+			<div>
+				${Name}<br>
+				${Date}<br>
+			</div>
+		</script>
+		
+		<script src='../common/js/lib/rxjs/rx.all.min.js'></script>
+		<script src='../common/js/lib/purl.js'></script>
+		<script src='js/api.js'></script>
+		<script>
+		
+		var react = react || {};
+		(function(module){
+			var on = new Rx.Subject()
+			var onapi = new Rx.Subject()
+			
+			function observeWithOn(id, jdom, evt, handle){
+				handle = handle || function(src){
+					on.onNext([id, evt, src])
+				}
+				jdom.on(evt, handle)
+			}
+			
+			function observeWithOnApi(id, des, handle){
+				
+				handle = handle || (function( id, des ){
+					return function(err, data){
+						onapi.onNext([id, des, err, data])
+					}
+				}) (id, des)
+				
+				api.talk(des, handle)
+			}
+			
+			module.on = on
+			module.onapi = onapi
+			module.observeWithOn = observeWithOn
+			module.observeWithOnApi = observeWithOnApi
+			
+		}) ( react )
+		
+		
+		var view = view || {};
+		(function(module){
+			
+			var root = 0
+			
+			function updateDuels(ctx){
+				var duels = ctx.duelctx.Duels
+				var container = root.find('#duels')
+				container.empty()
+				for(var i in duels){
+					var duel = duels[i]
+					var handle = (function(idx, duel){
+						return function(src){
+							react.on.onNext(['selectduel', 'click', src, idx, duel])
+						}
+					}) (parseInt(i), duel)
+					var jdom = $("#tmpl_duel").tmpl(duel)
+					react.observeWithOn(0, jdom, 'click', handle)
+					jdom.appendTo(container)
+				}
+			}
+			
+			function updateSelectDuel(ctx){
+				var selectidx = ctx.selectidx
+				var duel = ctx.duelctx.Duels[selectidx]
+				var container = root.find('#duelcontent')
+				container.empty()
+				var jdom = $('#tmpl_duelcontent').tmpl(duel)
+				jdom.appendTo(container)
+			}
+			
+			function update(ctx){
+				updateDuels(ctx)
+				updateSelectDuel(ctx)
+			}
+			
+			function init( jdom ){
+				root = jdom
+				react.observeWithOn('createduel', root.find('#createduel'), 'click')
+				react.observeWithOn('addpeople', root.find('#addpeople'), 'click')
+				react.observeWithOn('deletepeople', root.find('#deletepeople'), 'click')
+				react.observeWithOn('assignwin', root.find('#assignwin'), 'click')
+				react.observeWithOn('forward', root.find('#forward'), 'click')
+				react.observeWithOn('update', root.find('#update'), 'click')
+			}
+			
+			module.init = init
+			module.update = update
+			
+		}) ( view )
+		
+		$(function(){
+			
+			view.init($('duelsys'))
+			
+			
+			
+			var ctx = {
+				duelctx: 0,
+				selectidx:0
+			}
+			
+			react.onapi.subscribe(
+				function(data){
+					var id = data[0]
+					var des = data[1]
+					var err = data[2]
+					var ret = data[3]
+					console.log(data)
+					if( err ) {
+						alert(err)
+					} else {
+						switch(id){
+						case 'duelcontext':
+							ctx.duelctx = ret
+							view.update(ctx)
+							break
+						}
+					}
+				}
+			)
+			
+			
+			
+			react.on.subscribe(
+				function(data){
+					var id = data[0]
+					switch(id){
+					case 'forward':
+						{
+							var duel = ctx.duelctx.Duels[ctx.selectidx]
+							var pf = purl('?'+ $('#addpeopleform').serialize()).data.param.query
+							react.observeWithOnApi('forward', duel.Name+'比賽的'+pf.name+'決鬥者升格')
+						}
+						break
+					case 'assignwin':
+						{
+							var duel = ctx.duelctx.Duels[ctx.selectidx]
+							var pf = purl('?'+ $('#addpeopleform').serialize()).data.param.query
+							var af = purl('?'+ $('#assignwinform').serialize()).data.param.query
+							api.talk(duel.Name+'比賽的'+pf.name+'決鬥者的決鬥對象是誰？', function(err, target){
+								if( err ){
+									alert(err)
+								} else {
+									react.observeWithOnApi('assignwin', duel.Name+'比賽的'+pf.name+'決鬥者'+af.win+target+'決鬥者')
+								}
+							})
+						}
+						break
+					case 'createduel':
+						{
+							var d = purl('?'+ $('#createduelform').serialize()).data.param.query
+							react.observeWithOnApi('createduel', '建立'+d.duelname+'比賽。期間從'+d.open+'到'+d.close+'。報名日期'+d.start)
+						}
+						break
+						
+					case 'deletepeople':
+						{
+							if(ctx.duelctx.Duels.length==0){
+								alert("can't join")
+							} else {
+								var d = purl('?'+ $('#addpeopleform').serialize()).data.param.query
+								var duel = ctx.duelctx.Duels[ctx.selectidx]
+								react.observeWithOnApi('addpeople', d.name+'要取消參加'+duel.Name+'比賽')
+							}
+						}
+						
+						break
+					case 'addpeople':
+						{
+							if(ctx.duelctx.Duels.length==0){
+								alert("can't join")
+							} else {
+								var d = purl('?'+ $('#addpeopleform').serialize()).data.param.query
+								var duel = ctx.duelctx.Duels[ctx.selectidx]
+								react.observeWithOnApi('addpeople', d.name+'要參加'+duel.Name+'比賽')
+							}
+						}
+						
+						break
+					case 'update':
+						react.observeWithOnApi('duelcontext', '比賽本文')
+						break
+					case 'selectduel':
+						{
+							var idx = data[3]
+							var duel = data[4]
+							ctx.selectidx = idx
+							view.update(ctx)
+						}
+						break
+					}
+					console.log(data)
+				}
+			)
+			
+		})
+		</script>
+	</body>
+</html>
