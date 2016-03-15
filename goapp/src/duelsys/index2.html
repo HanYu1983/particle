@@ -196,8 +196,11 @@
 								if( err ){
 									alert(err)
 								} else {
-									console.log(targets)
-									//react.observeWithOnApi('assignwin', duel.Name+'比賽的'+pf.name+'決鬥者'+af.win+target+'決鬥者')
+									for(var i in targets){
+										var target = targets[i]
+										react.observeWithOnApi('assignwin', duel.Name+'比賽的'+pf.name+'決鬥者'+af.win+target+'決鬥者')
+									}
+									
 								}
 							})
 						}

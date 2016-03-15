@@ -217,7 +217,12 @@ func PeopleForward(dc *DuelContext, duelname string, winnerName string) error {
 	}
 
 	winnerInDuel.Position = fwdNode
-	info := duel.NodeInfo[fwdNode.ToString()]
+	info, exist := duel.NodeInfo[fwdNode.ToString()]
+	if exist == false {
+		info = NodeInfo{
+			Winner: map[string]bool{},
+		}
+	}
 	info.Name = winnerName
 	duel.NodeInfo[fwdNode.ToString()] = info
 
