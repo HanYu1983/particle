@@ -5,7 +5,7 @@ var admin = admin || {};
 	var version = '1.34';
 	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
-	var cardbackCount = 56;
+	var cardbackCount = 61;
 	
 	addVerToTitle();
 	
