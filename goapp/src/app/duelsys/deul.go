@@ -151,30 +151,35 @@ func CheckWinnerMatch(dc *DuelContext, duelname string, position Node, target No
 	return WinnerIsMatch, nil
 }
 
-func DuelTargetName(dc *DuelContext, duelname string, position Node) (string, error) {
+func DuelTargetName(dc *DuelContext, duelname string, position Node) ([]string, error) {
 	duel := GetDuel(dc, &duelname)
 	if duel == nil {
-		return "", ErrDuelNotFound
+		return nil, ErrDuelNotFound
 	}
 	nodes := NextNodes(duel.DuelTree, position)
 	for _, node := range nodes {
 		if duel.NodeInfo[node.ToString()].Name == "" {
-			return "", ErrTargetNotAlready
+			return nil, ErrTargetNotAlready
 		}
 	}
-
+	var names []string
 	var check int
 	var err error
 	for _, node := range nodes {
 		check, err = CheckWinnerMatch(dc, duelname, position, node)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		if check != WinnerIsMatch {
-			return duel.NodeInfo[node.ToString()].Name, nil
+			names = append(names, duel.NodeInfo[node.ToString()].Name)
+			//return duel.NodeInfo[node.ToString()].Name, nil
 		}
 	}
-	return "", ErrNoTarget
+	if names == nil {
+		return nil, ErrNoTarget
+	} else {
+		return names, nil
+	}
 }
 
 func GetPeople(dc *DuelContext, duelname string, name string) (People, error) {
@@ -212,7 +217,12 @@ func PeopleForward(dc *DuelContext, duelname string, winnerName string) error {
 	}
 
 	winnerInDuel.Position = fwdNode
-	info := duel.NodeInfo[fwdNode.ToString()]
+	info, exist := duel.NodeInfo[fwdNode.ToString()]
+	if exist == false {
+		info = NodeInfo{
+			Winner: map[string]bool{},
+		}
+	}
 	info.Name = winnerName
 	duel.NodeInfo[fwdNode.ToString()] = info
 

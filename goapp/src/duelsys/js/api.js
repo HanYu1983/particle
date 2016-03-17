@@ -18,7 +18,17 @@ var api = api || {};
 		})
 	}
 	
+	function rxtalk(des){
+		return Rx.Observable.create(function(obs){
+			talk(des, function(err, data){
+				obs.onNext([err, data])
+				obs.onComplete()
+			})
+		})
+	}
+	
 	module.talk = talk
+	module.rxtalk = rxtalk
 	module.createDuel = "建立(.+)比賽。期間從(.+)到(.+)。報名日期(.+)"	//期間的格式為yyyy-Jan-dd
 	module.duelContext = "比賽本文"
 	module.addPeople = "(.+)要參加(.+)比賽"
