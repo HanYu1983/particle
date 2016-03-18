@@ -13,7 +13,7 @@ var db2path = db2path || {};
 	var cardSuitJson = "root/user/{0}/cardSuit.json"
 	var oneParticleInfo = "root/particle/list/{0}.json"
 	var oneParticleImage = "root/particle/list/{0}.jpg"
-	var stockInfoJson = "root/stock/{0}/stockInfo.json"
+	var stockInfoJson = "root/stock/info/{0}.json"
 	
 	module.sf = sf
 	module.cardSuitJson = cardSuitJson
