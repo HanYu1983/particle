@@ -33,7 +33,8 @@ var gundamWarN = gundamWarN || {};
     "179003",
     "179002",
     "179001",
-    "179901"
+    "179901",
+		"179031"
 	]
 	
 	var transMap = {
