@@ -345,7 +345,7 @@ class UI extends Mediator
 			div.append( img );
 			
 			var img2 = Main.j( '<img></img>' );
-			img2.attr( 'src', 'images/sampleTxt.png' );
+			//img2.attr( 'src', 'images/sampleTxt.png' );
 			img2.css( 'position', 'absolute' );
 			img2.load( function() {
 				img2.css( 'width', '100%' );

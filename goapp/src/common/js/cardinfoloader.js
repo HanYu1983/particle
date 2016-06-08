@@ -56,6 +56,8 @@ var cardinfoloader = {} || cardinfoloader;
 				}
 				//magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
 				break;
+			default:
+				onLoadGameCallback()
 		}
 	}
 	

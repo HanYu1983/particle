@@ -1024,7 +1024,6 @@ mediator_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prot
 			});
 			div.append(img);
 			var img2 = Main.j("<img></img>");
-			img2.attr("src","images/sampleTxt.png");
 			img2.css("position","absolute");
 			img2.load(function() {
 				img2.css("width","100%");
