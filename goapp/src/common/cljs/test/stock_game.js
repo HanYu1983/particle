@@ -35,8 +35,8 @@ this.__extmap=null;
 test.stock_game.Order.prototype.cljs$core$ILookup$_lookup$arity$2 = (function (this__4137__auto__,k__4138__auto__){var self__ = this;
 var this__4137__auto____$1 = this;return cljs.core._lookup.call(null,this__4137__auto____$1,k__4138__auto__,null);
 });
-test.stock_game.Order.prototype.cljs$core$ILookup$_lookup$arity$3 = (function (this__4139__auto__,k16037,else__4140__auto__){var self__ = this;
-var this__4139__auto____$1 = this;var G__16039 = (((k16037 instanceof cljs.core.Keyword))?k16037.fqn:null);switch (G__16039) {
+test.stock_game.Order.prototype.cljs$core$ILookup$_lookup$arity$3 = (function (this__4139__auto__,k23499,else__4140__auto__){var self__ = this;
+var this__4139__auto____$1 = this;var G__23501 = (((k23499 instanceof cljs.core.Keyword))?k23499.fqn:null);switch (G__23501) {
 case "time":
 return self__.time;
 
@@ -58,7 +58,7 @@ return self__.id;
 
 break;
 default:
-return cljs.core.get.call(null,self__.__extmap,k16037,else__4140__auto__);
+return cljs.core.get.call(null,self__.__extmap,k23499,else__4140__auto__);
 
 }
 });
@@ -104,23 +104,23 @@ var this__4146__auto____$1 = this;if(cljs.core.contains_QMARK_.call(null,new clj
 {return (new test.stock_game.Order(self__.id,self__.type,self__.price,self__.cnt,self__.time,self__.__meta,cljs.core.not_empty.call(null,cljs.core.dissoc.call(null,self__.__extmap,k__4147__auto__)),null));
 }
 });
-test.stock_game.Order.prototype.cljs$core$IAssociative$_assoc$arity$3 = (function (this__4144__auto__,k__4145__auto__,G__16036){var self__ = this;
-var this__4144__auto____$1 = this;var pred__16040 = cljs.core.keyword_identical_QMARK_;var expr__16041 = k__4145__auto__;if(cljs.core.truth_(pred__16040.call(null,new cljs.core.Keyword(null,"id","id",-1388402092),expr__16041)))
-{return (new test.stock_game.Order(G__16036,self__.type,self__.price,self__.cnt,self__.time,self__.__meta,self__.__extmap,null));
+test.stock_game.Order.prototype.cljs$core$IAssociative$_assoc$arity$3 = (function (this__4144__auto__,k__4145__auto__,G__23498){var self__ = this;
+var this__4144__auto____$1 = this;var pred__23502 = cljs.core.keyword_identical_QMARK_;var expr__23503 = k__4145__auto__;if(cljs.core.truth_(pred__23502.call(null,new cljs.core.Keyword(null,"id","id",-1388402092),expr__23503)))
+{return (new test.stock_game.Order(G__23498,self__.type,self__.price,self__.cnt,self__.time,self__.__meta,self__.__extmap,null));
 } else
-{if(cljs.core.truth_(pred__16040.call(null,new cljs.core.Keyword(null,"type","type",1174270348),expr__16041)))
-{return (new test.stock_game.Order(self__.id,G__16036,self__.price,self__.cnt,self__.time,self__.__meta,self__.__extmap,null));
+{if(cljs.core.truth_(pred__23502.call(null,new cljs.core.Keyword(null,"type","type",1174270348),expr__23503)))
+{return (new test.stock_game.Order(self__.id,G__23498,self__.price,self__.cnt,self__.time,self__.__meta,self__.__extmap,null));
 } else
-{if(cljs.core.truth_(pred__16040.call(null,new cljs.core.Keyword(null,"price","price",22129180),expr__16041)))
-{return (new test.stock_game.Order(self__.id,self__.type,G__16036,self__.cnt,self__.time,self__.__meta,self__.__extmap,null));
+{if(cljs.core.truth_(pred__23502.call(null,new cljs.core.Keyword(null,"price","price",22129180),expr__23503)))
+{return (new test.stock_game.Order(self__.id,self__.type,G__23498,self__.cnt,self__.time,self__.__meta,self__.__extmap,null));
 } else
-{if(cljs.core.truth_(pred__16040.call(null,new cljs.core.Keyword(null,"cnt","cnt",283978798),expr__16041)))
-{return (new test.stock_game.Order(self__.id,self__.type,self__.price,G__16036,self__.time,self__.__meta,self__.__extmap,null));
+{if(cljs.core.truth_(pred__23502.call(null,new cljs.core.Keyword(null,"cnt","cnt",283978798),expr__23503)))
+{return (new test.stock_game.Order(self__.id,self__.type,self__.price,G__23498,self__.time,self__.__meta,self__.__extmap,null));
 } else
-{if(cljs.core.truth_(pred__16040.call(null,new cljs.core.Keyword(null,"time","time",1385887882),expr__16041)))
-{return (new test.stock_game.Order(self__.id,self__.type,self__.price,self__.cnt,G__16036,self__.__meta,self__.__extmap,null));
+{if(cljs.core.truth_(pred__23502.call(null,new cljs.core.Keyword(null,"time","time",1385887882),expr__23503)))
+{return (new test.stock_game.Order(self__.id,self__.type,self__.price,self__.cnt,G__23498,self__.__meta,self__.__extmap,null));
 } else
-{return (new test.stock_game.Order(self__.id,self__.type,self__.price,self__.cnt,self__.time,self__.__meta,cljs.core.assoc.call(null,self__.__extmap,k__4145__auto__,G__16036),null));
+{return (new test.stock_game.Order(self__.id,self__.type,self__.price,self__.cnt,self__.time,self__.__meta,cljs.core.assoc.call(null,self__.__extmap,k__4145__auto__,G__23498),null));
 }
 }
 }
@@ -130,8 +130,8 @@ var this__4144__auto____$1 = this;var pred__16040 = cljs.core.keyword_identical_
 test.stock_game.Order.prototype.cljs$core$ISeqable$_seq$arity$1 = (function (this__4149__auto__){var self__ = this;
 var this__4149__auto____$1 = this;return cljs.core.seq.call(null,cljs.core.concat.call(null,new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"id","id",-1388402092),self__.id],null)),(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"type","type",1174270348),self__.type],null)),(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"price","price",22129180),self__.price],null)),(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"cnt","cnt",283978798),self__.cnt],null)),(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"time","time",1385887882),self__.time],null))], null),self__.__extmap));
 });
-test.stock_game.Order.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (this__4136__auto__,G__16036){var self__ = this;
-var this__4136__auto____$1 = this;return (new test.stock_game.Order(self__.id,self__.type,self__.price,self__.cnt,self__.time,G__16036,self__.__extmap,self__.__hash));
+test.stock_game.Order.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (this__4136__auto__,G__23498){var self__ = this;
+var this__4136__auto____$1 = this;return (new test.stock_game.Order(self__.id,self__.type,self__.price,self__.cnt,self__.time,G__23498,self__.__extmap,self__.__hash));
 });
 test.stock_game.Order.prototype.cljs$core$ICollection$_conj$arity$2 = (function (this__4142__auto__,entry__4143__auto__){var self__ = this;
 var this__4142__auto____$1 = this;if(cljs.core.vector_QMARK_.call(null,entry__4143__auto__))
@@ -147,7 +147,7 @@ test.stock_game.Order.cljs$lang$ctorPrWriter = (function (this__4171__auto__,wri
 });
 test.stock_game.__GT_Order = (function __GT_Order(id,type,price,cnt,time){return (new test.stock_game.Order(id,type,price,cnt,time));
 });
-test.stock_game.map__GT_Order = (function map__GT_Order(G__16038){return (new test.stock_game.Order(new cljs.core.Keyword(null,"id","id",-1388402092).cljs$core$IFn$_invoke$arity$1(G__16038),new cljs.core.Keyword(null,"type","type",1174270348).cljs$core$IFn$_invoke$arity$1(G__16038),new cljs.core.Keyword(null,"price","price",22129180).cljs$core$IFn$_invoke$arity$1(G__16038),new cljs.core.Keyword(null,"cnt","cnt",283978798).cljs$core$IFn$_invoke$arity$1(G__16038),new cljs.core.Keyword(null,"time","time",1385887882).cljs$core$IFn$_invoke$arity$1(G__16038),null,cljs.core.dissoc.call(null,G__16038,new cljs.core.Keyword(null,"id","id",-1388402092),new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"price","price",22129180),new cljs.core.Keyword(null,"cnt","cnt",283978798),new cljs.core.Keyword(null,"time","time",1385887882))));
+test.stock_game.map__GT_Order = (function map__GT_Order(G__23500){return (new test.stock_game.Order(new cljs.core.Keyword(null,"id","id",-1388402092).cljs$core$IFn$_invoke$arity$1(G__23500),new cljs.core.Keyword(null,"type","type",1174270348).cljs$core$IFn$_invoke$arity$1(G__23500),new cljs.core.Keyword(null,"price","price",22129180).cljs$core$IFn$_invoke$arity$1(G__23500),new cljs.core.Keyword(null,"cnt","cnt",283978798).cljs$core$IFn$_invoke$arity$1(G__23500),new cljs.core.Keyword(null,"time","time",1385887882).cljs$core$IFn$_invoke$arity$1(G__23500),null,cljs.core.dissoc.call(null,G__23500,new cljs.core.Keyword(null,"id","id",-1388402092),new cljs.core.Keyword(null,"type","type",1174270348),new cljs.core.Keyword(null,"price","price",22129180),new cljs.core.Keyword(null,"cnt","cnt",283978798),new cljs.core.Keyword(null,"time","time",1385887882))));
 });
 
 /**
@@ -181,8 +181,8 @@ this.__extmap=null;
 test.stock_game.Deal.prototype.cljs$core$ILookup$_lookup$arity$2 = (function (this__4137__auto__,k__4138__auto__){var self__ = this;
 var this__4137__auto____$1 = this;return cljs.core._lookup.call(null,this__4137__auto____$1,k__4138__auto__,null);
 });
-test.stock_game.Deal.prototype.cljs$core$ILookup$_lookup$arity$3 = (function (this__4139__auto__,k16045,else__4140__auto__){var self__ = this;
-var this__4139__auto____$1 = this;var G__16047 = (((k16045 instanceof cljs.core.Keyword))?k16045.fqn:null);switch (G__16047) {
+test.stock_game.Deal.prototype.cljs$core$ILookup$_lookup$arity$3 = (function (this__4139__auto__,k23507,else__4140__auto__){var self__ = this;
+var this__4139__auto____$1 = this;var G__23509 = (((k23507 instanceof cljs.core.Keyword))?k23507.fqn:null);switch (G__23509) {
 case "time":
 return self__.time;
 
@@ -200,7 +200,7 @@ return self__.id;
 
 break;
 default:
-return cljs.core.get.call(null,self__.__extmap,k16045,else__4140__auto__);
+return cljs.core.get.call(null,self__.__extmap,k23507,else__4140__auto__);
 
 }
 });
@@ -246,20 +246,20 @@ var this__4146__auto____$1 = this;if(cljs.core.contains_QMARK_.call(null,new clj
 {return (new test.stock_game.Deal(self__.id,self__.buy,self__.sell,self__.time,self__.__meta,cljs.core.not_empty.call(null,cljs.core.dissoc.call(null,self__.__extmap,k__4147__auto__)),null));
 }
 });
-test.stock_game.Deal.prototype.cljs$core$IAssociative$_assoc$arity$3 = (function (this__4144__auto__,k__4145__auto__,G__16044){var self__ = this;
-var this__4144__auto____$1 = this;var pred__16048 = cljs.core.keyword_identical_QMARK_;var expr__16049 = k__4145__auto__;if(cljs.core.truth_(pred__16048.call(null,new cljs.core.Keyword(null,"id","id",-1388402092),expr__16049)))
-{return (new test.stock_game.Deal(G__16044,self__.buy,self__.sell,self__.time,self__.__meta,self__.__extmap,null));
+test.stock_game.Deal.prototype.cljs$core$IAssociative$_assoc$arity$3 = (function (this__4144__auto__,k__4145__auto__,G__23506){var self__ = this;
+var this__4144__auto____$1 = this;var pred__23510 = cljs.core.keyword_identical_QMARK_;var expr__23511 = k__4145__auto__;if(cljs.core.truth_(pred__23510.call(null,new cljs.core.Keyword(null,"id","id",-1388402092),expr__23511)))
+{return (new test.stock_game.Deal(G__23506,self__.buy,self__.sell,self__.time,self__.__meta,self__.__extmap,null));
 } else
-{if(cljs.core.truth_(pred__16048.call(null,new cljs.core.Keyword(null,"buy","buy",-794379565),expr__16049)))
-{return (new test.stock_game.Deal(self__.id,G__16044,self__.sell,self__.time,self__.__meta,self__.__extmap,null));
+{if(cljs.core.truth_(pred__23510.call(null,new cljs.core.Keyword(null,"buy","buy",-794379565),expr__23511)))
+{return (new test.stock_game.Deal(self__.id,G__23506,self__.sell,self__.time,self__.__meta,self__.__extmap,null));
 } else
-{if(cljs.core.truth_(pred__16048.call(null,new cljs.core.Keyword(null,"sell","sell",-1949004143),expr__16049)))
-{return (new test.stock_game.Deal(self__.id,self__.buy,G__16044,self__.time,self__.__meta,self__.__extmap,null));
+{if(cljs.core.truth_(pred__23510.call(null,new cljs.core.Keyword(null,"sell","sell",-1949004143),expr__23511)))
+{return (new test.stock_game.Deal(self__.id,self__.buy,G__23506,self__.time,self__.__meta,self__.__extmap,null));
 } else
-{if(cljs.core.truth_(pred__16048.call(null,new cljs.core.Keyword(null,"time","time",1385887882),expr__16049)))
-{return (new test.stock_game.Deal(self__.id,self__.buy,self__.sell,G__16044,self__.__meta,self__.__extmap,null));
+{if(cljs.core.truth_(pred__23510.call(null,new cljs.core.Keyword(null,"time","time",1385887882),expr__23511)))
+{return (new test.stock_game.Deal(self__.id,self__.buy,self__.sell,G__23506,self__.__meta,self__.__extmap,null));
 } else
-{return (new test.stock_game.Deal(self__.id,self__.buy,self__.sell,self__.time,self__.__meta,cljs.core.assoc.call(null,self__.__extmap,k__4145__auto__,G__16044),null));
+{return (new test.stock_game.Deal(self__.id,self__.buy,self__.sell,self__.time,self__.__meta,cljs.core.assoc.call(null,self__.__extmap,k__4145__auto__,G__23506),null));
 }
 }
 }
@@ -268,8 +268,8 @@ var this__4144__auto____$1 = this;var pred__16048 = cljs.core.keyword_identical_
 test.stock_game.Deal.prototype.cljs$core$ISeqable$_seq$arity$1 = (function (this__4149__auto__){var self__ = this;
 var this__4149__auto____$1 = this;return cljs.core.seq.call(null,cljs.core.concat.call(null,new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"id","id",-1388402092),self__.id],null)),(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"buy","buy",-794379565),self__.buy],null)),(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"sell","sell",-1949004143),self__.sell],null)),(new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[new cljs.core.Keyword(null,"time","time",1385887882),self__.time],null))], null),self__.__extmap));
 });
-test.stock_game.Deal.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (this__4136__auto__,G__16044){var self__ = this;
-var this__4136__auto____$1 = this;return (new test.stock_game.Deal(self__.id,self__.buy,self__.sell,self__.time,G__16044,self__.__extmap,self__.__hash));
+test.stock_game.Deal.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (this__4136__auto__,G__23506){var self__ = this;
+var this__4136__auto____$1 = this;return (new test.stock_game.Deal(self__.id,self__.buy,self__.sell,self__.time,G__23506,self__.__extmap,self__.__hash));
 });
 test.stock_game.Deal.prototype.cljs$core$ICollection$_conj$arity$2 = (function (this__4142__auto__,entry__4143__auto__){var self__ = this;
 var this__4142__auto____$1 = this;if(cljs.core.vector_QMARK_.call(null,entry__4143__auto__))
@@ -285,16 +285,16 @@ test.stock_game.Deal.cljs$lang$ctorPrWriter = (function (this__4171__auto__,writ
 });
 test.stock_game.__GT_Deal = (function __GT_Deal(id,buy,sell,time){return (new test.stock_game.Deal(id,buy,sell,time));
 });
-test.stock_game.map__GT_Deal = (function map__GT_Deal(G__16046){return (new test.stock_game.Deal(new cljs.core.Keyword(null,"id","id",-1388402092).cljs$core$IFn$_invoke$arity$1(G__16046),new cljs.core.Keyword(null,"buy","buy",-794379565).cljs$core$IFn$_invoke$arity$1(G__16046),new cljs.core.Keyword(null,"sell","sell",-1949004143).cljs$core$IFn$_invoke$arity$1(G__16046),new cljs.core.Keyword(null,"time","time",1385887882).cljs$core$IFn$_invoke$arity$1(G__16046),null,cljs.core.dissoc.call(null,G__16046,new cljs.core.Keyword(null,"id","id",-1388402092),new cljs.core.Keyword(null,"buy","buy",-794379565),new cljs.core.Keyword(null,"sell","sell",-1949004143),new cljs.core.Keyword(null,"time","time",1385887882))));
+test.stock_game.map__GT_Deal = (function map__GT_Deal(G__23508){return (new test.stock_game.Deal(new cljs.core.Keyword(null,"id","id",-1388402092).cljs$core$IFn$_invoke$arity$1(G__23508),new cljs.core.Keyword(null,"buy","buy",-794379565).cljs$core$IFn$_invoke$arity$1(G__23508),new cljs.core.Keyword(null,"sell","sell",-1949004143).cljs$core$IFn$_invoke$arity$1(G__23508),new cljs.core.Keyword(null,"time","time",1385887882).cljs$core$IFn$_invoke$arity$1(G__23508),null,cljs.core.dissoc.call(null,G__23508,new cljs.core.Keyword(null,"id","id",-1388402092),new cljs.core.Keyword(null,"buy","buy",-794379565),new cljs.core.Keyword(null,"sell","sell",-1949004143),new cljs.core.Keyword(null,"time","time",1385887882))));
 });
-test.stock_game.deal = (function deal(orders){var map__16055 = cljs.core.group_by.call(null,new cljs.core.Keyword(null,"type","type",1174270348),orders);var map__16055__$1 = ((cljs.core.seq_QMARK_.call(null,map__16055))?cljs.core.apply.call(null,cljs.core.hash_map,map__16055):map__16055);var buys = cljs.core.get.call(null,map__16055__$1,new cljs.core.Keyword(null,"buy","buy",-794379565));var sells = cljs.core.get.call(null,map__16055__$1,new cljs.core.Keyword(null,"sell","sell",-1949004143));var sortedBuys = cljs.core.sort_by.call(null,((function (map__16055,map__16055__$1,buys,sells){
+test.stock_game.deal = (function deal(orders){var map__23517 = cljs.core.group_by.call(null,new cljs.core.Keyword(null,"type","type",1174270348),orders);var map__23517__$1 = ((cljs.core.seq_QMARK_.call(null,map__23517))?cljs.core.apply.call(null,cljs.core.hash_map,map__23517):map__23517);var buys = cljs.core.get.call(null,map__23517__$1,new cljs.core.Keyword(null,"buy","buy",-794379565));var sells = cljs.core.get.call(null,map__23517__$1,new cljs.core.Keyword(null,"sell","sell",-1949004143));var sortedBuys = cljs.core.sort_by.call(null,((function (map__23517,map__23517__$1,buys,sells){
 return (function (item){return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [(- new cljs.core.Keyword(null,"price","price",22129180).cljs$core$IFn$_invoke$arity$1(item)),new cljs.core.Keyword(null,"time","time",1385887882).cljs$core$IFn$_invoke$arity$1(item)], null);
-});})(map__16055,map__16055__$1,buys,sells))
-,buys);var sortedSells = cljs.core.sort_by.call(null,((function (map__16055,map__16055__$1,buys,sells,sortedBuys){
+});})(map__23517,map__23517__$1,buys,sells))
+,buys);var sortedSells = cljs.core.sort_by.call(null,((function (map__23517,map__23517__$1,buys,sells,sortedBuys){
 return (function (item){return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [(- new cljs.core.Keyword(null,"price","price",22129180).cljs$core$IFn$_invoke$arity$1(item)),new cljs.core.Keyword(null,"time","time",1385887882).cljs$core$IFn$_invoke$arity$1(item)], null);
-});})(map__16055,map__16055__$1,buys,sells,sortedBuys))
-,sells);return cljs.core.take_while.call(null,cljs.core.comp.call(null,cljs.core.not,cljs.core.nil_QMARK_),cljs.core.iterate.call(null,((function (map__16055,map__16055__$1,buys,sells,sortedBuys,sortedSells){
-return (function (p__16056){var vec__16057 = p__16056;var buys__$1 = cljs.core.nth.call(null,vec__16057,(0),null);var sells__$1 = cljs.core.nth.call(null,vec__16057,(1),null);var deals = cljs.core.nth.call(null,vec__16057,(2),null);var buy = cljs.core.first.call(null,buys__$1);var sell = cljs.core.first.call(null,sells__$1);if((new cljs.core.Keyword(null,"price","price",22129180).cljs$core$IFn$_invoke$arity$1(buy) >= new cljs.core.Keyword(null,"price","price",22129180).cljs$core$IFn$_invoke$arity$1(sell)))
+});})(map__23517,map__23517__$1,buys,sells,sortedBuys))
+,sells);return cljs.core.take_while.call(null,cljs.core.comp.call(null,cljs.core.not,cljs.core.nil_QMARK_),cljs.core.iterate.call(null,((function (map__23517,map__23517__$1,buys,sells,sortedBuys,sortedSells){
+return (function (p__23518){var vec__23519 = p__23518;var buys__$1 = cljs.core.nth.call(null,vec__23519,(0),null);var sells__$1 = cljs.core.nth.call(null,vec__23519,(1),null);var deals = cljs.core.nth.call(null,vec__23519,(2),null);var buy = cljs.core.first.call(null,buys__$1);var sell = cljs.core.first.call(null,sells__$1);if((new cljs.core.Keyword(null,"price","price",22129180).cljs$core$IFn$_invoke$arity$1(buy) >= new cljs.core.Keyword(null,"price","price",22129180).cljs$core$IFn$_invoke$arity$1(sell)))
 {if((new cljs.core.Keyword(null,"cnt","cnt",283978798).cljs$core$IFn$_invoke$arity$1(buy) > new cljs.core.Keyword(null,"cnt","cnt",283978798).cljs$core$IFn$_invoke$arity$1(sell)))
 {return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cons.call(null,cljs.core.assoc.call(null,buy,new cljs.core.Keyword(null,"cnt","cnt",283978798),(new cljs.core.Keyword(null,"cnt","cnt",283978798).cljs$core$IFn$_invoke$arity$1(buy) - new cljs.core.Keyword(null,"cnt","cnt",283978798).cljs$core$IFn$_invoke$arity$1(sell))),cljs.core.rest.call(null,buys__$1)),cljs.core.rest.call(null,sells__$1),cljs.core.cons.call(null,(new test.stock_game.Deal((0),buy,sell,(0))),deals)], null);
 } else
@@ -311,6 +311,6 @@ return (function (p__16056){var vec__16057 = p__16056;var buys__$1 = cljs.core.n
 } else
 {return null;
 }
-});})(map__16055,map__16055__$1,buys,sells,sortedBuys,sortedSells))
+});})(map__23517,map__23517__$1,buys,sells,sortedBuys,sortedSells))
 ,new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [sortedBuys,sortedSells,cljs.core.List.EMPTY], null)));
 });

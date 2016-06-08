@@ -2,7 +2,7 @@
   (:require-macros
     [cljs.core.async.macros :as am])
   (:require
-    [app.dbfile :as db]
+    [app.stock.dbfile :as db]
     [stock.tool :as stl]
     [cljs.core.async :as a]))
 
@@ -19,8 +19,7 @@
       
 (defn loadUser [ch fbid accessToken request]
   (am/go
-    (let [[err content] (<! (db/loadFromUser fbid accessToken))
-          content (if (= content "") (js-obj "stocks" (array)) (.parse js/JSON content))]
+    (let [[err content] (<! (db/loadFromUser fbid accessToken))]
       (a/>! ch ["view" [err content request]]))))
 
 (defn saveUser [ch fbid accessToken data request]

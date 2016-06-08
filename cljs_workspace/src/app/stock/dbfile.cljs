@@ -1,4 +1,4 @@
-(ns app.dbfile
+(ns app.stock.dbfile
   (:require-macros
     [cljs.core.async.macros :as am])
   (:require
@@ -9,6 +9,7 @@
         filename 
         (.sf js/db2path (.-stockInfoJson js/db2path) (array fbid))]
     (.writefile
+      js/db2
       filename
       (js-obj
         "FBID" fbid
@@ -26,6 +27,7 @@
         filename 
         (.sf js/db2path (.-stockInfoJson js/db2path) (array fbid))]
     (.file
+      js/db2
       filename
       (js-obj
         "FBID" fbid
@@ -33,6 +35,8 @@
       "json"
       (fn [err data]
         (am/go
-          (a/>! ret [err data])
+          (if (= err "file not found")
+            (a/>! ret [nil nil])
+            (a/>! ret [err data]))
           (a/close! ret))))
     ret))

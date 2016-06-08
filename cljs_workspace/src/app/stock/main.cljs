@@ -3,8 +3,8 @@
     [cljs.core.async.macros :as am])
   (:require
     [stock.tool :as stl]
-    [app.dbfile :as db]
     [cljs.core.async :as a]
+    [app.stock.dbfile :as db]
     [app.stock.abstract :as abstract]
     [app.stock.impl]))
 

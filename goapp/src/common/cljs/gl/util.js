@@ -3,11 +3,11 @@ goog.provide('gl.util');
 goog.require('cljs.core');
 gl.util.getContext = (function getContext(canvas,option){return cljs.core.reduce.call(null,(function (ctx,test_name){if((ctx == null))
 {try{return canvas.getContext(test_name,option);
-}catch (e12676){if((e12676 instanceof Object))
-{var e = e12676;return null;
+}catch (e21747){if((e21747 instanceof Object))
+{var e = e21747;return null;
 } else
 {if(new cljs.core.Keyword(null,"else","else",-1508377146))
-{throw e12676;
+{throw e21747;
 } else
 {return null;
 }
