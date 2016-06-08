@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+                       xmlns:s="library://ns.adobe.com/flex/spark"
+                       xmlns:mx="library://ns.adobe.com/flex/mx" applicationComplete="appStart()">
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:Fade id="fadeIn" duration="500" alphaFrom="0" alphaTo="1"></s:Fade>
+	</fx:Declarations>
+	<s:Panel title="卡牌產生器" width="100%" height="100%">
+		<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+			<s:VGroup horizontalAlign="center">
+				<s:Label>套牌名稱</s:Label>
+				<s:ComboBox  id="combo_game"  dataProvider="{data}" width="150" selectedIndex="0" labelField="text"/> 
+				<s:Label>套牌網址</s:Label>
+				<!--
+				<s:TextInput id="txt_packageUrl" text="http://particle-979.appspot.com/fn/cardInfo/cardList" width="350"></s:TextInput>
+					-->
+				<s:Button id="btn_pickCsv">選取tsv</s:Button>
+				<s:Label>輸出路徑</s:Label>
+				<s:TextInput id="txt_outputUrl" text="/big_workspace/particle/goapp/src/common/cardPackage/" width="350"></s:TextInput>
+				<s:Label>伺服器路徑</s:Label>
+				<s:TextInput id="txt_serverUrl" text="http://particle-979.appspot.com/common/cardPackage/" width="350"></s:TextInput>
+				<s:Button id="btn_upload" click="onBtnClick( event )" enabled="false">執行</s:Button>
+			</s:VGroup>
+		</s:HGroup>
+		<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+			<s:Panel id="panel_wait" title="繪圖中..." visible="false" width="300">
+				<s:HGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+					<s:Label>請稍等...，繪圖完畢會自動關閉程式。</s:Label>
+				</s:HGroup>
+			</s:Panel>
+		</s:HGroup>
+	</s:Panel>
+	<fx:Script>
+		<![CDATA[
+		
+		import adobe.utils.CustomActions;
+		import flash.desktop.NativeApplication;
+		import flash.display.Loader;
+		import flash.display.LoaderInfo;
+		import flash.errors.IOError;
+		import flash.events.Event;
+		import flash.events.EventDispatcher;
+		import flash.events.IOErrorEvent;
+		import flash.events.MouseEvent;
+		import flash.filesystem.File;
+		import flash.net.FileFilter;
+		import flash.net.URLLoader;
+		import flash.net.URLRequest;
+		import flash.system.ApplicationDomain;
+		import mx.collections.ArrayCollection;
+		import mx.controls.Alert;
+		import view.CsvReader;
+		import view.UIurl;
+		import view.VicEvent;
+		
+		private var _ui:EventDispatcher;
+		private var _source:ApplicationDomain;
+		private var _template:Class;
+		private var _ary_imgPool:Object = { };
+		private var _csv:CsvReader;
+		
+		[Bindable]
+        public var data:ArrayCollection = new ArrayCollection(
+			[   
+				{value:"fighter", text:"格鬥風雲錄"},
+				{value:"army", text:"戰爭"}
+			]                
+        );
+		
+		public function appStart():void {
+			var l:Loader = new Loader();
+			l.load( new URLRequest( 'src/source.swf' ));
+			l.contentLoaderInfo.addEventListener( Event.COMPLETE, onComplete );
+		}
+		
+		private function onFlieUpload( e:VicEvent ):void {
+			
+			_ui.dispatchEvent( new VicEvent( 'appendCard', {
+				template:_template,
+				data: e.data
+			} ));
+		}
+		
+		private function getData():void {
+			if ( _csv == null ) return;
+			
+			/*
+			var ul:URLLoader = new URLLoader();
+			var url:String = txt_packageUrl.text;
+			ul.load( new URLRequest( url ));
+			ul.addEventListener(IOErrorEvent.IO_ERROR, function( e:IOErrorEvent ):void{
+				Alert.show( '套牌網址輸入錯誤!', '錯誤' );
+			});
+			*/
+			var packageName:String = combo_game.selectedItem.value;
+			try{
+				var templateName:String = 'mc_card_' + packageName;
+				_template = _source.getDefinition( templateName ) as Class;
+			}catch ( e:Error ) {
+				Alert.show( '沒有這個"' + templateName + '"模版，請檢查!', '錯誤' );
+				return ;
+			}
+			
+			_ui.dispatchEvent( new VicEvent( 'appendCard', {
+				template:_template,
+				data: _csv.getItem(),
+				outputUrl: File.documentsDirectory.url + txt_outputUrl.text,
+				packageName: packageName,
+				serverUrl: txt_serverUrl.text
+			} ));
+		}
+		
+		private function onComplete( e:Event ):void {
+			var info:LoaderInfo = e.currentTarget as LoaderInfo;
+			_source = info.applicationDomain;
+			
+			
+			_ui = new UIurl();
+			_ui.addEventListener( 'startProgress', function( e:Event ):void {
+				panel_wait.visible = true;
+			});
+			_ui.addEventListener( 'stopProgress', function( e:Event ):void {
+				panel_wait.visible = false;
+				NativeApplication.nativeApplication.exit();
+			});
+			
+			var csvFile:File = new File( File.desktopDirectory.nativePath );
+			csvFile.addEventListener(Event.SELECT, onCsvSelected);
+			
+			btn_pickCsv.addEventListener(MouseEvent.CLICK, function( e:MouseEvent ):void{
+				csvFile.browse([new FileFilter("Tsv", "*.tsv;")]);
+			});
+			
+			function onCsvSelected( e:Event ):void{
+				csvFile.load();
+				csvFile.addEventListener(Event.COMPLETE, onCsvLoadedCompleted );
+			}
+			
+			function onCsvLoadedCompleted( e:Event ):void {
+				csvFile.removeEventListener(Event.COMPLETE, onCsvLoadedCompleted );	
+				_csv = new CsvReader( csvFile.data + '' );
+				btn_upload.enabled = true;
+			}
+		}
+		
+		public function onBtnClick( e:MouseEvent ):void {
+			switch( e.currentTarget.id ){
+				case 'btn_upload':
+					getData();
+					
+			}
+		}
+		
+		]]>
+	</fx:Script>
+</s:WindowedApplication>

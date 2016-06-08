@@ -93,6 +93,8 @@ var cardinfoloader = {} || cardinfoloader;
 			return '//storage.googleapis.com/particle-resources/cardPackage/yugioh/' +id+ '.jpg'
 		case 'army':
 			return '//storage.googleapis.com/particle-resources/cardPackage/army/'+id+'.jpg'
+		case 'fighter':
+			return '//storage.googleapis.com/particle-resources/cardPackage/fighter/'+id+'.jpg'
 		case 'magic':
 			return '//storage.googleapis.com/particle-resources/cardPackage/magic/' +encodeURIComponent( id )+ '.jpg'
 		}

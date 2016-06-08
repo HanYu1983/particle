@@ -84,6 +84,7 @@ var admin = admin || {};
 	*/
 	var ary_games = [
 		{ game:'army', name:'軍武gogogo', hot:false, 'public':true },
+		{ game:'fighter', name:'格鬥風雲錄', hot:false, 'public':true },
 		{ game:'gundamWar', name:'鋼彈大戰', hot:false, 'public':false },
 		{ game:'gundamWarN', name:'鋼彈NexA', hot:true, 'public':false },
 		{ game:'sengoku', name:'戰國大戰', hot:false, 'public':false },

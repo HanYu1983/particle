@@ -4,6 +4,8 @@ runtime: go
 api_version: go1
 default_expiration: "7d"
 handlers:
+- url: /works
+  static_dir: works
 - url: /duelsys
   static_dir: duelsys
 - url: /collectmmo

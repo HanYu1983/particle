@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<application xmlns="http://ns.adobe.com/air/application/18.0"> 
+	
+	<id>CardCreator</id> 
+	<versionNumber>1.0</versionNumber> 
+	<filename>CardCreator</filename> 
+	
+	<name>CardCreator</name> 
+	<description></description> 
+	<copyright></copyright> 
+	
+	<initialWindow> 
+		<title>CardCreator</title> 
+		<content>CardCreator.swf</content> 
+		<systemChrome>standard</systemChrome> 
+		<transparent>false</transparent> 
+		<visible>true</visible> 
+		<minimizable>true</minimizable> 
+		<maximizable>true</maximizable> 
+		<resizable>true</resizable> 
+	</initialWindow> 
+	
+	<icon> 
+		<image128x128>icons/icon.png</image128x128>  
+	</icon>
+	<!-- 
+	More options:
+	http://livedocs.adobe.com/flex/3/html/File_formats_1.html#1043413
+	-->
+</application>
