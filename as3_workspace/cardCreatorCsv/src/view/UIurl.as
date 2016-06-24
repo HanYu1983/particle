@@ -364,7 +364,7 @@ package view
 			
 			_ary_cardView.forEach( function( cardView ) {
 				var data:Object = cardView['data'];
-				output.images[ data.Id ] = serverUrl + packageName + '/' + data.Id + '.jpg';
+				output.images[ data[0] ] = serverUrl + packageName + '/' + data[0] + '.jpg';
 			});
 			writeString( root, packageName, JSON.stringify( output ));
 		}
