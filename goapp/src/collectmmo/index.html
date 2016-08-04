@@ -30,8 +30,6 @@
 .tile{
 	position:relative;
 	width:13%;
-	height:45px;
-	background-color:yellow;
 	border:1px solid gray;
 	box-sizing: border-box;
 }
@@ -51,12 +49,43 @@
 	box-sizing: border-box;
 }
 
+.rectExtend{
+	position:relative;
+	width:100%;
+	left:0;
+	top:0;
+}
+
+#mc_tileContainer{
+	position:absolute;
+	width:100%;
+	left:0;
+	top:0;
+}
+
 #mc_status span{
 	width:100px;
 	color:yellow;
 }
+
 </style>
 <body>
+	<script id="tmpl_stuffs" type="jquery-x-tmpl">
+		<img src='images/me.png' style='position:absolute; width:20%; left:0px; bottom:0px;'></img>
+		<div style='position:absolute; width:100%;'>
+			{{each peoples}}
+				<img src='images/people.png' class='hori' style='width:20%;  float:right;'></img>
+			{{/each}}
+		</div>
+	</script>
+	<script id="tmpl_ground" type="jquery-x-tmpl">
+		{{each grounds}}
+		<div class="tile hori">
+			<img src=images/${type}.jpg style='position:relative; width:100%; left:0; top:0;'></img>
+			<div id="stuffs" style='position:absolute; top:0; left:0; width:100%; height:100%;'></div>
+		</div>
+		{{/each}}
+	</script>
 	<script id="tmpl_item" type="jquery-x-tmpl">
 		{{each items}}
 		<div class="item hori">
@@ -96,7 +125,9 @@
 				</div>
 			</div>
             <div title="地圖">
-				<div id="mc_tileContainer" class="group hori_center" >
+				<div class="group hori_center" >
+					<img src='images/empty.png' class="rectExtend"></img>
+					<div id="mc_tileContainer"></div>
 				</div>
             </div>
             <div title="場景" >
@@ -172,10 +203,21 @@
 	app.view = app.view || {};
 	
 	(function( module ){
+	
+	
 		var mc_tileContainer = $('#mc_tileContainer' );
+		
+		var config = {
+			grounds:[]
+		}
+		
 		_.each( _.range( 49 ), function( id ){
-			mc_tileContainer.append( '<div class="tile hori"></div>' );
+			config.grounds.push( { type:'sand', peoples:[{}, {}]} );
 		});
+		
+		var dom = $('#tmpl_ground').tmpl( config );
+		mc_tileContainer.append( dom );
+		
 		
 		var mc_sceneContainer = $("#mc_sceneContainer" );
 		var mc_bagContainer = $("#mc_bagContainer" );
