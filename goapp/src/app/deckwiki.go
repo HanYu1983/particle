@@ -1,3 +1,4 @@
+// 秀牌風雲從組牌風雲中需要的資料
 package app
 
 import (
@@ -13,6 +14,7 @@ const (
 	userDir = "root/user/"
 )
 
+// 吐出打開分享的套牌
 func ReadPublicCardSuit(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())

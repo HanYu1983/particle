@@ -1,3 +1,5 @@
+// 用來整合db到db2的過渡資料
+// 之後可以刪除
 package app
 
 import (
