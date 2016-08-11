@@ -2,6 +2,7 @@ package hello
 
 import (
 	"app"
+	"app/collectmmo"
 	"app/duelsys"
 	"fmt"
 	appauth "lib/auth"
@@ -10,14 +11,14 @@ import (
 	"net/http"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, world!")
+func handler2(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "Hello, world3!")
 }
 
 func init() {
 	//// 基本設施 ////
 	// 歡迎頁面
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", handler2)
 	// 代理伺服器
 	http.HandleFunc("/proxy", tool.Proxy)
 	// 即時訊息
@@ -32,21 +33,21 @@ func init() {
 	//// 檔案資料庫 ////
 	// 使用者用，這個會先經過FB認證
 	// 直接呼叫dbfile2的，就會先要求登入使用者fb，用來保護使用者資料
+	// 檔案資料庫有基本的保護機制，無法覆寫別的user的檔案，也無法看到別的user建立的檔案內容。
 	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
 	// 以下不必登fb，已登入自定user(deckWiki, particle)
-	// 檔案資料庫有基本的保護機制，無法覆寫別的user的檔案，也無法看到別的user建立的檔案內容。
 	// 秀牌風雲用
 	http.HandleFunc("/deckwikidbfile2/", db2.Handler(appauth.User{Key: "deckWiki"}))
 	// 幽夢仙境用
 	http.HandleFunc("/particledbfile2/", db2.Handler(appauth.User{Key: "particle"}))
-
+	// 管理者
+	// 權限最大，可以看到所有user建立的檔案內容
+	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
 	//// 資料庫檢視、備份與轉移 ////
 	// 下載備份加清除。若有Clear參數，才會執行清除
 	http.HandleFunc("/admindbfile2/__archiveAndClear__", db2.HandleClearDataAndDownloadArchive)
 	// 觀看現在資料庫的備份狀態（資料列表）
 	http.HandleFunc("/admindbfile2/__memento__", db2.HandleMemento)
-	// 資料庫viewer
-	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
 	// 新舊資料庫整合（舊方法移除後移除）
 	http.HandleFunc("/temp/dbtodb2", app.Dbtodb2)
 
@@ -69,11 +70,17 @@ func init() {
 
 	// 余氏K線圖
 	// no function
+
+	// collect mmo
+	http.HandleFunc("/fn/collectmmo/talk", collectmmo.Talk)
+
+	// 測試
+	http.HandleFunc("/fn/testmysql", app.Testmysql)
 }
 
 func init_xxx() {
 	// 歡迎頁面
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", handler2)
 	// 代理伺服器
 	http.HandleFunc("/proxy", tool.Proxy)
 	// 卡牌風雲
