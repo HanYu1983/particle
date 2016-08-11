@@ -9,7 +9,7 @@ import (
 
 func CreateChannel(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		Output(w, nil, err.Error())
+		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
 
@@ -20,12 +20,12 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 	tok, err := channel.Create(ctx, name)
 	tool.Assert(tool.IfError(err))
 
-	Output(w, tok, nil)
+	tool.Output(w, tok, nil)
 }
 
 func SendChannelMessage(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		Output(w, nil, err.Error())
+		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
 
@@ -41,7 +41,7 @@ func SendChannelMessage(w http.ResponseWriter, r *http.Request) {
 	err = channel.SendJSON(ctx, name, msg)
 	tool.Assert(tool.IfError(err))
 
-	Output(w, nil, nil)
+	tool.Output(w, nil, nil)
 }
 
 func OnChannelConnected(w http.ResponseWriter, r *http.Request) {
