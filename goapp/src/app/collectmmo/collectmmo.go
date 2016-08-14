@@ -18,6 +18,16 @@ const (
 	dbname = "root:@/mmo?charset=utf8"
 )
 
+/*
+TODO 這邊打開會出問題
+var db *sql.DB
+
+func init() {
+	var err error
+	db, err = sql.Open("mysql", dbname)
+	tool.Assert(tool.IfError(err))
+}
+*/
 var (
 	cmds = []Command{
 		Command{
@@ -52,9 +62,6 @@ var (
 				name := input[1]
 				movedir := input[2]
 
-				db, err := sql.Open("mysql", dbname)
-				tool.Assert(tool.IfError(err))
-
 				var x, y int
 				switch movedir {
 				case "上":
@@ -71,9 +78,20 @@ var (
 					break
 				}
 
-				sql := fmt.Sprintf("call move('%s', %d, %d)", name, x, y)
-				ctx.Infof("sql:%s", sql)
-				_, err = db.Exec(sql)
+				sqlstr := fmt.Sprintf("call move('%s', %d, %d)", name, x, y)
+				ctx.Infof("sql:%s", sqlstr)
+
+				db, err := sql.Open("mysql", dbname)
+				tool.Assert(tool.IfError(err))
+				/*
+					TODO 這邊用交易會出問題
+						err = tool.Transact(db, func(tx *sql.Tx) error {
+							_, err = tx.Exec(sqlstr)
+							return err
+						})
+						tool.Assert(tool.IfError(err))
+				*/
+				db.Exec(sqlstr)
 				tool.Assert(tool.IfError(err))
 				return nil
 			},
@@ -135,19 +153,24 @@ func ResetDB(w http.ResponseWriter, r *http.Request) {
 	db, err := sql.Open("mysql", dbname)
 	tool.Assert(tool.IfError(err))
 
-	for _, sql := range allSqlLine {
-		// 確保沒有呼叫到空白字串
-		trimedSql := strings.TrimSpace(sql)
-		isNotEmpty := len(trimedSql) != 0
-		if isNotEmpty {
-			_, err := db.Exec(trimedSql)
-			if err != nil {
+	err = tool.Transact(db, func(tx *sql.Tx) error {
+		for _, sql := range allSqlLine {
+			// 確保沒有呼叫到空白字串
+			trimedSql := strings.TrimSpace(sql)
+			isNotEmpty := len(trimedSql) != 0
+			if isNotEmpty {
+				_, err := tx.Exec(trimedSql)
 				ctx.Infof("err sql:%s", trimedSql)
+				if err != nil {
+					return err
+				}
 			}
-			tool.Assert(tool.IfError(err))
 		}
-	}
-	_, err = db.Exec("call Test()")
+		return nil
+	})
+	tool.Assert(tool.IfError(err))
+
+	_, err = db.Exec("call Test();")
 	tool.Assert(tool.IfError(err))
 	tool.Output(w, nil, nil)
 }
