@@ -120,5 +120,3 @@ BEGIN
   RETURN CONCAT('Hello ', addressee, ' - your parameter has ', strlen, ' characters');
 END; $$
 DELIMITER ;
-
-call test();
