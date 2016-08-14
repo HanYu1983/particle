@@ -69,12 +69,27 @@ create table log(
 	ctime timestamp default current_timestamp
 ) engine=InnoDB default charset=latin1 comment='';
 
+# 要使用交易所以把自動commit關掉
+# 使用以下指令來查詢自動commit狀態:SELECT @@AUTOCOMMIT
+# 使用以下指令來查詢隔離層級:SELECT @@tx_isolation
+set AUTOCOMMIT=0;
+
 DELIMITER $$
 drop procedure if exists move $$
 create procedure move(playername varchar(255), ox int, oy int) begin
+	# 變數宣告都要在handler or cursor宣告之前
 	declare cx, cy int;
 	declare isCanMove tinyint;
 	declare hasCell tinyint;
+	# 定義回滾
+	declare exit handler for sqlexception begin
+		rollback;
+	end;
+	declare exit handler for sqlwarning begin
+		rollback;
+	end;
+	# 開始交易
+	start transaction;
 	# 取得現在位置
 	select x, y into cx, cy from playerview as p where p.name = playername;
 	# 計算下一個位置
@@ -95,6 +110,7 @@ create procedure move(playername varchar(255), ox int, oy int) begin
 	else
 		select 0;
 	end if;
+	commit;
 end $$
 
 drop procedure if exists test $$
