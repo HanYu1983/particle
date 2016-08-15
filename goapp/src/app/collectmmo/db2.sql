@@ -1,10 +1,18 @@
+drop table if exists mapUserPlayer;
 drop table if exists item;
 drop table if exists player;
 drop table if exists cell;
 drop table if exists cellType;
-drop table if exists entity;
-drop table if exists entityType;
 
+drop table if exists log;
+create table log(
+	id int auto_increment,
+	msg text,
+	primary key(id),
+	ctime timestamp default current_timestamp
+) engine=InnoDB default charset=latin1 comment='';
+
+drop table if exists user;
 create table user(
 	name varchar(255),
 	nickname varchar(255),
@@ -26,31 +34,16 @@ create table cell(
 	foreign key(cellType) references cellType(name) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
 
-create table entityType(
-	name char(10),
-	primary key(name)
-) engine=InnoDB default charset=latin1 comment='';
-
-create table entity(
-	name varchar(255),
-	entityType char(10),
-	ctime timestamp default current_timestamp,
-	primary key(name, entityType),
-	foreign key(entityType) references entityType(name) on delete cascade
-) engine=InnoDB default charset=latin1 comment='';
-
 create table player(
 	name varchar(255),
 	x int default 0,
 	y int default 0,
-	primary key(name),
-	foreign key(name) references entity(name) on delete cascade
+	primary key(name)
 ) engine=InnoDB default charset=latin1 comment='';
 
 create table item(
 	name varchar(255),
-	primary key(name),
-	foreign key(name) references entity(name) on delete cascade
+	primary key(name)
 ) engine=InnoDB default charset=latin1 comment='';
 
 create table mapUserPlayer(
@@ -58,29 +51,20 @@ create table mapUserPlayer(
 	player varchar(255),
 	primary key(user, player),
 	foreign key(user) references user(name) on delete cascade,
-	foreign key(player) references entity(name) on delete cascade
+	foreign key(player) references player(name) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
-
-drop view if exists playerview;
-create view playerview as
-select e.entityType, p.* from entity as e left join player as p on e.name = p.name where e.entityType = 'player';
-
-drop view if exists itemview;
-create view itemview as
-select e.entityType, i.* from entity as e left join item as i on e.name = i.name where e.entityType = 'item';
 
 drop view if exists cellview;
 create view cellview as
 select * from cell as c left join cellType as ct on c.cellType = ct.name;
 
-
-drop table if exists log;
-create table log(
-	id int auto_increment,
-	msg text,
-	primary key(id),
-	ctime timestamp default current_timestamp
-) engine=InnoDB default charset=latin1 comment='';
+drop view if exists entityview;
+create view entityview as
+select p.name as name, 'player' as entityType from player as p
+union
+select i.name as name, 'item' as entityType from item as i
+union
+select u.name as name, 'user' as entityType from user as u;
 
 # 要使用交易所以把自動commit關掉
 # 使用以下指令來查詢自動commit狀態:SELECT @@AUTOCOMMIT
@@ -88,6 +72,52 @@ create table log(
 set AUTOCOMMIT=0;
 
 DELIMITER $$
+
+# 取得并建立玩家
+# 玩家一登入後就呼叫這個取得資訊
+# createplayer代表是否自動建立一個遊戲角色
+drop procedure if exists getUser $$
+create procedure getUser(username varchar(255), createplayer bool) begin
+	declare hasUser int;
+	# 定義回滾
+	declare exit handler for sqlexception begin
+		rollback;
+	end;
+	declare exit handler for sqlwarning begin
+		rollback;
+	end;
+	start transaction;
+	select count(name) into hasUser from user where name = username;
+	if hasUser = 0 then
+		insert into user(name) values (username);
+		if createplayer = true then
+			# 使用upsert
+			# 這樣我就可不用管有沒有重覆鍵值例外
+			insert into player(name) values (username) on duplicate key update
+				name = username;
+			insert into mapUserPlayer(user, player) values (username, username) on duplicate key update
+				user = username, player = username;
+		end if;
+	end if;
+	select * from user where name = username;
+	commit;
+end $$
+
+# 取得地圖
+# 指定一個地點為中心和左上的差距
+# 每次移動後就呼叫這個取得新的地圖
+drop procedure if exists getMap $$
+create procedure getMap(x int, y int, l int, t int) begin
+	declare sx, sy, ex, ey int;
+	set sx = x - l;
+	set ex = x + l;
+	set sy = y - t;
+	set ey = y + t;
+	# 注意。不要把變數名稱和欄位名稱搞混
+	select c.x, c.y, c.cellType, c.canmove from cellview as c where c.x >= sx and c.x < ex and c.y >= sy and c.y < ey;
+end $$
+
+# 角色移動
 drop procedure if exists move $$
 create procedure move(playername varchar(255), ox int, oy int) begin
 	# 變數宣告都要在handler or cursor宣告之前
@@ -104,7 +134,7 @@ create procedure move(playername varchar(255), ox int, oy int) begin
 	# 開始交易
 	start transaction;
 	# 取得現在位置
-	select x, y into cx, cy from playerview as p where p.name = playername;
+	select x, y into cx, cy from player as p where p.name = playername;
 	# 計算下一個位置
 	set cx = cx+ox;
 	set cy = cy+oy;
@@ -128,8 +158,7 @@ end $$
 
 drop procedure if exists test $$
 create procedure test() begin
-	insert into entityType(name) values ('player');
-	insert into entity (name,entityType) values ('han', 'player');
+	start transaction;
 	insert into player(name) values ('han');
 	insert into cellType(name,canmove) values ('plain',1);
 	insert into cellType(name,canmove) values ('mountain',0);
@@ -138,6 +167,7 @@ create procedure test() begin
 	call move('han',100,20);
 	call move('han',0,1);
 	call move('han',1,0);
+	commit;
 end $$
 
 drop function if exists hello_world $$
@@ -149,3 +179,5 @@ BEGIN
   RETURN CONCAT('Hello ', addressee, ' - your parameter has ', strlen, ' characters');
 END; $$
 DELIMITER ;
+
+# call test();
