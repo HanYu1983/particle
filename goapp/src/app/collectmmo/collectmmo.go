@@ -3,7 +3,7 @@ package collectmmo
 import (
 	"appengine"
 	"database/sql"
-	_ "errors"
+	"errors"
 	"fmt"
 	_ "fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -19,6 +19,10 @@ import (
 const (
 	sqlFilePath = "app/collectmmo/db2.sql"
 	dbname      = "root:@/mmo?charset=utf8"
+)
+
+var (
+	ErrNotLogin = errors.New("you are not login")
 )
 
 var db *sql.DB
@@ -82,7 +86,7 @@ var (
 				// 從cookie中取得玩家名稱
 				usernameCookie, err := tool.GetCookie(r, "user")
 				if err != nil {
-					return "you are not login"
+					panic(ErrNotLogin)
 				}
 				username := usernameCookie.Value
 
@@ -119,7 +123,7 @@ var (
 				// 從cookie中取得玩家名稱
 				usernameCookie, err := tool.GetCookie(r, "user")
 				if err != nil {
-					return "you are not login"
+					panic(ErrNotLogin)
 				}
 				username := usernameCookie.Value
 
@@ -181,7 +185,7 @@ var (
 				// 從cookie中取得玩家名稱
 				usernameCookie, err := tool.GetCookie(r, "user")
 				if err != nil {
-					return "you are not login"
+					panic(ErrNotLogin)
 				}
 				username := usernameCookie.Value
 				// 刪除cookie
