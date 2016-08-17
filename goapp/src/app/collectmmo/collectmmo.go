@@ -1,11 +1,11 @@
 package collectmmo
 
 import (
+	"app/collectmmo/mysql"
+	. "app/collectmmo/tool"
 	"appengine"
-	_ "database/sql"
 	"errors"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"lib/tool"
 	"net/http"
 	_ "os"
@@ -25,7 +25,7 @@ var (
 			regexp.MustCompile("(.*) login"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
 				username := input[1]
-				user, err := CallGetUser(username, true)
+				user, err := mysql.CallGetUser(username, true)
 				tool.Assert(tool.IfError(err))
 				// 加入cookie
 				// 用來判斷玩家有沒有登入
@@ -44,7 +44,7 @@ var (
 					panic(ErrNotLogin)
 				}
 				username := usernameCookie.Value
-				user, err := CallGetUser(username, true)
+				user, err := mysql.CallGetUser(username, true)
 				tool.Assert(tool.IfError(err))
 				// 回傳玩家資料
 				return user
@@ -79,7 +79,7 @@ var (
 					x, y = 1, 0
 					break
 				}
-				err = CallMove(username, x, y)
+				err = mysql.CallMove(username, x, y)
 				tool.Assert(tool.IfError(err))
 				return nil
 			},
@@ -95,7 +95,7 @@ var (
 				y, _ := strconv.Atoi(ys)
 				l, _ := strconv.Atoi(ls)
 				t, _ := strconv.Atoi(ts)
-				cells, err := CallGetMap(x, y, l, t)
+				cells, err := mysql.CallGetMap(x, y, l, t)
 				tool.Assert(tool.IfError(err))
 				return cells
 			},
@@ -158,7 +158,7 @@ func Server_ResetDB(w http.ResponseWriter, r *http.Request) {
 		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
-	err := ResetDB(ctx)
+	err := mysql.ResetDB(ctx)
 	tool.Assert(tool.IfError(err))
 	tool.Output(w, nil, nil)
 }

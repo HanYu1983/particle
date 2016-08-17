@@ -1,4 +1,4 @@
-package collectmmo
+package mysql
 
 import (
 	"appengine"

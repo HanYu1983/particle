@@ -1,4 +1,4 @@
-package collectmmo
+package tool
 
 import (
 	"appengine"
@@ -13,7 +13,7 @@ type Command struct {
 	Execute func(appengine.Context, http.ResponseWriter, *http.Request, []string) interface{}
 }
 
-func ExecuteCommand(cmd []Command, ctx appengine.Context, w http.ResponseWriter, r *http.Request, des string) interface{} {
+func ExecuteCommand(cmds []Command, ctx appengine.Context, w http.ResponseWriter, r *http.Request, des string) interface{} {
 	for _, cmd := range cmds {
 		substrings := cmd.Pattern.FindStringSubmatch(des)
 		isMatch := len(substrings) > 0
