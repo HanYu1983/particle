@@ -16,14 +16,20 @@ const (
 	sqlFilePath = "app/collectmmo/db2.sql"
 	// 要注意cloudsql的instance的名稱不要打錯了
 	// instance中的名稱不要和schema的名稱搞混
-	appengineDbName = "root:1234@cloudsql(particle-979:us-central1:test)/test"
-	debugDBName     = "root:@/mmo?charset=utf8"
-	dbname          = debugDBName
+	dbnameInProduction = "root:1234@cloudsql(particle-979:us-central1:test)/test"
+	dbnameInDev        = "root:@/mmo?charset=utf8"
 )
 
 var db *sql.DB
 
 func init() {
+	var dbname string
+	// 是否在本機
+	if appengine.IsDevAppServer() {
+		dbname = dbnameInDev
+	} else {
+		dbname = dbnameInProduction
+	}
 	// 建立db
 	var err error
 	db, err = sql.Open("mysql", dbname)
