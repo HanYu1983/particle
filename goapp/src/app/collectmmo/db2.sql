@@ -146,7 +146,7 @@ create procedure move(playername varchar(255), ox int, oy int) begin
 	else
 		set isCanMove = 1;
 	end if;
-	insert into log(msg) values (concat('(x,y,move)',cx,',',cy,',',isCanMove));
+	insert into log(msg) values (concat('(name, x,y,move)', playername, ',',cx,',',cy,',',isCanMove));
 	if isCanMove then
 		update player set x = cx, y = cy where name = playername;
 		select 1;

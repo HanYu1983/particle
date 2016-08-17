@@ -17,33 +17,38 @@ import (
 )
 
 const (
-	dbname = "root:@/mmo?charset=utf8"
+	sqlFilePath = "app/collectmmo/db2.sql"
+	dbname      = "root:@/mmo?charset=utf8"
 )
 
-/*
-TODO 這邊打開會出問題
 var db *sql.DB
 
 func init() {
+	// 建立db
 	var err error
 	db, err = sql.Open("mysql", dbname)
 	tool.Assert(tool.IfError(err))
+
+	// 連線池設定
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(10)
+
+	// sql.Open不代表連線，只是建立一個抽象介面
+	// 呼叫Ping來確定能不能連線成功
+	err = db.Ping()
+	tool.Assert(tool.IfError(err))
 }
-*/
+
 var (
 	cmds = []Command{
 		Command{
-			regexp.MustCompile("(.*)玩家登入"),
+			regexp.MustCompile("(.*) login"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
 				username := input[1]
 
-				sqlstr := fmt.Sprintf("call getUser('%s', true)", username)
-				ctx.Infof("sql:%s", sqlstr)
-
-				db, err := sql.Open("mysql", dbname)
-				tool.Assert(tool.IfError(err))
-
-				rows, err := db.Query(sqlstr)
+				// 直接使用Query方法加參數 = Prepared Statement
+				// getUser帶入true自動幫玩家建一個角色
+				rows, err := db.Query("call getUser(?, true)", username)
 				tool.Assert(tool.IfError(err))
 				defer rows.Close()
 
@@ -52,12 +57,15 @@ var (
 					var username string
 					var nickname sql.NullString
 					var ctime string
+					// 取得資料
 					err = rows.Scan(&username, &nickname, &ctime)
 					tool.Assert(tool.IfError(err))
-
+					// 加入cookie
+					// 用來判斷玩家有沒有登入
 					duration, _ := time.ParseDuration("6h")
 					tool.SetCookie(w, "user", "collectmmo/", username, time.Now().Add(duration))
 
+					// 回傳玩家資料
 					return map[string]interface{}{
 						"username": username,
 						"nickname": nickname.String,
@@ -69,21 +77,17 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("取得我的資料"),
+			regexp.MustCompile("me"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
+				// 從cookie中取得玩家名稱
 				usernameCookie, err := tool.GetCookie(r, "user")
-				tool.Assert(tool.IfError(err))
-
+				if err != nil {
+					return "you are not login"
+				}
 				username := usernameCookie.Value
-				ctx.Infof("username:%s", username)
 
-				sqlstr := fmt.Sprintf("call getUser('%s', false)", username)
-				ctx.Infof("sql:%s", sqlstr)
-
-				db, err := sql.Open("mysql", dbname)
-				tool.Assert(tool.IfError(err))
-
-				rows, err := db.Query(sqlstr)
+				// 取得玩家資料
+				rows, err := db.Query("call getUser(?, false)", username)
 				tool.Assert(tool.IfError(err))
 				defer rows.Close()
 
@@ -92,11 +96,9 @@ var (
 					var username string
 					var nickname sql.NullString
 					var ctime string
+					// 取得資料
 					err = rows.Scan(&username, &nickname, &ctime)
 					tool.Assert(tool.IfError(err))
-
-					duration, _ := time.ParseDuration("6h")
-					tool.SetCookie(w, "user", "collectmmo/", username, time.Now().Add(duration))
 
 					return map[string]interface{}{
 						"username": username,
@@ -109,51 +111,51 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("(.*)往([上|下|左|右])移動"),
+			regexp.MustCompile("move to (top|bottom|left|right)"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
 				ctx.Infof("use some thing %v", input)
-				name := input[1]
-				movedir := input[2]
+				movedir := input[1]
 
+				// 從cookie中取得玩家名稱
+				usernameCookie, err := tool.GetCookie(r, "user")
+				if err != nil {
+					return "you are not login"
+				}
+				username := usernameCookie.Value
+
+				// 判斷移動方向
 				var x, y int
 				switch movedir {
-				case "上":
+				case "top":
 					x, y = 0, -1
 					break
-				case "下":
+				case "bottom":
 					x, y = 0, 1
 					break
-				case "左":
+				case "left":
 					x, y = -1, 0
 					break
-				case "右":
+				case "right":
 					x, y = 1, 0
 					break
 				}
-
-				sqlstr := fmt.Sprintf("call move('%s', %d, %d)", name, x, y)
-				ctx.Infof("sql:%s", sqlstr)
-
-				db, err := sql.Open("mysql", dbname)
+				// 若procedure中有回傳table
+				// 一定要記得把table關閉
+				// 不然第兩次呼叫時會出現Commands out of sync例外
+				// 所以若不確定procedure有沒有回傳table, 則都當它有
+				ret, err := db.Query("call move(?, ?, ?)", username, x, y)
 				tool.Assert(tool.IfError(err))
-
-				db.Exec(sqlstr)
-				tool.Assert(tool.IfError(err))
+				defer ret.Close()
 				return nil
 			},
 		},
 		Command{
-			regexp.MustCompile("取得地圖，中心為\\((\\d+),(\\d+)\\)左上為\\((\\d+),(\\d+)\\)"),
+			regexp.MustCompile("get map. center is \\((\\d+),(\\d+)\\). left top is \\((\\d+),(\\d+)\\)"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
 				ctx.Infof("use some thing %v", input)
 				xs, ys, ls, ts := input[1], input[2], input[3], input[4]
-				sqlstr := fmt.Sprintf("call getMap(%s,%s,%s,%s)", xs, ys, ls, ts)
-				ctx.Infof("sql:%s", sqlstr)
-
-				db, err := sql.Open("mysql", dbname)
-				tool.Assert(tool.IfError(err))
-
-				rows, err := db.Query(sqlstr)
+				// 取得以xs, ys為中心, ls, ts為擴展格數的地圖
+				rows, err := db.Query("call getMap(?,?,?,?)", xs, ys, ls, ts)
 				tool.Assert(tool.IfError(err))
 				defer rows.Close()
 
@@ -174,9 +176,17 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("取得名稱為(.*)的玩家"),
+			regexp.MustCompile("logout"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
-				return nil
+				// 從cookie中取得玩家名稱
+				usernameCookie, err := tool.GetCookie(r, "user")
+				if err != nil {
+					return "you are not login"
+				}
+				username := usernameCookie.Value
+				// 刪除cookie
+				tool.ClearCookie(w, "user", "collectmmo/")
+				return fmt.Sprintf("%s logout", username)
 			},
 		},
 		Command{
@@ -223,10 +233,9 @@ func ResetDB(w http.ResponseWriter, r *http.Request) {
 		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
+	var _ = ctx
 
-	filePath := "app/collectmmo/db2.sql"
-
-	dbFile, err := os.Open(filePath)
+	dbFile, err := os.Open(sqlFilePath)
 	tool.Assert(tool.IfError(err))
 
 	dbFileBytes, err := tool.File2Bytes(dbFile)
@@ -246,21 +255,24 @@ func ResetDB(w http.ResponseWriter, r *http.Request) {
 	// 將所有sql語句合併起來再一起處理
 	allSqlLine := append(part1Lines, part2Lines...)
 
-	db, err := sql.Open("mysql", dbname)
-	tool.Assert(tool.IfError(err))
-
 	for _, sql := range allSqlLine {
 		// 確保沒有呼叫到空白字串
 		trimedSql := strings.TrimSpace(sql)
 		isNotEmpty := len(trimedSql) != 0
 		if isNotEmpty {
-			_, err := db.Exec(trimedSql)
-			ctx.Infof("sql:%s", trimedSql)
+			rows, err := db.Query(trimedSql)
 			tool.Assert(tool.IfError(err))
+			// 先確保關閉
+			// Close呼叫是可以重覆的
+			defer rows.Close()
+			// 馬上關閉
+			// 因為defer是在出了func之後才會執行，不直接關閉的話，記憶體無法釋放
+			rows.Close()
 		}
 	}
 
-	_, err = db.Exec("call Test();")
+	rows, err := db.Query("call Test();")
 	tool.Assert(tool.IfError(err))
+	defer rows.Close()
 	tool.Output(w, nil, nil)
 }
