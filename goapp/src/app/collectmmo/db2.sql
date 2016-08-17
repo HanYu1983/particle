@@ -72,12 +72,17 @@ select u.name as name, 'user' as entityType from user as u;
 set AUTOCOMMIT=0;
 
 DELIMITER $$
+# function或proceduer宣告至少要加入"DETERMINISTIC","NOT DETERMINISTIC","NO SQL","READS SQL DATA"之中一項
+# 請參考
+# http://stackoverflow.com/questions/26015160/deterministic-no-sql-or-reads-sql-data-in-its-declaration-and-binary-logging-i
+# 不然在某些mysql版本會出現之下錯誤
+# Error 1418: This function has none of DETERMINISTIC, NO SQL, or READS SQL DATA in its declaration and binary logging is enabled (you *might* want to use the less safe log_bin_trust_function_creators variable)accessible
 
 # 取得并建立玩家
 # 玩家一登入後就呼叫這個取得資訊
 # createplayer代表是否自動建立一個遊戲角色
 drop procedure if exists getUser $$
-create procedure getUser(username varchar(255), createplayer bool) begin
+create procedure getUser(username varchar(255), createplayer bool) not deterministic begin
 	declare hasUser int;
 	# 定義回滾
 	declare exit handler for sqlexception begin
@@ -107,7 +112,7 @@ end $$
 # 指定一個地點為中心和左上的差距
 # 每次移動後就呼叫這個取得新的地圖
 drop procedure if exists getMap $$
-create procedure getMap(x int, y int, l int, t int) begin
+create procedure getMap(x int, y int, l int, t int) not deterministic begin
 	declare sx, sy, ex, ey int;
 	set sx = x - l;
 	set ex = x + l;
@@ -119,7 +124,7 @@ end $$
 
 # 角色移動
 drop procedure if exists move $$
-create procedure move(playername varchar(255), ox int, oy int) begin
+create procedure move(playername varchar(255), ox int, oy int) not deterministic begin
 	# 變數宣告都要在handler or cursor宣告之前
 	declare cx, cy int;
 	declare isCanMove tinyint;
@@ -157,7 +162,7 @@ create procedure move(playername varchar(255), ox int, oy int) begin
 end $$
 
 drop procedure if exists test $$
-create procedure test() begin
+create procedure test() not deterministic begin
 	start transaction;
 	insert into player(name) values ('han');
 	insert into cellType(name,canmove) values ('plain',1);
@@ -169,15 +174,6 @@ create procedure test() begin
 	call move('han',1,0);
 	commit;
 end $$
-
-drop function if exists hello_world $$
-CREATE FUNCTION hello_world(addressee TEXT)
-  RETURNS TEXT
-BEGIN
-  DECLARE strlen INT;
-  SET strlen = LENGTH(addressee);
-  RETURN CONCAT('Hello ', addressee, ' - your parameter has ', strlen, ' characters');
-END; $$
 DELIMITER ;
 
 # call test();

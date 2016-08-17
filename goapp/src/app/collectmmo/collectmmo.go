@@ -18,7 +18,11 @@ import (
 
 const (
 	sqlFilePath = "app/collectmmo/db2.sql"
-	dbname      = "root:@/mmo?charset=utf8"
+	// 要注意cloudsql的instance的名稱不要打錯了
+	// instance中的名稱不要和schema的名稱搞混
+	appengineDbName = "root:1234@cloudsql(particle-979:us-central1:test)/test"
+	debugDBName     = "root:@/mmo?charset=utf8"
+	dbname          = appengineDbName
 )
 
 var (
