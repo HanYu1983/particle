@@ -1,5 +1,7 @@
+drop table if exists mapItemWhere;
 drop table if exists mapUserPlayer;
 drop table if exists item;
+drop table if exists itemPrototype;
 drop table if exists player;
 drop table if exists cell;
 drop table if exists cellType;
@@ -15,14 +17,14 @@ create table log(
 drop table if exists user;
 create table user(
 	name varchar(255),
-	nickname varchar(255),
+	nickname varchar(255) default "",
 	ctime timestamp default current_timestamp,
 	primary key(name)
 ) engine=InnoDB default charset=latin1 comment='';
 
 create table cellType(
 	name char(10),
-	canmove tinyint(1) comment '是否能移動',
+	canmove tinyint(1) default 1 comment '是否能移動',
 	primary key(name)
 ) engine=InnoDB default charset=latin1 comment='';
 
@@ -41,9 +43,17 @@ create table player(
 	primary key(name)
 ) engine=InnoDB default charset=latin1 comment='';
 
-create table item(
+create table itemPrototype(
 	name varchar(255),
+	description text,
 	primary key(name)
+) engine=InnoDB default charset=latin1 comment='';
+
+create table item(
+	id int auto_increment,
+	name varchar(255),
+	primary key(id),
+	foreign key(name) references itemPrototype(name) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
 
 create table mapUserPlayer(
@@ -52,6 +62,16 @@ create table mapUserPlayer(
 	primary key(user, player),
 	foreign key(user) references user(name) on delete cascade,
 	foreign key(player) references player(name) on delete cascade
+) engine=InnoDB default charset=latin1 comment='';
+
+create table mapItemWhere(
+	itemId int,
+	whereId tinyint default 0 comment '道具在哪裡(哪個table)。可能在player身上或地上。用這個值來判斷(0-地上, 1-player身上)',
+	cellx int default 0 comment '',
+	celly int default 0 comment '',
+	playerName varchar(255) default "" comment '',
+	primary key(itemId),
+	foreign key(itemId) references item(id) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
 
 drop view if exists cellview;
@@ -154,9 +174,34 @@ create procedure move(playername varchar(255), ox int, oy int) not deterministic
 	insert into log(msg) values (concat('(name, x,y,move)', playername, ',',cx,',',cy,',',isCanMove));
 	if isCanMove then
 		update player set x = cx, y = cy where name = playername;
-		select 1;
+	end if;
+	commit;
+end $$
+
+drop procedure if exists createItem $$
+create procedure createItem(itemName varchar(255), whereId tinyint, x int, y int, playerName varchar(255)) not deterministic begin
+	declare hasPlayer int;
+	declare newItemId int;
+	# 定義回滾
+	declare exit handler for sqlexception begin
+		rollback;
+	end;
+	declare exit handler for sqlwarning begin
+		rollback;
+	end;
+	start transaction;
+	insert into item(name) values (itemName);
+	# 要注意：select into不能超過一個row, 不然會出現下列例外
+	# Error Code: 1172. Result consisted of more than one row
+	# 使用last_insert_id()取得最後一個auto_increment的id
+	select last_insert_id() into newItemId;
+	if whereId = 0 then
+		insert into mapItemWhere(itemId, whereId, cellx, celly) values (newItemId, whereId, x, y);
 	else
-		select 0;
+		select count(name) into hasPlayer from player where name = playerName;
+		if hasPlayer > 0 then
+			insert into mapItemWhere(itemId, whereId, playerName) values (newItemId, whereId, playerName);
+		end if;
 	end if;
 	commit;
 end $$
@@ -172,8 +217,11 @@ create procedure test() not deterministic begin
 	call move('han',100,20);
 	call move('han',0,1);
 	call move('han',1,0);
+	insert into itemPrototype(name) values ('posion');
+	call createItem('posion', 0, 1, 1, '');
+	call createItem('posion', 1, 0, 0, 'han');
 	commit;
 end $$
 DELIMITER ;
 
-# call test();
+call test();
