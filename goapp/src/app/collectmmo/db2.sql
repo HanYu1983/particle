@@ -69,9 +69,10 @@ create table mapItemWhere(
 	whereId tinyint default 0 comment '道具在哪裡(哪個table)。可能在player身上或地上。用這個值來判斷(0-地上, 1-player身上)',
 	cellx int default 0 comment '',
 	celly int default 0 comment '',
-	playerName varchar(255) default "" comment '',
+	playerName varchar(255) default 'admin' comment '',
 	primary key(itemId),
-	foreign key(itemId) references item(id) on delete cascade
+	foreign key(itemId) references item(id) on delete cascade,
+	foreign key(playerName) references player(name) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
 
 drop view if exists cellview;
@@ -85,6 +86,8 @@ union
 select i.name as name, 'item' as entityType from item as i
 union
 select u.name as name, 'user' as entityType from user as u;
+
+insert into player(name) values ('admin');
 
 # 要使用交易所以把自動commit關掉
 # 使用以下指令來查詢自動commit狀態:SELECT @@AUTOCOMMIT
@@ -106,9 +109,8 @@ create procedure getUser(username varchar(255), createplayer bool) not determini
 	declare hasUser int;
 	# 定義回滾
 	declare exit handler for sqlexception begin
-		rollback;
-	end;
-	declare exit handler for sqlwarning begin
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		SELECT @sqlstate, @errno, @text;
 		rollback;
 	end;
 	start transaction;
@@ -118,10 +120,10 @@ create procedure getUser(username varchar(255), createplayer bool) not determini
 		if createplayer = true then
 			# 使用upsert
 			# 這樣我就可不用管有沒有重覆鍵值例外
-			insert into player(name) values (username) on duplicate key update
-				name = username;
-			insert into mapUserPlayer(user, player) values (username, username) on duplicate key update
-				user = username, player = username;
+			insert into player(name) values (username) on duplicate key
+				update name = username;
+			insert into mapUserPlayer(user, player) values (username, username) on duplicate key
+				update user = username, player = username;
 		end if;
 	end if;
 	select * from user where name = username;
@@ -151,9 +153,8 @@ create procedure move(playername varchar(255), ox int, oy int) not deterministic
 	declare hasCell tinyint;
 	# 定義回滾
 	declare exit handler for sqlexception begin
-		rollback;
-	end;
-	declare exit handler for sqlwarning begin
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		SELECT @sqlstate, @errno, @text;
 		rollback;
 	end;
 	# 開始交易
@@ -184,9 +185,8 @@ create procedure createItem(itemName varchar(255), whereId tinyint, x int, y int
 	declare newItemId int;
 	# 定義回滾
 	declare exit handler for sqlexception begin
-		rollback;
-	end;
-	declare exit handler for sqlwarning begin
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		SELECT @sqlstate, @errno, @text;
 		rollback;
 	end;
 	start transaction;
@@ -199,8 +199,10 @@ create procedure createItem(itemName varchar(255), whereId tinyint, x int, y int
 		insert into mapItemWhere(itemId, whereId, cellx, celly) values (newItemId, whereId, x, y);
 	else
 		select count(name) into hasPlayer from player where name = playerName;
-		if hasPlayer > 0 then
+		if hasPlayer = 1 then
 			insert into mapItemWhere(itemId, whereId, playerName) values (newItemId, whereId, playerName);
+		else
+			signal sqlstate 'ERROR' set message_text = 'player is not exist';
 		end if;
 	end if;
 	commit;
@@ -224,4 +226,4 @@ create procedure test() not deterministic begin
 end $$
 DELIMITER ;
 
-call test();
+#call test();
