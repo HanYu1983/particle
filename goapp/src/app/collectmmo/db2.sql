@@ -87,6 +87,8 @@ select i.name as name, 'item' as entityType from item as i
 union
 select u.name as name, 'user' as entityType from user as u;
 
+# 用來當成mapItemWhere中的playerName的預設值
+# 為了將playerName設為外鍵，必須要有一個預設玩家
 insert into player(name) values ('admin');
 
 # 要使用交易所以把自動commit關掉
