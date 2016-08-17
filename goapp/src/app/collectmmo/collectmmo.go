@@ -269,7 +269,7 @@ func ResetDB(w http.ResponseWriter, r *http.Request) {
 			// 先確保關閉
 			// Close呼叫是可以重覆的
 			defer rows.Close()
-			// 馬上關閉
+			// 在loop中，馬上關閉
 			// 因為defer是在出了func之後才會執行，不直接關閉的話，記憶體無法釋放
 			rows.Close()
 		}
