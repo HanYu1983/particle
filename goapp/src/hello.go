@@ -73,7 +73,7 @@ func init() {
 
 	// collect mmo
 	http.HandleFunc("/fn/collectmmo/talk", collectmmo.Talk)
-	http.HandleFunc("/fn/collectmmo/resetdb", collectmmo.ResetDB)
+	http.HandleFunc("/fn/collectmmo/resetdb", collectmmo.Server_ResetDB)
 	// 測試
 	http.HandleFunc("/fn/testmysql", app.Testmysql)
 }

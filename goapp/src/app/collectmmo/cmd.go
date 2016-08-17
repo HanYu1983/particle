@@ -1,5 +1,7 @@
+// 沒有在使用，可刪
 package collectmmo
 
+/*
 import (
 	"appengine"
 	"appengine/datastore"
@@ -57,3 +59,4 @@ func Users(ctx appengine.Context, w http.ResponseWriter, r *http.Request, userna
 		return users, err
 	}
 }
+*/

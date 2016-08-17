@@ -2,50 +2,22 @@ package collectmmo
 
 import (
 	"appengine"
-	"database/sql"
+	_ "database/sql"
 	"errors"
 	"fmt"
-	_ "fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"lib/tool"
 	"net/http"
-	"os"
+	_ "os"
 	"regexp"
-	_ "strconv"
-	"strings"
+	"strconv"
+	_ "strings"
 	"time"
-)
-
-const (
-	sqlFilePath = "app/collectmmo/db2.sql"
-	// 要注意cloudsql的instance的名稱不要打錯了
-	// instance中的名稱不要和schema的名稱搞混
-	appengineDbName = "root:1234@cloudsql(particle-979:us-central1:test)/test"
-	debugDBName     = "root:@/mmo?charset=utf8"
-	dbname          = appengineDbName
 )
 
 var (
 	ErrNotLogin = errors.New("you are not login")
 )
-
-var db *sql.DB
-
-func init() {
-	// 建立db
-	var err error
-	db, err = sql.Open("mysql", dbname)
-	tool.Assert(tool.IfError(err))
-
-	// 連線池設定
-	db.SetMaxIdleConns(10)
-	db.SetMaxOpenConns(10)
-
-	// sql.Open不代表連線，只是建立一個抽象介面
-	// 呼叫Ping來確定能不能連線成功
-	err = db.Ping()
-	tool.Assert(tool.IfError(err))
-}
 
 var (
 	cmds = []Command{
@@ -53,35 +25,14 @@ var (
 			regexp.MustCompile("(.*) login"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
 				username := input[1]
-
-				// 直接使用Query方法加參數 = Prepared Statement
-				// getUser帶入true自動幫玩家建一個角色
-				rows, err := db.Query("call getUser(?, true)", username)
+				user, err := CallGetUser(username, true)
 				tool.Assert(tool.IfError(err))
-				defer rows.Close()
-
-				hasUser := rows.Next()
-				if hasUser {
-					var username string
-					var nickname sql.NullString
-					var ctime string
-					// 取得資料
-					err = rows.Scan(&username, &nickname, &ctime)
-					tool.Assert(tool.IfError(err))
-					// 加入cookie
-					// 用來判斷玩家有沒有登入
-					duration, _ := time.ParseDuration("6h")
-					tool.SetCookie(w, "user", "collectmmo/", username, time.Now().Add(duration))
-
-					// 回傳玩家資料
-					return map[string]interface{}{
-						"username": username,
-						"nickname": nickname.String,
-						"ctime":    ctime,
-					}
-				} else {
-					panic(fmt.Sprintf("建立玩家錯誤(%s)", username))
-				}
+				// 加入cookie
+				// 用來判斷玩家有沒有登入
+				duration, _ := time.ParseDuration("6h")
+				tool.SetCookie(w, "user", "collectmmo/", username, time.Now().Add(duration))
+				// 回傳玩家資料
+				return user
 			},
 		},
 		Command{
@@ -93,29 +44,10 @@ var (
 					panic(ErrNotLogin)
 				}
 				username := usernameCookie.Value
-
-				// 取得玩家資料
-				rows, err := db.Query("call getUser(?, false)", username)
+				user, err := CallGetUser(username, true)
 				tool.Assert(tool.IfError(err))
-				defer rows.Close()
-
-				hasUser := rows.Next()
-				if hasUser {
-					var username string
-					var nickname sql.NullString
-					var ctime string
-					// 取得資料
-					err = rows.Scan(&username, &nickname, &ctime)
-					tool.Assert(tool.IfError(err))
-
-					return map[string]interface{}{
-						"username": username,
-						"nickname": nickname.String,
-						"ctime":    ctime,
-					}
-				} else {
-					panic(fmt.Sprintf("玩家已不存在(%s)", username))
-				}
+				// 回傳玩家資料
+				return user
 			},
 		},
 		Command{
@@ -147,13 +79,8 @@ var (
 					x, y = 1, 0
 					break
 				}
-				// 若procedure中有回傳table
-				// 一定要記得把table關閉
-				// 不然第兩次呼叫時會出現Commands out of sync例外
-				// 所以若不確定procedure有沒有回傳table, 則都當它有
-				ret, err := db.Query("call move(?, ?, ?)", username, x, y)
+				err = CallMove(username, x, y)
 				tool.Assert(tool.IfError(err))
-				defer ret.Close()
 				return nil
 			},
 		},
@@ -162,25 +89,15 @@ var (
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
 				ctx.Infof("use some thing %v", input)
 				xs, ys, ls, ts := input[1], input[2], input[3], input[4]
-				// 取得以xs, ys為中心, ls, ts為擴展格數的地圖
-				rows, err := db.Query("call getMap(?,?,?,?)", xs, ys, ls, ts)
+				// regular進來的一定是數字
+				// 不必檢查error
+				x, _ := strconv.Atoi(xs)
+				y, _ := strconv.Atoi(ys)
+				l, _ := strconv.Atoi(ls)
+				t, _ := strconv.Atoi(ts)
+				cells, err := CallGetMap(x, y, l, t)
 				tool.Assert(tool.IfError(err))
-				defer rows.Close()
-
-				var ret []map[string]interface{}
-				for rows.Next() {
-					var x, y, canMove int
-					var cellType string
-					err = rows.Scan(&x, &y, &cellType, &canMove)
-					tool.Assert(tool.IfError(err))
-					ret = append(ret, map[string]interface{}{
-						"x":        x,
-						"y":        y,
-						"canMove":  canMove,
-						"cellType": cellType,
-					})
-				}
-				return ret
+				return cells
 			},
 		},
 		Command{
@@ -236,51 +153,12 @@ func Talk(w http.ResponseWriter, r *http.Request) {
 // 重置db
 // 將所有的table刪掉重建
 // 資料當然全部不見
-func ResetDB(w http.ResponseWriter, r *http.Request) {
+func Server_ResetDB(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
-	var _ = ctx
-
-	dbFile, err := os.Open(sqlFilePath)
+	err := ResetDB(ctx)
 	tool.Assert(tool.IfError(err))
-
-	dbFileBytes, err := tool.File2Bytes(dbFile)
-	tool.Assert(tool.IfError(err))
-
-	// 將檔案中的資料分成二部分
-	// 第一部分為;分隔，用來處理一般的table, view, ...
-	// 第二部分為$$分隔，用來處理function, procedure
-	// 所以要注意讀入的sql檔的撰寫方法要正確
-	dbFileStr := string(dbFileBytes)
-	dbFileStrWithOutUselessWord := strings.Replace(dbFileStr, "DELIMITER ;", " ", -1)
-	stringParts := strings.Split(dbFileStrWithOutUselessWord, "DELIMITER $$")
-	part1 := stringParts[0]
-	part2 := stringParts[1]
-	part1Lines := strings.Split(part1, ";")
-	part2Lines := strings.Split(part2, "$$")
-	// 將所有sql語句合併起來再一起處理
-	allSqlLine := append(part1Lines, part2Lines...)
-
-	for _, sql := range allSqlLine {
-		// 確保沒有呼叫到空白字串
-		trimedSql := strings.TrimSpace(sql)
-		isNotEmpty := len(trimedSql) != 0
-		if isNotEmpty {
-			rows, err := db.Query(trimedSql)
-			tool.Assert(tool.IfError(err))
-			// 先確保關閉
-			// Close呼叫是可以重覆的
-			defer rows.Close()
-			// 在loop中，馬上關閉
-			// 因為defer是在出了func之後才會執行，不直接關閉的話，記憶體無法釋放
-			rows.Close()
-		}
-	}
-
-	rows, err := db.Query("call Test();")
-	tool.Assert(tool.IfError(err))
-	defer rows.Close()
 	tool.Output(w, nil, nil)
 }
