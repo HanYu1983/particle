@@ -90,12 +90,6 @@ func ResetDB(ctx appengine.Context) error {
 			rows.Close()
 		}
 	}
-
-	rows, err := db.Query("call Test();")
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
 	return nil
 }
 
