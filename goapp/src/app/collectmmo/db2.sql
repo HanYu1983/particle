@@ -1,3 +1,5 @@
+drop view if exists cellview;
+drop view if exists entityview;
 drop table if exists mapObjectWhere;
 drop table if exists mapUserPlayer;
 drop table if exists object;
@@ -77,11 +79,9 @@ create table mapObjectWhere(
 	foreign key(playerName) references player(name) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
 
-drop view if exists cellview;
 create view cellview as
 select * from cell as c left join cellType as ct on c.cellType = ct.name;
 
-drop view if exists entityview;
 create view entityview as
 select p.name as name, 'player' as entityType from player as p
 union

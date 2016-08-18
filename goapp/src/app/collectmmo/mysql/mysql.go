@@ -16,7 +16,7 @@ const (
 	sqlFilePath = "app/collectmmo/db2.sql"
 	// 要注意cloudsql的instance的名稱不要打錯了
 	// instance中的名稱不要和schema的名稱搞混
-	dbnameInProduction = "root:1234@cloudsql(particle-979:us-central1:test)/test"
+	dbnameInProduction = "root:1234@cloudsql(particle-979:us-central1:test3)/test"
 	dbnameInDev        = "root:@/mmo?charset=utf8"
 )
 
