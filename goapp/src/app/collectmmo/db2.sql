@@ -1,7 +1,7 @@
-drop table if exists mapItemWhere;
+drop table if exists mapObjectWhere;
 drop table if exists mapUserPlayer;
-drop table if exists item;
-drop table if exists itemPrototype;
+drop table if exists object;
+drop table if exists objectPrototype;
 drop table if exists player;
 drop table if exists cell;
 drop table if exists cellType;
@@ -43,17 +43,19 @@ create table player(
 	primary key(name)
 ) engine=InnoDB default charset=latin1 comment='';
 
-create table itemPrototype(
+create table objectPrototype(
 	name varchar(255),
+	objectType varchar(20),
 	description text,
-	primary key(name)
+	primary key(name, objectType)
 ) engine=InnoDB default charset=latin1 comment='';
 
-create table item(
+create table object(
 	id int auto_increment,
 	name varchar(255),
+	objectType varchar(20),
 	primary key(id),
-	foreign key(name) references itemPrototype(name) on delete cascade
+	foreign key(name,objectType) references objectPrototype(name,objectType) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
 
 create table mapUserPlayer(
@@ -64,14 +66,14 @@ create table mapUserPlayer(
 	foreign key(player) references player(name) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
 
-create table mapItemWhere(
-	itemId int,
+create table mapObjectWhere(
+	objectId int,
 	whereId tinyint default 0 comment '道具在哪裡(哪個table)。可能在player身上或地上。用這個值來判斷(0-地上, 1-player身上)',
 	cellx int default 0 comment '',
 	celly int default 0 comment '',
 	playerName varchar(255) default 'admin' comment '',
-	primary key(itemId),
-	foreign key(itemId) references item(id) on delete cascade,
+	primary key(objectId) comment '一個物件不可能在兩個地方，所以用objectId當主鍵',
+	foreign key(objectId) references object(id) on delete cascade,
 	foreign key(playerName) references player(name) on delete cascade
 ) engine=InnoDB default charset=latin1 comment='';
 
@@ -83,7 +85,7 @@ drop view if exists entityview;
 create view entityview as
 select p.name as name, 'player' as entityType from player as p
 union
-select i.name as name, 'item' as entityType from item as i
+select i.name as name, 'item' as entityType from object as i
 union
 select u.name as name, 'user' as entityType from user as u;
 
@@ -194,8 +196,8 @@ create procedure move(username varchar(255), playername varchar(255), ox int, oy
 	commit;
 end $$
 
-drop procedure if exists createItem $$
-create procedure createItem(itemName varchar(255), whereId tinyint, x int, y int, playerName varchar(255)) not deterministic begin
+drop procedure if exists createObject $$
+create procedure createObject(objectName varchar(255), objectType varchar(10), whereId tinyint, x int, y int, playerName varchar(255)) not deterministic begin
 	declare isValidItem int;
 	declare hasPlayer int;
 	declare newItemId int;
@@ -209,21 +211,21 @@ create procedure createItem(itemName varchar(255), whereId tinyint, x int, y int
 		signal sqlstate 'ERROR' set message_text = msg;
 	end;
 	start transaction;
-	select exists (select name from itemPrototype where name = itemName) into isValidItem;
+	select exists (select name from objectPrototype where (name,objectType) = (objectName,objectType)) into isValidItem;
 	if isValidItem = 0 then
 		signal sqlstate 'ERROR' set message_text = 'no this item';
 	end if;
-	insert into item(name) values (itemName);
+	insert into object(name,objectType) values (objectName,objectType);
 	# 要注意：select into不能超過一個row, 不然會出現下列例外
 	# Error Code: 1172. Result consisted of more than one row
 	# 使用last_insert_id()取得最後一個auto_increment的id
 	select last_insert_id() into newItemId;
 	if whereId = 0 then
-		insert into mapItemWhere(itemId, whereId, cellx, celly) values (newItemId, whereId, x, y);
+		insert into mapObjectWhere(objectId, whereId, cellx, celly) values (newItemId, whereId, x, y);
 	else
 		select count(name) into hasPlayer from player where name = playerName;
 		if hasPlayer = 1 then
-			insert into mapItemWhere(itemId, whereId, playerName) values (newItemId, whereId, playerName);
+			insert into mapObjectWhere(objectId, whereId, playerName) values (newItemId, whereId, playerName);
 		else
 			signal sqlstate 'ERROR' set message_text = 'player is not exist';
 		end if;
@@ -257,11 +259,14 @@ create procedure test() not deterministic begin
 	call move('han','han',100,20);
 	call move('han','han',0,1);
 	call move('han','han',1,0);
-	insert into itemPrototype(name) values ('posion');
-	call createItem('posion', 0, 1, 1, '');
-	call createItem('posion', 1, 0, 0, 'han');
+	insert into objectPrototype(name,objectType) values ('posion','item');
+	call createObject('posion', 'item', 0, 1, 1, '');
+	call createObject('posion', 'item', 1, 0, 0, 'han');
+	insert into objectPrototype(name,objectType) values ('tree','ground');
+	call createObject('tree', 'ground', 0, 1, 1, '');
 	commit;
 end $$
-DELIMITER ;
 
-#call test();
+call test() $$
+
+DELIMITER ;
