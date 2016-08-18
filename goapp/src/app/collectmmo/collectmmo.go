@@ -51,10 +51,11 @@ var (
 			},
 		},
 		Command{
-			regexp.MustCompile("move to (top|bottom|left|right)"),
+			regexp.MustCompile("player (.*) move to (top|bottom|left|right)"),
 			func(ctx appengine.Context, w http.ResponseWriter, r *http.Request, input []string) interface{} {
 				ctx.Infof("use some thing %v", input)
-				movedir := input[1]
+				playername := input[1]
+				movedir := input[2]
 
 				// 從cookie中取得玩家名稱
 				usernameCookie, err := tool.GetCookie(r, "user")
@@ -79,7 +80,7 @@ var (
 					x, y = 1, 0
 					break
 				}
-				err = mysql.CallMove(username, x, y)
+				err = mysql.CallMove(username, playername, x, y)
 				tool.Assert(tool.IfError(err))
 				return nil
 			},

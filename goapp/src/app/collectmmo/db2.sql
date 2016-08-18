@@ -103,11 +103,11 @@ DELIMITER $$
 # 不然在某些mysql版本會出現之下錯誤
 # Error 1418: This function has none of DETERMINISTIC, NO SQL, or READS SQL DATA in its declaration and binary logging is enabled (you *might* want to use the less safe log_bin_trust_function_creators variable)accessible
 
-# 取得并建立玩家
+# 建立玩家
 # 玩家一登入後就呼叫這個取得資訊
 # createplayer代表是否自動建立一個遊戲角色
-drop procedure if exists getUser $$
-create procedure getUser(username varchar(255), createplayer bool) not deterministic begin
+drop procedure if exists createUser $$
+create procedure createUser(username varchar(255), createplayer bool) not deterministic begin
 	declare hasUser int;
 	# 定義回滾
 	declare exit handler for sqlexception begin
@@ -128,7 +128,7 @@ create procedure getUser(username varchar(255), createplayer bool) not determini
 				update user = username, player = username;
 		end if;
 	end if;
-	select * from user where name = username;
+	#select * from user where name = username;
 	commit;
 end $$
 
@@ -147,9 +147,12 @@ create procedure getMap(x int, y int, l int, t int) not deterministic begin
 end $$
 
 # 角色移動
+# 輸入玩家和所屬的角色
+# 會判斷有沒有角色所有權
 drop procedure if exists move $$
-create procedure move(playername varchar(255), ox int, oy int) not deterministic begin
+create procedure move(username varchar(255), playername varchar(255), ox int, oy int) not deterministic begin
 	# 變數宣告都要在handler or cursor宣告之前
+	declare isValidPlayer int;
 	declare cx, cy int;
 	declare isCanMove tinyint;
 	declare hasCell tinyint;
@@ -161,6 +164,10 @@ create procedure move(playername varchar(255), ox int, oy int) not deterministic
 	end;
 	# 開始交易
 	start transaction;
+	select exists (select user from mapUserPlayer where (user, player) = (username, playername)) into isValidPlayer;
+	if isValidPlayer = 0 then
+		signal sqlstate 'ERROR' set message_text = "you don't have this player";
+	end if;
 	# 取得現在位置
 	select x, y into cx, cy from player as p where p.name = playername;
 	# 計算下一個位置
@@ -213,14 +220,16 @@ end $$
 drop procedure if exists test $$
 create procedure test() not deterministic begin
 	start transaction;
+	insert into user(name) values ('han');
 	insert into player(name) values ('han');
+	insert into mapUserPlayer(user, player) values ('han','han');
 	insert into cellType(name,canmove) values ('plain',1);
 	insert into cellType(name,canmove) values ('mountain',0);
 	insert into cell(x,y,cellType) values (100,20,'plain');
 	insert into cell(x,y,cellType) values (100,21,'mountain');
-	call move('han',100,20);
-	call move('han',0,1);
-	call move('han',1,0);
+	call move('han','han',100,20);
+	call move('han','han',0,1);
+	call move('han','han',1,0);
 	insert into itemPrototype(name) values ('posion');
 	call createItem('posion', 0, 1, 1, '');
 	call createItem('posion', 1, 0, 0, 'han');

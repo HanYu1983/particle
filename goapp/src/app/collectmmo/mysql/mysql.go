@@ -109,41 +109,54 @@ var (
 	EmptyUser = User{}
 )
 
+type SQLError struct {
+	SqlState string
+	Errno    int
+	Errmsg   string
+}
+
+func ReturnError(rowFromProcedure *sql.Rows) error {
+	if rowFromProcedure.Next() {
+		var e SQLError
+		rowFromProcedure.Scan(&e.SqlState, &e.Errno, &e.Errmsg)
+		return errors.New(e.Errmsg)
+	}
+	return nil
+}
+
 func CallGetUser(username string, createrole bool) (User, error) {
 	// 直接使用Query方法加參數 = Prepared Statement
 	// getUser帶入true自動幫玩家建一個角色
-	rows, err := db.Query("call getUser(?, ?)", username, createrole)
+	rows, err := db.Query("call createUser(?, ?)", username, createrole)
 	if err != nil {
 		return EmptyUser, err
 	}
-	defer rows.Close()
-
-	hasUser := rows.Next()
-	if hasUser {
-		var user User
-		// 取得資料
-		err = rows.Scan(&user.Name, &user.Nickname, &user.CreateTime)
-		if err != nil {
-			return EmptyUser, err
-		}
-		// 回傳玩家資料
-		return user, nil
-	} else {
-		return EmptyUser, errors.New(fmt.Sprintf("建立玩家錯誤(%s)", username))
+	rows.Close()
+	err = ReturnError(rows)
+	if err != nil {
+		return EmptyUser, err
 	}
+	var user User
+	err = db.QueryRow("select * from user where name = ?", username).Scan(&user.Name, &user.Nickname, &user.CreateTime)
+	if err == sql.ErrNoRows {
+		return EmptyUser, errors.New(fmt.Sprintf("建立玩家失敗(%s)", username))
+	} else if err != nil {
+		return EmptyUser, err
+	}
+	return user, nil
 }
 
-func CallMove(username string, x, y int) error {
+func CallMove(username, playername string, x, y int) error {
 	// 若procedure中有回傳table
 	// 一定要記得把table關閉
 	// 不然第兩次呼叫時會出現Commands out of sync例外
 	// 所以若不確定procedure有沒有回傳table, 則都當它有
-	ret, err := db.Query("call move(?, ?, ?)", username, x, y)
+	ret, err := db.Query("call move(?, ?, ?, ?)", username, playername, x, y)
 	if err != nil {
 		return err
 	}
 	defer ret.Close()
-	return nil
+	return ReturnError(ret)
 }
 
 type Cell struct {
