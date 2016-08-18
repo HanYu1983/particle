@@ -106,14 +106,18 @@ DELIMITER $$
 # 建立玩家
 # 玩家一登入後就呼叫這個取得資訊
 # createplayer代表是否自動建立一個遊戲角色
-drop procedure if exists createUser $$
-create procedure createUser(username varchar(255), createplayer bool) not deterministic begin
+drop procedure if exists getUser $$
+create procedure getUser(username varchar(255), createplayer bool) not deterministic begin
 	declare hasUser int;
+	declare msg char(100);
 	# 定義回滾
 	declare exit handler for sqlexception begin
+		#GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		#SELECT @sqlstate, @errno, @text;
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-		SELECT @sqlstate, @errno, @text;
+		set msg = SUBSTRING(@text,1,100);
 		rollback;
+		signal sqlstate 'ERROR' set message_text = msg;
 	end;
 	start transaction;
 	select count(name) into hasUser from user where name = username;
@@ -128,7 +132,7 @@ create procedure createUser(username varchar(255), createplayer bool) not determ
 				update user = username, player = username;
 		end if;
 	end if;
-	#select * from user where name = username;
+	select * from user where name = username;
 	commit;
 end $$
 
@@ -156,11 +160,13 @@ create procedure move(username varchar(255), playername varchar(255), ox int, oy
 	declare cx, cy int;
 	declare isCanMove tinyint;
 	declare hasCell tinyint;
+	declare msg char(100);
 	# 定義回滾
 	declare exit handler for sqlexception begin
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-		SELECT @sqlstate, @errno, @text;
+		set msg = SUBSTRING(@text,1,100);
 		rollback;
+		signal sqlstate 'ERROR' set message_text = msg;
 	end;
 	# 開始交易
 	start transaction;
@@ -190,15 +196,23 @@ end $$
 
 drop procedure if exists createItem $$
 create procedure createItem(itemName varchar(255), whereId tinyint, x int, y int, playerName varchar(255)) not deterministic begin
+	declare isValidItem int;
 	declare hasPlayer int;
 	declare newItemId int;
+	# msg要宣告在外面
+	declare msg char(100);
 	# 定義回滾
 	declare exit handler for sqlexception begin
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-		SELECT @sqlstate, @errno, @text;
+		set msg = SUBSTRING(@text,1,100);
 		rollback;
+		signal sqlstate 'ERROR' set message_text = msg;
 	end;
 	start transaction;
+	select exists (select name from itemPrototype where name = itemName) into isValidItem;
+	if isValidItem = 0 then
+		signal sqlstate 'ERROR' set message_text = 'no this item';
+	end if;
 	insert into item(name) values (itemName);
 	# 要注意：select into不能超過一個row, 不然會出現下列例外
 	# Error Code: 1172. Result consisted of more than one row
@@ -215,6 +229,19 @@ create procedure createItem(itemName varchar(255), whereId tinyint, x int, y int
 		end if;
 	end if;
 	commit;
+end $$
+
+drop procedure if exists testErr $$
+create procedure testErr() not deterministic begin
+	# msg要宣告在外面
+	declare msg char(100);
+	declare exit handler for sqlexception begin
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		set msg = SUBSTRING(@text,1,100);
+		rollback;
+		signal sqlstate 'ERROR' set message_text = msg;
+	end;
+	signal sqlstate 'ERROR' set message_text = 'player is not existplayer is not existplayer is not existplayer is not existplayer is not existplayer is not exist';
 end $$
 
 drop procedure if exists test $$

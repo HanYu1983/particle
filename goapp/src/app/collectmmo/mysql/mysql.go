@@ -109,6 +109,7 @@ var (
 	EmptyUser = User{}
 )
 
+/*
 type SQLError struct {
 	SqlState string
 	Errno    int
@@ -123,27 +124,32 @@ func ReturnError(rowFromProcedure *sql.Rows) error {
 	}
 	return nil
 }
-
+*/
 func CallGetUser(username string, createrole bool) (User, error) {
 	// 直接使用Query方法加參數 = Prepared Statement
 	// getUser帶入true自動幫玩家建一個角色
-	rows, err := db.Query("call createUser(?, ?)", username, createrole)
+	rows, err := db.Query("call getUser(?, ?)", username, createrole)
 	if err != nil {
 		return EmptyUser, err
 	}
-	rows.Close()
-	err = ReturnError(rows)
-	if err != nil {
-		return EmptyUser, err
-	}
-	var user User
-	err = db.QueryRow("select * from user where name = ?", username).Scan(&user.Name, &user.Nickname, &user.CreateTime)
-	if err == sql.ErrNoRows {
+	defer rows.Close()
+	if rows.Next() {
+		var user User
+		rows.Scan(&user.Name, &user.Nickname, &user.CreateTime)
+		return user, nil
+	} else {
 		return EmptyUser, errors.New(fmt.Sprintf("建立玩家失敗(%s)", username))
-	} else if err != nil {
-		return EmptyUser, err
 	}
-	return user, nil
+	/*
+		var user User
+		err = db.QueryRow("select * from user where name = ?", username).Scan(&user.Name, &user.Nickname, &user.CreateTime)
+		if err == sql.ErrNoRows {
+			return EmptyUser, errors.New(fmt.Sprintf("建立玩家失敗(%s)", username))
+		} else if err != nil {
+			return EmptyUser, err
+		}
+		return user, nil
+	*/
 }
 
 func CallMove(username, playername string, x, y int) error {
@@ -156,7 +162,7 @@ func CallMove(username, playername string, x, y int) error {
 		return err
 	}
 	defer ret.Close()
-	return ReturnError(ret)
+	return nil
 }
 
 type Cell struct {
