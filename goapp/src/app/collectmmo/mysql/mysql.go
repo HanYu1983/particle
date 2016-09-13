@@ -33,7 +33,10 @@ func init() {
 	// 建立db
 	var err error
 	db, err = sql.Open("mysql", dbname)
-	tool.Assert(tool.IfError(err))
+	// 不要panic，讓程式繼續運做
+	if err != nil {
+		return
+	}
 
 	// 連線池設定
 	db.SetMaxIdleConns(10)
@@ -42,7 +45,10 @@ func init() {
 	// sql.Open不代表連線，只是建立一個抽象介面
 	// 呼叫Ping來確定能不能連線成功
 	err = db.Ping()
-	tool.Assert(tool.IfError(err))
+	// 不要panic，讓程式繼續運做
+	if err != nil {
+		return
+	}
 }
 
 // 重置db
