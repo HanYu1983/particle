@@ -169,13 +169,6 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 		}
 		callback({ deck : ret});
 	}
-	,addPlayerDeckCard: function(playerId,uuid) {
-		this.getPlayerDeck(playerId).push(uuid);
-	}
-	,clearDeckByPlayerId: function(id) {
-		var deck = this.getPlayerDeck(id);
-		while(deck.length > 0) deck.pop();
-	}
 	,drawCardFromPlayerDeckToPlayerHand: function(fromPlayerId,toPlayerId,callback) {
 		var deckFrom = this.getPlayerDeck(fromPlayerId);
 		var toHand = this.getPlayerHand(toPlayerId);
@@ -192,6 +185,13 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 	}
 	,getPlayerHand: function(id) {
 		return this.players[id].hand;
+	}
+	,addPlayerDeckCard: function(playerId,uuid) {
+		this.getPlayerDeck(playerId).push(uuid);
+	}
+	,clearDeckByPlayerId: function(id) {
+		var deck = this.getPlayerDeck(id);
+		while(deck.length > 0) deck.pop();
 	}
 });
 var KeyboardController = function(_uid) {

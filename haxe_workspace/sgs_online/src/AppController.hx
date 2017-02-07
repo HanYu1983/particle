@@ -32,6 +32,8 @@ class AppController
 		gameController = new FakeBackEndController();
 		gameController.mediator = this;
 		gameStart();
+		
+		
 	}
 	
 	public function addWebglListener( event:String, action:Dynamic -> Void){

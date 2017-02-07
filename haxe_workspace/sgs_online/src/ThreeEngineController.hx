@@ -22,6 +22,9 @@ class ThreeEngineController extends BasicController
 	private var raycaster:Dynamic = untyped __js__("new THREE.Raycaster()");
 	private var mousePos = untyped __js__("new THREE.Vector2()");
 	
+	//private var composer:Dynamic = null;
+	//private var outlinePass:Dynamic = null;
+	
 	function set_context( c:Dynamic ):Dynamic {
 		context = c;
 		createEnviroment();
@@ -113,6 +116,7 @@ class ThreeEngineController extends BasicController
 		renderer.setSize( AppConfig.screenWidth, AppConfig.screenHeight );
 		renderer.sortObjects = true;
 		
+		
 		mediator.setWebgl( renderer.domElement );
 		
 		var autoCreate = untyped __js__("vic.tools.createSceneByDae")( context.dae.scene );
@@ -121,7 +125,17 @@ class ThreeEngineController extends BasicController
 		
 		camera.aspect = AppConfig.screenWidth / AppConfig.screenHeight;
 		camera.updateProjectionMatrix();
+		/*
+		composer = untyped __js__("new THREE.EffectComposer")( renderer );
+		composer.setSize( AppConfig.screenWidth, AppConfig.screenHeight );
 		
+		var renderPass:Dynamic = untyped __js__("new THREE.RenderPass")( scene, camera );
+		composer.addPass( renderPass );
+		
+		outlinePass = untyped __js__("new THREE.OutlinePass")( untyped __js__("new THREE.Vector2")(AppConfig.screenWidth, AppConfig.screenHeight), scene, camera);
+		outlinePass.edgeStrength = 10;
+		composer.addPass( outlinePass );
+		*/
 		context.dae.scene = scene;
 		
 		var stacks = [
@@ -159,12 +173,15 @@ class ThreeEngineController extends BasicController
 		var intersects:Dynamic = raycaster.intersectObjects( raycastMeshs );
 		if ( intersects.length > 0 ) {
 			overCard( intersects[0].object.target );
+			//outlinePass.selectedObjects = intersects[0].object;
 		}else {
 			if ( currentOverCard != null )	{
 				currentOverCard.releaseCardInHand();
 				currentOverCard = null;
 			}
 		}
+		
+		//composer.render();
 		renderer.render( scene, camera );
 	}
 	
@@ -181,6 +198,7 @@ class ThreeEngineController extends BasicController
 		if ( isInHand ) {
 			if ( currentOverCard == null || currentOverCard != card ) {
 				currentOverCard = card;
+				
 				currentOverCard.overCardInHand();
 			}
 		}
