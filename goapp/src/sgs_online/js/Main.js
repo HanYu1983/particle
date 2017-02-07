@@ -120,16 +120,13 @@ CardController.prototype = $extend(BasicController.prototype,{
 });
 var DomController = function(_uid) {
 	if(_uid == null) _uid = "";
+	this.acc_leftPanel = js.JQuery("#acc_leftPanel");
 	this.dom_webgl = js.JQuery("#webgl");
 	this.dia_command = js.JQuery("#dia_command");
-	var _g = this;
 	BasicController.call(this,_uid);
 	AppConfig.screenWidth = this.dom_webgl.width();
 	AppConfig.screenHeight = this.dom_webgl.height();
-	this.dom_webgl.on("contextmenu",function(event) {
-		event.preventDefault();
-		_g.openDialogCommand(true,null);
-	});
+	this.acc_leftPanel.accordion("select",1);
 };
 DomController.__name__ = true;
 DomController.__super__ = BasicController;

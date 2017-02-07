@@ -10,6 +10,7 @@ class DomController extends BasicController
 {
 	private var dia_command:Dynamic = new JQuery( "#dia_command" );
 	private var dom_webgl:Dynamic = new JQuery("#webgl");
+	private var acc_leftPanel:Dynamic = new JQuery("#acc_leftPanel" );
 
 	public function new(_uid:String="") 
 	{
@@ -18,11 +19,14 @@ class DomController extends BasicController
 		AppConfig.screenWidth = dom_webgl.width();
 		AppConfig.screenHeight = dom_webgl.height();
 		
+		/*
 		dom_webgl.on( 'contextmenu', function( event ) {
 			event.preventDefault();
 			
 			openDialogCommand(true, null);
 		});
+		*/
+		acc_leftPanel.accordion( 'select', 1 );
 	}
 	
 	public function openDialogCommand( open:Bool, config:Dynamic ){
