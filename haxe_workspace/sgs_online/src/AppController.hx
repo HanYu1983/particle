@@ -11,7 +11,7 @@ class AppController
 	
 	var threeEngineController:ThreeEngineController;
 	var keyboardController:KeyboardController;
-	var gameController:GameController;
+	var gameController:FakeBackEndController;
 	var domController:DomController;
 
 	public function new() 
@@ -29,9 +29,9 @@ class AppController
 		keyboardController = new KeyboardController();
 		keyboardController.mediator = this;
 		
-		gameController = new GameController();
+		gameController = new FakeBackEndController();
 		gameController.mediator = this;
-		gameController.createGame();
+		gameStart();
 	}
 	
 	public function addWebglListener( event:String, action:Dynamic -> Void){
@@ -42,18 +42,19 @@ class AppController
 		domController.setWebgl( dom );
 	}
 	
-	public function onGameStart() {
+	public function gameStart() {
 		threeEngineController.initGame();
 		keyboardController.start();
 		
-		gameController.clearDeckByPlayerId(0);
-		
-		for ( i in 0...50 ) {
-			var pos = threeEngineController.getMeshByName( "Player_deck_position" ).position.clone();
-			pos.y += i * .05;
-			var uuid = threeEngineController.createCard( context.textures[2], pos );
-			gameController.addPlayerDeckCard(0, uuid );
-		}
+		var pos = threeEngineController.getMeshByName( "Player_deck_position" ).position.clone();		
+		gameController.createPlayerDeck( function( args:Dynamic ):Void{
+			for ( i in 0...args.deck.length ) {
+				var uuid = args.deck[i];
+				var cardpos = pos.clone();
+				cardpos.y += i * .05;
+				threeEngineController.createCard( context.textures[2], cardpos, uuid );
+			}
+		});
 	}
 	
 	public function moveCardsFromCards( from:Array<String>, to:Array<String>, ?pos:Dynamic = null ) {
@@ -71,7 +72,9 @@ class AppController
 	public function onFUp() {
 		//threeEngineController.flipCard();
 		
-		gameController.drawCardFromPlayerDeckToPlayerHand( 0, 0 );
+		gameController.drawCardFromPlayerDeckToPlayerHand( 0, 0, function( args:Dynamic ){
+			moveCardsFromCards( args.deckFrom, args.toHand );
+		});
 	}
 	
 	public function isInTheHand( uid:String ) {

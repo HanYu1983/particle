@@ -18,9 +18,9 @@ AppController.prototype = {
 		this.threeEngineController.set_context(this.context);
 		this.keyboardController = new KeyboardController();
 		this.keyboardController.mediator = this;
-		this.gameController = new GameController();
+		this.gameController = new FakeBackEndController();
 		this.gameController.mediator = this;
-		this.gameController.createGame();
+		this.gameStart();
 	}
 	,addWebglListener: function(event,action) {
 		this.domController.addWebglListener(event,action);
@@ -28,18 +28,22 @@ AppController.prototype = {
 	,setWebgl: function(dom) {
 		this.domController.setWebgl(dom);
 	}
-	,onGameStart: function() {
+	,gameStart: function() {
+		var _g2 = this;
 		this.threeEngineController.initGame();
 		this.keyboardController.start();
-		this.gameController.clearDeckByPlayerId(0);
-		var _g = 0;
-		while(_g < 50) {
-			var i = _g++;
-			var pos = this.threeEngineController.getMeshByName("Player_deck_position").position.clone();
-			pos.y += i * .05;
-			var uuid = this.threeEngineController.createCard(this.context.textures[2],pos);
-			this.gameController.addPlayerDeckCard(0,uuid);
-		}
+		var pos = this.threeEngineController.getMeshByName("Player_deck_position").position.clone();
+		this.gameController.createPlayerDeck(function(args) {
+			var _g1 = 0;
+			var _g = args.deck.length;
+			while(_g1 < _g) {
+				var i = _g1++;
+				var uuid = args.deck[i];
+				var cardpos = pos.clone();
+				cardpos.y += i * .05;
+				_g2.threeEngineController.createCard(_g2.context.textures[2],cardpos,uuid);
+			}
+		});
 	}
 	,moveCardsFromCards: function(from,to,pos) {
 		this.threeEngineController.moveCardsFromCards(from,to,pos);
@@ -51,7 +55,10 @@ AppController.prototype = {
 		return this.threeEngineController.getCardByUuid(uuid);
 	}
 	,onFUp: function() {
-		this.gameController.drawCardFromPlayerDeckToPlayerHand(0,0);
+		var _g = this;
+		this.gameController.drawCardFromPlayerDeckToPlayerHand(0,0,function(args) {
+			_g.moveCardsFromCards(args.deckFrom,args.toHand);
+		});
 	}
 	,isInTheHand: function(uid) {
 		return this.gameController.isInTheHand(uid);
@@ -141,31 +148,40 @@ DomController.prototype = $extend(BasicController.prototype,{
 		this.dom_webgl.on(event,action);
 	}
 });
-var GameController = function(_uid) {
+var FakeBackEndController = function(_uid) {
 	if(_uid == null) _uid = "";
 	this.players = [];
 	BasicController.call(this,_uid);
 	this.players.push({ deck : [], hand : []});
 };
-GameController.__name__ = true;
-GameController.__super__ = BasicController;
-GameController.prototype = $extend(BasicController.prototype,{
-	addPlayerDeckCard: function(playerId,uuid) {
+FakeBackEndController.__name__ = true;
+FakeBackEndController.__super__ = BasicController;
+FakeBackEndController.prototype = $extend(BasicController.prototype,{
+	createPlayerDeck: function(callback) {
+		var ret = [];
+		this.clearDeckByPlayerId(0);
+		var _g = 0;
+		while(_g < 50) {
+			var i = _g++;
+			var uuid = Tools.uuid();
+			this.addPlayerDeckCard(0,uuid);
+			ret.push(uuid);
+		}
+		callback({ deck : ret});
+	}
+	,addPlayerDeckCard: function(playerId,uuid) {
 		this.getPlayerDeck(playerId).push(uuid);
 	}
 	,clearDeckByPlayerId: function(id) {
 		var deck = this.getPlayerDeck(id);
 		while(deck.length > 0) deck.pop();
 	}
-	,drawCardFromPlayerDeckToPlayerHand: function(fromPlayerId,toPlayerId) {
+	,drawCardFromPlayerDeckToPlayerHand: function(fromPlayerId,toPlayerId,callback) {
 		var deckFrom = this.getPlayerDeck(fromPlayerId);
 		var toHand = this.getPlayerHand(toPlayerId);
 		var uuid = deckFrom.pop();
 		toHand.push(uuid);
-		this.mediator.moveCardsFromCards(deckFrom,toHand);
-	}
-	,createGame: function() {
-		this.mediator.onGameStart();
+		callback({ deckFrom : deckFrom, toHand : toHand});
 	}
 	,isInTheHand: function(uid) {
 		var id = this.players[0].hand.indexOf(uid);
@@ -274,8 +290,8 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 	,setStackPosition: function(name,pos,rot) {
 		this.stackPosition.set(name,{ pos : pos, rot : rot});
 	}
-	,createCard: function(texture,pos) {
-		var card = new CardController();
+	,createCard: function(texture,pos,uuid) {
+		var card = new CardController(uuid);
 		card.set_mesh(this.getMeshByName("Card",true));
 		card.setFaceTexture(texture);
 		card.setBackTexture(this.context.textures[1]);

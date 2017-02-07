@@ -32,8 +32,8 @@ class ThreeEngineController extends BasicController
 		stackPosition.set(name, {pos:pos,rot:rot} );
 	}
 	
-	public function createCard( texture:Dynamic, pos:Dynamic ):String {
-		var card:ICardController = new CardController();
+	public function createCard( texture:Dynamic, pos:Dynamic, uuid:String ):String {
+		var card:ICardController = new CardController(uuid);
 		
 		card.mesh = getMeshByName( "Card", true );
 		card.setFaceTexture( texture );
