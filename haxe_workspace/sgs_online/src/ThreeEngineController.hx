@@ -107,17 +107,13 @@ class ThreeEngineController extends BasicController
 	}
 	
 	private function createEnviroment():Void {
-		var dom:Dynamic = untyped __js__('$("#webgl")');
-		AppConfig.screenWidth = dom.width();
-		AppConfig.screenHeight = dom.height();
-		
 		renderer = untyped __js__("new THREE.WebGLRenderer")( { antialias: false } );
 		renderer.setClearColor( 0xf0f0f0 );
 		renderer.setPixelRatio( AppConfig.screenWidth / AppConfig.screenHeight );
 		renderer.setSize( AppConfig.screenWidth, AppConfig.screenHeight );
 		renderer.sortObjects = true;
 		
-		dom.append( renderer.domElement );
+		mediator.setWebgl( renderer.domElement );
 		
 		var autoCreate = untyped __js__("vic.tools.createSceneByDae")( context.dae.scene );
 		scene = autoCreate.scene;
@@ -126,8 +122,6 @@ class ThreeEngineController extends BasicController
 		camera.aspect = AppConfig.screenWidth / AppConfig.screenHeight;
 		camera.updateProjectionMatrix();
 		
-		
-		
 		context.dae.scene = scene;
 		
 		var stacks = [
@@ -135,8 +129,8 @@ class ThreeEngineController extends BasicController
 		];
 		
 		for ( s in stacks ) setStackPosition( s, getMeshByName(s).position, getMeshByName(s).rotation );
-		dom.on( 'mousemove', onDocumentMouseMove );
 		
+		mediator.addWebglListener( 'mousemove', onDocumentMouseMove );
 		animate();
 	}
 	

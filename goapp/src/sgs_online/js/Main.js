@@ -12,10 +12,7 @@ var AppController = function() {
 AppController.__name__ = true;
 AppController.prototype = {
 	start: function() {
-		window.document.addEventListener("contextmenu",function(event) {
-			event.preventDefault();
-			console.log("DD");
-		});
+		this.domController = new DomController();
 		this.threeEngineController = new ThreeEngineController();
 		this.threeEngineController.mediator = this;
 		this.threeEngineController.set_context(this.context);
@@ -24,6 +21,12 @@ AppController.prototype = {
 		this.gameController = new GameController();
 		this.gameController.mediator = this;
 		this.gameController.createGame();
+	}
+	,addWebglListener: function(event,action) {
+		this.domController.addWebglListener(event,action);
+	}
+	,setWebgl: function(dom) {
+		this.domController.setWebgl(dom);
 	}
 	,onGameStart: function() {
 		this.threeEngineController.initGame();
@@ -113,6 +116,32 @@ CardController.prototype = $extend(BasicController.prototype,{
 	}
 	,addTweener: function(obj,props) {
 		Tweener.addTween(obj,props);
+	}
+});
+var DomController = function(_uid) {
+	if(_uid == null) _uid = "";
+	this.dom_webgl = js.JQuery("#webgl");
+	this.dia_command = js.JQuery("#dia_command");
+	var _g = this;
+	BasicController.call(this,_uid);
+	AppConfig.screenWidth = this.dom_webgl.width();
+	AppConfig.screenHeight = this.dom_webgl.height();
+	this.dom_webgl.on("contextmenu",function(event) {
+		event.preventDefault();
+		_g.openDialogCommand(true,null);
+	});
+};
+DomController.__name__ = true;
+DomController.__super__ = BasicController;
+DomController.prototype = $extend(BasicController.prototype,{
+	openDialogCommand: function(open,config) {
+		this.dia_command.dialog(open?"open":"close");
+	}
+	,setWebgl: function(dom) {
+		this.dom_webgl.append(dom);
+	}
+	,addWebglListener: function(event,action) {
+		this.dom_webgl.on(event,action);
 	}
 });
 var GameController = function(_uid) {
@@ -316,15 +345,12 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		board.children[0].material.needsUpdate = true;
 	}
 	,createEnviroment: function() {
-		var dom = $("#webgl");
-		AppConfig.screenWidth = dom.width();
-		AppConfig.screenHeight = dom.height();
 		this.renderer = new THREE.WebGLRenderer({ antialias : false});
 		this.renderer.setClearColor(15790320);
 		this.renderer.setPixelRatio(AppConfig.screenWidth / AppConfig.screenHeight);
 		this.renderer.setSize(AppConfig.screenWidth,AppConfig.screenHeight);
 		this.renderer.sortObjects = true;
-		dom.append(this.renderer.domElement);
+		this.mediator.setWebgl(this.renderer.domElement);
 		var autoCreate = vic.tools.createSceneByDae(this.context.dae.scene);
 		this.scene = autoCreate.scene;
 		this.camera = autoCreate.camera;
@@ -338,7 +364,7 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 			++_g;
 			this.setStackPosition(s,this.getMeshByName(s).position,this.getMeshByName(s).rotation);
 		}
-		dom.on("mousemove",$bind(this,this.onDocumentMouseMove));
+		this.mediator.addWebglListener("mousemove",$bind(this,this.onDocumentMouseMove));
 		this.animate();
 	}
 	,animate: function() {

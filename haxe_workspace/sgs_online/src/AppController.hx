@@ -12,6 +12,7 @@ class AppController
 	var threeEngineController:ThreeEngineController;
 	var keyboardController:KeyboardController;
 	var gameController:GameController;
+	var domController:DomController;
 
 	public function new() 
 	{
@@ -19,11 +20,7 @@ class AppController
 	}
 	
 	public function start() {
-		Browser.document.addEventListener( 'contextmenu', function( event ) {
-			event.preventDefault();
-			
-			trace("DD");
-		});
+		domController = new DomController();
 		
 		threeEngineController = new ThreeEngineController();
 		threeEngineController.mediator = this;
@@ -35,6 +32,14 @@ class AppController
 		gameController = new GameController();
 		gameController.mediator = this;
 		gameController.createGame();
+	}
+	
+	public function addWebglListener( event:String, action:Dynamic -> Void){
+		domController.addWebglListener(event, action);
+	}
+	
+	public function setWebgl( dom:Dynamic ){
+		domController.setWebgl( dom );
 	}
 	
 	public function onGameStart() {
