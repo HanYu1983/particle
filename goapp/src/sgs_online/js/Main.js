@@ -18,8 +18,8 @@ AppController.prototype = {
 		this.threeEngineController.set_context(this.context);
 		this.keyboardController = new KeyboardController();
 		this.keyboardController.mediator = this;
-		this.gameController = new FakeBackEndController();
-		this.gameController.mediator = this;
+		this.backendController = new FakeBackEndController();
+		this.backendController.mediator = this;
 		this.gameStart();
 	}
 	,addWebglListener: function(event,action) {
@@ -33,7 +33,7 @@ AppController.prototype = {
 		this.threeEngineController.initGame();
 		this.keyboardController.start();
 		var pos = this.threeEngineController.getMeshByName("Player_deck_position").position.clone();
-		this.gameController.createPlayerDeck(function(args) {
+		this.backendController.createPlayerDeck(function(args) {
 			var _g1 = 0;
 			var _g = args.deck.length;
 			while(_g1 < _g) {
@@ -44,6 +44,9 @@ AppController.prototype = {
 				_g2.threeEngineController.createCard(_g2.context.textures[2],cardpos,uuid);
 			}
 		});
+	}
+	,getAll: function() {
+		return this.backendController.getAll();
 	}
 	,moveCardsFromCards: function(from,to,pos) {
 		this.threeEngineController.moveCardsFromCards(from,to,pos);
@@ -56,12 +59,18 @@ AppController.prototype = {
 	}
 	,onFUp: function() {
 		var _g = this;
-		this.gameController.drawCardFromPlayerDeckToPlayerHand(0,0,function(args) {
+		this.backendController.drawCardFromPlayerDeckToPlayerHand(0,0,function(args) {
 			_g.moveCardsFromCards(args.deckFrom,args.toHand);
 		});
 	}
+	,onAUp: function() {
+		this.threeEngineController.selectPrev();
+	}
+	,onDUp: function() {
+		this.threeEngineController.selectNext();
+	}
 	,isInTheHand: function(uid) {
-		return this.gameController.isInTheHand(uid);
+		return this.backendController.isInTheHand(uid);
 	}
 };
 var BasicController = function(_uid) {
@@ -180,6 +189,9 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 		var id = this.players[0].hand.indexOf(uid);
 		return id != -1;
 	}
+	,getAll: function() {
+		return this.players;
+	}
 	,getPlayerDeck: function(id) {
 		return this.players[id].deck;
 	}
@@ -207,6 +219,12 @@ KeyboardController.prototype = $extend(BasicController.prototype,{
 			switch(_g) {
 			case 70:
 				_g1.mediator.onFUp();
+				break;
+			case 65:
+				_g1.mediator.onAUp();
+				break;
+			case 68:
+				_g1.mediator.onDUp();
 				break;
 			}
 		});
@@ -274,6 +292,7 @@ StringTools.hex = function(n,digits) {
 var ThreeEngineController = function(_uid) {
 	this.mousePos = new THREE.Vector2();
 	this.raycaster = new THREE.Raycaster();
+	this.currentId = 0;
 	this.stackPosition = new haxe_ds_StringMap();
 	this.cards = [];
 	this.raycastMeshs = [];
@@ -316,18 +335,19 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		card.moveCard(moveTo.pos.x,moveTo.pos.y,moveTo.pos.z);
 	}
 	,moveCardsFromCards: function(from,to,pos) {
+		var _g = this;
 		var moveTo = this.stackPosition.get("Player_deck_position");
 		var _g1 = 0;
-		var _g = from.length;
-		while(_g1 < _g) {
+		var _g2 = from.length;
+		while(_g1 < _g2) {
 			var i = _g1++;
 			this.getCardByUuid(from[i]).moveCard(moveTo.pos.x,moveTo.pos.y + i * .05,moveTo.pos.z);
 		}
 		moveTo = this.stackPosition.get("Player_hand_position");
 		var dist = 10 / to.length;
 		var _g11 = 0;
-		var _g2 = to.length;
-		while(_g11 < _g2) {
+		var _g3 = to.length;
+		while(_g11 < _g3) {
 			var i1 = _g11++;
 			var posFac = 0;
 			if(to.length > 1) posFac = i1 - to.length / 2;
@@ -337,6 +357,11 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 			card.rotateCard(moveTo.rot.x,moveTo.rot.y,moveTo.rot.z);
 			if(!card.get_isFaceUp()) card.flip();
 		}
+		var t = new haxe_Timer(Math.floor(AppConfig.moveTime * 1000));
+		t.run = function() {
+			t.stop();
+			_g.selectFirst();
+		};
 	}
 	,getCardByUuid: function(uuid) {
 		var _g = 0;
@@ -352,10 +377,45 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		var card = this.cards[this.cards.length - 1];
 		card.flip();
 	}
+	,selectFirst: function() {
+		var handCards = this.mediator.getAll()[0].hand;
+		var handCount = handCards.length;
+		if(handCount == 0) return;
+		this.currentId = 0;
+		this.selectCardAnimation(handCards,handCards[this.currentId]);
+	}
+	,selectNext: function() {
+		var handCards = this.mediator.getAll()[0].hand;
+		var handCount = handCards.length;
+		if(handCount == 0) return;
+		if(++this.currentId > handCount - 1) this.currentId = 0;
+		this.selectCardAnimation(handCards,handCards[this.currentId]);
+	}
+	,selectPrev: function() {
+		var handCards = this.mediator.getAll()[0].hand;
+		var handCount = handCards.length;
+		if(handCount == 0) return;
+		if(--this.currentId < 0) {
+			var max = handCount - 1;
+			this.currentId = max;
+		}
+		this.selectCardAnimation(handCards,handCards[this.currentId]);
+	}
 	,initGame: function() {
 		var board = this.getMeshByName("Board");
 		board.children[0].material.map = this.context.textures[0];
 		board.children[0].material.needsUpdate = true;
+	}
+	,selectCardAnimation: function(handCards,id) {
+		var _g1 = 0;
+		var _g = handCards.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var uuid = handCards[i];
+			var c = this.getCardByUuid(uuid);
+			c.releaseCardInHand();
+			if(uuid == id) c.overCardInHand();
+		}
 	}
 	,createEnviroment: function() {
 		this.renderer = new THREE.WebGLRenderer({ antialias : true});
@@ -445,6 +505,22 @@ Tools.uuid = function() {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe_Timer.__name__ = true;
+haxe_Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };

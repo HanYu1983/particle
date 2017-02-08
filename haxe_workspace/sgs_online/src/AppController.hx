@@ -11,7 +11,7 @@ class AppController
 	
 	var threeEngineController:ThreeEngineController;
 	var keyboardController:KeyboardController;
-	var gameController:FakeBackEndController;
+	var backendController:FakeBackEndController;
 	var domController:DomController;
 
 	public function new() 
@@ -29,8 +29,8 @@ class AppController
 		keyboardController = new KeyboardController();
 		keyboardController.mediator = this;
 		
-		gameController = new FakeBackEndController();
-		gameController.mediator = this;
+		backendController = new FakeBackEndController();
+		backendController.mediator = this;
 		gameStart();
 		
 		
@@ -49,7 +49,7 @@ class AppController
 		keyboardController.start();
 		
 		var pos = threeEngineController.getMeshByName( "Player_deck_position" ).position.clone();		
-		gameController.createPlayerDeck( function( args:Dynamic ):Void{
+		backendController.createPlayerDeck( function( args:Dynamic ):Void{
 			for ( i in 0...args.deck.length ) {
 				var uuid = args.deck[i];
 				var cardpos = pos.clone();
@@ -57,6 +57,10 @@ class AppController
 				threeEngineController.createCard( context.textures[2], cardpos, uuid );
 			}
 		});
+	}
+	
+	public function getAll():Dynamic{
+		return backendController.getAll();
 	}
 	
 	public function moveCardsFromCards( from:Array<String>, to:Array<String>, ?pos:Dynamic = null ) {
@@ -74,12 +78,20 @@ class AppController
 	public function onFUp() {
 		//threeEngineController.flipCard();
 		
-		gameController.drawCardFromPlayerDeckToPlayerHand( 0, 0, function( args:Dynamic ){
+		backendController.drawCardFromPlayerDeckToPlayerHand( 0, 0, function( args:Dynamic ){
 			moveCardsFromCards( args.deckFrom, args.toHand );
 		});
 	}
 	
+	public function onAUp(){
+		threeEngineController.selectPrev();
+	}
+	
+	public function onDUp(){
+		threeEngineController.selectNext();
+	}
+	
 	public function isInTheHand( uid:String ) {
-		return gameController.isInTheHand( uid);
+		return backendController.isInTheHand( uid);
 	}
 }

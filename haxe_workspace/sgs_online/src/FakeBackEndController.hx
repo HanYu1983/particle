@@ -45,6 +45,10 @@ class FakeBackEndController extends BasicController
 		return id != -1;
 	}
 	
+	public function getAll():Array<Dynamic>{
+		return players;
+	}
+	
 	private function getPlayerDeck( id:Int ):Dynamic {
 		return players[id].deck;
 	}

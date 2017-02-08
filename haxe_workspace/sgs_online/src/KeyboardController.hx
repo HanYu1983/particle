@@ -16,6 +16,10 @@ class KeyboardController extends BasicController
 			switch( e.keyCode ) {
 				case KeyboardEvent.DOM_VK_F:
 					mediator.onFUp();
+				case KeyboardEvent.DOM_VK_A:
+					mediator.onAUp();
+				case KeyboardEvent.DOM_VK_D:
+					mediator.onDUp();
 			}
 		});
 	}

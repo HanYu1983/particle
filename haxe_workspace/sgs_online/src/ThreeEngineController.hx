@@ -1,4 +1,5 @@
 package;
+import haxe.Timer;
 import js.Browser;
 import js.Lib;
 import js.html.Point;
@@ -18,9 +19,11 @@ class ThreeEngineController extends BasicController
 	
 	private var cards:Array<ICardController> = new Array<ICardController>();
 	private var stackPosition:Map<String,Dynamic> = new Map<String,Dynamic>();
+	private var currentId:Int = 0;
 	
 	private var raycaster:Dynamic = untyped __js__("new THREE.Raycaster()");
 	private var mousePos = untyped __js__("new THREE.Vector2()");
+	
 	/*
 	private var composer:Dynamic = null;
 	private var outlinePass:Dynamic = null;
@@ -90,6 +93,12 @@ class ThreeEngineController extends BasicController
 			card.rotateCard( moveTo.rot.x, moveTo.rot.y , moveTo.rot.z );
 			if ( !card.isFaceUp ) card.flip();
 		}
+		
+		var t = new Timer( Math.floor( AppConfig.moveTime * 1000 ) );
+		t.run = function(){
+			t.stop();
+			selectFirst();
+		};
 	}
 	
 	public function getCardByUuid( uuid:String):ICardController {
@@ -104,10 +113,69 @@ class ThreeEngineController extends BasicController
 		card.flip();
 	}
 	
+	public function selectFirst(){
+		var handCards:Dynamic = mediator.getAll()[0].hand;
+		var handCount = handCards.length;
+		if ( handCount == 0 ) return;
+		currentId = 0;
+		selectCardAnimation(handCards, handCards[currentId]);
+	}
+	
+	public function selectNext(){
+		var handCards:Dynamic = mediator.getAll()[0].hand;
+		var handCount = handCards.length;
+		if ( handCount == 0 ) return;
+		if ( ++currentId > handCount - 1 ){
+			currentId = 0;
+		}
+		selectCardAnimation(handCards, handCards[currentId]);
+	}
+	
+	public function selectPrev(){
+		var handCards:Dynamic = mediator.getAll()[0].hand;
+		var handCount = handCards.length;
+		if ( handCount == 0 ) return;
+		if ( --currentId < 0 ){
+			var max:Int = handCount - 1;
+			currentId = max;
+		}
+		selectCardAnimation(handCards, handCards[currentId]);
+	}
+	
 	public function initGame() {
 		var board = getMeshByName("Board");
 		board.children[0].material.map = context.textures[0];
 		board.children[0].material.needsUpdate = true;
+	}
+	/*
+	private function moveCardInPlayerHand(){
+		var moveTo:Dynamic = stackPosition["Player_hand_position"];
+		var dist:Float = 10 / to.length;
+		for ( i in 0...to.length ) {
+			var posFac:Float = 0;
+			if ( to.length > 1 ) {
+				posFac = i - to.length / 2;
+			}
+			if ( to.length < 5 ) {
+				dist = 2;
+			}
+			var card:ICardController = getCardByUuid( to[i] );
+			card.moveCard( moveTo.pos.x + posFac * dist, moveTo.pos.y + i * .01 , moveTo.pos.z );
+			card.rotateCard( moveTo.rot.x, moveTo.rot.y , moveTo.rot.z );
+			if ( !card.isFaceUp ) card.flip();
+		}
+	}
+	*/
+	private function selectCardAnimation( handCards:Dynamic, id:String ){
+		for ( i in 0...handCards.length ){
+			var uuid = handCards[i];
+			var c = getCardByUuid( uuid );
+			c.releaseCardInHand();
+			
+			if ( uuid == id ){
+				c.overCardInHand();
+			}
+		}
 	}
 	
 	private function createEnviroment():Void {
