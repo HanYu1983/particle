@@ -21,10 +21,11 @@ class ThreeEngineController extends BasicController
 	
 	private var raycaster:Dynamic = untyped __js__("new THREE.Raycaster()");
 	private var mousePos = untyped __js__("new THREE.Vector2()");
-	
-	//private var composer:Dynamic = null;
-	//private var outlinePass:Dynamic = null;
-	
+	/*
+	private var composer:Dynamic = null;
+	private var outlinePass:Dynamic = null;
+	private var effectFXAA:Dynamic = null;
+	*/
 	function set_context( c:Dynamic ):Dynamic {
 		context = c;
 		createEnviroment();
@@ -110,12 +111,11 @@ class ThreeEngineController extends BasicController
 	}
 	
 	private function createEnviroment():Void {
-		renderer = untyped __js__("new THREE.WebGLRenderer")( { antialias: false } );
+		renderer = untyped __js__("new THREE.WebGLRenderer")( { antialias: true } );
 		renderer.setClearColor( 0xf0f0f0 );
 		renderer.setPixelRatio( AppConfig.screenWidth / AppConfig.screenHeight );
 		renderer.setSize( AppConfig.screenWidth, AppConfig.screenHeight );
 		renderer.sortObjects = true;
-		
 		
 		mediator.setWebgl( renderer.domElement );
 		
@@ -125,6 +125,8 @@ class ThreeEngineController extends BasicController
 		
 		camera.aspect = AppConfig.screenWidth / AppConfig.screenHeight;
 		camera.updateProjectionMatrix();
+		
+		/* 测试outline效果
 		/*
 		composer = untyped __js__("new THREE.EffectComposer")( renderer );
 		composer.setSize( AppConfig.screenWidth, AppConfig.screenHeight );
@@ -135,6 +137,11 @@ class ThreeEngineController extends BasicController
 		outlinePass = untyped __js__("new THREE.OutlinePass")( untyped __js__("new THREE.Vector2")(AppConfig.screenWidth, AppConfig.screenHeight), scene, camera);
 		outlinePass.edgeStrength = 10;
 		composer.addPass( outlinePass );
+		
+		effectFXAA = untyped __js__("new THREE.ShaderPass")( untyped __js__("THREE.FXAAShader"));
+		effectFXAA.uniforms.resolution.value.set(1 / AppConfig.screenWidth, 1 / AppConfig.screenHeight );
+		effectFXAA.renderToScreen = true;
+		composer.addPass( effectFXAA );
 		*/
 		context.dae.scene = scene;
 		

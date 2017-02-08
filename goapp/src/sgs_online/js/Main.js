@@ -358,7 +358,7 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		board.children[0].material.needsUpdate = true;
 	}
 	,createEnviroment: function() {
-		this.renderer = new THREE.WebGLRenderer({ antialias : false});
+		this.renderer = new THREE.WebGLRenderer({ antialias : true});
 		this.renderer.setClearColor(15790320);
 		this.renderer.setPixelRatio(AppConfig.screenWidth / AppConfig.screenHeight);
 		this.renderer.setSize(AppConfig.screenWidth,AppConfig.screenHeight);
