@@ -120,6 +120,7 @@
 		<script type="text/javascript" src="/_ah/channel/jsapi"></script>
 
 		<script name="model" src="js/model.js"></script>
+			<!--
 		<script name="test">
 			var user = 'test2'
 			model.joinLobby(user, {
@@ -146,6 +147,7 @@
                 console.log(arguments)
 			})
 		</script>
+		-->
 		<script>
 
 		
@@ -163,10 +165,31 @@
 			var needPrivate = false;
 			var acc_leftPanel = $("#acc_leftPanel" );
 			var win_login = $("#win_login" );
+			var playerName = '';
 			
-			
-			//test create room
-			listRoom( ['d', 'g' ] );
+			function login( user ){
+				model.joinLobby(user, {
+					onopen: function(){
+						playerName = user;
+						model.roomList( function( error, val){
+							if( error == null ){
+								listRoom( val );
+							}
+						});
+					},
+					onmessage: function(path, option){
+						var msg = path.data
+						console.log('onmessage'+msg)
+						
+					},
+					onerror: function(){
+						console.log('onerror')
+					},
+					onclose: function(){
+						console.log('onclose')
+					}
+				})
+			}
 			
 			chk_pri.switchbutton({
 				onChange:function( chk ){
@@ -178,8 +201,7 @@
 				onClick:function(){
 					var id = txt_id.textbox( 'getValue' );
 					if( id != '' ){
-						// call login
-						console.log( id );
+						login( id );
 					}
 				}
 			});
@@ -187,10 +209,15 @@
 				onClick:function(){
 					var roomName = txt_roomName.textbox( 'getValue' );
 					if( roomName != '' ){
-						// call create room
-						
-						console.log( roomName );
-						console.log( needPrivate );
+						model.newRoom( playerName, 25, function( error, val ){
+							if( error == null ) {
+								model.roomList( function( error, val){
+									if( error == null ){
+										listRoom( val );
+									}
+								});
+							}
+						});
 					}
 				}
 			});
@@ -198,10 +225,19 @@
 				onClick:function(){
 					var enterName = txt_enterName.textbox( 'getValue' );
 					if( enterName != '' ){
-						console.log( enterName );
-						// enter target room
+						model.joinRoom( enterName, playerName, function(error, val){
+							if( error == null ){
+								var playerId = val.Players[0];
+								var enemyId = val.Players[1];
+							}
+						});
 					}else{
-						// auto room
+						model.autoMatch( playerName, function(error, val){
+							if( error == null ){
+								var playerId = val.Players[0];
+								var enemyId = val.Players[1];
+							}
+						});
 					}
 				}
 			});
@@ -211,13 +247,18 @@
 				acc_leftPanel.accordion( 'select', 1 );
 				div_container.empty();
 				for( var i = 0; i < ary_room.length; ++i ){
-					var roomButton = $('<a href="#" class="easyui-linkbutton roomButton" style="width:248px" >' + ary_room[i] + '</a>' );
-					roomButton.attr( 'roomId', ary_room[i] );
+					var roomButton = $('<a href="#" class="easyui-linkbutton roomButton" style="width:248px" >' + ary_room[i].ID + '</a>' );
+					roomButton.attr( 'roomId', ary_room[i].ID );
 					roomButton.linkbutton( {
 						onClick:function(){
 							var roomId = $(this).attr('roomId');
-							console.log( roomId );
-							win_login.window( 'close' );
+							model.joinRoom( roomId, playerName, function(error, val){
+								if( error == null ){
+									var playerId = val.Players[0];
+									var enemyId = val.Players[1];
+									win_login.window( 'close' );
+								}
+							});
 						}
 					});
 					div_container.append( roomButton );

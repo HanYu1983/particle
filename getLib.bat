@@ -1,3 +1,4 @@
-#set GOPATH=C:\Users\Vic\Documents\Custom\Server\git\particle\goapp
-#set GOPATH=C:\Users\han\Documents\big_workspace\particle\goapp
-../go_appengine/goapp get github.com/abbot/go-http-auth
+set GOPATH=C:\Users\final\Documents\Vic\Github\particle\goapp
+C:\Users\final\Documents\Vic\go_appengine\goapp.bat get github.com/go-sql-driver/mysql
+C:\Users\final\Documents\Vic\go_appengine\goapp.bat get github.com/gorilla/mux
+C:\Users\final\Documents\Vic\go_appengine\goapp.bat get github.com/google/uuid

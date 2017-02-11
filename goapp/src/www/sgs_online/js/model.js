@@ -102,7 +102,7 @@ var model = model || {};
                         }
                     })
                 }, 1000*validateSecond)
-                cb(nil, room)
+                cb(null, room)
             }
         })
     }
