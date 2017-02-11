@@ -40,7 +40,6 @@ func UpdateExpiration(r Room) Room {
 
 func CreateChannel(ctx appengine.Context, r Room) (Room, error) {
 	var err error
-	r.State = RoomStatePlaying
 	token, err := channel.Create(ctx, r.ID)
 	if err != nil {
 		return r, err
@@ -50,9 +49,6 @@ func CreateChannel(ctx appengine.Context, r Room) (Room, error) {
 }
 
 func SendMessage(ctx appengine.Context, r Room, msg interface{}) error {
-	if r.State != RoomStatePlaying {
-		return nil
-	}
 	var err error
 	err = channel.SendJSON(ctx, r.ID, msg)
 	if err != nil {
@@ -103,9 +99,9 @@ func SaveRoom(ctx appengine.Context, r Room, group *datastore.Key) (error) {
 func RoomList(ctx appengine.Context, offset, limit int, group *datastore.Key) ([]Room, error) {
 	q := datastore.NewQuery("gameRoom").Ancestor(group)
 	q = q.Limit(limit).Offset(offset)
-	q = q.Filter("IsPrivate =", false)
+	// q = q.Filter("IsPrivate =", false)
 	q = q.Filter("Expiration >", time.Now())
-	var rooms []Room
+	rooms := []Room{}
 	var err error
 	_, err = q.GetAll(ctx, &rooms)
 	if err != nil {

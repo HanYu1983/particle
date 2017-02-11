@@ -70,11 +70,11 @@ func NewLobby(w http.ResponseWriter, r *http.Request) {
 	err = datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
 		var err error
 		room = core.NewRoom("lobby")
-		err = core.SaveRoom(ctx, room, GroupKey(ctx))
+		room, err = core.CreateChannel(ctx, room)
 		if err != nil {
 			return err
 		}
-		room, err = core.CreateChannel(ctx, room)
+		err = core.SaveRoom(ctx, room, GroupKey(ctx))
 		if err != nil {
 			return err
 		}
@@ -88,17 +88,20 @@ func NewLobby(w http.ResponseWriter, r *http.Request) {
 
 func NewRoom(w http.ResponseWriter, r *http.Request) {
 	defer Recover(w)
+	r.ParseForm()
+	user := r.PostForm.Get("user")
+	if user == "" {
+		panic("must have user")
+	}
+
 	var err error
 	var room core.Room
 	ctx := appengine.NewContext(r)
 	err = datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
 		var err error
 		room = core.NewRoom(uuid.New().String())
+		room = core.AddPlayer(room, user, "")
 		err = core.SaveRoom(ctx, room, GroupKey(ctx))
-		if err != nil {
-			return err
-		}
-		room, err = core.CreateChannel(ctx, room)
 		if err != nil {
 			return err
 		}
@@ -112,6 +115,7 @@ func NewRoom(w http.ResponseWriter, r *http.Request) {
 
 func JoinRoom(w http.ResponseWriter, r *http.Request) {
 	defer Recover(w)
+	r.ParseForm()
 	user := r.PostForm.Get("user")
 	if user == "" {
 		panic("must have user")
@@ -130,8 +134,9 @@ func JoinRoom(w http.ResponseWriter, r *http.Request) {
 		}
 		room = core.AddPlayer(room, user, "")
 		err = core.SendMessage(ctx, room, map[string]interface{}{
-			"event":  "AddPlayer",
-			"player": user,
+			"desc": "{user}加入房間{roomId}",
+			"user": user,
+			"roomId":  roomId,
 		})
 		if err != nil {
 			return err
@@ -186,6 +191,48 @@ func GetRoom(w http.ResponseWriter, r *http.Request) {
 	err = datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
 		var err error
 		room, err = core.LoadRoom(ctx, roomId, GroupKey(ctx))
+		if err != nil {
+			return err
+		}
+		if err != nil {
+			return err
+		}
+		return nil
+	}, nil)
+	if err != nil {
+		panic(err)
+	}
+	Json(w, room, nil)
+}
+
+func SendRoomMessage(w http.ResponseWriter, r *http.Request) {
+	defer Recover(w)
+	var err error
+
+	vars := mux.Vars(r)
+	roomId := vars["roomId"]
+
+	r.ParseForm()
+	user := r.PostForm.Get("user")
+	if user == "" {
+		panic("must have user")
+	}
+
+	msg := r.PostForm.Get("msg")
+	if msg == "" {
+		panic("must have msg")
+	}
+
+	var room core.Room
+	ctx := appengine.NewContext(r)
+	err = datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
+		var err error
+		room, err = core.LoadRoom(ctx, roomId, GroupKey(ctx))
+		err = core.SendMessage(ctx, room, map[string]interface{}{
+			"desc": "{user}傳送訊息{msg}",
+			"user": user,
+			"msg":  msg,
+		})
 		if err != nil {
 			return err
 		}

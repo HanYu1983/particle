@@ -86,6 +86,7 @@ func init() {
 	r.HandleFunc("/fn/sgs/room/{roomId}", sgs.GetRoom).Methods("GET")
 	r.HandleFunc("/fn/sgs/room/{roomId}/join", sgs.JoinRoom).Methods("POST")
 	r.HandleFunc("/fn/sgs/room/{roomId}/validate", sgs.ValidateRoom).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}/message", sgs.SendRoomMessage).Methods("POST")
 	http.Handle("/fn/sgs/", r)
 
 	// 測試

@@ -116,11 +116,38 @@
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script src="js/vic.tools.js"></script>
 		<script src="js/Main.js"></script>
-		
+
+		<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+
+		<script name="model" src="js/model.js"></script>
+		<script name="test">
+			var user = 'test2'
+			model.joinLobby(user, {
+                onopen: function(){
+                    console.log('onopen')
+                    model.sendLobby(user, 'hello world!', function(err, res){
+                        console.log('sendhelloworld')
+                        console.log(arguments)
+					})
+				},
+                onmessage: function(path, option){
+                    var msg = path.data
+                    console.log('onmessage'+msg)
+                },
+                onerror: function(){
+                    console.log('onerror')
+				},
+                onclose: function(){
+                    console.log('onclose')
+				}
+            })
+			model.autoMatch(user, function(err, res){
+			    console.log('autoMatch')
+                console.log(arguments)
+			})
+		</script>
 		<script>
-		var global = global || {};
-		global.onModel = new Rx.Subject
-		global.onView = new Rx.Subject
+
 		
 		$(document).ready( initPage );
 		
@@ -197,46 +224,6 @@
 				}
 			}
 		}
-		</script>
-		
-		<script name="test">
-		global.onModel.subscribe(
-			function(cmd){
-			
-				var name = cmd[0];
-				var params = cmd[1];
-				
-				switch( name ){
-					case 'init':
-						break;
-					case 'updateCursor':
-						
-						break;
-					case 'update':
-						
-						break;
-				}
-			},
-			function(err){
-				console.log(err)
-			},
-			function(){
-				
-			}
-		)
-		global.onView.subscribe(
-			function(cmd){
-				console.log(cmd)
-			},
-			function(err){
-				console.log(err)
-			},
-			function(){
-				
-			}
-		)
-		global.onModel.onNext(['start from html',0])
-		global.onView.onNext(['start from html',0])
 		</script>
 	</body>
 </html>
