@@ -35,6 +35,9 @@
 	.menuButton{
 		width:48%;
 	}
+	.loginMenuButton{
+		width:70px;
+	}
 	</style>
 	<body class="easyui-layout">
 		
@@ -55,6 +58,25 @@
 		</div>
 		<div data-options="region:'center',title:'center title'">
 			<div id="webgl" style='position:relative; width:100%; height:100%;'></div>
+		</div>
+		
+		<div id="win_login" class="easyui-window" title="對戰列表" data-options="collapsible:false,minimizable:false,maximizable:false,closable:false,modal:true,draggable:false,resizable:false" style="width:290px; padding:10px">
+			<div class="group hori">
+				<a id="btn_login" href="#" class="easyui-linkbutton loginMenuButton" >登入</a>
+				<input id="txt_id" class="easyui-textbox"  style="width:173px;">
+			</div>
+			<div class="group hori">
+				<a id="btn_create" href="#" class="easyui-linkbutton loginMenuButton" >創建</a>
+				<input id="chk_pri" class="easyui-switchbutton" data-options="onText:'私有',offText:'公開'">
+				<input id="txt_roomName" class="easyui-textbox"  style="width:110px;">
+			</div>
+			<div class="group hori">
+				<a id="btn_enter" href="#" class="easyui-linkbutton loginMenuButton" >進入</a>
+				<input id="txt_enterName" class="easyui-textbox"  style="width:173px">
+			</div>
+			<div id="div_container" class="group">
+				<!-- for script -->
+			</div>
 		</div>
 		
 		<div id="dia_command" class="easyui-dialog" title="邀戰通知" data-options="iconCls:'icon-help',closed:true" style="width:300px; padding:10px">
@@ -99,6 +121,82 @@
 		var global = global || {};
 		global.onModel = new Rx.Subject
 		global.onView = new Rx.Subject
+		
+		$(document).ready( initPage );
+		
+		function initPage(){
+			var btn_login = $("#btn_login" );
+			var btn_create = $("#btn_create" );
+			var btn_enter = $("#btn_enter" );
+			var txt_id = $("#txt_id" );
+			var txt_roomName = $("#txt_roomName" );
+			var txt_enterName = $("#txt_enterName" );
+			var chk_pri = $("#chk_pri" );
+			var div_container = $("#div_container" );
+			var needPrivate = false;
+			var acc_leftPanel = $("#acc_leftPanel" );
+			var win_login = $("#win_login" );
+			
+			
+			//test create room
+			listRoom( ['d', 'g' ] );
+			
+			chk_pri.switchbutton({
+				onChange:function( chk ){
+					pri = chk;
+				}
+			});
+			
+			btn_login.linkbutton({
+				onClick:function(){
+					var id = txt_id.textbox( 'getValue' );
+					if( id != '' ){
+						// call login
+						console.log( id );
+					}
+				}
+			});
+			btn_create.linkbutton({
+				onClick:function(){
+					var roomName = txt_roomName.textbox( 'getValue' );
+					if( roomName != '' ){
+						// call create room
+						
+						console.log( roomName );
+						console.log( needPrivate );
+					}
+				}
+			});
+			btn_enter.linkbutton({
+				onClick:function(){
+					var enterName = txt_enterName.textbox( 'getValue' );
+					if( enterName != '' ){
+						console.log( enterName );
+						// enter target room
+					}else{
+						// auto room
+					}
+				}
+			});
+			
+			
+			function listRoom( ary_room ){
+				acc_leftPanel.accordion( 'select', 1 );
+				div_container.empty();
+				for( var i = 0; i < ary_room.length; ++i ){
+					var roomButton = $('<a href="#" class="easyui-linkbutton roomButton" style="width:248px" >' + ary_room[i] + '</a>' );
+					roomButton.attr( 'roomId', ary_room[i] );
+					roomButton.linkbutton( {
+						onClick:function(){
+							var roomId = $(this).attr('roomId');
+							console.log( roomId );
+							win_login.window( 'close' );
+						}
+					});
+					div_container.append( roomButton );
+				}
+			}
+		}
 		</script>
 		
 		<script name="test">
