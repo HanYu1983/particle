@@ -1,5 +1,6 @@
 package collectmmo
 
+/*
 import (
 	"appengine/aetest"
 	"net/http"
@@ -79,3 +80,4 @@ func TestBasic(t *testing.T) {
 		t.Fatal("必須有2個玩家")
 	}
 }
+*/

@@ -1,3 +1,5 @@
+// 用來整合db到db2的過渡資料
+// 之後可以刪除
 package app
 
 import (
@@ -12,7 +14,7 @@ import (
 
 func Dbtodb2(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		Output(w, nil, err.Error())
+		tool.Output(w, nil, err.Error())
 	})
 
 	ctx := appengine.NewContext(r)
@@ -22,7 +24,7 @@ func Dbtodb2(w http.ResponseWriter, r *http.Request) {
 	var fileList []dbfile.DBFile
 	err := json.Unmarshal([]byte(data2), &fileList)
 	if err != nil {
-		Output(w, nil, err.Error())
+		tool.Output(w, nil, err.Error())
 	}
 
 	ak2 := db2.AncestorKey(ctx)
@@ -47,9 +49,9 @@ func Dbtodb2(w http.ResponseWriter, r *http.Request) {
 		key := datastore.NewIncompleteKey(ctx, db2.Kind, ak2)
 		_, err := datastore.Put(ctx, key, &file2)
 		if err != nil {
-			Output(w, nil, err.Error())
+			tool.Output(w, nil, err.Error())
 			return
 		}
 	}
-	Output(w, nil, nil)
+	tool.Output(w, nil, nil)
 }

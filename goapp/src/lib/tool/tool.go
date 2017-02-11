@@ -5,6 +5,7 @@ import (
 	"appengine/datastore"
 	"appengine/urlfetch"
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -270,4 +271,27 @@ func WithTransaction(ctx appengine.Context, retry int, fn func(c appengine.Conte
 		times += 1
 	}
 	return err
+}
+
+func Transact(db *sql.DB, txFunc func(*sql.Tx) error) (err error) {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			switch p := p.(type) {
+			case error:
+				err = p
+			default:
+				err = fmt.Errorf("%s", p)
+			}
+		}
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		err = tx.Commit()
+	}()
+	return txFunc(tx)
 }

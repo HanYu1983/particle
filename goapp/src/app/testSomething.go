@@ -1,3 +1,4 @@
+// 測試用，用完就能刪
 package app
 
 import (
@@ -5,12 +6,15 @@ import (
 	"appengine/datastore"
 	"archive/zip"
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"io"
 	"io/ioutil"
 	"lib/db/file"
 	"lib/db2"
+	"lib/tool"
 	"net/http"
 )
 
@@ -199,4 +203,20 @@ func TestWriteSnaphot2(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, `err: %s!`, err.Error())
 		}
 	}
+}
+
+func Testmysql(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+	db, err := sql.Open("mysql", "root:@/mmo?charset=utf8")
+	rows, err := db.Query("call move('han',10,1);")
+	if err != nil {
+		ctx.Errorf("db.Query: %v", err)
+	}
+	defer rows.Close()
+	var _ = db
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, nil, nil)
 }
