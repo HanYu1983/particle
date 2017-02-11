@@ -97,7 +97,7 @@
 		global.onModel = new Rx.Subject
 		global.onView = new Rx.Subject
 		
-		initPage();
+		$(document).ready( initPage );
 		
 		function initPage(){
 			var btn_login = $("#btn_login" );
@@ -109,6 +109,8 @@
 			var chk_pri = $("#chk_pri" );
 			var div_container = $("#div_container" );
 			var needPrivate = false;
+			var acc_leftPanel = $("#acc_leftPanel" );
+			
 			
 			//test create room
 			listRoom( ['d', 'g' ] );
@@ -153,6 +155,7 @@
 			
 			
 			function listRoom( ary_room ){
+				acc_leftPanel.accordion( 'select', 1 );
 				div_container.empty();
 				for( var i = 0; i < ary_room.length; ++i ){
 					var roomButton = $('<a href="#" class="easyui-linkbutton roomButton" >' + ary_room[i] + '</a>' );
