@@ -1,3 +1,4 @@
+// channel相關處理
 package app
 
 import (
@@ -7,9 +8,10 @@ import (
 	"net/http"
 )
 
+// 輸入一個名稱建立channel
 func CreateChannel(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		Output(w, nil, err.Error())
+		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
 
@@ -20,12 +22,13 @@ func CreateChannel(w http.ResponseWriter, r *http.Request) {
 	tok, err := channel.Create(ctx, name)
 	tool.Assert(tool.IfError(err))
 
-	Output(w, tok, nil)
+	tool.Output(w, tok, nil)
 }
 
+// 發送訊息到指定的channel
 func SendChannelMessage(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		Output(w, nil, err.Error())
+		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
 
@@ -41,9 +44,11 @@ func SendChannelMessage(w http.ResponseWriter, r *http.Request) {
 	err = channel.SendJSON(ctx, name, msg)
 	tool.Assert(tool.IfError(err))
 
-	Output(w, nil, nil)
+	tool.Output(w, nil, nil)
 }
 
+// 監聽channel的創建
+// 要在hello.go中handle這個path:"/_ah/channel/connected/"
 func OnChannelConnected(w http.ResponseWriter, r *http.Request) {
 	/*
 	  r.ParseForm()
@@ -57,6 +62,8 @@ func OnChannelConnected(w http.ResponseWriter, r *http.Request) {
 	*/
 }
 
+// 監聽channel的離線
+// 要在hello.go中handle這個path:"/_ah/channel/disconnected/"
 func OnChannelDisconnected(w http.ResponseWriter, r *http.Request) {
 	/*
 	  r.ParseForm()

@@ -1,3 +1,4 @@
+// 秀牌風雲從組牌風雲中需要的資料
 package app
 
 import (
@@ -13,9 +14,10 @@ const (
 	userDir = "root/user/"
 )
 
+// 吐出打開分享的套牌
 func ReadPublicCardSuit(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		Output(w, nil, err.Error())
+		tool.Output(w, nil, err.Error())
 	})
 	ctx := appengine.NewContext(r)
 	list, err := db2.GetFileList(ctx, userDir, true)
@@ -31,7 +33,7 @@ func ReadPublicCardSuit(w http.ResponseWriter, r *http.Request) {
 		if filename != "cardSuit.json" {
 			continue
 		}
-		username :=  filePathToken[len(filePathToken)-2]
+		username := filePathToken[len(filePathToken)-2]
 		cardSuit, err := db2.GetFile(ctx, filepath)
 		tool.Assert(tool.IfError(err))
 		err = json.Unmarshal(cardSuit.Content, &jsoninfo)
@@ -46,5 +48,5 @@ func ReadPublicCardSuit(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	Output(w, pubs, nil)
+	tool.Output(w, pubs, nil)
 }
