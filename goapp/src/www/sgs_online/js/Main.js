@@ -29,30 +29,30 @@ AppController.prototype = {
 		this.domController.setWebgl(dom);
 	}
 	,gameStart: function() {
-		var _g2 = this;
+		var _g = this;
 		this.threeEngineController.initGame();
 		this.keyboardController.start();
-		var pos = this.threeEngineController.getMeshByName("Player_deck_position").position.clone();
-		this.backendController.createPlayerDeck(function(args) {
+		var createOneCards = function(deck,isPlayer) {
+			if(isPlayer == null) isPlayer = false;
+			var pos = null;
+			if(isPlayer) pos = _g.threeEngineController.getMeshByName("Player_deck_position").position.clone(); else pos = _g.threeEngineController.getMeshByName("Enemy_deck_position").position.clone();
 			var _g1 = 0;
-			var _g = args.deck.length;
-			while(_g1 < _g) {
+			var _g2 = deck.length;
+			while(_g1 < _g2) {
 				var i = _g1++;
-				var uuid = args.deck[i];
+				var uuid = deck[i];
 				var cardpos = pos.clone();
 				cardpos.y += i * .05;
-				_g2.threeEngineController.createCard(_g2.context.textures[2],cardpos,uuid);
+				_g.threeEngineController.createCard(_g.context.textures[2],cardpos,uuid);
 			}
+		};
+		this.backendController.createPlayerDeck(function(args) {
+			createOneCards(args[0].deck,true);
+			createOneCards(args[1].deck);
 		});
 	}
 	,getAll: function() {
 		return this.backendController.getAll();
-	}
-	,moveCardsFromCards: function(from,to,pos) {
-		this.threeEngineController.moveCardsFromCards(from,to,pos);
-	}
-	,moveCardByUuid: function(uuid,pos) {
-		this.threeEngineController.moveCard(uuid,pos);
 	}
 	,getCardByUuid: function(uuid) {
 		return this.threeEngineController.getCardByUuid(uuid);
@@ -60,7 +60,7 @@ AppController.prototype = {
 	,onFUp: function() {
 		var _g = this;
 		this.backendController.drawCardFromPlayerDeckToPlayerHand(0,0,function(args) {
-			_g.moveCardsFromCards(args.deckFrom,args.toHand);
+			_g.threeEngineController.syncGameView();
 		});
 	}
 	,onAUp: function() {
@@ -162,6 +162,7 @@ var FakeBackEndController = function(_uid) {
 	this.players = [];
 	BasicController.call(this,_uid);
 	this.players.push({ deck : [], hand : []});
+	this.players.push({ deck : ["ab","cc"], hand : []});
 };
 FakeBackEndController.__name__ = true;
 FakeBackEndController.__super__ = BasicController;
@@ -176,7 +177,7 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 			this.addPlayerDeckCard(0,uuid);
 			ret.push(uuid);
 		}
-		callback({ deck : ret});
+		callback(this.getAll());
 	}
 	,drawCardFromPlayerDeckToPlayerHand: function(fromPlayerId,toPlayerId,callback) {
 		var deckFrom = this.getPlayerDeck(fromPlayerId);
@@ -293,7 +294,6 @@ var ThreeEngineController = function(_uid) {
 	this.mousePos = new THREE.Vector2();
 	this.raycaster = new THREE.Raycaster();
 	this.currentId = 0;
-	this.stackPosition = new haxe_ds_StringMap();
 	this.cards = [];
 	this.raycastMeshs = [];
 	BasicController.call(this,_uid);
@@ -306,11 +306,9 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		this.createEnviroment();
 		return this.context;
 	}
-	,setStackPosition: function(name,pos,rot) {
-		this.stackPosition.set(name,{ pos : pos, rot : rot});
-	}
 	,createCard: function(texture,pos,uuid) {
 		var card = new CardController(uuid);
+		console.log(uuid);
 		card.set_mesh(this.getMeshByName("Card",true));
 		card.setFaceTexture(texture);
 		card.setBackTexture(this.context.textures[1]);
@@ -331,37 +329,9 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 	,moveCard: function(uuid,cards,pos) {
 		if(pos == null) pos = { x : 0, y : 0, z : 0};
 		var card = this.getCardByUuid(uuid);
-		var moveTo = this.stackPosition.get("Player_hand_position");
-		card.moveCard(moveTo.pos.x,moveTo.pos.y,moveTo.pos.z);
-	}
-	,moveCardsFromCards: function(from,to,pos) {
-		var _g = this;
-		var moveTo = this.stackPosition.get("Player_deck_position");
-		var _g1 = 0;
-		var _g2 = from.length;
-		while(_g1 < _g2) {
-			var i = _g1++;
-			this.getCardByUuid(from[i]).moveCard(moveTo.pos.x,moveTo.pos.y + i * .05,moveTo.pos.z);
-		}
-		moveTo = this.stackPosition.get("Player_hand_position");
-		var dist = 10 / to.length;
-		var _g11 = 0;
-		var _g3 = to.length;
-		while(_g11 < _g3) {
-			var i1 = _g11++;
-			var posFac = 0;
-			if(to.length > 1) posFac = i1 - to.length / 2;
-			if(to.length < 5) dist = 2;
-			var card = this.getCardByUuid(to[i1]);
-			card.moveCard(moveTo.pos.x + posFac * dist,moveTo.pos.y + i1 * .01,moveTo.pos.z);
-			card.rotateCard(moveTo.rot.x,moveTo.rot.y,moveTo.rot.z);
-			if(!card.get_isFaceUp()) card.flip();
-		}
-		var t = new haxe_Timer(Math.floor(AppConfig.moveTime * 1000));
-		t.run = function() {
-			t.stop();
-			_g.selectFirst();
-		};
+		if(card == null) throw new js__$Boot_HaxeError("need have card!");
+		var moveTo = this.getMeshByName("Player_hand_position").position.clone();
+		card.moveCard(moveTo.x,moveTo.y,moveTo.z);
 	}
 	,getCardByUuid: function(uuid) {
 		var _g = 0;
@@ -382,14 +352,14 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		var handCount = handCards.length;
 		if(handCount == 0) return;
 		this.currentId = 0;
-		this.selectCardAnimation(handCards,handCards[this.currentId]);
+		this.syncGameView();
 	}
 	,selectNext: function() {
 		var handCards = this.mediator.getAll()[0].hand;
 		var handCount = handCards.length;
 		if(handCount == 0) return;
 		if(++this.currentId > handCount - 1) this.currentId = 0;
-		this.selectCardAnimation(handCards,handCards[this.currentId]);
+		this.syncGameView();
 	}
 	,selectPrev: function() {
 		var handCards = this.mediator.getAll()[0].hand;
@@ -399,22 +369,65 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 			var max = handCount - 1;
 			this.currentId = max;
 		}
-		this.selectCardAnimation(handCards,handCards[this.currentId]);
+		this.syncGameView();
 	}
 	,initGame: function() {
 		var board = this.getMeshByName("Board");
 		board.children[0].material.map = this.context.textures[0];
 		board.children[0].material.needsUpdate = true;
 	}
-	,selectCardAnimation: function(handCards,id) {
+	,syncGameView: function() {
+		var _g = this;
+		var model = this.mediator.getAll();
+		var playerModel = model[0];
+		var enemyModel = model[1];
+		var syncOnePlayer = function(oneModel,isPlayer) {
+			if(isPlayer == null) isPlayer = false;
+			var hand = oneModel.hand;
+			var deck = oneModel.deck;
+			_g.syncHand(hand,isPlayer);
+			_g.syncDeck(deck,isPlayer);
+		};
+		syncOnePlayer(playerModel,true);
+		syncOnePlayer(enemyModel);
+	}
+	,syncDeck: function(oneModel,isPlayer) {
+		if(isPlayer == null) isPlayer = false;
+		var moveTo = null;
+		if(isPlayer) moveTo = this.getMeshByName("Player_deck_position").position.clone(); else moveTo = this.getMeshByName("Enemy_deck_position").position.clone();
 		var _g1 = 0;
-		var _g = handCards.length;
+		var _g = oneModel.length;
 		while(_g1 < _g) {
 			var i = _g1++;
-			var uuid = handCards[i];
-			var c = this.getCardByUuid(uuid);
-			c.releaseCardInHand();
-			if(uuid == id) c.overCardInHand();
+			var card = this.getCardByUuid(oneModel[i]);
+			if(card == null) throw new js__$Boot_HaxeError("need have card!");
+			card.moveCard(moveTo.x,moveTo.y + i * .05,moveTo.z);
+		}
+	}
+	,syncHand: function(oneModel,isPlayer) {
+		if(isPlayer == null) isPlayer = false;
+		var moveTo = null;
+		var rotTo = null;
+		if(isPlayer) {
+			moveTo = this.getMeshByName("Player_hand_position").position.clone();
+			rotTo = this.getMeshByName("Player_hand_position").rotation.clone();
+		} else {
+			moveTo = this.getMeshByName("Enemy_hand_position").position.clone();
+			rotTo = this.getMeshByName("Enemy_hand_position").rotation.clone();
+		}
+		var dist = 10 / oneModel.length;
+		var _g1 = 0;
+		var _g = oneModel.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var posFac = 0;
+			if(oneModel.length > 1) posFac = i - oneModel.length / 2;
+			if(oneModel.length < 5) dist = 2;
+			var card = this.getCardByUuid(oneModel[i]);
+			if(card == null) throw new js__$Boot_HaxeError("need have card!");
+			card.moveCard(moveTo.x + posFac * dist,moveTo.y + i * .01,moveTo.z);
+			card.rotateCard(rotTo.x,rotTo.y,rotTo.z);
+			if(!card.get_isFaceUp()) card.flip();
 		}
 	}
 	,createEnviroment: function() {
@@ -430,13 +443,6 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		this.camera.aspect = AppConfig.screenWidth / AppConfig.screenHeight;
 		this.camera.updateProjectionMatrix();
 		this.context.dae.scene = this.scene;
-		var stacks = ["Player_deck_position","Player_hand_position"];
-		var _g = 0;
-		while(_g < stacks.length) {
-			var s = stacks[_g];
-			++_g;
-			this.setStackPosition(s,this.getMeshByName(s).position,this.getMeshByName(s).rotation);
-		}
 		this.mediator.addWebglListener("mousemove",$bind(this,this.onDocumentMouseMove));
 		this.animate();
 	}
@@ -503,45 +509,16 @@ Tools.uuid = function() {
 	while(a++ < 36) uid.add((a * 51 & 52) != 0?StringTools.hex((a ^ 15) != 0?8 ^ Std["int"](Math.random() * ((a ^ 20) != 0?16:4)):4):"-");
 	return uid.b.toLowerCase();
 };
-var haxe_IMap = function() { };
-haxe_IMap.__name__ = true;
-var haxe_Timer = function(time_ms) {
-	var me = this;
-	this.id = setInterval(function() {
-		me.run();
-	},time_ms);
+var js__$Boot_HaxeError = function(val) {
+	Error.call(this);
+	this.val = val;
+	this.message = String(val);
+	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
 };
-haxe_Timer.__name__ = true;
-haxe_Timer.prototype = {
-	stop: function() {
-		if(this.id == null) return;
-		clearInterval(this.id);
-		this.id = null;
-	}
-	,run: function() {
-	}
-};
-var haxe_ds_StringMap = function() {
-	this.h = { };
-};
-haxe_ds_StringMap.__name__ = true;
-haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
-haxe_ds_StringMap.prototype = {
-	set: function(key,value) {
-		if(__map_reserved[key] != null) this.setReserved(key,value); else this.h[key] = value;
-	}
-	,get: function(key) {
-		if(__map_reserved[key] != null) return this.getReserved(key);
-		return this.h[key];
-	}
-	,setReserved: function(key,value) {
-		if(this.rh == null) this.rh = { };
-		this.rh["$" + key] = value;
-	}
-	,getReserved: function(key) {
-		if(this.rh == null) return null; else return this.rh["$" + key];
-	}
-};
+js__$Boot_HaxeError.__name__ = true;
+js__$Boot_HaxeError.__super__ = Error;
+js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
+});
 var js_Boot = function() { };
 js_Boot.__name__ = true;
 js_Boot.__string_rec = function(o,s) {
@@ -580,6 +557,7 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -616,7 +594,6 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 String.__name__ = true;
 Array.__name__ = true;
 Date.__name__ = ["Date"];
-var __map_reserved = {}
 var q = window.jQuery;
 var js = js || {}
 js.JQuery = q;

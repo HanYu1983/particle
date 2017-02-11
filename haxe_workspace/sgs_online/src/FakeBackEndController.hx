@@ -18,6 +18,13 @@ class FakeBackEndController extends BasicController
 				hand:[]
 			}
 		);
+		
+		players.push(
+			{
+				deck:['ab','cc'],
+				hand:[]
+			}
+		);
 	}
 	
 	public function createPlayerDeck( callback:Dynamic -> Void ){
@@ -28,7 +35,7 @@ class FakeBackEndController extends BasicController
 			addPlayerDeckCard(0, uuid );
 			ret.push( uuid );
 		}
-		callback( {deck:ret} );
+		callback( getAll() );
 	}
 	
 	public function drawCardFromPlayerDeckToPlayerHand(fromPlayerId:Int, toPlayerId:Int, callback:Dynamic -> Void ) {

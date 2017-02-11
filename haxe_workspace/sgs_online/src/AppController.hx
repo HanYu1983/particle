@@ -48,29 +48,41 @@ class AppController
 		threeEngineController.initGame();
 		keyboardController.start();
 		
-		var pos = threeEngineController.getMeshByName( "Player_deck_position" ).position.clone();		
-		backendController.createPlayerDeck( function( args:Dynamic ):Void{
-			for ( i in 0...args.deck.length ) {
-				var uuid = args.deck[i];
+		
+		function createOneCards(deck:Dynamic, isPlayer:Bool = false){
+			var pos:Dynamic = null;
+			if ( isPlayer ){
+				pos = threeEngineController.getMeshByName( "Player_deck_position" ).position.clone();		
+			}else{
+				pos = threeEngineController.getMeshByName( "Enemy_deck_position" ).position.clone();		
+			}
+			for ( i in 0...deck.length ) {
+				var uuid = deck[i];
 				var cardpos = pos.clone();
 				cardpos.y += i * .05;
 				threeEngineController.createCard( context.textures[2], cardpos, uuid );
 			}
+		}
+		
+		backendController.createPlayerDeck( function( args:Dynamic ):Void{
+			createOneCards( args[0].deck, true );
+			createOneCards( args[1].deck );
 		});
 	}
 	
 	public function getAll():Dynamic{
 		return backendController.getAll();
 	}
-	
+	/*
 	public function moveCardsFromCards( from:Array<String>, to:Array<String>, ?pos:Dynamic = null ) {
 		threeEngineController.moveCardsFromCards( from, to, pos );
 	}
-	
+	*/
+	/*
 	public function moveCardByUuid( uuid:String, ?pos:Dynamic = null ) {
 		threeEngineController.moveCard( uuid, pos );
 	}
-	
+	*/
 	public function getCardByUuid( uuid:String ):ICardController {
 		return threeEngineController.getCardByUuid(uuid);
 	}
@@ -79,7 +91,7 @@ class AppController
 		//threeEngineController.flipCard();
 		
 		backendController.drawCardFromPlayerDeckToPlayerHand( 0, 0, function( args:Dynamic ){
-			moveCardsFromCards( args.deckFrom, args.toHand );
+			threeEngineController.syncGameView();
 		});
 	}
 	
