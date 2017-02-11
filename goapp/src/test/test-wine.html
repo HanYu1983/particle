@@ -1,0 +1,83 @@
+<html>
+	<head>
+		<title>Wine.com Public API Test</title>
+	</head>
+	<body>
+		<input id='txt_query'>
+		<button id='btn_query'>query</button>
+		
+		<div name='winelist'>
+			
+		</div>
+		<script type='x-jquery-tmpl' id='tmpl_p'>
+			<div style='border:1px solid'>
+				Name:${Name}<br>
+				PriceMin:${PriceMin}<br>
+				Labels:
+				{{each Labels}} 
+					<img src=${Url}>
+				{{/each}}
+			</div>
+		</script>
+		<script src='../common/js/lib/jquery-1.9.min.js'></script>
+		<script src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script src='../common/js/lib/rxjs/rx.all.js'></script>
+		<script src='../common/js/lib/purl.js'></script>
+		
+		<script>
+		
+		$(function(){
+			
+			function updateView(data){
+				var ps = data.Products.List
+				var container = $('div[name=winelist]')
+				container.empty()
+				for(var i in ps){
+					var p = ps[i]
+					var dom = $('#tmpl_p').tmpl(p)
+					dom.appendTo(container)
+				}
+			}
+			
+			function searchWine(query, cb){
+				var queryinfo = purl(query).data.param.query
+				queryinfo.apikey = '3cce869ab659605c3642f1be332e56c3'
+				
+				$.ajax({
+					url:'http://services.wine.com/api/beta/service.svc/JSON/catalog',
+					data:queryinfo,
+					dataType:'json',
+					success: function(data){
+						cb(null, data)
+					},
+					error: function(xhr, res, err){
+						cb(err)
+						console.log(err)
+					}
+				})
+			}
+			
+			var onClickBtn = Rx.Observable.fromEvent($('#txt_query'), 'keyup')
+				.map(function(evt){
+					return evt.target.value
+				})
+				.debounce(500)
+				.distinctUntilChanged()
+				
+			onClickBtn.subscribe(function(txt){
+				searchWine('?search='+txt, function(err, data){
+					console.log(err)
+					console.log(data)
+					if( err ){
+						alert(err)
+					} else {
+						updateView(data)
+					}
+				})
+			})
+			
+		})
+		
+		</script>
+	</body>
+</html>
