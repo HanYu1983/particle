@@ -42,8 +42,6 @@ class ThreeEngineController extends BasicController
 	public function createCard( texture:Dynamic, pos:Dynamic, uuid:String ):String {
 		var card:ICardController = new CardController(uuid);
 		
-		trace( uuid );
-		
 		card.mesh = getMeshByName( "Card", true );
 		card.setFaceTexture( texture );
 		card.setBackTexture( context.textures[1] );

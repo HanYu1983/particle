@@ -308,7 +308,6 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 	}
 	,createCard: function(texture,pos,uuid) {
 		var card = new CardController(uuid);
-		console.log(uuid);
 		card.set_mesh(this.getMeshByName("Card",true));
 		card.setFaceTexture(texture);
 		card.setBackTexture(this.context.textures[1]);
