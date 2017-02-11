@@ -1,0 +1,83 @@
+<html>
+	<body>
+		card <br>
+		<img src='../common/cardPackage/gundamWar/1001.jpg'> <br>
+		<img src='//xn--hyv330g.net/mtg/pic/M15/Ajani Steadfast.full.jpg'><br>
+		create user <br>
+		<form name='create user' action='../fn/card/user/' method='post'>
+			<input name='FBID' value='han'>
+			<input name='Name' value='han'>
+			<input type=submit>
+		</form>
+		
+		create room <br>
+		<form name='create room' action='../fn/card/room/' method='post'>
+			<input name='ID' value='room1'>
+			<input name='Name' value='room1'>
+			<input type=submit>
+		</form>
+		
+		enter room <br>
+		<form name='enter room' action='../fn/card/enterRoom/' method='post'>
+			<input name='FBID' value='han'>
+			<input name='Room' value='room1'>
+			<input type=submit>
+		</form>
+		
+		send message<br>
+		<form name='message' action='../fn/card/message/' method='post'>
+			<input name='FBID' value='han'>
+			<input name='TargetUser' value='0'>
+			<input name='UnixTime' value='0'>
+			<textarea style="width:300px; height:300px; " name='Content' value='{}'></textarea>
+			<input type=submit>
+		</form>
+		
+		clear <br>
+		<form name='message' action='../fn/card/clear'>
+			<input type=submit>
+		</form>
+		
+		<script src="../common/js/lib/jquery/jquery-1.11.1.min.js"></script>
+		<script src='js/api.js'></script>
+		<script>
+		api.getCardPackageWithUrl( '../common/cardPackage/gundamWar.json', function(err, ret){
+			var pkg = ret
+			for( var key in pkg.images ){
+				var path = api.getCardImageUrlWithPackage( pkg, key )
+				console.log( path )
+				break
+			}
+		})
+		
+		api.getCardSuitPackageWithUrl( '../common/cardPackage/gundamWarCardSuit.json', function(err, ret){
+			var pkg = ret
+			console.log( pkg )
+		})
+		
+		
+		/*
+		api.createUser({FBID:"han", Name:"222"}, function(err, ret){
+			//console.log(ret.Info.Key)
+		})
+		
+		api.createUser({FBID:"vic", Name:"33"}, function(err, ret){
+			//console.log(ret.Info.Key)
+		})
+		
+		api.users( function(err, ret){
+			//console.log(JSON.stringify(ret))
+		})
+		
+		api.users( function(err, ret){
+			//console.log(JSON.stringify(ret))
+		})
+		
+		api.installPollMessageCallback( {FBID: "382661a8-74af-47b2-b972-701580c44e0e"}, function(err, info){
+			console.log( JSON.stringify(info) )
+		})
+		*/
+	
+		</script>
+	</body>
+</html>

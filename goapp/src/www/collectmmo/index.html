@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Collectmmo</title>
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="description" content="" />
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/mobile.css">  
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.mobile.js"></script> 
+</head>
+<style>
+.group{
+	position:relative;
+	width:100%;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+.hori{
+	display:inline-block;
+}
+.hori_center{
+	text-align:center;
+}
+
+.tile{
+	position:relative;
+	width:13%;
+	border:1px solid gray;
+	box-sizing: border-box;
+}
+.actionButton{
+	width:23%;
+	height:35px;
+}
+.itemButton{
+	width:40px;
+	height:90%;
+}
+.item{
+	position:relative;
+	width:100%;
+	height:35px;
+	border:1px solid gray;
+	box-sizing: border-box;
+}
+
+.rectExtend{
+	position:relative;
+	width:100%;
+	left:0;
+	top:0;
+}
+
+#mc_tileContainer{
+	position:absolute;
+	width:100%;
+	left:0;
+	top:0;
+}
+
+#mc_status span{
+	width:100px;
+	color:yellow;
+}
+
+</style>
+<body>
+	<script id="tmpl_stuffs" type="jquery-x-tmpl">
+		<img src='images/me.png' style='position:absolute; width:20%; left:0px; bottom:0px;'></img>
+		<div style='position:absolute; width:100%;'>
+			{{each peoples}}
+				<img src='images/people.png' class='hori' style='width:20%;  float:right;'></img>
+			{{/each}}
+		</div>
+	</script>
+	<script id="tmpl_ground" type="jquery-x-tmpl">
+		{{each grounds}}
+		<div class="tile hori">
+			<img src=images/${type}.jpg style='position:relative; width:100%; left:0; top:0;'></img>
+			<div id="stuffs" style='position:absolute; top:0; left:0; width:100%; height:100%;'></div>
+		</div>
+		{{/each}}
+	</script>
+	<script id="tmpl_item" type="jquery-x-tmpl">
+		{{each items}}
+		<div class="item hori">
+			<div style="position:relative; left:0; top:0; width:100px;">${name}</div>
+			<div style="position:absolute; right:0; top:0; height:100%;">
+				{{each actions}}
+				<a class="easyui-linkbutton itemButton" outline="true">${name}</a>
+				{{/each}}
+			</div>
+		</div>
+		{{/each}}
+	</script>
+	<script id="tmpl_material" type="jquery-x-tmpl">
+		{{each items}}
+		<div class="item hori">
+			<div style="position:relative; left:0; top:0; width:100px;">${name}</div>
+			<div style="position:absolute; right:0; top:0; height:100%;">
+				<span>${info_1}</span>
+				<a class="easyui-linkbutton itemButton" outline="true">觀察</a>
+			</div>
+		</div>
+		{{/each}}
+	</script>
+	<div class="easyui-navpanel">
+        <header>
+            <div class="m-toolbar">
+                <span class="m-title">收集遊戲介面測試</span>
+            </div>
+        </header>
+        <div class="easyui-accordion" data-options="multiple:true,selected:1" fit="false" border="false">
+			<div title="移動">
+				<div class="group hori_center">
+					<a class="easyui-linkbutton actionButton" outline="true">西</a>
+					<a class="easyui-linkbutton actionButton" outline="true">北</a> 
+					<a class="easyui-linkbutton actionButton" outline="true">南</a> 
+					<a class="easyui-linkbutton actionButton" outline="true">東</a> 
+				</div>
+			</div>
+            <div title="地圖">
+				<div class="group hori_center" >
+					<img src='images/empty.png' class="rectExtend"></img>
+					<div id="mc_tileContainer"></div>
+				</div>
+            </div>
+            <div title="場景" >
+				<div id="mc_sceneContainer" class="group hori_center" >
+					<!-- by script -->
+				</div>
+			</div>
+			<div title="背包" >
+				<div id="mc_bagContainer" class="group hori_center" >
+					<!-- by script -->
+				</div>
+			</div>
+			<div title="製作" >
+				<div id="mc_craftContainer" class="group hori_center" >
+					<!-- script -->
+				</div>
+			</div>
+			<div id="mc_status" title="狀態" >
+				<div class="group hori_center" style="font-size:16px;">
+					<div>血: <span id="txt_hp">100</span></div>
+					<div>體: <span id="txt_hp">100</span></div>
+					<div>攻: <span id="txt_str">5</span></div>
+					<div>防: <span id="txt_def">5</span></div>
+					<div>智: <span id="txt_int">5</span></div>
+					<div>敏: <span id="txt_agi">5</span></div>
+					<div>運: <span id="txt_luk">5</span></div>
+				</div>
+			</div>
+			<div title="熟練度" >
+				<div class="group hori_center" style="font-size:16px;">
+					<div>HP: 100</div>
+					<div>STR: 4</div>
+				</div>
+			</div>
+			
+        </div>
+		<div id="dlg_craft" class="easyui-dialog" style="padding:20px 6px;width:80%;" data-options="inline:true,modal:true,closed:true,title:'製作-鐵棍'">
+			<div class="group hori_center">
+				<div id="mc_materialContainer" class="group">
+					<!-- script -->
+				</div>
+				<div class="group">
+					<input class="easyui-numberspinner" value="1" data-options="increment:1,min:1" style="width:40%;"></input>
+				</div>
+				<div class="group">
+					<a href="javascript:void(0)" class="easyui-linkbutton" style="width:40%;height:35px" onclick="$('#dlg_craft').dialog('close')">製作</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" style="width:40%;height:35px" onclick="$('#dlg_craft').dialog('close')">放棄</a>
+				</div>
+			</div>
+        </div>
+		<div id="dlg_message" class="easyui-dialog" style="padding:20px 6px;width:80%;" data-options="inline:true,modal:true,closed:true,title:'訊息'">
+			<div class="group hori_center">
+				<div class="group">
+					Message!
+				</div>
+				<div class="group">
+					<a href="javascript:void(0)" class="easyui-linkbutton" style="width:40%;height:35px" onclick="$('#dlg_message').dialog('close')">確定</a>
+				</div>
+			</div>
+		</div>
+    </div>
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+	<!--
+	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
+	<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+	-->
+	<script>
+	
+	var app = app || {};
+	app.view = app.view || {};
+	
+	(function( module ){
+	
+	
+		var mc_tileContainer = $('#mc_tileContainer' );
+		
+		var config = {
+			grounds:[]
+		}
+		
+		_.each( _.range( 49 ), function( id ){
+			config.grounds.push( { type:'sand', peoples:[{}, {}]} );
+		});
+		
+		var dom = $('#tmpl_ground').tmpl( config );
+		mc_tileContainer.append( dom );
+		
+		
+		var mc_sceneContainer = $("#mc_sceneContainer" );
+		var mc_bagContainer = $("#mc_bagContainer" );
+		var mc_craftContainer = $("#mc_craftContainer" );
+		var mc_materialContainer = $("#mc_materialContainer" );
+		var dlg_craft = $("#dlg_craft" );
+		
+		
+		function openCraftPanel(){
+			dlg_craft.dialog( 'open' );
+		}
+		
+		appendItemToCraft( mc_materialContainer, {
+			items:[
+				{name:'鐵塊',info_1:'3/5'},
+				{name:'鐵條',info_1:'2/5'}
+			]
+		});
+		
+		appendItemTo( mc_sceneContainer, 
+		{
+			items:[
+				{
+					name:'怪',
+					actions:[{name:'殺'},{name:'資訊'}]
+				},{
+					name:'藥草',
+					actions:[{name:'撿起'},{name:'資訊'}]
+				},{
+					name:'大黃',
+					actions:[{name:'撿起'},{name:'資訊'}]
+				}
+			]
+		});
+		
+		appendItemTo( mc_bagContainer, 
+		{
+			items:[
+				{
+					name:'怪',
+					actions:[{name:'殺'},{name:'資訊'}]
+				},{
+					name:'藥草',
+					actions:[{name:'撿起'},{name:'資訊'}]
+				}
+			]
+		});
+		
+		appendItemTo( mc_craftContainer, 
+		{
+			items:[
+				{
+					name:'怪',
+					actions:[{name:'殺'},{name:'資訊'}]
+				},{
+					name:'藥草',
+					actions:[{name:'撿起'},{name:'資訊'}]
+				}
+			]
+		});
+		
+		function appendItemTo( container, itemModel ){
+			var dom = $('#tmpl_item').tmpl( itemModel );
+			container.append( dom );
+		}
+		
+		function appendItemToCraft( container, craftModel ){
+			var dom = $('#tmpl_material').tmpl( craftModel );
+			container.append( dom );
+		}
+		
+		function appStart(){
+			//openCraftPanel();
+		}
+		
+		module.appStart = appStart;
+	})( app.view );
+	
+	$(document).ready( function(){
+		app.view.appStart();
+	});
+	/*
+	var win = $.messager.progress({
+		title:'Please waiting',
+		msg:'Loading data...'
+	});
+	setTimeout(function(){
+		$.messager.progress('close');
+	},5000)
+	
+	$.messager.show({
+                title:'My Title',
+                msg:'Message will be closed after 5 seconds.',
+                timeout:5000,
+                showType:'slide'
+            });
+			*/
+	</script>
+	<script src="js/main.js"></script>
+</body>
+</html>

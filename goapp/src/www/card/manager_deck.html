@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>組牌風雲</title>
+	<!--page information for search engine-->
+	<meta name="title" content="組牌風雲" />
+	<meta name="keyword" content="組牌風雲,卡牌風雲,三國志大戰,集換式卡牌,線上卡牌,虛擬桌面,組牌機" />
+	<meta name="description" content="組牌風雲" />
+	<link rel="image_src" href=""/>
+	
+	<!--share information for fb-->
+	<meta property="og:description" content="組牌風雲" />
+	<meta property="og:title" content="組牌風雲" />
+	<meta property="og:url" content="http://particle-979.appspot.com/card/manager_sango.html#"/>
+	<meta name="description" content="" />
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+	
+</head>
+<style>
+body{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+.group{
+	position:relative;
+	width:100%;
+}
+.hori{
+	display:inline-block;
+}
+
+.card_item_root{
+	position:relative;
+	width:100%;
+	height:60px;
+	border:1px black solid;
+}
+
+.big_card_root{
+	position:relative;
+	display:inline-block;
+	width:260px;
+	height:390px;;
+	cursor:pointer;
+	border:1px black solid;
+}
+
+.big_card_root_focus{
+	border:1px red solid;
+}
+
+#mc_lefttop{
+	position:absolute; 
+	right:5px; 
+	top:0px;
+}
+
+@media screen and ( max-width:1366px ){
+	#mc_lefttop{
+		top:auto;
+		bottom:0px;
+	}
+}
+
+</style>
+
+<script id="tmpl_bigCard" type="jquery-x-tmpl">
+	<div cid=${id} class="big_card_root">
+		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="../common/images/card/cardback_0.jpg"/>
+		<img src=${url} style="position:relative; top:0; left:0; width:100%; height:100%;" />
+		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
+		<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
+		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:10px; padding-right:10px; padding-top:10px; ">
+			<div game="sangoWar">${id}</div>
+			<div game="sangoWar">${cname}</div>
+			<div game="sangoWar">${atype}/${atype2}</div>
+			<div game="sangoWar">${ability}</div>
+			<div game="sangoWar">{{html content}}</div>
+			<br/>
+			<div game="sangoWar">{{html counter}}</div>
+
+			<div game="sengoku">${id}</div>
+			<div game="sengoku">${set}</div>
+			<div game="sengoku">${cname}</div>
+			<div game="sengoku">${cost}</div>
+			<div game="sengoku">${atype}/${atype2}</div>
+			<div game="sengoku">${ability}</div>
+			<div game="sengoku">{{html content}}</div>
+			<br/>
+			<div game="sengoku">{{html counter}}</div>
+			
+			<div game="yugioh">${id}</div>
+			<div game="yugioh">${race}</div>
+			<div game="yugioh">${name}</div>
+			<div game="yugioh">level ${level}</div>
+			<div game="yugioh">${type}</div>
+			<div game="yugioh">${desc}</div>
+			
+			<div game="magic">${id}</div>
+			<div game="magic">${set}</div>
+			<div game="magic">${name}</div>
+			<div game="magic">${type}</div>
+			<div game="magic">{{html text}}</div>
+			
+			<div game="gundamWar">${id}</div>
+			<div game="gundamWar">${name}</div>
+			<div game="gundamWar">${ctype}</div>
+			<div game="gundamWar">${area}</div>
+			<div game="gundamWar">{{html context}}</div>
+			
+			<div game="army">${id}</div>
+			<div game="army">${Name}</div>
+			<div game="army">${Nation}</div>
+			<div game="army">${Ctype}</div>
+			<div game="army">${Atype}</div>
+			<div game="army">${text}</div>
+			 
+			<div game="battleSpirits">${id}</div>
+			<div game="battleSpirits">${info_2}/${info_41}</div>
+			<div game="battleSpirits">系統: ${info_25}</div>
+			<div game="battleSpirits">卡片種類: ${info_3}</div>
+			<div game="battleSpirits">属性: ${info_4}${info_5}</div>
+			<div game="battleSpirits">減輕需求: ${info_6}</div>
+			<div game="battleSpirits">LV1 core: ${info_7} hp: ${info_8}</div>
+			<div game="battleSpirits">LV2 core: ${info_9} hp: ${info_10}</div>
+			<div game="battleSpirits">LV3 core: ${info_11} hp: ${info_12}</div>
+			<div game="battleSpirits">中: {{html info_42}}</div>
+			<div game="battleSpirits">日: {{html info_14}}</div>
+			<div game="battleSpirits">稀有度: ${info_13}</div>
+			
+			<div game="crusade">${id}</div>
+			<div game="crusade">${info_2}</div>
+			<div game="crusade">${info_4}</div>
+			<div game="crusade">${info_3}</div>
+			<div game="crusade">${info_15}</div>
+			<div game="crusade">${info_5}-${info_6}-${info_7}</div>
+			<div game="crusade">{{html info_16}}</div>
+
+			<div game="gundamWarN">${id}</div>
+			<div game="gundamWarN">${info_17}</div>
+			<div game="gundamWarN">${info_6}</div>
+			<div game="gundamWarN">${info_2}</div>
+			<div game="gundamWarN">{{html info_11}}</div>
+			<div game="gundamWarN">{{html trans}}</div>
+			<div game="gundamWarN">{{html info_12}}</div>
+			
+			<div game="dragonZ">{{html id}}</div>
+			<div game="dragonZ">{{html name}}</div>
+			<div game="dragonZ">{{html type}}</div>
+			<div game="dragonZ">{{html descrition}}</div>
+			<div game="dragonZ">{{html rarity}}</div>
+
+			<div game="sgs">{{html id}}</div>
+			<div game="sgs">{{html name}}</div>
+			<div game="sgs">{{html type}}</div>
+			<div game="sgs">{{html text}}</div>
+
+			<div game="ws">{{html id}}</div>
+			<div game="ws">{{html name}}</div>
+			<div game="ws">{{html text}}</div>
+			<div game="ws">{{html chars}}</div>
+		</div>
+	</div>
+</script>
+<script id="tmpl_cardItem" type="jquery-x-tmpl">
+	<div id=${itemId} cid=${id} class="card_item_root">
+		<div class="hori" style="position:relative; top:0; left:0; height:100%; vertical-align:top;">
+			<a id="btn_remove" href="#" class="easyui-linkbutton" style="width:30px; height:100%;" data-options="iconCls:'icon-remove'"></a>
+		</div>
+		<div class="hori" style="position:relative; top:0; left:0; height:100%; vertical-align:top;">
+			<a id="btn_copy" href="#" class="easyui-linkbutton" style="width:30px; height:100%;" data-options="iconCls:'icon-add'"></a>
+		</div>
+		<div class="hori" style="position:relative; height:100%;">
+			<img style="position:relative; left:0; top:0; height:100%;" src="../common/images/card/cardback_0.jpg"/>
+			<img style="position:absolute; left:0; top:0; height:100%;" src=${url}  style="height:100%;" />
+		</div>
+		<div class="hori" style="overflow:hidden; width:150px; height:100%; vertical-align:top;">
+			
+			<div game="sangoWar">${cname}</div>
+			<div game="sangoWar">${atype}/${atype2}</div>
+			<div game="sangoWar">${ctype}</div>
+
+			<div game="sengoku">${cname}</div>
+			<div game="sengoku">${atype}/${atype2}</div>
+			<div game="sengoku">${ctype}</div>
+			
+			<div game="yugioh">${name}</div>
+			<div game="yugioh">level ${level}</div>
+			<div game="yugioh">${type}</div>
+
+			<div game="magic">${id}</div>
+			<div game="magic">${type}</div>
+			
+			<div game="gundamWar">${name}</div>
+			<div game="gundamWar">${ctype}</div>
+			<div game="gundamWar">${area}</div>
+
+			<div game="gundamWarN">${name}</div>
+			<div game="gundamWarN">${ctype}</div>
+			<div game="gundamWarN">${area}</div>
+
+			<div game="gundamWarN">${id}</div>
+			<div game="gundamWarN">${info_2}</div>
+			<div game="gundamWarN">${info_3}</div>
+			
+			<div game="army">${Name}</div>
+			<div game="army">${Ctype}</div>
+			<div game="army">${Atype}</div>
+			
+			<div game="battleSpirits">${info_2}</div>
+			<div game="battleSpirits">${info_25}</div>
+			<div game="battleSpirits">${info_3}</div>
+			
+			<div game="crusade">${info_2}</div>
+			<div game="crusade">${info_3}</div>
+			<div game="crusade">${info_5}-${info_6}-${info_7}</div>
+			
+			<div game="dragonZ">{{html id}}</div>
+			<div game="dragonZ">{{html name}}</div>
+			<div game="dragonZ">{{html type}}</div>
+			<div game="dragonZ">{{html rarity}}</div>
+
+			<div game="sgs">{{html id}}</div>
+			<div game="sgs">{{html name}}</div>
+			<div game="sgs">{{html type}}</div>
+
+			<div game="ws">{{html id}}</div>
+			<div game="ws">{{html name}}</div>
+		</div>
+	</div>
+</script>
+<body>
+	<div id="cc" class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'north',title:'條件',split:true" style="height:300px;">
+			<div class="group" style="text-align:center; margin-top:10px;">
+				<div class="group">
+					<form id="form_container" name="form_value" class="hori">
+						<!-- by script -->
+					</form>
+				</div>
+				<div class="group">
+					<div class="hori">
+						<a id="btn_detail" href="#" class="easyui-linkbutton" style="width:60px; height:40px;" onclick="app.view.onTipClick()" data-options="iconCls:'icon-tip',toggle:true,selected:false">內文</a>
+					</div>
+					<div class="hori">
+						<a id="btn" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onResetClick()" data-options="iconCls:'icon-edit'">重設</a>
+					</div>
+					<div class="hori">
+						<a id="btn_search" href="#" class="easyui-linkbutton" style="width:200px; height:40px;" onclick="app.view.onSearchClick()" data-options="iconCls:'icon-search',disabled:true">搜尋</a>
+					</div>
+				</div>
+				<div id="mc_lefttop" >
+					<a  href="#" title="我們有收錄很多遊戲哦!" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_others').panel( 'open' )" data-options="iconCls:'icon-redo'">其它遊戲</a>
+					<a  href="#" title="關於上善若水" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
+				</div>
+			</div>
+		</div>
+		<div data-options="region:'center',title:'結果'">
+			<div id="pag_bigCard" class="easyui-pagination" data-options="pageSize:15,layout:['first','links','last']"></div>
+			<div id="mc_bigCardContainer" >
+				
+			</div>
+		</div>
+		<div data-options="region:'east',title:'組牌'" style="width:300px; overflow-x:hidden;">
+			<div class="group" style="text-align:center; margin-top:10px;">
+				<div class="hori">
+					<span id="txt_count" style="color:yellow">0</span>張
+				</div>
+				<div class="hori">
+					<div class="hori">
+						<a id="btn" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onClearClick()" data-options="iconCls:'icon-remove'">清空</a>
+					</div>
+					<div class="hori">
+						<a id="btn_output" href="#" class="easyui-linkbutton" style="width:100px; height:40px;" onclick="app.view.onSaveClick()" data-options="iconCls:'icon-save',disabled:true">匯入/匯出</a>
+					</div>
+					<!--
+					<div class="hori">
+						<a id="btn_saveDeck" href="#" title="組牌危機是可以分享套牌並且評論套牌的一個網頁哦" class="easyui-linkbutton easyui-tooltip" style="width:203px; height:40px;" onclick="app.view.onOpenSaveForm()" data-options="iconCls:'icon-save'">儲存到組牌危機</a>
+					</div>
+						-->
+				</div>
+			</div>
+			<div id="mc_cardContainer" class="group" style="margin-top:10px;">
+				
+			</div>
+		</div>
+	</div>
+	<div id="win_output" class="easyui-window" title="匯入/匯出" data-options="minimizable:false,maximizable:false,collapsible:false,closed:true,modal:true" style="width:530px;height:300px" >
+		<div class="group" style="text-align:center;">
+			<input class="easyui-textbox" data-options="multiline:true" style="width:100%; height:200px">
+			<div class="hori" style="margin-top:10px;">
+				<!--
+				<a id="btn" href="#" title="歡迎大家加入哦" style="width:100px; height:40px;"  class="easyui-linkbutton easyui-tooltip" onclick="app.view.onGoToClubClick();">加入社團找牌咖</a>
+					-->
+				<a id="btn_gotoSet" href="#" title="去秀牌風雲輸入組好的牌組!" class="easyui-linkbutton easyui-tooltip" style="width:100px; height:40px;" onclick="app.view.onSetDeckClick()" data-options="iconCls:'icon-back'">去輸入牌組</a>
+				<a id="btn" href="#" title="匯入由此組牌機所輸出的文字來產生牌組" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onLoadClick()" data-options="iconCls:'icon-save'">匯入</a>
+				<a id="btn_gotoGame" href="#" title="去卡牌風雲頁面使用臨時創建的功能，來測試由此組牌機所組出來的套牌" class="easyui-linkbutton easyui-tooltip" style="width:120px; height:40px;" onclick="app.view.onGotoGameClick()" data-options="iconCls:'icon-redo'">線上打牌去</a>
+			</div>
+		</div>
+	</div>
+	<div id="dia_about" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
+		<div class="group" style="position:relative; width:100%; text-align:center;">
+			<div class="hori" >
+				上善若水APP
+				<br/>
+				<img src="../common/images/logo.jpg" width="100" height="100">
+				<br/>
+				<a style="color:yellow" href="//www.facebook.com/pages/上善若水/1653920964852269" target="_blank">上善若水粉絲頁</a>
+				<br/><br/>
+				<a style="color:yellow" href="//particle-979.appspot.com/manager/index.html#" target="_blank">上善若水官網</a>
+				<br/><br/>
+					<!--
+				<a style="color:yellow" href="//www.facebook.com/groups/1521526761495948/" target="_blank">加入社團找牌咖</a>
+				<br/><br/>
+						-->
+			</div>
+		</div>
+	</div>
+	<div id="dia_others" class="easyui-dialog" title="組牌機列表" data-options="closed:true" style="width:480px; padding:10px">
+		<div class="group" style="position:relative; width:100%; text-align:center;">
+			<div id="mc_game" class="group">
+				<!-- by script -->
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script src="../common/js/lib/underscore/underscore-min.js"></script>
+	<script src="../common/js/lib/async/async.js"></script>
+	<script src="../common/js/lib/google/ga.js"></script>
+	<script src="../common/js/lib/csv.js"></script>
+	<script src="../common/js/lib/purl.js"></script>	
+	<script src="../common/js/sangoWar.js"></script>	
+	<script src="../common/js/yugioh.js"></script>	
+	<script src="../common/js/magic.js"></script>	
+	<script src="../common/js/gundamWar.js"></script>	
+	<script src="../common/js/gundamWarN.js"></script>	
+	<script src="../common/js/army.js"></script>	
+	<script src="../common/js/battleSpirits.js"></script>	
+	<script src='../common/js/crusade.js'></script>
+	<script src='../common/js/dragonZ.js'></script>
+	<script src='../common/js/ws.js'></script>
+	<script src='../common/js/sengoku.js'></script>
+	<script src='../common/js/sgs.js'></script>
+	<script src="../common/js/cardsearch.js"></script>	
+	<script src="../common/js/admin.js"></script>	
+	<script src="../common/js/db2.js"></script>	
+	<script src="../common/js/store.js"></script>	
+	<script src="../common/js/cardinfoloader.js"></script>	
+	<script src='js/api.js'></script>
+	<script src="js/manager_deck_gameController.js"></script>
+	<script>
+	googleTracking.init( 'UA-55273266-3' );
+	
+	(function(){
+		var mc_game = $('#mc_game' );
+		_.each( admin.ary_games, function( game ){
+			var dom = $('<a game="' + game.game + '" href="#" class="easyui-linkbutton" style="width:130px;">' + game.name + '</a>');
+			dom.click( function(){
+				var togame = $(this).attr( 'game' );
+				window.open( 'manager_deck.html?game=' + togame + '&lang=ch' );
+			});
+			if( game.hot ){
+				dom.linkbutton({ iconCls: 'icon-fire2' });
+			}
+			mc_game.append( dom );
+		});
+	})();
+	
+		
+		/*
+			<div game="battleSpirits">系統: ${info_25}</div>
+			<div game="battleSpirits">卡片種類: ${info_3}</div>
+			<div game="battleSpirits">属性: ${info_4}${info_5}</div>
+			<div game="battleSpirits">減輕需求: ${info_6}</div>
+			<div game="battleSpirits">LV1 core: ${info_7} hp: ${info_8}</div>
+			<div game="battleSpirits">LV2 core: ${info_9} hp: ${info_10}</div>
+			<div game="battleSpirits">LV3 core: ${info_11} hp: ${info_12}</div>
+			<div game="battleSpirits">${info_42}</div>
+			<div game="battleSpirits">稀有度: ${info_13}</div>
+			*/
+			
+			
+			
+
+
+	var tmplAry = {
+		sengoku:{
+			default:[
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:3, val:{name:'ntype', items:['蒼','紅','翠']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:3,val:{name:'ctype', items:['武将','計略']}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5']}},
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:1,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:1, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[	{type:'label', val:'武力以上'},
+					{type:'select', span:3,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}},
+					{type:'label',val:'武力以下'},
+					{type:'select', span:3, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}}],
+				[	{type:'label', val:'攻城'},
+					{type:'select', span:1,val:{name:'acity', items:['1','2','3']}},
+					{type:'label',val:'兵種'},
+					{type:'select', span:1, val:{name:'atype', items:['計略/メイン','計略/戦闘','騎馬隊','槍足軽','鉄砲隊','足軽','竜騎馬','砲兵']}},
+					{type:'label', val:'特徵'},
+					{type:'select',span:3,val:{name:'symbol', items:['軍師','主君','女性','徳川四天王','美濃三人衆','北条五色備','毛利三兄弟','賤ヶ岳七本槍']}}
+				],
+				[	{type:'label', val:'特殊規則'},
+					{type:'checkbox', span:7,val:{name:'', items:['防柵','貫通','奇襲','制圧','焙烙','長槍','盾槍','舞踊','忍','三葵','一領','罠','日輪','置計']}}],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:7,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:7,val:{name:'rule'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:7,val:{name:'id'}}
+				]
+			]
+		},
+		ws:{
+			default:[
+				[
+					{type:'label', val:'タイトル'},
+					{type:'select', span:1, val:{name:'pkg', items:['AngelBeatS!','AngelBeats! Extra', 'AngelBeats! Extra2', 'Angel Beats! Re: Edit', 'リリカルなのはStrikerS','リリカルなのは A’s', 'リリカルなのは The MOVIE 1st', 'リリカルなのは The MOVIE 1st＆2nd A’s', 'リリカルなのは The MOVIE 2nd A’s', 'ガールフレンド（仮）', 'ガールフレンド（仮） Vol.2', 'FAIRY TAIL', 'FAIRY TAIL Extra', '探偵オペラ ミルキィホームズ','探偵オペラ ミルキィホームズ2','探偵オペラ ミルキィホームズ セカンドステージエディション','探偵オペラ ミルキィホームズ 怪盗帝国の逆襲','探偵オペラ ミルキィホームズ G4の反撃','リトルバスターズ!','リトルバスターズ!エクストラ','リトルバスターズ！ カードミッション Extra','リトルバスターズ!エクスタシー','アニメ リトルバスターズ','アニメ リトルバスターズ! Refrain Extra','初音ミク -Project DIVA- f', '初音ミク -Project DIVA- f 2nd', '涼宮ハルヒの憂鬱', '涼宮ハルヒの憂鬱 Extra', '進撃の巨人', '戦姫絶唱シンフォギア', '戦姫絶唱シンフォギアG', '戦姫絶唱シンフォギアGX', '艦隊これくしょん -艦これ-', '艦隊これくしょん -艦これ- 第二艦隊', 'To LOVEる -とらぶる- ダークネス 2nd']}},
+					{type:'label', val:'カテゴリ'},
+					{type:'select', span:1, val:{name:'type', items:['キャラ','イベント','クライマックス']}},
+					{type:'label', val:'トリガー'},
+					{type:'select', span:1,val:{name:'trigger', items:['なし','ソウル','リターン','プール','カムバック','ドロー','ショット','トレジャー','ゲート']}},
+					{type:'label',val:'キーワード'},
+					{type:'select', span:1, val:{name:'keyword', items:['アンコール','応援','絆','助太刀','大活躍','アラーム','集中','チェンジ','記憶','経験','シフト','加速','共鳴']}}
+				],
+				[
+					{type:'label', val:'レベル以上'},
+					{type:'select', span:3,val:{name:'level_1', items:['1','2','3']}},
+					{type:'label',val:'レベル以下'},
+					{type:'select', span:3, val:{name:'level_2', items:['1','2','3']}}
+				],
+				[
+					{type:'label', val:'コスト以上'},
+					{type:'select', span:3,val:{name:'cost_1', items:['1','2','3','4','5','6','7','8','9']}},
+					{type:'label',val:'コスト以下'},
+					{type:'select', span:3, val:{name:'cost_2', items:['1','2','3','4','5','6','7','8','9']}}
+				],
+				[
+					{type:'label', val:'パワー以上'},
+					{type:'select', span:3,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500','6000','6500','7000','7500','8000','8500','9000','9500','10000']}},
+					{type:'label',val:'パワー以下'},
+					{type:'select', span:3, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500','6000','6500','7000','7500','8000','8500','9000','9500','10000']}}
+				],
+				[
+					{type:'label', val:'ソウル以上'},
+					{type:'select', span:3,val:{name:'soul_1', items:['1','2','3']}},
+					{type:'label',val:'ソウル以下'},
+					{type:'select', span:3, val:{name:'soul_2', items:['1','2','3']}}
+				],
+				[	{type:'label', val:'カード名'},
+					{type:'textbox', span: 7, val:{name:'card_name'}}],
+				[	{type:'label', val:'テキスト'},
+					{type:'textbox', span: 7,val:{name:'rule'}}],
+				[	{type:'label', val:'特徴'},
+					{type:'textbox', span: 7, val:{name:'symbol'}}],
+				[	{type:'label', val:'id'},
+					{type:'textbox', span: 7,val:{name:'cid'}}]
+			]
+		},
+		sgs:{
+			default:[
+				[
+					{type:'label', val:'系列'},
+					{type:'select', span:1, val:{name:'set', items:['初阵','群星','缔盟','权倾','异军']}},
+					{type:'label', val:'勢力'},
+					{type:'select', span:1, val:{name:'color', items:['魏','蜀','吴','群','中立']}},
+					{type:'label', val:'卡片種類'},
+					{type:'select', span:1, val:{name:'ctype', items:['领土','单位','锦囊','阵略','战器']}}
+				],
+				[
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:2,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:2, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:11,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:11,val:{name:'rule'}}],
+				[	{type:'label', val:'特徵'},
+					{type:'textbox', span:11, val:{name:'symbol'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:11,val:{name:'cid'}}]
+			]
+		},
+		gundamWarN:{
+			default:[
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:5, val:{name:'ntype', items:['茶','白','青','紫','緑','赤','黒']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:5,val:{name:'ctype', items:['G','UNIT','CHARACTER','COMMAND','OPERATION', 'OPERATION（UNIT）', 'ACE']}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:2,val:{name:'cost_1', items:['1','2','3','4']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:2, val:{name:'cost_2', items:['1','2','3','4']}},
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:2,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:2, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9']}}],
+				[	{type:'label', val:'格鬥以上'},
+					{type:'select', span:1,val:{name:'atk_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'格鬥以下'},
+					{type:'select', span:1,val:{name:'atk_2', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'射擊以上'},
+					{type:'select', span:1,val:{name:'atk2_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'射擊以下'},
+					{type:'select', span:1,val:{name:'atk2_2', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'防守以上'},
+					{type:'select', span:1,val:{name:'def_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'防守以下'},
+					{type:'select', span:1,val:{name:'def_2', items:["0","1","2","3","4","5","6","7","8","9"]}}],
+				[	{type:'label', val:'區域'},
+					{type:'select', span:11,val:{name:'area', items:["宇宙","地球","宇宙/地球"]}}],
+				[	{type:'label', val:'特殊規則'},
+				{type:'checkbox', span:11,val:{name:'', items:
+				["一枚制限", "高機動","速攻","強襲","サイコミュ","範囲兵器","ゲイン","改装","共有","供給","クロスウェポン","PS装甲","クイック","戦闘配備","ステイ","ユニーク"]}}]
+				,
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:11,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'特徵'},
+					{type:'textbox', span:11, val:{name:'symbol'}}],
+				[
+					{type:'label', val:'G簽名'},
+					{
+						type:'select', span:11,
+						val:{
+							name:'gsign', 
+							items:["GUNDAM","08MS小隊","Z","ZZ","UC","UC（青赤）","V","W","G","∀","SEED","OO","OO（青赤）","OO（青黒）","AGE","NEX-A","クロスボーン","X","CCA","83","BF","0080","ポケットの中の戦争","Gのレコンギスタ","F91","ORIGIN","センチネル","閃光のハサウェイ","鉄血のオルフェンズ"]
+						}
+					}
+				],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:11,val:{name:'cid'}}]
+			]
+		},
+		dragonZ:{
+			default: [
+				[{type:'label', val:'id'}, {type:'textbox', span:3,val:{name:'id'}}],
+				[{type:'label', val:'color'}, {type:'select', span:3,val:{name:'color', items:['Black','Blue','Orange','Red','Namekian','Saiyan','Freestyle']}}],
+				[{type:'label', val:'name'}, {type:'textbox', span:3,val:{name:'name'}}],
+				[{type:'label', val:'type'}, {type:'select', span:3,val:{name:'type', items:['Ally','Dragon Ball','Drill','Energy','Event','mastery','MP','Physical','Setup']}}],
+				[
+					{type:'label', val:'energy'},{type:'select',val:{name:'cost', items:['1','2','3','4']}}
+				],
+				[
+					{type:'label', val:'damage'},{type:'select',val:{name:'damage', items:['1','2','3','4','5','6','7']}}
+				],
+				[{type:'label', val:'description'}, {type:'textbox', span:3,val:{name:'description'}}]
+			]
+		},
+		crusade:{
+			default:[
+				[
+					{type:'label', val:'系列'},
+					{type:'select2', span:5, val:{name:'set', items:[
+						['22','サンライズクルセイド'],
+					//	['77','マクロスクルセイド'],
+					//	['150','ボンズクルセイド'],
+						['123','ダイナミッククルセイド'],
+						['86','OGクルセイド'],
+						['193','聖闘士星矢'],
+					//	['198','アクエリオンシリーズ'],
+					//	['206','聖闘士星矢Ω'],
+					//	['209','非公認戦隊アキバレンジャー'],
+						['221','るろうに剣心-明治剣客浪漫譚-'],
+					//	['222','ガイナックスシリーズ'],
+					//	['225','ジョジョの奇妙な冒険'],
+					//	['227','マギ'],
+						['235','幽☆遊☆白書'],
+						['240','クルセイドジーベック'],
+					//	['251','銀河機攻隊マジェスティックプリンス'],
+					//	['254','フルメタル・パニック！'],
+					//	['262','モーレツ宇宙海賊'],
+					//	['279','魔法騎士レイアース']
+					]}},
+					{type:'label', val:'特徵'},
+					{type:'textbox', span:5, val:{name:'symbol'}}
+				],
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:5, val:{name:'ntype', items:['青','紫','緑','赤','黒']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:5,val:{name:'ctype', items:['ユニット','キャラクター','コマンド']}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:2,val:{name:'cost_1', items:['1','2','3','4']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:2, val:{name:'cost_2', items:['1','2','3','4']}},
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:2,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:2, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9']}}],
+				[	{type:'label', val:'格鬥以上'},
+					{type:'select', span:1,val:{name:'atk_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'格鬥以下'},
+					{type:'select', span:1,val:{name:'atk_2', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'射擊以上'},
+					{type:'select', span:1,val:{name:'atk2_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'射擊以下'},
+					{type:'select', span:1,val:{name:'atk2_2', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'防守以上'},
+					{type:'select', span:1,val:{name:'def_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'防守以下'},
+					{type:'select', span:1,val:{name:'def_2', items:["0","1","2","3","4","5","6","7","8","9"]}}],
+				[	{type:'label', val:'特殊規則'},
+					{type:'checkbox', span:11,val:{name:'', items:["エース","高機動","強襲","速攻","戦闘配備","クイック","ブースト","装填","鉄壁","武装変更","連動","高速戦闘","リンク","パートナー","聖闘士","激励","ペイン","セイバーシステム","改造","超合金","対価","共振","共鳴","剣客","根性","サウンドフォース","バックアップ","歌手","歌","精神コマンド","別名"]}}],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:11,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:11,val:{name:'rule'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:11,val:{name:'cid'}}]
+			]
+		},
+		battleSpirits:{
+			default:[
+				[
+					{type:'label', val:'系列'},
+					{type:'select2', span:11, val:{name:'set', items:[
+						['62003','BS01'],
+						['62007','BS02【激翔】'],
+						['62008','BS03【覇闘】'],
+						['62009','BS04【龍帝】'],
+						['62010','BS05【皇騎】'],
+						['62012','BS06【爆神】'],
+						['62014','BS07【天醒】'],
+						['62015','BS08【戦嵐】'],
+						['62017','BS09【超星】'],
+						['62020','BS10 星座編 第1弾 【八星龍降臨】'],
+						['62021','BS11 星座編 第2弾 【灼熱の太陽】'],
+						['62022','BS12 星座編 第3弾 【月の咆哮】'],
+						['62023','BS13 星座編 第4弾 【星空の王者】'],
+						['62025','BS14 覇王編 第1弾 【英雄龍の伝説】'],
+						['62026','BS15 覇王編 第2弾 【黄金の大地】'],
+						['62027','BS16 覇王編 第3弾 【爆烈の覇道】'],
+						['62028','BS17 覇王編 第4弾 【剣舞う世界】'],
+						['62029','BS18 覇王編 第5弾 【覇王大決戦】'],
+						['62032','BS19 剣刃編 第1弾【聖剣時代】'],
+						['62037','BS20 剣刃編 第2弾【乱剣戦記】'],
+						['62038','BS21 剣刃編 第3弾【光輝剣武】'],
+						['62040','BS22 剣刃編 第4弾【暗黒刃翼】'],
+						['62041','BS23 剣刃編 第5弾【剣刃神話】'],
+						['62045','BS24 アルティメットバトル01'],
+						['62049','BS25 アルティメットバトル02'],
+						['62051','BS26 アルティメットバトル03'],
+						['62055','BS27 アルティメットバトル04'],
+						['62057','BS28 アルティメットバトル05'],
+						['62060','BS29 アルティメットバトル06'],
+						['62063','BS30 アルティメットバトル07'],
+						['62068','BS31 烈火伝 第1章'],
+						['62071','BS32 烈火伝 第2章'],
+						['62073','BS33 烈火伝 第3章'],
+						['62019','BSC05'],
+						['62046','BSC15 バーストインパクト'],
+						['62050','BSC16 女神達の調べ'],
+						['62056','BSC17 眩き究極の王者'],
+						['62064','BSC18 詩姫の交響曲'],
+						['62065','BSC19 東宝怪獣大決戦'],
+						['62069','BSC20 激闘！戦国15ノ陣'],
+						['62072','BSC21 オールキラブースター 名刀コレクション'],
+						['62011','SD01'],
+						['62013','SD02'],
+						['62018','SD03'],
+						['62024','SD06'],
+						['62030','SD10'],
+						['62031','SD11'],
+						['62033','SD13'],
+						['62034','SD14'],
+						['62035','SD15'],
+						['62036','SD16'],
+						['62039','SD17'],
+						['62043','SD19'],
+						['62044','SD20'],
+						['62047','SD22'],
+						['62048','SD23'],
+						['62053','SD24'],
+						['62054','SD25'],
+						['62059','SD26'],
+						['62061','SD27'],
+						['62062','SD28'],
+						['62066','SD29'],
+						['62067','SD30'],
+						['62070','SD31'],
+						['62075','SD32'],
+						['62016','EXカード'],
+						['62074','リミテッドパック烈火伝'],
+						['62058','リミテッドパック三龍神エディション'],
+						['62052','リミテッドパック2014'],
+						['62042','リミテッドパックMAX2013'],
+						['62901','プロモーションカード'],
+					]}},
+				],
+				[
+					{type:'label', val:'lv1核以上'},
+					{type:'select', span:1, val:{name:'lv1_core_1', items:['1','2']}},
+					{type:'label', val:'lv1核以下'},
+					{type:'select', span:1, val:{name:'lv1_core_2', items:['1','2']}},
+					{type:'label', val:'lv2核以上'},
+					{type:'select', span:1, val:{name:'lv2_core_1', items:['1','2','3','4','5','6','7','8']}},
+					{type:'label', val:'lv2核以下'},
+					{type:'select', span:1, val:{name:'lv2_core_2', items:['1','2','3','4','5','6','7','8']}},
+					{type:'label', val:'lv3核以上'},
+					{type:'select', span:1, val:{name:'lv3_core_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'lv3核以下'},
+					{type:'select', span:1, val:{name:'lv3_core_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[
+					{type:'label', val:'lv1血以上'},
+					{type:'select', span:1, val:{name:'lv1_hp_1', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000']}},
+					{type:'label', val:'lv1血以下'},
+					{type:'select', span:1, val:{name:'lv1_hp_2', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000']}},
+					{type:'label', val:'lv2血以上'},
+					{type:'select', span:1, val:{name:'lv2_hp_1', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000','11000','12000','13000','14000','15000']}},
+					{type:'label', val:'lv2血以下'},
+					{type:'select', span:1, val:{name:'lv2_hp_2', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000','11000','12000','13000','14000','15000']}},
+					{type:'label', val:'lv3血以上'},
+					{type:'select', span:1, val:{name:'lv3_hp_1', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000','11000','12000','13000','14000','15000','16000','17000','18000','19000','20000']}},
+					{type:'label', val:'lv3血以下'},
+					{type:'select', span:1, val:{name:'lv3_hp_2', items:['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000','11000','12000','13000','14000','15000','16000','17000','18000','19000','20000']}},
+				],
+				[
+					{type:'label', val:'属性'},
+					{type:'select', span:1, val:{name:'attr', items:['赤','緑','紫','白','黄','青']}},
+					{type:'label', val:'需求以上'},
+					{type:'select', span:1, val:{name:'cost_1', items:['1','2','3','4','5','6','7','8','9','10','11','12']}},
+					{type:'label', val:'需求以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5','6','7','8','9','10','11','12']}},
+					{type:'label', val:'種類'},
+					{type:'select', span:1, val:{name:'ctype', items:['スピリット','ブレイヴ','ネクサス','マジック','アルティメット']}},
+					{type:'label', val:'系統'},
+					{type:'select', span:1, val:{name:'ctype2', items:['道化','漂精','戦騎','龍帝','竜騎','虚神','神将','翼竜','皇獣','地竜','空牙','竜人','古竜','爬獣','溶魚','機竜','星竜','魔神','幽魔','妖蛇','魔影','霊獣','夜族','無魔','呪鬼','冥主','爪鳥','樹魔','歌鳥','遊精','怪虫','剣獣','殻虫','殻人','光虫','甲獣','巨獣','空魚','氷姫','甲竜','機獣','動器','機人','武装','魔人','天霊','楽族','四道','想獣','動玩','戯狩','小玩','闘神','勇傑','創手','獣頭','異合','造兵','戦獣','光導','神星','星魂','導魔','道玩','戦竜','雄将','覇皇','海首','華兵','放浪者','絶晶神','交渉人','星文学者','菓族','剣使','剣刃','滅龍','竜騎士','六楯帝','新生','刃虫','詩姫','翼船','護将','調査員','次代','私服','衣装','三龍神','星将','極竜','先導者','極女王','武竜','戦極','主君','家臣','忍風','機巧','妖戒','戦姫','起導者','天魔王']}},
+					{type:'label', val:'稀有度'},
+					{type:'select', span:1, val:{name:'rare', items:['C','U','R','M','X','XX','P','PX','EX','SJ','KA','KF','PB','CP','LM']}}
+					
+				],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'id檢索'},{type:'textbox', span:11,val:{name:'id'}}]
+			]
+		},
+		yugioh:{
+			ch:[
+				[
+					{type:'label', val:'星級以上'},
+					{type:'select', span:3, val:{name:'level_1', items:['1','2','3','4','5','6','7','8','9','10','11','12']}},
+					{type:'label', val:'星級以下'},
+					{type:'select', span:3, val:{name:'level_2', items:['1','2','3','4','5','6','7','8','9','10','11','12']}}
+				],
+				[
+					{type:'label', val:'元素屬性'},
+					{type:'select', span:1, val:{name:'attr', items:['地','水','炎','風','光','闇','神']}},
+					{type:'label', val:'種族'},
+					{type:'select', span:1, val:{name:'race', items:['戰士','魔法使','天使','惡魔','不死','機械','水','炎','岩石','鳥獸','植物','昆蟲','雷','龍','獸','獸戰士','恐龍','魚','海龍','爬蟲類','超能','幻神獸','創造神','幻龍']}},
+					{type:'label', val:'卡片種類'},
+					{type:'select', span:1, val:{name:'ctype', items:['怪獸','魔法','陷阱']}},
+					{type:'label', val:'招喚種類'},
+					{type:'select', span:1, val:{name:'ctype2', items:['通常','效果','融合','儀式','陷阱怪獸','靈魂','聯合','二重','協調','同步','代幣','速攻','永續','裝備','場地','反擊','反轉','卡通','超量','靈擺']}}
+				],
+				[
+					{type:'label', val:'攻擊力以上'},{type:'select', val:{name:'atk_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'攻擊力以下'},{type:'select', val:{name:'atk_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'防守力以上'},{type:'select', val:{name:'def_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'防守力以下'},{type:'select', val:{name:'def_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}}
+				],
+				[	{type:'label', val:'左擺蕩以上'},{type:'select', val:{name:'lscale_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'左擺蕩以下'},{type:'select', val:{name:'lscale_2', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'右擺蕩以上'},{type:'select', val:{name:'rscale_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'右擺蕩以下'},{type:'select', val:{name:'rscale_2', items:['1','2','3','4','5','6','7','8','9','10']}}],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'id檢索'},{type:'textbox', span:7,val:{name:'id'}}]
+			],
+			jp:[
+				[
+					{type:'label', val:'レベル以上'},
+					{type:'select', span:3, val:{name:'level_1', items:['1','2','3','4','5','6','7','8','9','10','11','12']}},
+					{type:'label', val:'レベル以下'},
+					{type:'select', span:3, val:{name:'level_2', items:['1','2','3','4','5','6','7','8','9','10','11','12']}}
+				],
+				[
+					{type:'label', val:'属性'},
+					{type:'select', span:1, val:{name:'attr', items:['地','水','炎','風','光','闇','神']}},
+					{type:'label', val:'種族'},
+					{type:'select', span:1, val:{name:'race', items:['戦士族','魔法使い族','天使族','悪魔族','アンデット族','機械族','水族','炎族','岩石族','鳥獣族','植物族','昆虫族','雷族','ドラゴン族','獣族','獣戦士族','恐竜族','魚族','海竜族','爬虫類族','サイキック族','幻神獣族','創造神族','幻竜族']}},
+					{type:'label', val:'カード種類'},
+					{type:'select', span:1, val:{name:'ctype', items:['モンスター','魔法','罠']}},
+					{type:'label', val:'召喚種類'},
+					{type:'select', span:1, val:{name:'ctype2', items:['通常','効果','融合','儀式','罠モンスター','スピリット','ユニオン','デュアル','チューナー','シンクロ','トークン','速攻','永続','装備','フィールド','カウンター','リバース','トゥーン','エクシーズ','ペンデュラム']}}
+				],
+				[
+					{type:'label', val:'攻撃力以上'},{type:'select', val:{name:'atk_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'攻撃力以下'},{type:'select', val:{name:'atk_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'守備力以上'},{type:'select', val:{name:'def_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'守備力以下'},{type:'select', val:{name:'def_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}}
+				],
+				[	{type:'label', val:'左擺蕩以上'},{type:'select', val:{name:'lscale_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'左擺蕩以下'},{type:'select', val:{name:'lscale_2', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'右擺蕩以上'},{type:'select', val:{name:'rscale_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'右擺蕩以下'},{type:'select', val:{name:'rscale_2', items:['1','2','3','4','5','6','7','8','9','10']}}],
+				[{type:'label', val:'カード名'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'カードルール'},{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'カードID'},{type:'textbox', span:7,val:{name:'id'}}]
+			],
+			en:[
+				[
+					{type:'label', val:'Level以上'},
+					{type:'select', span:3, val:{name:'level_1', items:['1','2','3','4','5','6','7','8','9','10','11','12']}},
+					{type:'label', val:'Level以下'},
+					{type:'select', span:3, val:{name:'level_2', items:['1','2','3','4','5','6','7','8','9','10','11','12']}}
+				],
+				// race裡空白要用 這個字元來代替，因為原始資料中就是 
+				[
+					{type:'label', val:'Attribute'},
+					{type:'select', span:1, val:{name:'attr', items:['Earth','Water','Fire','Wind','Light','Dark','Divine']}},
+					{type:'label', val:'Race'},
+					{type:'select', span:1, val:{name:'race', items:['Warrior','Spellcaster','Fairy','Fiend','Zombie','Machine','Aqua','Pyro','Rock','Winged Beast','Plant','Insect','Thunder','Dragon','Beast','Beast-Warrior','Dinosaur','Fish','Sea Serpent','Reptile','Psychic','Divine-Beast','Creator God','Wyrm']}},
+					{type:'label', val:'Card Type'},
+					{type:'select', span:1, val:{name:'ctype', items:['Monster','Spell','Trap']}},
+					{type:'label', val:'Summon Type'},
+					{type:'select', span:1, val:{name:'ctype2', items:['Normal','Effect','Fusion','Ritual','Trap Monsters','Spirit','Union','Gemini','Tuner','Synchro','Token','Quick-Play','Continuous','Equip','Field','Counter','Flip','Toon','Xyz','Pendulum']}}
+				],
+				[
+					{type:'label', val:'Attack以上'},{type:'select', val:{name:'atk_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'Attack以下'},{type:'select', val:{name:'atk_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'Deffence以上'},{type:'select', val:{name:'def_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},
+					{type:'label', val:'Deffence以下'},{type:'select', val:{name:'def_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}}
+				],
+				[	{type:'label', val:'Left Scale以上'},{type:'select', val:{name:'lscale_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'Left Scale以下'},{type:'select', val:{name:'lscale_2', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'Right Scale以上'},{type:'select', val:{name:'rscale_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'Right Scale以下'},{type:'select', val:{name:'rscale_2', items:['1','2','3','4','5','6','7','8','9','10']}}],
+				[{type:'label', val:'Card Name'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'Card Rule'},{type:'textbox', span:11,val:{name:'rule'}}],
+				[{type:'label', val:'Card Id'},{type:'textbox', span:7,val:{name:'id'}}]
+			]
+		},
+		magic:{
+			'default':[
+				[
+					{type:'label', val:'白以上'},{type:'select', val:{name:'white_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'白以下'},{type:'select', val:{name:'white_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'藍以上'},{type:'select', val:{name:'blue_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'藍以下'},{type:'select', val:{name:'blue_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'綠以上'},{type:'select', val:{name:'green_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'綠以下'},{type:'select', val:{name:'green_2', items:['0','1','2','3','4','5']}}
+				],
+				[
+					{type:'label', val:'紅以上'},{type:'select', val:{name:'red_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'紅以下'},{type:'select', val:{name:'red_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'黑以上'},{type:'select', val:{name:'black_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'黑以下'},{type:'select', val:{name:'black_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'總cost以上'},{type:'select', val:{name:'all_1', items:['0','1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'總cost以下'},{type:'select', val:{name:'all_2', items:['0','1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[
+					{type:'label', val:'系列'},
+					{type:'select', span:2, val:{name:'set', items:["4E","5E","6E","7E","8E","9E","10E","ALA","ALP","AVR","ARB","AP","AL","AN","BNG","BFZ","BOK","C13","C14","C15","CNS","CMD","CS","CHK","CHR","DTK","DGM","DKA","DI","DS","DK","KTK","JU","JOU","MR","MOR","MBS","MI","MM","MM2","MMA","M10","M11","M12","M13","M14","M15","EXP","EVE","EX","FRF","FE","FUT","ORI","ON","OD","GTC","GP","THS","TS","TO","TP","PC","PC2","PTK","PO","PO2","PR","NPH","ISD","IN","SHM","SOM","SOK","SC","SH","S99","RTR","ROE","RAV","WWK","LE","UN","UD","UL","US","VI","LG"]}},
+					{type:'label', val:'基本種類'},
+					{type:'select', span:2, val:{name:'ctype', items:['Basic','Legendary']}},
+					{type:'label', val:'種類'},
+					{type:'select', span:2, val:{name:'ctype2', items:['Land','Creature','Instant','Sorcery','Enchantment','Artifact','Artifact Creature']}},
+					{type:'label', val:'子種類'},
+					{type:'textbox', span:2, val:{name:'ctype3'}}
+				],
+				[	{type:'label', val:'攻擊力以上'},
+					{type:'select', span:2, val:{name:'atk_1', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'攻擊力以下'},
+					{type:'select', span:2, val:{name:'atk_2', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'防守力以上'},
+					{type:'select', span:2, val:{name:'def_1', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'防守力以下'},
+					{type:'select', span:2, val:{name:'def_2', items:['0','1','2','3','4','5','6','7','8','9']}}],
+				[{type:'label', val:'能力'},{type:'checkbox', span:11,val:{name:'', items:["Cipher","Hexproof","Indestructible","Morph","Protection","Protection from all colors","Protection from Arcane","Protection from artifacts","Protection from black","Protection from blue","Protection from colored spells","Protection from creatures","Protection from enchantments","Protection from everthing","Protection from green","Protection from instants","Protection from lands","Protection from monocolored","Protection from multicolored","Protection from red","Protection from snow","Protection from the chosen player","Protection from white","Reinforce","Undying","Flanking","Haunt","Overload","Shadow","Absorb","Champion","Entwine","Landwalk","Forestwalk","Islandwalk","Mountainwalk","Plainswalk","Swampwalk","Nonbasic landwalk","Legendary landwalk","Snow landwalk","Dredge","Echo","Flashback","Flying","Gravestorm","Madness","Recover","Replicate","Storm","Affinity","Buyback","Fortify","Wither","Evoke","Living Weapon","Soulbond","Sunburst","Annihilator","Banding","Changeling","Delve","Evolve","Graft","Poisonous","Trample","Vigilance","Fear","Frenzy","Rampage","Aura Swap","Cumulative Upkeep","Double Strike","Epic","Persist","Prowess","Ripple","Haste","Hidden Agenda","Horsemanship","Equip","Unearth","Cascade","Extort","Infect","Miracle","Fuse","Ninjutsu","Bestow","Bloodthirst","Deathtouch","Defender","Exalted","Flash","Level Up","Phasing","Prowl","Scavenge","Devour","Modular","Provoke","Rebound","Splice","Totem Armor","Unleash","Bushido","Intimidate","Shroud","Conspire","Cycling","Fading","First Strike","Lifelink","Manifest","Offering","Vanishing","Dash","Dethrone","Forecast","Hideaway","Outlast","Suspend","Reach","Transfigure","Transmute","Amplify","Battle Cry","Convoke","Kicker","Populate","Retrace","Soulshift","Split Second","Tribute"]}}],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}]
+			],
+			'ch':[
+				[
+					{type:'label', val:'白以上'},{type:'select', val:{name:'white_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'白以下'},{type:'select', val:{name:'white_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'藍以上'},{type:'select', val:{name:'blue_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'藍以下'},{type:'select', val:{name:'blue_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'綠以上'},{type:'select', val:{name:'green_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'綠以下'},{type:'select', val:{name:'green_2', items:['0','1','2','3','4','5']}}
+				],
+				[
+					{type:'label', val:'紅以上'},{type:'select', val:{name:'red_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'紅以下'},{type:'select', val:{name:'red_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'黑以上'},{type:'select', val:{name:'black_1', items:['1','2','3','4','5']}},
+					{type:'label', val:'黑以下'},{type:'select', val:{name:'black_2', items:['0','1','2','3','4','5']}},
+					{type:'label', val:'總cost以上'},{type:'select', val:{name:'all_1', items:['0','1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'總cost以下'},{type:'select', val:{name:'all_2', items:['0','1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[
+					{type:'label', val:'系列'},
+					{type:'select', span:2, val:{name:'set', items:["守护者誓约","再战赞迪卡","鞑契龙王","龙命殊途","鞑契可汗","尼兹之旅","天神创生","Theros","巨龙迷城","兵临古城","再访拉尼卡","艾维欣重临","黑影笼罩","依尼翠","新非瑞克西亚","围攻秘罗地","秘罗地创痕","奥札奇再起","天地醒转","赞迪卡","Alara Reborn","聚流","阿拉若断片","暮光","暗影荒原","晨光","洛温","预知将来","时空混沌","Time Spiral",'Time Spiral "Timeshifted"',"骤霜","纷争","十會盟","拉尼卡公会城","Saviors of Kamigawa","神河叛将谱","神河群英录","五色曙光","玄铁","万智牌：起源","Magic 2015","魔法風雲會2014核心系列","核心系列2013","核心系列2012","Magic 2011","Magic 2010","第十版","第九版","Conspiracy","Modern Masters 2015 Edition","Commander 2015","Commander 2014 Edition","Ninth Edition Box Set","Portal Three Kingdoms","Ugin's Fate"]}},
+					{type:'label', val:'基本種類'},
+					{type:'select', span:2, val:{name:'ctype', items:['传奇']}},
+					{type:'label', val:'種類'},
+					{type:'select', span:2, val:{name:'ctype2', items:['地','生物','瞬间','法术','结界','神器','神器生物']}},
+					{type:'label', val:'子種類'},
+					{type:'textbox', span:2, val:{name:'ctype3'}}
+				],
+				[	{type:'label', val:'攻擊力以上'},
+					{type:'select', span:2, val:{name:'atk_1', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'攻擊力以下'},
+					{type:'select', span:2, val:{name:'atk_2', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'防守力以上'},
+					{type:'select', span:2, val:{name:'def_1', items:['0','1','2','3','4','5','6','7','8','9']}},
+					{type:'label', val:'防守力以下'},
+					{type:'select', span:2, val:{name:'def_2', items:['0','1','2','3','4','5','6','7','8','9']}}],
+				[{type:'label', val:'能力'},{type:'checkbox', span:11,val:{name:'', items:["暗码","辟邪","不灭","变身","保护","反五色保护","反古咒保护","反神器保护","反黑保护","反蓝保护","反有色咒语保护","反生物保护",
+"反结界保护","反一切保护","反绿保护","反瞬间保护","反地保护","反单色保护","反多色保护","反红保护","反雪境保护","反牌手保护",
+"反白保护","补强","不息","侧面攻击","缠身","超载","次元幽影","抵受","夺冠","打包","地行者","树林行者","海岛行者","山脉行者",
+"平原行者","沼泽行者","非基本地行者","传奇地行者","雪境地行者","发掘","返响","返照","飞行","坟场风暴","疯魔","复还","覆诵",
+"风暴","共鸣","购回","构工","干枯","呼魂","活化武器","魂系","辉映","歼灭","结合","化形","掘穴","进化","接殖","剧毒","践踏","警戒",
+"恐惧","狂热","狂暴","灵气转换","累积维持","连击","历传","留存","灵技","涟动","敏捷","秘案","马术","佩带","破坟","倾曳","敲诈",
+"侵染","奇迹","融咒","忍术","神授","嗜血","死触","守军","颂威","闪现","升级","时间跳跃","伺机","食腐","吞噬","套件","挑拨",
+"弹回","通联","替身甲","脱缰","武士道","威吓","帷幕","协力","循环","消退","先攻","系命","显化","献祭","消逝","掩袭","义勇","预报","掩蔽",
+"延生","延缓","延势","易形","易质","增强","战嚎","召集","增幅","殖民","追溯","转生","转瞬","致敬"]}}],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:11,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:11,val:{name:'rule'}}]
+			]
+		},
+		army:{
+			'default':[
+				[
+					{type:'label', val:'勢力'},{type:'select', span:1, val:{name:'ntype', items:['資本','共產','人民']}},
+					{type:'label',val:'國家'},{type:'select',span:1,val:{name:'nation', items:['中國','美國','英國','德國','日本','韓國','俄羅斯','以色列']}},
+					{type:'label', val:'卡片'},{type:'select', span:1,val:{name:'ctype', items:['部隊','建築','戰術']}},
+					{type:'label',val:'兵器'},{type:'select', span:1, val:{name:'atype', items:['戰鬥機','攻擊機','戰鬥攻擊機','戰略轟炸機','支援機','直升機','坦克','裝甲車','士兵','對空炮','自走炮','戰略火炮']}}
+				],
+				[
+					{type:'label', val:'科技力以上'},{type:'select', span:1,val:{name:'tech_1', items:['1','2','3','4']}},
+					{type:'label',val:'科技力以下'},{type:'select', span:1, val:{name:'tech_2', items:['1','2','3','4']}},
+					{type:'label', val:'cost以上'},{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5','6']}},
+					{type:'label',val:'cost以下'},{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5','6']}}
+				],
+				[{type:'label', val:'生產速度以上'},{type:'select', span:3,val:{name:'build_1', items:['1','2','3']}},{type:'label',val:'生產速度以下'},{type:'select', span:3, val:{name:'build_2', items:['1','2','3']}}],
+				[{type:'label', val:'陸'},{type:'select',val:{name:'pland', items:['不可','扺抗','精通']}},{type:'label',val:'空'},{type:'select', val:{name:'psky', items:['不可','扺抗','精通']}},{type:'label', val:'兵'},{type:'select',val:{name:'psoilder', items:['不可','扺抗','精通']}},{type:'label',val:'城'},{type:'select', val:{name:'pcity', items:['不可','扺抗','精通']}}],
+				[{type:'label', val:'速度'},{type:'select',span:7,val:{name:'speed', items:['0','1','2','3']}}],
+				[{type:'label', val:'能力'},{type:'checkbox', span:7,val:{name:'', items:['遠距','軍力減損','進駐','掃蕩','防塔','煙霧彈','偵察','警戒','全偵','遠距','區域攻擊','維修','複合式裝甲','突襲','回收','暱蹤','超高速','核子引擎','雷射護盾','火焰兵器','生化兵器','ECM兵器','重點建物']}}],
+				[{type:'label', val:'卡片名稱檢索'},{type:'textbox', span:7,val:{name:'card_name'}}],
+				[{type:'label', val:'卡片規則檢索'},{type:'textbox', span:7,val:{name:'rule'}}],
+				[{type:'label', val:'id檢索'},{type:'textbox', span:7,val:{name:'id'}}]
+			]
+		},
+		gundamWar:{
+			'default':[
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:5, val:{name:'ntype', items:['茶','藍','紫','白','綠','紅','黑']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:5,val:{name:'ctype', items:['G','unit','character','command','operation', 'ACE']}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:2,val:{name:'cost_1', items:['1','2','3','4']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:2, val:{name:'cost_2', items:['1','2','3','4']}},
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:2,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:2, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9']}}],
+				[	{type:'label', val:'格鬥以上'},
+					{type:'select', span:1,val:{name:'atk_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'格鬥以下'},
+					{type:'select', span:1,val:{name:'atk_2', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'射擊以上'},
+					{type:'select', span:1,val:{name:'atk2_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'射擊以下'},
+					{type:'select', span:1,val:{name:'atk2_2', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'防守以上'},
+					{type:'select', span:1,val:{name:'def_1', items:["0","1","2","3","4","5","6","7","8","9"]}},
+					{type:'label', val:'防守以下'},
+					{type:'select', span:1,val:{name:'def_2', items:["0","1","2","3","4","5","6","7","8","9"]}}],
+				[	{type:'label', val:'區域'},
+					{type:'select', span:11,val:{name:'area', items:["宇宙","地球","宇宙/地球"]}}],
+				[	{type:'label', val:'特殊規則'},
+					{type:'checkbox', span:11,val:{name:'', items:["１張限制","預防","快速","PS裝甲","強襲","速攻","回收","宙間戰鬥","大氣圈突入","範圍兵器","感應式兵器","高機動","砂漠","水","輪胎","變形","特殊盾","支援","據點","殖民地","艦船","補給","配置/X","家名","艦船用修正","解體","複數","換裝","變化","共有"]}}],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:11,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:11,val:{name:'rule'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:11,val:{name:'cid'}}]
+			]
+		},
+		sangoWar:{
+			'default':[
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:3, val:{name:'ntype', items:['蜀','魏','呉','漢','群','他']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:3,val:{name:'ctype', items:['武将','兵隊','計略','列伝','奥義','キャンペーン']}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5']}},
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:1,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:1, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[	{type:'label', val:'武力以上'},
+					{type:'select', span:3,val:{name:'power_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}},
+					{type:'label',val:'武力以下'},
+					{type:'select', span:3, val:{name:'power_2', items:['500','1000','1500','2000','2500','3000','3500','4000','4500']}}],
+				[	{type:'label', val:'攻城'},
+					{type:'select', span:1,val:{name:'acity', items:['1','2','3']}},
+					{type:'label',val:'兵種'},
+					{type:'select', span:1, val:{name:'atype', items:['槍兵','騎兵','弓兵','歩兵','象兵','攻城兵']}},
+					{type:'label', val:'特徵'},
+					{type:'select',span:3,val:{name:'symbol', items:['計略/戦闘','計略/メイン','女性','南蛮','魏五将','仙人','五虎将','軍師','黄巾','兵隊','旗本四天王','君主','賢女','西園八校尉','十常侍']}}
+				],
+				[	{type:'label', val:'特殊規則'},
+					{type:'checkbox', span:7,val:{name:'', items:["長槍","貫通","乱舞","奇襲","回避","先駆","走射","支援","連弩","戦象","強進","突撃","威圧","決起","憂国","国防","募兵","外交","伏兵","援軍","防柵","補佐","舞闘","覚醒","同盟","召喚"]}}],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:7,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:7,val:{name:'rule'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:7,val:{name:'id'}}]
+			]
+		}
+		
+	}
+	
+	function parseToTable( data ){
+		var table = $('<table border="1"></table>' );
+		_.each( data, function( items ){
+			var trdiv = $('<tr></tr>');
+			_.each( items, function( item ){
+				var tddiv = $('<td></td>' );
+				tddiv.css('text-align', 'center' );
+				var type = item.type;
+				var val = item.val;
+				var span = item.span;
+				if( span != undefined ){
+					tddiv.attr( 'colspan', span );
+				}
+				
+				switch( type ){
+					case 'label': 
+						tddiv.html( val ); 
+						tddiv.css( 'width', '100px' );
+						break;
+					case 'select':
+						var selname = val.name;
+						var items = val.items;
+						var seldiv = $('<select name="' + selname + '"></select>');
+						seldiv.css('width', '100%' );
+						seldiv.append( '<option></option>');
+						_.each( items, function( s ){
+							seldiv.append( '<option>' + s + '</option>');
+						});
+						tddiv.append( seldiv );
+						break;
+					case 'select2':
+						var selname = val.name;
+						var items = val.items;
+						var seldiv = $('<select name="' + selname + '"></select>');
+						seldiv.css('width', '100%' );
+						seldiv.append( '<option></option>');
+						_.each( items, function( ary_s ){
+							seldiv.append( '<option value="' + ary_s[0] + '">' + ary_s[1] + '</option>');
+						});
+						tddiv.append( seldiv );
+						break;
+					case 'checkbox':
+						var items = val.items;
+						_.each( items, function( s ){
+							var chkdiv = '<input type="checkbox" name="' + s + '" />' + s;
+							tddiv.append( chkdiv );
+						});
+						break;
+					case 'textbox':
+						var textname = val.name;
+						var textdiv = $('<input type="text" name="' + textname + '"/>');
+						textdiv.css('width', '99%' );
+						tddiv.append( textdiv );
+				}
+				
+				trdiv.append( tddiv );
+			});
+			table.append( trdiv );
+		});
+		return table;
+	}
+	
+	var game = (function( hashobj ){
+		if( hashobj.game == undefined ) return 'sangoWar';
+		return hashobj.game
+	})( leo.utils.getHash() );
+	
+	if( game != 'army' ){
+		$('#btn_gotoGame' ).hide();
+	}
+	
+	var titlemapping = {
+		sangoWar:'三國志大戰',
+		army:'軍武gogogo',
+		yugioh:'遊戲王',
+		magic:'魔法風雲會',
+		gundamWar:'鋼彈大戰',
+		gundamWarN:'鋼彈大戰NexA',
+		battleSpirits: '戰魂',
+		crusade: 'Crusade',
+		dragonZ: '七龍珠TCG',
+		sgs: '三國殺陣面對決',
+		ws: '黑白雙翼',
+		sengoku: '戰國大戰'
+	}
+	$('title').html(titlemapping[game] + '-組牌風雲' );
+	
+	
+	var lang = leo.utils.getHash().lang
+	/*
+	var tmplName = game
+	if( lang ){
+		tmplName = [tmplName, lang].join('_')
+	}else{
+		lang = 'default';
+	}
+	*/
+	
+	var cardlist;
+	var itemId = 0;
+	var form_container = $('#form_container' );
+	//var tmpl_form = $('#tmpl_' + tmplName + 'Form' );
+	var table = tmplAry[game][lang]
+	if( table == null ){
+		table = tmplAry[game]["default"]
+	}
+	
+	form_container.append( parseToTable( table ) );
+	gameController.loadCardData( game, lang, onLoadGameCallback );
+	
+	$.messager.progress({text:'讀取資料中…'}); 
+	
+	function onLoadGameCallback( err, _cardlist ){
+		//console.log( _cardlist );
+		cardlist = _cardlist;
+		$("#btn_search").linkbutton( 'enable' );
+		$("#btn_output").linkbutton( 'enable' );
+		
+		$.messager.progress( 'close' ); 
+		
+		app.view.searchCards();
+	}
+	
+	function getId(){
+		return itemId++;
+	}
+	
+	function handleResponse( cb ) {
+		return function ( err, ret ) {
+			if ( err != null ) {
+				alert( '錯誤:' + err );
+			}else {
+				cb( ret );
+			}
+		}
+	}
+	
+	var app = app || {};
+	app.view = app.view || {};
+	
+	(function( module ){
+		var mc_bigCardContainer = $('#mc_bigCardContainer' );
+		var win_output = $('#win_output' );
+		var mc_cardContainer = $('#mc_cardContainer' );
+		var txt_count = $('#txt_count' );
+		var pag_bigCard = $('#pag_bigCard' );
+		var currentPage = 0;
+		var ary_cards;
+		var ary_deck = [];
+		
+		function createBigCard(){
+			if( ary_cards == undefined ) return; 
+			mc_bigCardContainer.empty();
+			
+			var sid = currentPage * 15;
+			var eid = currentPage * 15 + 15;
+			
+			if( eid > ary_cards.length ){
+				eid = ary_cards.length;
+			}
+			
+			var showCards = ary_cards.slice( sid, eid );
+			_.each( showCards, function( card ){
+				card.url = gameController.getCardUrl( game, card );
+				if( card.url == undefined ) {
+					card.url = 'images/cardback.png';
+				}
+				
+				var div = $("#tmpl_bigCard").tmpl( card );
+				div.find( 'div[game]' ).hide();
+				div.find( 'div[game=' + game + ']' ).show();
+				div.attr( 'data', JSON.stringify( card ));
+				div.click( function(){
+					var thisDom = $(this);
+					outFocusAll();
+					thisDom.addClass( 'big_card_root_focus' );
+					pushToDeck( JSON.parse( thisDom.attr( 'data' ) ));
+				});
+				mc_bigCardContainer.append( div );
+			});
+			showHideDetail();
+			
+			function outFocusAll(){
+				mc_bigCardContainer.find( 'div' ).removeClass( 'big_card_root_focus' );
+			}
+		}
+		
+		function setDeck(){
+			
+			var oldtop = mc_cardContainer.parent().scrollTop();
+			mc_cardContainer.empty();
+			
+			ary_deck.sort( function( aobj, bobj ){
+				switch( game ){
+					case 'sangoWar':
+						return aobj.cname.localeCompare( bobj.cname );
+					default:
+						return aobj.id.localeCompare( bobj.id );
+				}
+			});
+			
+			txt_count.html( ary_deck.length );
+			
+			_.each( ary_deck, function( card ){
+				var cardItem = $("#tmpl_cardItem" ).tmpl( card );
+				cardItem.find( 'div[game]' ).hide();
+				cardItem.find( 'div[game=' + game + ']' ).show();
+				mc_cardContainer.append( cardItem );
+				
+				cardItem.find( '#btn_remove' ).linkbutton( {
+					onClick:function(){
+						var removeId = $(this ).parent().parent().attr( 'id' );
+						removeCardFromDeck( removeId );	
+						setDeck();
+					}
+				});
+				
+				cardItem.find( '#btn_copy' ).linkbutton( {
+					onClick:function(){
+						var addId = $(this ).parent().parent().attr( 'id' );
+						coptyCardFromDeck( addId );
+					}
+				});
+				
+				cardItem.click( function(){
+					var showId = $( this ).attr( 'id' );
+					searchCardFromDeck( showId );
+				});
+			});
+			
+			if( oldtop != 0 ){
+				mc_cardContainer.parent().scrollTop( oldtop );
+			}
+			
+		}
+		
+		function removeCardFromDeck( itemId ){
+			var removeItem = _.find( ary_deck, function( cardItem ){
+				return cardItem.itemId == itemId;
+			});
+			ary_deck.splice( ary_deck.indexOf( removeItem ), 1 );
+		}
+		
+		function coptyCardFromDeck( itemId ){
+			var beCopyItem = _.find( ary_deck, function( cardItem ){
+				return cardItem.itemId == itemId;
+			});
+			
+			var copyItem = JSON.parse( JSON.stringify( beCopyItem ) );
+			copyItem.itemId = getId();
+			
+			ary_deck.push( copyItem );
+			setDeck();
+		}
+		
+		function searchCardFromDeck( itemId ){
+			var searchCard = _.find( ary_deck, function( cardItem ){
+				return cardItem.itemId == itemId;
+			});
+			searchCards( 'cid=' + searchCard.id );
+		}
+		
+		function pushToDeck( card ){
+			var copyCard = JSON.parse( JSON.stringify( card ) );
+			copyCard.itemId = getId();
+			ary_deck.push( copyCard );
+			setDeck();
+		}
+		
+		function onSearchClick(){
+			googleTracking.click( 'onSearchClick' );
+			searchCards( $( document.form_value ).serialize() );
+		}
+		
+		var showTip = false;
+		function onTipClick(){
+			googleTracking.click( 'onTipClick' );
+			showTip = !showTip;
+			showHideDetail();
+		}
+		
+		function showHideDetail(){
+			if( showTip ){
+				mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').show();
+				mc_bigCardContainer.find('.big_card_root > #mc_black').show();
+			}else{
+				hideAllDetail();
+			}
+			overListener( !showTip );
+		}
+		
+		function overListener( add ){
+			mc_bigCardContainer.find('.big_card_root').off( 'mouseover' );
+			mc_bigCardContainer.find('.big_card_root').off( 'mouseout' );
+			if( add ){
+				mc_bigCardContainer.find('.big_card_root').mouseover( function( e ){
+					$(this).find('#mc_detail > div[game=' + game + ']').show();
+					$(this).find('#mc_black').show();
+				});
+				mc_bigCardContainer.find('.big_card_root').mouseout( function( e ){
+					hideAllDetail();
+				});
+			}
+		}
+		
+		function hideAllDetail(){
+			mc_bigCardContainer.find('#mc_detail > div[game=' + game + ']').hide();
+			mc_bigCardContainer.find('.big_card_root > #mc_black').hide();
+		}
+		
+		function searchCards( searchstr ){
+			currentPage = 0;
+			pag_bigCard.pagination( 'select', 1 );
+			
+			ary_cards = searchLib( searchstr ).slice();
+			
+			//console.log( ary_cards );
+			
+			createBigCard();
+			setPagination( ary_cards.length );
+		}
+		
+		function searchLib( str ){
+			var fns = gameController.getQueryStr( game, str );
+			return cardsearch.search( fns, cardlist );
+		}
+		
+		function setPagination( total ){
+			pag_bigCard.pagination({ total : total, onSelectPage : function(pageNumber,pageSize) {
+				currentPage = pageNumber - 1;
+				if( currentPage < 0 ) currentPage = 0;
+				createBigCard();
+			}});
+		}
+		
+		function onClearClick(){
+			googleTracking.click( 'onClearClick' );
+			ary_deck = [];
+			mc_cardContainer.empty();
+			setDeck();
+		}
+		
+		function onSaveClick(){
+			googleTracking.click( 'onSaveClick' );
+			win_output.window('open' );
+			var outputstr = getDeckString();
+			outputstr = outputstr.substr( 1, outputstr.length - 2 );
+			win_output.find( '.easyui-textbox' ).textbox( 'setText', outputstr);
+		}
+		
+		function getDeckString(){
+			var ary_new = _.map( ary_deck, function( card ){
+				switch( game ){
+				default:
+					return card.id
+				case 'sangoWar':
+					return sangoWar.formatKey( card.id );
+				}
+			});
+			return JSON.stringify( ary_new );
+		}
+		
+		function onLoadClick(){
+			googleTracking.click( 'onLoadClick' );
+			var str = win_output.find( '.easyui-textbox' ).textbox( 'getText');
+			str = '[' + str + ']';
+			try{
+				var inputobj = JSON.parse( str );
+				win_output.window('close' );
+				
+				var lostCards = [];
+				ary_deck = _.map( inputobj, function( incard ){
+					var retobj = _.find( cardlist, function( oricard ){
+						return oricard.id.indexOf( incard.replace( '.jpg', '' ) ) == 0;
+					});
+					if( retobj == undefined ){
+						lostCards.push( incard );
+					}
+					return retobj;
+				});
+				
+				ary_deck = _.filter( ary_deck, function( cardItem ){
+					return cardItem != undefined;
+				});
+				
+				if( ary_deck.length == 0 ){
+					showMessage( '系統中沒有任何您所輸入的卡片哦' );
+				}else{
+					if( lostCards.length > 0 ){
+						showMessage( '系統中找不到這些卡片哦! 代碼: ' + JSON.stringify( lostCards ) );
+					}
+					
+					_.each( ary_deck, function( card ){
+						card.itemId = getId();
+						card.url = gameController.getCardUrl( game, card );
+						if( card.url == undefined ) {
+							card.url = 'images/cardback.png';
+						}
+					});
+					setDeck();
+				}
+			}catch( e ){
+				$.messager.alert('提示','格式錯誤哦');
+			}
+		}
+		
+		function showMessage( msg ){
+			$.messager.show({
+				title:'提示',
+				msg: msg,
+				timeout:5000,
+				showType:'slide'
+			});
+		}
+		
+		function onResetClick(){
+			googleTracking.click( 'onResetClick' );
+			$('form').find( 'select' ).val('');
+			$('form').find( 'input[type=checkbox]' ).prop('checked', false);
+			$('form').find( 'input[type=text]' ).val('');
+		}
+		
+		function onSetDeckClick(){
+			googleTracking.click( 'onSetDeckClick' );
+			window.open('../deckWiki/index.html');
+		}
+		
+		function onGotoGameClick(){
+			googleTracking.click( 'onGotoGameClick' );
+			window.open('../card/index.html#');
+		}
+		
+		function onGoToClubClick(){
+			googleTracking.click( 'onGoToClubClick' );
+			window.open('//www.facebook.com/groups/1521526761495948/');
+		}
+		
+		function onOpenSaveForm(){
+			googleTracking.click( 'onOpenSaveForm' );
+			$('#dia_saveForm').panel('open' );
+		}
+		
+		function onSaveDeck(){
+			googleTracking.click( 'onSaveDeck' );
+			var uid = leo.utils.generateUUID();
+			var savestr = $( document.form_save ).serialize();
+			
+			//因為要檢查輸入的id是不是有資料的id，所以要先匯入才行
+			if( ary_deck.length == 0 ){
+				showMessage( '請先匯入牌組!' );
+				return;
+			}
+			$.messager.progress({text:'讀取資料中…'}); 
+			savestr += '&cards=' + encodeURIComponent( getDeckString());
+			/*
+			var deckstr = win_output.find( '.easyui-textbox' ).textbox( 'getText');
+			deckstr = '[' + deckstr + ']';
+			savestr += '&cards=' + encodeURIComponent( deckstr );
+			*/
+			var savedata = getQueryByStr( savestr );
+			api.save( uid, {Content:JSON.stringify({name:savedata.name, type:savedata.type, author:savedata.author, game:game, describe:savedata.describe, cards:JSON.parse( savedata.cards ) })}, function( err ){
+				if( err != null ){
+					$.messager.alert('提示', err );
+				}else{
+					showMessage( '儲存成功!' );
+					$('#dia_saveForm').panel('close' );
+				}
+				$.messager.progress('close'); 
+			});
+		}
+		
+		function getQueryByStr(qstr){
+			var url = $.url("?" + qstr);
+			return url.data.param.query;
+		}
+		
+		function onGotoWiki(){
+			googleTracking.click( 'onGotoWiki' );
+			window.open( '../deckWiki/index.html', '_blank' );
+		}
+		
+		module.onResetClick = onResetClick;
+		module.onSearchClick = onSearchClick;
+		module.onTipClick = onTipClick;
+		module.onClearClick = onClearClick;
+		module.onSaveClick = onSaveClick;
+		module.onLoadClick = onLoadClick;
+		module.onSetDeckClick = onSetDeckClick;
+		module.onGotoGameClick = onGotoGameClick;
+		module.onGoToClubClick = onGoToClubClick;
+		module.onOpenSaveForm = onOpenSaveForm;
+		module.onSaveDeck = onSaveDeck;
+		module.onGotoWiki = onGotoWiki;
+		module.searchCards = searchCards;
+		
+	})( app.view );
+	</script>
+</body>
+</html>

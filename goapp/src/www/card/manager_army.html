@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>card</title>
+	<meta name="description" content="" />
+	
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script type="text/javascript" src="../common/js/lib/underscore/underscore.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.edatagrid.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		
+</head>
+<style>
+body{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:#333333;
+}
+.group{
+	position:relative;
+	width:100%;
+}
+.hori{
+	display:inline-block;
+}
+</style>
+<body>
+	<div id="cc" class="easyui-layout" style="width:100%;height:100%;">
+		<div data-options="region:'center',title:'卡牌列表'" >
+			<div class="group">
+				<table id="grid_cards" class="easyui-datagrid" data-options="autoRowHeight:true, remoteSort:false,multiSort:true,fitColumns:true,singleSelect:true" style="width:100%;">
+					<thead>
+						<tr>
+							<th data-options="field:'id',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">ID</th>
+							<th data-options="field:'ntype',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">國別</th>
+							<th data-options="field:'nation',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">國旗</th>
+							<th data-options="field:'ctype',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">類別</th>
+							<th data-options="field:'atype',width:'7%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">兵器類別</th>
+							<th data-options="field:'name',width:'7%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">名稱</th>
+							<th data-options="field:'cost',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">資源</th>
+							<th data-options="field:'speed',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">速度</th>
+							<th data-options="field:'psky',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">空</th>
+							<th data-options="field:'pland',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">陸</th>
+							<th data-options="field:'psoilder',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">海</th>
+							<th data-options="field:'pcity',width:'4%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">城</th>
+							<th data-options="field:'ab1',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
+							<th data-options="field:'ab2',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
+							<th data-options="field:'ab3',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
+							<th data-options="field:'ab4',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
+							<th data-options="field:'ab5',width:'6%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">能力</th>
+							<th data-options="field:'text',width:'16%',sortable:'true'" editor="{type:'validatebox',options:{required:false}}">內文</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div data-options="region:'east',title:'新增卡牌',split:true,collapsible:false" style="width:30%;">
+			<div class="group" style="text-align:center; margin-top:30px;">
+				<div class="hori"><span id="txt_id" style="color:yellow"></span></div>
+			</div>
+			<div class="group" style="text-align:center; margin-top:10px;">
+				<div class="group" ctype="ntype">
+					<div class="hori">國別</div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>資本</option>
+							<option>共產</option>
+							<option>人民</option>
+							<option>無</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" ctype="nation">
+					<div class="hori">國旗</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+				</div>
+				<div class="group" ctype="ctype">
+					<div class="hori">卡片類別</div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>部隊</option>
+							<option>建築</option>
+							<option>戰術</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" ctype="atype">
+					<div class="hori">兵器類別</div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option></option>
+							<option>戰鬥機</option>
+							<option>攻擊機</option>
+							<option>戰鬥攻擊機</option>
+							<option>戰略轟炸機</option>
+							<option>支援機</option>
+							<option>直升機</option>
+							<option>坦克</option>
+							<option>裝甲車</option>
+							<option>士兵</option>
+							<option>對空炮</option>
+							<option>自走炮</option>
+							<option>戰略火炮</option>
+							<option>戰列艦</option>
+							<option>巡洋艦</option>
+							<option>驅逐艦</option>
+							<option>護衛艦</option>
+							<option>航空母艦</option>
+							<option>潛艦</option>
+							<option>戰略潛艦</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" ctype="name">
+					<div class="hori">名稱</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+				</div>
+				<div class="group" ctype="cost">
+					<div class="hori">資源</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+				</div>
+				<div class="group" ctype="speed">
+					<div class="hori">速度</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%"></div>
+				</div>
+				<div class="group" ctype="psky">
+					<div class="hori">空</div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>不可</option>
+							<option>抵抗</option>
+							<option>精通</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" ctype="pland">
+					<div class="hori">陸</div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>不可</option>
+							<option>抵抗</option>
+							<option>精通</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" ctype="psoilder">
+					<div class="hori">海</div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>不可</option>
+							<option>抵抗</option>
+							<option>精通</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" ctype="pcity">
+					<div class="hori">城</div>
+					<div class="hori" style="width:100%;">
+						<select class="easyui-combobox" style="width:80%;">
+							<option>不可</option>
+							<option>抵抗</option>
+							<option>精通</option>
+						</select>
+					</div>
+				</div>
+				<div class="group" ctype="ab1">
+					<div class="hori">能力</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" ></div>
+				</div>
+				<div class="group" ctype="ab2">
+					<div class="hori">能力</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" ></div>
+				</div>
+				<div class="group" ctype="ab3">
+					<div class="hori">能力</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" ></div>
+				</div>
+				<div class="group" ctype="ab4">
+					<div class="hori">能力</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" ></div>
+				</div>
+				<div class="group" ctype="ab5">
+					<div class="hori">能力</div>
+					<div class="hori" style="width:100%;"><input class="easyui-textbox" style="width:80%" ></div>
+				</div>
+				<div class="group" ctype="text">
+					<div class="hori">技能內文</div>
+					<div class="hori" style="width:100%;"><input id="txt_note" class="easyui-textbox" data-options="multiline:true" style="width:80%; height:250px;"></input></div>
+				</div>
+				<div class="group">
+					<div class="hori">
+						<a id="btn_modify" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-edit'" style="width:100px; height:60px; margin-top:10px;">修改</a>
+					</div>
+					<div class="hori">
+						<a id="btn_add" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-add'" style="width:100px; height:60px; margin-top:10px;">新增</a>
+					</div>
+					<div class="hori">
+						<a id="btn_remove" href="#" class="easyui-linkbutton" onclick="onBtnClick(this)" data-options="iconCls:'icon-remove'" style="width:100px; height:60px; margin-top:10px;">移除</a>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	<script src="js/capi2.js"></script>
+	<script>
+	
+	openLoading( '同步中...' );
+	resetRows( function(){
+		closeLoading();
+	});
+	
+	function resetRows( cb ){
+		
+		capi2.cardList( function( err, ret ){
+			
+			if( err != null ){
+				alert1( err );
+			}else{
+				ret = JSON.parse( ret );
+				ret.Info = _.filter( ret.Info, function( card ){
+					return card.Params.Game == 'army';
+				});
+				setRows( _.map( ret.Info, modelToView ) );
+			}
+			if( cb ) cb();
+		});
+	}
+	
+	var currentRow = undefined;
+	
+	$('.easyui-textbox ' ).textbox({
+		onChange:onUIChange
+	});
+	
+	$('.easyui-combobox' ).combobox({
+		onChange:onUIChange
+	});
+	
+	function onUIChange(nv, ov){
+		var ctype =$( this ).parent().parent().attr('ctype');
+		if( currentRow != undefined ){
+			currentRow.row[ctype] = nv;
+		}
+	}
+	
+	
+//	$('#grid_cards').edatagrid();
+	$('#grid_cards').datagrid( {
+		onAfterEdit:function( index, row, changes ){
+			console.log( index, row, changes );
+		},
+		onSelect:function( index, row ){
+			currentRow = {
+				id:index,
+				row:row
+			}
+			showCard( row );
+		}
+	});
+		
+	/*
+	//test
+	setRows([
+				{name:'value11', type:'value12', level:'2', weight:'3', power:'3', sname:'sname', stype:'stype', scost:'cost', stext:'text'},
+				{name:'value11', type:'value12', level:'2', weight:'3', power:'3', sname:'sname', stype:'stype', scost:'cost', stext:'text'}
+			]);
+			
+	appendRow( {name:'3', type:'3', level:'2', weight:'3', power:'3', sname:'sname', stype:'stype', scost:'cost', stext:'text'} );
+	deleteRow( 1 );
+	*/
+	
+	function modify(){
+		if( currentRow != undefined ){
+			openLoading( '同步中...' );
+			var saveData = viewToModel( currentRow.row );
+			capi2.addCard( saveData, function(err, ret){
+				if( err != null ){
+					closeLoading();
+					alert1( err );
+				}else{
+					resetRows( function(){
+						closeLoading();
+					});
+				}
+			});
+		}
+	}
+	
+	function onBtnClick( dom ){
+		switch( dom.id ){
+			case 'btn_modify':
+				modify();
+				break;
+			case 'btn_add':
+				var newobj;
+				if( currentRow != undefined ){
+					newobj = {	
+						id: '',
+						ntype: currentRow.row.ntype,
+						nation: currentRow.row.nation,
+						ctype: currentRow.row.ctype,
+						atype: currentRow.row.atype,
+						name: currentRow.row.name,
+						cost: currentRow.row.cost,
+						speed: currentRow.row.speed,
+						psky: currentRow.row.psky,
+						pland: currentRow.row.pland,
+						psoilder: currentRow.row.psoilder,
+						pcity: currentRow.row.pcity,
+						ab1: currentRow.row.ab1,
+						ab2: currentRow.row.ab2,
+						ab3: currentRow.row.ab3,
+						ab4: currentRow.row.ab4,
+						ab5: currentRow.row.ab5,
+						text: currentRow.row.text
+					} ;
+				}else{
+					newobj = {
+						id:'',
+						ntype: '資本',
+						nation: '',
+						ctype: '部隊',
+						atype: '',
+						name: '',
+						cost: '',
+						speed: '0',
+						psky: '精通',
+						pland: '抵抗',
+						psoilder: '不可',
+						pcity: '不可',
+						ab1: '',
+						ab2: '',
+						ab3: '',
+						ab4: '',
+						ab5: '',
+						text: ''
+					}
+				}
+				
+				openLoading( '同步中...' );
+				var saveData = viewToModel( newobj );
+				console.log( saveData );
+				capi2.addCard( saveData, function(err, ret){
+					if( err != null ){
+						closeLoading();
+						alert1( err );
+					}else{
+						resetRows( function(){
+							closeLoading();
+						});
+					}
+				});
+				
+				break;
+			case 'btn_remove':
+				if( currentRow != undefined ){
+					
+					openLoading( '同步中...' );
+					capi2.deleteCard( {Id:currentRow.row.id}, function(err, ret){
+						
+						currentRow = undefined;
+						if( err != null ){
+							closeLoading();
+							alert1( err );
+						}else{
+							resetRows( function(){
+								closeLoading();
+							});
+						}
+					});
+				}
+		}
+	}
+	
+	function setRows( datas ){
+		$('#grid_cards').datagrid({
+			data: datas
+		});
+		if( currentRow != undefined ){
+			selectRow( currentRow.id );
+		}
+	}
+	
+	function selectRow( index ){
+		$('#grid_cards').datagrid( 'selectRow', index );
+	}
+	
+	function appendRow( row ){
+		$('#grid_cards').datagrid('appendRow', row );
+	}
+	
+	function deleteRow( index ){
+		$('#grid_cards').datagrid( 'deleteRow', index );
+		currentRow = undefined;
+	}
+	
+	function getRowIndex( row ){
+		$('#grid_cards').datagrid( 'getRowIndex', row );
+	}
+	
+	function updateRow( index, row ){
+		$('#grid_cards').datagrid('updateRow',{
+			index: index,
+			row: row
+		});
+	}
+	
+	function showCard( data ){
+		$('#txt_id').html( data.id );
+		setCombobox( getCombo( 'ntype' ), data.ntype );
+		setCombobox( getCombo( 'ctype' ), data.ctype );
+		setCombobox( getCombo( 'atype' ), data.atype );
+		setText( getInput( 'name' ), data.name );
+		setText( getInput( 'nation' ), data.nation );
+		setText( getInput( 'cost' ), data.cost );
+		setText( getInput( 'speed' ), data.speed );
+		setCombobox( getCombo( 'psky' ), data.psky );
+		setCombobox( getCombo( 'pland' ), data.pland );
+		setCombobox( getCombo( 'psoilder' ), data.psoilder );
+		setCombobox( getCombo( 'pcity' ), data.pcity );
+		setText( getInput( 'ab1' ), data.ab1 );
+		setText( getInput( 'ab2' ), data.ab2 );
+		setText( getInput( 'ab3' ), data.ab3 );
+		setText( getInput( 'ab4' ), data.ab4 );
+		setText( getInput( 'ab5' ), data.ab5 );
+		setText( getInput( 'text' ), data.text );
+	}
+	
+	function setText( textbox, str ){
+		textbox.textbox( {
+			value:str
+		} );
+	}
+	
+	function setCombobox( combo, str ){
+		combo.combobox( {
+			value:str
+		} );
+	}
+	
+	function getInput( type ){
+		return $('.group[ctype=' + type + ']').find( '.easyui-textbox' );
+	}
+	
+	function getCombo( type ){
+		return $('.group[ctype=' + type + ']').find( '.easyui-combobox' );
+	}
+	
+	function viewToModel( view ){
+		return {
+			Id: view.id,
+			Params:JSON.stringify({
+				Game: 'army',
+				Ntype: view.ntype,
+				Nation: view.nation,
+				Ctype: view.ctype,
+				Atype: view.atype,
+				Name: view.name,
+				Cost: view.cost,
+				Speed: view.speed,
+				Psky: view.psky,
+				Pland: view.pland,
+				Psoilder: view.psoilder,
+				Pcity: view.pcity,
+				Ab1: view.ab1,
+				Ab2: view.ab2,
+				Ab3: view.ab3,
+				Ab4: view.ab4,
+				Ab5: view.ab5,
+				Text: view.text,
+			})
+		}
+	}
+	
+	function modelToView( model ){
+		return {
+			id: Math.floor( model.Id ),
+			ntype:model.Params.Ntype,
+			nation:model.Params.Nation,
+			ctype:model.Params.Ctype,
+			atype:model.Params.Atype,
+			name:model.Params.Name,
+			cost:model.Params.Cost,
+			speed:model.Params.Speed,
+			psky:model.Params.Psky,
+			pland:model.Params.Pland,
+			psoilder:model.Params.Psoilder,
+			pcity:model.Params.Pcity,
+			ab1:model.Params.Ab1,
+			ab2:model.Params.Ab2,
+			ab3:model.Params.Ab3,
+			ab4:model.Params.Ab4,
+			ab5:model.Params.Ab5,
+			text:model.Params.Text
+		}
+	}
+	
+	function alert1( msg ){
+		$.messager.alert('error', msg);
+	}
+	
+	function slide( msg ){
+		$.messager.show({
+			title:'tip',
+			msg: msg,
+			timeout:1000,
+			showType:'slide'
+		});
+	}
+	
+	function openLoading( msg ){
+		var win = $.messager.progress({
+			title:'tip',
+			msg:msg
+		});
+	}
+	
+	function closeLoading(){
+		$.messager.progress('close');
+	}
+	</script>
+	<script src="js/manager.js"></script>
+</body>
+</html>
