@@ -9,6 +9,8 @@ import (
 	"lib/db2"
 	"lib/tool"
 	"net/http"
+	"github.com/gorilla/mux"
+	sgs "app/cardgame/http"
 )
 
 func handler2(w http.ResponseWriter, r *http.Request) {
@@ -74,6 +76,18 @@ func init() {
 	// collect mmo
 	http.HandleFunc("/fn/collectmmo/talk", collectmmo.Talk)
 	http.HandleFunc("/fn/collectmmo/resetdb", collectmmo.Server_ResetDB)
+
+	// 陣面對決
+	r := mux.NewRouter()
+	r.HandleFunc("/fn/sgs/admin/room/newLobby", sgs.NewLobby).Methods("GET")
+
+	r.HandleFunc("/fn/sgs/room", sgs.RoomList).Methods("GET")
+	r.HandleFunc("/fn/sgs/room", sgs.NewRoom).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}", sgs.GetRoom).Methods("GET")
+	r.HandleFunc("/fn/sgs/room/{roomId}/join", sgs.JoinRoom).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}/validate", sgs.ValidateRoom).Methods("POST")
+	http.Handle("/fn/sgs/", r)
+
 	// 測試
 	http.HandleFunc("/fn/testmysql", app.Testmysql)
 }

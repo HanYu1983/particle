@@ -20,3 +20,5 @@ downloadPages/
 pkg/
 github.com/
 node_workspace/genCard/gundamWar/
+# goglang ide
+goapp/.idea/
