@@ -80,15 +80,26 @@ func init() {
 	// 陣面對決
 	r := mux.NewRouter()
 	r.HandleFunc("/fn/sgs/admin/room/newLobby", sgs.NewLobby).Methods("GET")
+	r.HandleFunc("/fn/sgs/room", sgs.AppengineContext(sgs.RoomList)).Methods("GET")
+	r.HandleFunc("/fn/sgs/room", sgs.AppengineContext(sgs.NewRoom)).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}", sgs.AppengineContext(sgs.GetRoom)).Methods("GET")
+	r.HandleFunc("/fn/sgs/room/{roomId}", sgs.AppengineContext(sgs.UpdateRoom)).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}/join", sgs.AppengineContext(sgs.JoinRoom)).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}/validate", sgs.AppengineContext(sgs.ValidateRoom)).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}/message", sgs.AppengineContext(sgs.SendRoomMessage)).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}/start", sgs.AppengineContext(sgs.StartGame)).Methods("POST")
+	// 取得遊戲狀態
+	r.HandleFunc("/fn/sgs/room/{roomId}/game", sgs.AppengineContext(sgs.GetGame)).Methods("GET")
+	// 1. 先呼叫topCommand察看堆疊中還沒結束的指令
+	r.HandleFunc("/fn/sgs/room/{roomId}/game/topCommand", sgs.AppengineContext(sgs.GetTopCommand)).Methods("GET")
+	// 1-1. 上傳並修改那個指令
+	r.HandleFunc("/fn/sgs/room/{roomId}/game/command/{commandId}", sgs.AppengineContext(sgs.UpdateCommand)).Methods("POST")
+	// 2. 或是呼叫collectCommand取得目前可以用的指令
+	r.HandleFunc("/fn/sgs/room/{roomId}/game/collectCommand", sgs.AppengineContext(sgs.CollectCommand)).Methods("POST")
+	// 2-1. 選一個指令上傳並加入
+	r.HandleFunc("/fn/sgs/room/{roomId}/game/command/", sgs.AppengineContext(sgs.PushCommand)).Methods("POST")
 
-	r.HandleFunc("/fn/sgs/room", sgs.RoomList).Methods("GET")
-	r.HandleFunc("/fn/sgs/room", sgs.NewRoom).Methods("POST")
-	r.HandleFunc("/fn/sgs/room/{roomId}", sgs.GetRoom).Methods("GET")
-	r.HandleFunc("/fn/sgs/room/{roomId}/join", sgs.JoinRoom).Methods("POST")
-	r.HandleFunc("/fn/sgs/room/{roomId}/validate", sgs.ValidateRoom).Methods("POST")
-	r.HandleFunc("/fn/sgs/room/{roomId}/message", sgs.SendRoomMessage).Methods("POST")
 	http.Handle("/fn/sgs/", r)
-
 	// 測試
 	http.HandleFunc("/fn/testmysql", app.Testmysql)
 }

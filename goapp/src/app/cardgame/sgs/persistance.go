@@ -28,16 +28,16 @@ func LoadGame(ctx appengine.Context, gameId string, group *datastore.Key) (Game,
 }
 
 // 記錄陣面對決
-func SaveGame(ctx appengine.Context, game Game, group *datastore.Key) (Game, error) {
+func SaveGame(ctx appengine.Context, game Game, group *datastore.Key) (error) {
 	var err error
 	bytes, err := json.Marshal(game)
 	if err != nil {
-		return game, err
+		return err
 	}
 	key := datastore.NewKey(ctx, "SgsGame", game.ID, 0, group)
 	_, err = datastore.Put(ctx, key, &GameWrapper{bytes})
 	if err != nil {
-		return game, err
+		return err
 	}
-	return game, nil
+	return nil
 }

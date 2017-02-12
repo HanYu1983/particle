@@ -5,6 +5,8 @@ import (
 	"appengine/datastore"
 	"appengine/channel"
 	"time"
+	"errors"
+	"fmt"
 )
 
 const (
@@ -14,27 +16,29 @@ const (
 )
 
 type Room struct {
-	ID      string
-	Players []string
-	Roles   []string
-	GameID  string
-	Channel string
-	State   int
-	IsPrivate bool
+	ID         string
+	Players    []string
+	Roles      []string
+	GameID     string
+	Channel    string
+	State      int
+	IsPrivate  bool
 	Expiration time.Time
+	Owner      string
 }
 
-func NewRoom(id string) Room {
+func NewRoom(id string, owner string) Room {
 	return Room{
 		ID:         id,
 		State:      RoomStateWaiting,
-		Expiration: time.Now().Add(time.Second*30),
+		Expiration: time.Now().Add(time.Second * 30),
 		IsPrivate:  true,
+		Owner:      owner,
 	}
 }
 
 func UpdateExpiration(r Room) Room {
-	r.Expiration = time.Now().Add(time.Second*30)
+	r.Expiration = time.Now().Add(time.Second * 30)
 	return r
 }
 
@@ -63,15 +67,31 @@ func AddPlayer(r Room, playerId, roleId string) Room {
 	return r
 }
 
-func ChangeRole(r Room, playerId, roleId string) Room {
-	var playerIndex int
+func ChangeRole(r Room, playerId, roleId string) (Room, error) {
+	playerIndex := -1
 	for i, player := range r.Players {
 		if player == playerId {
 			playerIndex = i
 		}
 	}
+	if playerIndex == -1 {
+		return r, errors.New(fmt.Sprintf("no this player:%v", playerId))
+	}
 	r.Roles[playerIndex] = roleId
-	return r
+	return r, nil
+}
+
+func GetRole(r Room, playerId string) (string, error) {
+	playerIndex := -1
+	for i, player := range r.Players {
+		if player == playerId {
+			playerIndex = i
+		}
+	}
+	if playerIndex == -1 {
+		return "", errors.New(fmt.Sprintf("no this player:%v", playerId))
+	}
+	return r.Roles[playerIndex], nil
 }
 
 func LoadRoom(ctx appengine.Context, roomId string, group *datastore.Key) (Room, error) {

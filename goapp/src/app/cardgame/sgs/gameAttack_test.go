@@ -145,7 +145,10 @@ func TestBasicAttack(t *testing.T) {
 
 	t.Log("測試記錄和讀取")
 	groupKey := datastore.NewKey(ctx, "Group", "temp", 0, nil)
-	SaveGame(ctx, game, groupKey)
+	err = SaveGame(ctx, game, groupKey)
+	if err != nil {
+		t.Fatal(err)
+	}
 	game, err = LoadGame (ctx, game.ID, groupKey)
 	if err != nil {
 		t.Fatal(err)

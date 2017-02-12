@@ -28,7 +28,7 @@ func CollectCommand(ctx appengine.Context, game Game, user string, cmd []core.Co
 	if isStackEmpty {
 		// 堆疊為空的狀況必須有優先權的玩家才能行動
 		if game.PriorityPlayer != user {
-			return nil, nil
+			return cmd, nil
 		}
 	}
 	// 收集指令
@@ -63,7 +63,7 @@ func CollectCommand(ctx appengine.Context, game Game, user string, cmd []core.Co
 	if isStackEmpty {
 		// 堆疊為空時才能讓出優先權
 		if game.PriorityPlayer == user {
-			cmd = append(cmd, core.Command{User: user, Description: "讓過", Parameters: nil})
+			cmd = append(cmd, core.Command{User: UserSys, Description: "{user}讓過", Parameters: url.Values{"user":{user}}})
 		}
 		// 堆疊為空時才能使用轉移
 	}
@@ -102,7 +102,8 @@ func PlayerMoveUnit(ctx appengine.Context, game Game, user string, slotStackId s
 func PlayerPass(ctx appengine.Context, game Game, user string) (Game, error) {
 	p := game.Procedure
 	// 堆疊不為空不能讓出優先權
-	if len(p.Block) != 0 {
+	// 一定有讓過的Block存在，所以是大於1
+	if len(p.Block) > 1 {
 		return game, errors.New("堆疊不為空不能讓出優先權")
 	}
 	// 如果是重置或棄牌步驟，主動玩家呼叫讓過就是直接跳過
@@ -415,6 +416,13 @@ const (
 // 基本規則實作
 func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game, error) {
 	switch c.Description {
+	case "{user}讓過":
+		var err error
+		user := c.Parameters.Get("user")
+		game, err = PlayerPass(ctx, game, user)
+		if err != nil {
+			return game, err
+		}
 	case "{user}選擇{num}張手牌{cardIds}廢棄":
 		var err error
 		var has bool
