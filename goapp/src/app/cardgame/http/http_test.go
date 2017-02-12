@@ -97,55 +97,65 @@ func TestBasicHttp(t *testing.T) {
 	r.HandleFunc("/fn/sgs/room/{roomId}/game/command", WithContext(ctx, PushCommand)).Methods("POST")
 
 
+	t.Log("建房")
 	var ret interface{}
 	ret, err = Post(r, "/fn/sgs/room", "user=test")
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	room := ret.(map[string]interface{})
 	roomId := room["ID"].(string)
 
+	t.Log("test2加入房間")
 	ret, err = Post(r, fmt.Sprintf("/fn/sgs/room/%v/join", roomId), "user=test2")
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	t.Log("test2再次加入房間")
 	ret, err = Post(r, fmt.Sprintf("/fn/sgs/room/%v/join", roomId), "user=test2")
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	t.Log("決定先手後手")
 	ret, err = Post(r, fmt.Sprintf("/fn/sgs/room/%v", roomId), fmt.Sprintf("userA=%v&userB=%v", "test", "test2"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	t.Log("開始遊戲")
 	ret, err = Post(r, fmt.Sprintf("/fn/sgs/room/%v/start", roomId), "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	room = ret.(map[string]interface{})
-
 	if int(room["State"].(float64)) != core.RoomStatePlaying {
 		t.Fatal("必須是Playing狀態")
 	}
 
+	t.Log("取得遊戲狀態")
 	ret, err = Get(r, fmt.Sprintf("/fn/sgs/room/%v/game", roomId))
 	if err != nil {
 		t.Fatal(err)
 	}
+	// 一開始是重置
+	game := ret.(map[string]interface{})
+	if int(game["CurrentPhase"].(float64)) != sgs.UntapStep {
+		t.Fatal("一開始是重置")
+	}
 
+	t.Log("收集test的指令")
 	ret, err = Post(r, fmt.Sprintf("/fn/sgs/room/%v/game/collectCommand", roomId), "user=test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx.Infof("%v", ret)
 	if len(ret.([]interface{})) == 0 {
 		t.Fatal("test必須至少一個指令(讓過)")
 	}
 	passCmd := ret.([]interface{})[0].(map[string]interface{})
 
+	t.Log("收集test2的指令")
 	ret, err = Post(r, fmt.Sprintf("/fn/sgs/room/%v/game/collectCommand", roomId), "user=test2")
 	if err != nil {
 		t.Fatal(err)
@@ -153,23 +163,24 @@ func TestBasicHttp(t *testing.T) {
 	if len(ret.([]interface{})) != 0 {
 		t.Fatal("test2必須沒有任何指令")
 	}
-
 	commandBody, err := json.Marshal(passCmd)
-
 	parameters := url.Values{}
 	parameters.Add("commandBody", string(commandBody))
 	body := parameters.Encode()
 
+	t.Log("test上傳讓過指令")
 	ret, err = Post(r, fmt.Sprintf("/fn/sgs/room/%v/game/command", roomId), body)
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	t.Log("取得遊戲狀態")
 	ret, err = Get(r, fmt.Sprintf("/fn/sgs/room/%v/game", roomId))
 	if err != nil {
 		t.Fatal(err)
 	}
 	// 一開始是重置，所以讓過後會直接跳到準備階段
-	game := ret.(map[string]interface{})
+	game = ret.(map[string]interface{})
 	if int(game["CurrentPhase"].(float64)) != sgs.StandbyStep {
 		t.Fatal("必須跳到準備階段")
 	}
