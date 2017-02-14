@@ -97,7 +97,7 @@ func init() {
 	// 2. 或是呼叫collectCommand取得目前可以用的指令
 	r.HandleFunc("/fn/sgs/room/{roomId}/game/collectCommand", sgs.AppengineContext(sgs.CollectCommand)).Methods("POST")
 	// 2-1. 選一個指令上傳並加入
-	r.HandleFunc("/fn/sgs/room/{roomId}/game/command/", sgs.AppengineContext(sgs.PushCommand)).Methods("POST")
+	r.HandleFunc("/fn/sgs/room/{roomId}/game/command", sgs.AppengineContext(sgs.PushCommand)).Methods("POST")
 
 	http.Handle("/fn/sgs/", r)
 	// 測試

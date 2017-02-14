@@ -120,34 +120,58 @@
 		<script type="text/javascript" src="/_ah/channel/jsapi"></script>
 
 		<script name="model" src="js/model.js"></script>
-			<!--
+
 		<script name="test">
-			var user = 'test2'
-			model.joinLobby(user, {
-                onopen: function(){
-                    console.log('onopen')
-                    model.sendLobby(user, 'hello world!', function(err, res){
-                        console.log('sendhelloworld')
-                        console.log(arguments)
+			var user = 'han'
+			model.newRoom(user, function(err, room){
+			    if( err ){
+			        console.log(err)
+				} else {
+			        model.joinRoom(room.ID, 'vic', function(err, res){
+			            if( err ){
+			                console.log(err)
+						} else {
+                            if( err ){
+                                console.log(err)
+                            } else {
+                                model.updateRoom(room.ID, {
+                                    userA: user,
+									userB: 'vic'
+								}, function(err, res){
+                                    if( err ){
+                                        console.log(err)
+									} else {
+                                        model.startGame(room.ID, function(err, res){
+                                            if( err ){
+                                                console.log(err)
+                                            } else {
+                                                model.collectCommand(room.ID, user, function(err, res){
+                                                    if( err ){
+                                                        console.log(err)
+                                                    } else {
+                                                        var passCmd = res[0]
+														model.pushCommand(room.ID, passCmd, function(err, res){
+														    if( err ){
+														        console.log(err)
+															} else {
+                                                                model.collectCommand(room.ID, user, function(err, res){
+                                                                    console.log(arguments)
+                                                                })
+															}
+														})
+                                                    }
+                                                })
+                                            }
+                                        })
+									}
+								})
+                            }
+						}
 					})
-				},
-                onmessage: function(path, option){
-                    var msg = path.data
-                    console.log('onmessage'+msg)
-                },
-                onerror: function(){
-                    console.log('onerror')
-				},
-                onclose: function(){
-                    console.log('onclose')
 				}
-            })
-			model.autoMatch(user, function(err, res){
-			    console.log('autoMatch')
-                console.log(arguments)
 			})
 		</script>
-		-->
+
 		<script>
 
 		

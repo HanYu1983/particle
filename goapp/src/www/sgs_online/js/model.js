@@ -84,41 +84,36 @@ var model = model || {};
         post('fn/sgs/room/'+roomId+'/join', {user: user}, cb)
     }
 
-    var validateThread = -1
-
-    function newRoom(user, validateSecond, cb){
+    function newRoom(user, cb){
         post('fn/sgs/room', {user: user}, function(err, room){
             if( err != null ){
                 cb(err)
             } else {
-                if( validateThread != -1 ){
-                    clearInterval(validateThread)
-                    validateThread = -1
-                }
-                validateThread = setInterval(function(){
-                    post('fn/sgs/room/'+room.ID+'/validate', {}, function(err, res){
-                        if( err != null ){
-                            console.log(err)
-                        }
-                    })
-                }, 1000*validateSecond)
                 cb(null, room)
             }
         })
     }
 
-    function autoMatch(user, cb){
-        roomList(function(err, list){
-            if(err!=null){
+    function updateRoom(roomId, data, cb){
+        post('fn/sgs/room/'+roomId, data, function(err, room){
+            if( err != null ){
                 cb(err)
             } else {
-                if(list.length == 0){
-                    newRoom(user, 25, cb)
-                } else {
-                    joinRoom(list[0].ID, user, cb)
-                }
+                cb(null, room)
             }
         })
+    }
+
+    function startGame(roomId, cb){
+        post('fn/sgs/room/'+roomId+'/start', {}, cb)
+    }
+
+    function collectCommand(roomId, user, cb){
+        post('fn/sgs/room/'+roomId+'/game/collectCommand', {user: user}, cb)
+    }
+
+    function pushCommand(roomId, cmd, cb){
+        post('fn/sgs/room/'+roomId+'/game/command', {commandBody: JSON.stringify(cmd)}, cb)
     }
 
     module.get = get
@@ -128,6 +123,9 @@ var model = model || {};
     module.sendLobby = sendLobby
     module.joinRoom = joinRoom
     module.newRoom = newRoom
-    module.autoMatch = autoMatch
+    module.startGame = startGame
+    module.collectCommand = collectCommand
+    module.pushCommand = pushCommand
+    module.updateRoom = updateRoom
 
 }) ( model )
