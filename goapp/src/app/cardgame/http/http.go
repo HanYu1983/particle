@@ -108,7 +108,7 @@ func NewRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 	err = datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
 		var err error
 		room = core.NewRoom(uuid.New().String(), user)
-		room = core.AddPlayer(room, user, "")
+		room = core.AddPlayer(room, user, sgs.UserA)
 		err = core.SaveRoom(ctx, room, GroupKey(ctx))
 		if err != nil {
 			return err
@@ -139,7 +139,11 @@ func JoinRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		room = core.AddPlayer(room, user, "")
+		role := "watcher"
+		if len(room.Players) == 1 {
+			role = sgs.UserB
+		}
+		room = core.AddPlayer(room, user, role)
 		err = core.SaveRoom(ctx, room, GroupKey(ctx))
 		if err != nil {
 			return err

@@ -108,6 +108,10 @@ var model = model || {};
         post('fn/sgs/room/'+roomId+'/start', {}, cb)
     }
 
+    function game(roomId, cb){
+        get('/fn/sgs/room/'+roomId+'/game', {}, cb)
+    }
+
     function collectCommand(roomId, user, cb){
         post('fn/sgs/room/'+roomId+'/game/collectCommand', {user: user}, cb)
     }
@@ -127,5 +131,6 @@ var model = model || {};
     module.collectCommand = collectCommand
     module.pushCommand = pushCommand
     module.updateRoom = updateRoom
+    module.game = game
 
 }) ( model )
