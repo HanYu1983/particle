@@ -60,13 +60,15 @@ class Main
 			case 'onGameStart':
 				trace( val );
 				GameInfo.userName = val.user;
-				
+				GameInfo.roomID = val.room.ID;
+				/*
 				var players:Dynamic = val.room.Players;
 				for ( i in 0...1 ){
 					if ( players.indexOf( GameInfo.userName ) == -1 ){
 						GameInfo.opponentName = players[i];
 					}
 				}
+				*/
 				
 		}
 	}

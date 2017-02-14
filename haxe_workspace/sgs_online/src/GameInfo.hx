@@ -7,7 +7,7 @@ package;
 class GameInfo 
 {
 	public static var userName = '';
-	public static var opponentName = '';
+	public static var roomID = '';
 
 	public function new() 
 	{

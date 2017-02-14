@@ -272,12 +272,7 @@ Main.prototype = {
 		case "onGameStart":
 			console.log(val);
 			GameInfo.userName = val.user;
-			var players = val.room.Players;
-			var _g = 0;
-			while(_g < 1) {
-				var i = _g++;
-				if(players.indexOf(GameInfo.userName) == -1) GameInfo.opponentName = players[i];
-			}
+			GameInfo.roomID = val.room.ID;
 			break;
 		}
 	}
@@ -628,7 +623,7 @@ AppConfig.screenHeight = 600;
 AppConfig.moveTime = .05;
 AppConfig.moveEasingType = "easeInSine";
 GameInfo.userName = "";
-GameInfo.opponentName = "";
+GameInfo.roomID = "";
 Main.async = async;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
