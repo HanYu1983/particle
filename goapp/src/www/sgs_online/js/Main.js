@@ -207,6 +207,9 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 		while(deck.length > 0) deck.pop();
 	}
 });
+var GameInfo = function() {
+};
+GameInfo.__name__ = true;
 var KeyboardController = function(_uid) {
 	BasicController.call(this,_uid);
 };
@@ -231,9 +234,7 @@ KeyboardController.prototype = $extend(BasicController.prototype,{
 		});
 	}
 });
-var Main = function() { };
-Main.__name__ = true;
-Main.main = function() {
+var Main = function() {
 	var gameStart = function(context) {
 		console.log(context);
 		var app = new AppController();
@@ -259,8 +260,34 @@ Main.main = function() {
 	Main.async.waterfall(waterFunc,function(err1,context2) {
 		if(err1 == null) gameStart(context2);
 	});
+	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
+};
+Main.__name__ = true;
+Main.main = function() {
+	new Main();
+};
+Main.prototype = {
+	onHtmlClick: function(type,val) {
+		switch(type) {
+		case "onGameStart":
+			console.log(val);
+			GameInfo.userName = val.user;
+			var players = val.room.Players;
+			var _g = 0;
+			while(_g < 1) {
+				var i = _g++;
+				if(players.indexOf(GameInfo.userName) == -1) GameInfo.opponentName = players[i];
+			}
+			break;
+		}
+	}
 };
 Math.__name__ = true;
+var Reflect = function() { };
+Reflect.__name__ = true;
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
+};
 var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
@@ -600,6 +627,8 @@ AppConfig.screenWidth = 800;
 AppConfig.screenHeight = 600;
 AppConfig.moveTime = .05;
 AppConfig.moveEasingType = "easeInSine";
+GameInfo.userName = "";
+GameInfo.opponentName = "";
 Main.async = async;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

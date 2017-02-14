@@ -2,7 +2,8 @@ package;
 import js.Browser;
 import js.JQuery;
 import js.Lib;
-
+using Lambda;
+using Reflect;
 /**
  * ...
  * @author vic
@@ -12,8 +13,7 @@ class Main
 {
 	public static var async:Dynamic = untyped __js__('async');
 	
-	static function main() 
-	{
+	public function new(){
 		function gameStart( context:Dynamic ) {
 			trace( context );
 			var app =  new AppController();
@@ -46,5 +46,28 @@ class Main
 				gameStart( context );
 			}
 		});
+		
+		Browser.window.setField( 'onHtmlClick', onHtmlClick );
+	}
+	
+	static function main() 
+	{
+		new Main();
 	}		
+	
+	function onHtmlClick( type:String, val:Dynamic ){
+		switch( type ){
+			case 'onGameStart':
+				trace( val );
+				GameInfo.userName = val.user;
+				
+				var players:Dynamic = val.room.Players;
+				for ( i in 0...1 ){
+					if ( players.indexOf( GameInfo.userName ) == -1 ){
+						GameInfo.opponentName = players[i];
+					}
+				}
+				
+		}
+	}
 }
