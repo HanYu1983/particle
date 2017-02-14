@@ -168,14 +168,15 @@ FakeBackEndController.__name__ = true;
 FakeBackEndController.__super__ = BasicController;
 FakeBackEndController.prototype = $extend(BasicController.prototype,{
 	createPlayerDeck: function(callback) {
-		var ret = [];
+		GameInfo.tableInfo(function(err,val) {
+			if(err == null) console.log(val);
+		});
 		this.clearDeckByPlayerId(0);
 		var _g = 0;
 		while(_g < 50) {
 			var i = _g++;
 			var uuid = Tools.uuid();
 			this.addPlayerDeckCard(0,uuid);
-			ret.push(uuid);
 		}
 		callback(this.getAll());
 	}
@@ -210,6 +211,9 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 var GameInfo = function() {
 };
 GameInfo.__name__ = true;
+GameInfo.tableInfo = function(cb) {
+	model.game(GameInfo.roomID,cb);
+};
 var KeyboardController = function(_uid) {
 	BasicController.call(this,_uid);
 };
@@ -235,31 +239,6 @@ KeyboardController.prototype = $extend(BasicController.prototype,{
 	}
 });
 var Main = function() {
-	var gameStart = function(context) {
-		console.log(context);
-		var app = new AppController();
-		app.context = context;
-		app.start();
-	};
-	var waterFunc = [function(cb) {
-		vic.tools.loadDAE("asset/scene.dae",function(dae) {
-			cb(null,{ dae : dae});
-		});
-	},function(context1,cb1) {
-		var ary_str = ["asset/sgs_desktop.jpg","asset/cardback3.png","asset/01030.jpg"];
-		Main.async.map(ary_str,function(path,cb2) {
-			var t = new THREE.TextureLoader();
-			t.load(path,function(t1) {
-				cb2(null,t1);
-			});
-		},function(err,result) {
-			context1.textures = result;
-			cb1(null,context1);
-		});
-	}];
-	Main.async.waterfall(waterFunc,function(err1,context2) {
-		if(err1 == null) gameStart(context2);
-	});
 	Reflect.setField(window,"onHtmlClick",$bind(this,this.onHtmlClick));
 };
 Main.__name__ = true;
@@ -267,12 +246,40 @@ Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	onHtmlClick: function(type,val) {
+	createGame: function() {
+		var gameStart = function(context) {
+			console.log(context);
+			var app = new AppController();
+			app.context = context;
+			app.start();
+		};
+		var waterFunc = [function(cb) {
+			vic.tools.loadDAE("asset/scene.dae",function(dae) {
+				cb(null,{ dae : dae});
+			});
+		},function(context1,cb1) {
+			var ary_str = ["asset/sgs_desktop.jpg","asset/cardback3.png","asset/01030.jpg"];
+			Main.async.map(ary_str,function(path,cb2) {
+				var t = new THREE.TextureLoader();
+				t.load(path,function(t1) {
+					cb2(null,t1);
+				});
+			},function(err,result) {
+				context1.textures = result;
+				cb1(null,context1);
+			});
+		}];
+		Main.async.waterfall(waterFunc,function(err1,context2) {
+			if(err1 == null) gameStart(context2);
+		});
+	}
+	,onHtmlClick: function(type,val) {
 		switch(type) {
 		case "onGameStart":
 			console.log(val);
 			GameInfo.userName = val.user;
 			GameInfo.roomID = val.room.ID;
+			this.createGame();
 			break;
 		}
 	}

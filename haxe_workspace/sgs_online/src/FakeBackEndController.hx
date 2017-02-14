@@ -28,12 +28,19 @@ class FakeBackEndController extends BasicController
 	}
 	
 	public function createPlayerDeck( callback:Dynamic -> Void ){
-		var ret = new Array<Dynamic>();
+		
+		GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
+			if ( err == null ){
+				trace( val );
+			}
+		});
+		
+		//var ret = new Array<Dynamic>();
 		clearDeckByPlayerId(0);
 		for ( i in 0...50 ) {
 			var uuid = Tools.uuid();
 			addPlayerDeckCard(0, uuid );
-			ret.push( uuid );
+		//	ret.push( uuid );
 		}
 		callback( getAll() );
 	}

@@ -32,8 +32,6 @@ class AppController
 		backendController = new FakeBackEndController();
 		backendController.mediator = this;
 		gameStart();
-		
-		
 	}
 	
 	public function addWebglListener( event:String, action:Dynamic -> Void){
@@ -47,7 +45,6 @@ class AppController
 	public function gameStart() {
 		threeEngineController.initGame();
 		keyboardController.start();
-		
 		
 		function createOneCards(deck:Dynamic, isPlayer:Bool = false){
 			var pos:Dynamic = null;
