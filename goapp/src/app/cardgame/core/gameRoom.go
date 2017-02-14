@@ -120,7 +120,7 @@ func RoomList(ctx appengine.Context, offset, limit int, group *datastore.Key) ([
 	q := datastore.NewQuery("gameRoom").Ancestor(group)
 	q = q.Limit(limit).Offset(offset)
 	// q = q.Filter("IsPrivate =", false)
-	q = q.Filter("Expiration >", time.Now())
+	// q = q.Filter("Expiration >", time.Now())
 	rooms := []Room{}
 	var err error
 	_, err = q.GetAll(ctx, &rooms)

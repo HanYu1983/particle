@@ -4,7 +4,8 @@
 var model = model || {};
 
 (function(module){
-    var apiHost = 'http://localhost:8080/'
+    // version = 1
+    var apiHost = '/'
 
     function get(path, data, cb){
         $.ajax({
