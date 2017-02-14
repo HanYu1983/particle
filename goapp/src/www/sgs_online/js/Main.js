@@ -32,23 +32,9 @@ AppController.prototype = {
 		var _g = this;
 		this.threeEngineController.initGame();
 		this.keyboardController.start();
-		var createOneCards = function(deck,isPlayer) {
-			if(isPlayer == null) isPlayer = false;
-			var pos = null;
-			if(isPlayer) pos = _g.threeEngineController.getMeshByName("Player_deck_position").position.clone(); else pos = _g.threeEngineController.getMeshByName("Enemy_deck_position").position.clone();
-			var _g1 = 0;
-			var _g2 = deck.length;
-			while(_g1 < _g2) {
-				var i = _g1++;
-				var uuid = deck[i];
-				var cardpos = pos.clone();
-				cardpos.y += i * .05;
-				_g.threeEngineController.createCard(_g.context.textures[2],cardpos,uuid);
-			}
-		};
-		this.backendController.createPlayerDeck(function(args) {
-			createOneCards(args[0].deck,true);
-			createOneCards(args[1].deck);
+		this.backendController.syncModel(function(val) {
+			_g.threeEngineController.syncGameView();
+			_g.backendController.collectCommand();
 		});
 	}
 	,getAll: function() {
@@ -168,9 +154,6 @@ FakeBackEndController.__name__ = true;
 FakeBackEndController.__super__ = BasicController;
 FakeBackEndController.prototype = $extend(BasicController.prototype,{
 	createPlayerDeck: function(callback) {
-		GameInfo.tableInfo(function(err,val) {
-			if(err == null) console.log(val);
-		});
 		this.clearDeckByPlayerId(0);
 		var _g = 0;
 		while(_g < 50) {
@@ -192,7 +175,21 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 		return id != -1;
 	}
 	,getAll: function() {
-		return this.players;
+		return this.tableInfo;
+	}
+	,syncModel: function(cb) {
+		var _g = this;
+		GameInfo.tableInfo(function(err,val) {
+			if(err == null) {
+				_g.tableInfo = val;
+				if(cb != null) cb(_g.tableInfo);
+			}
+		});
+	}
+	,collectCommand: function() {
+		GameInfo.collectCommand(function(err,val) {
+			haxe_Log.trace(err,{ fileName : "FakeBackEndController.hx", lineNumber : 72, className : "FakeBackEndController", methodName : "collectCommand", customParams : [val]});
+		});
 	}
 	,getPlayerDeck: function(id) {
 		return this.players[id].deck;
@@ -213,6 +210,12 @@ var GameInfo = function() {
 GameInfo.__name__ = true;
 GameInfo.tableInfo = function(cb) {
 	model.game(GameInfo.roomID,cb);
+};
+GameInfo.collectCommand = function(cb) {
+	model.collectCommand(GameInfo.roomID,GameInfo.userName,cb);
+};
+GameInfo.pushCommand = function(passCmd,cb) {
+	model.pushCommand(GameInfo.roomID,passCmd,cb);
 };
 var KeyboardController = function(_uid) {
 	BasicController.call(this,_uid);
@@ -248,7 +251,7 @@ Main.main = function() {
 Main.prototype = {
 	createGame: function() {
 		var gameStart = function(context) {
-			console.log(context);
+			haxe_Log.trace(context,{ fileName : "Main.hx", lineNumber : 29, className : "Main", methodName : "createGame"});
 			var app = new AppController();
 			app.context = context;
 			app.start();
@@ -276,7 +279,7 @@ Main.prototype = {
 	,onHtmlClick: function(type,val) {
 		switch(type) {
 		case "onGameStart":
-			console.log(val);
+			haxe_Log.trace(val,{ fileName : "Main.hx", lineNumber : 65, className : "Main", methodName : "onHtmlClick"});
 			GameInfo.userName = val.user;
 			GameInfo.roomID = val.room.ID;
 			this.createGame();
@@ -405,19 +408,8 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		board.children[0].material.needsUpdate = true;
 	}
 	,syncGameView: function() {
-		var _g = this;
 		var model = this.mediator.getAll();
-		var playerModel = model[0];
-		var enemyModel = model[1];
-		var syncOnePlayer = function(oneModel,isPlayer) {
-			if(isPlayer == null) isPlayer = false;
-			var hand = oneModel.hand;
-			var deck = oneModel.deck;
-			_g.syncHand(hand,isPlayer);
-			_g.syncDeck(deck,isPlayer);
-		};
-		syncOnePlayer(playerModel,true);
-		syncOnePlayer(enemyModel);
+		var currentPhase = model.CurrentPhase;
 	}
 	,syncDeck: function(oneModel,isPlayer) {
 		if(isPlayer == null) isPlayer = false;
@@ -537,6 +529,11 @@ Tools.uuid = function() {
 	while(a++ < 36) uid.add((a * 51 & 52) != 0?StringTools.hex((a ^ 15) != 0?8 ^ Std["int"](Math.random() * ((a ^ 20) != 0?16:4)):4):"-");
 	return uid.b.toLowerCase();
 };
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -549,6 +546,25 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";

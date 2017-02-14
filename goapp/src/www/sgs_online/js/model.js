@@ -110,7 +110,7 @@ var model = model || {};
     }
 
     function game(roomId, cb){
-        get('/fn/sgs/room/'+roomId+'/game', {}, cb)
+        get('fn/sgs/room/'+roomId+'/game', {}, cb)
     }
 
     function collectCommand(roomId, user, cb){
