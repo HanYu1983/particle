@@ -60,23 +60,50 @@
 			<div id="webgl" style='position:relative; width:100%; height:100%;'></div>
 		</div>
 		
-		<div id="win_login" class="easyui-window" title="對戰列表" data-options="collapsible:false,minimizable:false,maximizable:false,closable:false,modal:true,draggable:false,resizable:false" style="width:290px; padding:10px">
-			<div class="group hori">
-				<a id="btn_login" href="#" class="easyui-linkbutton loginMenuButton" >登入</a>
-				<input id="txt_id" class="easyui-textbox"  style="width:173px;">
+		
+		<div id="win_login" class="easyui-window" title="對戰列表" data-options="collapsible:false,minimizable:false,maximizable:false,closable:false,modal:true,draggable:false,resizable:false" style="width:800px; height:600px;">
+			<div class="easyui-layout full">
+				<div data-options="region:'west',title:'West',split:false" style="width:300px;">
+					<div class="group hori">
+						<a id="btn_login" href="#" class="easyui-linkbutton loginMenuButton" >FB登入</a>
+						<input id="txt_id" class="easyui-textbox" style="width:173px;">
+					</div>
+					<div class="group hori">
+						<a id="btn_create" href="#" class="easyui-linkbutton loginMenuButton" >創建</a>
+						<input id="chk_pri" class="easyui-switchbutton" data-options="onText:'私有',offText:'公開'">
+						<input id="txt_roomName" class="easyui-textbox"  style="width:110px;">
+					</div>
+					<!--
+					<div class="group hori">
+						<a id="btn_enter" href="#" class="easyui-linkbutton loginMenuButton" >進入</a>
+						<input id="txt_enterName" class="easyui-textbox"  style="width:173px">
+					</div>
+					-->
+					<div id="div_container" class="group">
+						<!-- for script -->
+					</div>
+				</div>
+				<div data-options="region:'center',title:'center title'">
+					<div class="group">
+						<div id="txt_channel">txt_channel</div>
+						<div id="txt_expiration">txt_expiration</div>
+						<div id="txt_gameId">txt_gameId</div>
+						<div id="txt_roomID">txt_id</div>
+						<div id="txt_isPrivate">txt_isPrivate</div>
+						<div id="txt_owner">txt_owner</div>
+						<div id="txt_players">txt_players</div>
+						<div id="txt_roles">txt_roles</div>
+						<div id="txt_state">txt_state</div>
+					</div>
+					<div class="group">
+						<!--
+						<input id="tog_priority" class="easyui-switchbutton" data-options="onText:'先攻',offText:'後攻'">
+							-->
+						<a id="btn_enter" href="#" class="easyui-linkbutton loginMenuButton" >進入</a>
+					</div>
+				</div>
 			</div>
-			<div class="group hori">
-				<a id="btn_create" href="#" class="easyui-linkbutton loginMenuButton" >創建</a>
-				<input id="chk_pri" class="easyui-switchbutton" data-options="onText:'私有',offText:'公開'">
-				<input id="txt_roomName" class="easyui-textbox"  style="width:110px;">
-			</div>
-			<div class="group hori">
-				<a id="btn_enter" href="#" class="easyui-linkbutton loginMenuButton" >進入</a>
-				<input id="txt_enterName" class="easyui-textbox"  style="width:173px">
-			</div>
-			<div id="div_container" class="group">
-				<!-- for script -->
-			</div>
+			
 		</div>
 		
 		<div id="dia_command" class="easyui-dialog" title="邀戰通知" data-options="iconCls:'icon-help',closed:true" style="width:300px; padding:10px">
@@ -122,6 +149,7 @@
 		<script name="model" src="js/model.js"></script>
 
 		<script name="test">
+		/*
 			var user = 'han'
 			model.newRoom(user, function(err, room){
 			    if( err ){
@@ -169,7 +197,7 @@
 						}
 					})
 				}
-			})
+			})*/
 		</script>
 
 		<script>
@@ -191,6 +219,61 @@
 			var win_login = $("#win_login" );
 			var playerName = '';
 			
+			txt_id.textbox({
+				value:"vic"
+			});
+			
+			selectRoom( 0 );
+			
+			function getUserName(){
+				return txt_id.textbox( 'getValue' );
+			}
+			
+			function showRoomDetail( room ){
+				var txt_channel = $("#txt_channel" );
+				var txt_expiration = $("#txt_expiration" );
+				var txt_gameId = $("#txt_gameId" );
+				var txt_roomID = $("#txt_roomID" );
+				var txt_isPrivate = $("#txt_isPrivate" );
+				var txt_owner = $("#txt_owner" );
+				var txt_players = $("#txt_players" );
+				var txt_roles = $("#txt_roles" );
+				var txt_state = $("#txt_state" );
+				
+				txt_channel.html( room.Channel );
+				txt_expiration.html( room.Expiration );
+				txt_gameId.html( room.GameID );
+				txt_roomID.html( room.ID );
+				txt_isPrivate.html( room.IsPrivate );
+				txt_owner.html( room.Owner );
+				txt_players.html( room.Players );
+				txt_roles.html( room.Roles );
+				txt_state.html( room.State );
+				
+				btn_enter.attr( 'roomId', room.ID);
+			}
+			
+			function selectRoom( id ){
+				showListRoom( function( val ){
+					if( val.length == 0 ) return;
+					var totalCount = val.length;
+					if( id > totalCount - 1 ){
+						id = totalCount - 1;
+					}
+					showRoomDetail( val[id] );
+				});
+			}
+			
+			function showListRoom( cb ){
+				model.roomList( function( error, val){
+					if( error == null ){
+						listRoom( val );
+						if( cb != null ) cb( val );
+					}
+				});
+			}
+			
+			/*
 			function login( user ){
 				model.joinLobby(user, {
 					onopen: function(){
@@ -214,7 +297,7 @@
 					}
 				})
 			}
-			
+			*/
 			chk_pri.switchbutton({
 				onChange:function( chk ){
 					pri = chk;
@@ -223,23 +306,17 @@
 			
 			btn_login.linkbutton({
 				onClick:function(){
-					var id = txt_id.textbox( 'getValue' );
-					if( id != '' ){
-						login( id );
-					}
+					// get facebook id
 				}
 			});
+			
 			btn_create.linkbutton({
 				onClick:function(){
-					var roomName = txt_roomName.textbox( 'getValue' );
-					if( roomName != '' ){
-						model.newRoom( playerName, 25, function( error, val ){
-							if( error == null ) {
-								model.roomList( function( error, val){
-									if( error == null ){
-										listRoom( val );
-									}
-								});
+					var userName = getUserName();
+					if( userName != '' ){
+						model.newRoom(userName, function(err, room){
+							if( err == null ) {
+								selectRoom(1000);
 							}
 						});
 					}
@@ -247,6 +324,57 @@
 			});
 			btn_enter.linkbutton({
 				onClick:function(){
+					var enterId = btn_enter.attr( 'roomId' );
+					model.joinRoom(enterId, getUserName(), function(err, res){
+						if( err ){
+							console.log(err)
+						} else {
+							var players = res.Players;
+							if( players.length >= 2){
+								model.updateRoom(enterId, {
+									userA: players[0],
+									userB: players[1]
+								}, function(err, res){
+									if( err ){
+										console.log(err)
+									} else {
+										model.startGame(enterId, function(err, res){
+											if( err ){
+												console.log(err)
+											} else {
+												// call haxe
+												
+												
+												$('#win_login' ).window( 'close' );
+												
+											/*
+												model.collectCommand(enterId, "vic", function(err, res){
+													if( err ){
+														console.log(err)
+													} else {
+														var passCmd = res[0]
+														model.pushCommand(enterId, passCmd, function(err, res){
+															if( err ){
+																console.log(err)
+															} else {
+																model.collectCommand(enterId, user, function(err, res){
+																	console.log(arguments)
+																})
+															}
+														})
+													}
+												})
+												*/
+											}
+										})
+									}
+								})
+							}
+							
+							
+						}
+					})
+				/*
 					var enterName = txt_enterName.textbox( 'getValue' );
 					if( enterName != '' ){
 						model.joinRoom( enterName, playerName, function(error, val){
@@ -263,27 +391,22 @@
 							}
 						});
 					}
+					*/
 				}
 			});
-			
 			
 			function listRoom( ary_room ){
 				acc_leftPanel.accordion( 'select', 1 );
 				div_container.empty();
 				for( var i = 0; i < ary_room.length; ++i ){
-					var roomButton = $('<a href="#" class="easyui-linkbutton roomButton" style="width:248px" >' + ary_room[i].ID + '</a>' );
+					var roomButton = $('<a href="#" class="easyui-linkbutton roomButton" style="width:248px" >' + ary_room[i].Owner + '</a>' );
 					roomButton.attr( 'roomId', ary_room[i].ID );
 					roomButton.linkbutton( {
-						onClick:function(){
-							var roomId = $(this).attr('roomId');
-							model.joinRoom( roomId, playerName, function(error, val){
-								if( error == null ){
-									var playerId = val.Players[0];
-									var enemyId = val.Players[1];
-									win_login.window( 'close' );
-								}
-							});
-						}
+						onClick:(function(pressId){
+							return function(){
+								selectRoom( pressId );
+							}
+						})(i)
 					});
 					div_container.append( roomButton );
 				}
