@@ -1,2 +1,2 @@
-set GOPATH=C:\Users\Vic\Documents\Custom\Server\git\particle\goapp
-..\go_appengine\goapp deploy goapp\src
+set GOPATH=C:\Users\final\Documents\Vic\Github\particle\goapp
+C:\Users\final\Documents\Vic\go_appengine\goapp.bat deploy goapp\src

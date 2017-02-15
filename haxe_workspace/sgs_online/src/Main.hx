@@ -14,6 +14,17 @@ class Main
 	public static var async:Dynamic = untyped __js__('async');
 	
 	public function new(){
+		
+		
+		Browser.window.setField( 'onHtmlClick', onHtmlClick );
+	}
+	
+	static function main() 
+	{
+		new Main();
+	}		
+	
+	function createGame(){
 		function gameStart( context:Dynamic ) {
 			trace( context );
 			var app =  new AppController();
@@ -46,14 +57,7 @@ class Main
 				gameStart( context );
 			}
 		});
-		
-		Browser.window.setField( 'onHtmlClick', onHtmlClick );
 	}
-	
-	static function main() 
-	{
-		new Main();
-	}		
 	
 	function onHtmlClick( type:String, val:Dynamic ){
 		switch( type ){
@@ -61,6 +65,7 @@ class Main
 				trace( val );
 				GameInfo.userName = val.user;
 				GameInfo.roomID = val.room.ID;
+				createGame();
 				/*
 				var players:Dynamic = val.room.Players;
 				for ( i in 0...1 ){

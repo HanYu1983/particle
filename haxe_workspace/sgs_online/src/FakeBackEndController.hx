@@ -7,7 +7,9 @@ package;
 class FakeBackEndController extends BasicController
 {
 	private var players:Array<Dynamic> = new Array<Dynamic>();
-
+	
+	private var tableInfo:Dynamic;
+	
 	public function new(_uid:String="") 
 	{
 		super(_uid);
@@ -28,12 +30,11 @@ class FakeBackEndController extends BasicController
 	}
 	
 	public function createPlayerDeck( callback:Dynamic -> Void ){
-		var ret = new Array<Dynamic>();
+		
 		clearDeckByPlayerId(0);
 		for ( i in 0...50 ) {
 			var uuid = Tools.uuid();
 			addPlayerDeckCard(0, uuid );
-			ret.push( uuid );
 		}
 		callback( getAll() );
 	}
@@ -53,7 +54,23 @@ class FakeBackEndController extends BasicController
 	}
 	
 	public function getAll():Array<Dynamic>{
-		return players;
+		return tableInfo;
+		//return players;
+	}
+	
+	public function syncModel( ?cb:Dynamic -> Void ){
+		GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
+			if ( err == null ){
+				tableInfo = val;
+				if ( cb != null ) cb( tableInfo );
+			}
+		});
+	}
+	
+	public function collectCommand(){
+		GameInfo.collectCommand( function( err:Dynamic, val:Dynamic ){
+			trace( err, val );
+		});
 	}
 	
 	private function getPlayerDeck( id:Int ):Dynamic {

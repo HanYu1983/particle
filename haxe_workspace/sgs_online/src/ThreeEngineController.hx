@@ -124,7 +124,10 @@ class ThreeEngineController extends BasicController
 	}
 	
 	public function syncGameView(){
-		var model = mediator.getAll();
+		var model:Dynamic = mediator.getAll();
+		var currentPhase = model.CurrentPhase;
+		
+		/*
 		var playerModel:Dynamic = model[0];
 		var enemyModel:Dynamic = model[1];
 		
@@ -137,6 +140,7 @@ class ThreeEngineController extends BasicController
 		
 		syncOnePlayer( playerModel, true );
 		syncOnePlayer( enemyModel );
+		*/
 	}
 	
 	private function syncDeck( oneModel:Dynamic, isPlayer:Bool = false ){

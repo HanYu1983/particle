@@ -32,8 +32,6 @@ class AppController
 		backendController = new FakeBackEndController();
 		backendController.mediator = this;
 		gameStart();
-		
-		
 	}
 	
 	public function addWebglListener( event:String, action:Dynamic -> Void){
@@ -48,7 +46,12 @@ class AppController
 		threeEngineController.initGame();
 		keyboardController.start();
 		
-		
+		backendController.syncModel( function( val:Dynamic ){
+			threeEngineController.syncGameView();
+			
+			backendController.collectCommand();
+		});
+		/*
 		function createOneCards(deck:Dynamic, isPlayer:Bool = false){
 			var pos:Dynamic = null;
 			if ( isPlayer ){
@@ -68,6 +71,7 @@ class AppController
 			createOneCards( args[0].deck, true );
 			createOneCards( args[1].deck );
 		});
+		*/
 	}
 	
 	public function getAll():Dynamic{
