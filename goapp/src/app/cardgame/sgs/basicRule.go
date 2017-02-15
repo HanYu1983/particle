@@ -6,6 +6,7 @@ import (
 	"errors"
 	"appengine"
 	core "app/cardgame/core"
+	"fmt"
 )
 
 // 121.1. 处于整备状态的单位不能发起战斗和宣告攻击，也不能启动费用中带有{横置}的能力。
@@ -54,7 +55,10 @@ func CollectCommand(ctx appengine.Context, game Game, user string, cmd []core.Co
 		// 如果卡在自己手牌上並且是錦囊
 		// 就可以瞬發
 		if card.CardStack == Hand {
-			cardType := CardType(ctx, game, card.ID)
+			cardType, err := QueryCardType(ctx, game, card.ID)
+			if err != nil {
+				return cmd, nil
+			}
 			if info.Owner == user && cardType == Tactics {
 				cmd = append(cmd, core.Command{User: user, Description: "支付這張{cardId}...", Parameters: nil})
 			}
@@ -225,7 +229,11 @@ func IsUnitDead(ctx appengine.Context, game Game, cardId string) (bool, int, err
 		}
 		damageCnt += 1
 	}
-	def := info.Defence
+	var err error
+	def, err := QueryDef(ctx, game, cardId)
+	if err != nil {
+		return false, 0, err
+	}
 	if damageCnt >= def {
 		return true, 0, nil
 	}
@@ -260,7 +268,7 @@ func UnitAttackProcedure(ctx appengine.Context, game Game, user string, cardId s
 	opponent := Opponent(slotUser)
 	opponentSlotId := PositionID(opponent, slotNum)
 	// 取得自身攻擊力
-	attack, err := ComputeNormalAttack(ctx, game, cardId)
+	attack, err := QueryAtk(ctx, game, cardId)
 	if err != nil {
 		return game, err
 	}
@@ -280,7 +288,7 @@ func UnitAttackProcedure(ctx appengine.Context, game Game, user string, cardId s
 			return game, err
 		}
 		// 查看有沒有破竹、並取得破竹力
-		powers, _, _, err := CheckKeyword(破竹, ctx, game, cardId)
+		powers, _, _, err := QueryKeyword(ctx, 破竹, game, cardId)
 		// 如果單位還存在並且有破竹
 		if isDead == false && len(powers) > 0 {
 			power := powers[0]
@@ -452,22 +460,20 @@ func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game
 		cost := c.Parameters.Get("cost")
 		costIds := c.Parameters["costIds"]
 		cardId := c.Parameters.Get("cardId")
-
-		game, err = ConsumeCost(ctx, game, user, cost, costIds)
+		slotNum, err := strconv.Atoi(c.Parameters.Get("slotNum"))
 		if err != nil {
-			return game, err
+			return game, errors.New(fmt.Sprintf("slotNum下錯:%v", slotNum))
 		}
 		cardState := game.CardState[cardId]
 		if cardState.Owner != user {
 			return game, errors.New("不是Onwer")
 		}
-		slotNum, err := strconv.Atoi(c.Parameters.Get("slotNum"))
+		game, err = ConsumeCost(ctx, game, user, cost, costIds)
 		if err != nil {
 			return game, err
 		}
 		fromStackId := user + Hand
 		toStackId := PositionID(user, slotNum)
-		// 先處理下單位，再處理替任
 		game, err = PlayCardFrom(ctx, game, fromStackId, toStackId, cardId)
 		if err != nil {
 			return game, err
@@ -525,7 +531,7 @@ func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game
 			if hasOppositeUnit {
 				// 迎擊
 				// 注意：是給移動的單位傷害
-				powers, _, _, err := CheckKeyword(迎擊, ctx, game, oppositeUnit)
+				powers, _, _, err := QueryKeyword(ctx, 迎擊, game, oppositeUnit)
 				if err != nil {
 					return game, err
 				}
@@ -538,7 +544,7 @@ func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game
 				// 突擊
 				// 後處理的先發動，所以突擊會先結算
 				// 注意：是給對面單位傷害
-				powers, _, _, err = CheckKeyword(突擊, ctx, game, cardId)
+				powers, _, _, err = QueryKeyword(ctx, 突擊, game, cardId)
 				if err != nil {
 					return game, err
 				}
@@ -657,7 +663,7 @@ func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game
 			}
 		}
 		// 取得對手防禦力
-		defence, err := ComputeNormalDefence(ctx, game, damageType, cardId)
+		defence, err := QueryDamageDef(ctx, damageType, game, cardId)
 		if err != nil {
 			return game, err
 		}
@@ -668,12 +674,12 @@ func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game
 		}
 		// TODO 防止性能力
 		// 處理抵抗
-		_, powers, _, err := CheckKeyword(抵抗, ctx, game, cardId)
+		_, powers, _, err := QueryKeyword(ctx, 抵抗, game, cardId)
 		if err != nil {
 			return game, err
 		}
 		for _, power := range powers {
-			isMatch, err := IfMatchResistance(ctx, power, game, cardId)
+			isMatch, err := QueryIfMatchResistance(ctx, power, game, cardId)
 			if err != nil {
 				return game, err
 			}
@@ -698,7 +704,7 @@ func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game
 		cardId := c.Parameters.Get("cardId")
 		attackId := c.Parameters.Get("attackId")
 		// 如果傷害來源有致命
-		_, _, hasKill, err := CheckKeyword(致命, ctx, game, attackId)
+		_, _, hasKill, err := QueryKeyword(ctx, 致命, game, attackId)
 		if err != nil {
 			return game, err
 		}
@@ -728,7 +734,7 @@ func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game
 		info := game.CardState[attackId]
 		// 處理斬獲
 		// 打掉多少血回復多少血
-		_, _, hasGetLife, err := CheckKeyword(斬獲, ctx, game, attackId)
+		_, _, hasGetLife, err := QueryKeyword(ctx, 斬獲, game, attackId)
 		if err != nil {
 			return game, err
 		}

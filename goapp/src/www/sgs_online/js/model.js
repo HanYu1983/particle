@@ -54,7 +54,7 @@ var model = model || {};
     },
     onerror: function(){},
     onclose: function(){}
-  }
+    }
      */
     function joinLobby(user, cbObj){
         post('fn/sgs/room/lobby/join', {user: user}, function(err, res){

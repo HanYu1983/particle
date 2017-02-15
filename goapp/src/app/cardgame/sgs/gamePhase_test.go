@@ -4,7 +4,7 @@ import (
 	"appengine/aetest"
 	"testing"
 	"appengine"
-	core "../core"
+	core "app/cardgame/core"
 )
 
 func TestPhase(t *testing.T) {

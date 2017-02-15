@@ -4,7 +4,7 @@ import (
 	"appengine/aetest"
 	"testing"
 	"appengine"
-	core "../core"
+	core "app/cardgame/core"
 	"appengine/datastore"
 )
 
@@ -84,7 +84,7 @@ func TestBasicAttack(t *testing.T) {
 	var passCmd core.Command
 	for _, cmd := range cmds {
 		switch  {
-		case cmd.Description == "讓過":
+		case cmd.Description == "{user}讓過":
 			passCmd = cmd
 		case cmd.Parameters.Get("cardId") == unitRef22:
 			unitRef22AttackCmd = cmd

@@ -167,21 +167,25 @@ const (
 	Territory
 )
 
+type CardText struct {
+	Name      string
+	CardID    string
+	Cost      string
+	Color     string
+	ColorCost string
+	Class     string
+	Attack    string
+	Defence   string
+	Text      string
+	Package   string
+}
+
 type CardState struct {
 	RefID         string
-	Name          string
-	CardID        string
-	Cost          int
-	Color         string
-	ColorCost     string
-	Class         string
-	Attack        int
-	Defence       int
 	ControlPlayer string
-	Text          string
 	Owner         string
 	Token         []string
-	Package string
+	MetaData      map[string]interface{}
 }
 
 type Player struct {
@@ -338,7 +342,7 @@ func AddCard(ctx appengine.Context, game Game, stackName string, owner string, r
 		return game, "", err
 	}
 	game.CardTable = table
-	game, err = OnAddCard(ctx, game, cardId, ref, owner)
+	game, err = OnCardInit(ctx, game, cardId, ref, owner)
 	if err != nil {
 		return game, "", err
 	}
@@ -353,7 +357,7 @@ func AddCards(ctx appengine.Context, game Game, stackName string, owner string, 
 	}
 	game.CardTable = table
 	for i := range cardIds {
-		game, err = OnAddCard(ctx, game, cardIds[i], ref[i], owner)
+		game, err = OnCardInit(ctx, game, cardIds[i], ref[i], owner)
 		if err != nil {
 			return game, nil, err
 		}
@@ -373,95 +377,21 @@ func ConsumeCost(ctx appengine.Context, game Game, user string, cost string, car
 	var err error
 	// 建立空的slot
 	// 這個slot必須被填滿
-	costSlot := make([]string, len([]rune(cost)))
+	costSlot := make([]bool, len([]rune(cost)))
 	for _, cardId := range cardIds {
 		// 支付消費
 		// 填充slot
-		game, err = OnConsumeCost(ctx, game, user, cost, costSlot, cardId)
+		game, err = OnCardConsumeCost(ctx, game, user, cost, costSlot, cardId)
 		if err != nil {
 			return game, err
 		}
 	}
 	// 檢查slot是不是都被填滿了
 	for _, slot := range costSlot {
-		if slot == "" {
+		if slot == false {
 			return game, ErrManaIsntEnougth
 		}
 	}
-	return game, nil
-}
-
-func OnAddCard(ctx appengine.Context, game Game, cardId string, refId string, owner string) (Game, error) {
-	var state CardState
-	switch refId {
-	case "22":
-		state = CardState{
-			Name:          "青州探马",
-			Class:         "單位~斥候",
-			Cost:          1,
-			Color:         ColorBlue,
-			ColorCost:     ColorBlue,
-			Attack:        1,
-			Defence:       2,
-			Text:          "转移（具有转移能力且不处于整备状态的单位可于你回合的{通常}时机向相邻的空阵地进行一次移动）",
-			RefID:         refId,
-			Owner:         owner,
-			ControlPlayer: owner,
-		}
-	case "28":
-		state = CardState{
-			CardID:    "28",
-			Name:      "三江城蛮丁",
-			Cost:      2,
-			Color:     ColorRed,
-			ColorCost: ColorRed,
-			Class:     "单位边境 ~ 南蛮/步兵",
-			Package:   "乱华",
-			Attack:    1,
-			Defence:   1,
-			Text:      "暴乱1；迎击2",
-			RefID:         refId,
-			Owner:         owner,
-			ControlPlayer: owner,
-		}
-	case "85":
-		state = CardState{
-			Name:          "飞将的利刃·张辽",
-			Class:         "无双单位 ~ 武将",
-			Cost:          5,
-			Color:         ColorGray,
-			ColorCost:     ColorGray + ColorGray,
-			Attack:        5,
-			Defence:       1,
-			Text:          "神速；转移；突击1。当张辽对一名对手造成伤害时，该玩家弃一张牌。你可以从手上展示一张无双名称为【吕布】的牌，若如此做，你抓一张牌。",
-			RefID:         refId,
-			Owner:         owner,
-			ControlPlayer: owner,
-		}
-	case "105":
-		state = CardState{
-			CardID:    "105",
-			Name:      "年轻贤君·孙权",
-			Cost:      5,
-			Color:     ColorGreen,
-			ColorCost: ColorGreen + ColorGreen,
-			Class:     "无双单位 ~ 主公",
-			Package:   "初阵",
-			Attack:    3,
-			Defence:   5,
-			Text:      "由你操控的其他吴势力单位各+1/+1。{通常}{X}，弃X张牌→抓X张牌。此能力每回合只能启动一次。",
-			RefID:         refId,
-			Owner:         owner,
-			ControlPlayer: owner,
-		}
-	}
-	game.CardState[cardId] = state
-	return game, nil
-}
-
-// 支付消費
-// 如何支付全部由卡牌自定
-func OnConsumeCost(ctx appengine.Context, game Game, user string, cost string, costSlot []string, cardId string) (Game, error) {
 	return game, nil
 }
 
@@ -478,58 +408,47 @@ func QueryUnitInOppositePosition(ctx appengine.Context, game Game, stack string)
 	return game.CardTable.CardStack[oppositeStack].Card[0], true, nil
 }
 
-func IfMatchResistance(ctx appengine.Context, keyword string, game Game, cardId string) (bool, error) {
-	return true, nil
-}
-
-func CardType(ctx appengine.Context, game Game, cardId string) int {
-	info := game.CardState[cardId]
-	if strings.Contains(info.Class, "锦囊") {
-		return Tactics
+func OnCardInit(ctx appengine.Context, game Game, cardId string, refId string, owner string) (Game, error) {
+	game.CardState[cardId] = CardState{
+		RefID:         refId,
+		Owner:         owner,
+		ControlPlayer: owner,
+		MetaData:      map[string]interface{}{},
 	}
-	return Weapon
+	return game, nil
 }
 
-// 計算基本攻擊力
-func ComputeNormalAttack(ctx appengine.Context, game Game, cardId string) (int, error) {
-	info := game.CardState[cardId]
-	return info.Attack, nil
-}
-
-// 計算基本防禦力
-// 沒有堅靭基本上都是0
-func ComputeNormalDefence(ctx appengine.Context, game Game, damageType string, cardId string) (int, error) {
-	// 處理堅靭
-	powers, _, _, err := CheckKeyword(堅靭, ctx, game, cardId)
-	if err != nil {
-		return 0, err
-	}
-	var total int
-	for _, power := range powers {
-		total += power
-	}
-	return total, nil
-}
-
-func CheckKeyword(keyword string, ctx appengine.Context, game Game, cardId string) ([]int, []string, bool, error) {
-	card := game.CardTable.Card[cardId]
-	switch keyword {
-	case 迎擊:
-		if card.Ref == "28" {
-			return []int{2}, nil, true, nil
+// 支付消費
+// 如何支付全部由卡牌自定
+func OnCardConsumeCost(ctx appengine.Context, game Game, user string, cost string, costSlot []bool, cardId string) (Game, error) {
+	ref := game.CardTable.Card[cardId].Ref
+	switch ref {
+	default:
+		var err error
+		clz, err := QueryCardType(ctx, game, cardId)
+		if err != nil {
+			return game, err
 		}
-	case 突擊:
-		if card.Ref == "85" {
-			return []int{1}, nil, true, nil
+		if clz == Territory {
+			card := game.CardTable.Card[cardId]
+			if card.Direction == core.DirectionTap {
+				return game, nil
+			}
+			text, err := QueryCardText(ctx, game, cardId)
+			if err != nil {
+				return game, err
+			}
+			for idx, c := range costSlot {
+				if c == false {
+					targetColor := []rune(cost)[idx]
+					if string(targetColor) == text.Color {
+						costSlot[idx] = true
+						card.Direction = core.DirectionTap
+						game.CardTable.Card[cardId] = card
+					}
+				}
+			}
 		}
-	case 致命:
-		return nil, nil, false, nil
-	case 堅靭:
-		return nil, nil, false, nil
-	//return []int{1, 1}, nil, true, nil
-	case 抵抗:
-		return nil, nil, false, nil
-	//return nil, []string{"單位"}, true, nil
 	}
-	return nil, nil, false, nil
+	return game, nil
 }
