@@ -48,4 +48,8 @@ class DomController extends BasicController
 	public function clearCmdButton(){
 		untyped __js__("window.clearCmdbutton")();
 	}
+	
+	public function syncView( info:Dynamic ){
+		untyped __js__("window.showTableInfo")( info );
+	}
 }

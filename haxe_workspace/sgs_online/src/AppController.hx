@@ -46,10 +46,14 @@ class AppController
 		threeEngineController.initGame();
 		keyboardController.start();
 		
+		onClickRefreshFromHtml();
+		
+		/*
 		backendController.syncModel( function( val:Dynamic ){
 			threeEngineController.syncGameView();
 			backendController.collectCommand();
 		});
+		*/
 		/*
 		function createOneCards(deck:Dynamic, isPlayer:Bool = false){
 			var pos:Dynamic = null;
@@ -74,27 +78,27 @@ class AppController
 	}
 	
 	public function onClickCmdFromHtml( val:Dynamic ){
-		
-		GameInfo.pushCommand( val, function( err:Dynamic, val:Dynamic ){
-			trace(err, val );
-			
-			GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
-				trace(err, val );
-				
-				if ( GameInfo.isMe( val ) ){
-					GameInfo.collectCommand( function( err:Dynamic, val:Dynamic ){
-						trace(err, val );
-						domController.createCmdButton( val );
-					});
-				}else{
-					domController.clearCmdButton();
-				}
-			});
-		});
+		pushCommandAndSyncView( val );
+	}
+	
+	public function onClickRefreshFromHtml(){
+		backendController.syncModel( syncHtmlAndThree );
+	}
+	
+	public function createCmdButton( val:Dynamic ){
+		domController.createCmdButton(val);
+	}
+	
+	public function clearCmdButton(){
+		domController.clearCmdButton();
 	}
 	
 	public function getAll():Dynamic{
 		return backendController.getAll();
+	}
+	
+	public function syncHtml( val:Dynamic ){
+		domController.syncView( val );
 	}
 	/*
 	public function moveCardsFromCards( from:Array<String>, to:Array<String>, ?pos:Dynamic = null ) {
@@ -112,10 +116,11 @@ class AppController
 	
 	public function onFUp() {
 		//threeEngineController.flipCard();
-		
+		/*
 		backendController.drawCardFromPlayerDeckToPlayerHand( 0, 0, function( args:Dynamic ){
 			threeEngineController.syncGameView();
 		});
+		*/
 	}
 	
 	public function onAUp(){
@@ -128,5 +133,14 @@ class AppController
 	
 	public function isInTheHand( uid:String ) {
 		return backendController.isInTheHand( uid);
+	}
+	
+	private function pushCommandAndSyncView( val:Dynamic ){
+		backendController.pushCommand( val, syncHtmlAndThree );
+	}
+	
+	private function syncHtmlAndThree( val:Dynamic ){
+		domController.syncView( val );
+		threeEngineController.syncView( val );
 	}
 }

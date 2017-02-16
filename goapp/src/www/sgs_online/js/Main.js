@@ -29,38 +29,32 @@ AppController.prototype = {
 		this.domController.setWebgl(dom);
 	}
 	,gameStart: function() {
-		var _g = this;
 		this.threeEngineController.initGame();
 		this.keyboardController.start();
-		this.backendController.syncModel(function(val) {
-			_g.threeEngineController.syncGameView();
-			_g.backendController.collectCommand();
-		});
+		this.onClickRefreshFromHtml();
 	}
 	,onClickCmdFromHtml: function(val) {
-		var _g = this;
-		GameInfo.pushCommand(val,function(err,val1) {
-			haxe_Log.trace(err,{ fileName : "AppController.hx", lineNumber : 79, className : "AppController", methodName : "onClickCmdFromHtml", customParams : [val1]});
-			GameInfo.tableInfo(function(err1,val2) {
-				haxe_Log.trace(err1,{ fileName : "AppController.hx", lineNumber : 82, className : "AppController", methodName : "onClickCmdFromHtml", customParams : [val2]});
-				if(GameInfo.isMe(val2)) GameInfo.collectCommand(function(err2,val3) {
-					haxe_Log.trace(err2,{ fileName : "AppController.hx", lineNumber : 86, className : "AppController", methodName : "onClickCmdFromHtml", customParams : [val3]});
-					_g.domController.createCmdButton(val3);
-				}); else _g.domController.clearCmdButton();
-			});
-		});
+		this.pushCommandAndSyncView(val);
+	}
+	,onClickRefreshFromHtml: function() {
+		this.backendController.syncModel($bind(this,this.syncHtmlAndThree));
+	}
+	,createCmdButton: function(val) {
+		this.domController.createCmdButton(val);
+	}
+	,clearCmdButton: function() {
+		this.domController.clearCmdButton();
 	}
 	,getAll: function() {
 		return this.backendController.getAll();
+	}
+	,syncHtml: function(val) {
+		this.domController.syncView(val);
 	}
 	,getCardByUuid: function(uuid) {
 		return this.threeEngineController.getCardByUuid(uuid);
 	}
 	,onFUp: function() {
-		var _g = this;
-		this.backendController.drawCardFromPlayerDeckToPlayerHand(0,0,function(args) {
-			_g.threeEngineController.syncGameView();
-		});
 	}
 	,onAUp: function() {
 		this.threeEngineController.selectPrev();
@@ -70,6 +64,13 @@ AppController.prototype = {
 	}
 	,isInTheHand: function(uid) {
 		return this.backendController.isInTheHand(uid);
+	}
+	,pushCommandAndSyncView: function(val) {
+		this.backendController.pushCommand(val,$bind(this,this.syncHtmlAndThree));
+	}
+	,syncHtmlAndThree: function(val) {
+		this.domController.syncView(val);
+		this.threeEngineController.syncView(val);
 	}
 };
 var BasicController = function(_uid) {
@@ -161,6 +162,9 @@ DomController.prototype = $extend(BasicController.prototype,{
 	,clearCmdButton: function() {
 		window.clearCmdbutton();
 	}
+	,syncView: function(info) {
+		window.showTableInfo(info);
+	}
 });
 var FakeBackEndController = function(_uid) {
 	if(_uid == null) _uid = "";
@@ -199,15 +203,20 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 	,syncModel: function(cb) {
 		var _g = this;
 		GameInfo.tableInfo(function(err,val) {
-			if(err == null) {
-				_g.tableInfo = val;
-				if(cb != null) cb(_g.tableInfo);
-			}
+			if(GameInfo.isMe(val)) _g.collectCommand(); else _g.mediator.clearCmdButton();
+			cb(val);
 		});
 	}
 	,collectCommand: function() {
-		GameInfo.collectCommand(function(err,cmds) {
-			if(err == null) window.createCmdButton(cmds);
+		var _g = this;
+		GameInfo.collectCommand(function(err,val) {
+			_g.mediator.createCmdButton(val);
+		});
+	}
+	,pushCommand: function(cmd,cb) {
+		var _g = this;
+		GameInfo.pushCommand(cmd,function(err,val) {
+			_g.syncModel(cb);
 		});
 	}
 	,getPlayerDeck: function(id) {
@@ -319,6 +328,9 @@ Main.prototype = {
 		case "onCmdClick":
 			if(this.app != null) this.app.onClickCmdFromHtml(val);
 			break;
+		case "onFreshClick":
+			if(this.app != null) this.app.onClickRefreshFromHtml();
+			break;
 		}
 	}
 };
@@ -418,14 +430,14 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 		var handCount = handCards.length;
 		if(handCount == 0) return;
 		this.currentId = 0;
-		this.syncGameView();
+		this.syncView(null);
 	}
 	,selectNext: function() {
 		var handCards = this.mediator.getAll()[0].hand;
 		var handCount = handCards.length;
 		if(handCount == 0) return;
 		if(++this.currentId > handCount - 1) this.currentId = 0;
-		this.syncGameView();
+		this.syncView(null);
 	}
 	,selectPrev: function() {
 		var handCards = this.mediator.getAll()[0].hand;
@@ -435,16 +447,14 @@ ThreeEngineController.prototype = $extend(BasicController.prototype,{
 			var max = handCount - 1;
 			this.currentId = max;
 		}
-		this.syncGameView();
+		this.syncView(null);
 	}
 	,initGame: function() {
 		var board = this.getMeshByName("Board");
 		board.children[0].material.map = this.context.textures[0];
 		board.children[0].material.needsUpdate = true;
 	}
-	,syncGameView: function() {
-		var model = this.mediator.getAll();
-		var currentPhase = model.CurrentPhase;
+	,syncView: function(val) {
 	}
 	,syncDeck: function(oneModel,isPlayer) {
 		if(isPlayer == null) isPlayer = false;
@@ -564,11 +574,6 @@ Tools.uuid = function() {
 	while(a++ < 36) uid.add((a * 51 & 52) != 0?StringTools.hex((a ^ 15) != 0?8 ^ Std["int"](Math.random() * ((a ^ 20) != 0?16:4)):4):"-");
 	return uid.b.toLowerCase();
 };
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -581,25 +586,6 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";

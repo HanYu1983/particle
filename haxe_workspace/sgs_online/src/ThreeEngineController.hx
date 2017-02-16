@@ -93,7 +93,7 @@ class ThreeEngineController extends BasicController
 		var handCount = handCards.length;
 		if ( handCount == 0 ) return;
 		currentId = 0;
-		syncGameView();
+		syncView(null);
 	}
 	
 	public function selectNext(){
@@ -103,7 +103,7 @@ class ThreeEngineController extends BasicController
 		if ( ++currentId > handCount - 1 ){
 			currentId = 0;
 		}
-		syncGameView();
+		syncView(null);
 	}
 	
 	public function selectPrev(){
@@ -114,7 +114,7 @@ class ThreeEngineController extends BasicController
 			var max:Int = handCount - 1;
 			currentId = max;
 		}
-		syncGameView();
+		syncView(null);
 	}
 	
 	public function initGame() {
@@ -123,9 +123,11 @@ class ThreeEngineController extends BasicController
 		board.children[0].material.needsUpdate = true;
 	}
 	
-	public function syncGameView(){
-		var model:Dynamic = mediator.getAll();
-		var currentPhase = model.CurrentPhase;
+	public function syncView( val:Dynamic ){
+		//mediator.syncHtml( val );
+		
+		//var model:Dynamic = mediator.getAll();
+		//var currentPhase = model.CurrentPhase;
 		
 		/*
 		var playerModel:Dynamic = model[0];

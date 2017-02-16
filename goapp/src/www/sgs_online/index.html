@@ -53,6 +53,10 @@
 						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
 						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
 					</div>
+					<div class="group">
+						<a id="btn_refresh" href="#" class="easyui-linkbutton loginMenuButton" >refresh</a>
+						<div id="txt_tableInfo"></div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -102,6 +106,7 @@
 						<a id="btn_enter" href="#" class="easyui-linkbutton loginMenuButton" >進入</a>
 						<a id="btn_start" href="#" class="easyui-linkbutton loginMenuButton" >開始遊戲</a>
 					</div>
+					
 				</div>
 			</div>
 			
@@ -208,6 +213,7 @@
 		
 		function initPage(){
 			var btn_login = $("#btn_login" );
+			var btn_refresh = $("#btn_refresh" );
 			var btn_create = $("#btn_create" );
 			var btn_enter = $("#btn_enter" );
 			var btn_start = $("#btn_start" );
@@ -224,6 +230,12 @@
 			txt_id.textbox({
 				value:"vic"
 			});
+			
+			btn_refresh.linkbutton( {
+				onClick:function(){
+					onHtmlClick( 'onFreshClick' );
+				}
+			})
 			
 			selectRoom( 0 );
 			
@@ -465,9 +477,15 @@
 				div_cmdContainer.empty();
 			}
 			
-			//export
+			function showTableInfo( info ){
+				var txt_tableInfo = $('#txt_tableInfo' );
+				txt_tableInfo.html( info.CurrentPhase );
+			}
+			
+			//export for haxe
 			window.createCmdButton = createCmdButton;
 			window.clearCmdbutton = clearCmdbutton;
+			window.showTableInfo = showTableInfo;
 		}
 		</script>
 	</body>

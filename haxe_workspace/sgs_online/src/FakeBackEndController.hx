@@ -57,7 +57,7 @@ class FakeBackEndController extends BasicController
 		return tableInfo;
 		//return players;
 	}
-	
+	/*
 	public function syncModel( ?cb:Dynamic -> Void ){
 		GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
 			if ( err == null ){
@@ -66,12 +66,27 @@ class FakeBackEndController extends BasicController
 			}
 		});
 	}
+	*/
+	public function syncModel( cb:Dynamic -> Void ){
+		GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
+			if ( GameInfo.isMe( val ) ){
+				collectCommand();
+			}else{
+				mediator.clearCmdButton();
+			}
+			cb( val );
+		});
+	}
 	
 	public function collectCommand(){
-		GameInfo.collectCommand( function( err:Dynamic, cmds:Dynamic ){
-			if ( err == null ){
-				untyped __js__("window.createCmdButton")( cmds );
-			}
+		GameInfo.collectCommand( function( err:Dynamic, val:Dynamic ){
+			mediator.createCmdButton( val );
+		});
+	}
+	
+	public function pushCommand( cmd:Dynamic, cb:Dynamic -> Void ){
+		GameInfo.pushCommand( cmd, function( err:Dynamic, val:Dynamic ){
+			syncModel( cb );
 		});
 	}
 	

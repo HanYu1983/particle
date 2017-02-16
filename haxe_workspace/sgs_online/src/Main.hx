@@ -68,9 +68,9 @@ class Main
 				GameInfo.roomData = val.room;
 				createGame();
 			case 'onCmdClick':
-				if ( app != null ){
-					app.onClickCmdFromHtml( val );
-				}
+				if ( app != null ) app.onClickCmdFromHtml( val );
+			case 'onFreshClick':
+				if ( app != null ) app.onClickRefreshFromHtml();
 		}
 	}
 }
