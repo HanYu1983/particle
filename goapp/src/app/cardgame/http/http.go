@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"strconv"
+	"lib/game"
 )
 
 type Handler func(ctx appengine.Context, w http.ResponseWriter, r *http.Request)
@@ -333,6 +334,9 @@ func StartGame(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 		room, err = core.LoadRoom(ctx, roomId, GroupKey(ctx))
 		if err != nil {
 			return err
+		}
+		if room.State == core.RoomStatePlaying {
+			return nil
 		}
 		game, err := sgs.NewGame(ctx, room.ID)
 		if err != nil {
