@@ -75,6 +75,26 @@ func QueryCardText(ctx appengine.Context, game Game, cardId string) (CardText, e
 	return CardText{}, nil
 }
 
+func QueryCost(ctx appengine.Context, game Game, cardId string) (string, error) {
+	ref := game.CardTable.Card[cardId].Ref
+	switch ref {
+	default:
+		var err error
+		text, err := QueryCardText(ctx, game, cardId)
+		if err != nil {
+			return "", err
+		}
+		if text.Cost == "X" {
+			return "X", nil
+		}
+		cost, err := strconv.Atoi(text.Cost)
+		if err != nil {
+			return "", err
+		}
+		costStr := fmt.Sprintf("%v%v", text.ColorCost, strings.Repeat("無", cost))
+		return costStr, nil
+	}
+}
 
 func QueryAtk(ctx appengine.Context, game Game, cardId string) (int, error) {
 	ref := game.CardTable.Card[cardId].Ref
@@ -130,6 +150,9 @@ func QueryCardClass(ctx appengine.Context, game Game, cardId string) (int, error
 	}
 	if strings.Contains(text.Class, "领土") {
 		return ClassTerritory, nil
+	}
+	if strings.Contains(text.Class, "單位") {
+		return ClassUnit, nil
 	}
 	return ClassWeapon, nil
 }

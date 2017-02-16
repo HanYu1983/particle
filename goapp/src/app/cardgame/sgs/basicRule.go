@@ -57,13 +57,18 @@ func CollectCommand(ctx appengine.Context, game Game, user string, cmd []core.Co
 			}
 			// 如果手牌有單位，就可以下
 			if info.Owner == user && cardType == ClassUnit {
+				cost, err := QueryCost(ctx, game, card.ID)
+				if err != nil {
+					return cmd, err
+				}
 				cmd = append(cmd, core.Command{
 					User:        user,
 					Description: "{user}使用{costIds}支付{cost}將{action}加入堆疊",
 					Parameters: url.Values{
 						"user":       {user},
 						"cardId":     {card.ID},
-						"action:":    {"打出單位{cardId}到{slotNum}"},
+						"cost":       {cost},
+						"action":    {"打出單位{cardId}到{slotNum}"},
 						"permitUser": {Opponent(user)},
 					},
 				})

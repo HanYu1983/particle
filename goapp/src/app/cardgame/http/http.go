@@ -108,7 +108,10 @@ func NewRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 	err = datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
 		var err error
 		room = core.NewRoom(uuid.New().String(), user)
-		room = core.AddPlayer(room, user, sgs.UserA)
+		room, err = core.AddPlayer(room, user, sgs.UserA)
+		if err != nil {
+			return err
+		}
 		err = core.SaveRoom(ctx, room, GroupKey(ctx))
 		if err != nil {
 			return err
@@ -143,7 +146,10 @@ func JoinRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 		if len(room.Players) == 1 {
 			role = sgs.UserB
 		}
-		room = core.AddPlayer(room, user, role)
+		room, err = core.AddPlayer(room, user, role)
+		if err != nil {
+			return err
+		}
 		err = core.SaveRoom(ctx, room, GroupKey(ctx))
 		if err != nil {
 			return err
@@ -264,6 +270,8 @@ func UpdateRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 	isPrivate := r.PostForm.Get("isPrivate")
 	userA := r.PostForm.Get("userA")
 	userB := r.PostForm.Get("userB")
+	userACards := r.PostForm["userACards"]
+	userBCards := r.PostForm["userBCards"]
 
 	var err error
 	var room core.Room
@@ -287,6 +295,12 @@ func UpdateRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				return err
 			}
+		}
+		if len(userACards) > 0 {
+			room.UserACards = userACards
+		}
+		if len(userBCards) > 0{
+			room.UserBCards = userBCards
 		}
 		err = core.SaveRoom(ctx, room, GroupKey(ctx))
 		if err != nil {
@@ -320,7 +334,18 @@ func StartGame(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
+		if room.State == core.RoomStatePlaying {
+			return nil
+		}
 		game, err := sgs.NewGame(ctx, room.ID)
+		if err != nil {
+			return err
+		}
+		game, _, err = sgs.AddCards(ctx, game, sgs.UserA+sgs.Hand, sgs.UserA, room.UserACards)
+		if err != nil {
+			return err
+		}
+		game, _, err = sgs.AddCards(ctx, game, sgs.UserB+sgs.Hand, sgs.UserB, room.UserBCards)
 		if err != nil {
 			return err
 		}
