@@ -73,6 +73,26 @@ class AppController
 		*/
 	}
 	
+	public function onClickCmdFromHtml( val:Dynamic ){
+		
+		GameInfo.pushCommand( val, function( err:Dynamic, val:Dynamic ){
+			trace(err, val );
+			
+			GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
+				trace(err, val );
+				
+				if ( GameInfo.isMe( val ) ){
+					GameInfo.collectCommand( function( err:Dynamic, val:Dynamic ){
+						trace(err, val );
+						domController.createCmdButton( val );
+					});
+				}else{
+					domController.clearCmdButton();
+				}
+			});
+		});
+	}
+	
 	public function getAll():Dynamic{
 		return backendController.getAll();
 	}

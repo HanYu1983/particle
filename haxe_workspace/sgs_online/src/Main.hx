@@ -22,12 +22,14 @@ class Main
 	static function main() 
 	{
 		new Main();
-	}		
+	}	
+	
+	var app:AppController;
 	
 	function createGame(){
 		function gameStart( context:Dynamic ) {
 			//trace( context );
-			var app =  new AppController();
+			app = new AppController();
 			app.context = context;
 			app.start();
 		}
@@ -62,28 +64,13 @@ class Main
 	function onHtmlClick( type:String, val:Dynamic ){
 		switch( type ){
 			case 'onGameStart':
-				//trace( val );
 				GameInfo.userName = val.user;
 				GameInfo.roomData = val.room;
-				//GameInfo.roomID = val.room.ID;
 				createGame();
 			case 'onCmdClick':
-				GameInfo.pushCommand( val, function( err:Dynamic, val:Dynamic ){
-					trace(err, val );
-					
-					GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
-						trace(err, val );
-						
-						if ( GameInfo.isMe( val ) ){
-							GameInfo.collectCommand( function( err:Dynamic, val:Dynamic ){
-								trace(err, val );
-								if( err == null ) untyped __js__("window.createCmdButton")( val );
-							});
-						}else{
-							untyped __js__("window.clearCmdbutton")();
-						}
-					});
-				});
+				if ( app != null ){
+					app.onClickCmdFromHtml( val );
+				}
 		}
 	}
 }

@@ -37,6 +37,19 @@ AppController.prototype = {
 			_g.backendController.collectCommand();
 		});
 	}
+	,onClickCmdFromHtml: function(val) {
+		var _g = this;
+		GameInfo.pushCommand(val,function(err,val1) {
+			haxe_Log.trace(err,{ fileName : "AppController.hx", lineNumber : 79, className : "AppController", methodName : "onClickCmdFromHtml", customParams : [val1]});
+			GameInfo.tableInfo(function(err1,val2) {
+				haxe_Log.trace(err1,{ fileName : "AppController.hx", lineNumber : 82, className : "AppController", methodName : "onClickCmdFromHtml", customParams : [val2]});
+				if(GameInfo.isMe(val2)) GameInfo.collectCommand(function(err2,val3) {
+					haxe_Log.trace(err2,{ fileName : "AppController.hx", lineNumber : 86, className : "AppController", methodName : "onClickCmdFromHtml", customParams : [val3]});
+					_g.domController.createCmdButton(val3);
+				}); else _g.domController.clearCmdButton();
+			});
+		});
+	}
 	,getAll: function() {
 		return this.backendController.getAll();
 	}
@@ -141,6 +154,12 @@ DomController.prototype = $extend(BasicController.prototype,{
 	}
 	,addWebglListener: function(event,action) {
 		this.dom_webgl.on(event,action);
+	}
+	,createCmdButton: function(val) {
+		window.createCmdButton(val);
+	}
+	,clearCmdButton: function() {
+		window.clearCmdbutton();
 	}
 });
 var FakeBackEndController = function(_uid) {
@@ -264,10 +283,11 @@ Main.main = function() {
 };
 Main.prototype = {
 	createGame: function() {
+		var _g = this;
 		var gameStart = function(context) {
-			var app = new AppController();
-			app.context = context;
-			app.start();
+			_g.app = new AppController();
+			_g.app.context = context;
+			_g.app.start();
 		};
 		var waterFunc = [function(cb) {
 			vic.tools.loadDAE("asset/scene.dae",function(dae) {
@@ -297,16 +317,7 @@ Main.prototype = {
 			this.createGame();
 			break;
 		case "onCmdClick":
-			GameInfo.pushCommand(val,function(err,val1) {
-				haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 72, className : "Main", methodName : "onHtmlClick", customParams : [val1]});
-				GameInfo.tableInfo(function(err1,val2) {
-					haxe_Log.trace(err1,{ fileName : "Main.hx", lineNumber : 75, className : "Main", methodName : "onHtmlClick", customParams : [val2]});
-					if(GameInfo.isMe(val2)) GameInfo.collectCommand(function(err2,val3) {
-						haxe_Log.trace(err2,{ fileName : "Main.hx", lineNumber : 79, className : "Main", methodName : "onHtmlClick", customParams : [val3]});
-						if(err2 == null) window.createCmdButton(val3);
-					}); else window.clearCmdbutton();
-				});
-			});
+			if(this.app != null) this.app.onClickCmdFromHtml(val);
 			break;
 		}
 	}
