@@ -41,6 +41,8 @@ const (
 	Position3 = "Position3"
 	Position4 = "Position4"
 	Position5 = "Position5"
+	//
+	Free = "Free"
 	// 放逐區
 	ExileZone = "ExileZone"
 )
@@ -156,15 +158,15 @@ const (
 
 const (
 	// 戰器
-	Weapon = iota
+	ClassWeapon = iota
 	// 單位
-	Unit
+	ClassUnit
 	// 陣略
-	Strategy
+	ClassStrategy
 	// 錦囊
-	Tactics
+	ClassTactics
 	// 領土
-	Territory
+	ClassTerritory
 )
 
 type CardText struct {
@@ -267,6 +269,10 @@ func NewGame(ctx appengine.Context, gameId string) (Game, error) {
 	if err != nil {
 		return Game{}, err
 	}
+	table, err = core.AddCardStack(ctx, table, UserA+Free, Position)
+	if err != nil {
+		return Game{}, err
+	}
 	// 建立B玩家牌堆
 	table, err = core.AddCardStack(ctx, table, UserB+Library, Library)
 	if err != nil {
@@ -301,6 +307,10 @@ func NewGame(ctx appengine.Context, gameId string) (Game, error) {
 		return Game{}, err
 	}
 	table, err = core.AddCardStack(ctx, table, UserB+Position5, Position)
+	if err != nil {
+		return Game{}, err
+	}
+	table, err = core.AddCardStack(ctx, table, UserB+Free, Position)
 	if err != nil {
 		return Game{}, err
 	}
@@ -425,11 +435,11 @@ func OnCardConsumeCost(ctx appengine.Context, game Game, user string, cost strin
 	switch ref {
 	default:
 		var err error
-		clz, err := QueryCardType(ctx, game, cardId)
+		clz, err := QueryCardClass(ctx, game, cardId)
 		if err != nil {
 			return game, err
 		}
-		if clz == Territory {
+		if clz == ClassTerritory {
 			card := game.CardTable.Card[cardId]
 			if card.Direction == core.DirectionTap {
 				return game, nil

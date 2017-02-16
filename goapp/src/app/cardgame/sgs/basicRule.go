@@ -35,7 +35,11 @@ func CollectCommand(ctx appengine.Context, game Game, user string, cmd []core.Co
 	// 收集指令
 	for _, card := range game.CardTable.Card {
 		info := game.CardState[card.ID]
-		// 行動階段單位可以攻擊
+		cardType, err := QueryCardClass(ctx, game, card.ID)
+		if err != nil {
+			return cmd, err
+		}
+		// 行動階段
 		if game.CurrentPhase == ActionPhase {
 			// 如果在陣地上並且操控玩家是自己
 			// 就可以攻擊
@@ -51,23 +55,73 @@ func CollectCommand(ctx appengine.Context, game Game, user string, cmd []core.Co
 					})
 				}
 			}
+			// 如果手牌有單位，就可以下
+			if info.Owner == user && cardType == ClassUnit {
+				cmd = append(cmd, core.Command{
+					User:        user,
+					Description: "{user}使用{costIds}支付{cost}將{action}加入堆疊",
+					Parameters: url.Values{
+						"user":       {user},
+						"cardId":     {card.ID},
+						"action:":    {"打出單位{cardId}到{slotNum}"},
+						"permitUser": {Opponent(user)},
+					},
+				})
+			}
+			// 如果手牌有領土，就可以下
+			if info.Owner == user && cardType == ClassTerritory {
+				cmd = append(cmd, core.Command{
+					User:        user,
+					Description: "{user}使用{costIds}支付{cost}將{action}加入堆疊",
+					Parameters: url.Values{
+						"user":       {user},
+						"cardId":     {card.ID},
+						"action":     {"打出領土{cardId}，面向為{face}"},
+						"face":       {core.FaceOpen},
+						"permitUser": {Opponent(user)},
+					},
+				})
+			}
+
+			// 如果手牌有非領土，就可以下暗地
+			if info.Owner == user && cardType != ClassTerritory {
+				cmd = append(cmd, core.Command{
+					User:        user,
+					Description: "{user}使用{costIds}支付{cost}將{action}加入堆疊",
+					Parameters: url.Values{
+						"user":       {user},
+						"cardId":     {card.ID},
+						"action":     {"打出領土{cardId}，面向為{face}"},
+						"face":       {core.FaceClose},
+						"permitUser": {Opponent(user)},
+					},
+				})
+			}
 		}
 		// 如果卡在自己手牌上並且是錦囊
 		// 就可以瞬發
 		if card.CardStack == Hand {
-			cardType, err := QueryCardType(ctx, game, card.ID)
 			if err != nil {
 				return cmd, nil
 			}
-			if info.Owner == user && cardType == Tactics {
-				cmd = append(cmd, core.Command{User: user, Description: "支付這張{cardId}...", Parameters: nil})
+			if info.Owner == user && cardType == ClassTactics {
+				cmd = append(cmd, core.Command{
+					User:        user,
+					Description: "{user}使用{costIds}支付{cost}將{action}加入堆疊",
+					Parameters: url.Values{
+						"user":       {user},
+						"cardId":     {card.ID},
+						"action:":    {"打出錦囊{cardId}"},
+						"permitUser": {Opponent(user)},
+					},
+				})
 			}
 		}
 	}
 	if isStackEmpty {
 		// 堆疊為空時才能讓出優先權
 		if game.PriorityPlayer == user {
-			cmd = append(cmd, core.Command{User: UserSys, Description: "{user}讓過", Parameters: url.Values{"user":{user}}})
+			cmd = append(cmd, core.Command{User: UserSys, Description: "{user}讓過", Parameters: url.Values{"user": {user}}})
 		}
 		// 堆疊為空時才能使用轉移
 	}
@@ -454,31 +508,62 @@ func BasicCommandHandler(ctx appengine.Context, game Game, c core.Command) (Game
 		if err != nil {
 			return game, err
 		}
-	case "{user}使用{costIds}支付{cost}打出單位{cardId}到{slotNum}":
+	case "{user}使用{costIds}支付{cost}將{action}加入堆疊":
 		var err error
 		user := c.Parameters.Get("user")
 		cost := c.Parameters.Get("cost")
 		costIds := c.Parameters["costIds"]
 		cardId := c.Parameters.Get("cardId")
-		slotNum, err := strconv.Atoi(c.Parameters.Get("slotNum"))
-		if err != nil {
-			return game, errors.New(fmt.Sprintf("slotNum下錯:%v", slotNum))
-		}
+		action := c.Parameters.Get("action")
+
 		cardState := game.CardState[cardId]
 		if cardState.Owner != user {
-			return game, errors.New("不是Onwer")
+			return game, errors.New("不是Owner")
 		}
 		game, err = ConsumeCost(ctx, game, user, cost, costIds)
 		if err != nil {
 			return game, err
 		}
 		fromStackId := user + Hand
-		toStackId := PositionID(user, slotNum)
-		game, err = PlayCardFrom(ctx, game, fromStackId, toStackId, cardId)
-		if err != nil {
-			return game, err
+		switch action {
+		case "打出單位{cardId}到{slotNum}":
+			slotNum, err := strconv.Atoi(c.Parameters.Get("slotNum"))
+			if err != nil {
+				return game, errors.New(fmt.Sprintf("slotNum下錯:%v", slotNum))
+			}
+			toStackId := PositionID(user, slotNum)
+			game, err = PlayCardFrom(ctx, game, fromStackId, toStackId, cardId)
+			if err != nil {
+				return game, err
+			}
+		case "打出錦囊{cardId}":
+
+		case "打出領土{cardId}，面向為{face}":
+			toStackId := user + TerritoryZone
+			face := c.Parameters.Get("face")
+			if face == "" {
+				return game, errors.New("面向選擇錯誤")
+			}
+			if face == core.FaceOpen {
+				// 正面下地必須是領土卡
+				clz, err := QueryCardClass(ctx, game, cardId)
+				if err != nil {
+					return game, err
+				}
+				if clz != ClassTerritory {
+					return game, errors.New("你出的不是領土")
+				}
+			}
+			// 改變朝向
+			card := game.CardTable.Card[cardId]
+			card.Face = face
+			game.CardTable.Card[cardId] = card
+			// 下領土
+			game, err = MoveCardProcedure(ctx, game, "下地", fromStackId, toStackId, cardId)
+			if err != nil {
+				return game, err
+			}
 		}
-		return game, nil
 	case "卡將移動":
 		cardId := c.Parameters.Get("cardId")
 		fromStackId := c.Parameters.Get("fromStackId")

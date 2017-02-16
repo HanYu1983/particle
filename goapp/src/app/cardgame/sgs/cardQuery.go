@@ -119,19 +119,19 @@ func QueryDef(ctx appengine.Context, game Game, cardId string) (int, error) {
 	}
 }
 
-func QueryCardType(ctx appengine.Context, game Game, cardId string) (int, error) {
+func QueryCardClass(ctx appengine.Context, game Game, cardId string) (int, error) {
 	var err error
 	text, err := QueryCardText(ctx, game, cardId)
 	if err != nil {
 		return 0, err
 	}
 	if strings.Contains(text.Class, "锦囊") {
-		return Tactics, nil
+		return ClassTactics, nil
 	}
 	if strings.Contains(text.Class, "领土") {
-		return Territory, nil
+		return ClassTerritory, nil
 	}
-	return Weapon, nil
+	return ClassWeapon, nil
 }
 
 func QueryKeyword(ctx appengine.Context, keyword string, game Game, cardId string) ([]int, []string, bool, error) {

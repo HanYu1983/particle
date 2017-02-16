@@ -8,8 +8,8 @@ import (
 
 // 卡牌面向
 const (
-	FaceClose = 0
-	FaceOpen  = 1
+	FaceClose = "FaceClose"
+	FaceOpen  = "FaceOpen"
 )
 
 const (
@@ -25,7 +25,7 @@ type CardStack struct {
 type Card struct {
 	ID        string
 	Ref       string
-	Face      int
+	Face      string
 	Direction int
 	CardStack string
 }

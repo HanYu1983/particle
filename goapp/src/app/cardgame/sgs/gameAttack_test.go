@@ -74,10 +74,6 @@ func TestBasicAttack(t *testing.T) {
 	cmds, err = CollectCommand(ctx, game, UserA, cmds)
 	t.Log(cmds)
 
-	if len(cmds) != 4 {
-		t.Fatal("必須有4個行動")
-	}
-
 	var unitRef22AttackCmd core.Command
 	var unitRef105AttackCmd core.Command
 	var unitRef85AttackCmd core.Command
@@ -86,11 +82,11 @@ func TestBasicAttack(t *testing.T) {
 		switch  {
 		case cmd.Description == "{user}讓過":
 			passCmd = cmd
-		case cmd.Parameters.Get("cardId") == unitRef22:
+		case cmd.Description == "{user}宣告{cardId}攻擊" && cmd.Parameters.Get("cardId") == unitRef22:
 			unitRef22AttackCmd = cmd
-		case cmd.Parameters.Get("cardId") == unitRef85:
+		case cmd.Description == "{user}宣告{cardId}攻擊" && cmd.Parameters.Get("cardId") == unitRef85:
 			unitRef85AttackCmd = cmd
-		case cmd.Parameters.Get("cardId") == unitRef105:
+		case cmd.Description == "{user}宣告{cardId}攻擊" && cmd.Parameters.Get("cardId") == unitRef105:
 			unitRef105AttackCmd = cmd
 		}
 	}
