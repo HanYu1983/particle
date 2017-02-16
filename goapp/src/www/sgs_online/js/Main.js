@@ -163,7 +163,7 @@ DomController.prototype = $extend(BasicController.prototype,{
 		window.clearCmdbutton();
 	}
 	,syncView: function(info) {
-		window.showTableInfo(info);
+		window.showTableInfo(info,{ isMe : GameInfo.isMe(info), user : GameInfo.userName});
 	}
 });
 var FakeBackEndController = function(_uid) {

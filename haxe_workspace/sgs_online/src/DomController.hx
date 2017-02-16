@@ -50,6 +50,6 @@ class DomController extends BasicController
 	}
 	
 	public function syncView( info:Dynamic ){
-		untyped __js__("window.showTableInfo")( info );
+		untyped __js__("window.showTableInfo")( info, {isMe:GameInfo.isMe( info ), user:GameInfo.userName } );
 	}
 }

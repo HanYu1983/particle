@@ -477,13 +477,12 @@
 				div_cmdContainer.empty();
 			}
 			
-			
-			
-			function showTableInfo( info ){
+			function showTableInfo( info, extra ){
 				var txt_tableInfo = $('#txt_tableInfo' );
-				var ary_phaseName = ['重置步驟', '準備步驟', '抓牌步驟','行動階段','結束步驟','棄牌步驟'];
-				txt_tableInfo.html( ary_phaseName[info.CurrentPhase] );
-				
+				var ary_phaseName = ['重置步驟','準備步驟','抓牌步驟','行動階段','結束步驟','棄牌步驟'];
+				var isMeStr = extra.isMe ? '我的':'對方的';
+				var userName = extra.user;
+				txt_tableInfo.html( userName + ':' + isMeStr + ary_phaseName[info.CurrentPhase] );
 			}
 			
 			//export for haxe
