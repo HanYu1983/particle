@@ -114,8 +114,8 @@ func TestBasicHttp(t *testing.T) {
 
 	t.Log("test2再次加入房間")
 	ret, err = Post(r, fmt.Sprintf("/fn/sgs/room/%v/join", roomId), "user=test2")
-	if err != nil {
-		t.Fatal(err)
+	if err == nil {
+		t.Fatal("重名玩家加入必須有錯誤")
 	}
 
 	t.Log("決定先手後手")

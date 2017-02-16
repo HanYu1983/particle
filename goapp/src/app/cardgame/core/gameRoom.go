@@ -19,6 +19,8 @@ type Room struct {
 	ID         string
 	Players    []string
 	Roles      []string
+	UserACards []string
+	UserBCards []string
 	GameID     string
 	Channel    string
 	State      int
@@ -61,10 +63,15 @@ func SendMessage(ctx appengine.Context, r Room, msg interface{}) error {
 	return nil
 }
 
-func AddPlayer(r Room, playerId, roleId string) Room {
+func AddPlayer(r Room, playerId, roleId string) (Room, error) {
+	for _, p := range r.Players {
+		if p == playerId {
+			return r, errors.New(fmt.Sprintf("%v已經加入", playerId))
+		}
+	}
 	r.Players = append(r.Players, playerId)
 	r.Roles = append(r.Roles, roleId)
-	return r
+	return r, nil
 }
 
 func ChangeRole(r Room, playerId, roleId string) (Room, error) {
