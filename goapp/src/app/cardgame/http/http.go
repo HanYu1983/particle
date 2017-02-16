@@ -13,7 +13,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"strconv"
-	"lib/game"
 )
 
 type Handler func(ctx appengine.Context, w http.ResponseWriter, r *http.Request)
