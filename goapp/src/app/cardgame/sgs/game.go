@@ -6,6 +6,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"fmt"
 )
 
 const (
@@ -389,6 +390,7 @@ func ConsumeCost(ctx appengine.Context, game Game, user string, cost string, car
 	// 這個slot必須被填滿
 	costSlot := make([]bool, len([]rune(cost)))
 	for _, cardId := range cardIds {
+		ctx.Infof("pay card %v", cardId)
 		// 支付消費
 		// 填充slot
 		game, err = OnCardConsumeCost(ctx, game, user, cost, costSlot, cardId)
@@ -399,7 +401,7 @@ func ConsumeCost(ctx appengine.Context, game Game, user string, cost string, car
 	// 檢查slot是不是都被填滿了
 	for _, slot := range costSlot {
 		if slot == false {
-			return game, ErrManaIsntEnougth
+			return game, errors.New(fmt.Sprintf("mana is not enougth. you pay:%v", costSlot))
 		}
 	}
 	return game, nil
@@ -434,27 +436,59 @@ func OnCardConsumeCost(ctx appengine.Context, game Game, user string, cost strin
 	ref := game.CardTable.Card[cardId].Ref
 	switch ref {
 	default:
-		var err error
-		clz, err := QueryCardClass(ctx, game, cardId)
-		if err != nil {
-			return game, err
-		}
-		if clz == ClassTerritory {
-			card := game.CardTable.Card[cardId]
+		card := game.CardTable.Card[cardId]
+		cardState := game.CardState[cardId]
+		// 處理領土區的卡
+		if card.CardStack == user+TerritoryZone {
+			// 不是自己的卡不能支付
+			if cardState.Owner != user {
+				return game, nil
+			}
+			// 已横置的卡不能支付
 			if card.Direction == core.DirectionTap {
 				return game, nil
 			}
-			text, err := QueryCardText(ctx, game, cardId)
-			if err != nil {
-				return game, err
-			}
-			for idx, c := range costSlot {
-				if c == false {
-					targetColor := []rune(cost)[idx]
-					if string(targetColor) == text.Color {
-						costSlot[idx] = true
-						card.Direction = core.DirectionTap
-						game.CardTable.Card[cardId] = card
+			if card.Face == core.FaceOpen {
+				// 處理亮領土
+				text, err := QueryCardText(ctx, game, cardId)
+				if err != nil {
+					return game, err
+				}
+				var payOk bool
+				for idx, c := range costSlot {
+					if c == false {
+						targetColor := []rune(cost)[idx]
+						if string(targetColor) == text.Color {
+							costSlot[idx] = true
+							card.Direction = core.DirectionTap
+							game.CardTable.Card[cardId] = card
+							payOk = true
+						}
+					}
+				}
+				// 沒有指定色需要支付, 支付任一個無
+				if payOk == false {
+					for idx, c := range costSlot {
+						if c == false {
+							targetColor := []rune(cost)[idx]
+							if string(targetColor) == "無" {
+								costSlot[idx] = true
+								card.Direction = core.DirectionTap
+								game.CardTable.Card[cardId] = card
+							}
+						}
+					}
+				}
+			} else {
+				// 處理暗領土
+				for idx, c := range costSlot {
+					if c == false {
+						targetColor := []rune(cost)[idx]
+						if string(targetColor) == "無" {
+							costSlot[idx] = true
+							card.Direction = core.DirectionTap
+							game.CardTable.Card[cardId] = card
+						}
 					}
 				}
 			}

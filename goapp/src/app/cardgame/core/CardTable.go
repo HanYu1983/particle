@@ -64,7 +64,7 @@ func AddCard(ctx appengine.Context, desk CardTable, stackName string, ref string
 		return desk, "", ErrCardStackNotExist
 	}
 	cardId := uuid.New().String()
-	desk.Card[cardId] = Card{ID: cardId, Ref: ref, CardStack: stackName}
+	desk.Card[cardId] = Card{ID: cardId, Ref: ref, CardStack: stackName, Face: FaceClose}
 
 	cardStack := desk.CardStack[stackName]
 	cardStack.Card = append(cardStack.Card, cardId)
