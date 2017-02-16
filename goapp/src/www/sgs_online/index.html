@@ -47,7 +47,7 @@
 					<img class="group top_left relative" src="asset/01030.jpg" />
 				</div>
 				<div title="指令" data-options="iconCls:'icon-reload',selected:true" style="padding:10px;">
-					<div class="group hori">
+					<div id="div_cmdContainer" class="group hori">
 						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
 						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
 						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
@@ -100,6 +100,7 @@
 						<input id="tog_priority" class="easyui-switchbutton" data-options="onText:'先攻',offText:'後攻'">
 							-->
 						<a id="btn_enter" href="#" class="easyui-linkbutton loginMenuButton" >進入</a>
+						<a id="btn_start" href="#" class="easyui-linkbutton loginMenuButton" >開始遊戲</a>
 					</div>
 				</div>
 			</div>
@@ -209,6 +210,7 @@
 			var btn_login = $("#btn_login" );
 			var btn_create = $("#btn_create" );
 			var btn_enter = $("#btn_enter" );
+			var btn_start = $("#btn_start" );
 			var txt_id = $("#txt_id" );
 			var txt_roomName = $("#txt_roomName" );
 			var txt_enterName = $("#txt_enterName" );
@@ -322,6 +324,40 @@
 					}
 				}
 			});
+			
+			btn_start.linkbutton({
+				onClick:function(){
+					var enterId = btn_enter.attr( 'roomId' );
+					model.startGame(enterId, function(err, res){
+						if( err ){
+							console.log(err)
+						} else {
+							onHtmlClick( 'onGameStart', {room:res, user:getUserName()} );
+							$('#win_login' ).window( 'close' );
+							
+						/*
+							model.collectCommand(enterId, "vic", function(err, res){
+								if( err ){
+									console.log(err)
+								} else {
+									var passCmd = res[0]
+									model.pushCommand(enterId, passCmd, function(err, res){
+										if( err ){
+											console.log(err)
+										} else {
+											model.collectCommand(enterId, user, function(err, res){
+												console.log(arguments)
+											})
+										}
+									})
+								}
+							})
+							*/
+						}
+					})
+				}
+			});
+			
 			btn_enter.linkbutton({
 				onClick:function(){
 					var enterId = btn_enter.attr( 'roomId' );
@@ -329,46 +365,39 @@
 						if( err ){
 							console.log(err)
 						} else {
+							console.log( res );
 							var players = res.Players;
 							if( players.length >= 2){
-								model.updateRoom(enterId, {
-									userA: players[0],
-									userB: players[1]
-								}, function(err, res){
-									if( err ){
-										console.log(err)
-									} else {
-										model.startGame(enterId, function(err, res){
-											if( err ){
-												console.log(err)
-											} else {
-												// call haxe
-												
-												onHtmlClick( 'onGameStart', {room:res, user:getUserName()} );
-												$('#win_login' ).window( 'close' );
-												
-											/*
-												model.collectCommand(enterId, "vic", function(err, res){
-													if( err ){
-														console.log(err)
-													} else {
-														var passCmd = res[0]
-														model.pushCommand(enterId, passCmd, function(err, res){
-															if( err ){
-																console.log(err)
-															} else {
-																model.collectCommand(enterId, user, function(err, res){
-																	console.log(arguments)
-																})
-															}
-														})
-													}
-												})
-												*/
-											}
-										})
-									}
-								})
+								var owner = res.Owner;
+								if( owner == getUserName() ){
+									model.startGame(enterId, function(err, res){
+										if( err ){
+											console.log(err)
+										} else {
+											onHtmlClick( 'onGameStart', {room:res, user:getUserName()} );
+											$('#win_login' ).window( 'close' );
+											
+										/*
+											model.collectCommand(enterId, "vic", function(err, res){
+												if( err ){
+													console.log(err)
+												} else {
+													var passCmd = res[0]
+													model.pushCommand(enterId, passCmd, function(err, res){
+														if( err ){
+															console.log(err)
+														} else {
+															model.collectCommand(enterId, user, function(err, res){
+																console.log(arguments)
+															})
+														}
+													})
+												}
+											})
+											*/
+										}
+									})
+								}
 							}
 							
 							
@@ -411,6 +440,34 @@
 					div_container.append( roomButton );
 				}
 			}
+			
+			function createCmdButton( cmds ){
+				var div_cmdContainer = $('#div_cmdContainer');
+				div_cmdContainer.empty();
+				for( var i = 0; i < cmds.length; ++i ){
+					var cmd = cmds[i];
+					var dom = $('<a href="#" class="easyui-linkbutton menuButton" >' + cmd.Description + '</a>' );
+					dom.attr( 'cmdstr', JSON.stringify(cmd) );
+					dom.linkbutton( {
+						onClick:function(){
+							console.log( this );
+							var cmdstr = $(this).attr('cmdstr');
+							onHtmlClick( 'onCmdClick', JSON.parse(cmdstr));
+						}
+					});
+					div_cmdContainer.append( dom );
+				}
+				
+			}
+			
+			function clearCmdbutton(){
+				var div_cmdContainer = $('#div_cmdContainer');
+				div_cmdContainer.empty();
+			}
+			
+			//export
+			window.createCmdButton = createCmdButton;
+			window.clearCmdbutton = clearCmdbutton;
 		}
 		</script>
 	</body>

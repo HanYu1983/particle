@@ -48,7 +48,6 @@ class AppController
 		
 		backendController.syncModel( function( val:Dynamic ){
 			threeEngineController.syncGameView();
-			
 			backendController.collectCommand();
 		});
 		/*

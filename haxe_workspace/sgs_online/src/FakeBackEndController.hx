@@ -68,8 +68,10 @@ class FakeBackEndController extends BasicController
 	}
 	
 	public function collectCommand(){
-		GameInfo.collectCommand( function( err:Dynamic, val:Dynamic ){
-			trace( err, val );
+		GameInfo.collectCommand( function( err:Dynamic, cmds:Dynamic ){
+			if ( err == null ){
+				untyped __js__("window.createCmdButton")( cmds );
+			}
 		});
 	}
 	

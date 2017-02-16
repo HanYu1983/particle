@@ -187,8 +187,8 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 		});
 	}
 	,collectCommand: function() {
-		GameInfo.collectCommand(function(err,val) {
-			haxe_Log.trace(err,{ fileName : "FakeBackEndController.hx", lineNumber : 72, className : "FakeBackEndController", methodName : "collectCommand", customParams : [val]});
+		GameInfo.collectCommand(function(err,cmds) {
+			if(err == null) window.createCmdButton(cmds);
 		});
 	}
 	,getPlayerDeck: function(id) {
@@ -208,14 +208,28 @@ FakeBackEndController.prototype = $extend(BasicController.prototype,{
 var GameInfo = function() {
 };
 GameInfo.__name__ = true;
+GameInfo.get_roomID = function() {
+	return GameInfo.roomData.ID;
+};
+GameInfo.get_roomRoles = function() {
+	return GameInfo.roomData.Roles;
+};
+GameInfo.get_roomPlayers = function() {
+	return GameInfo.roomData.Players;
+};
 GameInfo.tableInfo = function(cb) {
-	model.game(GameInfo.roomID,cb);
+	model.game(GameInfo.get_roomID(),cb);
 };
 GameInfo.collectCommand = function(cb) {
-	model.collectCommand(GameInfo.roomID,GameInfo.userName,cb);
+	model.collectCommand(GameInfo.get_roomID(),GameInfo.userName,cb);
 };
 GameInfo.pushCommand = function(passCmd,cb) {
-	model.pushCommand(GameInfo.roomID,passCmd,cb);
+	model.pushCommand(GameInfo.get_roomID(),passCmd,cb);
+};
+GameInfo.isMe = function(gameInfo) {
+	var priorityPlayer = gameInfo.PriorityPlayer;
+	var id = GameInfo.get_roomRoles().indexOf(priorityPlayer);
+	return GameInfo.get_roomPlayers()[id] == GameInfo.userName;
 };
 var KeyboardController = function(_uid) {
 	BasicController.call(this,_uid);
@@ -251,7 +265,6 @@ Main.main = function() {
 Main.prototype = {
 	createGame: function() {
 		var gameStart = function(context) {
-			haxe_Log.trace(context,{ fileName : "Main.hx", lineNumber : 29, className : "Main", methodName : "createGame"});
 			var app = new AppController();
 			app.context = context;
 			app.start();
@@ -279,10 +292,21 @@ Main.prototype = {
 	,onHtmlClick: function(type,val) {
 		switch(type) {
 		case "onGameStart":
-			haxe_Log.trace(val,{ fileName : "Main.hx", lineNumber : 65, className : "Main", methodName : "onHtmlClick"});
 			GameInfo.userName = val.user;
-			GameInfo.roomID = val.room.ID;
+			GameInfo.roomData = val.room;
 			this.createGame();
+			break;
+		case "onCmdClick":
+			GameInfo.pushCommand(val,function(err,val1) {
+				haxe_Log.trace(err,{ fileName : "Main.hx", lineNumber : 72, className : "Main", methodName : "onHtmlClick", customParams : [val1]});
+				GameInfo.tableInfo(function(err1,val2) {
+					haxe_Log.trace(err1,{ fileName : "Main.hx", lineNumber : 75, className : "Main", methodName : "onHtmlClick", customParams : [val2]});
+					if(GameInfo.isMe(val2)) GameInfo.collectCommand(function(err2,val3) {
+						haxe_Log.trace(err2,{ fileName : "Main.hx", lineNumber : 79, className : "Main", methodName : "onHtmlClick", customParams : [val3]});
+						if(err2 == null) window.createCmdButton(val3);
+					}); else window.clearCmdbutton();
+				});
+			});
 			break;
 		}
 	}
@@ -645,8 +669,6 @@ AppConfig.screenWidth = 800;
 AppConfig.screenHeight = 600;
 AppConfig.moveTime = .05;
 AppConfig.moveEasingType = "easeInSine";
-GameInfo.userName = "";
-GameInfo.roomID = "";
 Main.async = async;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

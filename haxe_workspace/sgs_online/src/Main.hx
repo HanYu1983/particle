@@ -26,7 +26,7 @@ class Main
 	
 	function createGame(){
 		function gameStart( context:Dynamic ) {
-			trace( context );
+			//trace( context );
 			var app =  new AppController();
 			app.context = context;
 			app.start();
@@ -62,19 +62,28 @@ class Main
 	function onHtmlClick( type:String, val:Dynamic ){
 		switch( type ){
 			case 'onGameStart':
-				trace( val );
+				//trace( val );
 				GameInfo.userName = val.user;
-				GameInfo.roomID = val.room.ID;
+				GameInfo.roomData = val.room;
+				//GameInfo.roomID = val.room.ID;
 				createGame();
-				/*
-				var players:Dynamic = val.room.Players;
-				for ( i in 0...1 ){
-					if ( players.indexOf( GameInfo.userName ) == -1 ){
-						GameInfo.opponentName = players[i];
-					}
-				}
-				*/
-				
+			case 'onCmdClick':
+				GameInfo.pushCommand( val, function( err:Dynamic, val:Dynamic ){
+					trace(err, val );
+					
+					GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
+						trace(err, val );
+						
+						if ( GameInfo.isMe( val ) ){
+							GameInfo.collectCommand( function( err:Dynamic, val:Dynamic ){
+								trace(err, val );
+								if( err == null ) untyped __js__("window.createCmdButton")( val );
+							});
+						}else{
+							untyped __js__("window.clearCmdbutton")();
+						}
+					});
+				});
 		}
 	}
 }
