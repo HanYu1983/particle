@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"strconv"
+	"appengine/channel"
 )
 
 type Handler func(ctx appengine.Context, w http.ResponseWriter, r *http.Request)
@@ -71,14 +72,20 @@ func RoomList(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 	Json(w, rooms, nil)
 }
 
-func NewLobby(w http.ResponseWriter, r *http.Request) {
+func GetLobby(w http.ResponseWriter, r *http.Request) {
 	defer Recover(w)
 	var err error
 	var room core.Room
 	ctx := appengine.NewContext(r)
 	err = datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
 		var err error
-		room = core.NewRoom("lobby", "admin")
+		room, err = core.LoadRoom(ctx, "lobby", GroupKey(ctx))
+		if err == datastore.ErrNoSuchEntity {
+			room = core.NewRoom("lobby", "admin")
+		} else if err != nil {
+			return err
+		}
+		// 每次都呼叫重建
 		room, err = core.CreateChannel(ctx, room)
 		if err != nil {
 			return err
@@ -154,7 +161,7 @@ func JoinRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		err = core.SendMessage(ctx, room, map[string]interface{}{
+		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
 			"desc": "{user}加入房間{roomId}",
 			"user": user,
 			"roomId":  roomId,
@@ -245,7 +252,7 @@ func SendRoomMessage(ctx appengine.Context, w http.ResponseWriter, r *http.Reque
 		if err != nil {
 			return err
 		}
-		err = core.SendMessage(ctx, room, map[string]interface{}{
+		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
 			"desc": "{user}傳送訊息{msg}",
 			"user": user,
 			"msg":  msg,
@@ -306,7 +313,7 @@ func UpdateRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		err = core.SendMessage(ctx, room, map[string]interface{}{
+		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
 			"desc": "{roomId}資料變更",
 			"roomId":  roomId,
 		})
@@ -359,7 +366,7 @@ func StartGame(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		err = core.SendMessage(ctx, room, map[string]interface{}{
+		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
 			"desc": "{roomId}開始遊戲",
 			"roomId":  roomId,
 		})
@@ -431,20 +438,27 @@ func PushCommand(ctx appengine.Context, w http.ResponseWriter, r *http.Request) 
 
 		var HandleCommand sgs.CommandHandler
 		HandleCommand = sgs.ReduceCommandHandler([]sgs.CommandHandler{sgs.BasicCommandHandler})
-		game, err = sgs.PerformCommandHandler(HandleCommand, ctx, game)
+		var history []core.Command
+		game, history, err = sgs.PerformCommandHandler(HandleCommand, ctx, game, history)
 		if err != nil {
 			switch err.(type) {
 			case sgs.TargetMissingError:
-				ctx.Infof("target missing:%v", err.Error())
-				return err
+				ctx.Infof("目標遺失錯誤:%v", err.Error())
 			default:
 				return err
 			}
 		}
-
 		err = sgs.SaveGame(ctx, game, GroupKey(ctx))
 		if err != nil {
 			return err
+		}
+		for _, c := range history{
+			err = channel.SendJSON(ctx, "lobby", c)
+			if err != nil {
+				ctx.Warningf("傳送訊息錯誤:%v", err.Error())
+				// 忽略錯誤
+				err = nil
+			}
 		}
 		return nil
 	}, nil)
@@ -521,19 +535,27 @@ func UpdateCommand(ctx appengine.Context, w http.ResponseWriter, r *http.Request
 
 		var HandleCommand sgs.CommandHandler
 		HandleCommand = sgs.ReduceCommandHandler([]sgs.CommandHandler{sgs.BasicCommandHandler})
-		game, err = sgs.PerformCommandHandler(HandleCommand, ctx, game)
+		var history []core.Command
+		game, history, err = sgs.PerformCommandHandler(HandleCommand, ctx, game, history)
 		if err != nil {
 			switch err.(type) {
 			case sgs.TargetMissingError:
-				ctx.Infof("target missing:%v", err.Error())
+				ctx.Infof("目標遺失錯誤:%v", err.Error())
 			default:
 				return err
 			}
 		}
-
 		err = sgs.SaveGame(ctx, game, GroupKey(ctx))
 		if err != nil {
 			return err
+		}
+		for _, c := range history{
+			err = channel.SendJSON(ctx, "lobby", c)
+			if err != nil {
+				ctx.Warningf("傳送訊息錯誤:%v", err.Error())
+				// 忽略錯誤
+				err = nil
+			}
 		}
 		return nil
 	}, nil)

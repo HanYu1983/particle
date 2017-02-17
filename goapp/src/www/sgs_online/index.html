@@ -155,6 +155,21 @@
 		<script name="model" src="js/model.js"></script>
 
 		<script name="test">
+
+			model.joinLobby({
+                onopen: function(){
+                    console.log('onopen')
+				},
+                onmessage: function(path, option){
+                    console.log(path.data)
+                },
+                onerror: function(){
+                    console.log('onerror')
+				},
+                onclose: function(){
+                    console.log('onclose')
+				}
+            })
 		/*
 			var user = 'han'
 			model.newRoom(user, function(err, room){

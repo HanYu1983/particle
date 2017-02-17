@@ -56,8 +56,8 @@ var model = model || {};
     onclose: function(){}
     }
      */
-    function joinLobby(user, cbObj){
-        post('fn/sgs/room/lobby/join', {user: user}, function(err, res){
+    function joinLobby(cbObj){
+        get('fn/sgs/room/lobby', {}, function(err, res){
             if( err != null ){
                 console.log(err)
                 cbObj.onerror(err)

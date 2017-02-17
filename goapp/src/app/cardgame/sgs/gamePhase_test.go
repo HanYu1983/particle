@@ -26,7 +26,7 @@ func TestPhase(t *testing.T) {
 	HandleCommand = ReduceCommandHandler([]CommandHandler{BasicCommandHandler})
 
 	handleLoop := func(ctx appengine.Context, game Game) (Game, error) {
-		game, err = PerformCommandHandler(HandleCommand, ctx, game)
+		game, _, err = PerformCommandHandler(HandleCommand, ctx, game, nil)
 		if err != nil {
 			switch err.(type) {
 			case TargetMissingError:

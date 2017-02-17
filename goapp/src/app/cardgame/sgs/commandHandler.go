@@ -3,6 +3,7 @@ package sgs
 import (
 	"appengine"
 	core "app/cardgame/core"
+	"net/url"
 )
 
 // 遺失目標錯誤
@@ -16,13 +17,14 @@ func (err TargetMissingError) Error() string {
 type CommandHandler func(appengine.Context, Game, core.Command) (Game, error)
 
 // 執行處理
-func PerformCommandHandler(handler CommandHandler, ctx appengine.Context, game Game) (Game, error) {
+func PerformCommandHandler(handler CommandHandler, ctx appengine.Context, game Game, history []core.Command) (Game, []core.Command, error) {
 	var c core.Command
 	var has bool
 	var err error
 	for {
 		c, has = core.GetCommand(ctx, game.Procedure)
 		ctx.Infof("%v", c)
+		history = append(history, c)
 		// 沒有指令就清空
 		if has == false {
 			game.Procedure = core.NewProcedure(ctx)
@@ -35,6 +37,12 @@ func PerformCommandHandler(handler CommandHandler, ctx appengine.Context, game G
 		if err != nil {
 			switch err.(type) {
 			case TargetMissingError:
+				history = append(history, core.Command{
+					Description:"目標遺失{msg}",
+					Parameters:url.Values{
+						"msg":{err.Error()},
+					},
+				})
 				p := game.Procedure
 				p = core.CompleteCommand(ctx, p, c)
 				// 處理完所有指令就清空
@@ -44,10 +52,10 @@ func PerformCommandHandler(handler CommandHandler, ctx appengine.Context, game G
 				}
 				game.Procedure = p
 			}
-			return game, err
+			return game, history, err
 		}
 	}
-	return game, nil
+	return game, history, nil
 }
 
 // 結合指定的處理者

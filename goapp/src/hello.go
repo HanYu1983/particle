@@ -79,7 +79,7 @@ func init() {
 
 	// 陣面對決
 	r := mux.NewRouter()
-	r.HandleFunc("/fn/sgs/admin/room/newLobby", sgs.NewLobby).Methods("GET")
+	r.HandleFunc("/fn/sgs/room/lobby", sgs.GetLobby).Methods("GET")
 	r.HandleFunc("/fn/sgs/room", sgs.AppengineContext(sgs.RoomList)).Methods("GET")
 	r.HandleFunc("/fn/sgs/room", sgs.AppengineContext(sgs.NewRoom)).Methods("POST")
 	r.HandleFunc("/fn/sgs/room/{roomId}", sgs.AppengineContext(sgs.GetRoom)).Methods("GET")
