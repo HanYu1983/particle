@@ -287,31 +287,6 @@
 				});
 			}
 			
-			/*
-			function login( user ){
-				model.joinLobby(user, {
-					onopen: function(){
-						playerName = user;
-						model.roomList( function( error, val){
-							if( error == null ){
-								listRoom( val );
-							}
-						});
-					},
-					onmessage: function(path, option){
-						var msg = path.data
-						console.log('onmessage'+msg)
-						
-					},
-					onerror: function(){
-						console.log('onerror')
-					},
-					onclose: function(){
-						console.log('onclose')
-					}
-				})
-			}
-			*/
 			chk_pri.switchbutton({
 				onChange:function( chk ){
 					pri = chk;
@@ -346,25 +321,6 @@
 						} else {
 							onHtmlClick( 'onGameStart', {room:res, user:getUserName()} );
 							$('#win_login' ).window( 'close' );
-							
-						/*
-							model.collectCommand(enterId, "vic", function(err, res){
-								if( err ){
-									console.log(err)
-								} else {
-									var passCmd = res[0]
-									model.pushCommand(enterId, passCmd, function(err, res){
-										if( err ){
-											console.log(err)
-										} else {
-											model.collectCommand(enterId, user, function(err, res){
-												console.log(arguments)
-											})
-										}
-									})
-								}
-							})
-							*/
 						}
 					})
 				}
@@ -377,62 +333,9 @@
 						if( err ){
 							console.log(err)
 						} else {
-							console.log( res );
-							var players = res.Players;
-							if( players.length >= 2){
-								var owner = res.Owner;
-								if( owner == getUserName() ){
-									model.startGame(enterId, function(err, res){
-										if( err ){
-											console.log(err)
-										} else {
-											onHtmlClick( 'onGameStart', {room:res, user:getUserName()} );
-											$('#win_login' ).window( 'close' );
-											
-										/*
-											model.collectCommand(enterId, "vic", function(err, res){
-												if( err ){
-													console.log(err)
-												} else {
-													var passCmd = res[0]
-													model.pushCommand(enterId, passCmd, function(err, res){
-														if( err ){
-															console.log(err)
-														} else {
-															model.collectCommand(enterId, user, function(err, res){
-																console.log(arguments)
-															})
-														}
-													})
-												}
-											})
-											*/
-										}
-									})
-								}
-							}
-							
-							
+						
 						}
 					})
-				/*
-					var enterName = txt_enterName.textbox( 'getValue' );
-					if( enterName != '' ){
-						model.joinRoom( enterName, playerName, function(error, val){
-							if( error == null ){
-								var playerId = val.Players[0];
-								var enemyId = val.Players[1];
-							}
-						});
-					}else{
-						model.autoMatch( playerName, function(error, val){
-							if( error == null ){
-								var playerId = val.Players[0];
-								var enemyId = val.Players[1];
-							}
-						});
-					}
-					*/
 				}
 			});
 			
@@ -477,9 +380,9 @@
 				div_cmdContainer.empty();
 			}
 			
+			var ary_phaseName = ['重置步驟','準備步驟','抓牌步驟','行動階段','結束步驟','棄牌步驟'];
 			function showTableInfo( info, extra ){
 				var txt_tableInfo = $('#txt_tableInfo' );
-				var ary_phaseName = ['重置步驟','準備步驟','抓牌步驟','行動階段','結束步驟','棄牌步驟'];
 				var isMeStr = extra.isMe ? '我的':'對方的';
 				var userName = extra.user;
 				txt_tableInfo.html( userName + ':' + isMeStr + ary_phaseName[info.CurrentPhase] );
