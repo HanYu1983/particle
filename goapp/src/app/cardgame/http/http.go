@@ -162,9 +162,9 @@ func JoinRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
-			"desc": "{user}加入房間{roomId}",
-			"user": user,
-			"roomId":  roomId,
+			"desc":   "{user}加入房間{roomId}",
+			"user":   user,
+			"roomId": roomId,
 		})
 		if err != nil {
 			return err
@@ -306,7 +306,7 @@ func UpdateRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 		if len(userACards) > 0 {
 			room.UserACards = userACards
 		}
-		if len(userBCards) > 0{
+		if len(userBCards) > 0 {
 			room.UserBCards = userBCards
 		}
 		err = core.SaveRoom(ctx, room, GroupKey(ctx))
@@ -314,8 +314,8 @@ func UpdateRoom(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
-			"desc": "{roomId}資料變更",
-			"roomId":  roomId,
+			"desc":   "{roomId}資料變更",
+			"roomId": roomId,
 		})
 		if err != nil {
 			return err
@@ -367,8 +367,8 @@ func StartGame(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
-			"desc": "{roomId}開始遊戲",
-			"roomId":  roomId,
+			"desc":   "{roomId}開始遊戲",
+			"roomId": roomId,
 		})
 		if err != nil {
 			return err
@@ -380,7 +380,6 @@ func StartGame(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	Json(w, room, nil)
 }
-
 
 func GetGame(ctx appengine.Context, w http.ResponseWriter, r *http.Request) {
 	defer Recover(w)
@@ -438,12 +437,20 @@ func PushCommand(ctx appengine.Context, w http.ResponseWriter, r *http.Request) 
 
 		var HandleCommand sgs.CommandHandler
 		HandleCommand = sgs.ReduceCommandHandler([]sgs.CommandHandler{sgs.BasicCommandHandler})
-		var history []core.Command
-		game, history, err = sgs.PerformCommandHandler(HandleCommand, ctx, game, history)
+		game, _, err = sgs.PerformCommandHandler(HandleCommand, ctx, game, nil)
 		if err != nil {
 			switch err.(type) {
 			case sgs.TargetMissingError:
-				ctx.Infof("目標遺失錯誤:%v", err.Error())
+				err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
+					"desc": "{roomId}的遊戲目標遺失錯誤{msg}",
+					"roomId": room.ID,
+					"msg:": err.Error(),
+				})
+				if err != nil {
+					ctx.Warningf("傳送訊息錯誤:%v", err.Error())
+					// 忽略錯誤
+					err = nil
+				}
 			default:
 				return err
 			}
@@ -452,13 +459,14 @@ func PushCommand(ctx appengine.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
-		for _, c := range history{
-			err = channel.SendJSON(ctx, "lobby", c)
-			if err != nil {
-				ctx.Warningf("傳送訊息錯誤:%v", err.Error())
-				// 忽略錯誤
-				err = nil
-			}
+		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
+			"desc":   "{roomId}的遊戲資料改變",
+			"roomId": room.ID,
+		})
+		if err != nil {
+			ctx.Warningf("傳送訊息錯誤:%v", err.Error())
+			// 忽略錯誤
+			err = nil
 		}
 		return nil
 	}, nil)
@@ -535,12 +543,21 @@ func UpdateCommand(ctx appengine.Context, w http.ResponseWriter, r *http.Request
 
 		var HandleCommand sgs.CommandHandler
 		HandleCommand = sgs.ReduceCommandHandler([]sgs.CommandHandler{sgs.BasicCommandHandler})
-		var history []core.Command
-		game, history, err = sgs.PerformCommandHandler(HandleCommand, ctx, game, history)
+
+		game, _, err = sgs.PerformCommandHandler(HandleCommand, ctx, game, nil)
 		if err != nil {
 			switch err.(type) {
 			case sgs.TargetMissingError:
-				ctx.Infof("目標遺失錯誤:%v", err.Error())
+				err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
+					"desc": "{roomId}的遊戲目標遺失錯誤{msg}",
+					"roomId": room.ID,
+					"msg:": err.Error(),
+				})
+				if err != nil {
+					ctx.Warningf("傳送訊息錯誤:%v", err.Error())
+					// 忽略錯誤
+					err = nil
+				}
 			default:
 				return err
 			}
@@ -549,13 +566,14 @@ func UpdateCommand(ctx appengine.Context, w http.ResponseWriter, r *http.Request
 		if err != nil {
 			return err
 		}
-		for _, c := range history{
-			err = channel.SendJSON(ctx, "lobby", c)
-			if err != nil {
-				ctx.Warningf("傳送訊息錯誤:%v", err.Error())
-				// 忽略錯誤
-				err = nil
-			}
+		err = channel.SendJSON(ctx, "lobby", map[string]interface{}{
+			"desc":   "{roomId}的遊戲資料改變",
+			"roomId": room.ID,
+		})
+		if err != nil {
+			ctx.Warningf("傳送訊息錯誤:%v", err.Error())
+			// 忽略錯誤
+			err = nil
 		}
 		return nil
 	}, nil)
