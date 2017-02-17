@@ -436,6 +436,7 @@ func PushCommand(ctx appengine.Context, w http.ResponseWriter, r *http.Request) 
 			switch err.(type) {
 			case sgs.TargetMissingError:
 				ctx.Infof("target missing:%v", err.Error())
+				return err
 			default:
 				return err
 			}

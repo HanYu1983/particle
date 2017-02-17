@@ -23,6 +23,7 @@ func PerformCommandHandler(handler CommandHandler, ctx appengine.Context, game G
 	for {
 		c, has = core.GetCommand(ctx, game.Procedure)
 		ctx.Infof("%v", c)
+		// 沒有指令就清空
 		if has == false {
 			game.Procedure = core.NewProcedure(ctx)
 			break
@@ -36,6 +37,11 @@ func PerformCommandHandler(handler CommandHandler, ctx appengine.Context, game G
 			case TargetMissingError:
 				p := game.Procedure
 				p = core.CompleteCommand(ctx, p, c)
+				// 處理完所有指令就清空
+				_, has = core.GetCommand(ctx, p)
+				if has == false {
+					p = core.NewProcedure(ctx)
+				}
 				game.Procedure = p
 			}
 			return game, err

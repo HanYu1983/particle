@@ -272,9 +272,7 @@ func TestPhase(t *testing.T) {
 
 	t.Log("玩家B選擇棄卡ID")
 	var c core.Command
-	p := game.Procedure
-
-	c, _ = core.GetCommand(ctx, p)
+	c, _ = core.GetCommand(ctx, game.Procedure)
 	t.Log(c)
 
 	if c.User != UserB {
@@ -282,7 +280,7 @@ func TestPhase(t *testing.T) {
 	}
 	c.Parameters["cardIds"] = []string{game.CardTable.CardStack[UserB+Hand].Card[0]}
 	// 資料補齊了，將責任者切換成系統
-	p.Command[c.ID].User = UserSys
+	game.Procedure.Command[c.ID].User = UserSys
 
 	t.Log("再讓系統處理")
 	game, _ = handleLoop(ctx, game)
