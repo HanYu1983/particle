@@ -30,10 +30,6 @@ func TestPlayCard(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	game, cardRef179_2, err := AddCard(ctx, game, UserA+TerritoryZone, UserA, "179")
-	if err != nil {
-		t.Fatal(err)
-	}
 	game, cardRef22, err := AddCard(ctx, game, UserA+Hand, UserA, "22")
 	if err != nil {
 		t.Fatal(err)
@@ -118,12 +114,12 @@ func TestPlayCard(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(game.CardTable.CardStack[UserA+TerritoryZone].Card) != 2 {
-		t.Fatal("領土區中必須有2張卡")
+	if len(game.CardTable.CardStack[UserA+TerritoryZone].Card) != 1 {
+		t.Fatal("領土區中必須有1張卡")
 	}
 
 	t.Log("指定2張地支付")
-	playRef22Cmd.Parameters["costIds"] = []string{cardRef179, cardRef179_2}
+	playRef22Cmd.Parameters["costIds"] = []string{cardRef179}
 	t.Log("下單位在第1個位置")
 	playRef22Cmd.Parameters.Set("slotNum", "1")
 	// 尋問對方要不要響應
@@ -154,9 +150,6 @@ func TestPlayCard(t *testing.T) {
 		t.Fatal("第1個陣必須有單位")
 	}
 	if game.CardTable.Card[cardRef179].Direction != core.DirectionTap {
-		t.Fatal("地必須被横置")
-	}
-	if game.CardTable.Card[cardRef179_2].Direction != core.DirectionTap {
 		t.Fatal("地必須被横置")
 	}
 

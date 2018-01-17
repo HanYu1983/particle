@@ -91,7 +91,8 @@ func QueryCost(ctx appengine.Context, game Game, cardId string) (string, error) 
 		if err != nil {
 			return "", err
 		}
-		costStr := fmt.Sprintf("%v%v", text.ColorCost, strings.Repeat("無", cost))
+		noColorCost := cost - len([]rune(text.ColorCost))
+		costStr := fmt.Sprintf("%v%v", text.ColorCost, strings.Repeat("無", noColorCost))
 		return costStr, nil
 	}
 }
