@@ -5,56 +5,56 @@ var cardinfoloader = {} || cardinfoloader;
 	function load( game, lang, onLoadGameCallback ){
 		switch( game ){
 			case 'sengoku':
-				sengoku.load( "../common/txt/sengokuList/", onLoadGameCallback)
+				sengoku.load( "//storage.googleapis.com/particle-resources/cardText/sengokuList/", onLoadGameCallback)
 				break;
 			case 'ws':
-				ws.load( "../common/txt/wsList/", onLoadGameCallback)
+				ws.load( "//storage.googleapis.com/particle-resources/cardText/wsList/", onLoadGameCallback)
 				break;
 			case 'sgs':
-				sgs.load( "../common/txt/sgsList.json", onLoadGameCallback)
+				sgs.load( "//storage.googleapis.com/particle-resources/cardText/sgsList.json", onLoadGameCallback)
 				break;
 			case 'gundamWarN':
-				gundamWarN.load( "../common/txt/gundamWarNexAList/", onLoadGameCallback)
+				gundamWarN.load( "//storage.googleapis.com/particle-resources/cardText/gundamWarNexAList/", onLoadGameCallback)
 				break;
 			case 'dragonZ':
-				dragonZ.load( "../common/txt/dragonZList.json", onLoadGameCallback)
+				dragonZ.load( "//storage.googleapis.com/particle-resources/cardText/dragonZList.json", onLoadGameCallback)
 				break;
 			case 'crusade':
-				crusade.load( "../common/txt/crusadeList/", onLoadGameCallback)
+				crusade.load( "//storage.googleapis.com/particle-resources/cardText/crusadeList/", onLoadGameCallback)
 				break;
 			case 'battleSpirits':
-				battleSpirits.load( "../common/txt/battleSpiritsList/", onLoadGameCallback)
+				battleSpirits.load( "//storage.googleapis.com/particle-resources/cardText/battleSpiritsList/", onLoadGameCallback)
 				break;
 			case 'army':
 				army.load(onLoadGameCallback)
 				break;
 			case 'gundamWar':
-				gundamWar.load("../common/txt/gundamWarList.json", onLoadGameCallback)
+				gundamWar.load("//storage.googleapis.com/particle-resources/cardText/gundamWarList.json", onLoadGameCallback)
 				break;
 			case 'yugioh':
 				if( lang == 'jp' ){
-					yugioh.load("../common/txt/yugiohListJp.json", onLoadGameCallback)
+					yugioh.load("//storage.googleapis.com/particle-resources/cardText/yugiohListJp.json", onLoadGameCallback)
 				} else if ( lang == 'en' ){
-					yugioh.load("../common/txt/yugiohListEn.json", onLoadGameCallback)
+					yugioh.load("//storage.googleapis.com/particle-resources/cardText/yugiohListEn.json", onLoadGameCallback)
 				} else if ( lang == 'ch' ){
-					yugioh.load("../common/txt/yugiohListCh.json", onLoadGameCallback)
+					yugioh.load("//storage.googleapis.com/particle-resources/cardText/yugiohListCh.json", onLoadGameCallback)
 				}
 				break;
 			case 'sangoWar':
 				if ( lang == 'ch' ){
-					sangoWar.loadCh( "../common/txt/sangoList/", onLoadGameCallback);
+					sangoWar.loadCh( "//storage.googleapis.com/particle-resources/cardText/sangoList/", onLoadGameCallback);
 				} else {
-					sangoWar.load("../common/txt/sangoList.txt", onLoadGameCallback)
+					sangoWar.load("//storage.googleapis.com/particle-resources/cardText/sangoList.txt", onLoadGameCallback)
 				}
-			//	sangoWar.load( "../common/txt/sangoList.txt", onLoadGameCallback);
+			//	sangoWar.load( "//storage.googleapis.com/particle-resources/cardText/sangoList.txt", onLoadGameCallback);
 				break;
 			case 'magic':
 				if ( lang == 'ch' ){
-					magic.loadCh( "../common/txt/magicList/", onLoadGameCallback);
+					magic.loadCh( "//storage.googleapis.com/particle-resources/cardText/magicList/", onLoadGameCallback);
 				} else {
-					magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
+					magic.load( "//storage.googleapis.com/particle-resources/cardText/magicList.xml", onLoadGameCallback);
 				}
-				//magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
+				//magic.load( "//storage.googleapis.com/particle-resources/cardText/magicList.xml", onLoadGameCallback);
 				break;
 			default:
 				onLoadGameCallback()

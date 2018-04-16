@@ -7,11 +7,12 @@ import (
 	"lib/db2"
 	"lib/tool"
 	"net/http"
+	"appengine"
+    "appengine/user"
 )
 
-func handler2(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, world3!")
-}
+
+
 
 func init() {
 	//// 基本設施 ////
@@ -65,4 +66,39 @@ func init() {
 
 	// 余氏K線圖
 	// no function
+	
+	// Test
+	http.HandleFunc("/fn/auth", welcome)
+}
+
+func handler2(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "Hello, world3!")
+}
+
+
+func welcome(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "text/html; charset=utf-8")
+	ctx := appengine.NewContext(r)
+	u := user.Current(ctx)
+	if u == nil {
+		url, _ := user.LoginURL(ctx, "/")
+		fmt.Fprintf(w, `<a href="%s">Sign in or register</a>`, url)
+		return
+	}
+	url, _ := user.LogoutURL(ctx, "/")
+	fmt.Fprintf(w, `Welcome, %s! (<a href="%s">sign out</a>)`, u, url)
+}
+
+func welcomeOAuth(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	u, err := user.CurrentOAuth(ctx, "")
+	if err != nil {
+		http.Error(w, "OAuth Authorization header required", http.StatusUnauthorized)
+		return
+	}
+	if !u.Admin {
+		http.Error(w, "Admin login only", http.StatusUnauthorized)
+		return
+	}
+	fmt.Fprintf(w, `Welcome, admin user %s!`, u)
 }

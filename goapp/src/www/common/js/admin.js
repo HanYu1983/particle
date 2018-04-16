@@ -2,7 +2,7 @@ var admin = admin || {};
 
 (function(module){
 	
-	var version = '1.34';
+	var version = '2';
 	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
 	var cardbackCount = 61;
@@ -102,6 +102,20 @@ var admin = admin || {};
 		$('title').html( $('title').html() + version );
 	}
 	
+	function init(){
+		// Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyAENP_mytmWSHJVWkpaJ4yJkXl3gXOdoL4",
+        authDomain: "particle-979.firebaseapp.com",
+        databaseURL: "https://particle-979.firebaseio.com",
+        projectId: "particle-979",
+        storageBucket: "particle-979.appspot.com",
+        messagingSenderId: "36532962877"
+      };
+      firebase.initializeApp(config);
+	}
+	
+	module.init = init
 	module.version = version
 	module.ary_games = ary_games
 	module.message = message

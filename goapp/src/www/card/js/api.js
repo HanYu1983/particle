@@ -1,6 +1,7 @@
 var api = api || {};
 
 (function( module ){
+	
 	/**
 	建立channel
 	cb: {
@@ -212,12 +213,13 @@ var api = api || {};
 		return cardinfoloader.cardimageurl( pkgName, id )
   }
 	
+	
 	module.createChannel = createChannel
 	module.startHeartbeat = startHeartbeat
 	module.stopHeartbeat = stopHeartbeat
 	module.startReceiveInvitation = startReceiveInvitation
 	module.sendMessageToSomeone = sendMessageToSomeone
 	module.invite = invite
-  module.getCardImageWithPackageName = getCardImageWithPackageName
+	module.getCardImageWithPackageName = getCardImageWithPackageName
 	
 }) (api)
