@@ -7,24 +7,7 @@ var channel = channel || {};
   name: string
   */
   function createChannel( name, cb ){
-    $.ajax({
-      url: '../fn/createChannel',
-      type: 'get',
-      dataType: 'json',
-      data:{ Name: name },
-      success: function( ret ){
-        if( ret.Error != null ){
-          cb( ret.Error )
-        } else {
-          var token = ret.Info
-          var channel = new goog.appengine.Channel(token);
-          cb( null, channel )
-        }
-      },
-      error: function( xhr, res, err ){
-        cb( err )
-      }
-    })
+    cb(null, {name:name})
   }
   
   /**
@@ -42,11 +25,34 @@ var channel = channel || {};
   }
   */
   function addEventListenerAndOpenSocket( channel, cbObj ){
-    var socket = channel.open()
-    socket.onopen = cbObj.onopen
-    socket.onmessage = cbObj.onmessage
-    socket.onerror = cbObj.onerror
-    socket.onclose = cbObj.onclose
+    // 聽自己的信箱
+    var address = 'app/card/channel/'+channel.name
+    var database = firebase.database();
+    var channelRef = database.ref(address);
+    
+    console.log(address)
+    setTimeout(function(){
+      cbObj.onopen()
+    }, 0)
+  
+    channelRef.on('value', function(snapshot) {
+      console.log("value change")
+      console.log(snapshot)
+      if(snapshot == null){
+        return
+      }
+      var value = snapshot.val()
+      console.log(value)
+      if(value == null){
+        return
+      }
+      cbObj.onmessage(JSON.parse(value))
+      /*
+      var path = {data: value}
+      var option = {}
+      cbObj.onmessage(path, option)
+      */
+    });
   }
   
   
@@ -54,18 +60,12 @@ var channel = channel || {};
   傳送訊息
   */
   function sendChannelMessage( name, msg, cb ){
-    $.ajax({
-      url: '../fn/sendChannelMessage',
-      type: 'post',
-      dataType: 'json',
-      data:{ Name: name, Message: msg },
-      success: function( ret ){
-        cb( ret.Error, ret )
-      },
-      error: function( xhr, res, err ){
-        cb( err )
-      }
-    })
+    // 送到指定的信箱
+    var address = 'app/card/channel/'+name
+    var database = firebase.database();
+    var testRef = database.ref(address);
+    testRef.set(msg)
+    cb(null)
   }
   
   module.createChannel = createChannel

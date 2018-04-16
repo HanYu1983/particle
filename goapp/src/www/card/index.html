@@ -27,6 +27,71 @@
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		
+
+<!-- firebase -->
+    <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyAENP_mytmWSHJVWkpaJ4yJkXl3gXOdoL4",
+        authDomain: "particle-979.firebaseapp.com",
+        databaseURL: "https://particle-979.firebaseio.com",
+        projectId: "particle-979",
+        storageBucket: "particle-979.appspot.com",
+        messagingSenderId: "36532962877"
+      };
+      firebase.initializeApp(config);
+    </script>
+      <script src="https://cdn.firebase.com/libs/firebaseui/2.6.3/firebaseui.js"></script>
+      <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.6.3/firebaseui.css" />
+      <script type="text/javascript">
+        // FirebaseUI config.
+        var uiConfig = {
+          signInSuccessUrl: 'index.html',
+          signInOptions: [
+            // Leave the lines as is for the providers you want to offer your users.
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            firebase.auth.FacebookAuthProvider.PROVIDER_ID
+          ],
+          // Terms of service url.
+          tosUrl: '<your-tos-url>'
+        };
+
+      
+      
+        firebase.auth().onAuthStateChanged(function(user){
+          console.log(user)
+          if(user == null){
+            // Initialize the FirebaseUI Widget using Firebase.
+            var ui = new firebaseui.auth.AuthUI(firebase.auth());
+            // The start method will wait until the DOM is loaded.
+            ui.start('#firebaseui-auth-container', uiConfig);
+            $('#firebaseui-auth-container').show()
+          } else {
+            $('#firebaseui-auth-container').hide()
+          }
+        })
+      
+        function loginAnonymously(){
+          console.log("loginAnonymously")
+          if(firebase.auth().currentUser != null){
+            alert("already login")
+            return;
+          }
+          firebase.auth().signInAnonymously().catch(function(error) {
+            console.log(error)
+          });
+        }
+        
+        function logout(){
+          firebase.auth().signOut().then(function() {
+            console.log("logout!")
+          }, function(error) {
+            console.log(error)
+          });
+        }
+      </script>
+<!-- firebase end -->
 </head>
 <style>
 body{
@@ -206,6 +271,13 @@ body{
         <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:520px;" >
 			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
 				<div class="hori">
+          
+          <div id="firebaseui-auth-container">
+            <button onclick='loginAnonymously()'>loginAnonymously</button>
+          </div>
+          <button onclick='logout()'>logout</button>
+          
+          
 					<a id="btn_notLogin" href="#" title="不需要登入就可以使用預組套牌跟朋友連線對戰哦!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnNotLoginClick')" data-options="iconCls:'icon-fire2'">創建臨時ID</a>
 					<a id="btn_login" href="#" title="登入fb，使用自己的套牌跟朋友連線對戰!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
 				</div>
@@ -424,17 +496,16 @@ body{
 		});
 	})();
 	
-	$( document ).ready(function() {
+	/*$( document ).ready(function() {
 		if( admin.admin ){
 			admin.defaultMessageHandle( 'card_admin', $('#dia_message') );
 		}else{
 			admin.defaultMessageHandle( 'card', $('#dia_message') );
 			$('[public=false]').hide();
 		}
-		
-	});
+	});*/
 	
-	googleTracking.init( 'UA-55273266-3' );
+	//googleTracking.init( 'UA-55273266-3' );
 	
 	function setCookie( key, value ){
 		$.cookie( key, value, { expires: 7 });
@@ -450,11 +521,9 @@ body{
 	}
 	
 	</script>
-	<script type="text/javascript" src="/_ah/channel/jsapi"></script>
-	<script type="text/javascript" src="../common/js/channel.js"></script>
 	<script src="../common/js/db2.js"></script>	
 	<script src="../common/js/db2path.js"></script>	
-	<script src="../common/js/store.js"></script>	
+  <script src="../common/js/channel.js"></script>
 	<script src="../common/js/cardSuit.js"></script>	
 	<script src='js/api.js'></script>
 	<script src="../common/js/cardinfoloader.js"></script>	
