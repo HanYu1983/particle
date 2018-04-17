@@ -1,6 +1,5 @@
 ﻿runtime: go
 api_version: go1
-default_expiration: "7d"
 threadsafe: true
 handlers:
 - url: /works

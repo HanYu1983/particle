@@ -22,3 +22,6 @@ github.com/
 node_workspace/genCard/gundamWar/
 # goglang ide
 goapp/.idea/
+cache/
+package-lock.json
+build/
