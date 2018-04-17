@@ -5,56 +5,56 @@ var cardinfoloader = {} || cardinfoloader;
 	function load( game, lang, onLoadGameCallback ){
 		switch( game ){
 			case 'sengoku':
-				sengoku.load( "//storage.googleapis.com/particle-resources/cardText/sengokuList/", onLoadGameCallback)
+				sengoku.load( "../common/txt/sengoku.json", onLoadGameCallback)
 				break;
 			case 'ws':
-				ws.load( "//storage.googleapis.com/particle-resources/cardText/wsList/", onLoadGameCallback)
+				ws.load( "../common/txt/wsList/", onLoadGameCallback)
 				break;
 			case 'sgs':
-				sgs.load( "//storage.googleapis.com/particle-resources/cardText/sgsList.json", onLoadGameCallback)
+				sgs.load( "../common/txt/sgsList.json", onLoadGameCallback)
 				break;
 			case 'gundamWarN':
-				gundamWarN.load( "//storage.googleapis.com/particle-resources/cardText/gundamWarNexAList/", onLoadGameCallback)
+				gundamWarN.load( "../common/txt/gundamWarNexAList/", onLoadGameCallback)
 				break;
 			case 'dragonZ':
-				dragonZ.load( "//storage.googleapis.com/particle-resources/cardText/dragonZList.json", onLoadGameCallback)
+				dragonZ.load( "../common/txt/dragonZList.json", onLoadGameCallback)
 				break;
 			case 'crusade':
-				crusade.load( "//storage.googleapis.com/particle-resources/cardText/crusadeList/", onLoadGameCallback)
+				crusade.load( "../common/txt/crusadeList/", onLoadGameCallback)
 				break;
 			case 'battleSpirits':
-				battleSpirits.load( "//storage.googleapis.com/particle-resources/cardText/battleSpiritsList/", onLoadGameCallback)
+				battleSpirits.load( "../common/txt/battleSpiritsList/", onLoadGameCallback)
 				break;
 			case 'army':
 				army.load(onLoadGameCallback)
 				break;
 			case 'gundamWar':
-				gundamWar.load("//storage.googleapis.com/particle-resources/cardText/gundamWarList.json", onLoadGameCallback)
+				gundamWar.load("../common/txt/gundamWarList.json", onLoadGameCallback)
 				break;
 			case 'yugioh':
 				if( lang == 'jp' ){
-					yugioh.load("//storage.googleapis.com/particle-resources/cardText/yugiohListJp.json", onLoadGameCallback)
+					yugioh.load("../common/txt/yugiohListJp.json", onLoadGameCallback)
 				} else if ( lang == 'en' ){
-					yugioh.load("//storage.googleapis.com/particle-resources/cardText/yugiohListEn.json", onLoadGameCallback)
+					yugioh.load("../common/txt/yugiohListEn.json", onLoadGameCallback)
 				} else if ( lang == 'ch' ){
-					yugioh.load("//storage.googleapis.com/particle-resources/cardText/yugiohListCh.json", onLoadGameCallback)
+					yugioh.load("../common/txt/yugiohListCh.json", onLoadGameCallback)
 				}
 				break;
 			case 'sangoWar':
 				if ( lang == 'ch' ){
-					sangoWar.loadCh( "//storage.googleapis.com/particle-resources/cardText/sangoList/", onLoadGameCallback);
+					sangoWar.loadCh( "../common/txt/sangoList/", onLoadGameCallback);
 				} else {
-					sangoWar.load("//storage.googleapis.com/particle-resources/cardText/sangoList.txt", onLoadGameCallback)
+					sangoWar.load("../common/txt/sangoList.txt", onLoadGameCallback)
 				}
-			//	sangoWar.load( "//storage.googleapis.com/particle-resources/cardText/sangoList.txt", onLoadGameCallback);
+			//	sangoWar.load( "../common/txt/sangoList.txt", onLoadGameCallback);
 				break;
 			case 'magic':
 				if ( lang == 'ch' ){
-					magic.loadCh( "//storage.googleapis.com/particle-resources/cardText/magicList/", onLoadGameCallback);
+					magic.loadCh( "../common/txt/magicList/", onLoadGameCallback);
 				} else {
-					magic.load( "//storage.googleapis.com/particle-resources/cardText/magicList.xml", onLoadGameCallback);
+					magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
 				}
-				//magic.load( "//storage.googleapis.com/particle-resources/cardText/magicList.xml", onLoadGameCallback);
+				//magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
 				break;
 			default:
 				onLoadGameCallback()
@@ -74,7 +74,7 @@ var cardinfoloader = {} || cardinfoloader;
 		case 'other':
 			return '../common/images/card/' +id + '.png'
 		case 'sengoku':
-			return '//storage.googleapis.com/particle-resources/cardPackage/sengoku/'+ id+ '_web.jpg'
+			return '//storage.googleapis.com/particle-resources/cardPackage/sengoku/'+ id
 		case 'ws':
 			return '//storage.googleapis.com/particle-resources/cardPackage/ws/' +id	
 		case 'sgs':

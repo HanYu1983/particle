@@ -1,7 +1,7 @@
 var sengoku = sengoku || {};
 
 (function( module ){
-	
+	/*
 	function parseCost( text ){
 		var map2 = "①②③④⑤"
 		var ret = [0, 0]
@@ -79,6 +79,19 @@ var sengoku = sengoku || {};
 				}
 			})
 			cb(err, list)
+		})
+	}*/
+	
+	function load( path, cb ){
+		$.ajax({
+			url: path,
+			dataType:'json',
+			success:function(data){
+				cb(null, data)
+			},
+			error: function(xhr, res, err){
+				cb(err)
+			}
 		})
 	}
 
