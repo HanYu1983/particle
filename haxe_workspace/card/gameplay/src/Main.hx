@@ -22,11 +22,11 @@ using Reflect;
 class Main 
 {
 	
-	public static var on_getSuit_success = 'on_getSuit_success';
-	public static var on_createDeck_click = 'on_createDeck_click';
-	public static var on_receiveOps = 'on_receiveOps';
-	public static var on_save_click = 'on_save_click';
-	public static var on_load_click = 'on_load_click';
+	public static inline var on_getSuit_success = 'on_getSuit_success';
+	public static inline var on_createDeck_click = 'on_createDeck_click';
+	public static inline var on_receiveOps = 'on_receiveOps';
+	public static inline var on_save_click = 'on_save_click';
+	public static inline var on_load_click = 'on_load_click';
 
 	public static var j:Dynamic = untyped __js__('$');
 	
@@ -432,9 +432,7 @@ class Main
 	*/
 	function chooseCardSuit( suitName ) {
 		cardSuit = Reflect.field( cardSuits, suitName ) ;
-		switch( cardSuit ) {
-			case null:cardSuit = [];
-		}
+		if ( cardSuit == null ) cardSuit = [];
 		Facade.getInstance().sendNotification( on_getSuit_success, { cardSuit:cardSuit  } );
 	}
 	

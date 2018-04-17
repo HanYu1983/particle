@@ -13,15 +13,15 @@ using Lambda;
  */
 class SocketController extends Mediator
 {
-	public static var setOpponents = 'setOpponents';
-	public static var sendMessage = 'sendMessage';
-	public static var createPlayerSocket = 'createPlayerSocket';
-	public static var do_startHeartbeat = 'do_startHeartbeat';
+	public static inline var setOpponents = 'setOpponents';
+	public static inline var sendMessage = 'sendMessage';
+	public static inline var createPlayerSocket = 'createPlayerSocket';
+	public static inline var do_startHeartbeat = 'do_startHeartbeat';
 	
-	public static var on_searchComplete = 'on_searchComplete';
-	public static var on_heartbeat_event = 'on_heartbeat_event';
-	public static var on_sendMessage = 'on_sendMessage';
-	public static var on_receiveMessage = 'on_receiveMessage';
+	public static inline var on_searchComplete = 'on_searchComplete';
+	public static inline var on_heartbeat_event = 'on_heartbeat_event';
+	public static inline var on_sendMessage = 'on_sendMessage';
+	public static inline var on_receiveMessage = 'on_receiveMessage';
 	
 	public static var playerId:String = 'smart';
 	public static var otherPlayerIds:Array<String> = [];
@@ -30,8 +30,8 @@ class SocketController extends Mediator
 	public static var isConntect = false;
 	public static var isCanSendMessage = false;
 	
-	public static var on_socket_error = 'on_socket_error';
-	public static var on_socket_success = 'on_socket_success';
+	public static inline var on_socket_error = 'on_socket_error';
+	public static inline var on_socket_success = 'on_socket_success';
 	
 	var ary_ops:Array<String>;
 	

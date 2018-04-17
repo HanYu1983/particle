@@ -13,8 +13,8 @@ using Reflect;
  */
 class BasicItem extends Mediator implements IItem
 {
-	public static var on_item_click = 'on_item_click';
-	public static var on_item_lock = 'on_item_lock';
+	public static inline var on_item_click = 'on_item_click';
+	public static inline var on_item_lock = 'on_item_lock';
 	
 	var _filp:Bool = true;
 	var _viewer:String = '';

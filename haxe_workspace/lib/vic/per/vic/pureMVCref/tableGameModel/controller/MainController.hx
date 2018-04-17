@@ -21,17 +21,17 @@ using Reflect;
  */
 class MainController extends Mediator
 {
-	public static var do_create_item = 'do_create_item';
-	public static var do_getItemsString = 'do_getItemsString';
-	public static var do_start_record = 'do_start_record';
-	public static var do_enable_command = 'do_enable_command';
-	public static var do_update_view = 'do_update_view';
+	public static inline var do_create_item = 'do_create_item';
+	public static inline var do_getItemsString = 'do_getItemsString';
+	public static inline var do_start_record = 'do_start_record';
+	public static inline var do_enable_command = 'do_enable_command';
+	public static inline var do_update_view = 'do_update_view';
 	
 	//public static var on_receiveMessage = 'on_receiveMessage';
-	public static var on_been_invite = 'on_been_invite';
-	public static var on_select_cards = 'on_select_cards';
-	public static var on_press = 'on_press';
-	public static var on_dice = 'on_dice';
+	public static inline var on_been_invite = 'on_been_invite';
+	public static inline var on_select_cards = 'on_select_cards';
+	public static inline var on_press = 'on_press';
+	public static inline var on_dice = 'on_dice';
 	
 	var ary_select:Array<Dynamic> = [];
 	var ary_allItem:Array<Dynamic> = [];
@@ -382,7 +382,7 @@ class MainController extends Mediator
 				updateView( ary_allItem );
 		}
 		
-		switch( e.which ) {
+		switch( Std.parseInt( e.which ) ) {
 			//ctrl事件只要到這裡就行了，不用傳指令出去
 			case KeyboardEvent.DOM_VK_CONTROL:
 			//骰子，不經過這邊，在上邊的時候就分發了

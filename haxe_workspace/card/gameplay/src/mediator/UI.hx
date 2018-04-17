@@ -21,9 +21,9 @@ using StringTools;
  */
 class UI extends Mediator
 {
-	public static var do_show_recevie = 'do_show_recevie';
+	public static inline var do_show_recevie = 'do_show_recevie';
 	
-	public static var on_combo_deck_change = 'on_combo_deck_change';
+	public static inline var on_combo_deck_change = 'on_combo_deck_change';
 	//public static var on_op_change = 'on_op_change';
 	
 	var mc_detailContainer:Dynamic;
@@ -440,12 +440,10 @@ class UI extends Mediator
 							str += detail.desc;
 					}
 				}else {
-					switch( game ) {
-						//data type card
-						case null:
-							str = card.extra[0];
-							str += '<br/>';
-							str += card.extra[1];
+					if ( game == null ){
+						str = card.extra[0];
+						str += '<br/>';
+						str += card.extra[1];
 					}
 				}
 				detaildiv.html( str );
