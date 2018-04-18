@@ -1,4 +1,4 @@
-package per.vic.pureMVCref.tableGameModel.controller;
+package controller;
 
 import haxe.CallStack;
 import haxe.Json;

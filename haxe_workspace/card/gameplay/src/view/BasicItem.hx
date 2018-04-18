@@ -1,9 +1,9 @@
-package per.vic.pureMVCref.tableGameModel.view;
+package view;
 
-import per.vic.pureMVCref.tableGameModel.controller.MainController;
+import controller.MainController;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
-import per.vic.pureMVCref.tableGameModel.controller.SocketController;
+import controller.SocketController;
 
 using Lambda;
 using Reflect;

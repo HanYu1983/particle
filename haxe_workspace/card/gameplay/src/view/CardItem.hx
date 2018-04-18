@@ -1,5 +1,5 @@
-package per.vic.pureMVCref.tableGameModel.view;
-import per.vic.pureMVCref.tableGameModel.view.BasicItem;
+package view;
+import view.BasicItem;
 
 /**
  * ...

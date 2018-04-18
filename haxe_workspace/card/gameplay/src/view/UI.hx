@@ -1,4 +1,4 @@
-package mediator;
+package view;
 
 import haxe.Json;
 import haxe.Timer;
@@ -7,10 +7,10 @@ import js.html.Image;
 import js.html.KeyboardEvent;
 import js.html.rtc.IdentityAssertion;
 import model.Model;
+import controller.SocketController;
+import controller.MainController;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
-import per.vic.pureMVCref.tableGameModel.controller.MainController;
-import per.vic.pureMVCref.tableGameModel.controller.SocketController;
 
 using Lambda;
 using Reflect;
@@ -36,6 +36,9 @@ class UI extends Mediator
 	
 	//chat
 	var mc_messagePanel:Dynamic;
+	
+	//tiemr view
+	var mc_timerView:Dynamic;
 	
 	var isShowNotify = false;
 	var browserNotify = null;
@@ -84,6 +87,7 @@ class UI extends Mediator
 			sendNotification( MainController.do_enable_command, { enable:true } );
 		});
 		
+		mc_timerView = Main.j("#mc_timerView" );
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		txt_savestr = getViewComponent().find( '#txt_savestr' );
@@ -142,6 +146,7 @@ class UI extends Mediator
 				browserNotify = null;
 			}
 		});
+		
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -154,6 +159,7 @@ class UI extends Mediator
 					SocketController.on_socket_success,
 					Main.on_getSuit_success,
 					Main.on_receiveOps,
+					Main.on_timer_update,
 					SocketController.on_searchComplete,
 					SocketController.on_heartbeat_event,
 					SocketController.on_receiveMessage,
@@ -222,6 +228,9 @@ class UI extends Mediator
 				var ary_ops = notification.getBody().ary_ops;
 				setComboOps( ary_ops );
 				combo_ops.combobox( 'select', ary_ops[ary_ops.length -1] );
+			case Main.on_timer_update:
+				var tcx:Dynamic = CallJs.api_getTimerContext();
+				doUpdateTimerView(tcx);
 			case MainController.on_select_cards:
 				showCards( notification.getBody().ary_select );
 			case Main.on_getSuit_success:
@@ -229,6 +238,25 @@ class UI extends Mediator
 			case str if ( str == do_show_recevie ):
 				showReceive( notification.getBody().show, notification.getBody().ops );
 			
+		}
+	}
+	function doUpdateTimerView( timerData:Dynamic ){
+		if ( timerData != null ){
+			for ( k in timerData.users.fields() ){
+				var user:Dynamic = timerData.users.field(k);
+				var name = user.field('name').substr(0, 6);
+				var t = CallJs.api_getTime( user.field('name') );
+				var t2:Dynamic = untyped __js__('new Date')(t);
+				var h = t2.getUTCHours();
+				var m = t2.getUTCMinutes();
+				var s = t2.getUTCSeconds();
+				addTimerItem(name, h+"時"+m+"分"+s+"秒");
+			}
+			if ( timerData.users[timerData.currUser].name == SocketController.playerId ){
+				mc_timerView.parent().addClass('timer_focus');
+			}else{
+				mc_timerView.parent().removeClass('timer_focus');
+			}
 		}
 	}
 	/*
@@ -251,6 +279,26 @@ class UI extends Mediator
 			msgdom.find( '#txt_message' ).css( 'color', 'lightblue' );
 		}
 		mc_message.prepend( msgdom );
+	}
+	
+	function addTimerItem( name:String, time:String ){
+		if ( hasTimerItem( name )){
+			getTimerItem(name).find('#usingTime').html( time );
+		}else{
+			var timerView = Main.j( '#tmpl_timerItem' ).tmpl( {
+				name:name,
+				time:time
+			} );
+			mc_timerView.prepend( timerView );
+		}
+	}
+	
+	function hasTimerItem( name:String ){
+		return mc_timerView.find( "#" + name ).field('length') > 0;
+	}
+	
+	function getTimerItem( name ){
+		return mc_timerView.find( "#" + name );
 	}
 	
 	function showReceive( show:Bool, ?ops:String ) {

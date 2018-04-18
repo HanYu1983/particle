@@ -1,4 +1,4 @@
-package per.vic.pureMVCref.tableGameModel.view;
+package view;
 
 /**
  * ...
