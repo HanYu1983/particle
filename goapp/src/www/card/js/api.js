@@ -253,6 +253,10 @@ var api = api || {};
 		syncTimer(selfName, targetNames, cb)
 	}
 	
+	function getTimerContext(){
+		return timerCtx
+	}
+	
 	function getUser(name){
 		var user = timerCtx.users.find(o => o.name == name)
 		if(!!user == false){
@@ -262,6 +266,11 @@ var api = api || {};
 	}
 	
 	// 取得累積時間
+	// var t = getTime('name')
+	// var t2 = new Date(t)
+	// var h = t2.getUTCHours()
+	// var m = t2.getUTCMinutes()
+	// var s = t2.getUTCSeconds()
 	function getTime(name){
 		var user = timerCtx.users.find(o => o.name == name)
 		// 沒這個使用者就回傳0, 這應該不會發生
@@ -357,5 +366,6 @@ var api = api || {};
 	module.startTimer = startTimer
 	module.stopTimer = stopTimer
 	module.switchUser = switchUser
+	module.getTimerContext = getTimerContext
 	
 }) (api)
