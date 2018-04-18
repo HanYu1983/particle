@@ -774,7 +774,7 @@ var gameController = {};
 			}
 			switch( k ){
 			case 'cid':
-				fns.push( cardsearch.attrEq( "id", v ) )
+				fns.push( cardsearch.attrEq( "cid", v ) )
 				break
 			case "id":
 				fns.push( cardsearch.attrEq( "id", v ) )
