@@ -113,6 +113,16 @@ body{
 .hide{
 	display:none;
 }
+
+.section_light{
+	padding: 5px 0 5px 0; 
+	background-color:darkgray
+}
+
+.section_dark{
+	padding: 5px 0 5px 0; 
+	
+}
 </style>
 <script id="tmpl_singleMessage" type="jquery-x-tmpl">
 	<div class="group">
@@ -203,8 +213,8 @@ body{
 	</div>
 	
 	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:380px;height:100%;">
-        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:520px;" >
-			<div class="group" style="text-align:center; margin-top:20px; margin-bottom:30px;">
+        <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:490px;" >
+			<div class="group section_light	" style="text-align:center;">
 				<div class="hori">
 					<a id="btn_notLogin" href="#" title="不需要登入就可以使用預組套牌跟朋友連線對戰哦!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnNotLoginClick')" data-options="iconCls:'icon-fire2'">創建臨時ID</a>
 					<a id="btn_login" href="#" title="登入fb，使用自己的套牌跟朋友連線對戰!" class="easyui-linkbutton easyui-tooltip" onclick="onHtmlClick('onBtnLoginClick')" data-options="iconCls:'icon-fb-login'">登入</a>
@@ -213,7 +223,7 @@ body{
 					<a id="btn_about" href="#" title="關於上善若水&卡牌遊戲規則" class="easyui-linkbutton easyui-tooltip" onclick="$('#dia_about').panel( 'open' )" data-options="iconCls:'icon-help'"></a>
 				</div>
 			</div>
-			<div class="group" style="text-align:center; margin-bottom:30px;">
+			<div class="group section_dark" style="text-align:center;">
 				<div>
 					<div class="hori">玩家</div>
 					<div class="hori">
@@ -233,14 +243,20 @@ body{
 					</div>
 				</div>
 			</div>
-			<div class="group" style="text-align:center; margin-bottom:30px;">
-				<div class="group" style="margin-bottom:30px;">
+			<div class="group" style="text-align:center;">
+				<div class="group section_light">
+					<a href="#" class="easyui-linkbutton" style="width:75px;" onclick="onHtmlClick('onResetTimerClick')">歸零</a>
+					<a href="#" class="easyui-linkbutton" style="width:75px;" onclick="onHtmlClick('onStopTimerClick')">暫停</a>
+					<a href="#" class="easyui-linkbutton" style="width:75px;" onclick="onHtmlClick('onStartTimerClick')">開始計時</a>
+					<a href="#" class="easyui-linkbutton" style="width:75px;" onclick="onHtmlClick('noSwitchTimerClick')">切換玩家</a>
+				</div>
+				<div class="group section_dark">
 					<a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onPokerClick')">撲克牌</a>
 					<a href="#" class="easyui-linkbutton" style="width:100px;" onclick="onHtmlClick('onConcreteDiceClick')">骰子套組</a>
 					<a href="#" title="每種顏色各二十個的指示物套包，要創建單個指示物可以按 I, O, P" class="easyui-linkbutton easyui-tooltip" style="width:100px;" onclick="onHtmlClick('onTokenClick')">指示物套組</a>
 					<a href="#" class="easyui-linkbutton" style="width:100px;" public="false" onclick="onHtmlClick('onShaClick')">三國殺</a>
 				</div>
-				<div id="mc_btnGame" class="group" style="margin-top:5px; margin-bottom:5px;">
+				<div id="mc_btnGame" class="group section_light">
 					<!-- by script -->
 					<!--
 					<a href="#" game="army" id="btn_army" class="easyui-linkbutton" onclick="onHtmlClick('onBtnLoadArmyClick')" style="width:100px;" data-options="toggle:true,group:'g1',selected:false">軍武gogogo</a>
@@ -257,34 +273,37 @@ body{
 						-->
 				</div>
 			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<select id="combo_deck" class="easyui-combobox" name="state" style="width:100px;"></select>
-					<a href="#" onclick="onHtmlClick('onBtnCreateDeck')" title="對手有了之後，所創建的卡牌對手才會收到哦" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-ok', disabled:false">創建套牌</a>
+			<div class="group section_dark">
+				<div class="group" style="text-align:center;">
+					<div class="hori">
+						<select id="combo_deck" class="easyui-combobox" name="state" style="width:100px;"></select>
+						<a href="#" onclick="onHtmlClick('onBtnCreateDeck')" title="對手有了之後，所創建的卡牌對手才會收到哦" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-ok', disabled:false">創建套牌</a>
+					</div>
+				</div>
+				<div class="group" style="text-align:center;">
+					<div class="hori">
+						<select id="txt_custom" class="easyui-textbox" name="state" style="width:100px;"></select>
+						<a href="#" onclick="onHtmlClick('onBtnCustomDeck')" title="創建臨時用的套牌" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時套牌</a>
+					</div>
+				</div>
+				<div class="group" style="text-align:center;">
+					<div class="hori">
+						<select id="txt_table" class="easyui-textbox" name="state" style="width:100px;"></select>
+						<a href="#" onclick="onHtmlClick('onBtnTableDeck')" title="創建臨時用的桌遊" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時桌遊</a>
+					</div>
+				</div>
+				<div class="group" style="text-align:center;">
+					<div class="hori">
+						<a href="#" onclick="onHtmlClick('onBtnSaveClick')" title="把當下的狀態儲存起來，下次可以繼續玩。在斷線後回不來時，可以用哦" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false">場景快照</a>
+						<!--
+						<a id="btn_record" href="#" onclick="onHtmlClick('onBtnRecordClick')" title="把遊玩過程錄製下來，之後可以分享或者自己觀看。" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false,toggle:true">錄製</a>
+						-->
+						<input id="txt_savestr" class="easyui-textbox" name="state" style="width:100px;"></input>
+						<a href="#" onclick="onHtmlClick('onBtnLoadClick')" title="把錄製的資料匯入，接續上一次的遊玩。在重現時請等待一秒鐘，讓他同步完成!" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false">重現場景</a>
+					</div>
 				</div>
 			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<select id="txt_custom" class="easyui-textbox" name="state" style="width:100px;"></select>
-					<a href="#" onclick="onHtmlClick('onBtnCustomDeck')" title="創建臨時用的套牌" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時套牌</a>
-				</div>
-			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<select id="txt_table" class="easyui-textbox" name="state" style="width:100px;"></select>
-					<a href="#" onclick="onHtmlClick('onBtnTableDeck')" title="創建臨時用的桌遊" class="easyui-linkbutton easyui-tooltip" data-options="iconCls:'icon-edit', disabled:false">臨時桌遊</a>
-				</div>
-			</div>
-			<div class="group" style="text-align:center;">
-				<div class="hori">
-					<a href="#" onclick="onHtmlClick('onBtnSaveClick')" title="把當下的狀態儲存起來，下次可以繼續玩。在斷線後回不來時，可以用哦" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false">場景快照</a>
-					<!--
-					<a id="btn_record" href="#" onclick="onHtmlClick('onBtnRecordClick')" title="把遊玩過程錄製下來，之後可以分享或者自己觀看。" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false,toggle:true">錄製</a>
-					-->
-					<input id="txt_savestr" class="easyui-textbox" name="state" style="width:100px;"></input>
-					<a href="#" onclick="onHtmlClick('onBtnLoadClick')" title="把錄製的資料匯入，接續上一次的遊玩。在重現時請等待一秒鐘，讓他同步完成!" class="easyui-linkbutton easyui-tooltip" data-options="disabled:false">重現場景</a>
-				</div>
-			</div>
+			
 		</div>
 		<div data-options="region:'center'">
 			<div id="mc_detailContainer" style="position:relative; width:100%">
@@ -310,7 +329,6 @@ body{
 					</div>
 				</div>
 			</div>
-			
 		</div>
 		<div id="dia_about" class="easyui-dialog" title="卡牌風雲" data-options="iconCls:'icon-help',closed:true" style="padding:10px">
 			<div class="group" style="position:relative; width:100%; text-align:center;">
