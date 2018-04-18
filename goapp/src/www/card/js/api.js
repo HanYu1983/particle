@@ -17,19 +17,11 @@ var api = api || {};
 				onopen: function(){
 					cb.onopen()
 				},
-        onmessage: function( json ){
+				onmessage: function( json ){
 					if( handleMessage( json ) == false ){
 						cb.onmessage( json )
 					}
 				},
-				/*onmessage: function( path, option ){
-					var origin = JSON.parse( path.data )
-					var json = JSON.parse( origin )
-					if( handleMessage( json ) == false ){
-						cb.onmessage( json )
-					}
-				},*/
-          
 				onerror: function(){
 					cb.onerror()
 				},
@@ -42,6 +34,9 @@ var api = api || {};
 	
 	function handleMessage( obj ){
 		switch( obj.type ){
+		case 'timer':
+			handleTimerMsg( obj )
+			return true
 		case 'invite':
 			receiveInvite( obj )
 			return true
@@ -204,22 +199,163 @@ var api = api || {};
 			}
 		}
 	}
-  
+	
 	/**
 	取得圖片路徑
 	pkgName: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
 	*/
 	function getCardImageWithPackageName( pkgName, id ){
 		return cardinfoloader.cardimageurl( pkgName, id )
-  }
+	}
 	
+	
+	var timerCtx
+	
+	function handleTimerMsg(obj){
+		if(obj.type != 'timer'){
+			return
+		}
+		switch(obj.msg.cmd){
+			case 'syncTimer':
+			{
+				timerCtx = obj.msg.timerCtx
+			}
+			break;
+		}
+	}
+	
+	// 同步時間物件
+	// 任何改變時間物件內容的操做都要呼叫這個方法
+	function syncTimer(selfName, targetNames, cb){
+		var obj = {
+			type: 'timer',
+			msg: {
+				cmd: 'syncTimer',
+				timerCtx: timerCtx
+			}
+		}
+		
+		for( var i in targetNames ){
+			var uid = targetNames[i]
+			channel.sendChannelMessage( uid, JSON.stringify(obj), cb )
+		}
+	}
+	
+	// 重置時間
+	// 起始玩家必須呼叫
+	function resetTimer(selfName, targetNames, cb){
+		timerCtx = {
+			users:[selfName].concat(targetNames).map(name => {return {"name":name, "timer":0}}),
+			currUser: 0,
+			isRunning: false,
+			lastRecordTime: 0
+		}
+		syncTimer(selfName, targetNames, cb)
+	}
+	
+	function getUser(name){
+		var user = timerCtx.users.find(o => o.name == name)
+		if(!!user == false){
+			timerCtx.users.push({"name":name, timer:0})
+		}
+		return user
+	}
+	
+	// 取得累積時間
+	function getTime(name){
+		var user = timerCtx.users.find(o => o.name == name)
+		// 沒這個使用者就回傳0, 這應該不會發生
+		if( !!user == false){
+			console.log('no user:'+name)
+			return 0
+		}
+		// 如果現在是暫停狀態, 就回傳累積的時間
+		if(timerCtx.isRunning == false){
+			return user.timer
+		}
+		// 如果是思考中的玩家, 回傳 = 累積時間 + (現在時間 - 開始時間)
+		var isCurrUser = timerCtx.users[timerCtx.currUser].name == name
+		if(isCurrUser){
+			var offset = new Date().getTime() - timerCtx.lastRecordTime
+			return user.timer + offset
+		}
+		// 其他玩家顯示累積時間
+		return user.timer
+	}
+	
+	// 開始計時
+	function startTimer(selfName, targetNames, cb){
+		// 思考中的玩家才能開始計時
+		var isCurrUser = timerCtx.users[timerCtx.currUser].name == selfName
+		if(isCurrUser == false){
+			cb('u are not curr user')
+			return
+		}
+		if(timerCtx.isRunning){
+			return
+		}
+		// 記錄開始的時間
+		timerCtx.lastRecordTime = new Date().getTime()
+		timerCtx.isRunning = true
+		syncTimer(selfName, targetNames, cb)
+	}
+	
+	// 暫停計時
+	function stopTimer(selfName, targetNames, cb){
+		// 非思考中玩家才能停止計時(公正性)
+		var isCurrUser = timerCtx.users[timerCtx.currUser].name == selfName
+		if(isCurrUser){
+			cb('u are curr user, can not stop time')
+			return
+		}
+		if(timerCtx.isRunning == false){
+			return
+		}
+		// 累積時間在思考中玩家
+		var offset = new Date().getTime() - timerCtx.lastRecordTime
+		var user = timerCtx.users[timerCtx.currUser]
+		user.timer += offset
+		timerCtx.isRunning = false
+		syncTimer(selfName, targetNames, cb)
+	}
+	
+	// 切換玩家
+	function switchUser(selfName, targetNames, cb){
+		// 思考中的玩家才能切換玩家
+		var isCurrUser = timerCtx.users[timerCtx.currUser].name == selfName
+		if(isCurrUser == false){
+			cb('u are not curr user')
+			return
+		}
+		// 如果現在非暫停中, 累積時間並重新記錄開始時間
+		if(timerCtx.isRunning){
+			var currTime = new Date().getTime()
+			var offset = currTime - timerCtx.lastRecordTime
+			var user = getUser(selfName)
+			user.timer += offset
+			timerCtx.lastRecordTime = currTime
+		}
+		// 切換玩家
+		timerCtx.currUser = (timerCtx.currUser + 1) % timerCtx.users.length
+		syncTimer(selfName, targetNames, cb)
+	}
 	
 	module.createChannel = createChannel
+	
 	module.startHeartbeat = startHeartbeat
 	module.stopHeartbeat = stopHeartbeat
-	module.startReceiveInvitation = startReceiveInvitation
-	module.sendMessageToSomeone = sendMessageToSomeone
+	
 	module.invite = invite
+	module.startReceiveInvitation = startReceiveInvitation
+	
+	module.sendMessageToSomeone = sendMessageToSomeone
+	
 	module.getCardImageWithPackageName = getCardImageWithPackageName
+	
+	module.resetTimer = resetTimer
+	module.getTime = getTime
+	module.startTimer = startTimer
+	module.stopTimer = stopTimer
+	module.switchUser = switchUser
 	
 }) (api)
