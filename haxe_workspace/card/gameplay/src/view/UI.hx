@@ -244,13 +244,13 @@ class UI extends Mediator
 		if ( timerData != null ){
 			for ( k in timerData.users.fields() ){
 				var user:Dynamic = timerData.users.field(k);
-				var name = user.field('name').substr(0, 6);
+				var name = user.field('name').substr(0, 5);
 				var t = CallJs.api_getTime( user.field('name') );
 				var t2:Dynamic = untyped __js__('new Date')(t);
 				var h = t2.getUTCHours();
 				var m = t2.getUTCMinutes();
 				var s = t2.getUTCSeconds();
-				addTimerItem(name, h+"時"+m+"分"+s+"秒");
+				addTimerItem(name, h + "時" + m + "分" + s + "秒");
 			}
 			if ( timerData.users[timerData.currUser].name == SocketController.playerId ){
 				mc_timerView.parent().addClass('timer_focus');

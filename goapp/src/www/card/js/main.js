@@ -406,12 +406,17 @@ Main.prototype = {
 			Main.createItem(data3);
 			break;
 		case "onStartTimerClick":
-			if(!this.isCanCallTimer()) {
-				return;
-			}
-			CallJs.api_startTimer(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err2,data4) {
+			CallJs.api_resetTimer(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err2,data4) {
 				if(err2 != null) {
 					Main.alert(err2);
+				} else {
+					CallJs.api_startTimer(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err3,data5) {
+						if(err3 != null) {
+							Main.alert(err3);
+						} else {
+							org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification("sendMessage",{ type : "chat", msg : { id : controller_SocketController.playerId, msg : "開始計時!"}});
+						}
+					});
 				}
 			});
 			break;
@@ -419,9 +424,9 @@ Main.prototype = {
 			if(!this.isCanCallTimer()) {
 				return;
 			}
-			CallJs.api_stopTimer(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err3,data5) {
-				if(err3 != null) {
-					Main.alert(err3);
+			CallJs.api_stopTimer(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err4,data6) {
+				if(err4 != null) {
+					Main.alert(err4);
 				}
 			});
 			break;
@@ -429,18 +434,20 @@ Main.prototype = {
 			if(!this.isCanCallTimer()) {
 				return;
 			}
-			CallJs.api_switchUser(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err4,data6) {
-				if(err4 != null) {
-					Main.alert(err4);
+			CallJs.api_switchUser(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err5,data7) {
+				if(err5 != null) {
+					Main.alert(err5);
+				} else {
+					org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification("sendMessage",{ type : "chat", msg : { id : controller_SocketController.playerId, msg : "切換玩家嘍~"}});
 				}
 			});
 			break;
 		case "onTokenClick":
 			var ary_token = ["token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_0","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_1","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2","token_2"];
-			var data7 = ary_token.map(function(idstr3) {
+			var data8 = ary_token.map(function(idstr3) {
 				return { extra : [idstr3,"other"], pos : [100,100], type : "token", width : 50, height : 50, owner : controller_SocketController.playerId};
 			});
-			Main.createItem(data7);
+			Main.createItem(data8);
 			break;
 		}
 		CallJs.googleTracking_click(type);
@@ -1047,7 +1054,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			case 17:
 				this.isCtrl = false;
 				break;
-			case 65:case 68:case 73:case 75:case 79:case 80:case 84:
+			case 65:case 66:case 68:case 73:case 75:case 79:case 80:case 84:
 				break;
 			default:
 				if(this.ary_select.length == 0) {
@@ -1060,6 +1067,9 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		case 3:case 65:
 			this.moveModel();
 			this.updateView(this.ary_select);
+			break;
+		case 66:
+			(Reflect.field(window,"onHtmlClick"))("onSwitchTimerClick");
 			break;
 		case 67:
 			this.setModelOwner();
@@ -2724,7 +2734,7 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 				var k = _g1[_g];
 				++_g;
 				var user = Reflect.field(timerData.users,k);
-				var name = Reflect.field(user,"name").substr(0,6);
+				var name = Reflect.field(user,"name").substr(0,5);
 				var t = CallJs.api_getTime(Reflect.field(user,"name"));
 				var t2 = new Date(t);
 				var h = t2.getUTCHours();
