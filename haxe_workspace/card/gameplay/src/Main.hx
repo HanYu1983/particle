@@ -171,14 +171,24 @@ class Main
 					if ( err != null )	alert( err );
 				});
 			case 'onStartTimerClick':
-				if ( !isCanCallTimer() ) return;
-				CallJs.api_startTimer( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
+				CallJs.api_resetTimer( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
 					if ( err != null )	alert( err );
+					else{
+						CallJs.api_startTimer( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
+							if ( err != null )	alert( err );
+							else{
+								Facade.getInstance().sendNotification( SocketController.sendMessage, { type:'chat', msg: { id:SocketController.playerId, msg:'開始計時!' } } );
+							}
+						});
+					}
 				});
 			case 'onSwitchTimerClick':
 				if ( !isCanCallTimer() ) return;
 				CallJs.api_switchUser( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
 					if ( err != null )	alert( err );
+					else{
+						Facade.getInstance().sendNotification( SocketController.sendMessage, { type:'chat', msg: { id:SocketController.playerId, msg:'切換玩家嘍~' } } );
+					}
 				});
 			case 'onBtnLoadGameClick':
 				currentSelect = params;

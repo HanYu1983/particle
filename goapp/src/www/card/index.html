@@ -202,6 +202,7 @@ body{
 			<div>K-解鎖所有物件</div>
 			<div>C-設定持有者</div>
 			<div>V-設定觀察者</div>
+			<div>B-切換玩家</div>
 			<div>R-執行動作</div>
 			<div>T-擲骰</div>
 			<div>I-黃色指示物</div>
@@ -214,11 +215,11 @@ body{
 		<div class="ghost-select"><span></span></div>
 	</div>
 	<div style="position:absolute; top:0; left:0;" id="container_cards"></div>
-	<div style="position:fixed; top:5px; right:355px;">
-		<div id="mc_light" class="hori" style="float:right"></div>
-	</div>
-	<div style="position:fixed; top:20px; right:355px; padding:5px">
-		<div id="mc_timerView" class="group" style="width:140px">
+	<div class="group" style="position:fixed; top:5px; right:355px; width:150px">
+		<div class="gruop" style="height:20px">
+			<div id="mc_light" class="hori" style="float:right"></div>
+		</div>
+		<div id="mc_timerView" class="group">
 			<!-- by script -->
 			<!--
 			<div style="color:gray">xiaozaxiaoza:<span style="color:yellow">0:21:1</span></div>
@@ -259,8 +260,10 @@ body{
 			</div>
 			<div class="group" style="text-align:center;">
 				<div class="group section_light">
+					<!--
 					<a href="#" class="easyui-linkbutton" style="width:75px;" onclick="onHtmlClick('onResetTimerClick')">歸零</a>
 					<a href="#" class="easyui-linkbutton" style="width:75px;" onclick="onHtmlClick('onStopTimerClick')">暫停</a>
+						-->
 					<a href="#" class="easyui-linkbutton" style="width:75px;" onclick="onHtmlClick('onStartTimerClick')">開始計時</a>
 					<a href="#" class="easyui-linkbutton" style="width:75px;" onclick="onHtmlClick('onSwitchTimerClick')">切換玩家</a>
 				</div>

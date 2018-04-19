@@ -289,7 +289,8 @@ class MainController extends Mediator
 					KeyboardEvent.DOM_VK_K,
 					KeyboardEvent.DOM_VK_I,
 					KeyboardEvent.DOM_VK_O,
-					KeyboardEvent.DOM_VK_P:
+					KeyboardEvent.DOM_VK_P,
+					KeyboardEvent.DOM_VK_B:
 			case KeyboardEvent.DOM_VK_CONTROL: isCtrl = false;
 			//滑鼠左鍵的事件不需要到這裡	
 			case 1:return;
@@ -298,6 +299,8 @@ class MainController extends Mediator
 		}
 		
 		switch( Std.parseInt( e.which ) ) {
+			case KeyboardEvent.DOM_VK_B:
+				Browser.window.field('onHtmlClick')('onSwitchTimerClick');
 			case KeyboardEvent.DOM_VK_H:
 				deleteModel( ary_select );
 				deleteView( ary_select );
