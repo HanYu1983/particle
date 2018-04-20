@@ -208,6 +208,5 @@ async function sengokuJp(outputPath){
 
 
 (async function(){
-	await sengokuJp('build/sengokuJp.json')
-	await sengokuCh('build/sengokuCh.json')
+	await sengokuCh('build/sengoku.json')
 })()
