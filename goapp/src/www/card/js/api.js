@@ -297,7 +297,7 @@ var api = api || {};
 		// 思考中的玩家才能開始計時
 		var isCurrUser = timerCtx.users[timerCtx.currUser].name == selfName
 		if(isCurrUser == false){
-			cb('u are not curr user')
+			cb('你不是思考中玩家')
 			return
 		}
 		if(timerCtx.isRunning){
@@ -314,7 +314,7 @@ var api = api || {};
 		// 非思考中玩家才能停止計時(公正性)
 		var isCurrUser = timerCtx.users[timerCtx.currUser].name == selfName
 		if(isCurrUser){
-			cb('u are curr user, can not stop time')
+			cb('你是思考中玩家, 不能暫停時間')
 			return
 		}
 		if(timerCtx.isRunning == false){
@@ -333,7 +333,7 @@ var api = api || {};
 		// 思考中的玩家才能切換玩家
 		var isCurrUser = timerCtx.users[timerCtx.currUser].name == selfName
 		if(isCurrUser == false){
-			cb('u are not curr user')
+			cb('你不是思考中玩家')
 			return
 		}
 		// 如果現在非暫停中, 累積時間並重新記錄開始時間
