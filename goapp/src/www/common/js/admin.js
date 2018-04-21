@@ -89,7 +89,7 @@
 		{ game:'gundamWarN', name:'鋼彈NexA', hot:false, 'public':false },
 		{ game:'sengoku', name:'戰國大戰', hot:false, 'public':false },
 		{ game:'sangoWar', name:'三國志大戰', hot:false, 'public':false },
-		{ game:'sgs', name:'陣面對決', hot:true, 'public':false },
+		{ game:'sgs', name:'陣面對決', hot:false, 'public':false },
 		{ game:'magic', name:'魔法風雲會', hot:false, 'public':false },
 		{ game:'battleSpirits', name:'戰魂', hot:false, 'public':false },
 		{ game:'crusade', name:'Crusade', hot:false, 'public':false },
