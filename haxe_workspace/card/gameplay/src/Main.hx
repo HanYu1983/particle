@@ -33,7 +33,7 @@ class Main
 	public static var token = '';
 	public static var otherPlayerId = '';
 	
-	public static var currentSelect = 'yugioh';
+	public static var currentSelect = 'fighter';
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
 	public static var cardSuitsDetails:Dynamic = {};
