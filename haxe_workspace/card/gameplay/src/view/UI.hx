@@ -417,6 +417,8 @@ class UI extends Mediator
 						case 'sengoku':
 							str += detail.cname + ' ' + detail.atype;
 							str += '<br/>';
+							str += detail.symbol;
+							str += '<br/>';
 							str += detail.content;
 							str += '<br/>';
 							str += detail.counter;
@@ -450,6 +452,8 @@ class UI extends Mediator
 							str += detail.context;
 						case 'gundamWarN':
 							str += detail.info_2;
+							str += '<br/>';
+							str += detail.info_17;
 							str += '<br/>';
 							str += detail.info_11;
 							str += '<br/>';

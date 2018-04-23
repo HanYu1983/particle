@@ -536,6 +536,7 @@ var gameController = {};
 		var fns = []
 		for( var k in query ){
 			var v = query[k]
+			console.log('v:' + v +',k:' + k );
 			if( v == "" ){
 				continue
 			}
@@ -615,10 +616,14 @@ var gameController = {};
 				if( v == "on" ){
 					if( k == "一枚制限" ){
 						fns.push( cardsearch.attrEq( "info_2", "［†］" ))
-					} else {
-						fns.push( cardsearch.attrEq( "info_12", k) )
+					} else if( k == 'S' || k == 'R' || k == 'N' || k == 'U' || k == 'C' || k == 'P' || k == '-'){
+						fns.push( cardsearch.not(cardsearch.attrEq( "info_17", k )))
+					} else{
+						fns.push( cardsearch.attrEq( "info_12", k))
 					}
 				}
+				break;
+				
 			}
 			
 		}
