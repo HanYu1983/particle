@@ -161,8 +161,10 @@ class Helper
 			case 'army':'軍武gogogo';
 			case 'gundamWar':'鋼彈大戰';
 			case 'gundamWarN':'鋼彈大戰Nex-A';
+			case 'gundamCrossWar':'鋼彈交錯戰爭';
 			case 'sangoWar':'三國志大戰';
 			case 'sgs':'三國殺陣面對決';
+			case 'sengoku':'戰國大戰';
 			case 'magic':'魔法風雲會';
 			case 'battleSpirits':'戰魂';
 			case 'crusade':'Crusade';
@@ -179,6 +181,7 @@ class Helper
 			case 'disgust':'噁心';
 			case 'heterodoxy':'偏門';
 			case _:'';
+				
 		}
 	}
 	

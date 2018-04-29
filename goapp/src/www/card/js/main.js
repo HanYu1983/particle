@@ -2909,6 +2909,15 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 						str += "<br/>";
 						str += detail.descrition;
 						break;
+					case "gundamCrossWar":
+						str += detail.cname + " " + detail.size;
+						str += "<br/>";
+						str += detail.ch;
+						str += "<br/>";
+						str += detail.abi1;
+						str += "<br/>";
+						str += detail.abi2;
+						break;
 					case "gundamWar":
 						str += detail.name;
 						str += "<br/>";
