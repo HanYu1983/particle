@@ -414,6 +414,14 @@ class UI extends Mediator
 				if ( detail != null ) {
 					str = '';
 					switch( game ) {
+						case 'gundamCrossWar':
+							str += detail.cname + ' ' + detail.size;
+							str += '<br/>';
+							str += detail.ch;
+							str += '<br/>';
+							str += detail.abi1;
+							str += '<br/>';
+							str += detail.abi2;
 						case 'sengoku':
 							str += detail.cname + ' ' + detail.atype;
 							str += '<br/>';
