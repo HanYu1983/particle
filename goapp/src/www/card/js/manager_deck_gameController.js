@@ -62,6 +62,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'gundamCrossWar':
+				return gundamCrossWarQuerystring2fns( str )
 			case 'sengoku':
 				return sengokuQuerystring2fns( str );
 			case 'ws':
@@ -87,6 +89,63 @@ var gameController = {};
 			default:
 				return gundamWarNQuerystring2fns(str)
 		}
+	}
+	
+	function gundamCrossWarQuerystring2fns(qstr){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		console.log(query)
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+				case 'cid':
+				fns.push( cardsearch.attrEq( "cid", v ) )
+				break;
+				case 'ntype':
+				fns.push( cardsearch.attrEq( "color", v ) )
+				break;
+				case 'ctype':
+				fns.push( cardsearch.attrEq( "ctype", v ) )
+				break;
+				case 'costAll_1':
+				fns.push( cardsearch.attrGe( "cost", parseInt(v) ) )
+				break;
+				case 'costAll_2':
+				fns.push( cardsearch.attrLe( "cost", parseInt(v) ) )
+				break;
+				case 'cost_1':
+				fns.push( cardsearch.attrGe( "colorCost", parseInt(v) ) )
+				break;
+				case 'cost_2':
+				fns.push( cardsearch.attrLe( "colorCost", parseInt(v) ) )
+				break;
+				case 'rare':
+				fns.push( cardsearch.attrEq( "rarity", v ) )
+				break;
+				case 'symbol':
+				fns.push( cardsearch.attrEq( "ch", v ) )
+				break;
+				case 'card_name':
+				fns.push( cardsearch.attrEq( "cname", v ) )
+				break;
+				case 'rule':
+				fns.push( cardsearch.or([cardsearch.attrEq( "abi1", v ), cardsearch.attrEq( "abi2", v )] ))
+				break;
+				case 'size':
+				fns.push( cardsearch.attrEq( "size", v ))
+				break;
+				default:
+				if( v == "on" ){
+					fns.push( cardsearch.or([cardsearch.attrEq( "abi1", k ), cardsearch.attrEq( "abi2", k )] ))
+				}
+				break
+			}
+		}
+		return fns
 	}
 	
 	function wsQuerystring2fns( qstr ){
