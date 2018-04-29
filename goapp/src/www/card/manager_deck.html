@@ -83,6 +83,7 @@ body{
 		<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
 		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:10px; padding-right:10px; padding-top:10px; ">
 			<div game="gundamCrossWar">${cid}</div>
+			<div game="gundamCrossWar">${size}</div>
 			<div game="gundamCrossWar">${cname}</div>
 			<div game="gundamCrossWar">${ch}</div>
 			<div game="gundamCrossWar">{{html abi1}}</div>
@@ -406,7 +407,40 @@ body{
 
 	var tmplAry = {
 		gundamCrossWar:{
-			default:[]
+			default:[
+				[	{type:'label', val:'勢力'},
+					{type:'select', span:3, val:{name:'ntype', items:['青','黃','緑','黑','赤','無色']}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:3,val:{name:'ctype', items:["UNIT","COUNTER","CREW","PILOT","EVENT","WARSHIP"]}}],
+				[	{type:'label', val:'指定cost以上'},
+					{type:'select', span:1,val:{name:'cost_1', items:['1','2','3','4','5']}},
+					{type:'label',val:'指定cost以下'},
+					{type:'select', span:1, val:{name:'cost_2', items:['1','2','3','4','5']}},
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:1,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:1, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[
+					{type:'label', val:'稀有度'},
+					{type:'select', span:2, val:{name:'rare',items:["レアリティ","ノーマル","レア","ダブルレア","クロスレア","コレクションレア","スペシャルレア","戦艦レア","プロモーション"]}},
+					{type:'label', val:'特徵'},
+					{type:'select', span:2,val:{name:'symbol', items:["CGS","AEU","BWS","GP","MA","NT","O・メテオ","OZ","T3部隊","アクシズ","アストレイ","アズラエル財団","ウィザードシステム","エゥーゴ","オーブ","オールズモビル","ガンダム","ガンプラ","キャスバル専用","ギャラルホルン","巨大ファンネル","ギラ・ドーガ","グフ","グレイズ","クロスボーン・バンガード","ゲルググ","コーディネイター","ザク","ザフト","ザンスカール","ジェガン","ジオン","ジオングヘッド","死の旋風隊","ジム","シャア専用","シルエットシステム","ジン","ジンクス","スーパードラグーン","ストライカーパック","スペシャル","ソレスタルビーイング","タービンズ","ダガー","ティターンズ","テイワズ","デラーズ・フリート","トークン","ドム","ナチュラル","ニューディサイズ","ネオ・ジオン","バグ","ヒューマンデブリ","ファントムペイン","武装","プチ・モビルスーツ","フリーデン","ブルワーズ","フロスト兄弟","ホビー・モビルスーツ","マグアナック隊","マゼラアタック","マッシュ専用","ユニオン","ラル専用","リガ・ミリティア","ロンメル部隊","阿頼耶識","宇宙革命軍","旧連邦","強化人間","黒い三連星","死神","新連邦","人革連","水陸両用","戦闘機","隊長","第08MS小隊","超兵","鉄華団","木星帝国","陸戦型","連合","連邦"]}},
+					{type:'label', val:'機體大小'},
+					{type:'select', span:2, val:{name:'size',items:["L","M","S","-"]}}
+				],
+				[	
+					{type:'label', val:'能力'},
+					{type:'checkbox', span:7, val:{name:'rule',items:["MA","インターセプト","大型ファンネル","可変","急襲","作戦","士気","侵撃","水中奇襲","スクランブル","制圧","装甲","適合","トークン","破壊工作","バグ","反撃","ファンネル","フィン・ファンネル","ブリッジ","武力介入","防衛","砲撃","リフレクタービット"]}}
+				],
+				[	{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:7,val:{name:'card_name'}}],
+				[	{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:7,val:{name:'rule'}}],
+				[	{type:'label', val:'id檢索'},
+					{type:'textbox', span:7,val:{name:'cid'}}
+				]
+			]
 		},
 		sengoku:{
 			default:[
@@ -1135,6 +1169,7 @@ body{
 		magic:'魔法風雲會',
 		gundamWar:'鋼彈大戰',
 		gundamWarN:'鋼彈大戰NexA',
+		gundamCrossWar: '交錯戰爭',
 		battleSpirits: '戰魂',
 		crusade: 'Crusade',
 		dragonZ: '七龍珠TCG',

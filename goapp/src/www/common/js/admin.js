@@ -87,6 +87,7 @@
 		{ game:'fighter', name:'格鬥風雲錄', hot:false, 'public':true },
 		{ game:'gundamWar', name:'鋼彈大戰', hot:false, 'public':false },
 		{ game:'gundamWarN', name:'鋼彈NexA', hot:false, 'public':false },
+		{ game:'gundamCrossWar', name:'交錯戰爭', hot:false, 'public':false },
 		{ game:'sengoku', name:'戰國大戰', hot:false, 'public':false },
 		{ game:'sangoWar', name:'三國志大戰', hot:false, 'public':false },
 		{ game:'sgs', name:'陣面對決', hot:false, 'public':false },
