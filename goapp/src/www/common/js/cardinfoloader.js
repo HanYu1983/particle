@@ -4,6 +4,9 @@ var cardinfoloader = {} || cardinfoloader;
 	
 	function load( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'gundamCrossWar':
+				gundamCrossWar.load( "../common/txt/gundamCrossWarJp.json", onLoadGameCallback)
+				break;
 			case 'sengoku':
 				sengoku.load( "../common/txt/sengoku.json", onLoadGameCallback)
 				break;
@@ -67,6 +70,8 @@ var cardinfoloader = {} || cardinfoloader;
 	*/
 	function cardimageurl( game, id ){
 		switch( game ){
+		case 'gundamCrossWar':
+			return '//storage.googleapis.com/particle-resources/cardPackage/gundamCrossWar/'+id+'.png'
 		case 'sanguosha':
 			return '../common/images/sanguosha/' +id + '.jpg'
 		case 'poker':
