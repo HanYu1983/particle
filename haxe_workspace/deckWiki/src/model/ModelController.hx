@@ -406,7 +406,9 @@ class ModelController extends Mediator
 			item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
+			if(item.gameName == '')	trace( "缺少中文翻譯,請補上:" + item.game );
 			item.typeName = Helper.EnToCh( item.type );
+			if(item.gameName == '')	trace( "缺少中文翻譯,請補上:" + item.type );
 			item.desc = item.desc == null ? '' : item.desc;
 			first.push( item );
 			return first;

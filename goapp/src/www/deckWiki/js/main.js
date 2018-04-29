@@ -123,6 +123,8 @@ Helper.EnToCh = function(en) {
 		return "噁心";
 	case "dragonZ":
 		return "七龍珠TCG";
+	case "gundamCrossWar":
+		return "鋼彈交錯戰爭";
 	case "gundamWar":
 		return "鋼彈大戰";
 	case "gundamWarN":
@@ -139,6 +141,8 @@ Helper.EnToCh = function(en) {
 		return "中速";
 	case "sangoWar":
 		return "三國志大戰";
+	case "sengoku":
+		return "戰國大戰";
 	case "sgs":
 		return "三國殺陣面對決";
 	case "ws":
@@ -962,7 +966,13 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh(item.game);
+			if(item.gameName == "") {
+				console.log("缺少中文翻譯,請補上:" + Std.string(item.game));
+			}
 			item.typeName = Helper.EnToCh(item.type);
+			if(item.gameName == "") {
+				console.log("缺少中文翻譯,請補上:" + Std.string(item.type));
+			}
 			item.desc = item.desc == null ? "" : item.desc;
 			first.push(item);
 			return first;
