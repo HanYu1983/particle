@@ -4,6 +4,9 @@ var cardinfoloader = {} || cardinfoloader;
 	
 	function load( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'fighting':
+				fighting.load("../common/txt/fighting.tsv", onLoadGameCallback);
+				break;
 			case 'gundamCrossWar':
 				gundamCrossWar.load( "../common/txt/gundamCrossWarJp.json", onLoadGameCallback)
 				break;

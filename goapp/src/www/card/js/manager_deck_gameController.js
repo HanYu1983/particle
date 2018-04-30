@@ -1,55 +1,5 @@
 var gameController = {};
 (function( module ){
-	/*
-	function loadCardData( game, lang, onLoadGameCallback ){
-		switch( game ){
-			case 'ws':
-				ws.load( "../common/txt/wsList/", onLoadGameCallback)
-				break;
-			case 'sgs':
-				sgs.load( "../common/txt/sgsList.json", onLoadGameCallback)
-				break;
-			case 'gundamWarN':
-				gundamWarN.load( "../common/txt/gundamWarNexAList/", onLoadGameCallback)
-				break;
-			case 'dragonZ':
-				dragonZ.load( "../common/txt/dragonZList.json", onLoadGameCallback)
-				break;
-			case 'crusade':
-				crusade.load( "../common/txt/crusadeList/", onLoadGameCallback)
-				break;
-			case 'battleSpirits':
-				battleSpirits.load( "../common/txt/battleSpiritsList/", onLoadGameCallback)
-				break;
-			case 'army':
-				army.load(onLoadGameCallback)
-				break;
-			case 'gundamWar':
-				gundamWar.load("../common/txt/gundamWarList.json", onLoadGameCallback)
-				break;
-			case 'yugioh':
-				if( lang == 'jp' ){
-					yugioh.load("../common/txt/yugiohListJp.json", onLoadGameCallback)
-				} else if ( lang == 'en' ){
-					yugioh.load("../common/txt/yugiohListEn.json", onLoadGameCallback)
-				} else if ( lang == 'ch' ){
-					yugioh.load("../common/txt/yugiohListCh.json", onLoadGameCallback)
-				}
-				break;
-			case 'sangoWar':
-				if ( lang == 'ch' ){
-					sangoWar.loadCh( "../common/txt/sangoList/", onLoadGameCallback);
-				} else {
-					sangoWar.load("../common/txt/sangoList.txt", onLoadGameCallback)
-				}
-				
-				break;
-			case 'magic':
-				magic.load( "../common/txt/magicList.xml", onLoadGameCallback);
-				break;
-		}
-	}
-	*/
 	
 	function getCardUrl( game, card ){
 		switch( game ){
@@ -62,6 +12,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'fighting':
+				return fightingQuerystring2fns( str )
 			case 'gundamCrossWar':
 				return gundamCrossWarQuerystring2fns( str )
 			case 'sengoku':
@@ -86,16 +38,57 @@ var gameController = {};
 				return sangoWarQuerystring2fns(str);
 			case 'magic':
 				return magicQuerystring2fns(str);
-			default:
+			case 'gundamWarN':
 				return gundamWarNQuerystring2fns(str)
+			default:
+				console.log('no this game '+game)
+				return [obj=>true]	// array of function
 		}
+	}
+	
+	function fightingQuerystring2fns(qstr){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+				case 'cid':
+				fns.push( cardsearch.attrEq( "cid", v ) )
+				break;
+				case 'ctype':
+				fns.push( cardsearch.attrEq( "ctype", v ) )
+				break;
+				case 'level_1':
+				fns.push( cardsearch.attrGe( "level", parseInt(v) ) )
+				break;
+				case 'level_2':
+				fns.push( cardsearch.attrLe( "level", parseInt(v) ) )
+				break;
+				case 'weight_1':
+				fns.push( cardsearch.attrGe( "weight", parseInt(v) ) )
+				break;
+				case 'weight_2':
+				fns.push( cardsearch.attrLe( "weight", parseInt(v) ) )
+				break;
+				case 'card_name':
+				fns.push( cardsearch.attrEq( "cname", v ) )
+				break;
+				case 'rule':
+				fns.push( cardsearch.or([cardsearch.attrEq( "abi1", v ), cardsearch.attrEq( "abi2", v ), cardsearch.attrEq( "abi3", v )] ))
+				break;
+			}
+		}
+		return fns
 	}
 	
 	function gundamCrossWarQuerystring2fns(qstr){
 		var url = $.url("?" + qstr)
 		var query = url.data.param.query
 		var fns = []
-		console.log(query)
 		for( var k in query ){
 			var v = query[k]
 			if( v == "" ){
