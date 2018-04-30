@@ -12,8 +12,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
-			case 'fighting':
-				return fightingQuerystring2fns( str )
+			case 'fighter':
+				return fighterQuerystring2fns( str )
 			case 'gundamCrossWar':
 				return gundamCrossWarQuerystring2fns( str )
 			case 'sengoku':
@@ -46,7 +46,7 @@ var gameController = {};
 		}
 	}
 	
-	function fightingQuerystring2fns(qstr){
+	function fighterQuerystring2fns(qstr){
 		var url = $.url("?" + qstr)
 		var query = url.data.param.query
 		var fns = []
