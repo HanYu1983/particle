@@ -1,4 +1,4 @@
-var fighting = fighting || {};
+var fighter = fighter || {};
 
 (function( module ){
 	
@@ -33,4 +33,4 @@ var fighting = fighting || {};
 
 	module.load = load
 	
-}) ( fighting )
+}) ( fighter )

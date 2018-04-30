@@ -82,12 +82,12 @@ body{
 		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
 		<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
 		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:10px; padding-right:10px; padding-top:10px; ">
-			<div game="fighting">${cid}</div>
-			<div game="fighting">${cname}</div>
-			<div game="fighting">${ctype}</div>
-			<div game="fighting">${abi1}</div>
-			<div game="fighting">${abi2}</div>
-			<div game="fighting">${abi3}</div>
+			<div game="fighter">${cid}</div>
+			<div game="fighter">${cname}</div>
+			<div game="fighter">${ctype}</div>
+			<div game="fighter">${abi1}</div>
+			<div game="fighter">${abi2}</div>
+			<div game="fighter">${abi3}</div>
 			
 			<div game="gundamCrossWar">${cid}</div>
 			<div game="gundamCrossWar">${size}</div>
@@ -200,9 +200,9 @@ body{
 			<img style="position:absolute; left:0; top:0; height:100%;" src=${url}  style="height:100%;" />
 		</div>
 		<div class="hori" style="overflow:hidden; width:150px; height:100%; vertical-align:top;">
-			<div game="fighting">${cid}</div>
-			<div game="fighting">${cname}</div>
-			<div game="fighting">${ctype}</div>
+			<div game="fighter">${cid}</div>
+			<div game="fighter">${cname}</div>
+			<div game="fighter">${ctype}</div>
 			
 			<div game="gundamCrossWar">${cid}</div>
 			<div game="gundamCrossWar">${cname}</div>
@@ -361,7 +361,7 @@ body{
 	<script src="../common/js/lib/google/ga.js"></script>
 	<script src="../common/js/lib/csv.js"></script>
 	<script src="../common/js/lib/purl.js"></script>	
-	<script src="../common/js/fighting.js"></script>
+	<script src="../common/js/fighter.js"></script>
 	<script src="../common/js/gundamCrossWar.js"></script>
 	<script src="../common/js/sangoWar.js"></script>	
 	<script src="../common/js/yugioh.js"></script>	
@@ -419,7 +419,7 @@ body{
 
 
 	var tmplAry = {
-		fighting:{
+		fighter:{
 			default:[
 				[
 					{type:'label',val:'卡片種類'},
