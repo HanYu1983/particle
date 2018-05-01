@@ -430,6 +430,14 @@ class UI extends Mediator
 							str += detail.content;
 							str += '<br/>';
 							str += detail.counter;
+						case 'fighter':
+							str += detail.cname + ' ' + detail.ctype;
+							str += '<br/>';
+							str += '狀態能力:' + detail.abi1;
+							str += '<br/>';
+							str += '武器能力:' + detail.abi2;
+							str += '<br/>';
+							str += '手牌能力:' + detail.abi3;
 						case 'ws':
 							str += detail.id;
 							str += '<br/>';

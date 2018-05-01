@@ -2909,6 +2909,15 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 						str += "<br/>";
 						str += detail.descrition;
 						break;
+					case "fighter":
+						str += detail.cname + " " + detail.ctype;
+						str += "<br/>";
+						str += "狀態能力:" + detail.abi1;
+						str += "<br/>";
+						str += "武器能力:" + detail.abi2;
+						str += "<br/>";
+						str += "手牌能力:" + detail.abi3;
+						break;
 					case "gundamCrossWar":
 						str += detail.cname + " " + detail.size;
 						str += "<br/>";
