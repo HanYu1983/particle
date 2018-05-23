@@ -8,7 +8,7 @@ function fetch(url){
 		const urlKey = encodeURIComponent(url)
 		const path = "cache/"+urlKey+".html"
 		if (fs.existsSync(path)) {
-			console.log('use cache:'+path)
+			//console.log('use cache:'+path)
 			fs.readFile(path, 'utf8', function (err,data) {
 				if (err) {
 					rej(err)
@@ -79,11 +79,11 @@ async function sengokuCh(outputPath){
 	var row = 0
 	while(row = reg.exec(page)){
 		var [ignore, nextUrl, name] = row
+		console.log(name)
 		var page2 = await fetch(host+nextUrl)
 		var row2 = 0
 		while(row2 = reg2.exec(page2)){
 			var [ignore, nextUrl] = row2
-			console.log(nextUrl)
 			var page3 = await fetch(host+nextUrl)
 			var row3 = reg3.exec(page3)
 			var [ignore, ...info] = row3
@@ -208,5 +208,6 @@ async function sengokuJp(outputPath){
 
 
 (async function(){
+	// 記得抓之前把要抓首頁的快取檔清掉, 不然抓不到最新的
 	await sengokuCh('build/sengoku.json')
 })()
