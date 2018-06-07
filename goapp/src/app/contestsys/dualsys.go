@@ -112,11 +112,8 @@ func GetDualWithPeople(dualSys *DualSys, contestId string, peopleId string) (Dua
 	return Dual{}, false
 }
 
-func GetDualWithPos(dualSys *DualSys, contestId string, pos string) (Dual, bool) {
+func GetDualWithPos(dualSys *DualSys, pos string) (Dual, bool) {
 	for _, dual := range dualSys.Duals {
-		if dual.Contest != contestId {
-			continue
-		}
 		if dual.ID == pos {
 			return dual, true
 		}
@@ -124,11 +121,8 @@ func GetDualWithPos(dualSys *DualSys, contestId string, pos string) (Dual, bool)
 	return Dual{}, false
 }
 
-func GetNextDual(dualSys *DualSys, contestId string, pos string) (Dual, bool) {
+func GetNextDual(dualSys *DualSys, pos string) (Dual, bool) {
 	for _, dual := range dualSys.Duals {
-		if dual.Contest != contestId {
-			continue
-		}
 		if dual.Left == pos || dual.Right == pos {
 			return dual, true
 		}

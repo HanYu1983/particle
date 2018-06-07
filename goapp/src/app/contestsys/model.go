@@ -16,12 +16,14 @@ const (
 type Context struct {
 	ContestSys ContestSys
 	DualSys    DualSys
+	ConfirmSys ConfirmSys
 }
 
 func NewContext() Context {
 	return Context{
 		ContestSys: NewContestSys(),
 		DualSys:    NewDualSys(),
+		ConfirmSys: NewConfirmSys(),
 	}
 }
 
@@ -53,7 +55,7 @@ func SaveContext(ctx appengine.Context, appContext Context) error {
 	return nil
 }
 
-func UpdateDual(appCtx *Context, contestId string) error {
+func CtxUpdateDual(appCtx *Context, contestId string) error {
 	contest, isExist := appCtx.ContestSys.Contests[contestId]
 	if isExist == false {
 		return errors.New("no contest")
@@ -64,9 +66,52 @@ func UpdateDual(appCtx *Context, contestId string) error {
 		if hasDual == false {
 			return errors.New("must has pos")
 		}
-		people.Pos = dual.ID
+		nextDual, hasDual := GetNextDual(&appCtx.DualSys, dual.ID)
+		if hasDual == false {
+			return errors.New("must has nextDual pos")
+		}
+		people.Pos = nextDual.ID
 		contest.Peoples[people.ID] = people
 	}
 	appCtx.ContestSys.Contests[contestId] = contest
+	return nil
+}
+
+func CtxConfirmWinner(appCtx *Context, contestId string, peopleId string, winner string) error {
+	contest, isExist := appCtx.ContestSys.Contests[contestId]
+	if isExist == false {
+		return errors.New("no contest")
+	}
+	people, isPeopleExist := contest.Peoples[peopleId]
+	if isPeopleExist == false {
+		return errors.New("no people")
+	}
+	ConfirmWinner(&appCtx.ConfirmSys, people.Pos, people.ID, winner)
+	return nil
+}
+
+func CtxUpgrade(appCtx *Context, contestId string, peopleId string) error {
+	contest, isExist := appCtx.ContestSys.Contests[contestId]
+	if isExist == false {
+		return errors.New("no contest")
+	}
+	people, isPeopleExist := contest.Peoples[peopleId]
+	if isPeopleExist == false {
+		return errors.New("no people")
+	}
+	pos := people.Pos
+	nextDual, hasNextDual := GetNextDual(&appCtx.DualSys, pos)
+	if hasNextDual == false {
+		return errors.New("no next dual")
+	}
+	state := GetConfirmState(&appCtx.ConfirmSys, pos)
+	if state != ConfirmStateOk {
+		return errors.New("can not upgrade")
+	}
+	people.Pos = nextDual.ID
+	contest.Peoples[peopleId] = people
+	appCtx.ContestSys.Contests[contestId] = contest
+
+	RemoveConfirm(&appCtx.ConfirmSys, pos)
 	return nil
 }

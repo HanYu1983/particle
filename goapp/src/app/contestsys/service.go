@@ -91,26 +91,61 @@ func Serve_PrepareDual(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		err = UpdateDual(&appCtx, contestId)
+		err = CtxUpdateDual(&appCtx, contestId)
 		if err != nil {
 			return err
 		}
-		/*
-			contest, isExist := appCtx.ContestSys.Contests[contestId]
-			if isExist == false {
-				return errors.New("no contest")
-			}
-			PrepareDual(&appCtx.DualSys, contest)
-			for _, people := range contest.Peoples {
-				dual, hasDual := GetDualWithPeople(&appCtx.DualSys, contestId, people.ID)
-				if hasDual == false {
-					return errors.New("must has pos")
-				}
-				people.Pos = dual.ID
-				contest.Peoples[people.ID] = people
-			}
-			appCtx.ContestSys.Contests[contestId] = contest
-		*/
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+
+	tool.Output(w, nil, nil)
+}
+
+func Serve_ConfirmWinner(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["peopleId"]
+	winner := params["winner"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		err = CtxConfirmWinner(&appCtx, contestId, peopleId, winner)
+		if err != nil {
+			return err
+		}
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+
+	tool.Output(w, nil, nil)
+}
+
+func Serve_Upgrade(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["peopleId"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		err = CtxUpgrade(&appCtx, contestId, peopleId)
+		if err != nil {
+			return err
+		}
 		return SaveContext(ctx, appCtx)
 	})
 	tool.Assert(tool.IfError(err))
