@@ -6,8 +6,8 @@ handlers:
   static_dir: www/works
 - url: /sgs_online
   static_dir: www/sgs_online
-- url: /duelsys
-  static_dir: www/duelsys
+- url: /contestsys
+  static_dir: www/contestsys
 - url: /collectmmo
   static_dir: www/collectmmo
 - url: /tableGameCreator
