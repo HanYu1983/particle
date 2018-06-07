@@ -7,12 +7,14 @@ import (
 	"lib/db2"
 	"lib/tool"
 	"net/http"
+
+	"github.com/gorilla/mux"
+
 	"appengine"
-    "appengine/user"
+	"appengine/user"
+
+	"app/contestsys"
 )
-
-
-
 
 func init() {
 	//// 基本設施 ////
@@ -20,12 +22,12 @@ func init() {
 	http.HandleFunc("/", handler2)
 	// 代理伺服器
 	http.HandleFunc("/proxy", tool.Proxy)
-	// 即時訊息
-	http.HandleFunc("/fn/createChannel", app.CreateChannel)
-	http.HandleFunc("/fn/sendChannelMessage", app.SendChannelMessage)
-	// 即時訊息傾聽事件
-	http.HandleFunc("/_ah/channel/connected/", app.OnChannelConnected)
-	http.HandleFunc("/_ah/channel/disconnected/", app.OnChannelDisconnected)
+	// 即時訊息(方法已淘汰)
+	//http.HandleFunc("/fn/createChannel", app.CreateChannel)
+	//http.HandleFunc("/fn/sendChannelMessage", app.SendChannelMessage)
+	// 即時訊息傾聽事件(方法已淘汰)
+	//http.HandleFunc("/_ah/channel/connected/", app.OnChannelConnected)
+	//http.HandleFunc("/_ah/channel/disconnected/", app.OnChannelDisconnected)
 	// 給前台的訊息
 	http.HandleFunc("/fn/message", app.MessageConfig)
 
@@ -66,7 +68,16 @@ func init() {
 
 	// 余氏K線圖
 	// no function
-	
+
+	//
+	router := mux.NewRouter()
+	router.HandleFunc("/fn/contestsys/", contestsys.Serve_Context).Methods("GET")
+	router.HandleFunc("/fn/contestsys/CreateContest/{owner}", contestsys.Serve_CreateContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/JoinContest/{contestId}/{peopleId}", contestsys.Serve_JoinContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/PrepareDual/{contestId}", contestsys.Serve_PrepareDual).Methods("GET")
+
+	http.Handle("/fn/contestsys/", router)
+
 	// Test
 	http.HandleFunc("/fn/auth", welcome)
 }
@@ -74,7 +85,6 @@ func init() {
 func handler2(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello, world3!")
 }
-
 
 func welcome(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "text/html; charset=utf-8")
