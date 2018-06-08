@@ -1,0 +1,217 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+	</head>
+	<body>
+<!--                                              -->
+<div style="width:100%;height:100%;">
+	<div class="easyui-layout" style="width:100%;height:100%;">
+        <div data-options="region:'west',split:true" title="比賽" style="width:200px;">
+			<div class="easyui-accordion" data-options="fit:true,border:false" style='overflow: auto;'>
+                <ul class="easyui-tree">
+		            <li>
+		                <span>比賽1</span>
+		                <ul>
+		                    <li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+		                </ul>
+		            </li>
+					
+					<li>
+		                <span>比賽2</span>
+		                <ul>
+		                    <li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+		                    <li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+							<li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+							<li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+							<li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+							<li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+							<li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+							<li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+							<li>index.html</li>
+		                    <li>about.html</li>
+		                    <li>welcome.html</li>
+		                </ul>
+		            </li>
+		        </ul>
+            </div>
+		</div>
+        <div data-options="region:'center'">
+            <div class="easyui-tabs" style='height:100%'>
+		        <div title="新增/修改比賽">
+					<div class="easyui-panel" style="padding:5px;">
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">新增草搞</a>
+				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">刪除</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">修改</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true">更新比賽列表</a>
+				    </div>
+					
+					<form id="ff" class="easyui-form" method="post" data-options="novalidate:true">
+						名稱
+			            <div style="margin-bottom:20px">
+			                <input class="easyui-textbox" name="subject" style="width:100%" data-options="required:true">
+			            </div>
+						描述
+			            <div style="margin-bottom:20px">
+			                <input class="easyui-textbox" name="description" style="width:100%" data-options="required:false">
+			            </div>
+			        </form>
+		        </div>
+		        <div title="賽程管理">
+					<div class="easyui-accordion" data-options="multiple:true" style="width:100%;">
+						<div title="賽程" style='height:300px'>
+				            
+				        </div>
+				        <div title="玩家" data-options="selected:true">
+				            <table id="dg" class="easyui-datagrid" style='width:100%'
+						            data-options="
+						                iconCls: 'icon-edit',
+						                singleSelect: true,
+										collapsible:false,
+						                toolbar: '#tb',
+						                onClickCell: onClickCell,
+						                onEndEdit: onEndEdit
+						            ">
+						        <thead>
+						            <tr>
+						                <th data-options="field:'ID',width:80">ID</th>
+						                <th data-options="field:'Name',width:100,editor:'textbox'">Product</th>
+						                <th data-options="field:'Power',width:80,align:'right',editor:'numberbox'">種子選手</th>
+						            </tr>
+						        </thead>
+								<tbody>
+									<tr>
+										<td field="ID">ID</td>
+										<td field="Name">Name</td>
+										<td field="Power">0</td>
+									</tr>
+								</tbody>
+						    </table>
+						 
+						    <div id="tb" style="height:auto">
+						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">強制退出比賽</a>
+						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">確認修改</a>
+						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">取消修改</a>
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-update',plain:true">重新排賽</a>
+						    </div>
+				        </div>
+					</div>
+		        </div>
+		        <div title="玩家">
+					<div class="easyui-panel" style="padding:5px;">
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈勝利</a>
+				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'">發佈失敗</a>
+				    </div>
+				</div>
+				<div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
+		            This is the help content.
+		        </div>
+		    </div>
+        </div>
+    </div>
+</div>
+
+	
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+			
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		
+		<script type="text/javascript">
+	        var editIndex = undefined;
+	        function endEditing(){
+	            if (editIndex == undefined){return true}
+	            if ($('#dg').datagrid('validateRow', editIndex)){
+	                $('#dg').datagrid('endEdit', editIndex);
+	                editIndex = undefined;
+	                return true;
+	            } else {
+	                return false;
+	            }
+	        }
+	        function onClickCell(index, field){
+	            if (editIndex != index){
+	                if (endEditing()){
+	                    $('#dg').datagrid('selectRow', index)
+	                            .datagrid('beginEdit', index);
+	                    var ed = $('#dg').datagrid('getEditor', {index:index,field:field});
+	                    if (ed){
+	                        ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+	                    }
+	                    editIndex = index;
+	                } else {
+	                    setTimeout(function(){
+	                        $('#dg').datagrid('selectRow', editIndex);
+	                    },0);
+	                }
+	            }
+	        }
+	        function onEndEdit(index, row){
+				/*
+	            var ed = $(this).datagrid('getEditor', {
+	                index: index,
+	                field: 'productid'
+	            });
+	            row.productname = $(ed.target).combobox('getText');
+				*/
+	        }
+	        function append(){
+	            if (endEditing()){
+	                $('#dg').datagrid('appendRow',{status:'P'});
+	                editIndex = $('#dg').datagrid('getRows').length-1;
+	                $('#dg').datagrid('selectRow', editIndex)
+	                        .datagrid('beginEdit', editIndex);
+	            }
+	        }
+	        function removeit(){
+				$.messager.confirm('系統', '確定要退出?', function(r){
+	                if(r){
+						if (editIndex == undefined){return}
+			            $('#dg').datagrid('cancelEdit', editIndex)
+			                    .datagrid('deleteRow', editIndex);
+			            editIndex = undefined;
+	                }else{
+						
+					}
+	            });
+	        }
+	        function accept(){
+	            if (endEditing()){
+	                $('#dg').datagrid('acceptChanges');
+	            }
+	        }
+	        function reject(){
+	            $('#dg').datagrid('rejectChanges');
+	            editIndex = undefined;
+	        }
+	        function getChanges(){
+	            var rows = $('#dg').datagrid('getChanges');
+	            alert(rows.length+' rows are changed!');
+	        }
+	    </script>
+<!--                   EASY UI END                           -->
+
+
+	</body>
+</html>
