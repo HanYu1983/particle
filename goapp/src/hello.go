@@ -73,6 +73,7 @@ func init() {
 	router := mux.NewRouter()
 	router.HandleFunc("/fn/contestsys/", contestsys.Serve_Context).Methods("GET")
 	router.HandleFunc("/fn/contestsys/CreateContest/{owner}", contestsys.Serve_CreateContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/UpdateContest/{contestId}/{peopleId}", contestsys.Serve_UpdateContest).Methods("GET")
 	router.HandleFunc("/fn/contestsys/JoinContest/{contestId}/{peopleId}", contestsys.Serve_JoinContest).Methods("GET")
 	router.HandleFunc("/fn/contestsys/PrepareDual/{contestId}", contestsys.Serve_PrepareDual).Methods("GET")
 	router.HandleFunc("/fn/contestsys/ConfirmWinner/{contestId}/{peopleId}/{winner}", contestsys.Serve_ConfirmWinner).Methods("GET")

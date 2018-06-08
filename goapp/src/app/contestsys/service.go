@@ -6,7 +6,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	_ "errors"
+	"errors"
+	"strings"
 
 	"appengine"
 )
@@ -35,7 +36,7 @@ func Serve_CreateContest(w http.ResponseWriter, r *http.Request) {
 
 	ctx := appengine.NewContext(r)
 	var id string
-	tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -43,8 +44,47 @@ func Serve_CreateContest(w http.ResponseWriter, r *http.Request) {
 		id = CreateContest(&appCtx.ContestSys, pwd, owner)
 		return SaveContext(ctx, appCtx)
 	})
-
+	tool.Assert(tool.IfError(err))
 	tool.Output(w, id, nil)
+}
+
+func Serve_UpdateContest(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+
+	r.ParseForm()
+	name := r.FormValue("name")
+	description := r.FormValue("description")
+
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["peopleId"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		contest, hasContest := appCtx.ContestSys.Contests[contestId]
+		if hasContest == false {
+			return errors.New("no contest")
+		}
+		if contest.Owner != peopleId {
+			return errors.New("u r not owner")
+		}
+		if strings.Trim(name, " ") != "" {
+			contest.Name = name
+		}
+		if strings.Trim(description, " ") != "" {
+			contest.Description = description
+		}
+		appCtx.ContestSys.Contests[contestId] = contest
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, nil, nil)
 }
 
 func Serve_JoinContest(w http.ResponseWriter, r *http.Request) {

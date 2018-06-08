@@ -8,7 +8,7 @@
 	<div class="easyui-layout" style="width:100%;height:100%;">
         <div data-options="region:'west',split:true" title="比賽" style="width:200px;">
 			<div class="easyui-accordion" data-options="fit:true,border:false" style='overflow: auto;'>
-                <ul class="easyui-tree">
+                <ul class="easyui-tree" id="gameTree" data-options="onClick: onClickGameTree">
 		            <li>
 		                <span>比賽1</span>
 		                <ul>
@@ -24,30 +24,6 @@
 		                    <li>index.html</li>
 		                    <li>about.html</li>
 		                    <li>welcome.html</li>
-		                    <li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-							<li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-							<li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-							<li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-							<li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-							<li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-							<li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-							<li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
 		                </ul>
 		            </li>
 		        </ul>
@@ -57,14 +33,15 @@
             <div class="easyui-tabs" style='height:100%'>
 		        <div title="新增/修改比賽">
 					<div class="easyui-panel" style="padding:5px;">
-						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">新增草搞</a>
-				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">刪除</a>
-						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈</a>
-						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">修改</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="onClick('newContest')">新增草搞</a>
+				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="onClick('removeContest')">刪除</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitContest')">發佈</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'" onclick="onClick('updateContest')">修改</a>
 						<a href="#" class="easyui-linkbutton" data-options="plain:true">更新比賽列表</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('joinContest')">參加比賽</a>
 				    </div>
 					
-					<form id="ff" class="easyui-form" method="post" data-options="novalidate:true">
+					<form name="form_contest" class="easyui-form" data-options="novalidate:true">
 						名稱
 			            <div style="margin-bottom:20px">
 			                <input class="easyui-textbox" name="subject" style="width:100%" data-options="required:true">
@@ -78,7 +55,7 @@
 		        <div title="賽程管理">
 					<div class="easyui-accordion" data-options="multiple:true" style="width:100%;">
 						<div title="賽程" style='height:300px'>
-				            
+				            <div id='infovis' style='width:600px; height:300px'></div>
 				        </div>
 				        <div title="玩家" data-options="selected:true">
 				            <table id="dg" class="easyui-datagrid" style='width:100%'
@@ -93,7 +70,7 @@
 						        <thead>
 						            <tr>
 						                <th data-options="field:'ID',width:80">ID</th>
-						                <th data-options="field:'Name',width:100,editor:'textbox'">Product</th>
+						                <th data-options="field:'Name',width:100">小名</th>
 						                <th data-options="field:'Power',width:80,align:'right',editor:'numberbox'">種子選手</th>
 						            </tr>
 						        </thead>
@@ -133,12 +110,10 @@
 		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
 		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
 		<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
-			
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-		
-		<script type="text/javascript">
+		<script name='editPeopleList' type="text/javascript">
 	        var editIndex = undefined;
 	        function endEditing(){
 	            if (editIndex == undefined){return true}
@@ -210,6 +185,348 @@
 	            alert(rows.length+' rows are changed!');
 	        }
 	    </script>
+		
+		
+		<script src='../common/js/lib/jit-yc.js'></script>
+		
+		<script>
+var model = {};
+(function(module){
+	
+	var ctx = null
+	function loadContext(cb){
+		$.ajax({
+			url: '../fn/contestsys/',
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					ctx = info.Info
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	function getCurrentContext(){
+		return ctx
+	}
+	
+	var id = null
+	function setId(fbid){
+		id = fbid
+	}
+	
+	function updateContest(info, cb){
+		var contestId = info.contestId
+		var name = info.name
+		var description = info.description
+		$.ajax({
+			url: '../fn/contestsys/UpdateContest/'+contestId+'/'+id,
+			dataType:'json',
+			data:{
+				name: name,
+				description: description
+			},
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	
+	var currentContestId = null
+	function setCurrentContestId(id){
+		currentContestId = id
+	}
+	function getCurrentContestId(){
+		return currentContestId
+	}
+	
+	module.loadContext = loadContext
+	module.getCurrentContext = getCurrentContext
+	module.setCurrentContestId = setCurrentContestId
+	module.getCurrentContestId = getCurrentContestId
+	module.updateContest = updateContest
+	module.setId = setId
+})(model)
+
+var view = {};
+(function(module){
+	function updateView(info){
+		var json = [
+			{"id":"1","text":"Node 1","state":"closed", children:[{"id":"5","text":"Node 2","state":"open"}]},
+			{"id":"2","text":"Node 2","state":"open"},
+			{"id":"3","text":"Node 3","state":"open"},
+			{"id":"4","text":"Node 4","state":"open"}
+		]
+		
+		$('#gameTree').tree({data: json})
+		
+		var json = {
+			total: 2,
+			rows:[{"ID":"ssID", "Name":"xx", "Power":20}, {"ID":"ssID", "Name":"xx", "Power":20}]
+		}
+		$('#dg').datagrid({data: json})
+		
+	}
+	
+	
+	
+	function updateContestListView(ctx){
+		var root = []
+		for(var k in ctx.ContestSys.Contests){
+			var contest = ctx.ContestSys.Contests[k]
+			var sub = []
+			for(var j in contest.Peoples){
+				var p = contest.Peoples[j]
+				var subNode = {
+					id: p.ID,
+					text: p.Name+"("+p.ID+")",
+					belongContest: contest.ID
+				}
+				sub.push(subNode)
+			}
+			var node = {
+				id: contest.ID,
+				text: contest.Name+"("+contest.ID+")",
+				children: sub,
+				isContest: true,
+			}
+			root.push(node)
+		}
+		$('#gameTree').tree({data: root})
+	}
+	
+	function updateContestDetailView(ctx, contestId){
+		var contest = ctx.ContestSys.Contests[contestId]
+		$(document.form_contest).form('load',{
+	        subject:contest.Name,
+	        description:contest.Description,
+	    });
+	}
+	
+	function getContestDetail(){
+		var name = document.form_contest.subject.value
+		var description = document.form_contest.description.value
+		return {
+			name: name,
+			description: description
+		}
+	}
+	
+	function updateContestPeopleListView(ctx, contestId){
+		var contest = ctx.ContestSys.Contests[contestId]
+		var rows = []
+		for(var k in contest.Peoples){
+			var p = contest.Peoples[k]
+			var node = {
+				ID: p.ID,
+				Name: p.Name,
+				Power: 0
+			}
+			rows.push(node)
+		}
+		var json = {
+			total: rows.length,
+			rows: rows
+		}
+		$('#dg').datagrid({data: json})
+	}
+	
+	var st = new $jit.ST({  
+	    //id of viz container element  
+	    injectInto: 'infovis',  
+	    //set duration for the animation  
+	    duration: 100,  
+	    //set animation transition type  
+	    transition: $jit.Trans.Quart.easeInOut,  
+	    //set distance between node and its children  
+	    levelDistance: 50,  
+	    //enable panning  
+	    Navigation: {  
+	      enable:true,  
+	      panning:true  
+	    },  
+	    //set node and edge styles  
+	    //set overridable=true for styling individual  
+	    //nodes or edges  
+	    Node: {  
+	        height: 20,  
+	        width: 60,  
+	        type: 'rectangle',  
+	        color: '#aaa',  
+	        overridable: true  
+	    },  
+	      
+	    Edge: {  
+	        type: 'bezier',  
+	        overridable: true  
+	    },  
+	      
+	    onBeforeCompute: function(node){  
+		
+	    },  
+	      
+	    onAfterCompute: function(){  
+
+	    },  
+	      
+	    //This method is called on DOM label creation.  
+	    //Use this method to add event handlers and styles to  
+	    //your node.  
+	    onCreateLabel: function(label, node){  
+	        label.id = node.id;              
+	        label.innerHTML = node.name;  
+	        label.onclick = function(){
+				console.log('click:'+node.id)
+				st.onClick(node.id);
+	        };  
+	        //set label styles  
+	        var style = label.style;  
+	        style.width = 60 + 'px';  
+	        style.height = 17 + 'px';              
+	        style.cursor = 'pointer';  
+	        style.color = '#333';  
+	        style.fontSize = '0.8em';  
+	        style.textAlign= 'center';  
+	        style.paddingTop = '3px';
+	    },  
+	      
+	    //This method is called right before plotting  
+	    //a node. It's useful for changing an individual node  
+	    //style properties before plotting it.  
+	    //The data properties prefixed with a dollar  
+	    //sign will override the global node style properties.  
+	    onBeforePlotNode: function(node){  
+		
+	    },  
+	      
+	    //This method is called right before plotting  
+	    //an edge. It's useful for changing an individual edge  
+	    //style properties before plotting it.  
+	    //Edge data proprties prefixed with a dollar sign will  
+	    //override the Edge global style properties.  
+	    onBeforePlotLine: function(adj){  
+	
+	    }  
+	});  
+	
+	function updateContestFlowView(ctx, contestId, pos){
+		var list = ctx.DualSys.Duals.filter(data=>data.Contest == contestId)
+		if(list.length == 0){
+			return
+		}
+		var nodes = {}
+		var getNode = (id)=>{
+			if(nodes[id] != null){
+				return nodes[id]
+			}
+			var node = {
+				id: id,
+				name: id,
+				data: {},
+				children: []
+			}
+			nodes[node.id] = node
+			return node
+		}
+		var newList = list.reduce((acc, data)=>{
+			var node = getNode(data.ID)
+			if(data.Left != ""){
+				node.children.push(getNode(data.Left))
+			}
+			if(data.Right != ""){
+				node.children.push(getNode(data.Right))
+			}
+			acc.push(node)
+			return acc
+		}, [])
+
+		var root = newList[newList.length-1]
+		//load json data  
+		st.loadJSON(root);  
+		//compute node positions and layout  
+		st.compute();  
+		//optional: make a translation of the tree  
+		st.geom.translate(new $jit.Complex(-200, 0), "current");  
+
+		if(!!pos){
+			st.setRoot(pos, 'animate')
+		}else{
+			st.onClick(st.root); 
+		}
+	}
+	
+	module.updateContestListView = updateContestListView
+	module.updateContestDetailView = updateContestDetailView
+	module.updateContestPeopleListView = updateContestPeopleListView
+	module.getContestDetail = getContestDetail
+	module.updateContestFlowView = updateContestFlowView
+})(view)
+		</script>
+		<script>
+			function onClickGameTree(node){
+				var contestId = node.isContest ? node.id : node.belongContest
+				model.setCurrentContestId(contestId)
+				view.updateContestDetailView(model.getCurrentContext(), contestId)
+				view.updateContestPeopleListView(model.getCurrentContext(), contestId)
+				
+				if(node.isContest == true){
+					view.updateContestFlowView(model.getCurrentContext(), contestId)
+				}else{
+					var people = model.getCurrentContext().ContestSys.Contests[contestId].Peoples[node.id]
+					console.log(people)
+					view.updateContestFlowView(model.getCurrentContext(), contestId, people.Pos)
+				}
+				
+			}
+			
+			function onClick(cmd){
+				console.log(cmd)
+				if(cmd == 'newContest'){
+					
+				}
+				
+				if(cmd == 'updateContest'){
+					var data = view.getContestDetail()
+					data.contestId = model.getCurrentContestId()
+					console.log(data)
+					
+					model.updateContest(data, (err, info)=>{
+						console.log(err)
+						updateView()
+					})
+				}
+			}
+			
+			function updateView(){
+				model.loadContext((err, info)=>{
+					if(err != null){
+						console.log(err)
+					}else{
+						view.updateContestListView(info)
+					}
+				})
+			}
+			
+			function init(){
+				model.setId('han')
+				updateView()
+			}
+			
+			init()
+		</script>
 <!--                   EASY UI END                           -->
 
 

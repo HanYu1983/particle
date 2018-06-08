@@ -15,18 +15,21 @@ type People struct {
 }
 
 const (
-	ContestStateIdle = iota
+	ContestStatePending = iota
+	ContestStateStart
 	ContestStateProcessing
-	ContestStateFinished
+	ContestStateEnd
 )
 
 type Contest struct {
-	ID         string
-	Password   string
-	Peoples    map[string]People
-	CreateTime time.Time
-	State      int
-	Owner      string
+	ID          string
+	Password    string
+	Name        string
+	Description string
+	Peoples     map[string]People
+	State       int
+	Owner       string
+	CreateTime  time.Time
 }
 
 type ContestSys struct {
@@ -47,7 +50,7 @@ func CreateContest(model *ContestSys, password string, owner string) string {
 		Password:   password,
 		Peoples:    map[string]People{},
 		CreateTime: time.Now(),
-		State:      ContestStateIdle,
+		State:      ContestStatePending,
 		Owner:      owner,
 	}
 	model.ContestSeq = model.ContestSeq + 1
