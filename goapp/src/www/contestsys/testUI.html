@@ -33,23 +33,54 @@
             <div class="easyui-tabs" style='height:100%'>
 		        <div title="新增/修改比賽">
 					<div class="easyui-panel" style="padding:5px;">
+						<form name="form_peopleJoin" class="easyui-form" data-options="novalidate:true">
+							小名<input class="easyui-textbox" name="name" style="width:100px" data-options="required:true">
+							參加碼<input name="pwd" type="password" class="easyui-textbox">
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('joinContest')">參加比賽</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('leaveContest')">退出比賽</a>
+						</form>
+					</div>
+					<div class="easyui-panel" style="padding:5px;">
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="onClick('newContest')">新增草搞</a>
 				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="onClick('removeContest')">刪除</a>
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitContest')">發佈</a>
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'" onclick="onClick('updateContest')">修改</a>
 						<a href="#" class="easyui-linkbutton" data-options="plain:true">更新比賽列表</a>
-						<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('joinContest')">參加比賽</a>
 				    </div>
-					
 					<form name="form_contest" class="easyui-form" data-options="novalidate:true">
+						狀態
+						<div style="margin-bottom:20px">
+			                <select class="easyui-combobox" name="state" disabled style="width:100%">
+				                <option value="0">草搞</option>
+				                <option value="1">進行中</option>
+								<option value="2">結束</option>
+							</select>
+			            </div>
+						遊戲
+						<div style="margin-bottom:20px">
+			                <select class="easyui-combobox" name="game">
+				                <option value="sengoku">戰國大戰</option>
+				                <option value="sengo">三國大戰</option>
+								<option value="gundamWarN">鋼彈大戰NexA</option>
+								<option value="gundamWar">鋼彈大戰</option>
+							</select>
+			            </div>
 						名稱
 			            <div style="margin-bottom:20px">
-			                <input class="easyui-textbox" name="subject" style="width:100%" data-options="required:true">
+			                <input class="easyui-textbox" name="name" style="width:100%" data-options="required:true">
 			            </div>
 						描述
 			            <div style="margin-bottom:20px">
-			                <input class="easyui-textbox" name="description" style="width:100%" data-options="required:false">
+							<textarea rows="4" cols="50" name="description">description</textarea>
 			            </div>
+						參加碼
+						<div style="margin-bottom:20px">
+							<input name="pwd" type="password" class="easyui-textbox">
+				        </div>
+						比賽開始
+						<div style="margin-bottom:20px">
+				            <input class="easyui-datebox" name="startTime">
+				        </div>
 			        </form>
 		        </div>
 		        <div title="賽程管理">
@@ -69,9 +100,9 @@
 						            ">
 						        <thead>
 						            <tr>
-						                <th data-options="field:'ID',width:80">ID</th>
-						                <th data-options="field:'Name',width:100">小名</th>
-						                <th data-options="field:'Power',width:80,align:'right',editor:'numberbox'">種子選手</th>
+						                <th data-options="field:'ID',width:80,align:'center'">ID</th>
+						                <th data-options="field:'Name',width:100,align:'center'">小名</th>
+						                <th data-options="field:'Power',width:80,align:'center',editor:'numberbox'">種子選手</th>
 						            </tr>
 						        </thead>
 								<tbody>
@@ -93,10 +124,38 @@
 					</div>
 		        </div>
 		        <div title="玩家">
-					<div class="easyui-panel" style="padding:5px;">
-						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈勝利</a>
-				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'">發佈失敗</a>
-				    </div>
+					<form name="form_player" class="easyui-form" data-options="novalidate:true">
+						ID
+			            <div style="margin-bottom:20px">
+							ID
+			            </div>
+			        </form>
+					<table class="easyui-datagrid" title="你的比賽" style="width:100%"
+				            data-options="singleSelect:true,collapsible:true">
+				        <thead>
+				            <tr>
+				                <th data-options="field:'contestId',width:80,align:'center'">比賽名稱</th>
+								<th data-options="field:'pos',width:100,align:'center'">場</th>
+								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
+				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
+								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
+				                <th data-options="field:'func',width:200,align:'center'">判定</th>
+				            </tr>
+				        </thead>
+						<tbody>
+							<tr>
+								<td field="contestId">contestId</td>
+								<td field="pos">pos</td>
+								<td field="left">left</td>
+								<td field="right">right</td>
+								<td field="winner">winner</td>
+								<td field="func">
+									<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈勝利</a>
+				        			<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'">發佈失敗</a>
+								</td>
+							</tr>
+						</tbody>
+				    </table>
 				</div>
 				<div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
 		            This is the help content.
@@ -220,17 +279,98 @@ var model = {};
 		id = fbid
 	}
 	
-	function updateContest(info, cb){
-		var contestId = info.contestId
-		var name = info.name
-		var description = info.description
+	function updateContest(contestId, info, cb){
 		$.ajax({
 			url: '../fn/contestsys/UpdateContest/'+contestId+'/'+id,
 			dataType:'json',
-			data:{
-				name: name,
-				description: description
+			data: info,
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
 			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function newContest(cb){
+		$.ajax({
+			url: '../fn/contestsys/CreateContest/'+id,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function deleteContest(contestId, cb){
+		$.ajax({
+			url: '../fn/contestsys/DeleteContest/'+contestId+'/'+id,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function upgradeContest(contestId, cb){
+		$.ajax({
+			url: '../fn/contestsys/UpgradeContest/'+contestId+'/'+id,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function joinContest(contestId, info, cb){
+		$.ajax({
+			url: '../fn/contestsys/JoinContest/'+contestId+'/'+id,
+			dataType:'json',
+			data: info,
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function leaveContest(contestId, info, cb){
+		$.ajax({
+			url: '../fn/contestsys/LeaveContest/'+contestId+'/'+id,
+			dataType:'json',
+			data: info,
 			success: (info)=>{
 				if(info.Error != null){
 					cb(info.Error)
@@ -258,30 +398,16 @@ var model = {};
 	module.setCurrentContestId = setCurrentContestId
 	module.getCurrentContestId = getCurrentContestId
 	module.updateContest = updateContest
+	module.newContest = newContest
+	module.deleteContest = deleteContest
+	module.upgradeContest = upgradeContest
+	module.joinContest = joinContest
+	module.leaveContest = leaveContest
 	module.setId = setId
 })(model)
 
 var view = {};
 (function(module){
-	function updateView(info){
-		var json = [
-			{"id":"1","text":"Node 1","state":"closed", children:[{"id":"5","text":"Node 2","state":"open"}]},
-			{"id":"2","text":"Node 2","state":"open"},
-			{"id":"3","text":"Node 3","state":"open"},
-			{"id":"4","text":"Node 4","state":"open"}
-		]
-		
-		$('#gameTree').tree({data: json})
-		
-		var json = {
-			total: 2,
-			rows:[{"ID":"ssID", "Name":"xx", "Power":20}, {"ID":"ssID", "Name":"xx", "Power":20}]
-		}
-		$('#dg').datagrid({data: json})
-		
-	}
-	
-	
 	
 	function updateContestListView(ctx){
 		var root = []
@@ -293,7 +419,8 @@ var view = {};
 				var subNode = {
 					id: p.ID,
 					text: p.Name+"("+p.ID+")",
-					belongContest: contest.ID
+					belongContest: contest.ID,
+					isContest: false,
 				}
 				sub.push(subNode)
 			}
@@ -310,19 +437,33 @@ var view = {};
 	
 	function updateContestDetailView(ctx, contestId){
 		var contest = ctx.ContestSys.Contests[contestId]
+		var d = new Date(contest.StartTime)
+		var timeStr = (d.getUTCDay()+1)+"/"+(d.getUTCMonth()+1)+"/"+d.getUTCFullYear()
 		$(document.form_contest).form('load',{
-	        subject:contest.Name,
+	        name:contest.Name,
 	        description:contest.Description,
+			game:contest.Game,
+			startTime:timeStr,
+			state:contest.State+"",
+			pwd:contest.Password
 	    });
 	}
 	
 	function getContestDetail(){
-		var name = document.form_contest.subject.value
+		var game = document.form_contest.game.value
+		var name = document.form_contest.name.value
 		var description = document.form_contest.description.value
-		return {
+		var startTime = new Date(document.form_contest.startTime.value).getTime()
+		var pwd = document.form_contest.pwd.value
+		var value = {
+			game: game,
 			name: name,
-			description: description
+			description: description,
+			startTime: startTime,
+			pwd: pwd
 		}
+		console.log(value)
+		return value
 	}
 	
 	function updateContestPeopleListView(ctx, contestId){
@@ -344,81 +485,73 @@ var view = {};
 		$('#dg').datagrid({data: json})
 	}
 	
-	var st = new $jit.ST({  
-	    //id of viz container element  
+	var st = new $jit.RGraph({  
+	    //Where to append the visualization  
 	    injectInto: 'infovis',  
-	    //set duration for the animation  
-	    duration: 100,  
-	    //set animation transition type  
-	    transition: $jit.Trans.Quart.easeInOut,  
-	    //set distance between node and its children  
-	    levelDistance: 50,  
-	    //enable panning  
-	    Navigation: {  
-	      enable:true,  
-	      panning:true  
+		duration: 100, 
+	    //Optional: create a background canvas that plots  
+	    //concentric circles.  
+	    background: {  
+	      CanvasStyles: {  
+	        strokeStyle: '#555'  
+	      }  
 	    },  
-	    //set node and edge styles  
-	    //set overridable=true for styling individual  
-	    //nodes or edges  
+	    //Add navigation capabilities:  
+	    //zooming by scrolling and panning.  
+	    Navigation: {  
+	      enable: true,  
+	      panning: true,  
+	      zooming: 10  
+	    },  
+	    //Set Node and Edge styles.  
 	    Node: {  
-	        height: 20,  
-	        width: 60,  
-	        type: 'rectangle',  
-	        color: '#aaa',  
-	        overridable: true  
+	        color: '#ddeeff'  
 	    },  
 	      
 	    Edge: {  
-	        type: 'bezier',  
-	        overridable: true  
+	      color: '#C17878',  
+	      lineWidth:1.5  
 	    },  
-	      
+	  
 	    onBeforeCompute: function(node){  
 		
 	    },  
 	      
-	    onAfterCompute: function(){  
-
-	    },  
-	      
-	    //This method is called on DOM label creation.  
-	    //Use this method to add event handlers and styles to  
-	    //your node.  
-	    onCreateLabel: function(label, node){  
-	        label.id = node.id;              
-	        label.innerHTML = node.name;  
-	        label.onclick = function(){
-				console.log('click:'+node.id)
-				st.onClick(node.id);
+	    //Add the name of the node in the correponding label  
+	    //and a click handler to move the graph.  
+	    //This method is called once, on label creation.  
+	    onCreateLabel: function(domElement, node){  
+	        domElement.innerHTML = node.name;  
+	        domElement.onclick = function(){  
+	            st.onClick(node.id, {  
+	                onComplete: function() {
+						
+	                }  
+	            });  
 	        };  
-	        //set label styles  
-	        var style = label.style;  
-	        style.width = 60 + 'px';  
-	        style.height = 17 + 'px';              
+	    },  
+	    //Change some label dom properties.  
+	    //This method is called each time a label is plotted.  
+	    onPlaceLabel: function(domElement, node){  
+	        var style = domElement.style;  
+	        style.display = '';  
 	        style.cursor = 'pointer';  
-	        style.color = '#333';  
-	        style.fontSize = '0.8em';  
-	        style.textAlign= 'center';  
-	        style.paddingTop = '3px';
-	    },  
-	      
-	    //This method is called right before plotting  
-	    //a node. It's useful for changing an individual node  
-	    //style properties before plotting it.  
-	    //The data properties prefixed with a dollar  
-	    //sign will override the global node style properties.  
-	    onBeforePlotNode: function(node){  
-		
-	    },  
-	      
-	    //This method is called right before plotting  
-	    //an edge. It's useful for changing an individual edge  
-	    //style properties before plotting it.  
-	    //Edge data proprties prefixed with a dollar sign will  
-	    //override the Edge global style properties.  
-	    onBeforePlotLine: function(adj){  
-	
+	  
+	        if (node._depth <= 1) {  
+	            style.fontSize = "0.8em";  
+	            style.color = "#ccc";  
+	          
+	        } else if(node._depth == 2){  
+	            style.fontSize = "0.7em";  
+	            style.color = "#494949";  
+	          
+	        } else {  
+	            style.display = 'none';  
+	        }  
+	  
+	        var left = parseInt(style.left);  
+	        var w = domElement.offsetWidth;  
+	        style.left = (left - w / 2) + 'px';  
 	    }  
 	});  
 	
@@ -454,25 +587,49 @@ var view = {};
 		}, [])
 
 		var root = newList[newList.length-1]
-		//load json data  
+		//load JSON data  
 		st.loadJSON(root);  
-		//compute node positions and layout  
-		st.compute();  
-		//optional: make a translation of the tree  
-		st.geom.translate(new $jit.Complex(-200, 0), "current");  
-
+		//trigger small animation  
+		st.graph.eachNode(function(n) {  
+		  var pos = n.getPos();  
+		  pos.setc(-200, -200);  
+		});  
+		st.compute('end');  
+		st.fx.animate({  
+		  modes:['polar'],  
+		  duration: 2000  
+		});
 		if(!!pos){
-			st.setRoot(pos, 'animate')
+			st.onClick(pos, 'animate')
 		}else{
 			st.onClick(st.root); 
 		}
 	}
 	
+	function alert(type, msg){
+		$.messager.alert('系統',msg,type);
+	}
+	
+	function confirm(msg, cb){
+		$.messager.confirm('系統', msg, cb);
+	}
+	
+	function getJoinInfo(){
+		var name = document.form_peopleJoin.name.value
+		var pwd = document.form_peopleJoin.pwd.value
+		return {
+			name: name,
+			pwd: pwd
+		}
+	}
 	module.updateContestListView = updateContestListView
 	module.updateContestDetailView = updateContestDetailView
 	module.updateContestPeopleListView = updateContestPeopleListView
 	module.getContestDetail = getContestDetail
 	module.updateContestFlowView = updateContestFlowView
+	module.alert = alert
+	module.confirm = confirm
+	module.getJoinInfo = getJoinInfo
 })(view)
 		</script>
 		<script>
@@ -495,17 +652,75 @@ var view = {};
 			function onClick(cmd){
 				console.log(cmd)
 				if(cmd == 'newContest'){
-					
+					model.newContest((err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							var contestId = info
+							model.setCurrentContestId(contestId)
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'removeContest'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						view.alert('info', "請選擇比賽")
+						return
+					}
+					view.confirm('是否刪除'+contestId, ok=>{
+						if(ok){
+							model.deleteContest(contestId, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
 				}
 				
 				if(cmd == 'updateContest'){
 					var data = view.getContestDetail()
-					data.contestId = model.getCurrentContestId()
-					console.log(data)
-					
-					model.updateContest(data, (err, info)=>{
-						console.log(err)
-						updateView()
+					model.updateContest(model.getCurrentContestId(), data, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'commitContest'){
+					model.upgradeContest(model.getCurrentContestId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'joinContest'){
+					var joinInfo = view.getJoinInfo()
+					model.joinContest(model.getCurrentContestId(), joinInfo, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'leaveContest'){
+					model.leaveContest(model.getCurrentContestId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
 					})
 				}
 			}
@@ -513,9 +728,12 @@ var view = {};
 			function updateView(){
 				model.loadContext((err, info)=>{
 					if(err != null){
-						console.log(err)
+						view.alert('error', err)
 					}else{
 						view.updateContestListView(info)
+						view.updateContestDetailView(info, model.getCurrentContestId())
+						view.updateContestPeopleListView(info, model.getCurrentContestId())
+						view.updateContestFlowView(info, model.getCurrentContestId())
 					}
 				})
 			}

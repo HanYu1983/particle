@@ -7,7 +7,9 @@ import (
 	"github.com/gorilla/mux"
 
 	"errors"
-	"strings"
+	"strconv"
+	_ "strings"
+	"time"
 
 	"appengine"
 )
@@ -48,18 +50,46 @@ func Serve_CreateContest(w http.ResponseWriter, r *http.Request) {
 	tool.Output(w, id, nil)
 }
 
+func Serve_DeleteContest(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["owner"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		err = DeleteContest(&appCtx.ContestSys, contestId, peopleId)
+		if err != nil {
+			return err
+		}
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, nil, nil)
+}
+
 func Serve_UpdateContest(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
 	})
 
 	r.ParseForm()
-	name := r.FormValue("name")
-	description := r.FormValue("description")
+	name, hasName := r.Form["name"]
+	description, hasDescription := r.Form["description"]
+	game, hasGame := r.Form["game"]
+	startTime, hasStartTime := r.Form["startTime"]
+	pwd, hasPwd := r.Form["pwd"]
 
 	params := mux.Vars(r)
 	contestId := params["contestId"]
-	peopleId := params["peopleId"]
+	peopleId := params["owner"]
 
 	ctx := appengine.NewContext(r)
 	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
@@ -74,13 +104,58 @@ func Serve_UpdateContest(w http.ResponseWriter, r *http.Request) {
 		if contest.Owner != peopleId {
 			return errors.New("u r not owner")
 		}
-		if strings.Trim(name, " ") != "" {
-			contest.Name = name
+		if contest.State == ContestStateEnd {
+			return errors.New("contest already end")
 		}
-		if strings.Trim(description, " ") != "" {
-			contest.Description = description
+		if contest.State == ContestStateProcessing && time.Now().After(contest.StartTime) {
+			return errors.New("already game start")
+		}
+		if hasName {
+			contest.Name = name[0]
+		}
+		if hasDescription {
+			contest.Description = description[0]
+		}
+		if hasGame {
+			contest.Game = game[0]
+		}
+		if hasStartTime {
+			t, err := strconv.ParseInt(startTime[0], 10, 64)
+			if err != nil {
+				return err
+			}
+			contest.StartTime = time.Unix(t/1000, 0)
+		}
+		if hasPwd {
+			contest.Password = pwd[0]
 		}
 		appCtx.ContestSys.Contests[contestId] = contest
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, nil, nil)
+}
+
+func Serve_UpgradeContestState(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+
+	r.ParseForm()
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["owner"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		err = UpgradeContest(&appCtx.ContestSys, contestId, peopleId)
+		if err != nil {
+			return err
+		}
 		return SaveContext(ctx, appCtx)
 	})
 	tool.Assert(tool.IfError(err))
@@ -108,6 +183,32 @@ func Serve_JoinContest(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = JoinContest(&appCtx.ContestSys, contestId, peopleId, peopleName, pwd)
+		if err != nil {
+			return err
+		}
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+
+	tool.Output(w, nil, nil)
+}
+
+func Serve_LeaveContest(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["peopleId"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		err = LeaveContest(&appCtx.ContestSys, contestId, peopleId)
 		if err != nil {
 			return err
 		}
