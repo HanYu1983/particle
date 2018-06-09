@@ -31,16 +31,54 @@
 		</div>
         <div data-options="region:'center'">
             <div class="easyui-tabs" style='height:100%'>
+				<div title="玩家">
+					<form name="form_player" class="easyui-form" data-options="novalidate:true">
+						ID
+			            <div style="margin-bottom:20px">
+							<input class="easyui-textbox" name="ID" style="width:100%" disabled>
+			            </div>
+						<div style="margin-bottom:20px">
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('login')">登入</a>
+			            </div>
+			        </form>
+					<table class="easyui-datagrid" title="你的比賽" style="width:100%"
+				            data-options="singleSelect:true,collapsible:true">
+				        <thead>
+				            <tr>
+				                <th data-options="field:'contestId',width:80,align:'center'">比賽名稱</th>
+								<th data-options="field:'pos',width:100,align:'center'">場</th>
+								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
+				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
+								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
+				                <th data-options="field:'func',width:200,align:'center'">判定</th>
+				            </tr>
+				        </thead>
+						<tbody>
+							<tr>
+								<td field="contestId">contestId</td>
+								<td field="pos">pos</td>
+								<td field="left">left</td>
+								<td field="right">right</td>
+								<td field="winner">winner</td>
+								<td field="func">
+									<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈勝利</a>
+				        			<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'">發佈失敗</a>
+								</td>
+							</tr>
+						</tbody>
+				    </table>
+				</div>
+				
 		        <div title="新增/修改比賽">
-					<div class="easyui-panel" style="padding:5px;">
-						<form name="form_peopleJoin" class="easyui-form" data-options="novalidate:true">
-							小名<input class="easyui-textbox" name="name" style="width:100px" data-options="required:true">
+					<div class="easyui-panel">
+						<form name="form_peopleJoin" class="easyui-form">
+							小名<input class="easyui-textbox" name="name" style="width:100px">
 							參加碼<input name="pwd" type="password" class="easyui-textbox">
 							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('joinContest')">參加比賽</a>
 							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('leaveContest')">退出比賽</a>
 						</form>
 					</div>
-					<div class="easyui-panel" style="padding:5px;">
+					<div class="easyui-panel">
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="onClick('newContest')">新增草搞</a>
 				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="onClick('removeContest')">刪除</a>
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitContest')">發佈</a>
@@ -123,40 +161,7 @@
 				        </div>
 					</div>
 		        </div>
-		        <div title="玩家">
-					<form name="form_player" class="easyui-form" data-options="novalidate:true">
-						ID
-			            <div style="margin-bottom:20px">
-							ID
-			            </div>
-			        </form>
-					<table class="easyui-datagrid" title="你的比賽" style="width:100%"
-				            data-options="singleSelect:true,collapsible:true">
-				        <thead>
-				            <tr>
-				                <th data-options="field:'contestId',width:80,align:'center'">比賽名稱</th>
-								<th data-options="field:'pos',width:100,align:'center'">場</th>
-								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
-				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
-								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
-				                <th data-options="field:'func',width:200,align:'center'">判定</th>
-				            </tr>
-				        </thead>
-						<tbody>
-							<tr>
-								<td field="contestId">contestId</td>
-								<td field="pos">pos</td>
-								<td field="left">left</td>
-								<td field="right">right</td>
-								<td field="winner">winner</td>
-								<td field="func">
-									<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈勝利</a>
-				        			<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'">發佈失敗</a>
-								</td>
-							</tr>
-						</tbody>
-				    </table>
-				</div>
+		        
 				<div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
 		            This is the help content.
 		        </div>

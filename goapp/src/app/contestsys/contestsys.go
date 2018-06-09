@@ -21,16 +21,17 @@ const (
 )
 
 type Contest struct {
-	ID          string
-	Password    string
-	Game        string
-	Name        string
-	Description string
-	Peoples     map[string]People
-	State       int
-	Owner       string
-	CreateTime  time.Time
-	StartTime   time.Time
+	ID            string
+	Password      string
+	Game          string
+	ForbiddenCard string
+	Name          string
+	Description   string
+	Peoples       map[string]People
+	State         int
+	Owner         string
+	CreateTime    time.Time
+	StartTime     time.Time
 }
 
 type ContestSys struct {
