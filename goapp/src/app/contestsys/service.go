@@ -107,9 +107,9 @@ func Serve_UpdateContest(w http.ResponseWriter, r *http.Request) {
 		if contest.State == ContestStateEnd {
 			return errors.New("contest already end")
 		}
-		if contest.State == ContestStateProcessing && time.Now().After(contest.StartTime) {
+		/*if contest.State == ContestStateProcessing && time.Now().After(contest.StartTime) {
 			return errors.New("already game start")
-		}
+		}*/
 		if hasName {
 			contest.Name = name[0]
 		}
@@ -207,7 +207,6 @@ func Serve_LeaveContest(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-
 		err = LeaveContest(&appCtx.ContestSys, contestId, peopleId)
 		if err != nil {
 			return err
@@ -225,6 +224,7 @@ func Serve_PrepareDual(w http.ResponseWriter, r *http.Request) {
 	})
 	params := mux.Vars(r)
 	contestId := params["contestId"]
+	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
 	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
@@ -232,7 +232,7 @@ func Serve_PrepareDual(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		err = CtxUpdateDual(&appCtx, contestId)
+		err = CtxUpdateDual(&appCtx, contestId, peopleId)
 		if err != nil {
 			return err
 		}
@@ -241,6 +241,27 @@ func Serve_PrepareDual(w http.ResponseWriter, r *http.Request) {
 	tool.Assert(tool.IfError(err))
 
 	tool.Output(w, nil, nil)
+}
+
+func Serve_GetDuals(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	params := mux.Vars(r)
+	peopleId := params["peopleId"]
+
+	var duals []Dual
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		duals = CtxGetDualsWithPeople(&appCtx, peopleId)
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, duals, nil)
 }
 
 func Serve_ConfirmWinner(w http.ResponseWriter, r *http.Request) {

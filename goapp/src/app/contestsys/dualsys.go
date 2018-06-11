@@ -2,7 +2,8 @@ package contestsys
 
 import (
 	_ "errors"
-	"sort"
+	"math/rand"
+	_ "sort"
 	"strconv"
 	_ "strings"
 	_ "time"
@@ -21,6 +22,7 @@ type Dual struct {
 	Right   string
 	Power   int
 	Contest string
+	IsTop   bool
 }
 
 type DualSys struct {
@@ -47,7 +49,7 @@ func PrepareDual(dualSys *DualSys, contest Contest) {
 	}
 
 	duals := []Dual{}
-
+	// 將玩家排入場次
 	for _, p := range contest.Peoples {
 		dual := Dual{
 			ID:      strconv.Itoa(dualSys.DualSeq),
@@ -62,31 +64,52 @@ func PrepareDual(dualSys *DualSys, contest Contest) {
 
 	for {
 		dualLen := len(duals)
+		// 無場次可排位就退出
 		if dualLen <= 1 {
 			break
 		}
 
+		// 記錄要刪除的場次
 		removeDuals := []string{}
-		sort.Sort(ByDualPower(duals))
+		// 隨機排位場次
+		src := duals
+		duals = make([]Dual, len(src))
+		perm := rand.Perm(len(src))
+		// 並記錄最大的種子場次
+		maxPowerId := 0
+		maxPower := 0
+		for i, v := range perm {
+			duals[v] = src[i]
+			if maxPower < duals[v].Power {
+				maxPower = duals[v].Power
+				maxPowerId = v
+			}
+		}
+		// 將種子場次移到最後
+		duals[len(duals)-1], duals[maxPowerId] = duals[maxPowerId], duals[len(duals)-1]
 
+		// 依排位新增場次, 最後的玩家剛好是種子場次
 		for i, length := 0, len(duals)/2; i < length; i += 1 {
-			left, right := duals[i*2].ID, duals[i*2+1].ID
+			left, right := duals[i*2], duals[i*2+1]
 			dual := Dual{
 				ID:      strconv.Itoa(dualSys.DualSeq),
 				Name:    "match",
 				Type:    DualTypeDuel,
-				Left:    left,
-				Right:   right,
+				Left:    left.ID,
+				Right:   right.ID,
 				Contest: contest.ID,
+				Power:   left.Power + right.Power,
+				IsTop:   length == 1,
 			}
 			dualSys.DualSeq = dualSys.DualSeq + 1
 			dualSys.Duals = append(dualSys.Duals, dual)
 			duals = append(duals, dual)
 
-			removeDuals = append(removeDuals, left)
-			removeDuals = append(removeDuals, right)
+			removeDuals = append(removeDuals, left.ID)
+			removeDuals = append(removeDuals, right.ID)
 		}
 
+		// 刪除已排位的場次
 		for i := len(duals) - 1; i >= 0; i -= 1 {
 			for _, removeId := range removeDuals {
 				if duals[i].ID == removeId {
@@ -97,7 +120,7 @@ func PrepareDual(dualSys *DualSys, contest Contest) {
 	}
 }
 
-func GetDualWithPeople(dualSys *DualSys, contestId string, peopleId string) (Dual, bool) {
+func GetStartDualWithPeople(dualSys *DualSys, contestId string, peopleId string) (Dual, bool) {
 	for _, dual := range dualSys.Duals {
 		if dual.Contest != contestId {
 			continue

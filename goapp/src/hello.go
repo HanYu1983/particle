@@ -78,7 +78,8 @@ func init() {
 	router.HandleFunc("/fn/contestsys/UpgradeContest/{contestId}/{owner}", contestsys.Serve_UpgradeContestState).Methods("GET")
 	router.HandleFunc("/fn/contestsys/JoinContest/{contestId}/{peopleId}", contestsys.Serve_JoinContest).Methods("GET")
 	router.HandleFunc("/fn/contestsys/LeaveContest/{contestId}/{peopleId}", contestsys.Serve_LeaveContest).Methods("GET")
-	router.HandleFunc("/fn/contestsys/PrepareDual/{contestId}", contestsys.Serve_PrepareDual).Methods("GET")
+	router.HandleFunc("/fn/contestsys/PrepareDual/{contestId}/{peopleId}", contestsys.Serve_PrepareDual).Methods("GET")
+	router.HandleFunc("/fn/contestsys/GetDuals/{peopleId}", contestsys.Serve_GetDuals).Methods("GET")
 	router.HandleFunc("/fn/contestsys/ConfirmWinner/{contestId}/{peopleId}/{winner}", contestsys.Serve_ConfirmWinner).Methods("GET")
 	router.HandleFunc("/fn/contestsys/Upgrade/{contestId}/{peopleId}", contestsys.Serve_Upgrade).Methods("GET")
 

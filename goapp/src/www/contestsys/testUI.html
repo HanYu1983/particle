@@ -30,7 +30,7 @@
             </div>
 		</div>
         <div data-options="region:'center'">
-            <div class="easyui-tabs" style='height:100%'>
+            <div id="tab_main" class="easyui-tabs" style='height:100%'>
 				<div title="玩家">
 					<form name="form_player" class="easyui-form" data-options="novalidate:true">
 						ID
@@ -40,17 +40,20 @@
 						<div style="margin-bottom:20px">
 							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('login')">登入</a>
 			            </div>
-			        </form>
-					<table class="easyui-datagrid" title="你的比賽" style="width:100%"
-				            data-options="singleSelect:true,collapsible:true">
+						<div style="margin-bottom:20px">
+							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈勝利</a>
+					        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'">發佈失敗</a>
+			        	</div>
+					</form>
+					<table id='dg_duals' class="easyui-datagrid" title="你的比賽" style="width:100%"
+				            data-options="singleSelect:true,collapsible:true,onClickRow:onClickDualsRow">
 				        <thead>
 				            <tr>
 				                <th data-options="field:'contestId',width:80,align:'center'">比賽名稱</th>
-								<th data-options="field:'pos',width:100,align:'center'">場</th>
+								<th data-options="field:'pos',width:100,align:'center'">場次</th>
 								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
 				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
 								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
-				                <th data-options="field:'func',width:200,align:'center'">判定</th>
 				            </tr>
 				        </thead>
 						<tbody>
@@ -60,10 +63,6 @@
 								<td field="left">left</td>
 								<td field="right">right</td>
 								<td field="winner">winner</td>
-								<td field="func">
-									<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈勝利</a>
-				        			<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'">發佈失敗</a>
-								</td>
 							</tr>
 						</tbody>
 				    </table>
@@ -153,10 +152,9 @@
 						    </table>
 						 
 						    <div id="tb" style="height:auto">
-						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">強制退出比賽</a>
-						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">確認修改</a>
-						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">取消修改</a>
-								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-update',plain:true">重新排賽</a>
+						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="onClick('kickPeople')">強制退出比賽</a>
+						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('confirmDualPower')">確認修改</a>
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('prepareDual')">重新排賽</a>
 						    </div>
 				        </div>
 					</div>
@@ -249,10 +247,7 @@
 	            alert(rows.length+' rows are changed!');
 	        }
 	    </script>
-		
-		
 		<script src='../common/js/lib/jit-yc.js'></script>
-		
 		<script>
 var model = {};
 (function(module){
@@ -282,6 +277,10 @@ var model = {};
 	var id = null
 	function setId(fbid){
 		id = fbid
+	}
+	
+	function getId(){
+		return id
 	}
 	
 	function updateContest(contestId, info, cb){
@@ -371,11 +370,10 @@ var model = {};
 		})
 	}
 	
-	function leaveContest(contestId, info, cb){
+	function leaveContest(contestId, cb){
 		$.ajax({
 			url: '../fn/contestsys/LeaveContest/'+contestId+'/'+id,
 			dataType:'json',
-			data: info,
 			success: (info)=>{
 				if(info.Error != null){
 					cb(info.Error)
@@ -389,6 +387,39 @@ var model = {};
 		})
 	}
 	
+	function getDuals(cb){
+		$.ajax({
+			url: '../fn/contestsys/GetDuals/'+id,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function prepareDual(contestId, cb){
+		$.ajax({
+			url: '../fn/contestsys/PrepareDual/'+contestId+'/'+id,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
 	
 	var currentContestId = null
 	function setCurrentContestId(id){
@@ -408,7 +439,10 @@ var model = {};
 	module.upgradeContest = upgradeContest
 	module.joinContest = joinContest
 	module.leaveContest = leaveContest
+	module.getDuals = getDuals
+	module.prepareDual = prepareDual
 	module.setId = setId
+	module.getId = getId
 })(model)
 
 var view = {};
@@ -441,9 +475,15 @@ var view = {};
 	}
 	
 	function updateContestDetailView(ctx, contestId){
+		if((!!contestId) == false){
+			return
+		}
 		var contest = ctx.ContestSys.Contests[contestId]
+		if((!!contest) == false){
+			return
+		}
 		var d = new Date(contest.StartTime)
-		var timeStr = (d.getUTCDay()+1)+"/"+(d.getUTCMonth()+1)+"/"+d.getUTCFullYear()
+		var timeStr = (d.getUTCMonth()+1)+"/"+(d.getDate())+"/"+d.getUTCFullYear()
 		$(document.form_contest).form('load',{
 	        name:contest.Name,
 	        description:contest.Description,
@@ -472,6 +512,9 @@ var view = {};
 	}
 	
 	function updateContestPeopleListView(ctx, contestId){
+		if((!!contestId) == false){
+			return
+		}
 		var contest = ctx.ContestSys.Contests[contestId]
 		var rows = []
 		for(var k in contest.Peoples){
@@ -483,11 +526,41 @@ var view = {};
 			}
 			rows.push(node)
 		}
-		var json = {
+		var data = {
 			total: rows.length,
 			rows: rows
 		}
-		$('#dg').datagrid({data: json})
+		$('#dg').datagrid({data: data})
+	}
+	
+	function updateDualsListView(ctx, duals){
+		var rows = duals.map(d=>{
+			var confirm = ctx.ConfirmSys.Confirms.find(c=>c.Pos == d.ID && c.People == id)
+			var contest = ctx.ContestSys.Contests[d.Contest]
+			var peopleLeft = null
+			var peopleRight = null
+			for(var k in contest.Peoples){
+				var p = contest.Peoples[k]
+				if(p.Pos == d.Left){
+					peopleLeft = p
+				}
+				if(p.Pos == d.Right){
+					peopleRight = p
+				}
+			}
+			return {
+				contestId: contest.Name,
+				left: peopleLeft ? peopleLeft.Name+"("+peopleLeft.ID+")" : "unknown",
+				right: peopleRight ? peopleRight.Name+"("+peopleRight.ID+")" : "unknown",
+				pos: d.ID,
+				winner: (!!confirm) ? confirm.Winner : "unknown"
+			}
+		})
+		var data = {
+			total: rows.length,
+			rows: rows
+		}
+		$('#dg_duals').datagrid({data: data})
 	}
 	
 	var st = new $jit.RGraph({  
@@ -506,7 +579,7 @@ var view = {};
 	    Navigation: {  
 	      enable: true,  
 	      panning: true,  
-	      zooming: 10  
+	      zooming: 50  
 	    },  
 	    //Set Node and Edge styles.  
 	    Node: {  
@@ -515,7 +588,7 @@ var view = {};
 	      
 	    Edge: {  
 	      color: '#C17878',  
-	      lineWidth:1.5  
+	      lineWidth:3  
 	    },  
 	  
 	    onBeforeCompute: function(node){  
@@ -525,8 +598,26 @@ var view = {};
 	    //Add the name of the node in the correponding label  
 	    //and a click handler to move the graph.  
 	    //This method is called once, on label creation.  
-	    onCreateLabel: function(domElement, node){  
-	        domElement.innerHTML = node.name;  
+	    onCreateLabel: function(domElement, node){
+			var ctx = node.data.ctx
+			var contestId = node.data.contest
+			var pos = node.id
+			var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+			if(dual == null){
+				domElement.innerHTML = "未定義("+pos+")" 
+			}else{
+				var msg = pos
+				for(var peopleId in ctx.ContestSys.Contests[contestId].Peoples){
+					var people = ctx.ContestSys.Contests[contestId].Peoples[peopleId]
+					if( people.Pos == pos ){
+						msg = people.Name+"("+people.ID+")"
+					}
+				}
+				if(dual.IsTop){
+					msg += "(GOAL)"
+				}
+				domElement.innerHTML = msg
+			} 
 	        domElement.onclick = function(){  
 	            st.onClick(node.id, {  
 	                onComplete: function() {
@@ -542,17 +633,8 @@ var view = {};
 	        style.display = '';  
 	        style.cursor = 'pointer';  
 	  
-	        if (node._depth <= 1) {  
-	            style.fontSize = "0.8em";  
-	            style.color = "#ccc";  
-	          
-	        } else if(node._depth == 2){  
-	            style.fontSize = "0.7em";  
-	            style.color = "#494949";  
-	          
-	        } else {  
-	            style.display = 'none';  
-	        }  
+	        style.fontSize = "1em";  
+	        style.color = "#ccc"; 
 	  
 	        var left = parseInt(style.left);  
 	        var w = domElement.offsetWidth;  
@@ -561,8 +643,17 @@ var view = {};
 	});  
 	
 	function updateContestFlowView(ctx, contestId, pos){
+		if((!!contestId) == false){
+			return
+		}
 		var list = ctx.DualSys.Duals.filter(data=>data.Contest == contestId)
 		if(list.length == 0){
+			console.log("no dual")
+			return
+		}
+		var top = list.find(data=>data.IsTop)
+		if(top == null){
+			console.log("top is null")
 			return
 		}
 		var nodes = {}
@@ -573,7 +664,10 @@ var view = {};
 			var node = {
 				id: id,
 				name: id,
-				data: {},
+				data: {
+					ctx: ctx,
+					contest: contestId
+				},
 				children: []
 			}
 			nodes[node.id] = node
@@ -591,7 +685,7 @@ var view = {};
 			return acc
 		}, [])
 
-		var root = newList[newList.length-1]
+		var root = getNode(top.ID)
 		//load JSON data  
 		st.loadJSON(root);  
 		//trigger small animation  
@@ -627,14 +721,21 @@ var view = {};
 			pwd: pwd
 		}
 	}
+	
+	function selectMainTab(idx){
+		$('#tab_main').tabs('select', idx)
+	}
 	module.updateContestListView = updateContestListView
 	module.updateContestDetailView = updateContestDetailView
 	module.updateContestPeopleListView = updateContestPeopleListView
 	module.getContestDetail = getContestDetail
 	module.updateContestFlowView = updateContestFlowView
+	module.updateDualsListView = updateDualsListView
 	module.alert = alert
 	module.confirm = confirm
 	module.getJoinInfo = getJoinInfo
+	module.selectMainTab = selectMainTab
+	
 })(view)
 		</script>
 		<script>
@@ -646,12 +747,16 @@ var view = {};
 				
 				if(node.isContest == true){
 					view.updateContestFlowView(model.getCurrentContext(), contestId)
+					view.selectMainTab(1)
 				}else{
 					var people = model.getCurrentContext().ContestSys.Contests[contestId].Peoples[node.id]
-					console.log(people)
 					view.updateContestFlowView(model.getCurrentContext(), contestId, people.Pos)
+					view.selectMainTab(2)
 				}
-				
+			}
+			
+			function onClickDualsRow(idx, row){
+				console.log(row)
 			}
 			
 			function onClick(cmd){
@@ -699,11 +804,19 @@ var view = {};
 				}
 				
 				if(cmd == 'commitContest'){
-					model.upgradeContest(model.getCurrentContestId(), (err, info)=>{
-						if(err!=null){
-							view.alert('error', err)
-						}else{
-							updateView()
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						return
+					}
+					view.confirm('是否升格:'+contestId, ok=>{
+						if(ok){
+							model.upgradeContest(contestId, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
 						}
 					})
 				}
@@ -728,6 +841,20 @@ var view = {};
 						}
 					})
 				}
+				
+				if(cmd == 'kickPeople'){
+					
+				}
+				
+				if(cmd == 'prepareDual'){
+					model.prepareDual(model.getCurrentContestId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
 			}
 			
 			function updateView(){
@@ -739,8 +866,18 @@ var view = {};
 						view.updateContestDetailView(info, model.getCurrentContestId())
 						view.updateContestPeopleListView(info, model.getCurrentContestId())
 						view.updateContestFlowView(info, model.getCurrentContestId())
+						
+						model.getDuals((err,duals)=>{
+							if(err != null){
+								view.alert('error', err)
+							}else{
+								view.updateDualsListView(info, duals)
+							}
+						})
 					}
 				})
+				
+				
 			}
 			
 			function init(){

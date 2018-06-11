@@ -55,22 +55,21 @@ func SaveContext(ctx appengine.Context, appContext Context) error {
 	return nil
 }
 
-func CtxUpdateDual(appCtx *Context, contestId string) error {
+func CtxUpdateDual(appCtx *Context, contestId string, peopleId string) error {
 	contest, isExist := appCtx.ContestSys.Contests[contestId]
 	if isExist == false {
 		return errors.New("no contest")
 	}
+	if peopleId != contest.Owner {
+		return errors.New("u r not owner")
+	}
 	PrepareDual(&appCtx.DualSys, contest)
 	for _, people := range contest.Peoples {
-		dual, hasDual := GetDualWithPeople(&appCtx.DualSys, contestId, people.ID)
+		dual, hasDual := GetStartDualWithPeople(&appCtx.DualSys, contestId, people.ID)
 		if hasDual == false {
 			return errors.New("must has pos")
 		}
-		nextDual, hasDual := GetNextDual(&appCtx.DualSys, dual.ID)
-		if hasDual == false {
-			return errors.New("must has nextDual pos")
-		}
-		people.Pos = nextDual.ID
+		people.Pos = dual.ID
 		contest.Peoples[people.ID] = people
 	}
 	appCtx.ContestSys.Contests[contestId] = contest
@@ -86,7 +85,11 @@ func CtxConfirmWinner(appCtx *Context, contestId string, peopleId string, winner
 	if isPeopleExist == false {
 		return errors.New("no people")
 	}
-	ConfirmWinner(&appCtx.ConfirmSys, people.Pos, people.ID, winner)
+	nextDual, hasDual := GetNextDual(&appCtx.DualSys, people.Pos)
+	if hasDual == false {
+		return errors.New("must has nextDual pos")
+	}
+	ConfirmWinner(&appCtx.ConfirmSys, nextDual.ID, people.ID, winner)
 	return nil
 }
 
@@ -114,4 +117,25 @@ func CtxUpgrade(appCtx *Context, contestId string, peopleId string) error {
 
 	RemoveConfirm(&appCtx.ConfirmSys, pos)
 	return nil
+}
+
+func CtxGetDualsWithPeople(appCtx *Context, peopleId string) []Dual {
+	duals := []Dual{}
+	for _, contest := range appCtx.ContestSys.Contests {
+		for _, people := range contest.Peoples {
+			if people.ID != peopleId {
+				continue
+			}
+			nextDual, hasNext := GetNextDual(&appCtx.DualSys, people.Pos)
+			if hasNext == false {
+				continue
+			}
+			for _, dual := range appCtx.DualSys.Duals {
+				if dual.Contest == contest.ID && dual.ID == nextDual.ID {
+					duals = append(duals, nextDual)
+				}
+			}
+		}
+	}
+	return duals
 }
