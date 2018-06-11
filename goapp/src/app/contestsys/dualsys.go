@@ -2,6 +2,7 @@ package contestsys
 
 import (
 	_ "errors"
+
 	"math/rand"
 	_ "sort"
 	"strconv"
@@ -56,6 +57,7 @@ func PrepareDual(dualSys *DualSys, contest Contest) {
 			Name:    p.ID,
 			Type:    DualTypePeople,
 			Contest: contest.ID,
+			Power:   p.Power,
 		}
 		dualSys.DualSeq = dualSys.DualSeq + 1
 		dualSys.Duals = append(dualSys.Duals, dual)
@@ -88,7 +90,7 @@ func PrepareDual(dualSys *DualSys, contest Contest) {
 		// 將種子場次移到最後
 		duals[len(duals)-1], duals[maxPowerId] = duals[maxPowerId], duals[len(duals)-1]
 
-		// 依排位新增場次, 最後的玩家剛好是種子場次
+		// 依排位新增場次, 每1對場次合成下一個場次, 落單的場次會排在下一輪(種子場次)
 		for i, length := 0, len(duals)/2; i < length; i += 1 {
 			left, right := duals[i*2], duals[i*2+1]
 			dual := Dual{

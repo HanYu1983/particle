@@ -314,3 +314,39 @@ func Serve_Upgrade(w http.ResponseWriter, r *http.Request) {
 
 	tool.Output(w, nil, nil)
 }
+
+func Serve_UpdateDual(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["peopleId"]
+	powerStr := params["power"]
+
+	power, err := strconv.Atoi(powerStr)
+	tool.Assert(tool.IfError(err))
+
+	ctx := appengine.NewContext(r)
+	err = tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		contest, isExist := appCtx.ContestSys.Contests[contestId]
+		if isExist == false {
+			return errors.New("contest is not exist")
+		}
+		people, isPeopleExist := contest.Peoples[peopleId]
+		if isPeopleExist == false {
+			return errors.New("people is not exist")
+		}
+		people.Power = power
+		contest.Peoples[peopleId] = people
+		appCtx.ContestSys.Contests[contestId] = contest
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+
+	tool.Output(w, nil, nil)
+}

@@ -519,10 +519,11 @@ var view = {};
 		var rows = []
 		for(var k in contest.Peoples){
 			var p = contest.Peoples[k]
+			var dual = ctx.DualSys.Duals.find(d=>d.Contest == contestId && d.Type == 0 && d.Name == p.ID)
 			var node = {
 				ID: p.ID,
 				Name: p.Name,
-				Power: 0
+				Power: dual ? dual.Power : -1
 			}
 			rows.push(node)
 		}
@@ -616,7 +617,7 @@ var view = {};
 				if(dual.IsTop){
 					msg += "(GOAL)"
 				}
-				domElement.innerHTML = msg
+				domElement.innerHTML = msg+"/"+dual.Power
 			} 
 	        domElement.onclick = function(){  
 	            st.onClick(node.id, {  
@@ -663,7 +664,6 @@ var view = {};
 			}
 			var node = {
 				id: id,
-				name: id,
 				data: {
 					ctx: ctx,
 					contest: contestId
