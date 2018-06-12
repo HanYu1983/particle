@@ -4,7 +4,7 @@ import (
 	_ "errors"
 
 	"math/rand"
-	_ "sort"
+	"sort"
 	"strconv"
 	_ "strings"
 	_ "time"
@@ -41,7 +41,13 @@ func (a ByDualPower) Len() int           { return len(a) }
 func (a ByDualPower) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByDualPower) Less(i, j int) bool { return a[i].Power < a[j].Power }
 
-func PrepareDual(dualSys *DualSys, contest Contest) {
+const (
+	SortTypeDefault = iota
+	SortTypeRandom
+	SortTypeMix
+)
+
+func PrepareDual(dualSys *DualSys, contest Contest, sortType int) {
 	// remove old
 	for i := len(dualSys.Duals) - 1; i >= 0; i -= 1 {
 		if dualSys.Duals[i].Contest == contest.ID {
@@ -73,22 +79,41 @@ func PrepareDual(dualSys *DualSys, contest Contest) {
 
 		// 記錄要刪除的場次
 		removeDuals := []string{}
-		// 隨機排位場次
-		src := duals
-		duals = make([]Dual, len(src))
-		perm := rand.Perm(len(src))
-		// 並記錄最大的種子場次
-		maxPowerId := 0
-		maxPower := 0
-		for i, v := range perm {
-			duals[v] = src[i]
-			if maxPower < duals[v].Power {
-				maxPower = duals[v].Power
-				maxPowerId = v
+
+		switch sortType {
+		case SortTypeDefault:
+			sort.Sort(ByDualPower(duals))
+			break
+		case SortTypeRandom:
+			// 隨機排位場次
+			src := duals
+			duals = make([]Dual, len(src))
+			perm := rand.Perm(len(src))
+			for i, v := range perm {
+				duals[v] = src[i]
 			}
+			break
+		case SortTypeMix:
+			// 隨機排位場次
+			src := duals
+			duals = make([]Dual, len(src))
+			perm := rand.Perm(len(src))
+			// 並記錄最大的種子場次
+			maxPowerId := 0
+			maxPower := 0
+			for i, v := range perm {
+				duals[v] = src[i]
+				if maxPower < duals[v].Power {
+					maxPower = duals[v].Power
+					maxPowerId = v
+				}
+			}
+			// 將種子場次移到最後
+			duals[len(duals)-1], duals[maxPowerId] = duals[maxPowerId], duals[len(duals)-1]
+			break
 		}
-		// 將種子場次移到最後
-		duals[len(duals)-1], duals[maxPowerId] = duals[maxPowerId], duals[len(duals)-1]
+
+		isTop := dualLen == 2
 
 		// 依排位新增場次, 每1對場次合成下一個場次, 落單的場次會排在下一輪(種子場次)
 		for i, length := 0, len(duals)/2; i < length; i += 1 {
@@ -101,7 +126,7 @@ func PrepareDual(dualSys *DualSys, contest Contest) {
 				Right:   right.ID,
 				Contest: contest.ID,
 				Power:   left.Power + right.Power,
-				IsTop:   length == 1,
+				IsTop:   isTop,
 			}
 			dualSys.DualSeq = dualSys.DualSeq + 1
 			dualSys.Duals = append(dualSys.Duals, dual)

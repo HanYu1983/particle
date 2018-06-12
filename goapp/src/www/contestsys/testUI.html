@@ -123,39 +123,31 @@
 		        <div title="賽程管理">
 					<div class="easyui-accordion" data-options="multiple:true" style="width:100%;">
 						<div title="賽程" style='height:300px'>
-				            <div id='infovis' style='width:600px; height:300px'></div>
+				            <div id='infovis' style='width:100%; height:300px'></div>
 				        </div>
 				        <div title="玩家" data-options="selected:true">
-				            <table id="dg" class="easyui-datagrid" style='width:100%'
+							<form name="form_peoplePower" class="easyui-form">
+								ID<input class="easyui-textbox" name="id" style="width:100px" disabled>
+								種子選手<input name="power" class="easyui-textbox">
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('confirmDualPower')">確認修改</a>
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('prepareDual')">重新排賽</a>
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="onClick('kickPeople')">強制退出比賽</a>
+							</form>
+							
+				            <table id="dg_people" class="easyui-datagrid" style='width:100%'
 						            data-options="
 						                iconCls: 'icon-edit',
 						                singleSelect: true,
-										collapsible:false,
-						                toolbar: '#tb',
-						                onClickCell: onClickCell,
-						                onEndEdit: onEndEdit
+						                onClickRow: onClickPeopleRow
 						            ">
 						        <thead>
 						            <tr>
 						                <th data-options="field:'ID',width:80,align:'center'">ID</th>
 						                <th data-options="field:'Name',width:100,align:'center'">小名</th>
-						                <th data-options="field:'Power',width:80,align:'center',editor:'numberbox'">種子選手</th>
+						                <th data-options="field:'Power',width:80,align:'center'">種子選手</th>
 						            </tr>
 						        </thead>
-								<tbody>
-									<tr>
-										<td field="ID">ID</td>
-										<td field="Name">Name</td>
-										<td field="Power">0</td>
-									</tr>
-								</tbody>
 						    </table>
-						 
-						    <div id="tb" style="height:auto">
-						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="onClick('kickPeople')">強制退出比賽</a>
-						        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('confirmDualPower')">確認修改</a>
-								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('prepareDual')">重新排賽</a>
-						    </div>
 				        </div>
 					</div>
 		        </div>
@@ -175,78 +167,6 @@
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-		<script name='editPeopleList' type="text/javascript">
-	        var editIndex = undefined;
-	        function endEditing(){
-	            if (editIndex == undefined){return true}
-	            if ($('#dg').datagrid('validateRow', editIndex)){
-	                $('#dg').datagrid('endEdit', editIndex);
-	                editIndex = undefined;
-	                return true;
-	            } else {
-	                return false;
-	            }
-	        }
-	        function onClickCell(index, field){
-	            if (editIndex != index){
-	                if (endEditing()){
-	                    $('#dg').datagrid('selectRow', index)
-	                            .datagrid('beginEdit', index);
-	                    var ed = $('#dg').datagrid('getEditor', {index:index,field:field});
-	                    if (ed){
-	                        ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
-	                    }
-	                    editIndex = index;
-	                } else {
-	                    setTimeout(function(){
-	                        $('#dg').datagrid('selectRow', editIndex);
-	                    },0);
-	                }
-	            }
-	        }
-	        function onEndEdit(index, row){
-				/*
-	            var ed = $(this).datagrid('getEditor', {
-	                index: index,
-	                field: 'productid'
-	            });
-	            row.productname = $(ed.target).combobox('getText');
-				*/
-	        }
-	        function append(){
-	            if (endEditing()){
-	                $('#dg').datagrid('appendRow',{status:'P'});
-	                editIndex = $('#dg').datagrid('getRows').length-1;
-	                $('#dg').datagrid('selectRow', editIndex)
-	                        .datagrid('beginEdit', editIndex);
-	            }
-	        }
-	        function removeit(){
-				$.messager.confirm('系統', '確定要退出?', function(r){
-	                if(r){
-						if (editIndex == undefined){return}
-			            $('#dg').datagrid('cancelEdit', editIndex)
-			                    .datagrid('deleteRow', editIndex);
-			            editIndex = undefined;
-	                }else{
-						
-					}
-	            });
-	        }
-	        function accept(){
-	            if (endEditing()){
-	                $('#dg').datagrid('acceptChanges');
-	            }
-	        }
-	        function reject(){
-	            $('#dg').datagrid('rejectChanges');
-	            editIndex = undefined;
-	        }
-	        function getChanges(){
-	            var rows = $('#dg').datagrid('getChanges');
-	            alert(rows.length+' rows are changed!');
-	        }
-	    </script>
 		<script src='../common/js/lib/jit-yc.js'></script>
 		<script>
 var model = {};
@@ -370,9 +290,9 @@ var model = {};
 		})
 	}
 	
-	function leaveContest(contestId, cb){
+	function leaveContest(contestId, peopleId, cb){
 		$.ajax({
-			url: '../fn/contestsys/LeaveContest/'+contestId+'/'+id,
+			url: '../fn/contestsys/LeaveContest/'+contestId+'/'+peopleId,
 			dataType:'json',
 			success: (info)=>{
 				if(info.Error != null){
@@ -421,6 +341,23 @@ var model = {};
 		})
 	}
 	
+	function updatePower(contestId, peopleId, power, cb){
+		$.ajax({
+			url: '../fn/contestsys/UpdatePower/'+contestId+'/'+id+'/'+peopleId+'/'+power,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
 	var currentContestId = null
 	function setCurrentContestId(id){
 		currentContestId = id
@@ -429,10 +366,20 @@ var model = {};
 		return currentContestId
 	}
 	
+	var currentPeopleId = null
+	function setCurrentPeopleId(id){
+		currentPeopleId = id
+	}
+	function getCurrentPeopleId(){
+		return currentPeopleId
+	}
+	
 	module.loadContext = loadContext
 	module.getCurrentContext = getCurrentContext
 	module.setCurrentContestId = setCurrentContestId
 	module.getCurrentContestId = getCurrentContestId
+	module.setCurrentPeopleId = setCurrentPeopleId
+	module.getCurrentPeopleId = getCurrentPeopleId
 	module.updateContest = updateContest
 	module.newContest = newContest
 	module.deleteContest = deleteContest
@@ -443,6 +390,7 @@ var model = {};
 	module.prepareDual = prepareDual
 	module.setId = setId
 	module.getId = getId
+	module.updatePower = updatePower
 })(model)
 
 var view = {};
@@ -519,11 +467,10 @@ var view = {};
 		var rows = []
 		for(var k in contest.Peoples){
 			var p = contest.Peoples[k]
-			var dual = ctx.DualSys.Duals.find(d=>d.Contest == contestId && d.Type == 0 && d.Name == p.ID)
 			var node = {
 				ID: p.ID,
 				Name: p.Name,
-				Power: dual ? dual.Power : -1
+				Power: p.Power
 			}
 			rows.push(node)
 		}
@@ -531,7 +478,7 @@ var view = {};
 			total: rows.length,
 			rows: rows
 		}
-		$('#dg').datagrid({data: data})
+		$('#dg_people').datagrid({data: data})
 	}
 	
 	function updateDualsListView(ctx, duals){
@@ -641,7 +588,7 @@ var view = {};
 	        var w = domElement.offsetWidth;  
 	        style.left = (left - w / 2) + 'px';  
 	    }  
-	});  
+	});
 	
 	function updateContestFlowView(ctx, contestId, pos){
 		if((!!contestId) == false){
@@ -649,7 +596,13 @@ var view = {};
 		}
 		var list = ctx.DualSys.Duals.filter(data=>data.Contest == contestId)
 		if(list.length == 0){
-			console.log("no dual")
+			st.loadJSON({id:0, data:{ctx: ctx, contest: contestId}, children:[]})
+			st.compute('end')
+			st.fx.animate({  
+			  modes:['polar'],  
+			  duration: 1000  
+			});
+			st.onClick(0)
 			return
 		}
 		var top = list.find(data=>data.IsTop)
@@ -696,7 +649,7 @@ var view = {};
 		st.compute('end');  
 		st.fx.animate({  
 		  modes:['polar'],  
-		  duration: 2000  
+		  duration: 1000  
 		});
 		if(!!pos){
 			st.onClick(pos, 'animate')
@@ -725,6 +678,51 @@ var view = {};
 	function selectMainTab(idx){
 		$('#tab_main').tabs('select', idx)
 	}
+	
+	function selectPeople(ctx, contestId, peopleId){
+		var contest = ctx.ContestSys.Contests[contestId]
+		if((!!contest) == false){
+			return
+		}
+		var people = contest.Peoples[peopleId]
+		if((!!people) == false){
+			return
+		}
+		var idx = 0
+		for(var k in contest.Peoples){
+			if(k == peopleId){
+				break
+			}
+			++idx
+		}
+		$('#dg_people').datagrid('selectRow', idx)
+	}
+	
+	function updatePeoplePowerForm(ctx, contestId, peopleId){
+		var contest = ctx.ContestSys.Contests[contestId]
+		if((!!contest) == false){
+			return
+		}
+		var people = contest.Peoples[peopleId]
+		if((!!people) == false){
+			return
+		}
+		$(document.form_peoplePower).form('load', {
+			id: peopleId,
+			power: people.Power
+		})
+	}
+	
+	function getPeoplePowerFormValue(){
+		var id = document.form_peoplePower.id.value
+		var power = document.form_peoplePower.power.value
+		return {
+			id: id,
+			power: power
+		}
+	}
+	
+	
 	module.updateContestListView = updateContestListView
 	module.updateContestDetailView = updateContestDetailView
 	module.updateContestPeopleListView = updateContestPeopleListView
@@ -735,6 +733,9 @@ var view = {};
 	module.confirm = confirm
 	module.getJoinInfo = getJoinInfo
 	module.selectMainTab = selectMainTab
+	module.selectPeople = selectPeople
+	module.updatePeoplePowerForm = updatePeoplePowerForm
+	module.getPeoplePowerFormValue = getPeoplePowerFormValue
 	
 })(view)
 		</script>
@@ -750,13 +751,23 @@ var view = {};
 					view.selectMainTab(1)
 				}else{
 					var people = model.getCurrentContext().ContestSys.Contests[contestId].Peoples[node.id]
+					model.setCurrentPeopleId(people.ID)
+					
 					view.updateContestFlowView(model.getCurrentContext(), contestId, people.Pos)
 					view.selectMainTab(2)
+					view.selectPeople(model.getCurrentContext(), contestId, people.ID)
+					view.updatePeoplePowerForm(model.getCurrentContext(), contestId, people.ID)
 				}
 			}
 			
 			function onClickDualsRow(idx, row){
 				console.log(row)
+			}
+			
+			function onClickPeopleRow(idx, row){
+				var peopleId = row.ID
+				model.setCurrentPeopleId(peopleId)
+				view.updatePeoplePowerForm(model.getCurrentContext(), model.getCurrentContestId(), peopleId)
 			}
 			
 			function onClick(cmd){
@@ -833,7 +844,7 @@ var view = {};
 				}
 				
 				if(cmd == 'leaveContest'){
-					model.leaveContest(model.getCurrentContestId(), (err, info)=>{
+					model.leaveContest(model.getCurrentContestId(), model.getId(), (err, info)=>{
 						if(err!=null){
 							view.alert('error', err)
 						}else{
@@ -843,7 +854,22 @@ var view = {};
 				}
 				
 				if(cmd == 'kickPeople'){
-					
+					var people = model.getCurrentPeopleId()
+					if(people == null){
+						view.alert('請選擇一位玩家')
+						return
+					}
+					view.confirm('是否強制退出:'+model.getCurrentPeopleId(), ok=>{
+						if(ok){
+							model.leaveContest(model.getCurrentContestId(), people, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									onClick('prepareDual')
+								}
+							})
+						}
+					})
 				}
 				
 				if(cmd == 'prepareDual'){
@@ -852,6 +878,17 @@ var view = {};
 							view.alert('error', err)
 						}else{
 							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'confirmDualPower'){
+					var value = view.getPeoplePowerFormValue()
+					model.updatePower(model.getCurrentContestId(), value.id, value.power, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							onClick('prepareDual')
 						}
 					})
 				}
@@ -866,6 +903,7 @@ var view = {};
 						view.updateContestDetailView(info, model.getCurrentContestId())
 						view.updateContestPeopleListView(info, model.getCurrentContestId())
 						view.updateContestFlowView(info, model.getCurrentContestId())
+						view.updatePeoplePowerForm(model.getCurrentContext(), model.getCurrentContestId(), model.getCurrentPeopleId())
 						
 						model.getDuals((err,duals)=>{
 							if(err != null){

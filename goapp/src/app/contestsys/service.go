@@ -315,12 +315,13 @@ func Serve_Upgrade(w http.ResponseWriter, r *http.Request) {
 	tool.Output(w, nil, nil)
 }
 
-func Serve_UpdateDual(w http.ResponseWriter, r *http.Request) {
+func Serve_UpdatePower(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
 	})
 	params := mux.Vars(r)
 	contestId := params["contestId"]
+	owner := params["owner"]
 	peopleId := params["peopleId"]
 	powerStr := params["power"]
 
@@ -336,6 +337,9 @@ func Serve_UpdateDual(w http.ResponseWriter, r *http.Request) {
 		contest, isExist := appCtx.ContestSys.Contests[contestId]
 		if isExist == false {
 			return errors.New("contest is not exist")
+		}
+		if contest.Owner != owner {
+			return errors.New("u r not owner")
 		}
 		people, isPeopleExist := contest.Peoples[peopleId]
 		if isPeopleExist == false {
