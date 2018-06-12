@@ -89,7 +89,36 @@ func CtxConfirmWinner(appCtx *Context, contestId string, peopleId string, winner
 	if hasDual == false {
 		return errors.New("must has nextDual pos")
 	}
+	leftPeople, rightPeople := "", ""
+	for _, people := range contest.Peoples {
+		if people.Pos == nextDual.Left {
+			leftPeople = people.ID
+		}
+		if people.Pos == nextDual.Right {
+			rightPeople = people.ID
+		}
+	}
+	if leftPeople == "" || rightPeople == "" {
+		return errors.New("dual not start")
+	}
 	ConfirmWinner(&appCtx.ConfirmSys, nextDual.ID, people.ID, winner)
+	return nil
+}
+
+func CtxCancelWinner(appCtx *Context, contestId string, peopleId string) error {
+	contest, isExist := appCtx.ContestSys.Contests[contestId]
+	if isExist == false {
+		return errors.New("no contest")
+	}
+	people, isPeopleExist := contest.Peoples[peopleId]
+	if isPeopleExist == false {
+		return errors.New("no people")
+	}
+	nextDual, hasDual := GetNextDual(&appCtx.DualSys, people.Pos)
+	if hasDual == false {
+		return errors.New("must has nextDual pos")
+	}
+	RemoveConfirm(&appCtx.ConfirmSys, nextDual.ID)
 	return nil
 }
 
@@ -102,12 +131,11 @@ func CtxUpgrade(appCtx *Context, contestId string, peopleId string) error {
 	if isPeopleExist == false {
 		return errors.New("no people")
 	}
-	pos := people.Pos
-	nextDual, hasNextDual := GetNextDual(&appCtx.DualSys, pos)
+	nextDual, hasNextDual := GetNextDual(&appCtx.DualSys, people.Pos)
 	if hasNextDual == false {
 		return errors.New("no next dual")
 	}
-	state := GetConfirmState(&appCtx.ConfirmSys, pos)
+	state := GetConfirmState(&appCtx.ConfirmSys, nextDual.ID)
 	if state != ConfirmStateOk {
 		return errors.New("can not upgrade")
 	}
@@ -115,7 +143,7 @@ func CtxUpgrade(appCtx *Context, contestId string, peopleId string) error {
 	contest.Peoples[peopleId] = people
 	appCtx.ContestSys.Contests[contestId] = contest
 
-	RemoveConfirm(&appCtx.ConfirmSys, pos)
+	RemoveConfirm(&appCtx.ConfirmSys, nextDual.ID)
 	return nil
 }
 

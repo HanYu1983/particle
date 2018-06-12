@@ -35,36 +35,35 @@
 					<form name="form_player" class="easyui-form" data-options="novalidate:true">
 						ID
 			            <div style="margin-bottom:20px">
-							<input class="easyui-textbox" name="ID" style="width:100%" disabled>
+							<input class="easyui-textbox" name="id" style="width:100%" disabled>
 			            </div>
 						<div style="margin-bottom:20px">
 							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('login')">登入</a>
 			            </div>
-						<div style="margin-bottom:20px">
-							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">發佈勝利</a>
-					        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'">發佈失敗</a>
-			        	</div>
+						
 					</form>
+					
+					<form name="form_winner" class="easyui-form" data-options="novalidate:true">
+						場次
+			            <div style="margin-bottom:20px">
+							<input class="easyui-textbox" name="pos" disabled>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitWinner')">發佈勝利</a>
+					        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('commitFail')">發佈失敗</a>
+				            <a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('cancelWinner')">取消發佈</a>
+						</div>
+					</form>
+					
 					<table id='dg_duals' class="easyui-datagrid" title="你的比賽" style="width:100%"
 				            data-options="singleSelect:true,collapsible:true,onClickRow:onClickDualsRow">
 				        <thead>
 				            <tr>
-				                <th data-options="field:'contestId',width:80,align:'center'">比賽名稱</th>
+				                <th data-options="field:'contestName',width:80,align:'center'">比賽名稱</th>
 								<th data-options="field:'pos',width:100,align:'center'">場次</th>
 								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
 				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
 								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
 				            </tr>
 				        </thead>
-						<tbody>
-							<tr>
-								<td field="contestId">contestId</td>
-								<td field="pos">pos</td>
-								<td field="left">left</td>
-								<td field="right">right</td>
-								<td field="winner">winner</td>
-							</tr>
-						</tbody>
 				    </table>
 				</div>
 				
@@ -358,6 +357,40 @@ var model = {};
 		})
 	}
 	
+	function confirmWinner(contestId, peopleId, cb){
+		$.ajax({
+			url: '../fn/contestsys/ConfirmWinner/'+contestId+'/'+id+'/'+peopleId,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function cancelWinner(contestId, cb){
+		$.ajax({
+			url: '../fn/contestsys/CancelWinner/'+contestId+'/'+id,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
 	var currentContestId = null
 	function setCurrentContestId(id){
 		currentContestId = id
@@ -374,12 +407,22 @@ var model = {};
 		return currentPeopleId
 	}
 	
+	var currentPos = null
+	function setCurrentPos(id){
+		currentPos = id
+	}
+	function getCurrentPos(){
+		return currentPos
+	}
+	
 	module.loadContext = loadContext
 	module.getCurrentContext = getCurrentContext
 	module.setCurrentContestId = setCurrentContestId
 	module.getCurrentContestId = getCurrentContestId
 	module.setCurrentPeopleId = setCurrentPeopleId
 	module.getCurrentPeopleId = getCurrentPeopleId
+	module.setCurrentPos = setCurrentPos
+	module.getCurrentPos = getCurrentPos
 	module.updateContest = updateContest
 	module.newContest = newContest
 	module.deleteContest = deleteContest
@@ -391,6 +434,8 @@ var model = {};
 	module.setId = setId
 	module.getId = getId
 	module.updatePower = updatePower
+	module.confirmWinner = confirmWinner
+	module.cancelWinner = cancelWinner
 })(model)
 
 var view = {};
@@ -481,7 +526,7 @@ var view = {};
 		$('#dg_people').datagrid({data: data})
 	}
 	
-	function updateDualsListView(ctx, duals){
+	function updateDualsListView(ctx, id, duals){
 		var rows = duals.map(d=>{
 			var confirm = ctx.ConfirmSys.Confirms.find(c=>c.Pos == d.ID && c.People == id)
 			var contest = ctx.ContestSys.Contests[d.Contest]
@@ -497,7 +542,8 @@ var view = {};
 				}
 			}
 			return {
-				contestId: contest.Name,
+				contestId: contest.ID,
+				contestName: contest.Name,
 				left: peopleLeft ? peopleLeft.Name+"("+peopleLeft.ID+")" : "unknown",
 				right: peopleRight ? peopleRight.Name+"("+peopleRight.ID+")" : "unknown",
 				pos: d.ID,
@@ -722,6 +768,12 @@ var view = {};
 		}
 	}
 	
+	function updateWinnerForm(ctx, pos){
+		$(document.form_winner).form('load', {
+			pos: pos
+		})
+	}
+	
 	
 	module.updateContestListView = updateContestListView
 	module.updateContestDetailView = updateContestDetailView
@@ -736,6 +788,7 @@ var view = {};
 	module.selectPeople = selectPeople
 	module.updatePeoplePowerForm = updatePeoplePowerForm
 	module.getPeoplePowerFormValue = getPeoplePowerFormValue
+	module.updateWinnerForm = updateWinnerForm
 	
 })(view)
 		</script>
@@ -761,7 +814,11 @@ var view = {};
 			}
 			
 			function onClickDualsRow(idx, row){
-				console.log(row)
+				var pos = row.pos
+				var contest = row.contestId
+				model.setCurrentContestId(contest)
+				model.setCurrentPos(pos)
+				view.updateWinnerForm(model.getCurrentContext(), pos)
 			}
 			
 			function onClickPeopleRow(idx, row){
@@ -892,6 +949,79 @@ var view = {};
 						}
 					})
 				}
+				
+				if(cmd == 'cancelWinner'){
+					var contest = model.getCurrentContestId()
+					if(contest == null){
+						console.log('no contest')
+						return
+					}
+					model.cancelWinner(contest, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'commitWinner'){
+					var contest = model.getCurrentContestId()
+					if(contest == null){
+						console.log('no contest')
+						return
+					}
+					model.confirmWinner(contest, model.getId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'commitFail'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						console.log('no contestId')
+						return
+					}
+					var ctx = model.getCurrentContext()
+					var contest = ctx.ContestSys.Contests[contestId]
+					if((!!contest) == false){
+						console.log('no contest')
+						return
+					}
+					var pos = model.getCurrentPos()
+					if(pos == null){
+						console.log('no pos')
+						return
+					}
+					var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+					if(dual == null){
+						console.log('no dual')
+						return
+					}
+					var peopleLeft = ""
+					var peopleRight = ""
+					for(var k in contest.Peoples){
+						var p = contest.Peoples[k]
+						if(p.Pos == dual.Left){
+							peopleLeft = p.ID
+						}
+						if(p.Pos == dual.Right){
+							peopleRight = p.ID
+						}
+					}
+					var other = peopleLeft == model.getId() ? peopleRight : peopleLeft
+					model.confirmWinner(contest.ID, other, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
 			}
 			
 			function updateView(){
@@ -909,7 +1039,7 @@ var view = {};
 							if(err != null){
 								view.alert('error', err)
 							}else{
-								view.updateDualsListView(info, duals)
+								view.updateDualsListView(info, model.getId(), duals)
 							}
 						})
 					}

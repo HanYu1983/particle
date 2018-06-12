@@ -290,6 +290,31 @@ func Serve_ConfirmWinner(w http.ResponseWriter, r *http.Request) {
 	tool.Output(w, nil, nil)
 }
 
+func Serve_CancelWinner(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["peopleId"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		err = CtxCancelWinner(&appCtx, contestId, peopleId)
+		if err != nil {
+			return err
+		}
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+
+	tool.Output(w, nil, nil)
+}
+
 func Serve_Upgrade(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
