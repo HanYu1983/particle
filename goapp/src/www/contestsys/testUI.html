@@ -3,29 +3,11 @@
 		<meta charset="utf-8"/>
 	</head>
 	<body>
-<!--                                              -->
 <div style="width:100%;height:100%;">
 	<div class="easyui-layout" style="width:100%;height:100%;">
         <div data-options="region:'west',split:true" title="比賽" style="width:200px;">
 			<div class="easyui-accordion" data-options="fit:true,border:false" style='overflow: auto;'>
                 <ul class="easyui-tree" id="gameTree" data-options="onClick: onClickGameTree">
-		            <li>
-		                <span>比賽1</span>
-		                <ul>
-		                    <li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-		                </ul>
-		            </li>
-					
-					<li>
-		                <span>比賽2</span>
-		                <ul>
-		                    <li>index.html</li>
-		                    <li>about.html</li>
-		                    <li>welcome.html</li>
-		                </ul>
-		            </li>
 		        </ul>
             </div>
 		</div>
@@ -33,14 +15,12 @@
             <div id="tab_main" class="easyui-tabs" style='height:100%'>
 				<div title="玩家">
 					<form name="form_player" class="easyui-form" data-options="novalidate:true">
-						ID
-			            <div style="margin-bottom:20px">
-							<input class="easyui-textbox" name="id" style="width:100%" disabled>
+						<div style="margin-bottom:20px">
+							ID<input class="easyui-textbox" name="id" disabled>
 			            </div>
 						<div style="margin-bottom:20px">
-							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('login')">登入</a>
+							<fb:login-button scope="public_profile,email" onlogin="onClick('login')"></fb:login-button>
 			            </div>
-						
 					</form>
 					
 					<form name="form_winner" class="easyui-form" data-options="novalidate:true">
@@ -50,6 +30,7 @@
 							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitWinner')">發佈勝利</a>
 					        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('commitFail')">發佈失敗</a>
 				            <a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('cancelWinner')">取消發佈</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgrade')">升格</a>
 						</div>
 					</form>
 					
@@ -70,8 +51,8 @@
 		        <div title="新增/修改比賽">
 					<div class="easyui-panel">
 						<form name="form_peopleJoin" class="easyui-form">
-							小名<input class="easyui-textbox" name="name" style="width:100px">
 							參加碼<input name="pwd" type="password" class="easyui-textbox">
+							小名<input class="easyui-textbox" name="name" style="width:100px">
 							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('joinContest')">參加比賽</a>
 							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('leaveContest')">退出比賽</a>
 						</form>
@@ -79,16 +60,16 @@
 					<div class="easyui-panel">
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="onClick('newContest')">新增草搞</a>
 				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="onClick('removeContest')">刪除</a>
-						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitContest')">發佈</a>
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'" onclick="onClick('updateContest')">修改</a>
-						<a href="#" class="easyui-linkbutton" data-options="plain:true">更新比賽列表</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitContest')">草搞>公佈>開始>結束</a>
 				    </div>
 					<form name="form_contest" class="easyui-form" data-options="novalidate:true">
 						狀態
 						<div style="margin-bottom:20px">
 			                <select class="easyui-combobox" name="state" disabled style="width:100%">
 				                <option value="0">草搞</option>
-				                <option value="1">進行中</option>
+				                <option value="1">公佈</option>
+								<option value="1">開始</option>
 								<option value="2">結束</option>
 							</select>
 			            </div>
@@ -103,7 +84,7 @@
 			            </div>
 						名稱
 			            <div style="margin-bottom:20px">
-			                <input class="easyui-textbox" name="name" style="width:100%" data-options="required:true">
+			                <input class="easyui-textbox" name="name" style="width:100%">
 			            </div>
 						描述
 			            <div style="margin-bottom:20px">
@@ -113,10 +94,14 @@
 						<div style="margin-bottom:20px">
 							<input name="pwd" type="password" class="easyui-textbox">
 				        </div>
-						比賽開始
+						報名截止
 						<div style="margin-bottom:20px">
 				            <input class="easyui-datebox" name="startTime">
 				        </div>
+						管理者
+						<div style="margin-bottom:20px">
+			                <input class="easyui-textbox" name="owner" style="width:100%" disabled>
+			            </div>
 			        </form>
 		        </div>
 		        <div title="賽程管理">
@@ -167,633 +152,15 @@
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script src='../common/js/lib/jit-yc.js'></script>
-		<script>
-var model = {};
-(function(module){
-	
-	var ctx = null
-	function loadContext(cb){
-		$.ajax({
-			url: '../fn/contestsys/',
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					ctx = info.Info
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	function getCurrentContext(){
-		return ctx
-	}
-	
-	var id = null
-	function setId(fbid){
-		id = fbid
-	}
-	
-	function getId(){
-		return id
-	}
-	
-	function updateContest(contestId, info, cb){
-		$.ajax({
-			url: '../fn/contestsys/UpdateContest/'+contestId+'/'+id,
-			dataType:'json',
-			data: info,
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function newContest(cb){
-		$.ajax({
-			url: '../fn/contestsys/CreateContest/'+id,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function deleteContest(contestId, cb){
-		$.ajax({
-			url: '../fn/contestsys/DeleteContest/'+contestId+'/'+id,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function upgradeContest(contestId, cb){
-		$.ajax({
-			url: '../fn/contestsys/UpgradeContest/'+contestId+'/'+id,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function joinContest(contestId, info, cb){
-		$.ajax({
-			url: '../fn/contestsys/JoinContest/'+contestId+'/'+id,
-			dataType:'json',
-			data: info,
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function leaveContest(contestId, peopleId, cb){
-		$.ajax({
-			url: '../fn/contestsys/LeaveContest/'+contestId+'/'+peopleId,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function getDuals(cb){
-		$.ajax({
-			url: '../fn/contestsys/GetDuals/'+id,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function prepareDual(contestId, cb){
-		$.ajax({
-			url: '../fn/contestsys/PrepareDual/'+contestId+'/'+id,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function updatePower(contestId, peopleId, power, cb){
-		$.ajax({
-			url: '../fn/contestsys/UpdatePower/'+contestId+'/'+id+'/'+peopleId+'/'+power,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function confirmWinner(contestId, peopleId, cb){
-		$.ajax({
-			url: '../fn/contestsys/ConfirmWinner/'+contestId+'/'+id+'/'+peopleId,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	function cancelWinner(contestId, cb){
-		$.ajax({
-			url: '../fn/contestsys/CancelWinner/'+contestId+'/'+id,
-			dataType:'json',
-			success: (info)=>{
-				if(info.Error != null){
-					cb(info.Error)
-				}else{
-					cb(null, info.Info)
-				}
-			},
-			error: (xhr, res, err)=>{
-				cb(err)
-			}
-		})
-	}
-	
-	var currentContestId = null
-	function setCurrentContestId(id){
-		currentContestId = id
-	}
-	function getCurrentContestId(){
-		return currentContestId
-	}
-	
-	var currentPeopleId = null
-	function setCurrentPeopleId(id){
-		currentPeopleId = id
-	}
-	function getCurrentPeopleId(){
-		return currentPeopleId
-	}
-	
-	var currentPos = null
-	function setCurrentPos(id){
-		currentPos = id
-	}
-	function getCurrentPos(){
-		return currentPos
-	}
-	
-	module.loadContext = loadContext
-	module.getCurrentContext = getCurrentContext
-	module.setCurrentContestId = setCurrentContestId
-	module.getCurrentContestId = getCurrentContestId
-	module.setCurrentPeopleId = setCurrentPeopleId
-	module.getCurrentPeopleId = getCurrentPeopleId
-	module.setCurrentPos = setCurrentPos
-	module.getCurrentPos = getCurrentPos
-	module.updateContest = updateContest
-	module.newContest = newContest
-	module.deleteContest = deleteContest
-	module.upgradeContest = upgradeContest
-	module.joinContest = joinContest
-	module.leaveContest = leaveContest
-	module.getDuals = getDuals
-	module.prepareDual = prepareDual
-	module.setId = setId
-	module.getId = getId
-	module.updatePower = updatePower
-	module.confirmWinner = confirmWinner
-	module.cancelWinner = cancelWinner
-})(model)
-
-var view = {};
-(function(module){
-	
-	function updateContestListView(ctx){
-		var root = []
-		for(var k in ctx.ContestSys.Contests){
-			var contest = ctx.ContestSys.Contests[k]
-			var sub = []
-			for(var j in contest.Peoples){
-				var p = contest.Peoples[j]
-				var subNode = {
-					id: p.ID,
-					text: p.Name+"("+p.ID+")",
-					belongContest: contest.ID,
-					isContest: false,
-				}
-				sub.push(subNode)
-			}
-			var node = {
-				id: contest.ID,
-				text: contest.Name+"("+contest.ID+")",
-				children: sub,
-				isContest: true,
-			}
-			root.push(node)
-		}
-		$('#gameTree').tree({data: root})
-	}
-	
-	function updateContestDetailView(ctx, contestId){
-		if((!!contestId) == false){
-			return
-		}
-		var contest = ctx.ContestSys.Contests[contestId]
-		if((!!contest) == false){
-			return
-		}
-		var d = new Date(contest.StartTime)
-		var timeStr = (d.getUTCMonth()+1)+"/"+(d.getDate())+"/"+d.getUTCFullYear()
-		$(document.form_contest).form('load',{
-	        name:contest.Name,
-	        description:contest.Description,
-			game:contest.Game,
-			startTime:timeStr,
-			state:contest.State+"",
-			pwd:contest.Password
-	    });
-	}
-	
-	function getContestDetail(){
-		var game = document.form_contest.game.value
-		var name = document.form_contest.name.value
-		var description = document.form_contest.description.value
-		var startTime = new Date(document.form_contest.startTime.value).getTime()
-		var pwd = document.form_contest.pwd.value
-		var value = {
-			game: game,
-			name: name,
-			description: description,
-			startTime: startTime,
-			pwd: pwd
-		}
-		console.log(value)
-		return value
-	}
-	
-	function updateContestPeopleListView(ctx, contestId){
-		if((!!contestId) == false){
-			return
-		}
-		var contest = ctx.ContestSys.Contests[contestId]
-		var rows = []
-		for(var k in contest.Peoples){
-			var p = contest.Peoples[k]
-			var node = {
-				ID: p.ID,
-				Name: p.Name,
-				Power: p.Power
-			}
-			rows.push(node)
-		}
-		var data = {
-			total: rows.length,
-			rows: rows
-		}
-		$('#dg_people').datagrid({data: data})
-	}
-	
-	function updateDualsListView(ctx, id, duals){
-		var rows = duals.map(d=>{
-			var confirm = ctx.ConfirmSys.Confirms.find(c=>c.Pos == d.ID && c.People == id)
-			var contest = ctx.ContestSys.Contests[d.Contest]
-			var peopleLeft = null
-			var peopleRight = null
-			for(var k in contest.Peoples){
-				var p = contest.Peoples[k]
-				if(p.Pos == d.Left){
-					peopleLeft = p
-				}
-				if(p.Pos == d.Right){
-					peopleRight = p
-				}
-			}
-			return {
-				contestId: contest.ID,
-				contestName: contest.Name,
-				left: peopleLeft ? peopleLeft.Name+"("+peopleLeft.ID+")" : "unknown",
-				right: peopleRight ? peopleRight.Name+"("+peopleRight.ID+")" : "unknown",
-				pos: d.ID,
-				winner: (!!confirm) ? confirm.Winner : "unknown"
-			}
-		})
-		var data = {
-			total: rows.length,
-			rows: rows
-		}
-		$('#dg_duals').datagrid({data: data})
-	}
-	
-	var st = new $jit.RGraph({  
-	    //Where to append the visualization  
-	    injectInto: 'infovis',  
-		duration: 100, 
-	    //Optional: create a background canvas that plots  
-	    //concentric circles.  
-	    background: {  
-	      CanvasStyles: {  
-	        strokeStyle: '#555'  
-	      }  
-	    },  
-	    //Add navigation capabilities:  
-	    //zooming by scrolling and panning.  
-	    Navigation: {  
-	      enable: true,  
-	      panning: true,  
-	      zooming: 50  
-	    },  
-	    //Set Node and Edge styles.  
-	    Node: {  
-	        color: '#ddeeff'  
-	    },  
-	      
-	    Edge: {  
-	      color: '#C17878',  
-	      lineWidth:3  
-	    },  
-	  
-	    onBeforeCompute: function(node){  
-		
-	    },  
-	      
-	    //Add the name of the node in the correponding label  
-	    //and a click handler to move the graph.  
-	    //This method is called once, on label creation.  
-	    onCreateLabel: function(domElement, node){
-			var ctx = node.data.ctx
-			var contestId = node.data.contest
-			var pos = node.id
-			var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
-			if(dual == null){
-				domElement.innerHTML = "未定義("+pos+")" 
-			}else{
-				var msg = pos
-				for(var peopleId in ctx.ContestSys.Contests[contestId].Peoples){
-					var people = ctx.ContestSys.Contests[contestId].Peoples[peopleId]
-					if( people.Pos == pos ){
-						msg = people.Name+"("+people.ID+")"
-					}
-				}
-				if(dual.IsTop){
-					msg += "(GOAL)"
-				}
-				domElement.innerHTML = msg+"/"+dual.Power
-			} 
-	        domElement.onclick = function(){  
-	            st.onClick(node.id, {  
-	                onComplete: function() {
-						
-	                }  
-	            });  
-	        };  
-	    },  
-	    //Change some label dom properties.  
-	    //This method is called each time a label is plotted.  
-	    onPlaceLabel: function(domElement, node){  
-	        var style = domElement.style;  
-	        style.display = '';  
-	        style.cursor = 'pointer';  
-	  
-	        style.fontSize = "1em";  
-	        style.color = "#ccc"; 
-	  
-	        var left = parseInt(style.left);  
-	        var w = domElement.offsetWidth;  
-	        style.left = (left - w / 2) + 'px';  
-	    }  
-	});
-	
-	function updateContestFlowView(ctx, contestId, pos){
-		if((!!contestId) == false){
-			return
-		}
-		var list = ctx.DualSys.Duals.filter(data=>data.Contest == contestId)
-		if(list.length == 0){
-			st.loadJSON({id:0, data:{ctx: ctx, contest: contestId}, children:[]})
-			st.compute('end')
-			st.fx.animate({  
-			  modes:['polar'],  
-			  duration: 1000  
-			});
-			st.onClick(0)
-			return
-		}
-		var top = list.find(data=>data.IsTop)
-		if(top == null){
-			console.log("top is null")
-			return
-		}
-		var nodes = {}
-		var getNode = (id)=>{
-			if(nodes[id] != null){
-				return nodes[id]
-			}
-			var node = {
-				id: id,
-				data: {
-					ctx: ctx,
-					contest: contestId
-				},
-				children: []
-			}
-			nodes[node.id] = node
-			return node
-		}
-		var newList = list.reduce((acc, data)=>{
-			var node = getNode(data.ID)
-			if(data.Left != ""){
-				node.children.push(getNode(data.Left))
-			}
-			if(data.Right != ""){
-				node.children.push(getNode(data.Right))
-			}
-			acc.push(node)
-			return acc
-		}, [])
-
-		var root = getNode(top.ID)
-		//load JSON data  
-		st.loadJSON(root);  
-		//trigger small animation  
-		st.graph.eachNode(function(n) {  
-		  var pos = n.getPos();  
-		  pos.setc(-200, -200);  
-		});  
-		st.compute('end');  
-		st.fx.animate({  
-		  modes:['polar'],  
-		  duration: 1000  
-		});
-		if(!!pos){
-			st.onClick(pos, 'animate')
-		}else{
-			st.onClick(st.root); 
-		}
-	}
-	
-	function alert(type, msg){
-		$.messager.alert('系統',msg,type);
-	}
-	
-	function confirm(msg, cb){
-		$.messager.confirm('系統', msg, cb);
-	}
-	
-	function getJoinInfo(){
-		var name = document.form_peopleJoin.name.value
-		var pwd = document.form_peopleJoin.pwd.value
-		return {
-			name: name,
-			pwd: pwd
-		}
-	}
-	
-	function selectMainTab(idx){
-		$('#tab_main').tabs('select', idx)
-	}
-	
-	function selectPeople(ctx, contestId, peopleId){
-		var contest = ctx.ContestSys.Contests[contestId]
-		if((!!contest) == false){
-			return
-		}
-		var people = contest.Peoples[peopleId]
-		if((!!people) == false){
-			return
-		}
-		var idx = 0
-		for(var k in contest.Peoples){
-			if(k == peopleId){
-				break
-			}
-			++idx
-		}
-		$('#dg_people').datagrid('selectRow', idx)
-	}
-	
-	function updatePeoplePowerForm(ctx, contestId, peopleId){
-		var contest = ctx.ContestSys.Contests[contestId]
-		if((!!contest) == false){
-			return
-		}
-		var people = contest.Peoples[peopleId]
-		if((!!people) == false){
-			return
-		}
-		$(document.form_peoplePower).form('load', {
-			id: peopleId,
-			power: people.Power
-		})
-	}
-	
-	function getPeoplePowerFormValue(){
-		var id = document.form_peoplePower.id.value
-		var power = document.form_peoplePower.power.value
-		return {
-			id: id,
-			power: power
-		}
-	}
-	
-	function updateWinnerForm(ctx, pos){
-		$(document.form_winner).form('load', {
-			pos: pos
-		})
-	}
-	
-	
-	module.updateContestListView = updateContestListView
-	module.updateContestDetailView = updateContestDetailView
-	module.updateContestPeopleListView = updateContestPeopleListView
-	module.getContestDetail = getContestDetail
-	module.updateContestFlowView = updateContestFlowView
-	module.updateDualsListView = updateDualsListView
-	module.alert = alert
-	module.confirm = confirm
-	module.getJoinInfo = getJoinInfo
-	module.selectMainTab = selectMainTab
-	module.selectPeople = selectPeople
-	module.updatePeoplePowerForm = updatePeoplePowerForm
-	module.getPeoplePowerFormValue = getPeoplePowerFormValue
-	module.updateWinnerForm = updateWinnerForm
-	
-})(view)
-		</script>
+		<script src='js/fb.js'></script>
+		<script src='js/model.js'></script>
+		<script src='js/view.js'></script>
 		<script>
 			function onClickGameTree(node){
+				var isGroup = node.isGroup
+				if(isGroup){
+					return
+				}
 				var contestId = node.isContest ? node.id : node.belongContest
 				model.setCurrentContestId(contestId)
 				view.updateContestDetailView(model.getCurrentContext(), contestId)
@@ -829,6 +196,10 @@ var view = {};
 			
 			function onClick(cmd){
 				console.log(cmd)
+				if(cmd == 'login'){
+					fb.checkLoginState()
+				}
+				
 				if(cmd == 'newContest'){
 					model.newContest((err, info)=>{
 						if(err!=null){
@@ -891,6 +262,9 @@ var view = {};
 				
 				if(cmd == 'joinContest'){
 					var joinInfo = view.getJoinInfo()
+					if(joinInfo.name.trim() == ""){
+						joinInfo.name = model.getCurrentName()
+					}
 					model.joinContest(model.getCurrentContestId(), joinInfo, (err, info)=>{
 						if(err!=null){
 							view.alert('error', err)
@@ -946,6 +320,16 @@ var view = {};
 							view.alert('error', err)
 						}else{
 							onClick('prepareDual')
+						}
+					})
+				}
+				
+				if(cmd == 'upgrade'){
+					model.upgrade(model.getCurrentContestId(), model.getId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
 						}
 					})
 				}
@@ -1029,7 +413,7 @@ var view = {};
 					if(err != null){
 						view.alert('error', err)
 					}else{
-						view.updateContestListView(info)
+						view.updateContestListView(info, model.getId())
 						view.updateContestDetailView(info, model.getCurrentContestId())
 						view.updateContestPeopleListView(info, model.getCurrentContestId())
 						view.updateContestFlowView(info, model.getCurrentContestId())
@@ -1044,18 +428,31 @@ var view = {};
 						})
 					}
 				})
-				
-				
 			}
-			
 			function init(){
-				model.setId('han')
-				updateView()
+				fb.init((err, res)=>{
+					if(err != null){
+						view.alert('login err')
+					}else{
+						var fbId = res.userID
+						model.setId(fbId)
+						
+						
+						$(document.form_player).form('load', {
+							id: fbId
+						})
+						updateView()
+						
+						
+						fb.me((err, res)=>{
+							var name = res.name
+							model.setCurrentName(name)
+						})
+					}
+				})
 			}
-			
 			init()
 		</script>
-<!--                   EASY UI END                           -->
 
 
 	</body>

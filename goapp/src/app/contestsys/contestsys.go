@@ -17,7 +17,8 @@ type People struct {
 
 const (
 	ContestStatePending = iota
-	ContestStateProcessing
+	ContestStatePublic
+	ContestStateStart
 	ContestStateEnd
 )
 
@@ -89,9 +90,12 @@ func UpgradeContest(model *ContestSys, contestId string, peopleId string) error 
 		if strings.Trim(contest.Game, " ") == "" {
 			return errors.New("沒有定義遊戲")
 		}
-		contest.State = ContestStateProcessing
+		contest.State = ContestStatePublic
 		break
-	case ContestStateProcessing:
+	case ContestStatePublic:
+		contest.State = ContestStateStart
+		break
+	case ContestStateStart:
 		contest.State = ContestStateEnd
 		break
 	}
@@ -122,10 +126,10 @@ func JoinContest(model *ContestSys, contestId string, id string, name string, pa
 	if isAlreadyJoin {
 		return errors.New("isAlreadyJoin")
 	}
-	if contest.State != ContestStateProcessing {
+	if contest.State != ContestStatePublic {
 		return errors.New("contest not ready")
 	}
-	if time.Now().Before(contest.StartTime) {
+	if time.Now().After(contest.StartTime) {
 		return errors.New("game already start")
 	}
 	isPasswordRequire := strings.Trim(contest.Password, " ") != ""

@@ -84,7 +84,7 @@ func init() {
 	router.HandleFunc("/fn/contestsys/CancelWinner/{contestId}/{peopleId}", contestsys.Serve_CancelWinner).Methods("GET")
 	router.HandleFunc("/fn/contestsys/Upgrade/{contestId}/{peopleId}", contestsys.Serve_Upgrade).Methods("GET")
 	router.HandleFunc("/fn/contestsys/UpdatePower/{contestId}/{owner}/{peopleId}/{power}", contestsys.Serve_UpdatePower).Methods("GET")
-
+	router.HandleFunc("/fn/contestsys/GetConflictDual", contestsys.Serve_GetConflictDual).Methods("GET")
 	http.Handle("/fn/contestsys/", router)
 
 	// Test

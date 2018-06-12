@@ -81,6 +81,9 @@ func CtxConfirmWinner(appCtx *Context, contestId string, peopleId string, winner
 	if isExist == false {
 		return errors.New("no contest")
 	}
+	if contest.State != ContestStateStart {
+		return errors.New("contest state not in ContestStateStart")
+	}
 	people, isPeopleExist := contest.Peoples[peopleId]
 	if isPeopleExist == false {
 		return errors.New("no people")
@@ -163,6 +166,26 @@ func CtxGetDualsWithPeople(appCtx *Context, peopleId string) []Dual {
 					duals = append(duals, nextDual)
 				}
 			}
+		}
+	}
+	return duals
+}
+
+func CtxGetConflictDual(appCtx *Context) []Dual {
+	duals := []Dual{}
+	for _, contest := range appCtx.ContestSys.Contests {
+		if contest.State != ContestStateStart {
+			continue
+		}
+		for _, dual := range appCtx.DualSys.Duals {
+			if dual.Contest != contest.ID {
+				continue
+			}
+			state := GetConfirmState(&appCtx.ConfirmSys, dual.ID)
+			if state != ConfirmStateConflict {
+				continue
+			}
+			duals = append(duals, dual)
 		}
 	}
 	return duals
