@@ -98,6 +98,8 @@ func UpgradeContest(model *ContestSys, contestId string, peopleId string) error 
 	case ContestStateStart:
 		contest.State = ContestStateEnd
 		break
+	case ContestStateEnd:
+		return errors.New("遊戲已結束")
 	}
 	model.Contests[contestId] = contest
 	return nil
@@ -108,8 +110,11 @@ func LeaveContest(model *ContestSys, contestId string, id string) error {
 	if isExist == false {
 		return errors.New("contest is not exist")
 	}
-	if time.Now().Before(contest.StartTime) {
+	if contest.State == ContestStatePublic && time.Now().After(contest.StartTime) {
 		return errors.New("game already start")
+	}
+	if contest.State >= ContestStateStart {
+		return errors.New("state not right")
 	}
 	delete(contest.Peoples, id)
 	model.Contests[contestId] = contest

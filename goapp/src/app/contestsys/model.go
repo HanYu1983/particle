@@ -63,6 +63,9 @@ func CtxUpdateDual(appCtx *Context, contestId string, peopleId string) error {
 	if peopleId != contest.Owner {
 		return errors.New("u r not owner")
 	}
+	if contest.State != ContestStatePublic {
+		return errors.New("state not in ContestStatePublic")
+	}
 	PrepareDual(&appCtx.DualSys, contest, SortTypeMix)
 	for _, people := range contest.Peoples {
 		dual, hasDual := GetStartDualWithPeople(&appCtx.DualSys, contestId, people.ID)
