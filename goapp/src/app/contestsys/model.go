@@ -160,6 +160,9 @@ func CtxGetDualsWithPeople(appCtx *Context, peopleId string) []Dual {
 			if people.ID != peopleId {
 				continue
 			}
+			if contest.State != ContestStateStart {
+				continue
+			}
 			nextDual, hasNext := GetNextDual(&appCtx.DualSys, people.Pos)
 			if hasNext == false {
 				continue

@@ -132,7 +132,7 @@ func JoinContest(model *ContestSys, contestId string, id string, name string, pa
 		return errors.New("isAlreadyJoin")
 	}
 	if contest.State != ContestStatePublic {
-		return errors.New("contest not ready")
+		return errors.New("contest not in ContestStatePublic")
 	}
 	if time.Now().After(contest.StartTime) {
 		return errors.New("game already start")

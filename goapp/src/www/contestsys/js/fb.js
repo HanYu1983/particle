@@ -1,8 +1,11 @@
 var fb = {};
 (function(module){
 	
-	var testAppId = '679171275511375';
+	//var testAppId = '679171275511375';
+	var testAppId = '425311264344425';
+	
 	var loginCallback = null
+	
 	function init(cb){
 			// Load the SDK asynchronously
 		(function(d, s, id) {
