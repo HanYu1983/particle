@@ -1,0 +1,2 @@
+node getSgs.js
+pause
