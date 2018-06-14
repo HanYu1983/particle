@@ -57,8 +57,10 @@ async function sgsCh(outputPath){
 	getUrl = (volId, page)=>{
 		return 'http://tcg.sanguosha.com/card/list?vol_id='+volId+'&page='+page
 	}
+	var volIds = [1,2,3,4,5,6,7,8,9,10,11,12,13,98]
+	var volIdx = 0
 	
-	var currVolId = 1
+	var currVolId = volIds[volIdx]
 	var currPage = 1
 	var data = []
 	while(true){
@@ -75,12 +77,15 @@ async function sgsCh(outputPath){
 			console.log('next url not found, break')
 			break
 		}
-		let [_, nextVolId, nextPage] = nextUrl
-		if(nextVolId == currVolId && nextPage == currPage ){
-			currVolId = parseInt(nextVolId) + 1
+		let [__, ___, nextPage] = nextUrl
+		if(nextPage == currPage){
+			volIdx += 1
+			if(volIdx >= volIds.length){
+				break
+			}
+			currVolId = volIds[volIdx]
 			currPage = 1
 		}else{
-			currVolId = parseInt(nextVolId)
 			currPage = parseInt(nextPage)
 		}
 
