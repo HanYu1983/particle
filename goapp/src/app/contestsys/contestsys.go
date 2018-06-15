@@ -20,6 +20,7 @@ const (
 	ContestStatePublic
 	ContestStateStart
 	ContestStateEnd
+	ContestStateFailEnd
 )
 
 type Contest struct {
@@ -56,6 +57,7 @@ func CreateContest(model *ContestSys, password string, owner string) string {
 		CreateTime: time.Now(),
 		State:      ContestStatePending,
 		Owner:      owner,
+		StartTime:  time.Now().AddDate(0, 0, 7),
 	}
 	model.ContestSeq = model.ContestSeq + 1
 	model.Contests[contest.ID] = contest
@@ -65,13 +67,13 @@ func CreateContest(model *ContestSys, password string, owner string) string {
 func DeleteContest(model *ContestSys, contestId string, peopleId string) error {
 	contest, isExist := model.Contests[contestId]
 	if isExist == false {
-		return errors.New("contest is not exist")
+		return errors.New("找不到比賽")
 	}
 	if contest.Owner != peopleId {
-		return errors.New("u r not owner")
+		return errors.New("你不是管理者")
 	}
 	if contest.State != ContestStatePending {
-		return errors.New("contest can not remove")
+		return errors.New("只有草搞能刪除")
 	}
 	delete(model.Contests, contestId)
 	return nil
@@ -80,10 +82,10 @@ func DeleteContest(model *ContestSys, contestId string, peopleId string) error {
 func UpgradeContest(model *ContestSys, contestId string, peopleId string) error {
 	contest, isExist := model.Contests[contestId]
 	if isExist == false {
-		return errors.New("contest is not exist")
+		return errors.New("找不到比賽")
 	}
 	if contest.Owner != peopleId {
-		return errors.New("u r not owner")
+		return errors.New("你不是管理者")
 	}
 	switch contest.State {
 	case ContestStatePending:
@@ -93,6 +95,14 @@ func UpgradeContest(model *ContestSys, contestId string, peopleId string) error 
 		contest.State = ContestStatePublic
 		break
 	case ContestStatePublic:
+		if len(contest.Peoples) == 0 {
+			return errors.New("沒有任何人參賽")
+		}
+		for _, people := range contest.Peoples {
+			if people.Pos == "" {
+				return errors.New("玩家還沒排賽")
+			}
+		}
 		contest.State = ContestStateStart
 		break
 	case ContestStateStart:
@@ -108,13 +118,15 @@ func UpgradeContest(model *ContestSys, contestId string, peopleId string) error 
 func LeaveContest(model *ContestSys, contestId string, id string) error {
 	contest, isExist := model.Contests[contestId]
 	if isExist == false {
-		return errors.New("contest is not exist")
+		return errors.New("找不到比賽")
 	}
-	if contest.State == ContestStatePublic && time.Now().After(contest.StartTime) {
-		return errors.New("game already start")
+	if contest.State == ContestStatePublic {
+		if time.Now().After(contest.StartTime) {
+			return errors.New("報名已截止, 不能退出比賽. 請自行在場次中宣告失敗")
+		}
 	}
 	if contest.State >= ContestStateStart {
-		return errors.New("state not right")
+		return errors.New("比賽已經開始了, 不能退出比賽. 請自行在場次中宣告失敗")
 	}
 	delete(contest.Peoples, id)
 	model.Contests[contestId] = contest
@@ -125,21 +137,21 @@ func LeaveContest(model *ContestSys, contestId string, id string) error {
 func JoinContest(model *ContestSys, contestId string, id string, name string, password string) error {
 	contest, isExist := model.Contests[contestId]
 	if isExist == false {
-		return errors.New("contest is not exist")
+		return errors.New("找不到比賽")
 	}
 	_, isAlreadyJoin := contest.Peoples[id]
 	if isAlreadyJoin {
-		return errors.New("isAlreadyJoin")
+		return errors.New("玩家已經加入")
 	}
 	if contest.State != ContestStatePublic {
-		return errors.New("contest not in ContestStatePublic")
+		return errors.New("只有公佈才能加入")
 	}
 	if time.Now().After(contest.StartTime) {
-		return errors.New("game already start")
+		return errors.New("報名已截止")
 	}
 	isPasswordRequire := strings.Trim(contest.Password, " ") != ""
 	if isPasswordRequire && contest.Password != password {
-		return errors.New("password not correct")
+		return errors.New("參加碼不正確")
 	}
 	people := People{
 		ID:         id,
@@ -154,11 +166,11 @@ func JoinContest(model *ContestSys, contestId string, id string, name string, pa
 func GetPeople(model *ContestSys, contestId string, id string) (People, error) {
 	contest, isExist := model.Contests[contestId]
 	if isExist == false {
-		return People{}, errors.New("contest is not exist")
+		return People{}, errors.New("找不到比賽")
 	}
 	people, isAlreadyJoin := contest.Peoples[id]
 	if isAlreadyJoin {
 		return people, nil
 	}
-	return People{}, errors.New("didn't join")
+	return People{}, errors.New("找不到玩家")
 }

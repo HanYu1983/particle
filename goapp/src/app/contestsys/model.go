@@ -7,6 +7,7 @@ import (
 	"appengine"
 
 	"errors"
+	"time"
 )
 
 const (
@@ -55,22 +56,52 @@ func SaveContext(ctx appengine.Context, appContext Context) error {
 	return nil
 }
 
+func CtxRemoveDual(appCtx *Context, contestId string) error {
+	contest, isExist := appCtx.ContestSys.Contests[contestId]
+	if isExist == false {
+		return errors.New("找不到比賽")
+	}
+	if contest.State != ContestStatePublic {
+		return errors.New("只有公佈比賽時才能清除排賽")
+	}
+	// 先清除舊的位置, 變成未安排狀態
+	for _, p := range contest.Peoples {
+		p.Pos = ""
+		contest.Peoples[p.ID] = p
+	}
+	// 一並刪除這場比賽的所有場次
+	RemoveDual(&appCtx.DualSys, contest.ID)
+	// 套用修改
+	appCtx.ContestSys.Contests[contestId] = contest
+	return nil
+}
+
 func CtxUpdateDual(appCtx *Context, contestId string, peopleId string) error {
 	contest, isExist := appCtx.ContestSys.Contests[contestId]
 	if isExist == false {
-		return errors.New("no contest")
+		return errors.New("找不到比賽")
 	}
 	if peopleId != contest.Owner {
-		return errors.New("u r not owner")
+		return errors.New("你不是管理者")
 	}
 	if contest.State != ContestStatePublic {
-		return errors.New("state not in ContestStatePublic")
+		return errors.New("只有公佈比賽時才能排賽")
 	}
-	PrepareDual(&appCtx.DualSys, contest, SortTypeMix)
+	if time.Now().Before(contest.StartTime) {
+		return errors.New("報名截止後才能排賽")
+	}
+	err := CtxRemoveDual(appCtx, contest.ID)
+	if err != nil {
+		return err
+	}
+	err = PrepareDual(&appCtx.DualSys, contest, SortTypeMix)
+	if err != nil {
+		return err
+	}
 	for _, people := range contest.Peoples {
 		dual, hasDual := GetStartDualWithPeople(&appCtx.DualSys, contestId, people.ID)
 		if hasDual == false {
-			return errors.New("must has pos")
+			return errors.New("程式內部錯誤")
 		}
 		people.Pos = dual.ID
 		contest.Peoples[people.ID] = people
@@ -82,18 +113,18 @@ func CtxUpdateDual(appCtx *Context, contestId string, peopleId string) error {
 func CtxConfirmWinner(appCtx *Context, contestId string, peopleId string, winner string) error {
 	contest, isExist := appCtx.ContestSys.Contests[contestId]
 	if isExist == false {
-		return errors.New("no contest")
+		return errors.New("找不到比賽")
 	}
 	if contest.State != ContestStateStart {
-		return errors.New("contest state not in ContestStateStart")
+		return errors.New("比賽中才能宣告勝利玩家")
 	}
 	people, isPeopleExist := contest.Peoples[peopleId]
 	if isPeopleExist == false {
-		return errors.New("no people")
+		return errors.New("找不到玩家")
 	}
 	nextDual, hasDual := GetNextDual(&appCtx.DualSys, people.Pos)
 	if hasDual == false {
-		return errors.New("must has nextDual pos")
+		return errors.New("找不到要爭奪的場次")
 	}
 	leftPeople, rightPeople := "", ""
 	for _, people := range contest.Peoples {
@@ -105,7 +136,7 @@ func CtxConfirmWinner(appCtx *Context, contestId string, peopleId string, winner
 		}
 	}
 	if leftPeople == "" || rightPeople == "" {
-		return errors.New("dual not start")
+		return errors.New("要爭奪場次玩家還沒到齊")
 	}
 	ConfirmWinner(&appCtx.ConfirmSys, nextDual.ID, people.ID, winner)
 	return nil
@@ -114,15 +145,15 @@ func CtxConfirmWinner(appCtx *Context, contestId string, peopleId string, winner
 func CtxCancelWinner(appCtx *Context, contestId string, peopleId string) error {
 	contest, isExist := appCtx.ContestSys.Contests[contestId]
 	if isExist == false {
-		return errors.New("no contest")
+		return errors.New("找不到比賽")
 	}
 	people, isPeopleExist := contest.Peoples[peopleId]
 	if isPeopleExist == false {
-		return errors.New("no people")
+		return errors.New("找不到玩家")
 	}
 	nextDual, hasDual := GetNextDual(&appCtx.DualSys, people.Pos)
 	if hasDual == false {
-		return errors.New("must has nextDual pos")
+		return errors.New("找不到要爭奪的場次")
 	}
 	RemoveConfirm(&appCtx.ConfirmSys, nextDual.ID)
 	return nil
@@ -131,19 +162,39 @@ func CtxCancelWinner(appCtx *Context, contestId string, peopleId string) error {
 func CtxUpgrade(appCtx *Context, contestId string, peopleId string) error {
 	contest, isExist := appCtx.ContestSys.Contests[contestId]
 	if isExist == false {
-		return errors.New("no contest")
+		return errors.New("找不到比賽")
 	}
 	people, isPeopleExist := contest.Peoples[peopleId]
 	if isPeopleExist == false {
-		return errors.New("no people")
+		return errors.New("找不到玩家")
 	}
 	nextDual, hasNextDual := GetNextDual(&appCtx.DualSys, people.Pos)
 	if hasNextDual == false {
-		return errors.New("no next dual")
+		return errors.New("找不到要爭奪的場次")
 	}
-	state := GetConfirmState(&appCtx.ConfirmSys, nextDual.ID)
+	state, winner := GetConfirmState(&appCtx.ConfirmSys, nextDual, contest.Peoples)
 	if state != ConfirmStateOk {
-		return errors.New("can not upgrade")
+		switch state {
+		case ConfirmStatePending:
+			return errors.New("尚未回報結果")
+
+		case ConfirmStateLoseLeft:
+			return errors.New("左方玩家未回報結果")
+
+		case ConfirmStateLoseRight:
+			return errors.New("右方玩家未回報結果")
+
+		case ConfirmStateConflict:
+			return errors.New("玩家回報結果不致, 請管理員做協調")
+
+		case ConfirmStateUnknown:
+			// 內部錯誤
+			break
+		}
+		return errors.New("不能升級")
+	}
+	if winner != people.ID {
+		return errors.New("你不是勝利玩家")
 	}
 	people.Pos = nextDual.ID
 	contest.Peoples[peopleId] = people
@@ -172,26 +223,6 @@ func CtxGetDualsWithPeople(appCtx *Context, peopleId string) []Dual {
 					duals = append(duals, nextDual)
 				}
 			}
-		}
-	}
-	return duals
-}
-
-func CtxGetConflictDual(appCtx *Context) []Dual {
-	duals := []Dual{}
-	for _, contest := range appCtx.ContestSys.Contests {
-		if contest.State != ContestStateStart {
-			continue
-		}
-		for _, dual := range appCtx.DualSys.Duals {
-			if dual.Contest != contest.ID {
-				continue
-			}
-			state := GetConfirmState(&appCtx.ConfirmSys, dual.ID)
-			if state != ConfirmStateConflict {
-				continue
-			}
-			duals = append(duals, dual)
 		}
 	}
 	return duals

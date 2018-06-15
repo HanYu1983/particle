@@ -34,7 +34,7 @@
 						</div>
 					</form>
 					
-					<table id='dg_duals' class="easyui-datagrid" title="你的比賽" style="width:100%"
+					<table id='dg_duals' class="easyui-datagrid" title="你參與的比賽" style="width:100%"
 				            data-options="singleSelect:true,collapsible:true,onClickRow:onClickDualsRow">
 				        <thead>
 				            <tr>
@@ -43,6 +43,20 @@
 								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
 				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
 								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
+				            </tr>
+				        </thead>
+				    </table>
+					
+					<table id='dg_ownerDuals' class="easyui-datagrid" title="你管理的比賽" style="width:100%"
+				            data-options="singleSelect:true,collapsible:true,onClickRow:onClickDualsRow">
+				        <thead>
+				            <tr>
+				                <th data-options="field:'contestName',width:80,align:'center'">比賽名稱</th>
+								<th data-options="field:'pos',width:100,align:'center'">場次</th>
+								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
+				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
+								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
+								<th data-options="field:'state',width:100,align:'center'">狀態</th>
 				            </tr>
 				        </thead>
 				    </table>
@@ -61,8 +75,9 @@
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="onClick('newContest')">新增草搞</a>
 				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="onClick('removeContest')">刪除</a>
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'" onclick="onClick('updateContest')">修改</a>
-						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitContest')">草搞>公佈>開始>結束</a>
-				    </div>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitContestUpgrade')">草搞>公佈>開始>結束</a>				    
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('commitContestFailEnd')">流局結束</a>
+					</div>
 					<form name="form_contest" class="easyui-form" data-options="novalidate:true">
 						狀態
 						<div style="margin-bottom:20px">
@@ -75,12 +90,7 @@
 			            </div>
 						遊戲
 						<div style="margin-bottom:20px">
-			                <select class="easyui-combobox" name="game">
-				                <option value="sengoku">戰國大戰</option>
-				                <option value="sengo">三國大戰</option>
-								<option value="gundamWarN">鋼彈大戰NexA</option>
-								<option value="gundamWar">鋼彈大戰</option>
-							</select>
+			                <select class="easyui-combobox" name="game" id='select_game' data-options="valueField:'value',textField:'label'" style='width: 200px'></select>
 			            </div>
 						名稱
 			            <div style="margin-bottom:20px">
@@ -129,6 +139,7 @@
 						                <th data-options="field:'ID',width:80,align:'center'">ID</th>
 						                <th data-options="field:'Name',width:100,align:'center'">小名</th>
 						                <th data-options="field:'Power',width:80,align:'center'">種子選手</th>
+										<th data-options="field:'Rank',width:80,align:'center'">排名</th>
 						            </tr>
 						        </thead>
 						    </table>
@@ -152,6 +163,8 @@
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script src='../common/js/lib/jit-yc.js'></script>
+		<script src='../common/js/lib/leo.utils.js'></script>
+		<script src='../common/js/admin.js'></script>
 		<script src='js/fb.js'></script>
 		<script src='js/model.js'></script>
 		<script src='js/view.js'></script>
@@ -242,7 +255,7 @@
 					})
 				}
 				
-				if(cmd == 'commitContest'){
+				if(cmd == 'commitContestUpgrade'){
 					var contestId = model.getCurrentContestId()
 					if(contestId == null){
 						return
@@ -250,6 +263,24 @@
 					view.confirm('是否升格:'+contestId, ok=>{
 						if(ok){
 							model.upgradeContest(contestId, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'commitContestFailEnd'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						return
+					}
+					view.confirm('是否確定流局:'+contestId, ok=>{
+						if(ok){
+							model.failEndContest(contestId, (err, info)=>{
 								if(err!=null){
 									view.alert('error', err)
 								}else{
@@ -409,41 +440,64 @@
 			}
 			
 			function updateView(){
-				model.loadContext((err, info)=>{
+				model.loadContext((err, ctx)=>{
 					if(err != null){
 						view.alert('error', err)
 					}else{
-						view.updateContestListView(info, model.getId())
-						view.updateContestDetailView(info, model.getCurrentContestId())
-						view.updateContestPeopleListView(info, model.getCurrentContestId())
-						view.updateContestFlowView(info, model.getCurrentContestId())
-						view.updatePeoplePowerForm(model.getCurrentContext(), model.getCurrentContestId(), model.getCurrentPeopleId())
+						view.updateContestListView(ctx, model.getId())
+						view.updateContestDetailView(ctx, model.getCurrentContestId())
+						view.updateContestPeopleListView(ctx, model.getCurrentContestId())
+						view.updateContestFlowView(ctx, model.getCurrentContestId())
+						view.updatePeoplePowerForm(ctx, model.getCurrentContestId(), model.getCurrentPeopleId())
 						
 						model.getDuals((err,duals)=>{
 							if(err != null){
 								view.alert('error', err)
 							}else{
-								view.updateDualsListView(info, model.getId(), duals)
+								view.updateDualsListView(ctx, model.getId(), duals)
+							}
+						})
+						
+						model.getOwnerDuals((err,info)=>{
+							if(err != null){
+								view.alert('error', err)
+							}else{
+								var duals = info.Duals
+								var states = info.States
+								view.updateOwnerDualsListView(ctx, model.getId(), duals, states)
 							}
 						})
 					}
 				})
 			}
 			function init(){
+				// 自動登入FB
 				fb.init((err, res)=>{
 					if(err != null){
 						view.alert('login err')
 					}else{
+						// 設定使用者ID
 						var fbId = res.userID
 						model.setId(fbId)
 						
-						
+						// 顯示使用者ID
 						$(document.form_player).form('load', {
 							id: fbId
 						})
+						
+						// 更新遊戲選單
+						var options = admin.ary_games.map(info=>{
+							var gameName = info.name
+							var gameValue = info.game
+							return {label: gameName, value: gameValue}
+						})
+						console.log(options)						
+						$('#select_game').combobox("loadData", options)
+						
+						// 更新所有視圖
 						updateView()
 						
-						
+						// 背景更新使用者小名
 						fb.me((err, res)=>{
 							var name = res.name
 							model.setCurrentName(name)
@@ -451,7 +505,7 @@
 					}
 				})
 			}
-			init()
+			window.onload = init
 		</script>
 
 

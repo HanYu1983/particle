@@ -136,9 +136,43 @@ var model = {};
 		})
 	}
 	
+	function failEndContest(contestId, cb){
+		$.ajax({
+			url: '../fn/contestsys/FailEndContest/'+contestId+'/'+id,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
 	function getDuals(cb){
 		$.ajax({
 			url: '../fn/contestsys/GetDuals/'+id,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function getOwnerDuals(cb){
+		$.ajax({
+			url: '../fn/contestsys/GetDualInfoWithContestOwner/'+id,
 			dataType:'json',
 			success: (info)=>{
 				if(info.Error != null){
@@ -238,6 +272,8 @@ var model = {};
 		})
 	}
 	
+	
+	
 	var currentContestId = null
 	function setCurrentContestId(id){
 		currentContestId = id
@@ -284,9 +320,11 @@ var model = {};
 	module.newContest = newContest
 	module.deleteContest = deleteContest
 	module.upgradeContest = upgradeContest
+	module.failEndContest = failEndContest
 	module.joinContest = joinContest
 	module.leaveContest = leaveContest
 	module.getDuals = getDuals
+	module.getOwnerDuals = getOwnerDuals
 	module.prepareDual = prepareDual
 	module.setId = setId
 	module.getId = getId

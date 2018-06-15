@@ -76,6 +76,7 @@ func init() {
 	router.HandleFunc("/fn/contestsys/DeleteContest/{contestId}/{owner}", contestsys.Serve_DeleteContest).Methods("GET")
 	router.HandleFunc("/fn/contestsys/UpdateContest/{contestId}/{owner}", contestsys.Serve_UpdateContest).Methods("GET")
 	router.HandleFunc("/fn/contestsys/UpgradeContest/{contestId}/{owner}", contestsys.Serve_UpgradeContestState).Methods("GET")
+	router.HandleFunc("/fn/contestsys/FailEndContest/{contestId}/{owner}", contestsys.Serve_FailEndContest).Methods("GET")
 	router.HandleFunc("/fn/contestsys/JoinContest/{contestId}/{peopleId}", contestsys.Serve_JoinContest).Methods("GET")
 	router.HandleFunc("/fn/contestsys/LeaveContest/{contestId}/{peopleId}", contestsys.Serve_LeaveContest).Methods("GET")
 	router.HandleFunc("/fn/contestsys/PrepareDual/{contestId}/{peopleId}", contestsys.Serve_PrepareDual).Methods("GET")
@@ -84,7 +85,7 @@ func init() {
 	router.HandleFunc("/fn/contestsys/CancelWinner/{contestId}/{peopleId}", contestsys.Serve_CancelWinner).Methods("GET")
 	router.HandleFunc("/fn/contestsys/Upgrade/{contestId}/{peopleId}", contestsys.Serve_Upgrade).Methods("GET")
 	router.HandleFunc("/fn/contestsys/UpdatePower/{contestId}/{owner}/{peopleId}/{power}", contestsys.Serve_UpdatePower).Methods("GET")
-	router.HandleFunc("/fn/contestsys/GetConflictDual", contestsys.Serve_GetConflictDual).Methods("GET")
+	router.HandleFunc("/fn/contestsys/GetDualInfoWithContestOwner/{owner}", contestsys.Serve_GetDualInfoWithContestOwner).Methods("GET")
 	http.Handle("/fn/contestsys/", router)
 
 	// Test

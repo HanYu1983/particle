@@ -1,7 +1,7 @@
 package contestsys
 
 import (
-	_ "errors"
+	"errors"
 
 	"math/rand"
 	"sort"
@@ -47,13 +47,21 @@ const (
 	SortTypeMix
 )
 
-func PrepareDual(dualSys *DualSys, contest Contest, sortType int) {
+func RemoveDual(dualSys *DualSys, contestId string) {
 	// remove old
 	for i := len(dualSys.Duals) - 1; i >= 0; i -= 1 {
-		if dualSys.Duals[i].Contest == contest.ID {
+		if dualSys.Duals[i].Contest == contestId {
 			dualSys.Duals = append(dualSys.Duals[:i], dualSys.Duals[i+1:]...)
 		}
 	}
+}
+
+func PrepareDual(dualSys *DualSys, contest Contest, sortType int) error {
+	if len(contest.Peoples) < 2 {
+		return errors.New("人數小於2人, 不能排賽")
+	}
+
+	RemoveDual(dualSys, contest.ID)
 
 	duals := []Dual{}
 	// 將玩家排入場次
@@ -145,6 +153,7 @@ func PrepareDual(dualSys *DualSys, contest Contest, sortType int) {
 			}
 		}
 	}
+	return nil
 }
 
 func GetStartDualWithPeople(dualSys *DualSys, contestId string, peopleId string) (Dual, bool) {
@@ -174,6 +183,15 @@ func GetDualWithPos(dualSys *DualSys, pos string) (Dual, bool) {
 func GetNextDual(dualSys *DualSys, pos string) (Dual, bool) {
 	for _, dual := range dualSys.Duals {
 		if dual.Left == pos || dual.Right == pos {
+			return dual, true
+		}
+	}
+	return Dual{}, false
+}
+
+func GetGoalDual(dualSys *DualSys, contestId string) (Dual, bool) {
+	for _, dual := range dualSys.Duals {
+		if dual.Contest == contestId && dual.IsTop {
 			return dual, true
 		}
 	}

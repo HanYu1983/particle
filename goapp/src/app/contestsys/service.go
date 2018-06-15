@@ -99,17 +99,14 @@ func Serve_UpdateContest(w http.ResponseWriter, r *http.Request) {
 		}
 		contest, hasContest := appCtx.ContestSys.Contests[contestId]
 		if hasContest == false {
-			return errors.New("no contest")
+			return errors.New("找不到比賽")
 		}
 		if contest.Owner != peopleId {
-			return errors.New("u r not owner")
+			return errors.New("你不是管理者")
 		}
 		if contest.State == ContestStateEnd {
-			return errors.New("contest already end")
+			return errors.New("比賽結束前才能修改比賽內容")
 		}
-		/*if contest.State == ContestStateProcessing && time.Now().After(contest.StartTime) {
-			return errors.New("already game start")
-		}*/
 		if hasName {
 			contest.Name = name[0]
 		}
@@ -152,10 +149,79 @@ func Serve_UpgradeContestState(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
+		contest, isExist := appCtx.ContestSys.Contests[contestId]
+		if isExist == false {
+			return errors.New("找不到比賽")
+		}
+		if contest.Owner != peopleId {
+			return errors.New("你不是管理者")
+		}
+		if contest.State == ContestStateStart {
+			goal, hasGoal := GetGoalDual(&appCtx.DualSys, contestId)
+			if hasGoal == false {
+				return errors.New("找不到冠軍賽場次. 程式內部錯誤")
+			}
+			hasTopPeople := false
+			for _, p := range contest.Peoples {
+				if p.Pos == goal.ID {
+					hasTopPeople = true
+					break
+				}
+			}
+			if hasTopPeople == false {
+				return errors.New("還沒決定冠軍, 無法結束")
+			}
+		}
 		err = UpgradeContest(&appCtx.ContestSys, contestId, peopleId)
 		if err != nil {
 			return err
 		}
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, nil, nil)
+}
+
+func Serve_FailEndContest(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+
+	r.ParseForm()
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["owner"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		contest, isExist := appCtx.ContestSys.Contests[contestId]
+		if isExist == false {
+			return errors.New("找不到比賽")
+		}
+		if contest.Owner != peopleId {
+			return errors.New("你不是管理者")
+		}
+		if contest.State == ContestStateStart {
+			goal, hasGoal := GetGoalDual(&appCtx.DualSys, contestId)
+			if hasGoal == true {
+				hasTopPeople := false
+				for _, p := range contest.Peoples {
+					if p.Pos == goal.ID {
+						hasTopPeople = true
+						break
+					}
+				}
+				if hasTopPeople == true {
+					return errors.New("已選出冠軍, 無法流局")
+				}
+			}
+			contest.State = ContestStateFailEnd
+		}
+		appCtx.ContestSys.Contests[contestId] = contest
 		return SaveContext(ctx, appCtx)
 	})
 	tool.Assert(tool.IfError(err))
@@ -250,7 +316,7 @@ func Serve_GetDuals(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	peopleId := params["peopleId"]
 
-	var duals []Dual
+	duals := []Dual{}
 	ctx := appengine.NewContext(r)
 	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
 		appCtx, err := LoadContext(ctx)
@@ -361,14 +427,17 @@ func Serve_UpdatePower(w http.ResponseWriter, r *http.Request) {
 		}
 		contest, isExist := appCtx.ContestSys.Contests[contestId]
 		if isExist == false {
-			return errors.New("contest is not exist")
+			return errors.New("找不到比賽")
 		}
 		if contest.Owner != owner {
-			return errors.New("u r not owner")
+			return errors.New("你不是管理者")
+		}
+		if contest.State != ContestStatePublic {
+			return errors.New("只有公佈比賽時才能指定種子選手")
 		}
 		people, isPeopleExist := contest.Peoples[peopleId]
 		if isPeopleExist == false {
-			return errors.New("people is not exist")
+			return errors.New("找不到玩家")
 		}
 		people.Power = power
 		contest.Peoples[peopleId] = people
@@ -380,11 +449,16 @@ func Serve_UpdatePower(w http.ResponseWriter, r *http.Request) {
 	tool.Output(w, nil, nil)
 }
 
-func Serve_GetConflictDual(w http.ResponseWriter, r *http.Request) {
+func Serve_GetDualInfoWithContestOwner(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
 	})
+
+	params := mux.Vars(r)
+	owner := params["owner"]
+
 	duals := []Dual{}
+	states := map[string]int{}
 
 	ctx := appengine.NewContext(r)
 	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
@@ -392,10 +466,32 @@ func Serve_GetConflictDual(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		duals = CtxGetConflictDual(&appCtx)
-		return SaveContext(ctx, appCtx)
+
+		for _, dual := range appCtx.DualSys.Duals {
+			if dual.Type == DualTypePeople {
+				continue
+			}
+			contest, hasContest := appCtx.ContestSys.Contests[dual.Contest]
+			if hasContest == false {
+				continue
+			}
+			if contest.Owner != owner {
+				continue
+			}
+			if contest.State != ContestStateStart {
+				continue
+			}
+			state, _ := GetConfirmState(&appCtx.ConfirmSys, dual, contest.Peoples)
+
+			duals = append(duals, dual)
+			states[dual.ID] = state
+		}
+		return nil
 	})
 	tool.Assert(tool.IfError(err))
 
-	tool.Output(w, duals, nil)
+	tool.Output(w, map[string]interface{}{
+		"Duals":  duals,
+		"States": states,
+	}, nil)
 }

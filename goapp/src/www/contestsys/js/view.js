@@ -23,9 +23,14 @@ var view = {};
 			children:[],
 			isGroup: true
 		}
+		var failEnd = {
+			text: '流局',
+			children:[],
+			isGroup: true
+		}
 		var top = {
 			text: '所有比賽',
-			children:[pending, public, start, end],
+			children:[pending, public, start, end, failEnd],
 			isGroup: true
 		}
 		var root = [top]
@@ -99,6 +104,66 @@ var view = {};
 		return value
 	}
 	
+	function findRank(ctx, contestId, peopleId){
+		var contest = ctx.ContestSys.Contests[contestId]
+		if((!!contest) == false){
+			console.log('contest not found')
+			return -1
+		}
+		var people = contest.Peoples[peopleId]
+		if((!!people) == false){
+			console.log('people not found')
+			return -1
+		}
+		var duals = ctx.DualSys.Duals.filter(d=>d.Contest == contestId)
+		var top = duals.filter(d=>d.IsTop)
+		if(top.length == 0){
+			console.log('must has top!')
+			return -1
+		}
+		top = top[0]
+		
+		function find(nodeId, depth){
+			var node = duals.find(d=>d.ID == nodeId)
+			if(node == null){
+				console.log('dual not found')
+				return -1
+			}
+			if(node.Type == 0){
+				return -1
+			}
+			if(node.ID == people.Pos){
+				return depth
+			}
+			if(node.Left != ""){
+				// 使用arguments.callee的話, 所在的函式不能使用lambda的形式
+				var ret = arguments.callee(node.Left, depth+1)
+				if( ret != -1 ){
+					return ret
+				}
+			}
+			if(node.Right != ""){
+				ret = arguments.callee(node.Right, depth+1)
+				if( ret != -1 ){
+					return ret
+				}
+			}
+			return -1
+		}
+		
+		return find(top.ID, 0)
+	}
+	
+	function rank2str(rank){
+		if(rank < 0){
+			return "無法排名"
+		}
+		if(rank == 0){
+			return "冠軍"
+		}
+		return "前" +(1 << rank)+"強"
+	}
+	
 	function updateContestPeopleListView(ctx, contestId){
 		if((!!contestId) == false){
 			console.log('no contestId')
@@ -115,7 +180,8 @@ var view = {};
 			var node = {
 				ID: p.ID,
 				Name: p.Name,
-				Power: p.Power
+				Power: p.Power,
+				Rank: rank2str(findRank(ctx, contestId, p.ID))
 			}
 			rows.push(node)
 		}
@@ -155,6 +221,42 @@ var view = {};
 			rows: rows
 		}
 		$('#dg_duals').datagrid({data: data})
+	}
+	
+	function state2str(state){
+		return ["等待玩家中","缺左玩家宣告","缺右玩家宣告","宣告沖突","完成","未知錯誤"][state]
+	}
+	
+	function updateOwnerDualsListView(ctx, id, duals, states){
+		var rows = duals.map(d=>{
+			var confirms = ctx.ConfirmSys.Confirms.filter(c=>c.Pos == d.ID)
+			var contest = ctx.ContestSys.Contests[d.Contest]
+			var peopleLeft = null
+			var peopleRight = null
+			for(var k in contest.Peoples){
+				var p = contest.Peoples[k]
+				if(p.Pos == d.Left){
+					peopleLeft = p
+				}
+				if(p.Pos == d.Right){
+					peopleRight = p
+				}
+			}
+			return {
+				contestId: contest.ID,
+				contestName: contest.Name,
+				left: peopleLeft ? peopleLeft.Name+"("+peopleLeft.ID+")" : "unknown",
+				right: peopleRight ? peopleRight.Name+"("+peopleRight.ID+")" : "unknown",
+				pos: d.ID,
+				winner: confirms.map(c=>c.Winner).join(','),
+				state: state2str(states[d.ID])
+			}
+		})
+		var data = {
+			total: rows.length,
+			rows: rows
+		}
+		$('#dg_ownerDuals').datagrid({data: data})
 	}
 	
 	var st = new $jit.RGraph({  
@@ -198,19 +300,19 @@ var view = {};
 			var pos = node.id
 			var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
 			if(dual == null){
-				domElement.innerHTML = "未定義("+pos+")" 
+				domElement.innerHTML = "未定義<br>("+pos+")" 
 			}else{
 				var msg = pos
 				for(var peopleId in ctx.ContestSys.Contests[contestId].Peoples){
 					var people = ctx.ContestSys.Contests[contestId].Peoples[peopleId]
 					if( people.Pos == pos ){
-						msg = people.Name+"("+people.ID+")"
+						msg = people.Name+"<br>("+people.ID+")"
 					}
 				}
 				if(dual.IsTop){
-					msg += "(GOAL)"
+					msg += "<br>(GOAL)"
 				}
-				domElement.innerHTML = msg+"/"+dual.Power
+				domElement.innerHTML = msg
 			} 
 	        domElement.onclick = function(){  
 	            st.onClick(node.id, {  
@@ -381,6 +483,7 @@ var view = {};
 	module.getContestDetail = getContestDetail
 	module.updateContestFlowView = updateContestFlowView
 	module.updateDualsListView = updateDualsListView
+	module.updateOwnerDualsListView = updateOwnerDualsListView
 	module.alert = alert
 	module.confirm = confirm
 	module.getJoinInfo = getJoinInfo
