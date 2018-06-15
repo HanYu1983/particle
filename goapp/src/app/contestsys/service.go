@@ -470,7 +470,6 @@ func Serve_GetDualInfoWithContestOwner(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-
 		for _, dual := range appCtx.DualSys.Duals {
 			if dual.Type == DualTypePeople {
 				continue

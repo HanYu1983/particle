@@ -370,36 +370,37 @@
 				}
 				
 				if(cmd == 'upgradeLeft'){
-					view.confirm('是否強制左玩家勝利:'+model.getCurrentPeopleId(), ok=>{
+					var ctx = model.getCurrentContext()
+					var contestId = model.getCurrentContestId()
+					var pos = model.getCurrentPos()
+					var contest = ctx.ContestSys.Contests[contestId]
+					if((!!contest) == false){
+						console.log('no contest')
+						return
+					}
+					var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+					if(dual == null){
+						console.log('no dual')
+						return
+					}
+					var leftP = null
+					var rightP = null
+					for(var i in contest.Peoples){
+						var p = contest.Peoples[i]
+						if(p.Pos == dual.Left){
+							leftP = p
+						}
+						if(p.Pos == dual.Right){
+							rightP = p
+						}
+					}
+					if(leftP == null){
+						console.log('left people not found')
+						return
+					}
+					view.confirm('是否強制左玩家勝利:'+leftP.ID, ok=>{
 						if(ok){
-							var ctx = model.getCurrentContext()
-							var contestId = model.getCurrentContestId()
-							var pos = model.getCurrentPos()
-							var contest = ctx.ContestSys.Contests[contestId]
-							if((!!contest) == false){
-								console.log('no contest')
-								return
-							}
-							var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
-							if(dual == null){
-								console.log('no dual')
-								return
-							}
-							var leftP = null
-							var rightP = null
-							for(var i in contest.Peoples){
-								var p = contest.Peoples[i]
-								if(p.Pos == dual.Left){
-									leftP = p
-								}
-								if(p.Pos == dual.Right){
-									rightP = p
-								}
-							}
-							if(leftP == null){
-								console.log('left people not found')
-								return
-							}
+							
 							model.upgrade(model.getCurrentContestId(), leftP.ID, {force: 1}, (err, info)=>{
 								if(err!=null){
 									view.alert('error', err)
@@ -412,36 +413,37 @@
 				}
 				
 				if(cmd == 'upgradeRight'){
-					view.confirm('是否強制右玩家勝利:'+model.getCurrentPeopleId(), ok=>{
+					var ctx = model.getCurrentContext()
+					var contestId = model.getCurrentContestId()
+					var pos = model.getCurrentPos()
+					var contest = ctx.ContestSys.Contests[contestId]
+					if((!!contest) == false){
+						console.log('no contest')
+						return
+					}
+					var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+					if(dual == null){
+						console.log('no dual')
+						return
+					}
+					var leftP = null
+					var rightP = null
+					for(var i in contest.Peoples){
+						var p = contest.Peoples[i]
+						if(p.Pos == dual.Left){
+							leftP = p
+						}
+						if(p.Pos == dual.Right){
+							rightP = p
+						}
+					}
+					if(rightP == null){
+						console.log('left people not found')
+						return
+					}
+					view.confirm('是否強制右玩家勝利:'+rightP.ID, ok=>{
 						if(ok){
-							var ctx = model.getCurrentContext()
-							var contestId = model.getCurrentContestId()
-							var pos = model.getCurrentPos()
-							var contest = ctx.ContestSys.Contests[contestId]
-							if((!!contest) == false){
-								console.log('no contest')
-								return
-							}
-							var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
-							if(dual == null){
-								console.log('no dual')
-								return
-							}
-							var leftP = null
-							var rightP = null
-							for(var i in contest.Peoples){
-								var p = contest.Peoples[i]
-								if(p.Pos == dual.Left){
-									leftP = p
-								}
-								if(p.Pos == dual.Right){
-									rightP = p
-								}
-							}
-							if(rightP == null){
-								console.log('left people not found')
-								return
-							}
+							
 							model.upgrade(model.getCurrentContestId(), rightP.ID, {force: 1}, (err, info)=>{
 								if(err!=null){
 									view.alert('error', err)
@@ -578,8 +580,7 @@
 							var gameName = info.name
 							var gameValue = info.game
 							return {label: gameName, value: gameValue}
-						})
-						console.log(options)						
+						})					
 						$('#select_game').combobox("loadData", options)
 						
 						// 更新所有視圖

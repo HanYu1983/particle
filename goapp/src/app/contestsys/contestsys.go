@@ -11,6 +11,7 @@ type People struct {
 	ID         string
 	Name       string
 	Pos        string
+	Lose       bool
 	Power      int
 	CreateTime time.Time
 }

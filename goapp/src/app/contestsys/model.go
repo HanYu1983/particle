@@ -168,6 +168,9 @@ func CtxUpgrade(appCtx *Context, contestId string, owner string, peopleId string
 	if isPeopleExist == false {
 		return errors.New("找不到玩家")
 	}
+	if people.Lose {
+		return errors.New("玩家已經失敗")
+	}
 	nextDual, hasNextDual := GetNextDual(&appCtx.DualSys, people.Pos)
 	if hasNextDual == false {
 		return errors.New("找不到要爭奪的場次")
@@ -202,8 +205,20 @@ func CtxUpgrade(appCtx *Context, contestId string, owner string, peopleId string
 			return errors.New("你不是勝利玩家")
 		}
 	}
+	// 先將左右玩家設為已失敗
+	for _, p := range contest.Peoples {
+		if p.Pos == nextDual.Left {
+			p.Lose = true
+			contest.Peoples[p.ID] = p
+		}
 
+		if p.Pos == nextDual.Right {
+			p.Lose = true
+			contest.Peoples[p.ID] = p
+		}
+	}
 	people.Pos = nextDual.ID
+	people.Lose = false
 	contest.Peoples[peopleId] = people
 	appCtx.ContestSys.Contests[contestId] = contest
 
