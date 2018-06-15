@@ -159,7 +159,7 @@ func CtxCancelWinner(appCtx *Context, contestId string, peopleId string) error {
 	return nil
 }
 
-func CtxUpgrade(appCtx *Context, contestId string, peopleId string) error {
+func CtxUpgrade(appCtx *Context, contestId string, owner string, peopleId string, force bool) error {
 	contest, isExist := appCtx.ContestSys.Contests[contestId]
 	if isExist == false {
 		return errors.New("找不到比賽")
@@ -172,30 +172,37 @@ func CtxUpgrade(appCtx *Context, contestId string, peopleId string) error {
 	if hasNextDual == false {
 		return errors.New("找不到要爭奪的場次")
 	}
-	state, winner := GetConfirmState(&appCtx.ConfirmSys, nextDual, contest.Peoples)
-	if state != ConfirmStateOk {
-		switch state {
-		case ConfirmStatePending:
-			return errors.New("尚未回報結果")
-
-		case ConfirmStateLoseLeft:
-			return errors.New("左方玩家未回報結果")
-
-		case ConfirmStateLoseRight:
-			return errors.New("右方玩家未回報結果")
-
-		case ConfirmStateConflict:
-			return errors.New("玩家回報結果不致, 請管理員做協調")
-
-		case ConfirmStateUnknown:
-			// 內部錯誤
-			break
+	if force {
+		if contest.Owner != owner {
+			return errors.New("你不是管理者")
 		}
-		return errors.New("不能升級")
+	} else {
+		state, winner := GetConfirmState(&appCtx.ConfirmSys, nextDual, contest.Peoples)
+		if state != ConfirmStateOk {
+			switch state {
+			case ConfirmStatePending:
+				return errors.New("尚未回報結果")
+
+			case ConfirmStateLoseLeft:
+				return errors.New("左方玩家未回報結果")
+
+			case ConfirmStateLoseRight:
+				return errors.New("右方玩家未回報結果")
+
+			case ConfirmStateConflict:
+				return errors.New("玩家回報結果不致, 請管理員做協調")
+
+			case ConfirmStateUnknown:
+				// 內部錯誤
+				break
+			}
+			return errors.New("不能升級")
+		}
+		if winner != people.ID {
+			return errors.New("你不是勝利玩家")
+		}
 	}
-	if winner != people.ID {
-		return errors.New("你不是勝利玩家")
-	}
+
 	people.Pos = nextDual.ID
 	contest.Peoples[peopleId] = people
 	appCtx.ContestSys.Contests[contestId] = contest

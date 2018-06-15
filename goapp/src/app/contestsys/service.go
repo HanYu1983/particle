@@ -385,8 +385,12 @@ func Serve_Upgrade(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
 	})
+	r.ParseForm()
+	_, hasForce := r.Form["force"]
+
 	params := mux.Vars(r)
 	contestId := params["contestId"]
+	owner := params["owner"]
 	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
@@ -395,7 +399,7 @@ func Serve_Upgrade(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		err = CtxUpgrade(&appCtx, contestId, peopleId)
+		err = CtxUpgrade(&appCtx, contestId, owner, peopleId, hasForce)
 		if err != nil {
 			return err
 		}

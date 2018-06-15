@@ -255,9 +255,10 @@ var model = {};
 		})
 	}
 	
-	function upgrade(contestId, peopleId, cb){
+	function upgrade(contestId, peopleId, info, cb){
 		$.ajax({
-			url: '../fn/contestsys/Upgrade/'+contestId+'/'+peopleId,
+			url: '../fn/contestsys/Upgrade/'+contestId+'/'+id+'/'+peopleId,
+			data: info,
 			dataType:'json',
 			success: (info)=>{
 				if(info.Error != null){

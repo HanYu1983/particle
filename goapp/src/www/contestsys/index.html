@@ -24,13 +24,17 @@
 					</form>
 					
 					<form name="form_winner" class="easyui-form" data-options="novalidate:true">
-						場次
+						
 			            <div style="margin-bottom:20px">
-							<input class="easyui-textbox" name="pos" disabled>
+							比賽<input class="easyui-textbox" name="contestName" disabled>
 							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitWinner')">發佈勝利</a>
 					        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('commitFail')">發佈失敗</a>
 				            <a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('cancelWinner')">取消發佈</a>
 							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgrade')">升格</a>
+							<br>
+							場次<input class="easyui-textbox" name="pos" disabled>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgradeLeft')">左玩家升格</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgradeRight')">右玩家升格</a>
 						</div>
 					</form>
 					
@@ -356,11 +360,95 @@
 				}
 				
 				if(cmd == 'upgrade'){
-					model.upgrade(model.getCurrentContestId(), model.getId(), (err, info)=>{
+					model.upgrade(model.getCurrentContestId(), model.getId(), {}, (err, info)=>{
 						if(err!=null){
 							view.alert('error', err)
 						}else{
 							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'upgradeLeft'){
+					view.confirm('是否強制左玩家勝利:'+model.getCurrentPeopleId(), ok=>{
+						if(ok){
+							var ctx = model.getCurrentContext()
+							var contestId = model.getCurrentContestId()
+							var pos = model.getCurrentPos()
+							var contest = ctx.ContestSys.Contests[contestId]
+							if((!!contest) == false){
+								console.log('no contest')
+								return
+							}
+							var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+							if(dual == null){
+								console.log('no dual')
+								return
+							}
+							var leftP = null
+							var rightP = null
+							for(var i in contest.Peoples){
+								var p = contest.Peoples[i]
+								if(p.Pos == dual.Left){
+									leftP = p
+								}
+								if(p.Pos == dual.Right){
+									rightP = p
+								}
+							}
+							if(leftP == null){
+								console.log('left people not found')
+								return
+							}
+							model.upgrade(model.getCurrentContestId(), leftP.ID, {force: 1}, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'upgradeRight'){
+					view.confirm('是否強制右玩家勝利:'+model.getCurrentPeopleId(), ok=>{
+						if(ok){
+							var ctx = model.getCurrentContext()
+							var contestId = model.getCurrentContestId()
+							var pos = model.getCurrentPos()
+							var contest = ctx.ContestSys.Contests[contestId]
+							if((!!contest) == false){
+								console.log('no contest')
+								return
+							}
+							var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+							if(dual == null){
+								console.log('no dual')
+								return
+							}
+							var leftP = null
+							var rightP = null
+							for(var i in contest.Peoples){
+								var p = contest.Peoples[i]
+								if(p.Pos == dual.Left){
+									leftP = p
+								}
+								if(p.Pos == dual.Right){
+									rightP = p
+								}
+							}
+							if(rightP == null){
+								console.log('left people not found')
+								return
+							}
+							model.upgrade(model.getCurrentContestId(), rightP.ID, {force: 1}, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
 						}
 					})
 				}

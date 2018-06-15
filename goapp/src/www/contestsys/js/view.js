@@ -129,9 +129,6 @@ var view = {};
 				console.log('dual not found')
 				return -1
 			}
-			if(node.Type == 0){
-				return -1
-			}
 			if(node.ID == people.Pos){
 				return depth
 			}
@@ -303,14 +300,14 @@ var view = {};
 				domElement.innerHTML = "未定義<br>("+pos+")" 
 			}else{
 				var msg = pos
+				if(dual.IsTop){
+					msg += "(GOAL)"
+				}
 				for(var peopleId in ctx.ContestSys.Contests[contestId].Peoples){
 					var people = ctx.ContestSys.Contests[contestId].Peoples[peopleId]
 					if( people.Pos == pos ){
-						msg = people.Name+"<br>("+people.ID+")"
+						msg += "<br>"+(people.Name == "" ? people.ID : people.Name)
 					}
-				}
-				if(dual.IsTop){
-					msg += "<br>(GOAL)"
 				}
 				domElement.innerHTML = msg
 			} 
@@ -471,7 +468,18 @@ var view = {};
 	}
 	
 	function updateWinnerForm(ctx, pos){
+		var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+		if(dual == null){
+			console.log('no dual')
+			return
+		}
+		var contest = ctx.ContestSys.Contests[dual.Contest]
+		if(contest == null){
+			console.log('no contest')
+			return
+		}
 		$(document.form_winner).form('load', {
+			contestName: contest.Name,
 			pos: pos
 		})
 	}
