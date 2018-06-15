@@ -15,7 +15,9 @@ type ConfirmSys struct {
 }
 
 func NewConfirmSys() ConfirmSys {
-	return ConfirmSys{}
+	return ConfirmSys{
+		Confirms: []Confirm{},
+	}
 }
 
 func ConfirmWinner(s *ConfirmSys, pos string, people string, winner string) {
