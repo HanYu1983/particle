@@ -168,12 +168,15 @@
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script src='../common/js/lib/jit-yc.js'></script>
 		<script src='../common/js/lib/leo.utils.js'></script>
+		<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
 		<script src='../common/js/admin.js'></script>
 		<script src='js/fb.js'></script>
 		<script src='js/model.js'></script>
 		<script src='js/view.js'></script>
 		<script>
 			function onClickGameTree(node){
+				trackClick('onClickGameTree')
+				
 				var isGroup = node.isGroup
 				if(isGroup){
 					return
@@ -198,6 +201,8 @@
 			}
 			
 			function onClickDualsRow(idx, row){
+				trackClick('onClickDualsRow')
+				
 				var pos = row.pos
 				var contest = row.contestId
 				model.setCurrentContestId(contest)
@@ -206,13 +211,21 @@
 			}
 			
 			function onClickPeopleRow(idx, row){
+				trackClick('onClickPeopleRow')
+				
 				var peopleId = row.ID
 				model.setCurrentPeopleId(peopleId)
 				view.updatePeoplePowerForm(model.getCurrentContext(), model.getCurrentContestId(), peopleId)
 			}
 			
-			function onClick(cmd){
+			function trackClick(cmd){
 				console.log(cmd)
+				googleTracking.click('contestSys_'+cmd);
+			}
+			
+			function onClick(cmd){
+				trackClick(cmd)
+				
 				if(cmd == 'login'){
 					fb.checkLoginState()
 				}
@@ -591,6 +604,9 @@
 							var name = res.name
 							model.setCurrentName(name)
 						})
+						
+						// google分析
+						googleTracking.init( 'UA-55273266-3' );
 					}
 				})
 			}
