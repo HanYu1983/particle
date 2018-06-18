@@ -223,8 +223,8 @@ func Serve_FailEndContest(w http.ResponseWriter, r *http.Request) {
 					return errors.New("已選出冠軍, 無法流局")
 				}
 			}
-			contest.State = ContestStateFailEnd
 		}
+		contest.State = ContestStateFailEnd
 		appCtx.ContestSys.Contests[contestId] = contest
 		return SaveContext(ctx, appCtx)
 	})

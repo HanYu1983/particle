@@ -536,6 +536,10 @@ var view = {};
 		}
 	}
 	
+	function openAccorDual(){
+		$('#accor_dual').accordion('select', '賽程')
+	}
+	
 	
 	module.updateContestListView = updateContestListView
 	module.updateContestDetailView = updateContestDetailView
@@ -554,5 +558,6 @@ var view = {};
 	module.getPeoplePowerFormValue = getPeoplePowerFormValue
 	module.updateWinnerForm = updateWinnerForm
 	module.updateCards = updateCards
+	module.openAccorDual = openAccorDual
 	
 })(view)

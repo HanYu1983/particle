@@ -128,9 +128,9 @@
 			        </form>
 		        </div>
 		        <div title="賽程管理">
-					<div class="easyui-accordion" data-options="multiple:true" style="width:100%;">
+					<div id='accor_dual' class="easyui-accordion" data-options="multiple:true" style="width:100%;">
 						<div title="賽程" style='height:300px'>
-				            <div id='infovis' style='width:100%; height:300px'></div>
+				            <div id='infovis' style='width:700px; height:300px'></div>
 				        </div>
 				        <div title="玩家" data-options="selected:true">
 							<form name="form_peoplePower" class="easyui-form">
@@ -401,6 +401,7 @@
 							view.alert('error', err)
 						}else{
 							updateView()
+							view.openAccorDual()
 						}
 					})
 				}
