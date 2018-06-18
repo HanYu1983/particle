@@ -137,18 +137,18 @@ func LeaveContest(model *ContestSys, contestId string, id string) error {
 // id is fbid
 func JoinContest(model *ContestSys, contestId string, id string, name string, password string) error {
 	contest, isExist := model.Contests[contestId]
+	if contest.State != ContestStatePublic {
+		return errors.New("只有公佈才能加入")
+	}
+	if time.Now().After(contest.StartTime) {
+		return errors.New("報名已截止")
+	}
 	if isExist == false {
 		return errors.New("找不到比賽")
 	}
 	_, isAlreadyJoin := contest.Peoples[id]
 	if isAlreadyJoin {
 		return errors.New("玩家已經加入")
-	}
-	if contest.State != ContestStatePublic {
-		return errors.New("只有公佈才能加入")
-	}
-	if time.Now().After(contest.StartTime) {
-		return errors.New("報名已截止")
 	}
 	isPasswordRequire := strings.Trim(contest.Password, " ") != ""
 	if isPasswordRequire && contest.Password != password {

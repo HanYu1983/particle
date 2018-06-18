@@ -124,6 +124,7 @@
 						禁卡
 			            <div style="margin-bottom:20px">
 							<textarea rows="4" cols="50" name="infoCards"></textarea>
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('editCards')">編輯</a>
 			            </div>
 			        </form>
 		        </div>
@@ -161,7 +162,7 @@
 		        </div>
 		        
 				<div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
-		            
+		            <iframe width="560" height="315" src="https://www.youtube.com/embed/9L4fby0Bsmw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 		        </div>
 		    </div>
         </div>
@@ -345,19 +346,24 @@
 				}
 				
 				if(cmd == 'fakeJoinContest'){
-					var joinInfo = view.getFakeJoinInfo()
-					if(joinInfo.name.trim() == ""){
-						view.alert('error', '請輸入名稱')
-						return
-					}
-					var peopleId = joinInfo.name.replace(/ /g, "")
-					model.joinContest(model.getCurrentContestId(), peopleId, joinInfo, (err, info)=>{
-						if(err!=null){
-							view.alert('error', err)
-						}else{
-							updateView()
+					view.confirm('這個是管理員功能, 是否確定加入假玩家?', ok=>{
+						if(ok){
+							var joinInfo = view.getFakeJoinInfo()
+							if(joinInfo.name.trim() == ""){
+								view.alert('error', '請輸入名稱')
+								return
+							}
+					
+							var peopleId = joinInfo.name.replace(/ /g, "")
+							model.joinContest(model.getCurrentContestId(), peopleId, joinInfo, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
 						}
-					})
+					});
 				}
 				
 				if(cmd == 'fakeLeaveContest'){
@@ -584,6 +590,25 @@
 							updateView()
 						}
 					})
+				}
+				
+				if(cmd == 'editCards'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						console.log('no contestId')
+						return
+					}
+					var ctx = model.getCurrentContext()
+					var contest = ctx.ContestSys.Contests[contestId]
+					if((!!contest) == false){
+						console.log('no contest')
+						return
+					}
+					var url = "../card/manager_deck.html"
+					if(contest.Game != ""){
+						url += "?game="+contest.Game
+					}
+					window.open(url,'_blank');
 				}
 			}
 			
