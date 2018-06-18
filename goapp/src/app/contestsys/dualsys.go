@@ -32,7 +32,9 @@ type DualSys struct {
 }
 
 func NewDualSys() DualSys {
-	return DualSys{}
+	return DualSys{
+		Duals: []Dual{},
+	}
 }
 
 type ByDualPower []Dual

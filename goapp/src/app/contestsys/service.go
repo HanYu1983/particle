@@ -86,6 +86,7 @@ func Serve_UpdateContest(w http.ResponseWriter, r *http.Request) {
 	game, hasGame := r.Form["game"]
 	startTime, hasStartTime := r.Form["startTime"]
 	pwd, hasPwd := r.Form["pwd"]
+	info, hasInfo := r.Form["info"]
 
 	params := mux.Vars(r)
 	contestId := params["contestId"]
@@ -125,6 +126,9 @@ func Serve_UpdateContest(w http.ResponseWriter, r *http.Request) {
 		}
 		if hasPwd {
 			contest.Password = pwd[0]
+		}
+		if hasInfo {
+			contest.Info = info[0]
 		}
 		appCtx.ContestSys.Contests[contestId] = contest
 		return SaveContext(ctx, appCtx)

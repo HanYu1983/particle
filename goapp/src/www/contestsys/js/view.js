@@ -77,14 +77,23 @@ var view = {};
 		}
 		var d = new Date(contest.StartTime)
 		var timeStr = (d.getUTCMonth()+1)+"/"+(d.getDate())+"/"+d.getUTCFullYear()
+		
+		var info = {cards:[]} 
+		try{
+			info = JSON.parse(contest.Info)
+		}catch(e){
+			console.log('parse info error')
+		}
 		$(document.form_contest).form('load',{
+			id:contest.ID,
 	        name:contest.Name,
 	        description:contest.Description,
 			game:contest.Game,
 			startTime:timeStr,
 			state:contest.State+"",
 			pwd:contest.Password,
-			owner: contest.Owner
+			owner: contest.Owner,
+			infoCards: info.cards
 	    });
 	}
 	
@@ -94,12 +103,14 @@ var view = {};
 		var description = document.form_contest.description.value
 		var startTime = new Date(document.form_contest.startTime.value).getTime()
 		var pwd = document.form_contest.pwd.value
+		var infoCards = document.form_contest.infoCards.value.replace(/\"/g, "").split(',')
 		var value = {
 			game: game,
 			name: name,
 			description: description,
 			startTime: startTime,
-			pwd: pwd
+			pwd: pwd,
+			info: JSON.stringify({"cards":infoCards})
 		}
 		return value
 	}
@@ -239,6 +250,9 @@ var view = {};
 					peopleRight = p
 				}
 			}
+			var isLeftPeopleFail = peopleLeft != null ? peopleLeft.Lose : false
+			var isRightPeopleFail = peopleRight != null ? peopleRight.Lose : false
+			var state = (isLeftPeopleFail | isRightPeopleFail) ? "結束" : state2str(states[d.ID])
 			return {
 				contestId: contest.ID,
 				contestName: contest.Name,
@@ -246,7 +260,7 @@ var view = {};
 				right: peopleRight ? peopleRight.Name+"("+peopleRight.ID+")" : "unknown",
 				pos: d.ID,
 				winner: confirms.map(c=>c.Winner).join(','),
-				state: state2str(states[d.ID])
+				state: state
 			}
 		})
 		var data = {
@@ -412,7 +426,16 @@ var view = {};
 	}
 	
 	function getJoinInfo(){
-		var name = document.form_peopleJoin.name.value
+		var name = ""
+		var pwd = document.form_peopleJoin.pwd.value
+		return {
+			name: name,
+			pwd: pwd
+		}
+	}
+	
+	function getFakeJoinInfo(){
+		var name = document.form_fakeJoin.name.value
 		var pwd = document.form_peopleJoin.pwd.value
 		return {
 			name: name,
@@ -474,7 +497,7 @@ var view = {};
 			return
 		}
 		var contest = ctx.ContestSys.Contests[dual.Contest]
-		if(contest == null){
+		if((!!contest) == false){
 			console.log('no contest')
 			return
 		}
@@ -482,6 +505,35 @@ var view = {};
 			contestName: contest.Name,
 			pos: pos
 		})
+	}
+	
+	function updateCards(ctx, contestId){
+		$('#cards').empty()
+		
+		var contest = ctx.ContestSys.Contests[contestId]
+		if((!!contest) == false){
+			console.log('no contest')
+			return
+		}
+		
+		var info = {cards:[]} 
+		try{
+			info = JSON.parse(contest.Info)
+		}catch(e){
+			console.log('parse info error')
+		}
+		
+		var game = contest.Game
+		for(var i in info.cards){
+			var id = info.cards[i]
+			if(id.trim() == ""){
+				continue
+			}
+			var label = $('<span></span>').text(id)
+			var img = $('<img style="width: 100px; height: 120px"></img>').attr('src', cardinfoloader.cardimageurl(game, id))
+			var div = $('<div></div>').append(label).append(img)
+			$('#cards').append(div)
+		}
 	}
 	
 	
@@ -495,10 +547,12 @@ var view = {};
 	module.alert = alert
 	module.confirm = confirm
 	module.getJoinInfo = getJoinInfo
+	module.getFakeJoinInfo = getFakeJoinInfo
 	module.selectMainTab = selectMainTab
 	module.selectPeople = selectPeople
 	module.updatePeoplePowerForm = updatePeoplePowerForm
 	module.getPeoplePowerFormValue = getPeoplePowerFormValue
 	module.updateWinnerForm = updateWinnerForm
+	module.updateCards = updateCards
 	
 })(view)

@@ -6,11 +6,14 @@
 	<body>
 <div style="width:100%;height:100%;">
 	<div class="easyui-layout" style="width:100%;height:100%;">
-        <div data-options="region:'west',split:true" title="比賽" style="width:200px;">
+        <div data-options="region:'west',split:true,collapsible:false" title="比賽" style="width:250px;">
 			<div class="easyui-accordion" data-options="fit:true,border:false" style='overflow: auto;'>
                 <ul class="easyui-tree" id="gameTree" data-options="onClick: onClickGameTree">
 		        </ul>
             </div>
+		</div>
+		<div data-options="region:'east',split:true,collapsible:false" title="禁卡顯示" style="width:200px;">
+			<div id='cards'></div>
 		</div>
         <div data-options="region:'center'">
             <div id="tab_main" class="easyui-tabs" style='height:100%'>
@@ -20,7 +23,7 @@
 							ID<input class="easyui-textbox" name="id" disabled>
 			            </div>
 						<div style="margin-bottom:20px">
-							<fb:login-button scope="public_profile,email" onlogin="onClick('login')"></fb:login-button>
+							<fb:login-button id="btn_login" scope="public_profile,email" onlogin="onClick('login')"></fb:login-button>
 			            </div>
 					</form>
 					
@@ -71,9 +74,13 @@
 					<div class="easyui-panel">
 						<form name="form_peopleJoin" class="easyui-form">
 							參加碼<input name="pwd" type="password" class="easyui-textbox">
-							小名<input class="easyui-textbox" name="name" style="width:100px">
 							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('joinContest')">參加比賽</a>
 							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('leaveContest')">退出比賽</a>
+						</form>
+						<form name="form_fakeJoin" class="easyui-form">
+							名稱<input name="name" class="easyui-textbox">
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('fakeJoinContest')">手動參加比賽</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('fakeLeaveContest')">手動退出比賽</a>
 						</form>
 					</div>
 					<div class="easyui-panel">
@@ -84,38 +91,39 @@
 						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('commitContestFailEnd')">流局結束</a>
 					</div>
 					<form name="form_contest" class="easyui-form" data-options="novalidate:true">
-						狀態
 						<div style="margin-bottom:20px">
-			                <select class="easyui-combobox" name="state" disabled style="width:100%">
+							比賽序號
+			                <input class="easyui-textbox" name="id" style="width:100%" disabled>
+							管理者
+							<input class="easyui-textbox" name="owner" style="width:100%" disabled>
+							狀態
+							<select class="easyui-combobox" name="state" disabled style="width:100%">
 				                <option value="0">草搞</option>
 				                <option value="1">公佈</option>
 								<option value="2">開始</option>
 								<option value="3">結束</option>
 							</select>
 			            </div>
-						遊戲
+						
 						<div style="margin-bottom:20px">
+							遊戲
 			                <select class="easyui-combobox" name="game" id='select_game' data-options="valueField:'value',textField:'label'" style='width: 200px'></select>
-			            </div>
+			            	報名截止
+							<input class="easyui-datebox" name="startTime">
+							參加碼
+							<input name="pwd" type="password" class="easyui-textbox">
+						</div>
 						名稱
 			            <div style="margin-bottom:20px">
 			                <input class="easyui-textbox" name="name" style="width:100%">
 			            </div>
 						描述
 			            <div style="margin-bottom:20px">
-							<textarea rows="4" cols="50" name="description">description</textarea>
+							<textarea rows="4" cols="50" name="description"></textarea>
 			            </div>
-						參加碼
-						<div style="margin-bottom:20px">
-							<input name="pwd" type="password" class="easyui-textbox">
-				        </div>
-						報名截止
-						<div style="margin-bottom:20px">
-				            <input class="easyui-datebox" name="startTime">
-				        </div>
-						管理者
-						<div style="margin-bottom:20px">
-			                <input class="easyui-textbox" name="owner" style="width:100%" disabled>
+						禁卡
+			            <div style="margin-bottom:20px">
+							<textarea rows="4" cols="50" name="infoCards"></textarea>
 			            </div>
 			        </form>
 		        </div>
@@ -153,7 +161,7 @@
 		        </div>
 		        
 				<div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
-		            This is the help content.
+		            
 		        </div>
 		    </div>
         </div>
@@ -169,6 +177,7 @@
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script src='../common/js/lib/jit-yc.js'></script>
 		<script src='../common/js/lib/leo.utils.js'></script>
+		<script src='../common/js/cardinfoloader.js'></script>
 		<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
 		<script src='../common/js/admin.js'></script>
 		<script src='js/fb.js'></script>
@@ -199,6 +208,8 @@
 					view.selectPeople(model.getCurrentContext(), contestId, people.ID)
 					view.updatePeoplePowerForm(model.getCurrentContext(), contestId, people.ID)
 				}
+				
+				view.updateCards(model.getCurrentContext(), model.getCurrentContestId())
 			}
 			
 			function onClickDualsRow(idx, row){
@@ -314,7 +325,7 @@
 					if(joinInfo.name.trim() == ""){
 						joinInfo.name = model.getCurrentName()
 					}
-					model.joinContest(model.getCurrentContestId(), joinInfo, (err, info)=>{
+					model.joinContest(model.getCurrentContestId(), model.getId(), joinInfo, (err, info)=>{
 						if(err!=null){
 							view.alert('error', err)
 						}else{
@@ -325,6 +336,38 @@
 				
 				if(cmd == 'leaveContest'){
 					model.leaveContest(model.getCurrentContestId(), model.getId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'fakeJoinContest'){
+					var joinInfo = view.getFakeJoinInfo()
+					if(joinInfo.name.trim() == ""){
+						view.alert('error', '請輸入名稱')
+						return
+					}
+					var peopleId = joinInfo.name.replace(/ /g, "")
+					model.joinContest(model.getCurrentContestId(), peopleId, joinInfo, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'fakeLeaveContest'){
+					var joinInfo = view.getFakeJoinInfo()
+					if(joinInfo.name.trim() == ""){
+						view.alert('error', '請輸入名稱')
+						return
+					}
+					var peopleId = joinInfo.name.replace(/ /g, "")
+					model.leaveContest(model.getCurrentContestId(), peopleId, (err, info)=>{
 						if(err!=null){
 							view.alert('error', err)
 						}else{
@@ -553,7 +596,7 @@
 						view.updateContestPeopleListView(ctx, model.getCurrentContestId())
 						view.updateContestFlowView(ctx, model.getCurrentContestId())
 						view.updatePeoplePowerForm(ctx, model.getCurrentContestId(), model.getCurrentPeopleId())
-						
+						view.updateCards(ctx, model.getCurrentContestId())
 						model.getDuals((err,duals)=>{
 							if(err != null){
 								view.alert('error', err)
@@ -605,6 +648,9 @@
 							var name = res.name
 							model.setCurrentName(name)
 						})
+						
+						// 隱藏登入按鈕
+						$('#btn_login').hide()
 						
 						// google分析
 						googleTracking.init( 'UA-55273266-3' );

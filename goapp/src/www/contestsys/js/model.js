@@ -101,9 +101,9 @@ var model = {};
 		})
 	}
 	
-	function joinContest(contestId, info, cb){
+	function joinContest(contestId, peopleId, info, cb){
 		$.ajax({
-			url: '../fn/contestsys/JoinContest/'+contestId+'/'+id,
+			url: '../fn/contestsys/JoinContest/'+contestId+'/'+peopleId,
 			dataType:'json',
 			data: info,
 			success: (info)=>{
