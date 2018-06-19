@@ -137,8 +137,8 @@
 							<form name="form_peoplePower" class="easyui-form">
 								ID<input class="easyui-textbox" name="id" style="width:100px" disabled>
 								種子選手<input name="power" class="easyui-textbox">
-								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('confirmDualPower')">確認修改</a>
-								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('prepareDual')">重新排賽</a>
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('confirmDualPower')">修改</a>
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('prepareDual')">排賽</a>
 								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="onClick('kickPeople')">強制退出比賽</a>
 							</form>
 							
@@ -162,6 +162,93 @@
 		        </div>
 		        
 				<div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
+					<h1>基本操做</h1>
+					以下分別以主辨者和參與者的角度說明
+					
+					<h2>參加比賽(參)</h2>
+					<ol>
+						<li>移至[新增/修改比賽]輸入參加碼並按下[參加比賽]. 若比賽沒有設定參加碼則參加碼不必輸入. 注意: 不要按[手動參加比賽], 除非你是管理者</li>
+						<li>報名截止日以前才能參加比賽</li>
+						<li>管理者自己要參賽也必須按[參加比賽]</li>
+					</ol>
+					
+					<h2>決鬥與結果回報(參)</h2>
+					<ol>
+						<li>當比賽開始後, 移至[玩家]下方的[你參與的比賽], 會顯示你現在的比賽場次與回報結果</li>
+						<li>找個時間與對方聯繫並依管理者的規則決鬥</li>
+						<li>決鬥完成後, 選擇上方點擊[發佈勝利]或[發佈失敗]</li>
+						<li>與聯繫中的對方確認回報完成後, 勝利者可以按[升格]. 就可以等待下一場決鬥玩家</li>
+						<li>若你發現對方回報結果與你不一致(沖突)並溝通未果, 可聯繫並交由管理員協調</li>
+						<li>請參照說明[賽程觀察]</li>
+					</ol>
+		
+					<h2>新增比賽(主)</h2>
+					<ol>
+						<li>移至[新增/修改比賽]並按下[新增草搞]. 這時比賽還不可見</li>
+						<li>修改完內容並按下[修改]</li>
+						<li>按[草搞>公怖>開始>結束]公開比賽. 讓比賽變成他人可見</li>
+					</ol>
+					
+					<h2>安排賽程(主)</h2>
+					<ol>
+						<li>移至左邊[比賽]欄位樹狀圖的[公佈/{你的比賽}]並點擊</li>
+						<li>移至[賽程管理]/[玩家]點擊[重新排賽], 上方的賽程表將會出現</li>
+						<li>報名截止日後才能安排比賽</li>
+					</ol>
+					
+					<h2>種子選手(主)</h2>
+					<ol>
+						<li>移至左邊[比賽]欄位樹狀圖的[公佈/{你的比賽}]並點擊</li>
+						<li>移至[賽程管理]/[玩家]點擊下方玩家列表中的要當種子選手的玩家</li>
+						<li>在修改欄位中修改後按[修改], 這樣會自動重新排賽</li>
+						<li>所修改的種子選手的數字大小只有比較的意義, 請自行輸入習慣的值. 比如1~10或是10~100都可</li>
+					</ol>
+					
+					<h2>開始比賽(主)</h2>
+					<ol>
+						<li>若安排完賽程後, 就可以開始比賽</li>
+						<li>移至[新增/修改比賽], 按[草搞>公怖>開始>結束]讓比賽開始</li>
+					</ol>
+					
+					<h2>結束比賽(主)</h2>
+					<ol>
+						<li>請參照說明[比賽結果], 若有冠軍出現代表賽程全部完成</li>
+						<li>移至[新增/修改比賽], 按[草搞>公怖>開始>結束]讓比賽結束</li>
+					</ol>
+					
+					<h2>流局比賽(主)</h2>
+					<ol>
+						<li>如果有人中途沒時間完或比賽進行不順利導致沒有冠軍出現, 就可以讓比賽流局</li>
+						<li>移至[新增/修改比賽], 按[流局結束]讓比賽結束</li>
+					</ol>
+					
+					<h2>協調決鬥結果(主)</h2>
+					<ol>
+						<li>當比賽開始後, 移至[玩家]下方的[你管理的比賽], 會顯示你的比賽的全部決鬥場次</li>
+						<li>若某一個場次顯示沖突代表雙方玩家同時宣告了勝利或失敗</li>
+						<li>管理員將聯繫雙方並協調結果, 點擊[左玩家升格]或[右玩家升格]</li>
+						<li>請參照說明[賽程觀察]</li>
+					</ol>
+					
+					<h2>比賽結果</h2>
+					<ol>
+						<li>移至左邊[比賽]欄位樹狀圖的[公佈/{你的比賽}]並點擊</li>
+						<li>移至[賽程管理]/[玩家]下方的玩家列表</li>
+						<li>列表右邊的排名就是結果. 比賽中可以隨時觀查</li>
+					</ol>
+					
+					<h2>賽程觀察</h2>
+					<ol>
+						<li>點擊左方樹狀圖中的人名, 右邊就會展開[賽程管理]</li>
+						<li>點擊[賽程]打開賽程圖</li>
+						<li>圖中GOAL代表冠軍賽</li>
+						<li>名字代表玩家的位置</li>
+						<li>圖中的文字可以點擊</li>
+					</ol>
+					
+					<h1>影片教學</h1>
+					
+					<h2>基本概念</h2>
 		            <iframe width="560" height="315" src="https://www.youtube.com/embed/9L4fby0Bsmw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 		        </div>
 		    </div>
@@ -244,7 +331,10 @@
 				}
 				
 				if(cmd == 'newContest'){
-					model.newContest((err, info)=>{
+					var info = {
+						ownerName: model.getCurrentName()
+					}
+					model.newContest(info, (err, info)=>{
 						if(err!=null){
 							view.alert('error', err)
 						}else{

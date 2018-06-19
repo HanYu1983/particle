@@ -34,6 +34,7 @@ type Contest struct {
 	Peoples     map[string]People
 	State       int
 	Owner       string
+	OwnerName   string
 	CreateTime  time.Time
 	StartTime   time.Time
 }

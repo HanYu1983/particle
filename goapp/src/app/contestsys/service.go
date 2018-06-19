@@ -32,6 +32,7 @@ func Serve_CreateContest(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 	pwd := r.FormValue("pwd")
+	ownerName := r.FormValue("ownerName")
 
 	params := mux.Vars(r)
 	owner := params["owner"]
@@ -44,6 +45,9 @@ func Serve_CreateContest(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		id = CreateContest(&appCtx.ContestSys, pwd, owner)
+		contest := appCtx.ContestSys.Contests[id]
+		contest.OwnerName = ownerName
+		appCtx.ContestSys.Contests[id] = contest
 		return SaveContext(ctx, appCtx)
 	})
 	tool.Assert(tool.IfError(err))

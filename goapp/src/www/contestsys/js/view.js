@@ -76,8 +76,7 @@ var view = {};
 			return
 		}
 		var d = new Date(contest.StartTime)
-		var timeStr = (d.getUTCMonth()+1)+"/"+(d.getDate())+"/"+d.getUTCFullYear()
-		
+		var timeStr = (d.getMonth()+1)+"/"+(d.getDate())+"/"+d.getFullYear()
 		var info = {cards:[]} 
 		try{
 			info = JSON.parse(contest.Info)
@@ -92,7 +91,7 @@ var view = {};
 			startTime:timeStr,
 			state:contest.State+"",
 			pwd:contest.Password,
-			owner: contest.Owner,
+			owner: contest.OwnerName+"("+contest.Owner+")",
 			infoCards: info.cards
 	    });
 	}

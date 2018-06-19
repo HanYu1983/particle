@@ -1,8 +1,16 @@
 var fb = {};
 (function(module){
 	
-	//var testAppId = '679171275511375';
-	var testAppId = '425311264344425';
+	var localAppId = '679171275511375';
+	var removeAppId = '425311264344425';
+	
+	function getAppId(){
+		if (location.hostname === "localhost" || location.hostname === "127.0.0.1"){
+	    	return localAppId
+		}else{
+			return removeAppId
+		}
+	}
 	
 	var loginCallback = null
 	
@@ -18,7 +26,7 @@ var fb = {};
 		
 		window.fbAsyncInit = function() {
 		    FB.init({
-		      	appId      : testAppId,
+		      	appId      : getAppId(),
 		      	cookie     : true,  // enable cookies to allow the server to access 
 		         	                 // the session
 		      	xfbml      : true,  // parse social plugins on this page

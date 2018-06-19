@@ -50,10 +50,11 @@ var model = {};
 		})
 	}
 	
-	function newContest(cb){
+	function newContest(info, cb){
 		$.ajax({
 			url: '../fn/contestsys/CreateContest/'+id,
 			dataType:'json',
+			data: info,
 			success: (info)=>{
 				if(info.Error != null){
 					cb(info.Error)
