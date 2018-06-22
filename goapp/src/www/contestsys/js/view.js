@@ -48,7 +48,7 @@ var view = {};
 				var p = contest.Peoples[j]
 				var subNode = {
 					id: p.ID,
-					text: p.Name+"("+p.ID+")",
+					text: p.Name,
 					belongContest: contest.ID,
 					isContest: false,
 					isGroup: false
@@ -75,6 +75,9 @@ var view = {};
 		if((!!contest) == false){
 			return
 		}
+		var createTimeUtc = new Date(contest.CreateTime)
+		var createTimeLocal = toLocalTime(createTimeUtc)
+		
 		var d = new Date(contest.StartTime)
 		var timeStr = (d.getMonth()+1)+"/"+(d.getDate())+"/"+d.getFullYear()
 		var info = {cards:[]} 
@@ -89,6 +92,7 @@ var view = {};
 	        description:contest.Description,
 			game:contest.Game,
 			startTime:timeStr,
+			createTime: createTimeLocal.toISOString(),
 			state:contest.State+"",
 			pwd:contest.Password,
 			owner: contest.OwnerName+"("+contest.Owner+")",
@@ -574,6 +578,10 @@ var view = {};
 		return html.html()	
 	}
 	
+	function toLocalTime(date){
+		return new Date(date.getTime() + (-date.getTimezoneOffset() * 60000))
+	}
+	
 	function updateMessageListView(ctx, contestId){
 		var contest = ctx.ContestSys.Contests[contestId]
 		if((!!contest) == false){
@@ -591,11 +599,13 @@ var view = {};
 			var htmlText = removeScriptTag(decodeURIComponent(m.Text))
 			htmlText = htmlText.replace(/\n/g, "<br>")
 			
-			var d = new Date(m.CreateTime)
+			var utc = new Date(m.CreateTime)
+			var local = toLocalTime(utc)
+			
 			return {
 				id: m.ID,
 				peopleName: ((!!p) != false) ? p.Name : m.People,
-				createTime: d.toISOString(),
+				createTime: local.toISOString(),
 				text: htmlText
 			}
 		})

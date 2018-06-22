@@ -101,6 +101,8 @@
 								<option value="2">開始</option>
 								<option value="3">結束</option>
 							</select>
+							創建時間
+							<input class="easyui-textbox" name="createTime" style="width:100%" disabled>
 			            </div>
 						
 						<div style="margin-bottom:20px">
@@ -258,10 +260,7 @@
 		
 		<div data-options="region:'east',split:false,collapsible:false" title="資訊" style="width:400px;">
 			<div id='accor_dual' class="easyui-accordion" data-options="multiple:true" style="width:100%;">
-				<div title="禁卡顯示" style='height:300px' data-options="collapsed:false" >
-		            <div id='cards'></div>
-		        </div>
-				<div title="討論區" style='height:600px' data-options="collapsed:false" >
+				<div title="討論區" style='height:400px' data-options="collapsed:false" >
 		            <form name="form_message" class="easyui-form">
 						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('leaveMessage')">留言</a>
 						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true" onclick="onClick('deleteMessage')">刪除</a>
@@ -274,10 +273,13 @@
 								<th data-options="field:'id',width:50,align:'center'">序號</th>
 								<th data-options="field:'text',width:200">訊息</th>
 				                <th data-options="field:'peopleName',width:100,align:'center'">小名</th>
-								<th data-options="field:'createTime',width:100,align:'center'">時間</th>
+								<th data-options="field:'createTime',width:200,align:'center'">時間</th>
 				            </tr>
 				        </thead>
 				    </table>
+		        </div>
+				<div title="禁卡顯示" style='height:400px' data-options="collapsed:false" >
+		            <div id='cards'></div>
 		        </div>
 			</div>
 		</div>
