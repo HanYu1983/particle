@@ -12,9 +12,7 @@
 		        </ul>
             </div>
 		</div>
-		<div data-options="region:'east',split:true,collapsible:false" title="禁卡顯示" style="width:200px;">
-			<div id='cards'></div>
-		</div>
+		
         <div data-options="region:'center'">
             <div id="tab_main" class="easyui-tabs" style='height:100%'>
 				<div title="玩家">
@@ -130,7 +128,7 @@
 		        </div>
 		        <div title="賽程管理">
 					<div id='accor_dual' class="easyui-accordion" data-options="multiple:true" style="width:100%;">
-						<div title="賽程" style='height:300px'>
+						<div title="賽程" style='height:300px' data-options="iconCls:'icon-search',collapsed:false" >
 				            <div id='infovis' style='width:700px; height:300px'></div>
 				        </div>
 				        <div title="玩家" data-options="selected:true">
@@ -160,8 +158,7 @@
 				        </div>
 					</div>
 		        </div>
-		        
-				<div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
+				<div title="幫助" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
 					<h1>基本操做</h1>
 					以下分別以主辨者和參與者的角度說明
 					
@@ -246,6 +243,11 @@
 						<li>圖中的文字可以點擊</li>
 					</ol>
 					
+					<h2>其它說明</h2>
+					<ol>
+						<li>請參照影片教學</li>
+					</ol>
+					
 					<h1>影片教學</h1>
 					
 					<h2>基本概念</h2>
@@ -253,6 +255,32 @@
 		        </div>
 		    </div>
         </div>
+		
+		<div data-options="region:'east',split:false,collapsible:false" title="資訊" style="width:400px;">
+			<div id='accor_dual' class="easyui-accordion" data-options="multiple:true" style="width:100%;">
+				<div title="禁卡顯示" style='height:300px' data-options="collapsed:false" >
+		            <div id='cards'></div>
+		        </div>
+				<div title="討論區" style='height:600px' data-options="collapsed:false" >
+		            <form name="form_message" class="easyui-form">
+						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('leaveMessage')">留言</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true" onclick="onClick('deleteMessage')">刪除</a>
+						<textarea rows="4" cols="50" name="text"></textarea>
+					</form>
+					<table id='dg_message' class="easyui-datagrid" title="留言"
+				            data-options="singleSelect:true,collapsible:true,onClickRow: onClickMessageRow">
+				        <thead>
+				            <tr>
+								<th data-options="field:'id',width:50,align:'center'">序號</th>
+								<th data-options="field:'text',width:200">訊息</th>
+				                <th data-options="field:'peopleName',width:100,align:'center'">小名</th>
+								<th data-options="field:'createTime',width:100,align:'center'">時間</th>
+				            </tr>
+				        </thead>
+				    </table>
+		        </div>
+			</div>
+		</div>
     </div>
 </div>
 
@@ -272,6 +300,7 @@
 		<script src='js/model.js'></script>
 		<script src='js/view.js'></script>
 		<script>
+		
 			function onClickGameTree(node){
 				trackClick('onClickGameTree')
 				
@@ -298,6 +327,14 @@
 				}
 				
 				view.updateCards(model.getCurrentContext(), model.getCurrentContestId())
+				view.updateMessageListView(model.getCurrentContext(), model.getCurrentContestId())
+			}
+			
+			function onClickMessageRow(idx, row){
+				trackClick('onClickMessageRow')
+				var msgId = row.id
+				model.setCurrentMsgId(msgId)
+				view.updateMessageForm(model.getCurrentContext(), model.getCurrentMsgId())
 			}
 			
 			function onClickDualsRow(idx, row){
@@ -700,6 +737,42 @@
 					}
 					window.open(url,'_blank');
 				}
+				
+				if(cmd == 'leaveMessage'){
+					var contestId = model.getCurrentContestId()
+					var joinInfo = view.getJoinInfo()
+					var msgInfo = view.getMessageFormValue()
+					var info = {
+						pwd: joinInfo.pwd,
+						txt: encodeURIComponent(msgInfo.text)
+					}
+					model.leaveMessage(contestId, info, (err, res)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'deleteMessage'){
+					var joinInfo = view.getJoinInfo()
+					var info = {
+						pwd: joinInfo.pwd
+					}
+					var msgId = model.getCurrentMsgId()
+					view.confirm('是否刪除留言:'+msgId, ok=>{
+						if(ok){
+							model.deleteMessage(msgId, info, (err, res)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
 			}
 			
 			function updateView(){
@@ -713,6 +786,8 @@
 						view.updateContestFlowView(ctx, model.getCurrentContestId())
 						view.updatePeoplePowerForm(ctx, model.getCurrentContestId(), model.getCurrentPeopleId())
 						view.updateCards(ctx, model.getCurrentContestId())
+						view.updateMessageListView(ctx, model.getCurrentContestId())
+						
 						model.getDuals((err,duals)=>{
 							if(err != null){
 								view.alert('error', err)

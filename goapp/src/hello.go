@@ -86,6 +86,9 @@ func init() {
 	router.HandleFunc("/fn/contestsys/Upgrade/{contestId}/{owner}/{peopleId}", contestsys.Serve_Upgrade).Methods("GET")
 	router.HandleFunc("/fn/contestsys/UpdatePower/{contestId}/{owner}/{peopleId}/{power}", contestsys.Serve_UpdatePower).Methods("GET")
 	router.HandleFunc("/fn/contestsys/GetDualInfoWithContestOwner/{owner}", contestsys.Serve_GetDualInfoWithContestOwner).Methods("GET")
+	router.HandleFunc("/fn/contestsys/LeaveMessage/{contestId}/{peopleId}", contestsys.Serve_LeaveMessage).Methods("GET")
+	router.HandleFunc("/fn/contestsys/DeleteMessage/{peopleId}/{msgId}", contestsys.Serve_DeleteMessage).Methods("GET")
+
 	http.Handle("/fn/contestsys/", router)
 
 	// Test

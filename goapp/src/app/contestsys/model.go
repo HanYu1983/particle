@@ -18,6 +18,7 @@ type Context struct {
 	ContestSys ContestSys
 	DualSys    DualSys
 	ConfirmSys ConfirmSys
+	MessageSys MessageSys
 }
 
 func NewContext() Context {
@@ -25,6 +26,7 @@ func NewContext() Context {
 		ContestSys: NewContestSys(),
 		DualSys:    NewDualSys(),
 		ConfirmSys: NewConfirmSys(),
+		MessageSys: NewMessageSys(),
 	}
 }
 

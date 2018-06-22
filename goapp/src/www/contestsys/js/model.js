@@ -274,6 +274,41 @@ var model = {};
 		})
 	}
 	
+	function leaveMessage(contestId, info, cb){
+		$.ajax({
+			url: '../fn/contestsys/LeaveMessage/'+contestId+'/'+id,
+			data: info,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
+	function deleteMessage(msgId, info, cb){
+		$.ajax({
+			url: '../fn/contestsys/DeleteMessage/'+id+'/'+msgId,
+			data: info,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
 	
 	
 	var currentContestId = null
@@ -308,7 +343,15 @@ var model = {};
 		return currentName
 	}
 	
-	module.loadContext = loadContext
+	var currentMsgId = null
+	function setCurrentMsgId(v){
+		currentMsgId = v
+	}
+	function getCurrentMsgId(){
+		return currentMsgId
+	}
+	
+	// getter setter
 	module.getCurrentContext = getCurrentContext
 	module.setCurrentContestId = setCurrentContestId
 	module.getCurrentContestId = getCurrentContestId
@@ -318,6 +361,12 @@ var model = {};
 	module.getCurrentPos = getCurrentPos
 	module.setCurrentName = setCurrentName
 	module.getCurrentName = getCurrentName
+	module.setCurrentMsgId = setCurrentMsgId
+	module.getCurrentMsgId = getCurrentMsgId
+	module.setId = setId
+	module.getId = getId
+	// function
+	module.loadContext = loadContext
 	module.updateContest = updateContest
 	module.newContest = newContest
 	module.deleteContest = deleteContest
@@ -328,10 +377,11 @@ var model = {};
 	module.getDuals = getDuals
 	module.getOwnerDuals = getOwnerDuals
 	module.prepareDual = prepareDual
-	module.setId = setId
-	module.getId = getId
 	module.updatePower = updatePower
 	module.confirmWinner = confirmWinner
 	module.cancelWinner = cancelWinner
 	module.upgrade = upgrade
+	module.leaveMessage = leaveMessage
+	module.deleteMessage = deleteMessage
+	
 })(model)

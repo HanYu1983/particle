@@ -8,7 +8,7 @@ import (
 
 	"errors"
 	"strconv"
-	_ "strings"
+	"strings"
 	"time"
 
 	"appengine"
@@ -505,4 +505,80 @@ func Serve_GetDualInfoWithContestOwner(w http.ResponseWriter, r *http.Request) {
 		"Duals":  duals,
 		"States": states,
 	}, nil)
+}
+
+func Serve_LeaveMessage(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+
+	r.ParseForm()
+	pwd := r.FormValue("pwd")
+	txt := r.FormValue("txt")
+
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["peopleId"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		contest, hasContest := appCtx.ContestSys.Contests[contestId]
+		if hasContest == false {
+			return errors.New("找不到比賽")
+		}
+		isPasswordRequire := strings.Trim(contest.Password, " ") != ""
+		if isPasswordRequire && contest.Password != pwd {
+			return errors.New("參加碼不正確")
+		}
+		NewMessage(&appCtx.MessageSys, peopleId, contestId, txt)
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+
+	tool.Output(w, nil, nil)
+}
+
+func Serve_DeleteMessage(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+
+	r.ParseForm()
+	pwd := r.FormValue("pwd")
+
+	params := mux.Vars(r)
+	peopleId := params["peopleId"]
+	msgId := params["msgId"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		msg, hasMessage := FindMessage(&appCtx.MessageSys, msgId)
+		if hasMessage == false {
+			return errors.New("沒有這個訊息")
+		}
+		if msg.People != peopleId {
+			return errors.New("你不是擁有者")
+		}
+		contest, hasContest := appCtx.ContestSys.Contests[msg.Contest]
+		if hasContest == false {
+			return errors.New("找不到比賽")
+		}
+		isPasswordRequire := strings.Trim(contest.Password, " ") != ""
+		if isPasswordRequire && contest.Password != pwd {
+			return errors.New("參加碼不正確")
+		}
+		DeleteMessage(&appCtx.MessageSys, msgId)
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+
+	tool.Output(w, nil, nil)
 }

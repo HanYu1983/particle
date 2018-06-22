@@ -539,6 +539,73 @@ var view = {};
 		$('#accor_dual').accordion('select', '賽程')
 	}
 	
+	function updateMessageForm(ctx, msgId){
+		var msg = ctx.MessageSys.Messages.find(m=>m.ID == msgId)
+		if(msg == null){
+			console.log("msg not found")
+			return
+		}
+		var htmlText = decodeURIComponent(msg.Text)
+		$(document.form_message).form('load', {
+			text: htmlText
+		})
+	}
+	
+	function getMessageFormValue(){
+		/*
+		var ary = $(document.form_message).serializeArray()
+		return ary.reduce((acc, {name,value})=>{
+			acc[name] = value
+			return acc
+		}, {})
+		*/
+		
+		var txt = removeScriptTag(document.form_message.text.value)
+		return {
+			text: txt
+		}
+	}
+	
+	function removeScriptTag(htmlText){
+		var wrappedString = '<div>' + htmlText + '</div>'
+		var noScript = wrappedString.replace(/script/g, "THISISNOTASCRIPTREALLY")
+		var html = $(noScript);
+		html.find('THISISNOTASCRIPTREALLY').remove();
+		return html.html()	
+	}
+	
+	function updateMessageListView(ctx, contestId){
+		var contest = ctx.ContestSys.Contests[contestId]
+		if((!!contest) == false){
+			console.log('no contest')
+			return
+		}
+		var sortByTime = (a, b)=>{
+			var aTime = new Date(a.CreateTime).getTime()
+			var bTime = new Date(b.CreateTime).getTime()
+			return bTime - aTime
+		}
+		
+		var rows = ctx.MessageSys.Messages.filter(m=>m.Contest == contestId).sort(sortByTime).map(m=>{
+			var p = contest.Peoples[m.People]
+			var htmlText = removeScriptTag(decodeURIComponent(m.Text))
+			htmlText = htmlText.replace(/\n/g, "<br>")
+			
+			var d = new Date(m.CreateTime)
+			return {
+				id: m.ID,
+				peopleName: ((!!p) != false) ? p.Name : m.People,
+				createTime: d.toISOString(),
+				text: htmlText
+			}
+		})
+		
+		var data = {
+			total: rows.length,
+			rows: rows
+		}
+		$('#dg_message').datagrid({data: data})
+	}
 	
 	module.updateContestListView = updateContestListView
 	module.updateContestDetailView = updateContestDetailView
@@ -555,8 +622,11 @@ var view = {};
 	module.selectPeople = selectPeople
 	module.updatePeoplePowerForm = updatePeoplePowerForm
 	module.getPeoplePowerFormValue = getPeoplePowerFormValue
+	module.getMessageFormValue = getMessageFormValue
 	module.updateWinnerForm = updateWinnerForm
 	module.updateCards = updateCards
 	module.openAccorDual = openAccorDual
+	module.updateMessageListView = updateMessageListView
+	module.updateMessageForm = updateMessageForm
 	
 })(view)
