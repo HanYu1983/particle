@@ -88,6 +88,7 @@ func init() {
 	router.HandleFunc("/fn/contestsys/GetDualInfoWithContestOwner/{owner}", contestsys.Serve_GetDualInfoWithContestOwner).Methods("GET")
 	router.HandleFunc("/fn/contestsys/LeaveMessage/{contestId}/{peopleId}", contestsys.Serve_LeaveMessage).Methods("GET")
 	router.HandleFunc("/fn/contestsys/DeleteMessage/{peopleId}/{msgId}", contestsys.Serve_DeleteMessage).Methods("GET")
+	router.HandleFunc("/fn/contestsys/MakeDualTime/{contestId}/{peopleId}", contestsys.Serve_MakeDualTime).Methods("GET")
 
 	http.Handle("/fn/contestsys/", router)
 

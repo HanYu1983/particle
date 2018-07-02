@@ -468,6 +468,7 @@ func Serve_GetDualInfoWithContestOwner(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	owner := params["owner"]
+	var _ = owner
 
 	duals := []Dual{}
 	states := map[string]int{}
@@ -486,9 +487,9 @@ func Serve_GetDualInfoWithContestOwner(w http.ResponseWriter, r *http.Request) {
 			if hasContest == false {
 				continue
 			}
-			if contest.Owner != owner {
+			/*if contest.Owner != owner {
 				continue
-			}
+			}*/
 			if contest.State != ContestStateStart {
 				continue
 			}
@@ -530,7 +531,8 @@ func Serve_LeaveMessage(w http.ResponseWriter, r *http.Request) {
 		if hasContest == false {
 			return errors.New("找不到比賽")
 		}
-		isPasswordRequire := strings.Trim(contest.Password, " ") != ""
+		_, isJoinPeople := contest.Peoples[peopleId]
+		isPasswordRequire := isJoinPeople == false && strings.Trim(contest.Password, " ") != ""
 		if isPasswordRequire && contest.Password != pwd {
 			return errors.New("參加碼不正確")
 		}
@@ -571,7 +573,8 @@ func Serve_DeleteMessage(w http.ResponseWriter, r *http.Request) {
 		if hasContest == false {
 			return errors.New("找不到比賽")
 		}
-		isPasswordRequire := strings.Trim(contest.Password, " ") != ""
+		_, isJoinPeople := contest.Peoples[peopleId]
+		isPasswordRequire := isJoinPeople == false && strings.Trim(contest.Password, " ") != ""
 		if isPasswordRequire && contest.Password != pwd {
 			return errors.New("參加碼不正確")
 		}
@@ -580,5 +583,43 @@ func Serve_DeleteMessage(w http.ResponseWriter, r *http.Request) {
 	})
 	tool.Assert(tool.IfError(err))
 
+	tool.Output(w, nil, nil)
+}
+
+func Serve_MakeDualTime(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	r.ParseForm()
+	dualTime := r.FormValue("dualTime")
+
+	params := mux.Vars(r)
+	contestId := params["contestId"]
+	peopleId := params["peopleId"]
+
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
+		appCtx, err := LoadContext(ctx)
+		if err != nil {
+			return err
+		}
+		contest, hasContest := appCtx.ContestSys.Contests[contestId]
+		if hasContest == false {
+			return errors.New("找不到比賽")
+		}
+		people, isJoinPeople := contest.Peoples[peopleId]
+		if isJoinPeople == false {
+			return errors.New("你沒有參賽")
+		}
+		if people.Info == nil {
+			people.Info = map[string]string{}
+		}
+		people.Info["dualTime"] = dualTime
+
+		contest.Peoples[peopleId] = people
+		appCtx.ContestSys.Contests[contestId] = contest
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
 	tool.Output(w, nil, nil)
 }

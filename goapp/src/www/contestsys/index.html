@@ -34,13 +34,20 @@
 				            <a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('cancelWinner')">取消發佈</a>
 							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgrade')">升格</a>
 							<br>
-							場次<input class="easyui-textbox" name="pos" disabled>
+							決鬥時間<input class="easyui-textbox" name="dualTime" disabled>
+							<input class="easyui-textbox" name="makeDualTime">
+							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('agreeDualTime')">同意最後時間</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('makeDualTime')">預約新時間</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('cancelDualTime')">取消預約</a>
+							
+							<br>
+							決鬥場次<input class="easyui-textbox" name="pos" disabled>
 							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgradeLeft')">左玩家升格</a>
 							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgradeRight')">右玩家升格</a>
 						</div>
 					</form>
 					
-					<table id='dg_duals' class="easyui-datagrid" title="你參與的比賽" style="width:100%"
+					<table id='dg_duals' class="easyui-datagrid" title="你的比賽" style="width:100%"
 				            data-options="singleSelect:true,collapsible:true,onClickRow:onClickDualsRow">
 				        <thead>
 				            <tr>
@@ -53,7 +60,7 @@
 				        </thead>
 				    </table>
 					
-					<table id='dg_ownerDuals' class="easyui-datagrid" title="你管理的比賽" style="width:100%"
+					<table id='dg_ownerDuals' class="easyui-datagrid" title="賽況" style="width:100%"
 				            data-options="singleSelect:true,collapsible:true,onClickRow:onClickDualsRow">
 				        <thead>
 				            <tr>
@@ -61,6 +68,7 @@
 								<th data-options="field:'pos',width:100,align:'center'">場次</th>
 								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
 				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
+								<th data-options="field:'dualTime',width:100,align:'center'">比賽時間</th>
 								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
 								<th data-options="field:'state',width:100,align:'center'">狀態</th>
 				            </tr>
@@ -169,6 +177,20 @@
 						<li>移至[新增/修改比賽]輸入參加碼並按下[參加比賽]. 若比賽沒有設定參加碼則參加碼不必輸入. 注意: 不要按[手動參加比賽], 除非你是管理者</li>
 						<li>報名截止日以前才能參加比賽</li>
 						<li>管理者自己要參賽也必須按[參加比賽]</li>
+					</ol>
+					
+					<h2>預約決鬥時間(參)</h2>
+					<ol>
+						<li>比賽開始後(比賽在樹狀圖的開始資料夾下)時, 點擊[玩家]面板</li>
+						<li>移至決鬥時間右方有輸入框, 可輸入決鬥時間. 格式為m/d hh/MM. 例:1/1 12:00</li>
+						<li>點擊右方[預約新時間]</li>
+					</ol>
+					
+					<h2>同意決鬥時間(參)</h2>
+					<ol>
+						<li>比賽開始後(比賽在樹狀圖的開始資料夾下)時, 點擊[玩家]面板</li>
+						<li>若[決鬥時間]欄位中有值的話, 點擊右方[同意最後時間]</li>
+						<li>注意: 時間已最晚的為主. 若不同意決鬥時間, 就預約新的更晚的時間</li>
 					</ol>
 					
 					<h2>決鬥與結果回報(參)</h2>
@@ -345,7 +367,7 @@
 				var contest = row.contestId
 				model.setCurrentContestId(contest)
 				model.setCurrentPos(pos)
-				view.updateWinnerForm(model.getCurrentContext(), pos)
+				view.updateWinnerForm(model.getCurrentContext(), model.getId(), pos)
 			}
 			
 			function onClickPeopleRow(idx, row){
@@ -774,6 +796,61 @@
 						}
 					})
 				}
+				
+				if(cmd == 'makeDualTime'){
+					var format = /\d+\/\d+ \d+:\d+/	
+					var value = view.getWinnerFormValue()
+					var dualTime = value.makeDualTime
+					
+					if(format.test(dualTime) == false){
+						view.alert('error', '時間格式不正確. 格式例: 1/1 12:00')
+						return
+					}
+					
+					var contestId = model.getCurrentContestId()
+					var peopleId = model.getId()
+					model.makeDualTime(contestId, peopleId, {dualTime: dualTime}, (err, res)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'agreeDualTime'){
+					var format = /\d+\/\d+ \d+:\d+/
+					var value = view.getWinnerFormValue()
+					var dualTime = value.dualTime
+					
+					if(format.test(dualTime) == false){
+						view.alert('error', '時間格式不正確. 格式例: 1/1 12:00')
+						return
+					}
+					
+					var contestId = model.getCurrentContestId()
+					var peopleId = model.getId()
+					model.makeDualTime(contestId, peopleId, {dualTime: dualTime}, (err, res)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'cancelDualTime'){
+					var value = view.getWinnerFormValue()
+					var contestId = model.getCurrentContestId()
+					var peopleId = model.getId()
+					model.makeDualTime(contestId, peopleId, {dualTime: ""}, (err, res)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
 			}
 			
 			function updateView(){
@@ -788,6 +865,7 @@
 						view.updatePeoplePowerForm(ctx, model.getCurrentContestId(), model.getCurrentPeopleId())
 						view.updateCards(ctx, model.getCurrentContestId())
 						view.updateMessageListView(ctx, model.getCurrentContestId())
+						view.updateWinnerForm(ctx, model.getId(), model.getCurrentPos())
 						
 						model.getDuals((err,duals)=>{
 							if(err != null){

@@ -310,6 +310,24 @@ var model = {};
 		})
 	}
 	
+	function makeDualTime(contestId, peopleId, info, cb){
+		$.ajax({
+			url: '../fn/contestsys/MakeDualTime/'+contestId+'/'+peopleId,
+			data: info,
+			dataType:'json',
+			success: (info)=>{
+				if(info.Error != null){
+					cb(info.Error)
+				}else{
+					cb(null, info.Info)
+				}
+			},
+			error: (xhr, res, err)=>{
+				cb(err)
+			}
+		})
+	}
+	
 	
 	var currentContestId = null
 	function setCurrentContestId(id){
@@ -383,5 +401,6 @@ var model = {};
 	module.upgrade = upgrade
 	module.leaveMessage = leaveMessage
 	module.deleteMessage = deleteMessage
+	module.makeDualTime = makeDualTime
 	
 })(model)

@@ -80,11 +80,15 @@ var view = {};
 		
 		var d = new Date(contest.StartTime)
 		var timeStr = (d.getMonth()+1)+"/"+(d.getDate())+"/"+d.getFullYear()
-		var info = {cards:[]} 
+		var info = {cards:[]}
+		var cardsStr = ""
 		try{
 			info = JSON.parse(contest.Info)
 		}catch(e){
 			console.log('parse info error')
+		}
+		if(info.cards.length > 0){
+			cardsStr = "\"" + info.cards.join("\",\"")+"\""
 		}
 		$(document.form_contest).form('load',{
 			id:contest.ID,
@@ -96,7 +100,7 @@ var view = {};
 			state:contest.State+"",
 			pwd:contest.Password,
 			owner: contest.OwnerName+"("+contest.Owner+")",
-			infoCards: info.cards
+			infoCards: cardsStr
 	    });
 	}
 	
@@ -106,14 +110,18 @@ var view = {};
 		var description = document.form_contest.description.value
 		var startTime = new Date(document.form_contest.startTime.value).getTime()
 		var pwd = document.form_contest.pwd.value
-		var infoCards = document.form_contest.infoCards.value.replace(/\"/g, "").split(',')
+		var infoCards = document.form_contest.infoCards.value.replace(/\"/g, "").split(',').filter(c=>c.trim() != "")
+		var infoCardsStr = ""
+		if(infoCards.length > 0){
+			infoCardsStr = JSON.stringify({"cards":infoCards})
+		}
 		var value = {
 			game: game,
 			name: name,
 			description: description,
 			startTime: startTime,
 			pwd: pwd,
-			info: JSON.stringify({"cards":infoCards})
+			info: infoCardsStr
 		}
 		return value
 	}
@@ -256,6 +264,20 @@ var view = {};
 			var isLeftPeopleFail = peopleLeft != null ? peopleLeft.Lose : false
 			var isRightPeopleFail = peopleRight != null ? peopleRight.Lose : false
 			var state = (isLeftPeopleFail | isRightPeopleFail) ? "結束" : state2str(states[d.ID])
+			var dualTimes = []
+			if(peopleLeft != null && (!!peopleLeft.Info.dualTime)){
+				dualTimes.push(peopleLeft.Info.dualTime)
+			}
+			if(peopleRight != null && (!!peopleRight.Info.dualTime)){
+				dualTimes.push(peopleRight.Info.dualTime)
+			}
+			var dualTimeOk = false
+			dualTimes = dualTimes.filter(t=>t.trim() != "")
+			if(dualTimes.length == 2){
+				if(dualTimes[0] == dualTimes[1]){
+					dualTimeOk = true
+				}
+			}
 			return {
 				contestId: contest.ID,
 				contestName: contest.Name,
@@ -263,7 +285,8 @@ var view = {};
 				right: peopleRight ? peopleRight.Name+"("+peopleRight.ID+")" : "unknown",
 				pos: d.ID,
 				winner: confirms.map(c=>c.Winner).join(','),
-				state: state
+				state: state,
+				dualTime: dualTimeOk ? "敲定 "+dualTimes[0] : "協商 "+dualTimes.join(",")
 			}
 		})
 		var data = {
@@ -493,7 +516,16 @@ var view = {};
 		}
 	}
 	
-	function updateWinnerForm(ctx, pos){
+	function getWinnerFormValue(){
+		var dualTime = document.form_winner.dualTime.value
+		var makeDualTime = document.form_winner.makeDualTime.value
+		return {
+			dualTime: dualTime,
+			makeDualTime: makeDualTime
+		}
+	}
+	
+	function updateWinnerForm(ctx, id, pos){
 		var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
 		if(dual == null){
 			console.log('no dual')
@@ -504,9 +536,92 @@ var view = {};
 			console.log('no contest')
 			return
 		}
+		
+		var me = contest.Peoples[id]
+		if(!!me == false){
+			console.log('me not found')
+			return
+		}
+		var meDual = ctx.DualSys.Duals.find(d=>d.Contest == contest.ID && (me.Pos == d.Left || me.Pos == d.Right))
+		var opponent = null
+		if(meDual != null){
+			for(var k in contest.Peoples){
+				var p = contest.Peoples[k]
+				if(p.Pos == meDual.Left){
+					opponent = p
+				} else if(p.Pos == meDual.Right){
+					opponent = p
+				}
+			}
+		}
+		var lastTime = ""
+		var makeDualTime = ""
+		if(me != null && opponent != null){
+			var d1 = new Date(me.Info.dualTime).getTime()
+			var d2 = new Date(opponent.Info.dualTime).getTime()
+			if(isNaN(d1)){
+				d1 = 0
+			}
+			if(isNaN(d2)){
+				d2 = 0
+			}
+			var max = Math.max(d1, d2)
+			if(max == d1){
+				lastTime = me.Info.dualTime
+			}else if(max == d2){
+				lastTime = opponent.Info.dualTime
+			}
+			
+			if(me.ID == id){
+				makeDualTime = me.Info.dualTime
+			}else if(opponent.ID == id){
+				makeDualTime = opponent.Info.dualTime
+			}
+		}
+
+		/*
+		var peopleLeft = null
+		var peopleRight = null
+		for(var k in contest.Peoples){
+			var p = contest.Peoples[k]
+			if(p.Pos == dual.Left){
+				peopleLeft = p
+			}
+			if(p.Pos == dual.Right){
+				peopleRight = p
+			}
+		}
+		
+		var lastTime = ""
+		var makeDualTime = ""
+		if(peopleLeft != null && peopleRight != null){
+			var d1 = new Date(peopleLeft.Info.dualTime).getTime()
+			var d2 = new Date(peopleRight.Info.dualTime).getTime()
+			if(isNaN(d1)){
+				d1 = 0
+			}
+			if(isNaN(d2)){
+				d2 = 0
+			}
+			var max = Math.max(d1, d2)
+			if(max == d1){
+				lastTime = peopleLeft.Info.dualTime
+			}else if(max == d2){
+				lastTime = peopleRight.Info.dualTime
+			}
+			
+			if(peopleLeft.ID == id){
+				makeDualTime = peopleLeft.Info.dualTime
+			}else if(peopleRight.ID == id){
+				makeDualTime = peopleRight.Info.dualTime
+			}
+		}
+		*/
 		$(document.form_winner).form('load', {
 			contestName: contest.Name,
-			pos: pos
+			pos: pos,
+			dualTime: lastTime,
+			makeDualTime: makeDualTime
 		})
 	}
 	
@@ -638,5 +753,6 @@ var view = {};
 	module.openAccorDual = openAccorDual
 	module.updateMessageListView = updateMessageListView
 	module.updateMessageForm = updateMessageForm
+	module.getWinnerFormValue = getWinnerFormValue
 	
 })(view)

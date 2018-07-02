@@ -30,3 +30,4 @@ handlers:
   static_dir: www/deckWiki
 - url: /.*
   script: _go_app
+  secure: always
