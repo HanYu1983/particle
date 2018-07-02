@@ -14,7 +14,7 @@ type People struct {
 	Lose       bool   // 是否已輸場, 只要為真就沒有變回假的可能. 用來判斷是否場次已比完
 	Power      int    // 種子權重
 	CreateTime time.Time
-	Info       map[string]string
+	DualTime   string
 }
 
 const (
@@ -160,7 +160,6 @@ func JoinContest(model *ContestSys, contestId string, id string, name string, pa
 		ID:         id,
 		Name:       name,
 		CreateTime: time.Now(),
-		Info:       map[string]string{},
 	}
 	contest.Peoples[people.ID] = people
 	model.Contests[contestId] = contest

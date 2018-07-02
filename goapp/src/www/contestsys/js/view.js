@@ -265,11 +265,11 @@ var view = {};
 			var isRightPeopleFail = peopleRight != null ? peopleRight.Lose : false
 			var state = (isLeftPeopleFail | isRightPeopleFail) ? "結束" : state2str(states[d.ID])
 			var dualTimes = []
-			if(peopleLeft != null && (!!peopleLeft.Info.dualTime)){
-				dualTimes.push(peopleLeft.Info.dualTime)
+			if(peopleLeft != null){
+				dualTimes.push(peopleLeft.DualTime)
 			}
-			if(peopleRight != null && (!!peopleRight.Info.dualTime)){
-				dualTimes.push(peopleRight.Info.dualTime)
+			if(peopleRight != null){
+				dualTimes.push(peopleRight.DualTime)
 			}
 			var dualTimeOk = false
 			dualTimes = dualTimes.filter(t=>t.trim() != "")
@@ -557,8 +557,8 @@ var view = {};
 		var lastTime = ""
 		var makeDualTime = ""
 		if(me != null && opponent != null){
-			var d1 = new Date(me.Info.dualTime).getTime()
-			var d2 = new Date(opponent.Info.dualTime).getTime()
+			var d1 = new Date(me.DualTime).getTime()
+			var d2 = new Date(opponent.DualTime).getTime()
 			if(isNaN(d1)){
 				d1 = 0
 			}
@@ -567,56 +567,17 @@ var view = {};
 			}
 			var max = Math.max(d1, d2)
 			if(max == d1){
-				lastTime = me.Info.dualTime
+				lastTime = me.DualTime
 			}else if(max == d2){
-				lastTime = opponent.Info.dualTime
+				lastTime = opponent.DualTime
 			}
 			
 			if(me.ID == id){
-				makeDualTime = me.Info.dualTime
+				makeDualTime = me.DualTime
 			}else if(opponent.ID == id){
-				makeDualTime = opponent.Info.dualTime
+				makeDualTime = opponent.DualTime
 			}
 		}
-
-		/*
-		var peopleLeft = null
-		var peopleRight = null
-		for(var k in contest.Peoples){
-			var p = contest.Peoples[k]
-			if(p.Pos == dual.Left){
-				peopleLeft = p
-			}
-			if(p.Pos == dual.Right){
-				peopleRight = p
-			}
-		}
-		
-		var lastTime = ""
-		var makeDualTime = ""
-		if(peopleLeft != null && peopleRight != null){
-			var d1 = new Date(peopleLeft.Info.dualTime).getTime()
-			var d2 = new Date(peopleRight.Info.dualTime).getTime()
-			if(isNaN(d1)){
-				d1 = 0
-			}
-			if(isNaN(d2)){
-				d2 = 0
-			}
-			var max = Math.max(d1, d2)
-			if(max == d1){
-				lastTime = peopleLeft.Info.dualTime
-			}else if(max == d2){
-				lastTime = peopleRight.Info.dualTime
-			}
-			
-			if(peopleLeft.ID == id){
-				makeDualTime = peopleLeft.Info.dualTime
-			}else if(peopleRight.ID == id){
-				makeDualTime = peopleRight.Info.dualTime
-			}
-		}
-		*/
 		$(document.form_winner).form('load', {
 			contestName: contest.Name,
 			pos: pos,

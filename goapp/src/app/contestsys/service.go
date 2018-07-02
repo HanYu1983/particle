@@ -611,10 +611,7 @@ func Serve_MakeDualTime(w http.ResponseWriter, r *http.Request) {
 		if isJoinPeople == false {
 			return errors.New("你沒有參賽")
 		}
-		if people.Info == nil {
-			people.Info = map[string]string{}
-		}
-		people.Info["dualTime"] = dualTime
+		people.DualTime = dualTime
 
 		contest.Peoples[peopleId] = people
 		appCtx.ContestSys.Contests[contestId] = contest
