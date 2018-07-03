@@ -42,18 +42,20 @@ var view = {};
 					continue
 				}
 			}
-			
 			var sub = []
-			for(var j in contest.Peoples){
-				var p = contest.Peoples[j]
-				var subNode = {
-					id: p.ID,
-					text: p.Name,
-					belongContest: contest.ID,
-					isContest: false,
-					isGroup: false
+			var shouldShowPeople = contest.State == 1 || contest.State == 2
+			if(shouldShowPeople){
+				for(var j in contest.Peoples){
+					var p = contest.Peoples[j]
+					var subNode = {
+						id: p.ID,
+						text: p.Name,
+						belongContest: contest.ID,
+						isContest: false,
+						isGroup: false
+					}
+					sub.push(subNode)
 				}
-				sub.push(subNode)
 			}
 			var node = {
 				id: contest.ID,
@@ -62,6 +64,7 @@ var view = {};
 				isContest: true,
 				isGroup: false
 			}
+			
 			top.children[contest.State].children.push(node)
 		}
 		$('#gameTree').tree({data: root})
@@ -226,13 +229,28 @@ var view = {};
 					peopleRight = p
 				}
 			}
+			var dualTimes = []
+			if(peopleLeft != null){
+				dualTimes.push(peopleLeft.DualTime)
+			}
+			if(peopleRight != null){
+				dualTimes.push(peopleRight.DualTime)
+			}
+			var dualTimeOk = false
+			dualTimes = dualTimes.filter(t=>t.trim() != "")
+			if(dualTimes.length == 2){
+				if(dualTimes[0] == dualTimes[1]){
+					dualTimeOk = true
+				}
+			}
 			return {
 				contestId: contest.ID,
 				contestName: contest.Name,
 				left: peopleLeft ? peopleLeft.Name+"("+peopleLeft.ID+")" : "unknown",
 				right: peopleRight ? peopleRight.Name+"("+peopleRight.ID+")" : "unknown",
 				pos: d.ID,
-				winner: (!!confirm) ? confirm.Winner : "unknown"
+				winner: (!!confirm) ? confirm.Winner : "unknown",
+				dualTime: dualTimeOk ? "敲定 "+dualTimes[0] : "協商 "+dualTimes.join(",")
 			}
 		})
 		var data = {
