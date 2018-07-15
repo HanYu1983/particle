@@ -892,7 +892,7 @@
 				// 自動登入FB
 				fb.init((err, res)=>{
 					if(err != null){
-						view.alert('login err')
+						view.alert('error', '請先登入FB')
 					}else{
 						// 設定使用者ID
 						var fbId = res.userID
