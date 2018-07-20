@@ -3,20 +3,22 @@ const _ = require('underscore')
 const request = require('request')
 const fs = require('fs')
 
-function fetch(url){
+function fetch(url, dontUseCache){
 	return new Promise((res, rej)=>{
 		const urlKey = encodeURIComponent(url)
 		const path = "cache/"+urlKey+".html"
-		if (fs.existsSync(path)) {
-			//console.log('use cache:'+path)
-			fs.readFile(path, 'utf8', function (err,data) {
-				if (err) {
-					rej(err)
-					return
-				}
-				res(data)
-			});
-			return
+		if((!!dontUseCache) == false){
+			if (fs.existsSync(path)) {
+				//console.log('use cache:'+path)
+				fs.readFile(path, 'utf8', function (err,data) {
+					if (err) {
+						rej(err)
+						return
+					}
+					res(data)
+				});
+				return
+			}
 		}
 		request
 			.get(url)
@@ -75,7 +77,7 @@ async function sengokuCh(outputPath){
 
 	let datas = []
 	let host = 'http://sengoku-taisen-tcg.segataiwan.com.tw/'
-	let page = await fetch(host + 'card.php')
+	let page = await fetch(host + 'card.php', true)
 	var row = 0
 	while(row = reg.exec(page)){
 		var [ignore, nextUrl, name] = row
@@ -84,6 +86,7 @@ async function sengokuCh(outputPath){
 		var row2 = 0
 		while(row2 = reg2.exec(page2)){
 			var [ignore, nextUrl] = row2
+			console.log(nextUrl)
 			var page3 = await fetch(host+nextUrl)
 			var row3 = reg3.exec(page3)
 			var [ignore, ...info] = row3
@@ -146,7 +149,7 @@ async function sengokuJp(outputPath){
 	let reg2 = /<a href="#card-detail_\d+">[\s\S]<img src="http:\/\/sengoku-taisen-tcg\.sega\.jp\/wp-content\/uploads\/([\s\S]*?)">[\s\S]*?<span class="name">[\s\S]*?<\/span>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>[\s\S]*?<th scope="row">[\s\S]*?<\/th><td>([\s\S]*?)<\/td>/g
 	
 	let datas = []
-	let page = await fetch('http://sengoku-taisen-tcg.sega.jp/cards/')
+	let page = await fetch('http://sengoku-taisen-tcg.sega.jp/cards/', true)
 	var row = 0
 	while(row = reg.exec(page)){
 		var [ignore, nextUrl, name] = row
@@ -210,4 +213,5 @@ async function sengokuJp(outputPath){
 (async function(){
 	// 記得抓之前把要抓首頁的快取檔清掉, 不然抓不到最新的
 	await sengokuCh('build/sengoku.json')
+	await sengokuJp('build/sengokuJp.json')
 })()
