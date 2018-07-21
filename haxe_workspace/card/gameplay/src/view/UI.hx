@@ -273,8 +273,14 @@ class UI extends Mediator
 	}
 	
 	function createIconDialog(){
+		var cookieData = CallJs.getCookie('iconContents');
+		trace( cookieData );
+		if ( cookieData == null ){
+			trace('empty' );
+		}
+		
 		for ( i in 0...10 ){
-			addSingleIconData(i, 'icon_' + i);
+			addSingleIconData(i, '天機桐人:1/1:宇');
 		}
 		dia_iconGenerator.find('.easyui-linkbutton' ).linkbutton({
 			onClick:function(){

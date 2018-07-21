@@ -2778,10 +2778,15 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 	}
 	,createIconDialog: function() {
 		var _gthis = this;
+		var cookieData = CallJs.getCookie("iconContents");
+		console.log(cookieData);
+		if(cookieData == null) {
+			console.log("empty");
+		}
 		var _g = 0;
 		while(_g < 10) {
 			var i = _g++;
-			this.addSingleIconData(i,"icon_" + i);
+			this.addSingleIconData(i,"天機桐人:1/1:宇");
 		}
 		this.dia_iconGenerator.find(".easyui-linkbutton").linkbutton({ onClick : function() {
 			var dom = Main.j(this);
