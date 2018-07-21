@@ -516,6 +516,9 @@ body{
 		$.removeCookie( key );
 	}
 	
+	
+	
+	
 	</script>
 	<script src="../common/js/db2.js"></script>	
 	<script src="../common/js/db2path.js"></script>	
@@ -526,5 +529,10 @@ body{
 	<script src="js/config.js?v=20180416"></script>
 	<script src="js/main.js?v=20180417"></script>
 	<script>admin.init()</script>
+	<script>
+	var test = api.loadUserConfig("test", {abc:10, name:"ci"})
+	console.log(test)
+	api.saveUserConfig("test", {abc:2000, name:"han"})
+	</script>
 </body>
 </html>

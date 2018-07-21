@@ -349,6 +349,30 @@ var api = api || {};
 		syncTimer(selfName, targetNames, cb)
 	}
 	
+	
+	// 記錄使用者設定
+	function saveUserConfig(key, obj){
+		if (typeof(window.localStorage) == "undefined") {
+			console.log('window.localStorage not support')
+		    return
+		}
+		window.localStorage.setItem("app/card/config_"+key, JSON.stringify(obj));
+	}
+	
+	// 讀取使用者設定
+	// 若還沒有記錄, 回傳defV
+	function loadUserConfig(key, defV){
+		if (typeof(window.localStorage) == "undefined") {
+			console.log('window.localStorage not support')
+		    return defV
+		}
+		var jsonStr = window.localStorage["app/card/config_"+key]
+		if(!!jsonStr == false){
+			return defV
+		}
+		return JSON.parse(jsonStr)
+	}
+	
 	module.createChannel = createChannel
 	
 	module.startHeartbeat = startHeartbeat
@@ -367,5 +391,8 @@ var api = api || {};
 	module.stopTimer = stopTimer
 	module.switchUser = switchUser
 	module.getTimerContext = getTimerContext
+	
+	module.saveUserConfig = saveUserConfig
+	module.loadUserConfig = loadUserConfig
 	
 }) (api)
