@@ -228,7 +228,6 @@ class UI extends Mediator
 					Main.alert( '格式不對哦!' );
 				}
 			case Main.on_save_click:
-				//trace( notification.getBody().str );
 				txt_savestr.textbox( { value: notification.getBody().str } );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
@@ -322,6 +321,7 @@ class UI extends Mediator
 		dia_iconGenerator.find('.easyui-textbox').each( function(){
 			var dom = Main.j(untyped __js__("this"));
 			var content = dom.textbox('getValue');
+			if ( content == "" ) content = "天機桐人_1/1_宇";
 			var path = dom.parents('.singleIconData').find('.img_token').attr('src');
 			saveAry.push({path:path, content:content});
 		});

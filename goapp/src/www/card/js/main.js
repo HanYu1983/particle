@@ -2846,6 +2846,9 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 		this.dia_iconGenerator.find(".easyui-textbox").each(function() {
 			var dom = Main.j(this);
 			var content = dom.textbox("getValue");
+			if(content == "") {
+				content = "天機桐人_1/1_宇";
+			}
 			var path = dom.parents(".singleIconData").find(".img_token").attr("src");
 			saveAry.push({ path : path, content : content});
 		});
