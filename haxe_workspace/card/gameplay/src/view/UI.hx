@@ -164,6 +164,7 @@ class UI extends Mediator
 					SocketController.on_searchComplete,
 					SocketController.on_heartbeat_event,
 					SocketController.on_receiveMessage,
+					Main.on_startTimer_click,
 					Main.on_createDeck_click,
 					Main.on_save_click,
 					Main.on_load_click,
@@ -189,6 +190,8 @@ class UI extends Mediator
 				onSocketSuccess();
 			case SocketController.on_socket_error:
 				onSocketError();
+			case Main.on_startTimer_click:
+				mc_layoutMain.layout('collapse', 'north');
 			case MainController.on_been_invite:
 				combo_ops.combobox( 'setValue', notification.getBody().inviteId );
 			case MainController.on_dice:

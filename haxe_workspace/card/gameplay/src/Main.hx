@@ -25,6 +25,7 @@ class Main
 	public static inline var on_receiveOps = 'on_receiveOps';
 	public static inline var on_save_click = 'on_save_click';
 	public static inline var on_load_click = 'on_load_click';
+	public static inline var on_startTimer_click = 'on_startTimer_click';
 	public static inline var on_timer_update = 'on_timer_update';
 
 	public static var j:Dynamic = untyped __js__('$');
@@ -171,6 +172,7 @@ class Main
 					if ( err != null )	alert( err );
 				});
 			case 'onStartTimerClick':
+				Facade.getInstance().sendNotification( on_startTimer_click );
 				CallJs.api_resetTimer( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
 					if ( err != null )	alert( err );
 					else{

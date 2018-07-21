@@ -406,6 +406,7 @@ Main.prototype = {
 			Main.createItem(data3);
 			break;
 		case "onStartTimerClick":
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification("on_startTimer_click");
 			CallJs.api_resetTimer(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err2,data4) {
 				if(err2 != null) {
 					Main.alert(err2);
@@ -2645,7 +2646,7 @@ view_UI.__name__ = true;
 view_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return ["on_select_cards","on_dice","on_been_invite","on_socket_error","on_socket_success","on_getSuit_success","on_receiveOps","on_timer_update","on_searchComplete","on_heartbeat_event","on_receiveMessage","on_createDeck_click","on_save_click","on_load_click","do_show_recevie"];
+		return ["on_select_cards","on_dice","on_been_invite","on_socket_error","on_socket_success","on_getSuit_success","on_receiveOps","on_timer_update","on_searchComplete","on_heartbeat_event","on_receiveMessage","on_startTimer_click","on_createDeck_click","on_save_click","on_load_click","do_show_recevie"];
 	}
 	,handleNotification: function(notification) {
 		var _gthis = this;
@@ -2716,6 +2717,9 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			break;
 		case "on_socket_success":
 			this.onSocketSuccess();
+			break;
+		case "on_startTimer_click":
+			this.mc_layoutMain.layout("collapse","north");
 			break;
 		case "on_timer_update":
 			var tcx = CallJs.api_getTimerContext();
@@ -3073,6 +3077,7 @@ Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
 Main.on_save_click = "on_save_click";
 Main.on_load_click = "on_load_click";
+Main.on_startTimer_click = "on_startTimer_click";
 Main.on_timer_update = "on_timer_update";
 Main.j = $;
 Main.fbid = "";
