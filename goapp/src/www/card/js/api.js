@@ -367,7 +367,7 @@ var api = api || {};
 		    return defV
 		}
 		var jsonStr = window.localStorage["app/card/config_"+key]
-		if(!!jsonStr == false){
+		if((!!jsonStr) == false){
 			return defV
 		}
 		return JSON.parse(jsonStr)

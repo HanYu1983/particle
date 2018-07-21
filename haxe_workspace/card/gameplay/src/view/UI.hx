@@ -273,20 +273,19 @@ class UI extends Mediator
 	}
 	
 	function createIconDialog(){
-		var cookieData = CallJs.getCookie('iconContents');
-		trace( cookieData );
+		var cookieData:Array<Dynamic> = CallJs.api_loadUserConfig("userIconContents", null);
 		if ( cookieData == null ){
-			trace('empty' );
+			cookieData = [for (i in 0...10) {path:'../common/images/card/token_0.png', content:'天機桐人_1/1_宇'}];
 		}
-		
-		for ( i in 0...10 ){
-			addSingleIconData(i, '天機桐人:1/1:宇');
+		for ( i in 0...cookieData.count() ){
+			addSingleIconData(i, cookieData[i]);
 		}
 		dia_iconGenerator.find('.easyui-linkbutton' ).linkbutton({
 			onClick:function(){
 				var dom = Main.j(untyped __js__('this'));
 				var createContent:String = dom.parents('.singleIconData').find('.easyui-textbox').textbox('getValue');
-				facade.sendNotification( MainController.do_create_item, Tool.createItemFromData( [{ extra:[ 'token_0', 'other', createContent], pos:[100, 100], type:'tokenString', width:50, height:50, owner:SocketController.playerId }] ));
+				var path = dom.parents('.singleIconData').find('.img_token').attr('src');
+				facade.sendNotification( MainController.do_create_item, Tool.createItemFromData( [{ extra:[ 'token_0', 'other', createContent, path], pos:[100, 100], type:'tokenString', width:50, height:50, owner:SocketController.playerId }] ));
 				
 				//有沒有打開自動關閉
 				var checked:Bool = dom.parents('#dia_iconGenerator').find('.switchbutton-inner').css("margin-left") == '0px';
@@ -295,23 +294,49 @@ class UI extends Mediator
 				}
 			}
 		});
+		dia_iconGenerator.find('.img_token').click(function(){
+			var dom:Dynamic = Main.j(untyped __js__("this"));
+			var imgPath:String = dom.attr('src');
+			if(imgPath.indexOf("token_0" ) != -1){
+				imgPath = StringTools.replace( imgPath, "token_0", "token_1" );
+			}else if(imgPath.indexOf("token_1" ) != -1){
+				imgPath = StringTools.replace( imgPath, "token_1", "token_2" );
+			}else if(imgPath.indexOf("token_2" ) != -1){
+				imgPath = StringTools.replace( imgPath, "token_2", "token_0" );
+			}
+			dom.attr('src', imgPath );
+		});
+		
 		dia_iconGenerator.find('.easyui-textbox' ).textbox();
 		dia_iconGenerator.dialog({
 			closed:true,
 			onClose:function(){
+				saveIconContents();
 				facade.sendNotification( on_iconGenerator_close );
 			}
 		});
+	}
+	
+	function saveIconContents(){
+		var saveAry = [];
+		dia_iconGenerator.find('.easyui-textbox').each( function(){
+			var dom = Main.j(untyped __js__("this"));
+			var content = dom.textbox('getValue');
+			var path = dom.parents('.singleIconData').find('.img_token').attr('src');
+			saveAry.push({path:path, content:content});
+		});
+		CallJs.api_saveUserConfig("userIconContents", saveAry );
 	}
 	
 	function openIconGenerator(open){
 		dia_iconGenerator.dialog(open ? 'open' : 'close' );
 	}
 	
-	function addSingleIconData(id, content){
+	function addSingleIconData(id, data:Dynamic){
 		var icondataDom = Main.j('#tmpl_singleIconData' ).tmpl({
 			buttonId:id,
-			content:content
+			content:data.content,
+			tokenPath:data.path
 		});
 		dia_iconGenerator.append(icondataDom );
 	}

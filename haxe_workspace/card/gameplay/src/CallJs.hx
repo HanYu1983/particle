@@ -29,6 +29,8 @@ package;
 						'api.stopTimer',
 						'api.switchUser',
 						'api.getTime',
+						'api.saveUserConfig',
+						'api.loadUserConfig',
 						'myapp.facebook.login',
 						'myapp.facebook.init',
 						'leo.utils.initRectSelect',

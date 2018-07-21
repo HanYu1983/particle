@@ -257,10 +257,8 @@ class MainController extends Mediator
 				item = new TokenItem( model.id, Tool.createItemDiv( model.type, parseData ) );
 			case 'tokenString':
 				var parseData = Json.parse( Json.stringify( model ) );
-				parseData.extra = [ 
-					untyped __js__('api.getCardImageWithPackageName')( model.extra[1], model.extra[0] )
-				];
 				parseData.content = model.extra[2];
+				parseData.path = model.extra[3];
 				item = new TokenItem( model.id, Tool.createItemDiv( model.type, parseData ) );
 			default:
 				item = new BasicItem( model.id, Tool.createItemDiv( model.type, model ) );

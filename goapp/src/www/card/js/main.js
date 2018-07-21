@@ -60,6 +60,25 @@ Lambda.fold = function(it,f,first) {
 	}
 	return first;
 };
+Lambda.count = function(it,pred) {
+	var n = 0;
+	if(pred == null) {
+		var _ = $iterator(it)();
+		while(_.hasNext()) {
+			var _1 = _.next();
+			++n;
+		}
+	} else {
+		var x = $iterator(it)();
+		while(x.hasNext()) {
+			var x1 = x.next();
+			if(pred(x1)) {
+				++n;
+			}
+		}
+	}
+	return n;
+};
 Lambda.find = function(it,f) {
 	var v = $iterator(it)();
 	while(v.hasNext()) {
@@ -1024,8 +1043,8 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			break;
 		case "tokenString":
 			var parseData2 = JSON.parse(JSON.stringify(model));
-			parseData2.extra = [api.getCardImageWithPackageName(model.extra[1],model.extra[0])];
 			parseData2.content = model.extra[2];
+			parseData2.path = model.extra[3];
 			item = new view_TokenItem(model.id,Tool.createItemDiv(model.type,parseData2));
 			break;
 		default:
@@ -2778,35 +2797,65 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 	}
 	,createIconDialog: function() {
 		var _gthis = this;
-		var cookieData = CallJs.getCookie("iconContents");
-		console.log(cookieData);
+		var cookieData = CallJs.api_loadUserConfig("userIconContents",null);
 		if(cookieData == null) {
-			console.log("empty");
+			var _g = [];
+			var _g1 = 0;
+			while(_g1 < 10) {
+				var i = _g1++;
+				_g.push({ path : "../common/images/card/token_0.png", content : "天機桐人_1/1_宇"});
+			}
+			cookieData = _g;
 		}
-		var _g = 0;
-		while(_g < 10) {
-			var i = _g++;
-			this.addSingleIconData(i,"天機桐人:1/1:宇");
+		var _g11 = 0;
+		var _g2 = Lambda.count(cookieData);
+		while(_g11 < _g2) {
+			var i1 = _g11++;
+			this.addSingleIconData(i1,cookieData[i1]);
 		}
 		this.dia_iconGenerator.find(".easyui-linkbutton").linkbutton({ onClick : function() {
 			var dom = Main.j(this);
 			var createContent = dom.parents(".singleIconData").find(".easyui-textbox").textbox("getValue");
-			_gthis.facade.sendNotification("do_create_item",Tool.createItemFromData([{ extra : ["token_0","other",createContent], pos : [100,100], type : "tokenString", width : 50, height : 50, owner : controller_SocketController.playerId}]));
+			var path = dom.parents(".singleIconData").find(".img_token").attr("src");
+			_gthis.facade.sendNotification("do_create_item",Tool.createItemFromData([{ extra : ["token_0","other",createContent,path], pos : [100,100], type : "tokenString", width : 50, height : 50, owner : controller_SocketController.playerId}]));
 			var checked = dom.parents("#dia_iconGenerator").find(".switchbutton-inner").css("margin-left") == "0px";
 			if(checked) {
 				_gthis.openIconGenerator(false);
 			}
 		}});
+		this.dia_iconGenerator.find(".img_token").click(function() {
+			var dom1 = Main.j(this);
+			var imgPath = dom1.attr("src");
+			if(imgPath.indexOf("token_0") != -1) {
+				imgPath = StringTools.replace(imgPath,"token_0","token_1");
+			} else if(imgPath.indexOf("token_1") != -1) {
+				imgPath = StringTools.replace(imgPath,"token_1","token_2");
+			} else if(imgPath.indexOf("token_2") != -1) {
+				imgPath = StringTools.replace(imgPath,"token_2","token_0");
+			}
+			dom1.attr("src",imgPath);
+		});
 		this.dia_iconGenerator.find(".easyui-textbox").textbox();
 		this.dia_iconGenerator.dialog({ closed : true, onClose : function() {
+			_gthis.saveIconContents();
 			_gthis.facade.sendNotification("on_iconGenerator_close");
 		}});
+	}
+	,saveIconContents: function() {
+		var saveAry = [];
+		this.dia_iconGenerator.find(".easyui-textbox").each(function() {
+			var dom = Main.j(this);
+			var content = dom.textbox("getValue");
+			var path = dom.parents(".singleIconData").find(".img_token").attr("src");
+			saveAry.push({ path : path, content : content});
+		});
+		CallJs.api_saveUserConfig("userIconContents",saveAry);
 	}
 	,openIconGenerator: function(open) {
 		this.dia_iconGenerator.dialog(open ? "open" : "close");
 	}
-	,addSingleIconData: function(id,content) {
-		var icondataDom = Main.j("#tmpl_singleIconData").tmpl({ buttonId : id, content : content});
+	,addSingleIconData: function(id,data) {
+		var icondataDom = Main.j("#tmpl_singleIconData").tmpl({ buttonId : id, content : data.content, tokenPath : data.path});
 		this.dia_iconGenerator.append(icondataDom);
 	}
 	,addSingleMessage: function(id,msg) {
@@ -3111,6 +3160,8 @@ CallJs.api_startTimer = api.startTimer;
 CallJs.api_stopTimer = api.stopTimer;
 CallJs.api_switchUser = api.switchUser;
 CallJs.api_getTime = api.getTime;
+CallJs.api_saveUserConfig = api.saveUserConfig;
+CallJs.api_loadUserConfig = api.loadUserConfig;
 CallJs.myapp_facebook_login = myapp.facebook.login;
 CallJs.myapp_facebook_init = myapp.facebook.init;
 CallJs.leo_utils_initRectSelect = leo.utils.initRectSelect;

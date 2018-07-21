@@ -135,6 +135,9 @@ body{
 		<div class="hori">
 			<input value=${content} class="easyui-textbox" style="width:130px;" />
 		</div>
+		<div class="hori">
+			<img class="img_token" style="position:relative; top:7px; left:0; height:20px;" src=${tokenPath} />
+		</div>
 	</div>
 </script>
 <script id="tmpl_singleMessage" type="jquery-x-tmpl">
@@ -176,7 +179,7 @@ body{
 </script>
 <script id="tmpl_tokenString" type="jquery-x-tmpl">
 	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
-		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />
+		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${path} />
 		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
 		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
 		<div style="position:relative; left:-25px; width:100px; height:12px; text-align:center; background-color:#ccc; outline:1px solid">
@@ -441,7 +444,7 @@ body{
 			</div>
 		</div>
 		<div id="dia_message" class="easyui-dialog" title="注意!" data-options="iconCls:'icon-help',closed:true" style="text-align:center;width:500px;padding:10px"></div>
-		<div id="dia_iconGenerator" class="easyui-dialog" title="指示物產生器" data-options="iconCls:'icon-sum',closed:false" style="width:230px; padding:10px">
+		<div id="dia_iconGenerator" class="easyui-dialog" title="指示物產生器" data-options="iconCls:'icon-sum',closed:false" style="width:255px; padding:10px">
 			<div style="margin-bottom:5px" class="group">
 				<div class="hori">
 					<input class="easyui-switchbutton" checked>
@@ -530,9 +533,9 @@ body{
 	<script src="js/main.js?v=20180417"></script>
 	<script>admin.init()</script>
 	<script>
-	var test = api.loadUserConfig("test", {abc:10, name:"ci"})
-	console.log(test)
-	api.saveUserConfig("test", {abc:2000, name:"han"})
+	//var test = api.loadUserConfig("test", {abc:10, name:"ci"})
+	//console.log(test)
+	//api.saveUserConfig("test", {abc:2000, name:"han"})
 	</script>
 </body>
 </html>
