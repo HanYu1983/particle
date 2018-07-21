@@ -406,6 +406,7 @@ Main.prototype = {
 			Main.createItem(data3);
 			break;
 		case "onStartTimerClick":
+			org_puremvc_haxe_patterns_facade_Facade.getInstance().sendNotification("on_startTimer_click");
 			CallJs.api_resetTimer(controller_SocketController.playerId,controller_SocketController.otherPlayerIds,function(err2,data4) {
 				if(err2 != null) {
 					Main.alert(err2);
@@ -722,12 +723,15 @@ controller_MainController.__name__ = true;
 controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return ["do_create_item","do_getItemsString","on_sendMessage","on_receiveMessage","do_start_record","do_enable_command","do_update_view","on_item_click","on_item_lock"];
+		return ["do_create_item","do_getItemsString","on_sendMessage","on_receiveMessage","do_start_record","do_enable_command","do_update_view","on_item_click","on_item_lock","on_iconGenerator_close"];
 	}
 	,handleNotification: function(notification) {
 		var _gthis = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_iconGenerator_close":
+			this.isEnableCommand = true;
+			break;
 		case "on_item_click":
 			var div = notification.getBody();
 			this.onSelectItems(div,true,this.isCtrl);
@@ -1018,6 +1022,12 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			parseData1.extra = [api.getCardImageWithPackageName(model.extra[1],model.extra[0])];
 			item = new view_TokenItem(model.id,Tool.createItemDiv(model.type,parseData1));
 			break;
+		case "tokenString":
+			var parseData2 = JSON.parse(JSON.stringify(model));
+			parseData2.extra = [api.getCardImageWithPackageName(model.extra[1],model.extra[0])];
+			parseData2.content = model.extra[2];
+			item = new view_TokenItem(model.id,Tool.createItemDiv(model.type,parseData2));
+			break;
 		default:
 			item = new view_BasicItem(model.id,Tool.createItemDiv(model.type,model));
 		}
@@ -1042,6 +1052,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			return;
 		}
 		this.sendNotification("on_press",null,e.which);
+		this.facade.sendNotification("on_keyboard_click",{ which : Std.parseInt(e.which)});
 		var _g = Std.parseInt(e.which);
 		if(_g == null) {
 			if(this.ary_select.length == 0) {
@@ -1054,7 +1065,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			case 17:
 				this.isCtrl = false;
 				break;
-			case 65:case 66:case 68:case 73:case 75:case 79:case 80:case 84:
+			case 65:case 66:case 68:case 73:case 75:case 79:case 80:case 84:case 85:
 				break;
 			default:
 				if(this.ary_select.length == 0) {
@@ -1139,6 +1150,9 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			var dice = Math.floor(Math.random() * 100);
 			this.sendNotification("on_dice",{ playerId : controller_SocketController.playerId, dice : dice});
 			this.sendNotification("sendMessage",{ type : "dice", msg : { playerId : controller_SocketController.playerId, dice : dice}});
+			break;
+		case 85:
+			this.isEnableCommand = false;
 			break;
 		case 86:
 			this.setModelViewer();
@@ -2556,6 +2570,8 @@ var view_UI = function(mediatorName,viewComponent) {
 	var _gthis = this;
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
+	this.mc_layoutMain = this.getViewComponent();
+	this.mc_layoutMain.layout("collapse","south");
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
 	this.mc_messagePanel = this.getViewComponent().find("#mc_messagePanel");
 	this.mc_messagePanel.attr("isOpen",0);
@@ -2617,6 +2633,8 @@ var view_UI = function(mediatorName,viewComponent) {
 		_gthis.sendNotification("do_startHeartbeat");
 		_gthis.showReceive(false);
 	});
+	this.dia_iconGenerator = Main.j("#dia_iconGenerator");
+	this.createIconDialog();
 	this.combo_ops.combobox({ onChange : function(nv1,ov1) {
 		Main.selectOps(nv1);
 	}});
@@ -2643,7 +2661,7 @@ view_UI.__name__ = true;
 view_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return ["on_select_cards","on_dice","on_been_invite","on_socket_error","on_socket_success","on_getSuit_success","on_receiveOps","on_timer_update","on_searchComplete","on_heartbeat_event","on_receiveMessage","on_createDeck_click","on_save_click","on_load_click","do_show_recevie"];
+		return ["on_select_cards","on_dice","on_been_invite","on_keyboard_click","on_socket_error","on_socket_success","on_getSuit_success","on_receiveOps","on_timer_update","on_searchComplete","on_heartbeat_event","on_receiveMessage","on_startTimer_click","on_createDeck_click","on_save_click","on_load_click","do_show_recevie"];
 	}
 	,handleNotification: function(notification) {
 		var _gthis = this;
@@ -2663,6 +2681,12 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			break;
 		case "on_heartbeat_event":
 			this.showOnlineOffline(notification.getBody().conn);
+			break;
+		case "on_keyboard_click":
+			var which = notification.getBody().which;
+			if(which == 85) {
+				this.openIconGenerator(true);
+			}
 			break;
 		case "on_load_click":
 			var loadstr = this.txt_savestr.textbox("getValue");
@@ -2715,6 +2739,9 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 		case "on_socket_success":
 			this.onSocketSuccess();
 			break;
+		case "on_startTimer_click":
+			this.mc_layoutMain.layout("collapse","north");
+			break;
 		case "on_timer_update":
 			var tcx = CallJs.api_getTimerContext();
 			this.doUpdateTimerView(tcx);
@@ -2748,6 +2775,34 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 				this.mc_timerView.parent().removeClass("timer_focus");
 			}
 		}
+	}
+	,createIconDialog: function() {
+		var _gthis = this;
+		var _g = 0;
+		while(_g < 10) {
+			var i = _g++;
+			this.addSingleIconData(i,"icon_" + i);
+		}
+		this.dia_iconGenerator.find(".easyui-linkbutton").linkbutton({ onClick : function() {
+			var dom = Main.j(this);
+			var createContent = dom.parents(".singleIconData").find(".easyui-textbox").textbox("getValue");
+			_gthis.facade.sendNotification("do_create_item",Tool.createItemFromData([{ extra : ["token_0","other",createContent], pos : [100,100], type : "tokenString", width : 50, height : 50, owner : controller_SocketController.playerId}]));
+			var checked = dom.parents("#dia_iconGenerator").find(".switchbutton-inner").css("margin-left") == "0px";
+			if(checked) {
+				_gthis.openIconGenerator(false);
+			}
+		}});
+		this.dia_iconGenerator.find(".easyui-textbox").textbox();
+		this.dia_iconGenerator.dialog({ closed : true, onClose : function() {
+			_gthis.facade.sendNotification("on_iconGenerator_close");
+		}});
+	}
+	,openIconGenerator: function(open) {
+		this.dia_iconGenerator.dialog(open ? "open" : "close");
+	}
+	,addSingleIconData: function(id,content) {
+		var icondataDom = Main.j("#tmpl_singleIconData").tmpl({ buttonId : id, content : content});
+		this.dia_iconGenerator.append(icondataDom);
 	}
 	,addSingleMessage: function(id,msg) {
 		var mc_message = this.mc_messagePanel.find("#mc_message");
@@ -3071,6 +3126,7 @@ Main.on_createDeck_click = "on_createDeck_click";
 Main.on_receiveOps = "on_receiveOps";
 Main.on_save_click = "on_save_click";
 Main.on_load_click = "on_load_click";
+Main.on_startTimer_click = "on_startTimer_click";
 Main.on_timer_update = "on_timer_update";
 Main.j = $;
 Main.fbid = "";
@@ -3087,6 +3143,7 @@ controller_MainController.do_getItemsString = "do_getItemsString";
 controller_MainController.do_start_record = "do_start_record";
 controller_MainController.do_enable_command = "do_enable_command";
 controller_MainController.do_update_view = "do_update_view";
+controller_MainController.on_keyboard_click = "on_keyboard_click";
 controller_MainController.on_been_invite = "on_been_invite";
 controller_MainController.on_select_cards = "on_select_cards";
 controller_MainController.on_press = "on_press";
@@ -3111,5 +3168,6 @@ view_BasicItem.on_item_click = "on_item_click";
 view_BasicItem.on_item_lock = "on_item_lock";
 view_UI.do_show_recevie = "do_show_recevie";
 view_UI.on_combo_deck_change = "on_combo_deck_change";
+view_UI.on_iconGenerator_close = "on_iconGenerator_close";
 Main.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

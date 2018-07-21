@@ -22,9 +22,8 @@ using StringTools;
 class UI extends Mediator
 {
 	public static inline var do_show_recevie = 'do_show_recevie';
-	
 	public static inline var on_combo_deck_change = 'on_combo_deck_change';
-	//public static var on_op_change = 'on_op_change';
+	public static inline var on_iconGenerator_close = 'on_iconGenerator_close';
 	
 	var mc_detailContainer:Dynamic;
 	var combo_deck:Dynamic;
@@ -33,12 +32,10 @@ class UI extends Mediator
 	var btn_record:Dynamic;
 	var dia_invite:Dynamic;
 	var mc_light:Dynamic;
-	
-	//chat
+	var mc_layoutMain:Dynamic;
 	var mc_messagePanel:Dynamic;
-	
-	//tiemr view
 	var mc_timerView:Dynamic;
+	var dia_iconGenerator:Dynamic;
 	
 	var isShowNotify = false;
 	var browserNotify = null;
@@ -48,6 +45,9 @@ class UI extends Mediator
 		super(mediatorName, viewComponent);
 		
 		getViewComponent().layout();
+		
+		mc_layoutMain = getViewComponent();
+		mc_layoutMain.layout('collapse', 'south');
 		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
 		
@@ -109,6 +109,9 @@ class UI extends Mediator
 			showReceive( false );
 		});
 		
+		dia_iconGenerator = Main.j('#dia_iconGenerator');	
+		createIconDialog();
+		
 		combo_ops.combobox( {
 			onChange:function( nv, ov ) {
 				Main.selectOps( nv );
@@ -146,7 +149,6 @@ class UI extends Mediator
 				browserNotify = null;
 			}
 		});
-		
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -155,6 +157,7 @@ class UI extends Mediator
 					MainController.on_select_cards,
 					MainController.on_dice,
 					MainController.on_been_invite,
+					MainController.on_keyboard_click,
 					SocketController.on_socket_error,
 					SocketController.on_socket_success,
 					Main.on_getSuit_success,
@@ -163,10 +166,11 @@ class UI extends Mediator
 					SocketController.on_searchComplete,
 					SocketController.on_heartbeat_event,
 					SocketController.on_receiveMessage,
+					Main.on_startTimer_click,
 					Main.on_createDeck_click,
 					Main.on_save_click,
 					Main.on_load_click,
-					do_show_recevie
+					do_show_recevie,
 				];
 	}
 	
@@ -188,10 +192,18 @@ class UI extends Mediator
 				onSocketSuccess();
 			case SocketController.on_socket_error:
 				onSocketError();
+			case Main.on_startTimer_click:
+				mc_layoutMain.layout('collapse', 'north');
 			case MainController.on_been_invite:
 				combo_ops.combobox( 'setValue', notification.getBody().inviteId );
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
+			case MainController.on_keyboard_click:
+				var which = notification.getBody().which;
+				switch(which){
+					case KeyboardEvent.DOM_VK_U:
+						openIconGenerator(true);
+				}
 			case Main.on_load_click:
 				var loadstr = txt_savestr.textbox( 'getValue' );
 				try{
@@ -259,15 +271,44 @@ class UI extends Mediator
 			}
 		}
 	}
-	/*
-	function showChatPanel( show ) {
-		if ( show ) {
-			mc_messagePanel.dialog( 'open' );
-		}else {
-			mc_messagePanel.dialog( 'close' );
+	
+	function createIconDialog(){
+		for ( i in 0...10 ){
+			addSingleIconData(i, 'icon_' + i);
 		}
+		dia_iconGenerator.find('.easyui-linkbutton' ).linkbutton({
+			onClick:function(){
+				var dom = Main.j(untyped __js__('this'));
+				var createContent:String = dom.parents('.singleIconData').find('.easyui-textbox').textbox('getValue');
+				facade.sendNotification( MainController.do_create_item, Tool.createItemFromData( [{ extra:[ 'token_0', 'other', createContent], pos:[100, 100], type:'tokenString', width:50, height:50, owner:SocketController.playerId }] ));
+				
+				//有沒有打開自動關閉
+				var checked:Bool = dom.parents('#dia_iconGenerator').find('.switchbutton-inner').css("margin-left") == '0px';
+				if (checked){
+					openIconGenerator(false);
+				}
+			}
+		});
+		dia_iconGenerator.find('.easyui-textbox' ).textbox();
+		dia_iconGenerator.dialog({
+			closed:true,
+			onClose:function(){
+				facade.sendNotification( on_iconGenerator_close );
+			}
+		});
 	}
-	*/
+	
+	function openIconGenerator(open){
+		dia_iconGenerator.dialog(open ? 'open' : 'close' );
+	}
+	
+	function addSingleIconData(id, content){
+		var icondataDom = Main.j('#tmpl_singleIconData' ).tmpl({
+			buttonId:id,
+			content:content
+		});
+		dia_iconGenerator.append(icondataDom );
+	}
 	
 	function addSingleMessage( id, msg ) {
 		var mc_message = mc_messagePanel.find( '#mc_message' );
