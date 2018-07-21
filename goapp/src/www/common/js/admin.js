@@ -2,7 +2,7 @@
 
 (function(module){
 	
-	var version = '2.2';
+	var version = '3.0';
 	var admin = ( leo.utils.getHash().admin != undefined && leo.utils.getHash().admin == 'nimda' );
 	var beta = ( leo.utils.getHash().beta != undefined && leo.utils.getHash().beta == '1' );
 	var cardbackCount = 64;
