@@ -378,7 +378,7 @@ var api = api || {};
 			console.log('window.localStorage not support')
 		    return
 		}
-		window.localStorage.removeItem(key)
+		window.localStorage.removeItem("app/card/config_"+key)
 	}
 	
 	module.createChannel = createChannel
