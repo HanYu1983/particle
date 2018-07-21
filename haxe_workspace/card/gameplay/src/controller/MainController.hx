@@ -20,6 +20,7 @@ class MainController extends Mediator
 	public static inline var do_start_record = 'do_start_record';
 	public static inline var do_enable_command = 'do_enable_command';
 	public static inline var do_update_view = 'do_update_view';
+	public static inline var on_keyboard_click = 'on_keyboard_click';
 	
 	//public static var on_receiveMessage = 'on_receiveMessage';
 	public static inline var on_been_invite = 'on_been_invite';
@@ -61,14 +62,16 @@ class MainController extends Mediator
 					do_enable_command,
 					do_update_view,
 					BasicItem.on_item_click,
-					BasicItem.on_item_lock
+					BasicItem.on_item_lock,
+					UI.on_iconGenerator_close
 					];
 	}
 	
 	override public function handleNotification(notification:INotification):Void 
 	{
 		switch( notification.getName() ) {
-			
+			case UI.on_iconGenerator_close:
+				isEnableCommand = true;
 			case BasicItem.on_item_lock:
 				var div:Dynamic = notification.getBody().view;
 				var lock = notification.getBody().lock;
@@ -252,6 +255,13 @@ class MainController extends Mediator
 					untyped __js__('api.getCardImageWithPackageName')( model.extra[1], model.extra[0] )
 				];
 				item = new TokenItem( model.id, Tool.createItemDiv( model.type, parseData ) );
+			case 'tokenString':
+				var parseData = Json.parse( Json.stringify( model ) );
+				parseData.extra = [ 
+					untyped __js__('api.getCardImageWithPackageName')( model.extra[1], model.extra[0] )
+				];
+				parseData.content = model.extra[2];
+				item = new TokenItem( model.id, Tool.createItemDiv( model.type, parseData ) );
 			default:
 				item = new BasicItem( model.id, Tool.createItemDiv( model.type, model ) );
 		}
@@ -280,7 +290,7 @@ class MainController extends Mediator
 	function onBodyKeyUp( e ) {
 		if ( !isEnableCommand ) return;
 		sendNotification( on_press, null, e.which );
-		
+		facade.sendNotification(on_keyboard_click, {which:Std.parseInt( e.which )});
 		switch( Std.parseInt( e.which ) ) {
 			//不需要選擇任何牌也可以執行
 			case 	KeyboardEvent.DOM_VK_T,
@@ -290,7 +300,8 @@ class MainController extends Mediator
 					KeyboardEvent.DOM_VK_I,
 					KeyboardEvent.DOM_VK_O,
 					KeyboardEvent.DOM_VK_P,
-					KeyboardEvent.DOM_VK_B:
+					KeyboardEvent.DOM_VK_B,
+					KeyboardEvent.DOM_VK_U:
 			case KeyboardEvent.DOM_VK_CONTROL: isCtrl = false;
 			//滑鼠左鍵的事件不需要到這裡	
 			case 1:return;
@@ -299,6 +310,8 @@ class MainController extends Mediator
 		}
 		
 		switch( Std.parseInt( e.which ) ) {
+			case KeyboardEvent.DOM_VK_U:
+				isEnableCommand = false;
 			case KeyboardEvent.DOM_VK_B:
 				Browser.window.field('onHtmlClick')('onSwitchTimerClick');
 			case KeyboardEvent.DOM_VK_H:

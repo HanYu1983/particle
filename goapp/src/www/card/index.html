@@ -127,6 +127,16 @@ body{
 	outline:1px solid red;
 }
 </style>
+<script id="tmpl_singleIconData" type="jquery-x-tmpl">
+	<div class="group singleIconData">
+		<div class="hori">
+			<a buttonid=${buttonId} href="#" class="easyui-linkbutton" style="width:60px;  " data-options="iconCls:'icon-add', disabled:false">生成</a>
+		</div>
+		<div class="hori">
+			<input value=${content} class="easyui-textbox" style="width:100px;" />
+		</div>
+	</div>
+</script>
 <script id="tmpl_singleMessage" type="jquery-x-tmpl">
 	<div class="group">
 		<div id="txt_messageId" style="padding-left:5px; color:yellow;">${id}</div>
@@ -162,6 +172,16 @@ body{
 		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />
 		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
 		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
+	</div>
+</script>
+<script id="tmpl_tokenString" type="jquery-x-tmpl">
+	<div id=${id} class="token_root elements" style=width:${width}px;height:${height}px>
+		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${extra[0]} />
+		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
+		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
+		<div style="position:relative; left:-25px; width:100px; height:12px; text-align:center; background-color:#ccc; outline:1px solid">
+			<div style="font-size:10px">${content}</div>
+		</div>
 	</div>
 </script>
 <script id="tmpl_data" type="jquery-x-tmpl">
@@ -421,6 +441,15 @@ body{
 			</div>
 		</div>
 		<div id="dia_message" class="easyui-dialog" title="注意!" data-options="iconCls:'icon-help',closed:true" style="text-align:center;width:500px;padding:10px"></div>
+		<div id="dia_iconGenerator" class="easyui-dialog" title="指示物產生器" data-options="iconCls:'icon-sum',closed:false" style="width:200px; padding:10px">
+			<div style="margin-bottom:5px" class="group">
+				<div class="hori">
+					<input class="easyui-switchbutton" checked>
+				</div>
+				<div class="hori">自動關閉</div>
+			</div>
+			<!-- for script -->
+		</div>
     </div>
 	<script src="../common/js/admin.js?v=20180429"></script>	
 	<script type="text/javascript" src="../common/js/lib/myapp.facebook.js"></script>
