@@ -2,6 +2,12 @@ var cardsearch = cardsearch || {};
 
 (function( module ){
 	
+	function fullMatch(key, value){
+		return function(obj){
+			return obj[ key ] == value
+		}
+	}
+	
 	function attrEq( key, value ){
 		return function( obj ){
 			switch( typeof obj[key] ){
@@ -107,5 +113,6 @@ var cardsearch = cardsearch || {};
 	module.indexLe = indexLe
 	module.indexEq = indexEq
 	module.search = search
+	module.fullMatch = fullMatch
 	
 }) ( cardsearch )

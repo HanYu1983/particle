@@ -708,13 +708,13 @@ var gameController = {};
 			case 'area':
 				switch( v ){
 				case '宇宙':
-					fns.push( cardsearch.attrEq( "info_10", '宇' ) )
+					fns.push( cardsearch.fullMatch( "info_10", '宇' ) )
 					break
 				case '地球':
-					fns.push( cardsearch.attrEq( "info_10", '地' ) )
+					fns.push( cardsearch.fullMatch( "info_10", '地' ) )
 					break
 				case '宇宙/地球':
-					fns.push( cardsearch.attrEq( "info_10", '宇、地' ) )
+					fns.push( cardsearch.fullMatch( "info_10", '宇、地' ) )
 					break
 				}
 				break;
