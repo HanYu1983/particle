@@ -567,26 +567,42 @@ body{
 			default:[
 				[
 					{type:'label', val:'系列'},
-					{type:'select', span:1, val:{name:'set', items:['初阵','群星','缔盟','权倾','异军']}},
+					{type:'select', span:8, val:{name:'set', items:['初阵','群星','缔盟','权倾','异军','乱华','帝畿','裂土','怒焰','燎原','炽血','焚天','问鼎','beauty卡']}},
+					
+				],
+				[
 					{type:'label', val:'勢力'},
 					{type:'select', span:1, val:{name:'color', items:['魏','蜀','吴','群','中立']}},
 					{type:'label', val:'卡片種類'},
-					{type:'select', span:1, val:{name:'ctype', items:['领土','单位','锦囊','阵略','战器']}}
+					{type:'select', span:1, val:{name:'ctype', items:['领土','单位','锦囊','阵略','战器']}},
+					
+					{type:'label', val:'合計cost以上'},
+					{type:'select', span:1,val:{name:'costAll_1', items:['0','1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'合計cost以下'},
+					{type:'select', span:1, val:{name:'costAll_2', items:['0','1','2','3','4','5','6','7','8','9','10']}}
 				],
 				[
-					{type:'label', val:'合計cost以上'},
-					{type:'select', span:2,val:{name:'costAll_1', items:['1','2','3','4','5','6','7','8','9','10']}},
-					{type:'label',val:'合計cost以下'},
-					{type:'select', span:2, val:{name:'costAll_2', items:['1','2','3','4','5','6','7','8','9','10']}}
+					{type:'label', val:'武力以上'},
+					{type:'select', span:1,val:{name:'atk_1', items:['0','1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'武力以下'},
+					{type:'select', span:1, val:{name:'atk_2', items:['0','1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label', val:'体力以上'},
+					{type:'select', span:1,val:{name:'def_1', items:['0','1','2','3','4','5','6','7','8','9','10']}},
+					{type:'label',val:'体力以下'},
+					{type:'select', span:1, val:{name:'def_2', items:['0','1','2','3','4','5','6','7','8','9','10']}}
+				],
+				[
+					{type:'label', val:'关键词能力'},
+					{type:'checkbox', span:8,val:{name:'', items:['致命','佩带','伏击','神速','洞察','破竹','射击','抵抗','转移','坚韧','突击','斩获','迎击','外交','逆境','动荡','赋力','奇袭','暴乱','猛进','观星']}}
 				],
 				[	{type:'label', val:'卡片名稱檢索'},
-					{type:'textbox', span:11,val:{name:'card_name'}}],
+					{type:'textbox', span:7,val:{name:'card_name'}}],
 				[	{type:'label', val:'卡片規則檢索'},
-					{type:'textbox', span:11,val:{name:'rule'}}],
+					{type:'textbox', span:7,val:{name:'rule'}}],
 				[	{type:'label', val:'特徵'},
-					{type:'textbox', span:11, val:{name:'symbol'}}],
+					{type:'textbox', span:7, val:{name:'symbol'}}],
 				[	{type:'label', val:'id檢索'},
-					{type:'textbox', span:11,val:{name:'cid'}}]
+					{type:'textbox', span:7,val:{name:'cid'}}]
 			]
 		},
 		gundamWarN:{
@@ -915,16 +931,16 @@ body{
 					{type:'label', val:'Level以下'},
 					{type:'select', span:3, val:{name:'level_2', items:['1','2','3','4','5','6','7','8','9','10','11','12']}}
 				],
-				// race裡空白要用 這個字元來代替，因為原始資料中就是 
+				// race裡空白要用 這個字元來代替，因為原始資料中就是 
 				[
 					{type:'label', val:'Attribute'},
 					{type:'select', span:1, val:{name:'attr', items:['Earth','Water','Fire','Wind','Light','Dark','Divine']}},
 					{type:'label', val:'Race'},
-					{type:'select', span:1, val:{name:'race', items:['Warrior','Spellcaster','Fairy','Fiend','Zombie','Machine','Aqua','Pyro','Rock','Winged Beast','Plant','Insect','Thunder','Dragon','Beast','Beast-Warrior','Dinosaur','Fish','Sea Serpent','Reptile','Psychic','Divine-Beast','Creator God','Wyrm']}},
+					{type:'select', span:1, val:{name:'race', items:['Warrior','Spellcaster','Fairy','Fiend','Zombie','Machine','Aqua','Pyro','Rock','Winged Beast','Plant','Insect','Thunder','Dragon','Beast','Beast-Warrior','Dinosaur','Fish','Sea Serpent','Reptile','Psychic','Divine-Beast','Creator God','Wyrm']}},
 					{type:'label', val:'Card Type'},
 					{type:'select', span:1, val:{name:'ctype', items:['Monster','Spell','Trap']}},
 					{type:'label', val:'Summon Type'},
-					{type:'select', span:1, val:{name:'ctype2', items:['Normal','Effect','Fusion','Ritual','Trap Monsters','Spirit','Union','Gemini','Tuner','Synchro','Token','Quick-Play','Continuous','Equip','Field','Counter','Flip','Toon','Xyz','Pendulum']}}
+					{type:'select', span:1, val:{name:'ctype2', items:['Normal','Effect','Fusion','Ritual','Trap Monsters','Spirit','Union','Gemini','Tuner','Synchro','Token','Quick-Play','Continuous','Equip','Field','Counter','Flip','Toon','Xyz','Pendulum']}}
 				],
 				[
 					{type:'label', val:'Attack以上'},{type:'select', val:{name:'atk_1', items:['500','1000','1500','2000','2500','3000','3500','4000','4500','5000']}},

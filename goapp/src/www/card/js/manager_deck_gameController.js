@@ -207,6 +207,40 @@ var gameController = {};
 		return fns
 	}
 	
+	function compareSgsPowerGe(compareKey, value){
+		return obj=>{
+			var power = obj['power']
+			var formatPower = power.split('/').map(v=>parseInt(v))
+			var hasAtkDef = formatPower.length > 1
+			if(hasAtkDef == false){
+				return false
+			}
+			var [atk, def] = formatPower
+			var valueMap = {
+				'atk': atk,
+				'def': def
+			}
+			return valueMap[compareKey] >= value
+		}
+	}
+	
+	function compareSgsPowerLe(compareKey, value){
+		return obj=>{
+			var power = obj['power']
+			var formatPower = power.split('/').map(v=>parseInt(v))
+			var hasAtkDef = formatPower.length > 1
+			if(hasAtkDef == false){
+				return false
+			}
+			var [atk, def] = formatPower
+			var valueMap = {
+				'atk': atk,
+				'def': def
+			}
+			return valueMap[compareKey] <= value
+		}
+	}
+	
 	function sgsQuerystring2fns( qstr ){
 		var url = $.url("?" + qstr)
 		var query = url.data.param.query
@@ -249,6 +283,26 @@ var gameController = {};
 			case 'ctype':
 				fns.push( cardsearch.attrEq( "type", v ) )
 				break;
+			case 'atk_1':
+				var target = parseInt(v)
+				fns.push(compareSgsPowerGe('atk', target))
+				break
+			case 'atk_2':
+				var target = parseInt(v)
+				fns.push(compareSgsPowerLe('atk', target))
+				break
+			case 'def_1':
+				var target = parseInt(v)
+				fns.push(compareSgsPowerGe('def', target))
+				break
+			case 'def_2':
+				var target = parseInt(v)
+				fns.push(compareSgsPowerLe('def', target))
+				break
+			default:
+				if( v == "on" ){
+					fns.push( cardsearch.attrEq( "text", k ))
+				}
 			}
 		}
 		return fns;
