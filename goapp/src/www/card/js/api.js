@@ -373,6 +373,14 @@ var api = api || {};
 		return JSON.parse(jsonStr)
 	}
 	
+	function clearUserConfig(key){
+		if (typeof(window.localStorage) == "undefined") {
+			console.log('window.localStorage not support')
+		    return
+		}
+		window.localStorage.removeItem(key)
+	}
+	
 	module.createChannel = createChannel
 	
 	module.startHeartbeat = startHeartbeat
@@ -394,5 +402,6 @@ var api = api || {};
 	
 	module.saveUserConfig = saveUserConfig
 	module.loadUserConfig = loadUserConfig
+	module.clearUserConfig = clearUserConfig
 	
 }) (api)
