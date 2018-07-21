@@ -9,7 +9,7 @@ var cardsearch = cardsearch || {};
 	}
 	
 	function attrEq( key, value ){
-		return function( obj ){
+		return function( obj ){	
 			switch( typeof obj[key] ){
 			case "string":
 				return obj[ key ].toUpperCase().indexOf( value.toUpperCase() ) != -1
@@ -24,7 +24,13 @@ var cardsearch = cardsearch || {};
 		return function( obj ){
 			switch( typeof obj[key] ){
 			case "string":
-				return obj[ key ].indexOf( value ) != -1
+				var origin = parseInt(obj[key])
+				if(isNaN(origin)){
+					return false
+				}
+				return origin >= value
+				
+				// return obj[ key ].indexOf( value ) != -1
 			case "number":
 				return obj[ key ] >= value
 			}
@@ -36,7 +42,13 @@ var cardsearch = cardsearch || {};
 		return function( obj ){
 			switch( typeof obj[key] ){
 			case "string":
-				return obj[ key ].indexOf( value ) != -1
+				var origin = parseInt(obj[key])
+				if(isNaN(origin)){
+					return false
+				}
+				return origin <= value
+				
+				//return obj[ key ].indexOf( value ) != -1
 			case "number":
 				return obj[ key ] <= value
 			}

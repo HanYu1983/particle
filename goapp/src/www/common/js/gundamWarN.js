@@ -167,7 +167,7 @@ var gundamWarN = gundamWarN || {};
 					obj['trans'] = originContent
 					obj.cardId = obj.id
 					obj.id = obj.prodid +'_'+ obj.info_25
-					var shouldInt = [4,5,7,8,9]
+					var shouldInt = [4,7,8,9]
 					for( var i in shouldInt ){
 						var idx = shouldInt[i]
 						try{
@@ -180,6 +180,8 @@ var gundamWarN = gundamWarN || {};
 						}
 					}
 				}
+				
+				//console.log(list.filter(v=>v["info_2"]=="セラヴィーガンダム＆ティエリア"))
 				cb( null, list )
 			}
 		], cb)
