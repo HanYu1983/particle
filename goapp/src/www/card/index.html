@@ -228,7 +228,7 @@ body{
 			-->
 		</div>
 	</div>
-	<div class="easyui-layout" style="position:fixed; right:0; top:0; width:350px;height:100%;">
+	<div id="mc_layoutMain" class="easyui-layout" style="position:fixed; right:0; top:0; width:350px;height:100%;">
         <div data-options="region:'north', title:'卡牌風雲',split:true" style="height:490px;" >
 			<div class="group section_light	" style="text-align:center;">
 				<div class="hori">
@@ -482,7 +482,6 @@ body{
 	function getCookie( key ){
 		return $.cookie( key );
 	}
-	
 	
 	function removeCookie( key ){
 		$.removeCookie( key );

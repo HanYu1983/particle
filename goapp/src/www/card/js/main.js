@@ -2557,6 +2557,8 @@ var view_UI = function(mediatorName,viewComponent) {
 	org_puremvc_haxe_patterns_mediator_Mediator.call(this,mediatorName,viewComponent);
 	this.getViewComponent().layout();
 	this.mc_detailContainer = this.getViewComponent().find("#mc_detailContainer");
+	this.mc_layoutMain = this.getViewComponent();
+	this.mc_layoutMain.layout("collapse","south");
 	this.mc_messagePanel = this.getViewComponent().find("#mc_messagePanel");
 	this.mc_messagePanel.attr("isOpen",0);
 	this.mc_messagePanel.find("#txt_messageInput").textbox({ onChange : function(nv,ov) {

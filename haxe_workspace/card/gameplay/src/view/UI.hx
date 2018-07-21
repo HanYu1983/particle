@@ -33,7 +33,7 @@ class UI extends Mediator
 	var btn_record:Dynamic;
 	var dia_invite:Dynamic;
 	var mc_light:Dynamic;
-	
+	var mc_layoutMain:Dynamic;
 	//chat
 	var mc_messagePanel:Dynamic;
 	
@@ -50,6 +50,8 @@ class UI extends Mediator
 		getViewComponent().layout();
 		
 		mc_detailContainer = getViewComponent().find( '#mc_detailContainer' );
+		mc_layoutMain = getViewComponent();
+		mc_layoutMain.layout('collapse', 'south');
 		
 		mc_messagePanel = getViewComponent().find( '#mc_messagePanel' );
 		mc_messagePanel.attr( 'isOpen', 0 );
@@ -146,7 +148,6 @@ class UI extends Mediator
 				browserNotify = null;
 			}
 		});
-		
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -259,15 +260,6 @@ class UI extends Mediator
 			}
 		}
 	}
-	/*
-	function showChatPanel( show ) {
-		if ( show ) {
-			mc_messagePanel.dialog( 'open' );
-		}else {
-			mc_messagePanel.dialog( 'close' );
-		}
-	}
-	*/
 	
 	function addSingleMessage( id, msg ) {
 		var mc_message = mc_messagePanel.find( '#mc_message' );
