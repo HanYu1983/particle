@@ -389,7 +389,8 @@ class ViewController extends Mediator
 				game:dom.find( '.easyui-combobox' ).combobox('getValue' ),
 				cards: Json.parse( cardstr ),
 				backId:dom.find( '#txt_back' ).textbox('getValue' ),
-				'public':dom.find( '#btn_public' ).hasClass( 'l-btn-selected' )
+				'public':dom.find( '#btn_public' ).hasClass( 'l-btn-selected' ),
+				top:dom.find('#btn_top').hasClass( 'l-btn-selected' )
 			});
 		});
 		return savefile;
@@ -419,6 +420,13 @@ class ViewController extends Mediator
 			onClick:function() {
 				var _this = j( untyped __js__( '$(this)' ));
 				_this.parent().remove();
+				enableSave( true );
+			}
+		});
+		dom.find('#btn_top').linkbutton({
+			selected: deckModel.field( 'top' ) == null ? false : deckModel.field( 'top' ),
+			onClick:function(){
+				var _this = j( untyped __js__( '$(this)' ));
 				enableSave( true );
 			}
 		});

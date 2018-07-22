@@ -1678,7 +1678,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			var _this_r = new RegExp("\\\\t","g".split("u").join(""));
 			cardstr = cardstr.replace(_this_r,"");
 			cardstr = "[" + cardstr + "]";
-			savefile.cardSuit.push({ uid : dom.attr("uid"), type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), "public" : dom.find("#btn_public").hasClass("l-btn-selected")});
+			savefile.cardSuit.push({ uid : dom.attr("uid"), type : dom.attr("type"), desc : dom.attr("desc"), name : dom.find("#txt_name").textbox("getValue"), game : dom.find(".easyui-combobox").combobox("getValue"), cards : JSON.parse(cardstr), backId : dom.find("#txt_back").textbox("getValue"), "public" : dom.find("#btn_public").hasClass("l-btn-selected"), top : dom.find("#btn_top").hasClass("l-btn-selected")});
 		});
 		return savefile;
 	}
@@ -1704,10 +1704,14 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			_this1.parent().remove();
 			_gthis.enableSave(true);
 		}});
-		dom.find("#btn_detail").linkbutton({ onClick : function() {
+		dom.find("#btn_top").linkbutton({ selected : Reflect.field(deckModel,"top") == null ? false : Reflect.field(deckModel,"top"), onClick : function() {
 			var _this2 = _gthis.j($(this));
-			var deckName = _this2.parent().find("#txt_name").textbox("getValue");
-			var tmp = _this2.parent();
+			_gthis.enableSave(true);
+		}});
+		dom.find("#btn_detail").linkbutton({ onClick : function() {
+			var _this3 = _gthis.j($(this));
+			var deckName = _this3.parent().find("#txt_name").textbox("getValue");
+			var tmp = _this3.parent();
 			_gthis.showDetailForm(true,tmp,deckName);
 			_gthis.enableSave(true);
 		}});
@@ -1715,15 +1719,15 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			_gthis.enableSave(true);
 		}});
 		dom.find(".easyui-textbox").textbox({ onChange : function(nv,ov) {
-			var _this3 = $(this);
-			var _g = _this3.attr("id");
+			var _this4 = $(this);
+			var _g = _this4.attr("id");
 			if(_g == "txt_cards") {
 				try {
 					JSON.parse("[" + nv + "]");
 					_gthis.enableSave(true);
 				} catch( e ) {
 					_gthis.alert("格式輸入錯誤，請檢查");
-					_this3.textbox({ value : ""});
+					_this4.textbox({ value : ""});
 				}
 			} else {
 				_gthis.enableSave(true);
