@@ -259,6 +259,9 @@ body{
 			<div game="ws">{{html id}}</div>
 			<div game="ws">{{html name}}</div>
 		</div>
+		<div style="position:absolute; bottom:0px; right:0; color:yellow;">
+			x${count}
+		</div>
 	</div>
 </script>
 <body>
@@ -1352,7 +1355,20 @@ body{
 			
 			txt_count.html( ary_deck.length );
 			
+			// 轉換成顯示張數的資料
+			var ary_toHasCount = [];
+			var currCard;
 			_.each( ary_deck, function( card ){
+				if(currCard !== undefined && (currCard.id == card.id) ){
+					currCard.count += 1;
+				}else{
+					ary_toHasCount.push(card);
+					card.count = 1;
+					currCard = card;
+				}
+			});
+			
+			_.each( ary_toHasCount, function( card ){
 				var cardItem = $("#tmpl_cardItem" ).tmpl( card );
 				cardItem.find( 'div[game]' ).hide();
 				cardItem.find( 'div[game=' + game + ']' ).show();
@@ -1369,7 +1385,7 @@ body{
 				cardItem.find( '#btn_copy' ).linkbutton( {
 					onClick:function(){
 						var addId = $(this ).parent().parent().attr( 'id' );
-						coptyCardFromDeck( addId );
+						copyCardFromDeck( addId );
 					}
 				});
 				
@@ -1392,7 +1408,7 @@ body{
 			ary_deck.splice( ary_deck.indexOf( removeItem ), 1 );
 		}
 		
-		function coptyCardFromDeck( itemId ){
+		function copyCardFromDeck( itemId ){
 			var beCopyItem = _.find( ary_deck, function( cardItem ){
 				return cardItem.itemId == itemId;
 			});
