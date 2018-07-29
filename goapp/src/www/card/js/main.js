@@ -724,7 +724,6 @@ var controller_MainController = function(mediatorName,viewComponent) {
 	this.isRecord = false;
 	this.isCtrl = false;
 	this.isList = false;
-	this.pos_mouse = [0,0];
 	this.ary_allItem = [];
 	this.ary_select = [];
 	var _gthis = this;
@@ -1071,7 +1070,6 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			return;
 		}
 		this.sendNotification("on_press",null,e.which);
-		this.facade.sendNotification("on_keyboard_click",{ which : Std.parseInt(e.which)});
 		var _g = Std.parseInt(e.which);
 		if(_g == null) {
 			if(this.ary_select.length == 0) {
@@ -1084,7 +1082,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			case 17:
 				this.isCtrl = false;
 				break;
-			case 65:case 66:case 68:case 73:case 75:case 79:case 80:case 84:case 85:
+			case 65:case 66:case 68:case 73:case 75:case 79:case 80:case 84:case 85:case 89:
 				break;
 			default:
 				if(this.ary_select.length == 0) {
@@ -1124,7 +1122,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.deleteView(this.ary_select);
 			break;
 		case 73:
-			var token = Tool.createItem(["token_0","other"],this.pos_mouse.slice(0),"token",50,50,true,false,controller_SocketController.playerId);
+			var token = Tool.createItem(["token_0","other"],controller_MainController.pos_mouse.slice(0),"token",50,50,true,false,controller_SocketController.playerId);
 			this.createItem(token);
 			this.sendNotification("sendMessage",{ type : "addItems", msg : [token]});
 			break;
@@ -1137,12 +1135,12 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.updateView(this.ary_select);
 			break;
 		case 79:
-			var token1 = Tool.createItem(["token_1","other"],this.pos_mouse.slice(0),"token",50,50,true,false,controller_SocketController.playerId);
+			var token1 = Tool.createItem(["token_1","other"],controller_MainController.pos_mouse.slice(0),"token",50,50,true,false,controller_SocketController.playerId);
 			this.createItem(token1);
 			this.sendNotification("sendMessage",{ type : "addItems", msg : [token1]});
 			break;
 		case 80:
-			var token2 = Tool.createItem(["token_2","other"],this.pos_mouse.slice(0),"token",50,50,true,false,controller_SocketController.playerId);
+			var token2 = Tool.createItem(["token_2","other"],controller_MainController.pos_mouse.slice(0),"token",50,50,true,false,controller_SocketController.playerId);
 			this.createItem(token2);
 			this.sendNotification("sendMessage",{ type : "addItems", msg : [token2]});
 			break;
@@ -1170,9 +1168,6 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.sendNotification("on_dice",{ playerId : controller_SocketController.playerId, dice : dice});
 			this.sendNotification("sendMessage",{ type : "dice", msg : { playerId : controller_SocketController.playerId, dice : dice}});
 			break;
-		case 85:
-			this.isEnableCommand = false;
-			break;
 		case 86:
 			this.setModelViewer();
 			this.sendNotification("on_select_cards",{ ary_select : this.ary_select});
@@ -1186,6 +1181,9 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		case 88:
 			this.rotateModel(90);
 			this.updateView(this.ary_select);
+			break;
+		case 89:
+			this.isEnableCommand = false;
 			break;
 		case 90:
 			this.rotateModel(-90);
@@ -1382,8 +1380,8 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		while(_g1 < _g) {
 			var i = _g1++;
 			var itemModel = this.ary_select[i];
-			itemModel.pos[0] = i % 10 * (Reflect.field(info,"mw") + 4) + this.pos_mouse[0];
-			itemModel.pos[1] = Math.floor(i / 10) * (Reflect.field(info,"mh") + 4) + this.pos_mouse[1];
+			itemModel.pos[0] = i % 10 * (Reflect.field(info,"mw") + 4) + controller_MainController.pos_mouse[0];
+			itemModel.pos[1] = Math.floor(i / 10) * (Reflect.field(info,"mh") + 4) + controller_MainController.pos_mouse[1];
 		}
 	}
 	,togetherModel: function() {
@@ -1392,8 +1390,8 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		while(_g1 < _g) {
 			var i = _g1++;
 			var itemModel = this.ary_select[i];
-			itemModel.pos[0] = i * 2 + this.pos_mouse[0];
-			itemModel.pos[1] = i * 2 + this.pos_mouse[1];
+			itemModel.pos[0] = i * 2 + controller_MainController.pos_mouse[0];
+			itemModel.pos[1] = i * 2 + controller_MainController.pos_mouse[1];
 		}
 	}
 	,flipModel: function() {
@@ -1456,8 +1454,8 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		return nary;
 	}
 	,onBodyMouseMove: function(e) {
-		this.pos_mouse[0] = e.pageX;
-		this.pos_mouse[1] = e.pageY;
+		controller_MainController.pos_mouse[0] = e.pageX;
+		controller_MainController.pos_mouse[1] = e.pageY;
 	}
 	,getItemFromPoolById: function(id) {
 		return this.ary_allItem.filter(function(model) {
@@ -1523,8 +1521,8 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			return 1;
 		});
 		moveTarget.y = this.ary_select[0].pos[1];
-		var offset_0 = this.pos_mouse[0] - moveTarget.x;
-		var offset_1 = this.pos_mouse[1] - moveTarget.y;
+		var offset_0 = controller_MainController.pos_mouse[0] - moveTarget.x;
+		var offset_1 = controller_MainController.pos_mouse[1] - moveTarget.y;
 		Lambda.foreach(this.ary_select,function(select) {
 			select.pos[0] += offset_0;
 			select.pos[1] += offset_1;
@@ -2680,7 +2678,7 @@ view_UI.__name__ = true;
 view_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return ["on_select_cards","on_dice","on_been_invite","on_keyboard_click","on_socket_error","on_socket_success","on_getSuit_success","on_receiveOps","on_timer_update","on_searchComplete","on_heartbeat_event","on_receiveMessage","on_startTimer_click","on_createDeck_click","on_save_click","on_load_click","do_show_recevie"];
+		return ["on_select_cards","on_dice","on_been_invite","on_press","on_socket_error","on_socket_success","on_getSuit_success","on_receiveOps","on_timer_update","on_searchComplete","on_heartbeat_event","on_receiveMessage","on_startTimer_click","on_createDeck_click","on_save_click","on_load_click","do_show_recevie"];
 	}
 	,handleNotification: function(notification) {
 		var _gthis = this;
@@ -2701,12 +2699,6 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 		case "on_heartbeat_event":
 			this.showOnlineOffline(notification.getBody().conn);
 			break;
-		case "on_keyboard_click":
-			var which = notification.getBody().which;
-			if(which == 85) {
-				this.openIconGenerator(true);
-			}
-			break;
 		case "on_load_click":
 			var loadstr = this.txt_savestr.textbox("getValue");
 			try {
@@ -2726,9 +2718,21 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 				Main.alert("格式不對哦!");
 			}
 			break;
+		case "on_press":
+			var which = notification.getType();
+			var _g2 = Std.parseInt(which);
+			switch(_g2) {
+			case 85:
+				this.createCustomToken();
+				break;
+			case 89:
+				this.openIconGenerator(true);
+				break;
+			}
+			break;
 		case "on_receiveMessage":
-			var _g2 = notification.getType();
-			if(_g2 == "chat") {
+			var _g3 = notification.getType();
+			if(_g3 == "chat") {
 				var id = notification.getBody().id;
 				var msg = notification.getBody().msg;
 				this.addSingleMessage(id,msg);
@@ -2801,12 +2805,13 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 		if(cookieData == null) {
 			var _g = [];
 			var _g1 = 0;
-			while(_g1 < 10) {
+			while(_g1 < 20) {
 				var i = _g1++;
 				_g.push({ path : "../common/images/card/token_0.png", content : "天機桐人_1/1_宇"});
 			}
 			cookieData = _g;
 		}
+		while(Lambda.count(cookieData) < 20) cookieData.push({ path : "../common/images/card/token_0.png", content : "天機桐人_1/1_宇"});
 		var _g11 = 0;
 		var _g2 = Lambda.count(cookieData);
 		while(_g11 < _g2) {
@@ -2817,11 +2822,9 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			var dom = Main.j(this);
 			var createContent = dom.parents(".singleIconData").find(".easyui-textbox").textbox("getValue");
 			var path = dom.parents(".singleIconData").find(".img_token").attr("src");
-			_gthis.facade.sendNotification("do_create_item",Tool.createItemFromData([{ extra : ["token_0","other",createContent,path], pos : [100,100], type : "tokenString", width : 50, height : 50, owner : controller_SocketController.playerId}]));
-			var checked = dom.parents("#dia_iconGenerator").find(".switchbutton-inner").css("margin-left") == "0px";
-			if(checked) {
-				_gthis.openIconGenerator(false);
-			}
+			_gthis.quickCustomToken = { createContent : createContent, path : path};
+			_gthis.createCustomToken();
+			_gthis.openIconGenerator(false);
 		}});
 		this.dia_iconGenerator.find(".img_token").click(function() {
 			var dom1 = Main.j(this);
@@ -2856,6 +2859,13 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 	}
 	,openIconGenerator: function(open) {
 		this.dia_iconGenerator.dialog(open ? "open" : "close");
+	}
+	,createCustomToken: function() {
+		if(this.quickCustomToken != null) {
+			this.facade.sendNotification("do_create_item",Tool.createItemFromData([{ extra : ["token_0","other",this.quickCustomToken.createContent,this.quickCustomToken.path], pos : controller_MainController.pos_mouse.slice(0), type : "tokenString", width : 50, height : 50, owner : controller_SocketController.playerId}]));
+		} else {
+			Main.slide("請先按Y來生成一個指示物!");
+		}
 	}
 	,addSingleIconData: function(id,data) {
 		var icondataDom = Main.j("#tmpl_singleIconData").tmpl({ buttonId : id, content : data.content, tokenPath : data.path});
@@ -3068,7 +3078,7 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 						str += detail.counter;
 						break;
 					case "sengoku":
-						str += detail.cname + " " + detail.atype;
+						str += detail.cname + " " + detail.atype + " " + detail.atype2;
 						str += "<br/>";
 						str += detail.symbol;
 						str += "<br/>";
@@ -3202,11 +3212,11 @@ controller_MainController.do_getItemsString = "do_getItemsString";
 controller_MainController.do_start_record = "do_start_record";
 controller_MainController.do_enable_command = "do_enable_command";
 controller_MainController.do_update_view = "do_update_view";
-controller_MainController.on_keyboard_click = "on_keyboard_click";
 controller_MainController.on_been_invite = "on_been_invite";
 controller_MainController.on_select_cards = "on_select_cards";
 controller_MainController.on_press = "on_press";
 controller_MainController.on_dice = "on_dice";
+controller_MainController.pos_mouse = [0,0];
 controller_SocketController.setOpponents = "setOpponents";
 controller_SocketController.sendMessage = "sendMessage";
 controller_SocketController.createPlayerSocket = "createPlayerSocket";

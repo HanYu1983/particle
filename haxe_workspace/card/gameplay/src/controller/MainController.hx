@@ -20,7 +20,7 @@ class MainController extends Mediator
 	public static inline var do_start_record = 'do_start_record';
 	public static inline var do_enable_command = 'do_enable_command';
 	public static inline var do_update_view = 'do_update_view';
-	public static inline var on_keyboard_click = 'on_keyboard_click';
+	//public static inline var on_keyboard_click = 'on_keyboard_click';
 	
 	//public static var on_receiveMessage = 'on_receiveMessage';
 	public static inline var on_been_invite = 'on_been_invite';
@@ -30,7 +30,7 @@ class MainController extends Mediator
 	
 	var ary_select:Array<Dynamic> = [];
 	var ary_allItem:Array<Dynamic> = [];
-	var pos_mouse = [0, 0];
+	public static var pos_mouse = [0, 0];
 	var isList = false;
 	var isCtrl = false;
 	var isRecord = false;
@@ -288,7 +288,6 @@ class MainController extends Mediator
 	function onBodyKeyUp( e ) {
 		if ( !isEnableCommand ) return;
 		sendNotification( on_press, null, e.which );
-		facade.sendNotification(on_keyboard_click, {which:Std.parseInt( e.which )});
 		switch( Std.parseInt( e.which ) ) {
 			//不需要選擇任何牌也可以執行
 			case 	KeyboardEvent.DOM_VK_T,
@@ -299,7 +298,8 @@ class MainController extends Mediator
 					KeyboardEvent.DOM_VK_O,
 					KeyboardEvent.DOM_VK_P,
 					KeyboardEvent.DOM_VK_B,
-					KeyboardEvent.DOM_VK_U:
+					KeyboardEvent.DOM_VK_U,
+					KeyboardEvent.DOM_VK_Y:
 			case KeyboardEvent.DOM_VK_CONTROL: isCtrl = false;
 			//滑鼠左鍵的事件不需要到這裡	
 			case 1:return;
@@ -308,7 +308,7 @@ class MainController extends Mediator
 		}
 		
 		switch( Std.parseInt( e.which ) ) {
-			case KeyboardEvent.DOM_VK_U:
+			case KeyboardEvent.DOM_VK_Y:
 				isEnableCommand = false;
 			case KeyboardEvent.DOM_VK_B:
 				Browser.window.field('onHtmlClick')('onSwitchTimerClick');

@@ -182,9 +182,7 @@ body{
 		<img id="img_token" style="position:relative; top:0; left:0; width:100%; height:100%;" src=${path} />
 		<img id="img_owner" class="hide" style="position:absolute; top:0; left:0; width:20px;" src="../common/images/card/Host.png"/>
 		<img id="img_lock" class="hide" style="position:absolute; right:0; bottom:0; width:20px;" src="../common/images/card/Lock.png" />
-		<div style="position:relative; left:-25px; width:100px; height:12px; text-align:center; background-color:#ccc; outline:1px solid">
-			<div style="font-size:10px">${content}</div>
-		</div>
+		<p style="position:absolute; width:100%; top:30px; text-align:center; background-color:#ccc; outline:1px solid; font-size:10px">${content}</p>
 	</div>
 </script>
 <script id="tmpl_data" type="jquery-x-tmpl">
@@ -229,7 +227,8 @@ body{
 			<div>B-切換玩家</div>
 			<div>R-執行動作</div>
 			<div>T-擲骰</div>
-			<div>U-指示物產生器</div>
+			<div>Y-指示物產生器</div>
+			<div>U-產生最後一個由Y產生的指示物</div>
 			<div>I-黃色指示物</div>
 			<div>O-綠色指示物</div>
 			<div>P-紅色指示物</div>
@@ -445,13 +444,15 @@ body{
 			</div>
 		</div>
 		<div id="dia_message" class="easyui-dialog" title="注意!" data-options="iconCls:'icon-help',closed:true" style="text-align:center;width:500px;padding:10px"></div>
-		<div id="dia_iconGenerator" class="easyui-dialog" title="指示物產生器" data-options="iconCls:'icon-sum',closed:false" style="width:255px; padding:10px">
+		<div id="dia_iconGenerator" class="easyui-dialog" title="指示物產生器" data-options="iconCls:'icon-sum',closed:false" style="top:20px; width:255px; padding:10px">
+			<!--
 			<div style="margin-bottom:5px" class="group">
 				<div class="hori">
 					<input class="easyui-switchbutton" checked>
 				</div>
 				<div class="hori">自動關閉</div>
 			</div>
+			-->
 			<!-- for script -->
 		</div>
     </div>

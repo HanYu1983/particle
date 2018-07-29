@@ -39,6 +39,7 @@ class UI extends Mediator
 	
 	var isShowNotify = false;
 	var browserNotify = null;
+	var quickCustomToken:Dynamic;
 
 	public function new(?mediatorName:String, ?viewComponent:Dynamic) 
 	{
@@ -157,7 +158,7 @@ class UI extends Mediator
 					MainController.on_select_cards,
 					MainController.on_dice,
 					MainController.on_been_invite,
-					MainController.on_keyboard_click,
+					MainController.on_press,
 					SocketController.on_socket_error,
 					SocketController.on_socket_success,
 					Main.on_getSuit_success,
@@ -198,10 +199,12 @@ class UI extends Mediator
 				combo_ops.combobox( 'setValue', notification.getBody().inviteId );
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
-			case MainController.on_keyboard_click:
-				var which = notification.getBody().which;
-				switch(which){
+			case MainController.on_press:
+				var which = notification.getType();
+				switch(Std.parseInt(which)){
 					case KeyboardEvent.DOM_VK_U:
+						createCustomToken();
+					case KeyboardEvent.DOM_VK_Y:
 						openIconGenerator(true);
 				}
 			case Main.on_load_click:
@@ -209,17 +212,12 @@ class UI extends Mediator
 				try{
 					var ary_cmds = Json.parse( loadstr );
 					ary_cmds.forEach( function( cmd ) {
-						//trace( cmd.type );
-						//sendNotification( SocketController.on_receiveMessage, cmd.msg, cmd.type );
-						
 						switch( cmd.type ) {
 							case 'addItems':
 								sendNotification( MainController.do_create_item, cmd.msg );
 								Timer.delay( function() {
 									sendNotification( MainController.do_update_view );
 								}, 1000 );
-							//case _:
-							//	sendNotification( SocketController.sendMessage, { type:'deleteItem', msg: ary_select } );
 						}
 						return true;
 					});
@@ -274,7 +272,10 @@ class UI extends Mediator
 	function createIconDialog(){
 		var cookieData:Array<Dynamic> = CallJs.api_loadUserConfig("userIconContents", null);
 		if ( cookieData == null ){
-			cookieData = [for (i in 0...10) {path:'../common/images/card/token_0.png', content:'天機桐人_1/1_宇'}];
+			cookieData = [for (i in 0...20) {path:'../common/images/card/token_0.png', content:'天機桐人_1/1_宇'}];
+		}
+		while (cookieData.count() < 20 ){
+			cookieData.push( {path:'../common/images/card/token_0.png', content:'天機桐人_1/1_宇'} );
 		}
 		for ( i in 0...cookieData.count() ){
 			addSingleIconData(i, cookieData[i]);
@@ -284,13 +285,18 @@ class UI extends Mediator
 				var dom = Main.j(untyped __js__('this'));
 				var createContent:String = dom.parents('.singleIconData').find('.easyui-textbox').textbox('getValue');
 				var path = dom.parents('.singleIconData').find('.img_token').attr('src');
-				facade.sendNotification( MainController.do_create_item, Tool.createItemFromData( [{ extra:[ 'token_0', 'other', createContent, path], pos:[100, 100], type:'tokenString', width:50, height:50, owner:SocketController.playerId }] ));
+				quickCustomToken = {
+					createContent:createContent,
+					path:path
+				};
+				createCustomToken();
+				openIconGenerator(false);
 				
 				//有沒有打開自動關閉
-				var checked:Bool = dom.parents('#dia_iconGenerator').find('.switchbutton-inner').css("margin-left") == '0px';
-				if (checked){
-					openIconGenerator(false);
-				}
+				//var checked:Bool = dom.parents('#dia_iconGenerator').find('.switchbutton-inner').css("margin-left") == '0px';
+				//if (checked){
+					//openIconGenerator(false);
+				//}
 			}
 		});
 		dia_iconGenerator.find('.img_token').click(function(){
@@ -319,7 +325,7 @@ class UI extends Mediator
 	function saveIconContents(){
 		var saveAry = [];
 		dia_iconGenerator.find('.easyui-textbox').each( function(){
-			var dom = Main.j(untyped __js__("this"));
+			var dom:Dynamic = Main.j(untyped __js__("this"));
 			var content = dom.textbox('getValue');
 			if ( content == "" ) content = "天機桐人_1/1_宇";
 			var path = dom.parents('.singleIconData').find('.img_token').attr('src');
@@ -330,6 +336,14 @@ class UI extends Mediator
 	
 	function openIconGenerator(open){
 		dia_iconGenerator.dialog(open ? 'open' : 'close' );
+	}
+	
+	function createCustomToken(){
+		if (quickCustomToken != null){
+			facade.sendNotification( MainController.do_create_item, Tool.createItemFromData( [{ extra:[ 'token_0', 'other', quickCustomToken.createContent, quickCustomToken.path], pos:MainController.pos_mouse.slice(0), type:'tokenString', width:50, height:50, owner:SocketController.playerId }] ));
+		}else{
+			Main.slide('請先按Y來生成一個指示物!');
+		}
 	}
 	
 	function addSingleIconData(id, data:Dynamic){
@@ -465,7 +479,6 @@ class UI extends Mediator
 			div.append( img );
 			
 			var img2 = Main.j( '<img></img>' );
-			//img2.attr( 'src', 'images/sampleTxt.png' );
 			img2.css( 'position', 'absolute' );
 			img2.load( function() {
 				img2.css( 'width', '100%' );
@@ -495,7 +508,7 @@ class UI extends Mediator
 							str += '<br/>';
 							str += detail.abi2;
 						case 'sengoku':
-							str += detail.cname + ' ' + detail.atype;
+							str += detail.cname + ' ' + detail.atype + ' ' +detail.atype2;
 							str += '<br/>';
 							str += detail.symbol;
 							str += '<br/>';
