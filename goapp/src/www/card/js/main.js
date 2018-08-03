@@ -2614,7 +2614,7 @@ var view_UI = function(mediatorName,viewComponent) {
 			msg = "否。";
 			break;
 		case "btn_turnEnd":
-			msg = "趟~印度！";
+			msg = "我結束這個回合！";
 			break;
 		case "btn_yes":
 			msg = "是，親愛的伙伴!";
@@ -2635,12 +2635,6 @@ var view_UI = function(mediatorName,viewComponent) {
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.txt_savestr = this.getViewComponent().find("#txt_savestr");
-	this.txt_savestr.find("input").focus(function() {
-		_gthis.sendNotification("do_enable_command",{ enable : false});
-	});
-	this.txt_savestr.find("input").focusout(function() {
-		_gthis.sendNotification("do_enable_command",{ enable : true});
-	});
 	this.btn_record = this.getViewComponent().find("#btn_record");
 	this.mc_light = Main.j("#mc_light");
 	this.dia_invite = Main.j("#dia_invite");
@@ -2700,20 +2694,20 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			this.showOnlineOffline(notification.getBody().conn);
 			break;
 		case "on_load_click":
-			var loadstr = this.txt_savestr.textbox("getValue");
+			var loadstr = this.txt_savestr.val();
 			try {
 				var ary_cmds = JSON.parse(loadstr);
 				ary_cmds.forEach(function(cmd) {
 					var _g1 = cmd.type;
 					if(_g1 == "addItems") {
 						_gthis.sendNotification("do_create_item",cmd.msg);
-						haxe_Timer.delay(function() {
-							_gthis.sendNotification("do_update_view");
-						},1000);
 					}
 					return true;
 				});
-				this.txt_savestr.textbox("setValue","");
+				haxe_Timer.delay(function() {
+					_gthis.sendNotification("do_update_view");
+				},1000);
+				this.txt_savestr.val("");
 			} catch( error ) {
 				Main.alert("格式不對哦!");
 			}
@@ -2748,7 +2742,7 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			this.combo_ops.combobox("select",ary_ops[ary_ops.length - 1]);
 			break;
 		case "on_save_click":
-			this.txt_savestr.textbox({ value : notification.getBody().str});
+			this.txt_savestr.val(notification.getBody().str);
 			break;
 		case "on_searchComplete":
 			this.disabledOpponent();

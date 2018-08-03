@@ -72,7 +72,7 @@ class UI extends Mediator
 					case 'btn_isMyTurn': '到我了嗎？我的朋友。';
 					case 'btn_yes': '是，親愛的伙伴!';
 					case 'btn_no': '否。';
-					case 'btn_turnEnd': '趟~印度！';
+					case 'btn_turnEnd': '我結束這個回合！';
 					case _:'';
 				}
 				addSingleMessage( SocketController.playerId, msg );
@@ -92,13 +92,13 @@ class UI extends Mediator
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		txt_savestr = getViewComponent().find( '#txt_savestr' );
-		txt_savestr.find( 'input' ).focus( function() {
-			sendNotification( MainController.do_enable_command, { enable:false } );
-		});
-		
-		txt_savestr.find( 'input' ).focusout( function() {
-			sendNotification( MainController.do_enable_command, { enable:true } );
-		});
+		//txt_savestr.focus( function() {
+			//sendNotification( MainController.do_enable_command, { enable:false } );
+		//});
+		//
+		//txt_savestr.focusout( function() {
+			//sendNotification( MainController.do_enable_command, { enable:true } );
+		//});
 		
 		btn_record = getViewComponent().find( '#btn_record' );
 		mc_light = Main.j( '#mc_light' );
@@ -208,25 +208,25 @@ class UI extends Mediator
 						openIconGenerator(true);
 				}
 			case Main.on_load_click:
-				var loadstr = txt_savestr.textbox( 'getValue' );
+				var loadstr = txt_savestr.val();
 				try{
 					var ary_cmds = Json.parse( loadstr );
 					ary_cmds.forEach( function( cmd ) {
 						switch( cmd.type ) {
 							case 'addItems':
 								sendNotification( MainController.do_create_item, cmd.msg );
-								Timer.delay( function() {
-									sendNotification( MainController.do_update_view );
-								}, 1000 );
 						}
 						return true;
 					});
-					txt_savestr.textbox( 'setValue', '' );
+					Timer.delay( function() {
+						sendNotification( MainController.do_update_view );
+					}, 1000 );
+					txt_savestr.val( '' );
 				}catch ( error:Dynamic ) {
 					Main.alert( '格式不對哦!' );
 				}
 			case Main.on_save_click:
-				txt_savestr.textbox( { value: notification.getBody().str } );
+				txt_savestr.val( notification.getBody().str );
 			case Main.on_createDeck_click:
 				closeNorthPanel();
 			case SocketController.on_heartbeat_event:
