@@ -2735,9 +2735,7 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			case "applyTransform":
 				var ary_item1 = notification.getBody().ary_item;
 				var updateLayer = notification.getBody().zs;
-				if(updateLayer) {
-					this.pushHistoryMsg("對手選擇或擇排序了" + ary_item1.length + "個實體");
-				} else {
+				if(!updateLayer) {
 					this.pushHistoryMsg("對手操作了" + ary_item1.length + "個實體");
 				}
 				break;
