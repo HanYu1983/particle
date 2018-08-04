@@ -191,7 +191,8 @@ class UI extends Mediator
 						var ary_item = notification.getBody().ary_item;
 						var updateLayer = notification.getBody().zs;
 						if ( updateLayer ){
-							pushHistoryMsg( '對手選擇或擇排序了' + ary_item.length + '個實體' );
+							// 不需要顯示選擇或操作的訊息
+							//pushHistoryMsg( '對手選擇或擇排序了' + ary_item.length + '個實體' );
 						}else{
 							pushHistoryMsg( '對手操作了' + ary_item.length + '個實體' );
 						}
