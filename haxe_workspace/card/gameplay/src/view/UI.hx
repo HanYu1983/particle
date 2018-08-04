@@ -183,17 +183,17 @@ class UI extends Mediator
 						Main.slide( id + '說:' + msg );
 					case 'addItems':
 						var ary_item = notification.getBody();
-						pushHistoryMsg( '對手新增了' + ary_item.length + '個實體。' );
+						pushHistoryMsg( '對手新增了' + ary_item.length + '個實體' );
 					case 'deleteItem':
 						var ary_item = notification.getBody();
-						pushHistoryMsg( '對手刪除了' + ary_item.length + '個實體。' );
+						pushHistoryMsg( '對手刪除了' + ary_item.length + '個實體' );
 					case 'applyTransform':
 						var ary_item = notification.getBody().ary_item;
 						var updateLayer = notification.getBody().zs;
 						if ( updateLayer ){
-							pushHistoryMsg( '對手選擇或擇排序了' + ary_item.length + '個實體。' );
+							pushHistoryMsg( '對手選擇或擇排序了' + ary_item.length + '個實體' );
 						}else{
-							pushHistoryMsg( '對手操作了' + ary_item.length + '個實體。' );
+							pushHistoryMsg( '對手操作了' + ary_item.length + '個實體' );
 						}
 				}
 				if ( isShowNotify && ( browserNotify == null ) ) {

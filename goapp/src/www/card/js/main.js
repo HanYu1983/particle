@@ -2730,15 +2730,15 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			switch(_g3) {
 			case "addItems":
 				var ary_item = notification.getBody();
-				this.pushHistoryMsg("對手新增了" + ary_item.length + "個實體。");
+				this.pushHistoryMsg("對手新增了" + ary_item.length + "個實體");
 				break;
 			case "applyTransform":
 				var ary_item1 = notification.getBody().ary_item;
 				var updateLayer = notification.getBody().zs;
 				if(updateLayer) {
-					this.pushHistoryMsg("對手選擇或擇排序了" + ary_item1.length + "個實體。");
+					this.pushHistoryMsg("對手選擇或擇排序了" + ary_item1.length + "個實體");
 				} else {
-					this.pushHistoryMsg("對手操作了" + ary_item1.length + "個實體。");
+					this.pushHistoryMsg("對手操作了" + ary_item1.length + "個實體");
 				}
 				break;
 			case "chat":
@@ -2749,7 +2749,7 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 				break;
 			case "deleteItem":
 				var ary_item2 = notification.getBody();
-				this.pushHistoryMsg("對手刪除了" + ary_item2.length + "個實體。");
+				this.pushHistoryMsg("對手刪除了" + ary_item2.length + "個實體");
 				break;
 			}
 			if(this.isShowNotify && this.browserNotify == null) {
