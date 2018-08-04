@@ -2635,6 +2635,7 @@ var view_UI = function(mediatorName,viewComponent) {
 	this.combo_deck = this.getViewComponent().find("#combo_deck");
 	this.combo_ops = this.getViewComponent().find("#combo_ops");
 	this.txt_savestr = this.getViewComponent().find("#txt_savestr");
+	this.mc_historyList = Main.j("#mc_historyList");
 	this.btn_record = this.getViewComponent().find("#btn_record");
 	this.mc_light = Main.j("#mc_light");
 	this.dia_invite = Main.j("#dia_invite");
@@ -2726,11 +2727,30 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			break;
 		case "on_receiveMessage":
 			var _g3 = notification.getType();
-			if(_g3 == "chat") {
+			switch(_g3) {
+			case "addItems":
+				var ary_item = notification.getBody();
+				this.pushHistoryMsg("對手新增了" + ary_item.length + "個實體。");
+				break;
+			case "applyTransform":
+				var ary_item1 = notification.getBody().ary_item;
+				var updateLayer = notification.getBody().zs;
+				if(updateLayer) {
+					this.pushHistoryMsg("對手選擇或擇排序了" + ary_item1.length + "個實體。");
+				} else {
+					this.pushHistoryMsg("對手操作了" + ary_item1.length + "個實體。");
+				}
+				break;
+			case "chat":
 				var id = notification.getBody().id;
 				var msg = notification.getBody().msg;
 				this.addSingleMessage(id,msg);
 				Main.slide(id + "說:" + msg);
+				break;
+			case "deleteItem":
+				var ary_item2 = notification.getBody();
+				this.pushHistoryMsg("對手刪除了" + ary_item2.length + "個實體。");
+				break;
 			}
 			if(this.isShowNotify && this.browserNotify == null) {
 				this.browserNotify = google.notify("你的對戰卡友動作囉! 趕快回去卡牌風雲應戰吧","../common/images/logo.jpg");
@@ -2769,6 +2789,12 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 				this.showReceive(notification.getBody().show,notification.getBody().ops);
 			}
 		}
+	}
+	,pushHistoryMsg: function(msg) {
+		if(this.mc_historyList.find("p").length > 20) {
+			this.mc_historyList.find("p").first().remove();
+		}
+		this.mc_historyList.append("<p style=\"font-size:12px; text-align:right;\">" + msg + "</p>");
 	}
 	,doUpdateTimerView: function(timerData) {
 		if(timerData != null) {

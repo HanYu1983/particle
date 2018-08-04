@@ -35,6 +35,7 @@ class UI extends Mediator
 	var mc_layoutMain:Dynamic;
 	var mc_messagePanel:Dynamic;
 	var mc_timerView:Dynamic;
+	var mc_historyList:Dynamic;
 	var dia_iconGenerator:Dynamic;
 	
 	var isShowNotify = false;
@@ -92,13 +93,8 @@ class UI extends Mediator
 		combo_deck = getViewComponent().find( '#combo_deck' );
 		combo_ops = getViewComponent().find( '#combo_ops' );
 		txt_savestr = getViewComponent().find( '#txt_savestr' );
-		//txt_savestr.focus( function() {
-			//sendNotification( MainController.do_enable_command, { enable:false } );
-		//});
-		//
-		//txt_savestr.focusout( function() {
-			//sendNotification( MainController.do_enable_command, { enable:true } );
-		//});
+		
+		mc_historyList = Main.j("#mc_historyList");
 		
 		btn_record = getViewComponent().find( '#btn_record' );
 		mc_light = Main.j( '#mc_light' );
@@ -185,6 +181,20 @@ class UI extends Mediator
 						var msg = notification.getBody().msg;
 						addSingleMessage( id, msg );
 						Main.slide( id + '說:' + msg );
+					case 'addItems':
+						var ary_item = notification.getBody();
+						pushHistoryMsg( '對手新增了' + ary_item.length + '個實體。' );
+					case 'deleteItem':
+						var ary_item = notification.getBody();
+						pushHistoryMsg( '對手刪除了' + ary_item.length + '個實體。' );
+					case 'applyTransform':
+						var ary_item = notification.getBody().ary_item;
+						var updateLayer = notification.getBody().zs;
+						if ( updateLayer ){
+							pushHistoryMsg( '對手選擇或擇排序了' + ary_item.length + '個實體。' );
+						}else{
+							pushHistoryMsg( '對手操作了' + ary_item.length + '個實體。' );
+						}
 				}
 				if ( isShowNotify && ( browserNotify == null ) ) {
 					browserNotify = untyped __js__('google.notify')('你的對戰卡友動作囉! 趕快回去卡牌風雲應戰吧', '../common/images/logo.jpg');
@@ -249,6 +259,14 @@ class UI extends Mediator
 			
 		}
 	}
+	
+	function pushHistoryMsg( msg:String ){
+		if ( mc_historyList.find('p').length > 20 ){
+			mc_historyList.find('p').first().remove();
+		}
+		mc_historyList.append('<p style="font-size:12px; text-align:right;">' + msg + '</p>' );
+	}
+	
 	function doUpdateTimerView( timerData:Dynamic ){
 		if ( timerData != null ){
 			for ( k in timerData.users.fields() ){
