@@ -24,6 +24,7 @@ class UI extends Mediator
 	public static inline var do_show_recevie = 'do_show_recevie';
 	public static inline var on_combo_deck_change = 'on_combo_deck_change';
 	public static inline var on_iconGenerator_close = 'on_iconGenerator_close';
+	public static inline var on_confirmPanel_btnConfirm_click = 'on_confirmPanel_btnConfirm_click';
 	
 	var mc_detailContainer:Dynamic;
 	var combo_deck:Dynamic;
@@ -37,6 +38,7 @@ class UI extends Mediator
 	var mc_timerView:Dynamic;
 	var mc_historyList:Dynamic;
 	var dia_iconGenerator:Dynamic;
+	var dia_confirm:Dynamic;
 	
 	var isShowNotify = false;
 	var browserNotify = null;
@@ -109,6 +111,20 @@ class UI extends Mediator
 		dia_iconGenerator = Main.j('#dia_iconGenerator');	
 		createIconDialog();
 		
+		dia_confirm = Main.j("#dia_confirm");
+		dia_confirm.find('#btn_cancel' ).linkbutton({
+			onClick:function(){
+				sendNotification( on_confirmPanel_btnConfirm_click, false );
+				openConfirmPanel(false);
+			}
+		});
+		dia_confirm.find('#btn_confirm').linkbutton({
+			onClick:function(){
+				sendNotification( on_confirmPanel_btnConfirm_click, true );
+				openConfirmPanel(false);
+			}
+		});
+		
 		combo_ops.combobox( {
 			onChange:function( nv, ov ) {
 				Main.selectOps( nv );
@@ -155,6 +171,7 @@ class UI extends Mediator
 					MainController.on_dice,
 					MainController.on_been_invite,
 					MainController.on_press,
+					MainController.on_readyToDeleteItem,
 					SocketController.on_socket_error,
 					SocketController.on_socket_success,
 					Main.on_getSuit_success,
@@ -218,6 +235,10 @@ class UI extends Mediator
 					case KeyboardEvent.DOM_VK_Y:
 						openIconGenerator(true);
 				}
+			case MainController.on_readyToDeleteItem:
+				var count = notification.getBody().count;
+				var msg = '你確定要刪除這' + count + '個物件嗎？';
+				openConfirmPanel(true, msg);
 			case Main.on_load_click:
 				var loadstr = txt_savestr.val();
 				try{
@@ -351,6 +372,11 @@ class UI extends Mediator
 			saveAry.push({path:path, content:content});
 		});
 		CallJs.api_saveUserConfig("userIconContents", saveAry );
+	}
+	
+	function openConfirmPanel( open, ?msg = '' ){
+		dia_confirm.find('p').html(msg);
+		dia_confirm.dialog( open ? 'open' : 'close' );
 	}
 	
 	function openIconGenerator(open){

@@ -458,7 +458,7 @@ body{
 			</div>
 		</div>
 		<div id="dia_message" class="easyui-dialog" title="注意!" data-options="iconCls:'icon-help',closed:true" style="text-align:center;width:500px;padding:10px"></div>
-		<div id="dia_iconGenerator" class="easyui-dialog" title="指示物產生器" data-options="iconCls:'icon-sum',closed:false" style="top:20px; width:255px; padding:10px">
+		<div id="dia_iconGenerator" class="easyui-dialog" title="指示物產生器" data-options="iconCls:'icon-sum',closed:true" style="top:20px; width:255px; padding:10px">
 			<!--
 			<div style="margin-bottom:5px" class="group">
 				<div class="hori">
@@ -468,6 +468,15 @@ body{
 			</div>
 			-->
 			<!-- for script -->
+		</div>
+		<div id="dia_confirm" class="easyui-dialog" title="事件" data-options="iconCls:'icon-help',closed:true, closable:false" style="top:300px; width:255px; padding:10px">
+			<div class="group" style="text-align:center">
+				<p>確定刪除嗎？</p>
+			</div>
+			<div class="group" style="text-align:center">
+				<a id="btn_confirm" href="#" class="easyui-linkbutton" style="width:60px; height:30px; " data-options="iconCls:'icon-ok', disabled:false">確定</a>
+				<a id="btn_cancel" href="#" class="easyui-linkbutton" style="width:60px; height:30px; " data-options="iconCls:'icon-cancel', disabled:false">取消</a>
+			</div>
 		</div>
     </div>
 	<script src="../common/js/admin.js?v=20180429"></script>	

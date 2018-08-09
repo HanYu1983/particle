@@ -27,10 +27,12 @@ class MainController extends Mediator
 	public static inline var on_select_cards = 'on_select_cards';
 	public static inline var on_press = 'on_press';
 	public static inline var on_dice = 'on_dice';
+	public static inline var on_readyToDeleteItem = 'on_readyToDeleteItem';
+	public static var pos_mouse = [0, 0];
 	
 	var ary_select:Array<Dynamic> = [];
 	var ary_allItem:Array<Dynamic> = [];
-	public static var pos_mouse = [0, 0];
+	var ary_readyForDelete:Array<Dynamic>;
 	var isList = false;
 	var isCtrl = false;
 	var isRecord = false;
@@ -63,7 +65,8 @@ class MainController extends Mediator
 					do_update_view,
 					BasicItem.on_item_click,
 					BasicItem.on_item_lock,
-					UI.on_iconGenerator_close
+					UI.on_iconGenerator_close,
+					UI.on_confirmPanel_btnConfirm_click
 					];
 	}
 	
@@ -72,6 +75,14 @@ class MainController extends Mediator
 		switch( notification.getName() ) {
 			case UI.on_iconGenerator_close:
 				isEnableCommand = true;
+			case UI.on_confirmPanel_btnConfirm_click:
+				if ( notification.getBody()){
+					if (ary_readyForDelete != null && ary_readyForDelete.length > 0 ){
+						deleteModel( ary_readyForDelete );
+						deleteView( ary_readyForDelete );
+					}
+				}
+				ary_readyForDelete = null;
 			case BasicItem.on_item_lock:
 				var div:Dynamic = notification.getBody().view;
 				var lock = notification.getBody().lock;
@@ -279,6 +290,7 @@ class MainController extends Mediator
 	}
 	
 	function onBodyKeyDown( e ) {
+		if ( !isEnableCommand ) return;
 		switch( Std.parseInt( e.which ) ) {
 			case KeyboardEvent.DOM_VK_CONTROL:
 				isCtrl = true;
@@ -313,8 +325,10 @@ class MainController extends Mediator
 			case KeyboardEvent.DOM_VK_B:
 				Browser.window.field('onHtmlClick')('onSwitchTimerClick');
 			case KeyboardEvent.DOM_VK_H:
-				deleteModel( ary_select );
-				deleteView( ary_select );
+				if ( ary_select.length > 0 ){
+					ary_readyForDelete = ary_select.slice(0);
+					sendNotification(on_readyToDeleteItem, {count:ary_readyForDelete.length});
+				}
 			case KeyboardEvent.DOM_VK_I:
 				var token = Tool.createItem( [ 'token_0', 'other' ], pos_mouse.slice(0), 'token', 50, 50, true, false, SocketController.playerId );
 				createItem( token );

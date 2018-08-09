@@ -741,12 +741,21 @@ controller_MainController.__name__ = true;
 controller_MainController.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return ["do_create_item","do_getItemsString","on_sendMessage","on_receiveMessage","do_start_record","do_enable_command","do_update_view","on_item_click","on_item_lock","on_iconGenerator_close"];
+		return ["do_create_item","do_getItemsString","on_sendMessage","on_receiveMessage","do_start_record","do_enable_command","do_update_view","on_item_click","on_item_lock","on_iconGenerator_close","on_confirmPanel_btnConfirm_click"];
 	}
 	,handleNotification: function(notification) {
 		var _gthis = this;
 		var _g = notification.getName();
 		switch(_g) {
+		case "on_confirmPanel_btnConfirm_click":
+			if(notification.getBody()) {
+				if(this.ary_readyForDelete != null && this.ary_readyForDelete.length > 0) {
+					this.deleteModel(this.ary_readyForDelete);
+					this.deleteView(this.ary_readyForDelete);
+				}
+			}
+			this.ary_readyForDelete = null;
+			break;
 		case "on_iconGenerator_close":
 			this.isEnableCommand = true;
 			break;
@@ -1060,6 +1069,9 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		this.ary_allItem.push(model);
 	}
 	,onBodyKeyDown: function(e) {
+		if(!this.isEnableCommand) {
+			return;
+		}
 		var _g = Std.parseInt(e.which);
 		if(_g == 17) {
 			this.isCtrl = true;
@@ -1118,8 +1130,10 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.updateView(this.ary_select);
 			break;
 		case 72:
-			this.deleteModel(this.ary_select);
-			this.deleteView(this.ary_select);
+			if(this.ary_select.length > 0) {
+				this.ary_readyForDelete = this.ary_select.slice(0);
+				this.sendNotification("on_readyToDeleteItem",{ count : this.ary_readyForDelete.length});
+			}
 			break;
 		case 73:
 			var token = Tool.createItem(["token_0","other"],controller_MainController.pos_mouse.slice(0),"token",50,50,true,false,controller_SocketController.playerId);
@@ -2647,6 +2661,15 @@ var view_UI = function(mediatorName,viewComponent) {
 	});
 	this.dia_iconGenerator = Main.j("#dia_iconGenerator");
 	this.createIconDialog();
+	this.dia_confirm = Main.j("#dia_confirm");
+	this.dia_confirm.find("#btn_cancel").linkbutton({ onClick : function() {
+		_gthis.sendNotification("on_confirmPanel_btnConfirm_click",false);
+		_gthis.openConfirmPanel(false);
+	}});
+	this.dia_confirm.find("#btn_confirm").linkbutton({ onClick : function() {
+		_gthis.sendNotification("on_confirmPanel_btnConfirm_click",true);
+		_gthis.openConfirmPanel(false);
+	}});
 	this.combo_ops.combobox({ onChange : function(nv1,ov1) {
 		Main.selectOps(nv1);
 	}});
@@ -2673,7 +2696,7 @@ view_UI.__name__ = true;
 view_UI.__super__ = org_puremvc_haxe_patterns_mediator_Mediator;
 view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototype,{
 	listNotificationInterests: function() {
-		return ["on_select_cards","on_dice","on_been_invite","on_press","on_socket_error","on_socket_success","on_getSuit_success","on_receiveOps","on_timer_update","on_searchComplete","on_heartbeat_event","on_receiveMessage","on_startTimer_click","on_createDeck_click","on_save_click","on_load_click","do_show_recevie"];
+		return ["on_select_cards","on_dice","on_been_invite","on_press","on_readyToDeleteItem","on_socket_error","on_socket_success","on_getSuit_success","on_receiveOps","on_timer_update","on_searchComplete","on_heartbeat_event","on_receiveMessage","on_startTimer_click","on_createDeck_click","on_save_click","on_load_click","do_show_recevie"];
 	}
 	,handleNotification: function(notification) {
 		var _gthis = this;
@@ -2725,6 +2748,11 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 				break;
 			}
 			break;
+		case "on_readyToDeleteItem":
+			var count = notification.getBody().count;
+			var msg = "你確定要刪除這" + count + "個物件嗎？";
+			this.openConfirmPanel(true,msg);
+			break;
 		case "on_receiveMessage":
 			var _g3 = notification.getType();
 			switch(_g3) {
@@ -2741,9 +2769,9 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 				break;
 			case "chat":
 				var id = notification.getBody().id;
-				var msg = notification.getBody().msg;
-				this.addSingleMessage(id,msg);
-				Main.slide(id + "說:" + msg);
+				var msg1 = notification.getBody().msg;
+				this.addSingleMessage(id,msg1);
+				Main.slide(id + "說:" + msg1);
 				break;
 			case "deleteItem":
 				var ary_item2 = notification.getBody();
@@ -2874,6 +2902,13 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			saveAry.push({ path : path, content : content});
 		});
 		CallJs.api_saveUserConfig("userIconContents",saveAry);
+	}
+	,openConfirmPanel: function(open,msg) {
+		if(msg == null) {
+			msg = "";
+		}
+		this.dia_confirm.find("p").html(msg);
+		this.dia_confirm.dialog(open ? "open" : "close");
 	}
 	,openIconGenerator: function(open) {
 		this.dia_iconGenerator.dialog(open ? "open" : "close");
@@ -3234,6 +3269,7 @@ controller_MainController.on_been_invite = "on_been_invite";
 controller_MainController.on_select_cards = "on_select_cards";
 controller_MainController.on_press = "on_press";
 controller_MainController.on_dice = "on_dice";
+controller_MainController.on_readyToDeleteItem = "on_readyToDeleteItem";
 controller_MainController.pos_mouse = [0,0];
 controller_SocketController.setOpponents = "setOpponents";
 controller_SocketController.sendMessage = "sendMessage";
@@ -3256,5 +3292,6 @@ view_BasicItem.on_item_lock = "on_item_lock";
 view_UI.do_show_recevie = "do_show_recevie";
 view_UI.on_combo_deck_change = "on_combo_deck_change";
 view_UI.on_iconGenerator_close = "on_iconGenerator_close";
+view_UI.on_confirmPanel_btnConfirm_click = "on_confirmPanel_btnConfirm_click";
 Main.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
