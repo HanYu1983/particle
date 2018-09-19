@@ -213,5 +213,5 @@ async function sengokuJp(outputPath){
 (async function(){
 	// 記得抓之前把要抓首頁的快取檔清掉, 不然抓不到最新的
 	await sengokuCh('build/sengoku.json')
-	await sengokuJp('build/sengokuJp.json')
+	// await sengokuJp('build/sengokuJp.json')
 })()
