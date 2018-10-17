@@ -25,3 +25,4 @@ goapp/.idea/
 cache/
 package-lock.json
 build/
+tmp/
