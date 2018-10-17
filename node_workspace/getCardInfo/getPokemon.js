@@ -21,7 +21,7 @@ function fetch(url, dontUseCache){
 		//const urlKey = encodeURIComponent(url)
 		const urlKey = crypto.createHash('md5').update(url).digest('hex')
 		const path = "cache/"+urlKey+".html"
-		console.log(path)
+		//console.log(urlKey)
 		
 		if((!!dontUseCache) == false){
 			if (fs.existsSync(path)) {
@@ -106,7 +106,7 @@ async function getPackages(){
 	var row = 0
 	while(row = pkgNameReq.exec(page)){
 		var [ignore, pkgId, pkg] = row
-		console.log(pkg)
+		//console.log(pkg)
 		ret.push([pkgId, pkg])
 	}
 	return ret
@@ -125,13 +125,13 @@ async function getPackage(pkgId){
 	var detailPageUrls = []
 	for(var i=1; i<=totalPage; ++i){
 		pkgPageUrl = host + path + i + querystring + '&'+pkgId+'=on'
-		console.log(pkgPageUrl)
+		//console.log(pkgPageUrl)
 		pkgPage = await fetch(pkgPageUrl)
 		
 		var cardLinkRow = 0
 		while(cardLinkRow = cardLinkReq.exec(pkgPage)){
 			var [ignore, cardLink] = cardLinkRow
-			console.log(cardLink)
+			//console.log(cardLink)
 			detailPageUrls.push(cardLink)
 		}
 	}
@@ -140,11 +140,8 @@ async function getPackage(pkgId){
 }
 
 async function getDetails(detailPageUrls){
-	//let cardDetailReg = /<section class="mosaic section card-detail">\n\s+<div.+>\n\s+<!-- START: MAIN CARD PICTURE -->\n\s+<div.+>\n\s+<img src="(.+)"\n\s+.+>[\s\S]+<!-- START: POKEMON CARD BASIC DESCRIPTION -->\n\s+<div class=.+>\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>\n\s+<\/div>\n\s+<div.+>\n\s+<span class="card-hp"><span>HP<\/span>(.+)<\/span>\n\s+.+"energy (.+)">[\s\S]+<!-- START: POKEMON CARD ABILITIES -->([\s\S]+?)<!-- ENDS: POKEMON CARD ABILITIES -->\n\s+<!-- START: POKEMON CARD STATS AND EXPANSIONS -->([\s\S]+?)<!-- ENDS: POKEMON CARD STATS AND EXPANSIONS -->\n\s+<!-- START: ILLUSTRATOR -->([\s\S]+?)<!-- ENDS: ILLUSTRATOR -->/
-	//var cardDetailReg = /<section class="mosaic section card-detail">\n\s+<div.+>\n\s+<!-- START: MAIN CARD PICTURE -->\n\s+<div.+>\n\s+<img src="(.+)"\n\s+.+>[\s\S]+<!-- START: POKEMON CARD BASIC DESCRIPTION -->\n\s+<div class=.+>\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>\n\s+[\s\S]+?<\/div>\n\s+<div.+>\n\s+<span class="card-hp"><span>HP<\/span>(.+)<\/span>\n\s+.+"energy (.+)">[\s\S]+<!-- START: POKEMON CARD ABILITIES -->([\s\S]+?)<!-- ENDS: POKEMON CARD ABILITIES -->\n\s+<!-- START: POKEMON CARD STATS AND EXPANSIONS -->([\s\S]+?)<!-- ENDS: POKEMON CARD STATS AND EXPANSIONS -->\n\s+<!-- START: ILLUSTRATOR -->([\s\S]+?)<!-- ENDS: ILLUSTRATOR -->/
-	
-	
-	var cardDetailReg = /<section class="mosaic section card-detail">\n\s+<div.+>\n\s+<!-- START: MAIN CARD PICTURE -->\n\s+<div.+>\n\s+<img src="(.+)"\n\s+.+>[\s\S]+<!-- START: POKEMON CARD BASIC DESCRIPTION -->([\s\S]+?)<!-- ENDS: POKEMON CARD BASIC DESCRIPTION -->[\s\S]+?<!-- START: POKEMON CARD ABILITIES -->([\s\S]+?)<!-- ENDS: POKEMON CARD ABILITIES -->[\s\S]+?<!-- START: POKEMON CARD STATS AND EXPANSIONS -->([\s\S]+?)<!-- ENDS: POKEMON CARD STATS AND EXPANSIONS -->/
+	//var cardDetailReg = /<section class="mosaic section card-detail">\n\s+<div.+>\n\s+<!-- START: MAIN CARD PICTURE -->\n\s+<div.+>\n\s+<img src="(.+)"\n\s+.+>[\s\S]+<!-- START: POKEMON CARD BASIC DESCRIPTION -->([\s\S]+?)<!-- ENDS: POKEMON CARD BASIC DESCRIPTION -->[\s\S]+?<!-- START: POKEMON CARD ABILITIES -->([\s\S]+?)<!-- ENDS: POKEMON CARD ABILITIES -->[\s\S]+?<!-- START: POKEMON CARD STATS AND EXPANSIONS -->([\s\S]+?)<!-- ENDS: POKEMON CARD STATS AND EXPANSIONS -->/
+	var cardDetailReg = /<section class="mosaic section card-detail">\n\s+<div.+>\n\s+<!-- START: MAIN CARD PICTURE -->\n\s+<div.+>\n\s+<img src="(.+)"[\s\S]+?>[\s\S]+<!-- START: POKEMON CARD BASIC DESCRIPTION -->([\s\S]+?)<!-- ENDS: POKEMON CARD BASIC DESCRIPTION -->[\s\S]+?<!-- START: POKEMON CARD ABILITIES -->([\s\S]+?)<!-- ENDS: POKEMON CARD ABILITIES -->[\s\S]+?<!-- START: POKEMON CARD STATS AND EXPANSIONS -->([\s\S]+?)<!-- ENDS: POKEMON CARD STATS AND EXPANSIONS -->/
 	var nameTypeReg = /<div class="card-description">\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>/
 	var basicReg = /<div class=.+>\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>\n\s+[\s\S]+?<\/div>\n\s+<div.+>\n\s+<span class="card-hp"><span>HP<\/span>(.+)<\/span>\n\s+.+"energy (.+)">/
 	var basicStageReg = /Evolves From:\n\s+<a.+>\n\s+(.+)\n\s+<\/a>/
@@ -157,7 +154,7 @@ async function getDetails(detailPageUrls){
 	var output = []
 	for(var i in detailPageUrls){
 		var cardPageUrl = host + detailPageUrls[i]
-		console.log(i, "/", detailPageUrls.length, ":", cardPageUrl)
+		//console.log(i, "/", detailPageUrls.length, ":", cardPageUrl)
 		
 		var cardPage = await fetch(cardPageUrl)
 		var parseDetail = cardDetailReg.exec(cardPage)
@@ -229,20 +226,63 @@ async function getDetails(detailPageUrls){
 				name = name_
 				type = type_
 				
-				if(type.indexOf("Pokémon") != -1){
+				/*if(type.indexOf("Pokémon") != -1){
+					try{
+						var [ignore, name_, type_, hp_, energy_] = basicReg.exec(basicSection)
+						energy_ = energy_.replace(/icon-/, "")
+						
+						hp = hp_
+						energy = energy_
+					}catch(e){
+						// ignore
+					}
+				}
+				
+				if(type.indexOf("Stage") != -1){
+					try{
+						var [ignore, evolveFrom_] = basicStageReg.exec(basicSection)
+						evolveFrom = evolveFrom_
+					}catch(e){
+						// ignore
+					}
+				}
+				
+				if(type.indexOf("Trainer") != -1){
+					try{
+						var [ignore, powerTxt_] = /<pre>([\s\S]*?)<\/pre>/.exec(pokePower)
+						powerTxt = powerTxt_
+						
+						powerTxt = powerTxt.replace(/<span .+">/, "<")
+						powerTxt = powerTxt.replace(/<\/span>/, ">")
+						powers.push({
+							"powerName": "",
+							"power": "",
+							"powerTxt": powerTxt,
+							"powerCost": ""
+						})
+					}catch(e){
+						// ignore
+					}
+				}*/
+				
+				try{
 					var [ignore, name_, type_, hp_, energy_] = basicReg.exec(basicSection)
 					energy_ = energy_.replace(/icon-/, "")
 					
 					hp = hp_
 					energy = energy_
+				}catch(e){
+					// ignore
 				}
 				
-				if(type.indexOf("Stage") != -1){
+				try{
 					var [ignore, evolveFrom_] = basicStageReg.exec(basicSection)
 					evolveFrom = evolveFrom_
+				}catch(e){
+					// ignore
 				}
 				
-				if(type.indexOf("Trainer") != -1){
+				try{
 					var [ignore, powerTxt_] = /<pre>([\s\S]*?)<\/pre>/.exec(pokePower)
 					powerTxt = powerTxt_
 					
@@ -254,11 +294,12 @@ async function getDetails(detailPageUrls){
 						"powerTxt": powerTxt,
 						"powerCost": ""
 					})
+				}catch(e){
+					// ignore
 				}
 			}catch(e){
 				console.log(e)
 				console.log(img)
-				output.push([img, name, type, hp, energy, evolveFrom, ability, restorePokeman, exRule, pokeBody, pokePower, lvRule, basicSection, abi, stateSection])
 				break
 			}
 			
@@ -288,6 +329,7 @@ async function getDetails(detailPageUrls){
 				"abiName":abiName,
 				"abiTxt":abiTxt,
 				"exRuleTxt":exRuleTxt,
+				/*
 				"ability_":ability, 
 				"restorePokeman_":restorePokeman, 
 				"exRule_":exRule, 
@@ -297,10 +339,15 @@ async function getDetails(detailPageUrls){
 				"basicSection_":basicSection, 
 				"abiSection_":abiSection, 
 				"stateSection_":stateSection
+				*/
 			})
 
 		}catch(e){
 			console.log(e)
+			console.log(cardPageUrl)
+			var urlKey = crypto.createHash('md5').update(cardPageUrl).digest('hex')
+			console.log(urlKey)
+			break
 		}
 	}
 	return output
@@ -308,7 +355,7 @@ async function getDetails(detailPageUrls){
 
 async function pokemonEn(outputPath){
 	var pkgs = await getPackages()
-	console.log(pkgs)
+	//console.log(pkgs)
 
 	var files = []
 	for(var i in pkgs){
@@ -320,7 +367,8 @@ async function pokemonEn(outputPath){
 		await writeFile(tmpFileName, JSON.stringify(output, null, 2))
 		
 		files.push(tmpFileName)
-		break
+		//if(i == "3")
+		//	break
 	}
 	
 	var output = []
