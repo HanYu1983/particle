@@ -147,7 +147,12 @@ async function getDetails(detailPageUrls){
 	var cardDetailReg = /<section class="mosaic section card-detail">\n\s+<div.+>\n\s+<!-- START: MAIN CARD PICTURE -->\n\s+<div.+>\n\s+<img src="(.+)"\n\s+.+>[\s\S]+<!-- START: POKEMON CARD BASIC DESCRIPTION -->([\s\S]+?)<!-- ENDS: POKEMON CARD BASIC DESCRIPTION -->[\s\S]+?<!-- START: POKEMON CARD ABILITIES -->([\s\S]+?)<!-- ENDS: POKEMON CARD ABILITIES -->[\s\S]+?<!-- START: POKEMON CARD STATS AND EXPANSIONS -->([\s\S]+?)<!-- ENDS: POKEMON CARD STATS AND EXPANSIONS -->/
 	var nameTypeReg = /<div class="card-description">\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>/
 	var basicReg = /<div class=.+>\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>\n\s+[\s\S]+?<\/div>\n\s+<div.+>\n\s+<span class="card-hp"><span>HP<\/span>(.+)<\/span>\n\s+.+"energy (.+)">/
-	var stageReg = /Evolves From:\n\s+<a.+>\n\s+(.+)\n\s+<\/a>/
+	var basicStageReg = /Evolves From:\n\s+<a.+>\n\s+(.+)\n\s+<\/a>/
+	var abiReg = /<div class="pokemon-abilities">\n\s+<!-- ABILITY -->([\s\S]+?)<!-- RESTORED POKEMON -->([\s\S]+?)<!-- EX RULE -->([\s\S]+?)<!-- POKE-BODY -->([\s\S]+?)<!-- POKE-POWER -->([\s\S]+?)<!-- LV RULE -->([\s\S]+?)<!-- POKE-BODY -->/
+	var abiPowerReq = /<ul class="left">([\s\S]+?)<\/ul>\n\s+<h4 .+">(.+)<\/h4>\n\s+<span .+">(.+)<\/span>\n\s+<pre>([\s\S]*?)<\/pre>/g
+	var abiPowerCostReg = /<li rel="tooltip" title="(.+)">/g
+	var abiAbiReg = /<div>(.+)<\/div>\n\s+<\/h3>\n\s+<p>(.+)<\/p>/
+	var abiRuleReg = /<p>(.*)<\/p>/
 	
 	var output = []
 	for(var i in detailPageUrls){
@@ -158,26 +163,74 @@ async function getDetails(detailPageUrls){
 		var parseDetail = cardDetailReg.exec(cardPage)
 		
 		try{
-			var [ignore, img, basic, abi, state] = parseDetail
-			img = img.split("/")[img.split("/").length-1]
+			var [ignore, img, basicSection, abiSection, stateSection] = parseDetail
+			var [ignore, ability, restorePokeman, exRule, pokeBody, pokePower, lvRule] = abiReg.exec(abiSection)
 			
 			var name = ""
 			var type = ""
-			var hp = -1
-			var energy = "*"
-			var evolveFrom = "*"
+			var hp = ""
+			var energy = ""
+			var evolveFrom = ""
+			var powers = []
+			var abiName = ""
+			var abiTxt = ""
+			var exRuleTxt = ""
 			
 			try{
-				var nameTypeRow = nameTypeReg.exec(basic)
-				var [ignore, name_, type_] = nameTypeRow
+				var [ignore, exRuleTxt_] = abiRuleReg.exec(exRule)
+				exRuleTxt = exRuleTxt_
+			}catch(e){
+				// ignore
+			}
+			
+			try{
+				var [ignore, abiName_, abiTxt_] = abiAbiReg.exec(ability)
+				abiName = abiName_
+				abiTxt = abiTxt_
+			}catch(e){
+				// ignore
+			}
+			
+			try{
+				var row = 0
+				while(row = abiPowerReq.exec(pokePower)){
+					var [ignore, costs, powerName_, power_, powerTxt_] = row
+					var powerName = powerName_
+					var power = power_
+					var powerTxt = powerTxt_
+					
+					var powerCost = []
+					var costRow = 0
+					while(costRow = abiPowerCostReg.exec(costs)){
+						var [ignore, cost] = costRow
+						powerCost.push(cost)
+					}
+					
+					powerName = powerName.replace(/<\/?em>/g, "")
+					powerTxt = powerTxt.replace(/<span .+">/, "<")
+					powerTxt = powerTxt.replace(/<\/span>/, ">")
+					powers.push({
+						"powerName": powerName,
+						"power": power,
+						"powerTxt": powerTxt,
+						"powerCost": powerCost
+					})
+				}
+				
+			}catch(e){
+				// ignore
+			}
+			
+			try{
+				var [ignore, name_, type_] = nameTypeReg.exec(basicSection)
 				name_ = name_.replace(/ +<img.+\/>/, "")
 				name_ = name_.replace(/<\/?em>/g, "")
 				
 				name = name_
 				type = type_
 				
-				if(type.indexOf("Basic") != -1){
-					var [ignore, name_, type_, hp_, energy_] = basicReg.exec(basic)
+				if(type.indexOf("Pokémon") != -1){
+					var [ignore, name_, type_, hp_, energy_] = basicReg.exec(basicSection)
 					energy_ = energy_.replace(/icon-/, "")
 					
 					hp = hp_
@@ -185,23 +238,67 @@ async function getDetails(detailPageUrls){
 				}
 				
 				if(type.indexOf("Stage") != -1){
-					var [ignore, evolveFrom_] = stageReg.exec(basic)
+					var [ignore, evolveFrom_] = basicStageReg.exec(basicSection)
 					evolveFrom = evolveFrom_
+				}
+				
+				if(type.indexOf("Trainer") != -1){
+					var [ignore, powerTxt_] = /<pre>([\s\S]*?)<\/pre>/.exec(pokePower)
+					powerTxt = powerTxt_
+					
+					powerTxt = powerTxt.replace(/<span .+">/, "<")
+					powerTxt = powerTxt.replace(/<\/span>/, ">")
+					powers.push({
+						"powerName": "",
+						"power": "",
+						"powerTxt": powerTxt,
+						"powerCost": ""
+					})
 				}
 			}catch(e){
 				console.log(e)
 				console.log(img)
-				output.push([img, name, type, hp, energy, evolveFrom, basic, abi, state])
+				output.push([img, name, type, hp, energy, evolveFrom, ability, restorePokeman, exRule, pokeBody, pokePower, lvRule, basicSection, abi, stateSection])
 				break
 			}
-			output.push([img, name, type, hp, energy, evolveFrom, basic, abi, state])
 			
-			//var [ignore, img, name, type, hp, energy] = parseDetail
-			//output.push([img, name, type, hp, energy])
+			img = img.split("/")[img.split("/").length-1]
+			ability = ability.trim()
+			restorePokeman = restorePokeman.trim()
+			exRule = exRule.trim()
+			pokeBody = pokeBody.trim()
+			pokePower = pokePower.trim()
+			lvRule = lvRule.trim()
 			
-			//var [ignore, img, name, type, hp, energy, abi, state, ill] = parseDetail
-			//output.push([img, name, type, hp, energy, abi, state, ill])
+			var ruleImgReg = /<img class=".+" alt="(.+)" \/>/g
+			var row = 0
+			while(row = ruleImgReg.exec(exRuleTxt)){
+				var [match, ruleImg] = row
+				exRuleTxt = exRuleTxt.replace(match, ruleImg)
+			}
 			
+			output.push({
+				"id":img, 
+				"name":name, 
+				"type":type, 
+				"hp":hp, 
+				"energy":energy, 
+				"evolveFrom":evolveFrom,
+				"powers":powers,
+				"abiName":abiName,
+				"abiTxt":abiTxt,
+				"exRuleTxt":exRuleTxt,
+				"ability_":ability, 
+				"restorePokeman_":restorePokeman, 
+				"exRule_":exRule, 
+				"pokeBody_":pokeBody, 
+				"pokePower_":pokePower, 
+				"lvRule_":lvRule, 
+				"basicSection_":basicSection, 
+				"abiSection_":abiSection, 
+				"stateSection_":stateSection
+			})
+
 		}catch(e){
 			console.log(e)
 		}
