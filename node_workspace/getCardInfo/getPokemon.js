@@ -316,9 +316,6 @@ async function getDetails(detailPageUrls){
 				
 			}catch(e){
 				// ignore
-				//console.log(e)
-				//console.log(img)
-				//break
 			}
 			
 			// state section
@@ -368,7 +365,6 @@ async function getDetails(detailPageUrls){
 				"weakness":weakness,
 				"resistance":resistance,
 				"retreatCost":retreatCost,
-				
 				"abiName":abiName,
 				"abiTxt":abiTxt,
 				/*
@@ -382,7 +378,6 @@ async function getDetails(detailPageUrls){
 				"abiSection_":abiSection, 
 				"stateSection_":stateSection
 				*/
-				
 			})
 
 		}catch(e){
@@ -403,9 +398,9 @@ async function pokemonEn(outputPath){
 	var files = []
 	for(var i in pkgs){
 		var [pkgId, pkgName] = pkgs[i]
-		if(pkgName != "Holon Phantoms"){
+		/*if(pkgName != "Holon Phantoms"){
 			continue
-		}
+		}*/
 		
 		var links = await getPackage(pkgId)
 		var output = await getDetails(links)
