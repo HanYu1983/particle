@@ -145,11 +145,21 @@ async function getDetails(detailPageUrls){
 	var nameTypeReg = /<div class="card-description">\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>/
 	var basicReg = /<div class=.+>\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>\n\s+[\s\S]+?<\/div>\n\s+<div.+>\n\s+<span class="card-hp"><span>HP<\/span>(.+)<\/span>\n\s+.+"energy (.+)">/
 	var basicStageReg = /Evolves From:\n\s+<a.+>\n\s+(.+)\n\s+<\/a>/
+	
 	var abiReg = /<div class="pokemon-abilities">\n\s+<!-- ABILITY -->([\s\S]+?)<!-- RESTORED POKEMON -->([\s\S]+?)<!-- EX RULE -->([\s\S]+?)<!-- POKE-BODY -->([\s\S]+?)<!-- POKE-POWER -->([\s\S]+?)<!-- LV RULE -->([\s\S]+?)<!-- POKE-BODY -->/
-	var abiPowerReq = /<ul class="left">([\s\S]+?)<\/ul>\n\s+<h4 .+">(.+)<\/h4>\n\s+<span .+">(.+)<\/span>\n\s+<pre>([\s\S]*?)<\/pre>/g
+	//var abiPowerReq = /<ul class="left">([\s\S]+?)<\/ul>\n\s+<h4 .+">(.+)<\/h4>\n\s+<span .+">(.+)<\/span>\n\s+<pre>([\s\S]*?)<\/pre>/g
+	//var abiPowerReg = /<ul class="left">([\s\S]+?)<\/ul>([\s\S]+?)<\/div>/g
+	
+	var abiPowerReg = /<ul class="left">([\s\S]+?)<\/ul>\n\s+<h4 .+">(.+)<\/h4>[\s\S]+?<pre>([\s\S]*?)<\/pre>/g
+	var abiPowerPowerReg = /<span .+">(.+)<\/span>/
+	
+	var abiPowerReg2 = /<pre>([\s\S]*?)<\/pre>/g
+	var abiPowerReg3 = /<p>([\s\S]*?)<\/p>/
 	var abiPowerCostReg = /<li rel="tooltip" title="(.+)">/g
 	var abiAbiReg = /<div>(.+)<\/div>\n\s+<\/h3>\n\s+<p>(.+)<\/p>/
 	var abiRuleReg = /<p>(.*)<\/p>/
+	
+	var stateReg = /<h4>Weakness<\/h4>([\s\S]+?)<h4>Resistance<\/h4>([\s\S]+?)<h4>Retreat Cost<\/h4>([\s\S]+?)<\/div>/
 	
 	var output = []
 	for(var i in detailPageUrls){
@@ -161,8 +171,7 @@ async function getDetails(detailPageUrls){
 		
 		try{
 			var [ignore, img, basicSection, abiSection, stateSection] = parseDetail
-			var [ignore, ability, restorePokeman, exRule, pokeBody, pokePower, lvRule] = abiReg.exec(abiSection)
-			
+
 			var name = ""
 			var type = ""
 			var hp = ""
@@ -172,52 +181,11 @@ async function getDetails(detailPageUrls){
 			var abiName = ""
 			var abiTxt = ""
 			var exRuleTxt = ""
+			var weakness = []
+			var resistance = []
+			var retreatCost = []
 			
-			try{
-				var [ignore, exRuleTxt_] = abiRuleReg.exec(exRule)
-				exRuleTxt = exRuleTxt_
-			}catch(e){
-				// ignore
-			}
-			
-			try{
-				var [ignore, abiName_, abiTxt_] = abiAbiReg.exec(ability)
-				abiName = abiName_
-				abiTxt = abiTxt_
-			}catch(e){
-				// ignore
-			}
-			
-			try{
-				var row = 0
-				while(row = abiPowerReq.exec(pokePower)){
-					var [ignore, costs, powerName_, power_, powerTxt_] = row
-					var powerName = powerName_
-					var power = power_
-					var powerTxt = powerTxt_
-					
-					var powerCost = []
-					var costRow = 0
-					while(costRow = abiPowerCostReg.exec(costs)){
-						var [ignore, cost] = costRow
-						powerCost.push(cost)
-					}
-					
-					powerName = powerName.replace(/<\/?em>/g, "")
-					powerTxt = powerTxt.replace(/<span .+">/, "<")
-					powerTxt = powerTxt.replace(/<\/span>/, ">")
-					powers.push({
-						"powerName": powerName,
-						"power": power,
-						"powerTxt": powerTxt,
-						"powerCost": powerCost
-					})
-				}
-				
-			}catch(e){
-				// ignore
-			}
-			
+			// basicSection
 			try{
 				var [ignore, name_, type_] = nameTypeReg.exec(basicSection)
 				name_ = name_.replace(/ +<img.+\/>/, "")
@@ -225,45 +193,6 @@ async function getDetails(detailPageUrls){
 				
 				name = name_
 				type = type_
-				
-				/*if(type.indexOf("Pokémon") != -1){
-					try{
-						var [ignore, name_, type_, hp_, energy_] = basicReg.exec(basicSection)
-						energy_ = energy_.replace(/icon-/, "")
-						
-						hp = hp_
-						energy = energy_
-					}catch(e){
-						// ignore
-					}
-				}
-				
-				if(type.indexOf("Stage") != -1){
-					try{
-						var [ignore, evolveFrom_] = basicStageReg.exec(basicSection)
-						evolveFrom = evolveFrom_
-					}catch(e){
-						// ignore
-					}
-				}
-				
-				if(type.indexOf("Trainer") != -1){
-					try{
-						var [ignore, powerTxt_] = /<pre>([\s\S]*?)<\/pre>/.exec(pokePower)
-						powerTxt = powerTxt_
-						
-						powerTxt = powerTxt.replace(/<span .+">/, "<")
-						powerTxt = powerTxt.replace(/<\/span>/, ">")
-						powers.push({
-							"powerName": "",
-							"power": "",
-							"powerTxt": powerTxt,
-							"powerCost": ""
-						})
-					}catch(e){
-						// ignore
-					}
-				}*/
 				
 				try{
 					var [ignore, name_, type_, hp_, energy_] = basicReg.exec(basicSection)
@@ -281,36 +210,145 @@ async function getDetails(detailPageUrls){
 				}catch(e){
 					// ignore
 				}
+			}catch(e){
+				console.log(e)
+				console.log(img)
+				//break
+			}
+			
+			// abiSection
+			try{
+				var [ignore, ability, restorePokeman, exRule, pokeBody, pokePower, lvRule] = abiReg.exec(abiSection)
+				ability = ability.trim()
+				restorePokeman = restorePokeman.trim()
+				exRule = exRule.trim()
+				pokeBody = pokeBody.trim()
+				pokePower = pokePower.trim()
+				lvRule = lvRule.trim()
 				
 				try{
-					var [ignore, powerTxt_] = /<pre>([\s\S]*?)<\/pre>/.exec(pokePower)
-					powerTxt = powerTxt_
-					
+					var [ignore, exRuleTxt_] = abiRuleReg.exec(exRule)
+					exRuleTxt = exRuleTxt_
+				}catch(e){
+					// ignore
+				}
+				
+				try{
+					var [ignore, abiName_, abiTxt_] = abiAbiReg.exec(ability)
+					abiName = abiName_
+					abiTxt = abiTxt_
+				}catch(e){
+					// ignore
+				}
+				
+				try{
+					var [ignore, powerTxt] = abiPowerReg3.exec(pokePower)
 					powerTxt = powerTxt.replace(/<span .+">/, "<")
 					powerTxt = powerTxt.replace(/<\/span>/, ">")
 					powers.push({
 						"powerName": "",
 						"power": "",
 						"powerTxt": powerTxt,
-						"powerCost": ""
+						"powerCost": []
 					})
 				}catch(e){
 					// ignore
 				}
+				
+				
+				
+				if(type.indexOf("Pokémon") != -1){					
+					try{
+						var row = 0
+						while(row = abiPowerReg.exec(pokePower)){
+							var [match, costs, powerName, powerTxt] = row
+							var powerCost = []
+							var costRow = 0
+							var power = ""
+							
+							while(costRow = abiPowerCostReg.exec(costs)){
+								var [ignore, cost] = costRow
+								powerCost.push(cost)
+							}
+							
+							try{
+								var [ignore, power_] = abiPowerPowerReg.exec(match)
+								power = power_
+							}catch(e){
+								// ignore
+							}
+							
+							powerName = powerName.replace(/<\/?em>/g, "")
+							powerTxt = powerTxt.replace(/<span .+">/, "<")
+							powerTxt = powerTxt.replace(/<\/span>/, ">")
+							powers.push({
+								"powerName": powerName,
+								"power": power,
+								"powerTxt": powerTxt,
+								"powerCost": powerCost
+							})
+						}
+						
+					}catch(e){
+						console.log(e)
+						// ignore
+					}
+				} else {
+					try{
+						var row = 0
+						while(row = abiPowerReg2.exec(pokePower)){
+							var [ignore, powerTxt] = row
+
+							powerTxt = powerTxt.replace(/<span .+">/, "<")
+							powerTxt = powerTxt.replace(/<\/span>/, ">")
+							powers.push({
+								"powerName": "",
+								"power": "",
+								"powerTxt": powerTxt,
+								"powerCost": []
+							})
+						}
+						
+					}catch(e){
+						// ignore
+					}
+				}
+				
 			}catch(e){
-				console.log(e)
-				console.log(img)
-				break
+				// ignore
+				//console.log(e)
+				//console.log(img)
+				//break
+			}
+			
+			// state section
+			try{
+				var [ignore, weakness_, resistance_, retreatCost_] = stateReg.exec(stateSection)
+				var iconReg = /<i class="energy (.+)"><\/i>/g
+				
+				var row = []
+				while(row = iconReg.exec(weakness_)){
+					var [ignore, icon] = row
+					icon = icon.replace(/icon-/, "")
+					weakness.push(icon)
+				}
+				
+				while(row = iconReg.exec(resistance_)){
+					var [ignore, icon] = row
+					icon = icon.replace(/icon-/, "")
+					resistance.push(icon)
+				}
+				
+				while(row = iconReg.exec(retreatCost_)){
+					var [ignore, icon] = row
+					icon = icon.replace(/icon-/, "")
+					retreatCost.push(icon)
+				}
+			}catch(e){
+				// ignore
 			}
 			
 			img = img.split("/")[img.split("/").length-1]
-			ability = ability.trim()
-			restorePokeman = restorePokeman.trim()
-			exRule = exRule.trim()
-			pokeBody = pokeBody.trim()
-			pokePower = pokePower.trim()
-			lvRule = lvRule.trim()
-			
 			var ruleImgReg = /<img class=".+" alt="(.+)" \/>/g
 			var row = 0
 			while(row = ruleImgReg.exec(exRuleTxt)){
@@ -326,20 +364,25 @@ async function getDetails(detailPageUrls){
 				"energy":energy, 
 				"evolveFrom":evolveFrom,
 				"powers":powers,
+				"exRuleTxt":exRuleTxt,
+				"weakness":weakness,
+				"resistance":resistance,
+				"retreatCost":retreatCost,
+				
 				"abiName":abiName,
 				"abiTxt":abiTxt,
-				"exRuleTxt":exRuleTxt,
 				/*
 				"ability_":ability, 
 				"restorePokeman_":restorePokeman, 
 				"exRule_":exRule, 
 				"pokeBody_":pokeBody, 
 				"pokePower_":pokePower, 
-				"lvRule_":lvRule, 
+				"lvRule_":lvRule,
 				"basicSection_":basicSection, 
 				"abiSection_":abiSection, 
 				"stateSection_":stateSection
 				*/
+				
 			})
 
 		}catch(e){
@@ -360,15 +403,19 @@ async function pokemonEn(outputPath){
 	var files = []
 	for(var i in pkgs){
 		var [pkgId, pkgName] = pkgs[i]
+		if(pkgName != "Holon Phantoms"){
+			continue
+		}
+		
 		var links = await getPackage(pkgId)
 		var output = await getDetails(links)
+		for(var i in output){
+			output[i].pack = pkgName
+		}
 		// 記憶體不足,拆成二個部分
 		var tmpFileName = 'tmp/'+pkgName+".json"
 		await writeFile(tmpFileName, JSON.stringify(output, null, 2))
-		
 		files.push(tmpFileName)
-		//if(i == "3")
-		//	break
 	}
 	
 	var output = []
