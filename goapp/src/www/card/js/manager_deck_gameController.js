@@ -52,7 +52,7 @@ var gameController = {};
 		return function( obj ){	
 			for(var i in obj.powers){
 				var info = obj.powers[i]
-				return info.powerTxt.indexOf( value ) != -1
+				return info.txt.indexOf( value ) != -1
 			}
 			return obj.abiTxt.indexOf( value ) != -1
 		}

@@ -85,18 +85,17 @@ body{
 			<div game="pokemon">${id}</div>
 			<div game="pokemon">${type}</div>
 			<div game="pokemon">${name}</div>
-			<div game="pokemon">hp ${hp}</div>
-			<div game="pokemon">energy ${energy}</div>
-			<div game="pokemon">evolveFrom ${evolveFrom}</div>
+			<div game="pokemon">${hp}</div>
+			<div game="pokemon">${energy}</div>
+			<div game="pokemon">evolveFrom:${evolveFrom}</div>
+			<div game="pokemon">{{html abiTxt}}</div>
+			<div game="pokemon">{{html body}}</div>
 			<div game="pokemon">
 				{{each(prop, val) powers}}
-					<div>${val.powerName}</div>
-					<div>${val.power}</div>
-					<div>${val.powerTxt}</div>
+					<div>${val.name} ${val.power}</div>
+					<div>${val.txt}</div>
 				{{/each}}
 			</div>
-			<div game="pokemon">${abiName}</div>
-			<div game="pokemon">${abiTxt}</div>
 			<div game="pokemon">${pack}</div>
 			
 			<div game="fighter">${cid}</div>
@@ -447,28 +446,26 @@ body{
 			default:[
 				[	
 					{type:'label', val:'能量'},
-					{type:'select', span:3, val:{name:'energy', items:["grass","fire","water","lightning","psychic","fighting","darkness","metal","colorless","fairy","dragon"]}},
+					{type:'select', span:2, val:{name:'energy', items:["grass","fire","water","lightning","psychic","fighting","darkness","metal","colorless","fairy","dragon"]}},
 					{type:'label',val:'卡片種類'},
-					{type:'select',span:3,val:{name:'type', items:["Pokémon","Stage 1 Pokémon","Stage 2 Pokémon","Pokémon-GX", "Trainer"]}}],
-				[
-					{type:'label', val:'從演化'},
-					{type:'textbox', span:3, val:{name:'evolveFrom'}},
-				],
+					{type:'select',span:2,val:{name:'type', items:["Pokémon","Stage 1 Pokémon","Stage 2 Pokémon","Pokémon-GX", "Trainer", "Trainer - Supporter", "Trainer [Pokémon Tool]", "Trainer - Item", "Trainer - Stadium"]}}],
 				[
 					{type:'label', val:'hp以上'},
-					{type:'textbox', span:3,val:{name:'hp_1'}},
+					{type:'textbox', span:2,val:{name:'hp_1'}},
 					{type:'label',val:'hp以下'},
-					{type:'textbox', span:3, val:{name:'hp_2'}},
+					{type:'textbox', span:2, val:{name:'hp_2'}},
 				],
 				[	
 					{type:'label', val:'卡片名稱檢索'},
-					{type:'textbox', span:6,val:{name:'name'}}],
+					{type:'textbox', span:2,val:{name:'name'}},
+					{type:'label', val:'從演化'},
+					{type:'textbox', span:2, val:{name:'evolveFrom'}}],
 				[	
 					{type:'label', val:'卡片規則檢索'},
-					{type:'textbox', span:6,val:{name:'rule'}}],
+					{type:'textbox', span:5,val:{name:'rule'}}],
 				[	
 					{type:'label', val:'id檢索'},
-					{type:'textbox', span:6,val:{name:'id'}}
+					{type:'textbox', span:5,val:{name:'id'}}
 				]
 			]
 		},

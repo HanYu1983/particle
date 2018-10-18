@@ -184,6 +184,7 @@ async function getDetails(detailPageUrls){
 			var weakness = []
 			var resistance = []
 			var retreatCost = []
+			var body = ""
 			
 			// basicSection
 			try{
@@ -219,13 +220,14 @@ async function getDetails(detailPageUrls){
 			// abiSection
 			try{
 				var [ignore, ability, restorePokeman, exRule, pokeBody, pokePower, lvRule] = abiReg.exec(abiSection)
+				/*
 				ability = ability.trim()
 				restorePokeman = restorePokeman.trim()
 				exRule = exRule.trim()
 				pokeBody = pokeBody.trim()
 				pokePower = pokePower.trim()
 				lvRule = lvRule.trim()
-				
+				*/
 				try{
 					var [ignore, exRuleTxt_] = abiRuleReg.exec(exRule)
 					exRuleTxt = exRuleTxt_
@@ -242,22 +244,39 @@ async function getDetails(detailPageUrls){
 				}
 				
 				try{
+					var [ignore, txt] = abiPowerReg2.exec(pokeBody)
+					txt = powerTxt.replace(/<span .+">/, "<")
+					txt = powerTxt.replace(/<\/span>/, ">")
+					body = txt
+				}catch(e){
+					// ignore
+				}
+				
+				try{
+					var [ignore, powerTxt] = abiPowerReg3.exec(pokeBody)
+					txt = powerTxt.replace(/<span .+">/, "<")
+					txt = powerTxt.replace(/<\/span>/, ">")
+					body = txt
+				}catch(e){
+					// ignore
+				}
+				
+				try{
 					var [ignore, powerTxt] = abiPowerReg3.exec(pokePower)
 					powerTxt = powerTxt.replace(/<span .+">/, "<")
 					powerTxt = powerTxt.replace(/<\/span>/, ">")
 					powers.push({
-						"powerName": "",
+						"name": "",
 						"power": "",
-						"powerTxt": powerTxt,
-						"powerCost": []
+						"txt": powerTxt,
+						"cost": []
 					})
 				}catch(e){
 					// ignore
 				}
 				
-				
-				
-				if(type.indexOf("Pokémon") != -1){					
+				// 不是Trainer並且有Pokémon的
+				if(type.indexOf('Trainer') == -1 && type.indexOf("Pokémon") != -1){					
 					try{
 						var row = 0
 						while(row = abiPowerReg.exec(pokePower)){
@@ -282,10 +301,10 @@ async function getDetails(detailPageUrls){
 							powerTxt = powerTxt.replace(/<span .+">/, "<")
 							powerTxt = powerTxt.replace(/<\/span>/, ">")
 							powers.push({
-								"powerName": powerName,
+								"name": powerName,
 								"power": power,
-								"powerTxt": powerTxt,
-								"powerCost": powerCost
+								"txt": powerTxt,
+								"cost": powerCost
 							})
 						}
 						
@@ -302,10 +321,10 @@ async function getDetails(detailPageUrls){
 							powerTxt = powerTxt.replace(/<span .+">/, "<")
 							powerTxt = powerTxt.replace(/<\/span>/, ">")
 							powers.push({
-								"powerName": "",
+								"name": "",
 								"power": "",
-								"powerTxt": powerTxt,
-								"powerCost": []
+								"txt": powerTxt,
+								"cost": []
 							})
 						}
 						
@@ -368,6 +387,7 @@ async function getDetails(detailPageUrls){
 				"retreatCost":retreatCost,
 				"abiName":abiName,
 				"abiTxt":abiTxt,
+				"body":body
 				/*
 				"ability_":ability, 
 				"restorePokeman_":restorePokeman, 
@@ -393,27 +413,29 @@ async function getDetails(detailPageUrls){
 }
 
 async function pokemonEn(outputPath){
+	console.log("取得套件...")
 	var pkgs = await getPackages()
-	//console.log(pkgs)
-
 	var files = []
 	for(var i in pkgs){
 		var [pkgId, pkgName] = pkgs[i]
-		/*if(pkgName != "Holon Phantoms"){
+		console.log("解析:"+pkgName)
+		/*if(pkgName != "Dragon Majesty"){
 			continue
 		}*/
-		
 		var links = await getPackage(pkgId)
+		console.log("取得詳細...")
 		var output = await getDetails(links)
 		for(var i in output){
 			output[i].pack = pkgName
 		}
 		// 記憶體不足,拆成二個部分
 		var tmpFileName = 'tmp/'+pkgName+".json"
+		console.log("暫存:"+tmpFileName)
 		await writeFile(tmpFileName, JSON.stringify(output, null, 2))
 		files.push(tmpFileName)
 	}
 	
+	console.log("合併檔案...")
 	var output = []
 	for(var i in files){
 		var tmpFileName = files[i]
@@ -422,6 +444,7 @@ async function pokemonEn(outputPath){
 		output = output.concat(data)
 	}
 	await writeFile(outputPath, JSON.stringify(output, null, 2))
+	console.log("完成:"+outputPath)
 }
 
 async function genImgHtml(){
