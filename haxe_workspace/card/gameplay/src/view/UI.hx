@@ -544,6 +544,24 @@ class UI extends Mediator
 				if ( detail != null ) {
 					str = '';
 					switch( game ) {
+						case 'pokemon':
+							str += detail.id;
+							str += '<br/>';
+							str += detail.name;
+							str += '<br/>';
+							str += detail.abiTxt;
+							str += '<br/>';
+							str += detail.body;
+							str += '<br/>';
+							for (i in Reflect.fields(detail.powers)){
+								var power = Reflect.field(detail.powers, i);
+								str += power.name;
+								str += '<br/>';
+								str += power.power;
+								str += '<br/>';
+								str += power.txt;
+								str += '<br/>';
+							}
 						case 'gundamCrossWar':
 							str += detail.cname + ' ' + detail.size;
 							str += '<br/>';
