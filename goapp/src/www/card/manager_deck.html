@@ -82,6 +82,23 @@ body{
 		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
 		<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
 		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:10px; padding-right:10px; padding-top:10px; ">
+			<div game="pokemon">${id}</div>
+			<div game="pokemon">${type}</div>
+			<div game="pokemon">${name}</div>
+			<div game="pokemon">hp ${hp}</div>
+			<div game="pokemon">energy ${energy}</div>
+			<div game="pokemon">evolveFrom ${evolveFrom}</div>
+			<div game="pokemon">
+				{{each(prop, val) powers}}
+					<div>${val.powerName}</div>
+					<div>${val.power}</div>
+					<div>${val.powerTxt}</div>
+				{{/each}}
+			</div>
+			<div game="pokemon">${abiName}</div>
+			<div game="pokemon">${abiTxt}</div>
+			<div game="pokemon">${pack}</div>
+			
 			<div game="fighter">${cid}</div>
 			<div game="fighter">${cname}</div>
 			<div game="fighter">${ctype}</div>
@@ -200,6 +217,9 @@ body{
 			<img style="position:absolute; left:0; top:0; height:100%;" src=${url}  style="height:100%;" />
 		</div>
 		<div class="hori" style="overflow:hidden; width:150px; height:100%; vertical-align:top;">
+			<div game="pokemon">${id}</div>
+			<div game="pokemon">${type}</div>
+			
 			<div game="fighter">${cid}</div>
 			<div game="fighter">${cname}</div>
 			<div game="fighter">${ctype}</div>
@@ -364,6 +384,7 @@ body{
 	<script src="../common/js/lib/google/ga.js"></script>
 	<script src="../common/js/lib/csv.js"></script>
 	<script src="../common/js/lib/purl.js"></script>	
+	<script src="../common/js/pokemon.js"></script>
 	<script src="../common/js/fighter.js"></script>
 	<script src="../common/js/gundamCrossWar.js"></script>
 	<script src="../common/js/sangoWar.js"></script>	
@@ -422,6 +443,35 @@ body{
 
 
 	var tmplAry = {
+		pokemon:{
+			default:[
+				[	
+					{type:'label', val:'能量'},
+					{type:'select', span:3, val:{name:'energy', items:["grass","fire","water","lightning","psychic","fighting","darkness","metal","colorless","fairy","dragon"]}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:3,val:{name:'type', items:["Pokémon","Stage 1 Pokémon","Stage 2 Pokémon","Pokémon-GX", "Trainer"]}}],
+				[
+					{type:'label', val:'從演化'},
+					{type:'textbox', span:3, val:{name:'evolveFrom'}},
+				],
+				[
+					{type:'label', val:'hp以上'},
+					{type:'textbox', span:3,val:{name:'hp_1'}},
+					{type:'label',val:'hp以下'},
+					{type:'textbox', span:3, val:{name:'hp_2'}},
+				],
+				[	
+					{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:6,val:{name:'name'}}],
+				[	
+					{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:6,val:{name:'rule'}}],
+				[	
+					{type:'label', val:'id檢索'},
+					{type:'textbox', span:6,val:{name:'id'}}
+				]
+			]
+		},
 		fighter:{
 			default:[
 				[
@@ -1222,6 +1272,7 @@ body{
 	}
 	
 	var titlemapping = {
+		pokemon:'寶可夢TCG',
 		sangoWar:'三國志大戰',
 		army:'軍武gogogo',
 		fighter: '格鬥風雲錄',

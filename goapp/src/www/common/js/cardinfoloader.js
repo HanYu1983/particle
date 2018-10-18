@@ -4,6 +4,9 @@ var cardinfoloader = {} || cardinfoloader;
 	
 	function load( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'pokemon':
+				pokemon.load("../common/txt/pokemonEn.json", onLoadGameCallback)
+				break
 			case 'fighter':
 				fighter.load("../common/txt/fighter.tsv", onLoadGameCallback);
 				break;
@@ -73,6 +76,8 @@ var cardinfoloader = {} || cardinfoloader;
 	*/
 	function cardimageurl( game, id ){
 		switch( game ){
+		case 'pokemon':
+			return '//storage.googleapis.com/particle-resources/cardPackage/pokemon/'+ id
 		case 'gundamCrossWar':
 			return '//storage.googleapis.com/particle-resources/cardPackage/gundamCrossWar/'+id+'.png'
 		case 'sanguosha':

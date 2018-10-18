@@ -12,6 +12,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'pokemon':
+				return pokemonQuerystring2fns( str )
 			case 'fighter':
 				return fighterQuerystring2fns( str )
 			case 'gundamCrossWar':
@@ -44,6 +46,53 @@ var gameController = {};
 				console.log('no this game '+game)
 				return [obj=>true]	// array of function
 		}
+	}
+	
+	function pokemonRule( value ){
+		return function( obj ){	
+			for(var i in obj.powers){
+				var info = obj.powers[i]
+				return info.powerTxt.indexOf( value ) != -1
+			}
+			return obj.abiTxt.indexOf( value ) != -1
+		}
+	}
+	
+	function pokemonQuerystring2fns(qstr){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+				case 'cid':
+				case 'id':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break;
+				case 'type':
+				fns.push( cardsearch.attrEq( "type", v ) )
+				break;
+				case 'name':
+				fns.push( cardsearch.attrEq( "name", v ) )
+				break;
+				case 'hp_1':
+				fns.push( cardsearch.attrGe( "hp", parseInt(v) ) )
+				break;
+				case 'hp_2':
+				fns.push( cardsearch.attrLe( "hp", parseInt(v) ) )
+				break;
+				case 'rule':
+				fns.push( pokemonRule( v ) )
+				break;
+				default:
+				fns.push( cardsearch.attrEq( k, v ) )
+				break;
+			}
+		}
+		return fns
 	}
 	
 	function fighterQuerystring2fns(qstr){
