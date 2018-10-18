@@ -6,12 +6,10 @@ import js.Browser;
 import js.html.BarProp;
 import js.html.NotifyPaintEvent;
 import js.Lib;
-import mediator.UI;
+import view.UI;
 import model.Model;
+import controller.*;
 import org.puremvc.haxe.patterns.facade.Facade;
-import per.vic.pureMVCref.tableGameModel.controller.MainController;
-import per.vic.pureMVCref.tableGameModel.controller.SocketController;
-import per.vic.pureMVCref.tableGameModel.Tool;
 
 using Lambda;
 using Reflect;
@@ -27,6 +25,8 @@ class Main
 	public static inline var on_receiveOps = 'on_receiveOps';
 	public static inline var on_save_click = 'on_save_click';
 	public static inline var on_load_click = 'on_load_click';
+	public static inline var on_startTimer_click = 'on_startTimer_click';
+	public static inline var on_timer_update = 'on_timer_update';
 
 	public static var j:Dynamic = untyped __js__('$');
 	
@@ -34,13 +34,15 @@ class Main
 	public static var token = '';
 	public static var otherPlayerId = '';
 	
-	public static var currentSelect = 'yugioh';
+	public static var currentSelect = 'fighter';
 	public static var cardSuits:Dynamic = {};
 	public static var cardSuit = null;
 	public static var cardSuitsDetails:Dynamic = {};
 	public static var cardSuitsDetailsIsLoading:Dynamic = {};
 	
 	static var ary_ops:Array<String>;
+	
+	private var timer:Timer;
 	
 	function new() {
 		
@@ -72,8 +74,12 @@ class Main
 			}else {
 				ary_ops = [];
 			}
+			
+			timer = new Timer( 1000 );
+			timer.run = function(){
+				Facade.getInstance().sendNotification( on_timer_update );
+			}
 		});
-		
 	}
 	
 	public static function changePlayer( player:String ) {
@@ -150,9 +156,42 @@ class Main
 		});
 	}
 	
+	function isCanCallTimer():Bool{
+		return CallJs.api_getTimerContext() != null;
+	}
+	
 	function onHtmlClick( type:String, ?params ) {
-		
 		switch( type ) {
+			case 'onResetTimerClick':
+				CallJs.api_resetTimer( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
+					if ( err != null )	alert( err );
+				});
+			case 'onStopTimerClick':
+				if ( !isCanCallTimer() ) return;
+				CallJs.api_stopTimer( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
+					if ( err != null )	alert( err );
+				});
+			case 'onStartTimerClick':
+				Facade.getInstance().sendNotification( on_startTimer_click );
+				CallJs.api_resetTimer( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
+					if ( err != null )	alert( err );
+					else{
+						CallJs.api_startTimer( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
+							if ( err != null )	alert( err );
+							else{
+								Facade.getInstance().sendNotification( SocketController.sendMessage, { type:'chat', msg: { id:SocketController.playerId, msg:'開始計時!' } } );
+							}
+						});
+					}
+				});
+			case 'onSwitchTimerClick':
+				if ( !isCanCallTimer() ) return;
+				CallJs.api_switchUser( SocketController.playerId, SocketController.otherPlayerIds, function( err, data ) {
+					if ( err != null )	alert( err );
+					else{
+						Facade.getInstance().sendNotification( SocketController.sendMessage, { type:'chat', msg: { id:SocketController.playerId, msg:'切換玩家嘍~' } } );
+					}
+				});
 			case 'onBtnLoadGameClick':
 				currentSelect = params;
 				chooseCardSuit( params );

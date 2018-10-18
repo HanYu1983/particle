@@ -2,20 +2,19 @@ package hello
 
 import (
 	"app"
-	"app/collectmmo"
-	"app/duelsys"
 	"fmt"
 	appauth "lib/auth"
 	"lib/db2"
 	"lib/tool"
 	"net/http"
-	"github.com/gorilla/mux"
-	sgs "app/cardgame/http"
-)
 
-func handler2(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, world3!")
-}
+	"github.com/gorilla/mux"
+
+	"appengine"
+	"appengine/user"
+
+	"app/contestsys"
+)
 
 func init() {
 	//// 基本設施 ////
@@ -23,12 +22,12 @@ func init() {
 	http.HandleFunc("/", handler2)
 	// 代理伺服器
 	http.HandleFunc("/proxy", tool.Proxy)
-	// 即時訊息
-	http.HandleFunc("/fn/createChannel", app.CreateChannel)
-	http.HandleFunc("/fn/sendChannelMessage", app.SendChannelMessage)
-	// 即時訊息傾聽事件
-	http.HandleFunc("/_ah/channel/connected/", app.OnChannelConnected)
-	http.HandleFunc("/_ah/channel/disconnected/", app.OnChannelDisconnected)
+	// 即時訊息(方法已淘汰)
+	//http.HandleFunc("/fn/createChannel", app.CreateChannel)
+	//http.HandleFunc("/fn/sendChannelMessage", app.SendChannelMessage)
+	// 即時訊息傾聽事件(方法已淘汰)
+	//http.HandleFunc("/_ah/channel/connected/", app.OnChannelConnected)
+	//http.HandleFunc("/_ah/channel/disconnected/", app.OnChannelDisconnected)
 	// 給前台的訊息
 	http.HandleFunc("/fn/message", app.MessageConfig)
 
@@ -64,63 +63,66 @@ func init() {
 	// 取得公開的牌組
 	http.HandleFunc("/fn/publicdeck", app.ReadPublicCardSuit)
 
-	// 比賽風雲
-	http.HandleFunc("/fn/duelsys/talk", duelsys.Server_Talk)
-
 	// 幽夢仙境[池]
 	// no function
 
 	// 余氏K線圖
 	// no function
 
-	// collect mmo
-	http.HandleFunc("/fn/collectmmo/talk", collectmmo.Talk)
-	http.HandleFunc("/fn/collectmmo/resetdb", collectmmo.Server_ResetDB)
+	//
+	router := mux.NewRouter()
+	router.HandleFunc("/fn/contestsys/", contestsys.Serve_Context).Methods("GET")
+	router.HandleFunc("/fn/contestsys/CreateContest/{owner}", contestsys.Serve_CreateContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/DeleteContest/{contestId}/{owner}", contestsys.Serve_DeleteContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/UpdateContest/{contestId}/{owner}", contestsys.Serve_UpdateContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/UpgradeContest/{contestId}/{owner}", contestsys.Serve_UpgradeContestState).Methods("GET")
+	router.HandleFunc("/fn/contestsys/FailEndContest/{contestId}/{owner}", contestsys.Serve_FailEndContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/JoinContest/{contestId}/{peopleId}", contestsys.Serve_JoinContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/LeaveContest/{contestId}/{peopleId}", contestsys.Serve_LeaveContest).Methods("GET")
+	router.HandleFunc("/fn/contestsys/PrepareDual/{contestId}/{peopleId}", contestsys.Serve_PrepareDual).Methods("GET")
+	router.HandleFunc("/fn/contestsys/GetDuals/{peopleId}", contestsys.Serve_GetDuals).Methods("GET")
+	router.HandleFunc("/fn/contestsys/ConfirmWinner/{contestId}/{peopleId}/{winner}", contestsys.Serve_ConfirmWinner).Methods("GET")
+	router.HandleFunc("/fn/contestsys/CancelWinner/{contestId}/{peopleId}", contestsys.Serve_CancelWinner).Methods("GET")
+	router.HandleFunc("/fn/contestsys/Upgrade/{contestId}/{owner}/{peopleId}", contestsys.Serve_Upgrade).Methods("GET")
+	router.HandleFunc("/fn/contestsys/UpdatePower/{contestId}/{owner}/{peopleId}/{power}", contestsys.Serve_UpdatePower).Methods("GET")
+	router.HandleFunc("/fn/contestsys/GetDualInfoWithContestOwner/{owner}", contestsys.Serve_GetDualInfoWithContestOwner).Methods("GET")
+	router.HandleFunc("/fn/contestsys/LeaveMessage/{contestId}/{peopleId}", contestsys.Serve_LeaveMessage).Methods("GET")
+	router.HandleFunc("/fn/contestsys/DeleteMessage/{peopleId}/{msgId}", contestsys.Serve_DeleteMessage).Methods("GET")
+	router.HandleFunc("/fn/contestsys/MakeDualTime/{contestId}/{peopleId}", contestsys.Serve_MakeDualTime).Methods("GET")
 
-	// 陣面對決
-	r := mux.NewRouter()
-	r.HandleFunc("/fn/sgs/admin/room/newLobby", sgs.NewLobby).Methods("GET")
+	http.Handle("/fn/contestsys/", router)
 
-	r.HandleFunc("/fn/sgs/room", sgs.RoomList).Methods("GET")
-	r.HandleFunc("/fn/sgs/room", sgs.NewRoom).Methods("POST")
-	r.HandleFunc("/fn/sgs/room/{roomId}", sgs.GetRoom).Methods("GET")
-	r.HandleFunc("/fn/sgs/room/{roomId}/join", sgs.JoinRoom).Methods("POST")
-	r.HandleFunc("/fn/sgs/room/{roomId}/validate", sgs.ValidateRoom).Methods("POST")
-	http.Handle("/fn/sgs/", r)
-
-	// 測試
-	http.HandleFunc("/fn/testmysql", app.Testmysql)
+	// Test
+	http.HandleFunc("/fn/auth", welcome)
 }
 
-func init_xxx() {
-	// 歡迎頁面
-	http.HandleFunc("/", handler2)
-	// 代理伺服器
-	http.HandleFunc("/proxy", tool.Proxy)
-	// 卡牌風雲
-	http.HandleFunc("/fn/createChannel", app.CreateChannel)
-	http.HandleFunc("/fn/sendChannelMessage", app.SendChannelMessage)
-	// 傾聽事件，沒有實作內容
-	http.HandleFunc("/_ah/channel/connected/", app.OnChannelConnected)
-	http.HandleFunc("/_ah/channel/disconnected/", app.OnChannelDisconnected)
-	// 給前台的訊息
-	http.HandleFunc("/fn/message", app.MessageConfig)
-	// 取得公開的牌組(秀牌風雲用)
-	http.HandleFunc("/fn/publicdeck", app.ReadPublicCardSuit)
-	// 使用者用，這個會先經過FB認證
-	http.HandleFunc("/dbfile2/", appauth.WrapFBAuth(db2.Handler))
-	// 秀牌風雲用
-	http.HandleFunc("/deckwikidbfile2/", db2.Handler(appauth.User{Key: "deckWiki"}))
-	// 幽夢仙境用
-	http.HandleFunc("/particledbfile2/", db2.Handler(appauth.User{Key: "particle"}))
-	// 下載備份加清除。若有Clear參數，才會執行清除
-	http.HandleFunc("/admindbfile2/__archiveAndClear__", db2.HandleClearDataAndDownloadArchive)
-	// 觀看現在資料庫的備份狀態（資料列表）
-	http.HandleFunc("/admindbfile2/__memento__", db2.HandleMemento)
-	// 資料庫viewer
-	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
-	// 新舊資料庫整合（舊方法移除後移除）
-	http.HandleFunc("/temp/dbtodb2", app.Dbtodb2)
-	// 比賽風雲
-	http.HandleFunc("/fn/duelsys/talk", duelsys.Server_Talk)
+func handler2(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "Hello, world3!")
+}
+
+func welcome(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "text/html; charset=utf-8")
+	ctx := appengine.NewContext(r)
+	u := user.Current(ctx)
+	if u == nil {
+		url, _ := user.LoginURL(ctx, "/")
+		fmt.Fprintf(w, `<a href="%s">Sign in or register</a>`, url)
+		return
+	}
+	url, _ := user.LogoutURL(ctx, "/")
+	fmt.Fprintf(w, `Welcome, %s! (<a href="%s">sign out</a>)`, u, url)
+}
+
+func welcomeOAuth(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	u, err := user.CurrentOAuth(ctx, "")
+	if err != nil {
+		http.Error(w, "OAuth Authorization header required", http.StatusUnauthorized)
+		return
+	}
+	if !u.Admin {
+		http.Error(w, "Admin login only", http.StatusUnauthorized)
+		return
+	}
+	fmt.Fprintf(w, `Welcome, admin user %s!`, u)
 }

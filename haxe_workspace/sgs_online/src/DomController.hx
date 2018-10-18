@@ -40,4 +40,16 @@ class DomController extends BasicController
 	public function addWebglListener( event:String, action:Dynamic -> Void){
 		dom_webgl.on( event, action );
 	}
+	
+	public function createCmdButton( val:Dynamic ){
+		untyped __js__("window.createCmdButton")( val );
+	}
+	
+	public function clearCmdButton(){
+		untyped __js__("window.clearCmdbutton")();
+	}
+	
+	public function syncView( info:Dynamic ){
+		untyped __js__("window.showTableInfo")( info, {isMe:GameInfo.isMe( info ), user:GameInfo.userName } );
+	}
 }

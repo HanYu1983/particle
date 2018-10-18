@@ -11,16 +11,16 @@ import (
 // 由path:"/fn/message"處理
 func MessageConfig(w http.ResponseWriter, r *http.Request) {
 	config := []map[string]interface{}{
-		map[string]interface{}{
-			"app":     "card_admin",
-			"level":   3,
-			"Message": "<h1>遊戲暫時停止維護，不便之處請見諒!</h1>",
-		},
-		map[string]interface{}{
-			"app":     "deckWiki_admin",
-			"level":   3,
-			"Message": "<h1>遊戲暫時停止維護，不便之處請見諒!</h1>",
-		},
+		//map[string]interface{}{
+		//	"app":     "card_admin",
+		//	"level":   3,
+		//	"Message": "<h1>遊戲暫時停止維護，不便之處請見諒!</h1>",
+		//},
+		//map[string]interface{}{
+		//	"app":     "deckWiki_admin",
+		//	"level":   3,
+		//	"Message": "<h1>遊戲暫時停止維護，不便之處請見諒!</h1>",
+		//},
 		//map[string]interface{}{
 		//	"app":     "stock",
 		//	"level":   3,

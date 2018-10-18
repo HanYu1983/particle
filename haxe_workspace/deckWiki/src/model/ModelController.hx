@@ -15,15 +15,15 @@ using StringTools;
  */
 class ModelController extends Mediator
 {
-	public static var do_load_all_list = 'do_load_all_list';
-	public static var do_save_count = 'do_save_count';
-	//public static var do_save_read = 'do_save_read';
+	public static inline var do_load_all_list = 'do_load_all_list';
+	public static inline var do_save_count = 'do_save_count';
+	//public static inline var do_save_read = 'do_save_read';
 	
-	public static var on_facebook_login = 'on_facebook_login';
-	public static var on_cardsuit_load = 'on_cardsuit_load';
-	public static var on_cardsuit_save_success = 'on_cardsuit_save_success';
-	public static var on_loadPublic_error = 'on_loadPublic_error';
-	public static var on_copy_success = 'on_copy_success';
+	public static inline var on_facebook_login = 'on_facebook_login';
+	public static inline var on_cardsuit_load = 'on_cardsuit_load';
+	public static inline var on_cardsuit_save_success = 'on_cardsuit_save_success';
+	public static inline var on_loadPublic_error = 'on_loadPublic_error';
+	public static inline var on_copy_success = 'on_copy_success';
 	
 	var data:Array<Dynamic>;
 	var ary_result:Array<Dynamic>;
@@ -406,7 +406,9 @@ class ModelController extends Mediator
 			item.id = item.uid;
 			item.author = item.username;
 			item.gameName = Helper.EnToCh( item.game );
+			if(item.gameName == '')	trace( "缺少中文翻譯,請補上:" + item.game );
 			item.typeName = Helper.EnToCh( item.type );
+			if(item.gameName == '')	trace( "缺少中文翻譯,請補上:" + item.type );
 			item.desc = item.desc == null ? '' : item.desc;
 			first.push( item );
 			return first;

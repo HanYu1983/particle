@@ -20,7 +20,6 @@ class Main
 	static function main() 
 	{
 		var j:Dynamic = untyped __js__('$');
-		
 		Facade.getInstance().registerMediator( new ViewController( 'ViewController', j('body' )) );
 		Facade.getInstance().registerMediator( new ModelController( 'ModelController' ) );
 		Facade.getInstance().sendNotification( ViewController.do_show_loading, { show:true } );

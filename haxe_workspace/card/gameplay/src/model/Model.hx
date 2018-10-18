@@ -3,7 +3,7 @@ package model;
 import js.html.KeyboardEvent;
 import js.html.MouseEvent;
 import js.html.MouseEventInit;
-import mediator.UI;
+import view.UI;
 import org.puremvc.haxe.interfaces.INotification;
 import org.puremvc.haxe.patterns.mediator.Mediator;
 using Reflect;

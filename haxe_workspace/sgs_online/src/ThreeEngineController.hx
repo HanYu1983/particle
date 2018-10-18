@@ -18,7 +18,7 @@ class ThreeEngineController extends BasicController
 	private var raycastMeshs = [];
 	
 	private var cards:Array<ICardController> = new Array<ICardController>();
-	private var stackPosition:Map<String,Dynamic> = new Map<String,Dynamic>();
+//	private var stackPosition:Map<String,Dynamic> = new Map<String,Dynamic>();
 	private var currentId:Int = 0;
 	
 	private var raycaster:Dynamic = untyped __js__("new THREE.Raycaster()");
@@ -34,11 +34,11 @@ class ThreeEngineController extends BasicController
 		createEnviroment();
 		return context;
 	}
-	
+	/*
 	private function setStackPosition( name:String, pos:Dynamic, rot:Dynamic ) {
 		stackPosition.set(name, {pos:pos,rot:rot} );
 	}
-	
+	*/
 	public function createCard( texture:Dynamic, pos:Dynamic, uuid:String ):String {
 		var card:ICardController = new CardController(uuid);
 		
@@ -69,37 +69,12 @@ class ThreeEngineController extends BasicController
 			pos = {x:0,y:0,z:0 };
 		}
 		var card:ICardController = getCardByUuid( uuid );
-		var moveTo = stackPosition["Player_hand_position"];
-		card.moveCard( moveTo.pos.x, moveTo.pos.y, moveTo.pos.z );
+		if ( card == null ) throw "need have card!";
+		var moveTo = getMeshByName("Player_hand_position").position.clone();
+		card.moveCard( moveTo.x, moveTo.y, moveTo.z );
 	}
 	
-	public function moveCardsFromCards( from:Array<String>, to:Array<String>, ?pos:Dynamic = null ) {
-		var moveTo = stackPosition["Player_deck_position"];
-		for ( i in 0...from.length ) {
-			getCardByUuid( from[i] ).moveCard( moveTo.pos.x, moveTo.pos.y + i * .05 , moveTo.pos.z );
-		}
-		moveTo = stackPosition["Player_hand_position"];
-		var dist:Float = 10 / to.length;
-		for ( i in 0...to.length ) {
-			var posFac:Float = 0;
-			if ( to.length > 1 ) {
-				posFac = i - to.length / 2;
-			}
-			if ( to.length < 5 ) {
-				dist = 2;
-			}
-			var card:ICardController = getCardByUuid( to[i] );
-			card.moveCard( moveTo.pos.x + posFac * dist, moveTo.pos.y + i * .01 , moveTo.pos.z );
-			card.rotateCard( moveTo.rot.x, moveTo.rot.y , moveTo.rot.z );
-			if ( !card.isFaceUp ) card.flip();
-		}
-		
-		var t = new Timer( Math.floor( AppConfig.moveTime * 1000 ) );
-		t.run = function(){
-			t.stop();
-			selectFirst();
-		};
-	}
+	
 	
 	public function getCardByUuid( uuid:String):ICardController {
 		for ( c in cards ) {
@@ -118,7 +93,7 @@ class ThreeEngineController extends BasicController
 		var handCount = handCards.length;
 		if ( handCount == 0 ) return;
 		currentId = 0;
-		selectCardAnimation(handCards, handCards[currentId]);
+		syncView(null);
 	}
 	
 	public function selectNext(){
@@ -128,7 +103,7 @@ class ThreeEngineController extends BasicController
 		if ( ++currentId > handCount - 1 ){
 			currentId = 0;
 		}
-		selectCardAnimation(handCards, handCards[currentId]);
+		syncView(null);
 	}
 	
 	public function selectPrev(){
@@ -139,7 +114,7 @@ class ThreeEngineController extends BasicController
 			var max:Int = handCount - 1;
 			currentId = max;
 		}
-		selectCardAnimation(handCards, handCards[currentId]);
+		syncView(null);
 	}
 	
 	public function initGame() {
@@ -147,37 +122,70 @@ class ThreeEngineController extends BasicController
 		board.children[0].material.map = context.textures[0];
 		board.children[0].material.needsUpdate = true;
 	}
-	/*
-	private function moveCardInPlayerHand(){
-		var moveTo:Dynamic = stackPosition["Player_hand_position"];
-		var dist:Float = 10 / to.length;
-		for ( i in 0...to.length ) {
-			var posFac:Float = 0;
-			if ( to.length > 1 ) {
-				posFac = i - to.length / 2;
-			}
-			if ( to.length < 5 ) {
-				dist = 2;
-			}
-			var card:ICardController = getCardByUuid( to[i] );
-			card.moveCard( moveTo.pos.x + posFac * dist, moveTo.pos.y + i * .01 , moveTo.pos.z );
-			card.rotateCard( moveTo.rot.x, moveTo.rot.y , moveTo.rot.z );
-			if ( !card.isFaceUp ) card.flip();
+	
+	public function syncView( val:Dynamic ){
+		//mediator.syncHtml( val );
+		
+		//var model:Dynamic = mediator.getAll();
+		//var currentPhase = model.CurrentPhase;
+		
+		/*
+		var playerModel:Dynamic = model[0];
+		var enemyModel:Dynamic = model[1];
+		
+		function syncOnePlayer( oneModel:Dynamic, isPlayer:Bool = false ){
+			var hand:Array<String> = oneModel.hand;
+			var deck:Array<String> = oneModel.deck;
+			syncHand( hand, isPlayer );
+			syncDeck( deck, isPlayer );
 		}
+		
+		syncOnePlayer( playerModel, true );
+		syncOnePlayer( enemyModel );
+		*/
 	}
-	*/
-	private function selectCardAnimation( handCards:Dynamic, id:String ){
-		for ( i in 0...handCards.length ){
-			var uuid = handCards[i];
-			var c = getCardByUuid( uuid );
-			c.releaseCardInHand();
-			
-			if ( uuid == id ){
-				c.overCardInHand();
-			}
+	
+	private function syncDeck( oneModel:Dynamic, isPlayer:Bool = false ){
+		var moveTo:Dynamic = null;
+		if ( isPlayer ){
+			moveTo = getMeshByName("Player_deck_position").position.clone();
+		}else{
+			moveTo = getMeshByName("Enemy_deck_position").position.clone();
+		}
+		for ( i in 0...oneModel.length ) {
+			var card = getCardByUuid( oneModel[i] );
+			if ( card == null ) throw "need have card!";
+			card.moveCard( moveTo.x, moveTo.y + i * .05 , moveTo.z );
 		}
 	}
 	
+	private function syncHand( oneModel:Dynamic, isPlayer:Bool = false ){
+		var moveTo:Dynamic = null;
+		var rotTo:Dynamic = null;
+		if ( isPlayer ){
+			moveTo = getMeshByName("Player_hand_position").position.clone();
+			rotTo = getMeshByName("Player_hand_position").rotation.clone();
+		}else{
+			moveTo = getMeshByName("Enemy_hand_position").position.clone();
+			rotTo = getMeshByName("Enemy_hand_position").rotation.clone();
+		}
+		
+		var dist:Float = 10 / oneModel.length;
+		for ( i in 0...oneModel.length ) {
+			var posFac:Float = 0;
+			if ( oneModel.length > 1 ) {
+				posFac = i - oneModel.length / 2;
+			}
+			if ( oneModel.length < 5 ) {
+				dist = 2;
+			}
+			var card:ICardController = getCardByUuid( oneModel[i] );
+			if ( card == null ) throw "need have card!";
+			card.moveCard( moveTo.x + posFac * dist, moveTo.y + i * .01 , moveTo.z );
+			card.rotateCard( rotTo.x, rotTo.y , rotTo.z );
+			if ( !card.isFaceUp ) card.flip();
+		}
+	}
 	private function createEnviroment():Void {
 		renderer = untyped __js__("new THREE.WebGLRenderer")( { antialias: true } );
 		renderer.setClearColor( 0xf0f0f0 );
@@ -212,13 +220,13 @@ class ThreeEngineController extends BasicController
 		composer.addPass( effectFXAA );
 		*/
 		context.dae.scene = scene;
-		
+		/*
 		var stacks = [
 			"Player_deck_position","Player_hand_position"
 		];
 		
 		for ( s in stacks ) setStackPosition( s, getMeshByName(s).position, getMeshByName(s).rotation );
-		
+		*/
 		mediator.addWebglListener( 'mousemove', onDocumentMouseMove );
 		animate();
 	}

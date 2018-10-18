@@ -1,0 +1,9 @@
+{
+	"name": "getCardInfo",
+	"dependencies": {
+		"rx": "4.0.7",
+		"request": "*",
+		"underscore": "*",
+		"async": "*"
+	}
+}

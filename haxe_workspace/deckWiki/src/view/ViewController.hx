@@ -25,22 +25,22 @@ class ViewController extends Mediator
 	public static var do_enable_login = 'do_enable_login';
 	public static var do_show_auth = 'do_show_auth';
 	
-	public static var on_item_click = 'on_item_click';
-	public static var on_item_over = 'on_item_over';
-	public static var on_item_out = 'on_item_out';
-	public static var on_input_search_change = 'on_input_search_change';
-	public static var on_pag_page_change = 'on_pag_page_change';
-	public static var on_btn_output_click = 'on_btn_output_click';
-	public static var on_btn_seeCount_click = 'on_btn_seeCount_click';
-	public static var on_btn_getShareLink_click = 'on_btn_getShareLink_click';
-	public static var on_btn_copy_click = 'on_btn_copy_click';
-	public static var on_btn_self_click = 'on_btn_self_click';
-	public static var on_btn_login_click = 'on_btn_login_click';
-	public static var on_btn_gotoGroup_click = 'on_btn_gotoGroup_click';
-	public static var on_btn_gotoDeckManager_click = 'on_btn_gotoDeckManager_click';
-	public static var on_btn_addDeck_click = 'on_btn_addDeck_click';
-	public static var on_btn_saveDeck_click = 'on_btn_saveDeck_click';
-	public static var on_btn_share_deck_click = 'on_btn_share_deck_click';
+	public static inline var on_item_click = 'on_item_click';
+	public static inline var on_item_over = 'on_item_over';
+	public static inline var on_item_out = 'on_item_out';
+	public static inline var on_input_search_change = 'on_input_search_change';
+	public static inline var on_pag_page_change = 'on_pag_page_change';
+	public static inline var on_btn_output_click = 'on_btn_output_click';
+	public static inline var on_btn_seeCount_click = 'on_btn_seeCount_click';
+	public static inline var on_btn_getShareLink_click = 'on_btn_getShareLink_click';
+	public static inline var on_btn_copy_click = 'on_btn_copy_click';
+	public static inline var on_btn_self_click = 'on_btn_self_click';
+	public static inline var on_btn_login_click = 'on_btn_login_click';
+	public static inline var on_btn_gotoGroup_click = 'on_btn_gotoGroup_click';
+	public static inline var on_btn_gotoDeckManager_click = 'on_btn_gotoDeckManager_click';
+	public static inline var on_btn_addDeck_click = 'on_btn_addDeck_click';
+	public static inline var on_btn_saveDeck_click = 'on_btn_saveDeck_click';
+	public static inline var on_btn_share_deck_click = 'on_btn_share_deck_click';
 	
 	var j:Dynamic = untyped __js__('$');
 	var mc_itemContainer:Dynamic;
@@ -102,16 +102,6 @@ class ViewController extends Mediator
 			onClose:onCloseDetailForm
 		});
 		
-		var cardbackCount = untyped __js__('admin.cardbackCount' );
-		[for ( i in 0...cardbackCount ) i ].foreach( function( bid ) {
-			var useId = bid+1;
-			var url = '../common/images/card/cardback_' + useId + '.jpg';
-			var div = j("#tmpl_back").tmpl({id:useId, url:url });
-			div.hide();
-			mc_backContainer.append( div );
-			return true;
-		});
-		
 		mc_detail_panel.find( '#btn_share' ).click( function() {
 			var deckuid = mc_detail_panel.attr( 'uid' );
 			sendNotification( on_btn_share_deck_click, { deckuid:deckuid } );
@@ -136,10 +126,11 @@ class ViewController extends Mediator
 			}
 		});
 		
+		var ary = [{game:'', name:'不檢索'}].concat( untyped __js__( 'admin.ary_games' ));
 		slt_game.combobox( {
 			valueField: 'game',
 			textField: 'name',
-			data: [{game:'', name:'不檢索'}].concat( untyped __js__( 'admin.ary_games' )),
+			data: ary,
 			onChange:function( nv, ov ) {
 				sendNotification( on_input_search_change, { value:getSearchConditions() } );
 			}
@@ -226,7 +217,18 @@ class ViewController extends Mediator
 			}
 		});
 		
-		hideCardBackContainer();
+		//hideCardBackContainer();
+		
+		if ( Helper.isAdmin() ) {
+			var cardbackCount:Int = untyped __js__('admin.cardbackCount' );
+			[for ( i in 0...cardbackCount ) i ].foreach( function( bid ) {
+				var useId = bid+1;
+				var url = '../common/images/card/cardback_' + useId + '.jpg';
+				var div = j("#tmpl_back").tmpl({id:useId, url:url });
+				mc_backContainer.append( div );
+				return true;
+			});
+		}
 	}
 	
 	override public function listNotificationInterests():Array<String> 
@@ -387,7 +389,8 @@ class ViewController extends Mediator
 				game:dom.find( '.easyui-combobox' ).combobox('getValue' ),
 				cards: Json.parse( cardstr ),
 				backId:dom.find( '#txt_back' ).textbox('getValue' ),
-				'public':dom.find( '#btn_public' ).hasClass( 'l-btn-selected' )
+				'public':dom.find( '#btn_public' ).hasClass( 'l-btn-selected' ),
+				top:dom.find('#btn_top').hasClass( 'l-btn-selected' )
 			});
 		});
 		return savefile;
@@ -417,6 +420,13 @@ class ViewController extends Mediator
 			onClick:function() {
 				var _this = j( untyped __js__( '$(this)' ));
 				_this.parent().remove();
+				enableSave( true );
+			}
+		});
+		dom.find('#btn_top').linkbutton({
+			selected: deckModel.field( 'top' ) == null ? false : deckModel.field( 'top' ),
+			onClick:function(){
+				var _this = j( untyped __js__( '$(this)' ));
 				enableSave( true );
 			}
 		});
@@ -468,10 +478,6 @@ class ViewController extends Mediator
 		dom.find( '#txt_name' ).textbox( {
 			value:deckModel.name
 		});
-		
-		if ( !Helper.isAdmin() ) {
-			dom.find( '#txt_back' ).parent().hide();
-		}
 	}
 	
 	function hideCardBackContainer() {

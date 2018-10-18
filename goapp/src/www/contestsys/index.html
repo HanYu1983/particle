@@ -1,0 +1,936 @@
+<html>
+	<head>
+		<title>比賽風雲</title>
+		<meta charset="utf-8"/>
+	</head>
+	<body>
+<div style="width:100%;height:100%;">
+	<div class="easyui-layout" style="width:100%;height:100%;">
+        <div data-options="region:'west',split:true,collapsible:false" title="比賽" style="width:250px;">
+			<div class="easyui-accordion" data-options="fit:true,border:false" style='overflow: auto;'>
+                <ul class="easyui-tree" id="gameTree" data-options="onClick: onClickGameTree">
+		        </ul>
+            </div>
+		</div>
+		
+        <div data-options="region:'center'">
+            <div id="tab_main" class="easyui-tabs" style='height:100%'>
+				<div title="玩家">
+					<form name="form_player" class="easyui-form" data-options="novalidate:true">
+						<div style="margin-bottom:20px">
+							ID<input class="easyui-textbox" name="id" disabled>
+			            </div>
+						<div style="margin-bottom:20px">
+							<fb:login-button id="btn_login" scope="public_profile,email" onlogin="onClick('login')"></fb:login-button>
+			            </div>
+					</form>
+					
+					<form name="form_winner" class="easyui-form" data-options="novalidate:true">
+						
+			            <div style="margin-bottom:20px">
+							比賽<input class="easyui-textbox" name="contestName" disabled>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitWinner')">發佈勝利</a>
+					        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('commitFail')">發佈失敗</a>
+				            <a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('cancelWinner')">取消發佈</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgrade')">升格</a>
+							<br>
+							決鬥時間<input class="easyui-textbox" name="dualTime" disabled>
+							<input class="easyui-textbox" name="makeDualTime">
+							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('agreeDualTime')">同意最後時間</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('makeDualTime')">預約新時間</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('cancelDualTime')">取消預約</a>
+							
+							<br>
+							決鬥場次<input class="easyui-textbox" name="pos" disabled>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgradeLeft')">左玩家升格</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('upgradeRight')">右玩家升格</a>
+						</div>
+					</form>
+					
+					<table id='dg_duals' class="easyui-datagrid" title="你的比賽" style="width:100%"
+				            data-options="singleSelect:true,collapsible:true,onClickRow:onClickDualsRow">
+				        <thead>
+				            <tr>
+				                <th data-options="field:'contestName',width:150,align:'center'">比賽名稱</th>
+								<th data-options="field:'pos',width:50,align:'center'">場次</th>
+								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
+				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
+								<th data-options="field:'dualTime',width:100,align:'center'">比賽時間</th>
+								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
+				            </tr>
+				        </thead>
+				    </table>
+					
+					<table id='dg_ownerDuals' class="easyui-datagrid" title="賽況" style="width:100%"
+				            data-options="singleSelect:true,collapsible:true,onClickRow:onClickDualsRow">
+				        <thead>
+				            <tr>
+				                <th data-options="field:'contestName',width:150,align:'center'">比賽名稱</th>
+								<th data-options="field:'pos',width:50,align:'center'">場次</th>
+								<th data-options="field:'left',width:100,align:'center'">左玩家</th>
+				                <th data-options="field:'right',width:100,align:'center'">右玩家</th>
+								<th data-options="field:'dualTime',width:100,align:'center'">比賽時間</th>
+								<th data-options="field:'winner',width:100,align:'center'">勝利玩家</th>
+								<th data-options="field:'state',width:100,align:'center'">狀態</th>
+				            </tr>
+				        </thead>
+				    </table>
+				</div>
+				
+		        <div title="新增/修改比賽">
+					<div class="easyui-panel">
+						<form name="form_peopleJoin" class="easyui-form">
+							參加碼<input name="pwd" type="password" class="easyui-textbox">
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('joinContest')">參加比賽</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('leaveContest')">退出比賽</a>
+						</form>
+						<form name="form_fakeJoin" class="easyui-form">
+							名稱<input name="name" class="easyui-textbox">
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('fakeJoinContest')">手動參加比賽</a>
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('fakeLeaveContest')">手動退出比賽</a>
+						</form>
+					</div>
+					<div class="easyui-panel">
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="onClick('newContest')">新增草搞</a>
+				        <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="onClick('removeContest')">刪除</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'" onclick="onClick('updateContest')">修改</a>
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'" onclick="onClick('commitContestUpgrade')">草搞>公佈>開始>結束</a>				    
+						<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-cancel'" onclick="onClick('commitContestFailEnd')">流局結束</a>
+					</div>
+					<form name="form_contest" class="easyui-form" data-options="novalidate:true">
+						<div style="margin-bottom:20px">
+							比賽序號
+			                <input class="easyui-textbox" name="id" style="width:100%" disabled>
+							管理者
+							<input class="easyui-textbox" name="owner" style="width:100%" disabled>
+							狀態
+							<select class="easyui-combobox" name="state" disabled style="width:100%">
+				                <option value="0">草搞</option>
+				                <option value="1">公佈</option>
+								<option value="2">開始</option>
+								<option value="3">結束</option>
+							</select>
+							創建時間
+							<input class="easyui-textbox" name="createTime" style="width:100%" disabled>
+			            </div>
+						
+						<div style="margin-bottom:20px">
+							遊戲
+			                <select class="easyui-combobox" name="game" id='select_game' data-options="valueField:'value',textField:'label'" style='width: 200px'></select>
+			            	報名截止
+							<input class="easyui-datebox" name="startTime">
+							參加碼
+							<input name="pwd" type="password" class="easyui-textbox">
+						</div>
+						名稱
+			            <div style="margin-bottom:20px">
+			                <input class="easyui-textbox" name="name" style="width:100%">
+			            </div>
+						描述
+			            <div style="margin-bottom:20px">
+							<textarea rows="4" cols="50" name="description"></textarea>
+			            </div>
+						禁卡
+			            <div style="margin-bottom:20px">
+							<textarea rows="4" cols="50" name="infoCards"></textarea>
+							<a href="#" class="easyui-linkbutton" data-options="plain:false" onclick="onClick('editCards')">編輯</a>
+			            </div>
+			        </form>
+		        </div>
+		        <div title="賽程管理">
+					<div id='accor_dual' class="easyui-accordion" data-options="multiple:true" style="width:100%;">
+						<div title="賽程" style='height:300px' data-options="iconCls:'icon-search',collapsed:false" >
+				            <div id='infovis' style='width:700px; height:300px'></div>
+				        </div>
+				        <div title="玩家" data-options="selected:true">
+							<form name="form_peoplePower" class="easyui-form">
+								ID<input class="easyui-textbox" name="id" style="width:100px" disabled>
+								種子選手<input name="power" class="easyui-textbox">
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('confirmDualPower')">修改</a>
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="onClick('prepareDual')">排賽</a>
+								<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="onClick('kickPeople')">強制退出比賽</a>
+							</form>
+							
+				            <table id="dg_people" class="easyui-datagrid" style='width:100%'
+						            data-options="
+						                iconCls: 'icon-edit',
+						                singleSelect: true,
+						                onClickRow: onClickPeopleRow
+						            ">
+						        <thead>
+						            <tr>
+						                <th data-options="field:'ID',width:80,align:'center'">ID</th>
+						                <th data-options="field:'Name',width:100,align:'center'">小名</th>
+						                <th data-options="field:'Power',width:80,align:'center'">種子選手</th>
+										<th data-options="field:'Rank',width:80,align:'center'">排名</th>
+						            </tr>
+						        </thead>
+						    </table>
+				        </div>
+					</div>
+		        </div>
+				<div title="幫助" data-options="iconCls:'icon-help'" style="padding:10px">
+					<h1>基本操做</h1>
+					以下分別以主辨者和參與者的角度說明
+					
+					<h2>參加比賽(參)</h2>
+					<ol>
+						<li>移至[新增/修改比賽]輸入參加碼並按下[參加比賽]. 若比賽沒有設定參加碼則參加碼不必輸入. 注意: 不要按[手動參加比賽], 除非你是管理者</li>
+						<li>報名截止日以前才能參加比賽</li>
+						<li>管理者自己要參賽也必須按[參加比賽]</li>
+					</ol>
+					
+					<h2>預約決鬥時間(參)</h2>
+					<ol>
+						<li>比賽開始後(比賽在樹狀圖的開始資料夾下)時, 點擊[玩家]面板</li>
+						<li>移至決鬥時間右方有輸入框, 可輸入決鬥時間. 格式為m/d hh/MM. 例:1/1 12:00</li>
+						<li>點擊右方[預約新時間]</li>
+					</ol>
+					
+					<h2>同意決鬥時間(參)</h2>
+					<ol>
+						<li>比賽開始後(比賽在樹狀圖的開始資料夾下)時, 點擊[玩家]面板</li>
+						<li>若[決鬥時間]欄位中有值的話, 點擊右方[同意最後時間]</li>
+						<li>注意: 時間已最晚的為主. 若不同意決鬥時間, 就預約新的更晚的時間</li>
+					</ol>
+					
+					<h2>決鬥與結果回報(參)</h2>
+					<ol>
+						<li>當比賽開始後, 移至[玩家]下方的[你參與的比賽], 會顯示你現在的比賽場次與回報結果</li>
+						<li>找個時間與對方聯繫並依管理者的規則決鬥</li>
+						<li>決鬥完成後, 選擇上方點擊[發佈勝利]或[發佈失敗]</li>
+						<li>與聯繫中的對方確認回報完成後, 勝利者可以按[升格]. 就可以等待下一場決鬥玩家</li>
+						<li>若你發現對方回報結果與你不一致(沖突)並溝通未果, 可聯繫並交由管理員協調</li>
+						<li>請參照說明[賽程觀察]</li>
+					</ol>
+		
+					<h2>新增比賽(主)</h2>
+					<ol>
+						<li>移至[新增/修改比賽]並按下[新增草搞]. 這時比賽還不可見</li>
+						<li>修改完內容並按下[修改]</li>
+						<li>按[草搞>公怖>開始>結束]公開比賽. 讓比賽變成他人可見</li>
+					</ol>
+					
+					<h2>安排賽程(主)</h2>
+					<ol>
+						<li>移至左邊[比賽]欄位樹狀圖的[公佈/{你的比賽}]並點擊</li>
+						<li>移至[賽程管理]/[玩家]點擊[重新排賽], 上方的賽程表將會出現</li>
+						<li>報名截止日後才能安排比賽</li>
+					</ol>
+					
+					<h2>種子選手(主)</h2>
+					<ol>
+						<li>移至左邊[比賽]欄位樹狀圖的[公佈/{你的比賽}]並點擊</li>
+						<li>移至[賽程管理]/[玩家]點擊下方玩家列表中的要當種子選手的玩家</li>
+						<li>在修改欄位中修改後按[修改], 這樣會自動重新排賽</li>
+						<li>所修改的種子選手的數字大小只有比較的意義, 請自行輸入習慣的值. 比如1~10或是10~100都可</li>
+					</ol>
+					
+					<h2>開始比賽(主)</h2>
+					<ol>
+						<li>若安排完賽程後, 就可以開始比賽</li>
+						<li>移至[新增/修改比賽], 按[草搞>公怖>開始>結束]讓比賽開始</li>
+					</ol>
+					
+					<h2>結束比賽(主)</h2>
+					<ol>
+						<li>請參照說明[比賽結果], 若有冠軍出現代表賽程全部完成</li>
+						<li>移至[新增/修改比賽], 按[草搞>公怖>開始>結束]讓比賽結束</li>
+					</ol>
+					
+					<h2>流局比賽(主)</h2>
+					<ol>
+						<li>如果有人中途沒時間完或比賽進行不順利導致沒有冠軍出現, 就可以讓比賽流局</li>
+						<li>移至[新增/修改比賽], 按[流局結束]讓比賽結束</li>
+					</ol>
+					
+					<h2>協調決鬥結果(主)</h2>
+					<ol>
+						<li>當比賽開始後, 移至[玩家]下方的[你管理的比賽], 會顯示你的比賽的全部決鬥場次</li>
+						<li>若某一個場次顯示沖突代表雙方玩家同時宣告了勝利或失敗</li>
+						<li>管理員將聯繫雙方並協調結果, 點擊[左玩家升格]或[右玩家升格]</li>
+						<li>請參照說明[賽程觀察]</li>
+					</ol>
+					
+					<h2>比賽結果</h2>
+					<ol>
+						<li>移至左邊[比賽]欄位樹狀圖的[公佈/{你的比賽}]並點擊</li>
+						<li>移至[賽程管理]/[玩家]下方的玩家列表</li>
+						<li>列表右邊的排名就是結果. 比賽中可以隨時觀查</li>
+					</ol>
+					
+					<h2>賽程觀察</h2>
+					<ol>
+						<li>點擊左方樹狀圖中的人名, 右邊就會展開[賽程管理]</li>
+						<li>點擊[賽程]打開賽程圖</li>
+						<li>圖中GOAL代表冠軍賽</li>
+						<li>名字代表玩家的位置</li>
+						<li>圖中的文字可以點擊</li>
+					</ol>
+					
+					<h2>其它說明</h2>
+					<ol>
+						<li>請參照影片教學</li>
+					</ol>
+					
+					<h1>影片教學</h1>
+		            <iframe width="560" height="315" src="https://www.youtube.com/embed/9L4fby0Bsmw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/todD5CbrMNQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+		        </div>
+		    </div>
+        </div>
+		
+		<div data-options="region:'east',split:false,collapsible:false" title="資訊" style="width:400px;">
+			<div id='accor_dual' class="easyui-accordion" data-options="multiple:true" style="width:100%;">
+				<div title="討論區" style='height:400px' data-options="collapsed:false" >
+		            <form name="form_message" class="easyui-form">
+						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="onClick('leaveMessage')">留言</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true" onclick="onClick('deleteMessage')">刪除</a>
+						<textarea rows="4" cols="50" name="text"></textarea>
+					</form>
+					<table id='dg_message' class="easyui-datagrid" title="留言"
+				            data-options="singleSelect:true,collapsible:true,onClickRow: onClickMessageRow">
+				        <thead>
+				            <tr>
+								<th data-options="field:'id',width:50,align:'center'">序號</th>
+								<th data-options="field:'text',width:200">訊息</th>
+				                <th data-options="field:'peopleName',width:100,align:'center'">小名</th>
+								<th data-options="field:'createTime',width:200,align:'center'">時間</th>
+				            </tr>
+				        </thead>
+				    </table>
+		        </div>
+				<div title="禁卡顯示" style='height:400px' data-options="collapsed:false" >
+		            <div id='cards'></div>
+		        </div>
+			</div>
+		</div>
+    </div>
+</div>
+
+	
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script src='../common/js/lib/jit-yc.js'></script>
+		<script src='../common/js/lib/leo.utils.js'></script>
+		<script src='../common/js/cardinfoloader.js'></script>
+		<script type="text/javascript" src="../common/js/lib/google/ga.js"></script>
+		<script src='../common/js/admin.js'></script>
+		<script src='js/fb.js'></script>
+		<script src='js/model.js'></script>
+		<script src='js/view.js'></script>
+		<script>
+		
+			function onClickGameTree(node){
+				trackClick('onClickGameTree')
+				
+				var isGroup = node.isGroup
+				if(isGroup){
+					return
+				}
+				var contestId = node.isContest ? node.id : node.belongContest
+				model.setCurrentContestId(contestId)
+				view.updateContestDetailView(model.getCurrentContext(), contestId)
+				view.updateContestPeopleListView(model.getCurrentContext(), contestId)
+				
+				if(node.isContest == true){
+					view.updateContestFlowView(model.getCurrentContext(), contestId)
+					view.selectMainTab(1)
+				}else{
+					var people = model.getCurrentContext().ContestSys.Contests[contestId].Peoples[node.id]
+					model.setCurrentPeopleId(people.ID)
+					
+					view.updateContestFlowView(model.getCurrentContext(), contestId, people.Pos)
+					view.selectMainTab(2)
+					view.selectPeople(model.getCurrentContext(), contestId, people.ID)
+					view.updatePeoplePowerForm(model.getCurrentContext(), contestId, people.ID)
+				}
+				
+				view.updateCards(model.getCurrentContext(), model.getCurrentContestId())
+				view.updateMessageListView(model.getCurrentContext(), model.getCurrentContestId())
+			}
+			
+			function onClickMessageRow(idx, row){
+				trackClick('onClickMessageRow')
+				var msgId = row.id
+				model.setCurrentMsgId(msgId)
+				view.updateMessageForm(model.getCurrentContext(), model.getCurrentMsgId())
+			}
+			
+			function onClickDualsRow(idx, row){
+				trackClick('onClickDualsRow')
+				
+				var pos = row.pos
+				var contest = row.contestId
+				model.setCurrentContestId(contest)
+				model.setCurrentPos(pos)
+				view.updateWinnerForm(model.getCurrentContext(), model.getId(), pos)
+			}
+			
+			function onClickPeopleRow(idx, row){
+				trackClick('onClickPeopleRow')
+				
+				var peopleId = row.ID
+				model.setCurrentPeopleId(peopleId)
+				view.updatePeoplePowerForm(model.getCurrentContext(), model.getCurrentContestId(), peopleId)
+			}
+			
+			function trackClick(cmd){
+				console.log(cmd)
+				googleTracking.click('contestSys_'+cmd);
+			}
+			
+			function onClick(cmd){
+				trackClick(cmd)
+				
+				if(cmd == 'login'){
+					fb.checkLoginState()
+				}
+				
+				if(cmd == 'newContest'){
+					var info = {
+						ownerName: model.getCurrentName()
+					}
+					model.newContest(info, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							var contestId = info
+							model.setCurrentContestId(contestId)
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'removeContest'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						view.alert('info', "請選擇比賽")
+						return
+					}
+					view.confirm('是否刪除'+contestId, ok=>{
+						if(ok){
+							model.deleteContest(contestId, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'updateContest'){
+					var data = view.getContestDetail()
+					model.updateContest(model.getCurrentContestId(), data, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'commitContestUpgrade'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						return
+					}
+					view.confirm('是否升格:'+contestId, ok=>{
+						if(ok){
+							model.upgradeContest(contestId, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'commitContestFailEnd'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						return
+					}
+					view.confirm('是否確定流局:'+contestId, ok=>{
+						if(ok){
+							model.failEndContest(contestId, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'joinContest'){
+					var joinInfo = view.getJoinInfo()
+					if(joinInfo.name.trim() == ""){
+						joinInfo.name = model.getCurrentName()
+					}
+					model.joinContest(model.getCurrentContestId(), model.getId(), joinInfo, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'leaveContest'){
+					model.leaveContest(model.getCurrentContestId(), model.getId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'fakeJoinContest'){
+					view.confirm('這個是管理員功能, 是否確定加入假玩家?', ok=>{
+						if(ok){
+							var joinInfo = view.getFakeJoinInfo()
+							if(joinInfo.name.trim() == ""){
+								view.alert('error', '請輸入名稱')
+								return
+							}
+					
+							var peopleId = joinInfo.name.replace(/ /g, "")
+							model.joinContest(model.getCurrentContestId(), peopleId, joinInfo, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					});
+				}
+				
+				if(cmd == 'fakeLeaveContest'){
+					var joinInfo = view.getFakeJoinInfo()
+					if(joinInfo.name.trim() == ""){
+						view.alert('error', '請輸入名稱')
+						return
+					}
+					var peopleId = joinInfo.name.replace(/ /g, "")
+					model.leaveContest(model.getCurrentContestId(), peopleId, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'kickPeople'){
+					var people = model.getCurrentPeopleId()
+					if(people == null){
+						view.alert('請選擇一位玩家')
+						return
+					}
+					view.confirm('是否強制退出:'+model.getCurrentPeopleId(), ok=>{
+						if(ok){
+							model.leaveContest(model.getCurrentContestId(), people, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									onClick('prepareDual')
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'prepareDual'){
+					model.prepareDual(model.getCurrentContestId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+							view.openAccorDual()
+						}
+					})
+				}
+				
+				if(cmd == 'confirmDualPower'){
+					var value = view.getPeoplePowerFormValue()
+					model.updatePower(model.getCurrentContestId(), value.id, value.power, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							onClick('prepareDual')
+						}
+					})
+				}
+				
+				if(cmd == 'upgrade'){
+					model.upgrade(model.getCurrentContestId(), model.getId(), {}, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'upgradeLeft'){
+					var ctx = model.getCurrentContext()
+					var contestId = model.getCurrentContestId()
+					var pos = model.getCurrentPos()
+					var contest = ctx.ContestSys.Contests[contestId]
+					if((!!contest) == false){
+						console.log('no contest')
+						return
+					}
+					var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+					if(dual == null){
+						console.log('no dual')
+						return
+					}
+					var leftP = null
+					var rightP = null
+					for(var i in contest.Peoples){
+						var p = contest.Peoples[i]
+						if(p.Pos == dual.Left){
+							leftP = p
+						}
+						if(p.Pos == dual.Right){
+							rightP = p
+						}
+					}
+					if(leftP == null){
+						console.log('left people not found')
+						return
+					}
+					view.confirm('是否強制左玩家勝利:'+leftP.ID, ok=>{
+						if(ok){
+							
+							model.upgrade(model.getCurrentContestId(), leftP.ID, {force: 1}, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'upgradeRight'){
+					var ctx = model.getCurrentContext()
+					var contestId = model.getCurrentContestId()
+					var pos = model.getCurrentPos()
+					var contest = ctx.ContestSys.Contests[contestId]
+					if((!!contest) == false){
+						console.log('no contest')
+						return
+					}
+					var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+					if(dual == null){
+						console.log('no dual')
+						return
+					}
+					var leftP = null
+					var rightP = null
+					for(var i in contest.Peoples){
+						var p = contest.Peoples[i]
+						if(p.Pos == dual.Left){
+							leftP = p
+						}
+						if(p.Pos == dual.Right){
+							rightP = p
+						}
+					}
+					if(rightP == null){
+						console.log('left people not found')
+						return
+					}
+					view.confirm('是否強制右玩家勝利:'+rightP.ID, ok=>{
+						if(ok){
+							
+							model.upgrade(model.getCurrentContestId(), rightP.ID, {force: 1}, (err, info)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'cancelWinner'){
+					var contest = model.getCurrentContestId()
+					if(contest == null){
+						console.log('no contest')
+						return
+					}
+					model.cancelWinner(contest, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'commitWinner'){
+					var contest = model.getCurrentContestId()
+					if(contest == null){
+						console.log('no contest')
+						return
+					}
+					model.confirmWinner(contest, model.getId(), (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'commitFail'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						console.log('no contestId')
+						return
+					}
+					var ctx = model.getCurrentContext()
+					var contest = ctx.ContestSys.Contests[contestId]
+					if((!!contest) == false){
+						console.log('no contest')
+						return
+					}
+					var pos = model.getCurrentPos()
+					if(pos == null){
+						console.log('no pos')
+						return
+					}
+					var dual = ctx.DualSys.Duals.find(d=>d.ID == pos)
+					if(dual == null){
+						console.log('no dual')
+						return
+					}
+					var peopleLeft = ""
+					var peopleRight = ""
+					for(var k in contest.Peoples){
+						var p = contest.Peoples[k]
+						if(p.Pos == dual.Left){
+							peopleLeft = p.ID
+						}
+						if(p.Pos == dual.Right){
+							peopleRight = p.ID
+						}
+					}
+					var other = peopleLeft == model.getId() ? peopleRight : peopleLeft
+					model.confirmWinner(contest.ID, other, (err, info)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'editCards'){
+					var contestId = model.getCurrentContestId()
+					if(contestId == null){
+						console.log('no contestId')
+						return
+					}
+					var ctx = model.getCurrentContext()
+					var contest = ctx.ContestSys.Contests[contestId]
+					if((!!contest) == false){
+						console.log('no contest')
+						return
+					}
+					var url = "../card/manager_deck.html"
+					if(contest.Game != ""){
+						url += "?game="+contest.Game
+					}
+					window.open(url,'_blank');
+				}
+				
+				if(cmd == 'leaveMessage'){
+					var contestId = model.getCurrentContestId()
+					var joinInfo = view.getJoinInfo()
+					var msgInfo = view.getMessageFormValue()
+					var info = {
+						pwd: joinInfo.pwd,
+						txt: encodeURIComponent(msgInfo.text)
+					}
+					model.leaveMessage(contestId, info, (err, res)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'deleteMessage'){
+					var joinInfo = view.getJoinInfo()
+					var info = {
+						pwd: joinInfo.pwd
+					}
+					var msgId = model.getCurrentMsgId()
+					view.confirm('是否刪除留言:'+msgId, ok=>{
+						if(ok){
+							model.deleteMessage(msgId, info, (err, res)=>{
+								if(err!=null){
+									view.alert('error', err)
+								}else{
+									updateView()
+								}
+							})
+						}
+					})
+				}
+				
+				if(cmd == 'makeDualTime'){
+					var format = /\d+\/\d+ \d+:\d+/	
+					var value = view.getWinnerFormValue()
+					var dualTime = value.makeDualTime
+					
+					if(format.test(dualTime) == false){
+						view.alert('error', '時間格式不正確. 格式例: 1/1 12:00')
+						return
+					}
+					
+					var contestId = model.getCurrentContestId()
+					var peopleId = model.getId()
+					model.makeDualTime(contestId, peopleId, {dualTime: dualTime}, (err, res)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'agreeDualTime'){
+					var format = /\d+\/\d+ \d+:\d+/
+					var value = view.getWinnerFormValue()
+					var dualTime = value.dualTime
+					
+					if(format.test(dualTime) == false){
+						view.alert('error', '時間格式不正確. 格式例: 1/1 12:00')
+						return
+					}
+					
+					var contestId = model.getCurrentContestId()
+					var peopleId = model.getId()
+					model.makeDualTime(contestId, peopleId, {dualTime: dualTime}, (err, res)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+				
+				if(cmd == 'cancelDualTime'){
+					var value = view.getWinnerFormValue()
+					var contestId = model.getCurrentContestId()
+					var peopleId = model.getId()
+					model.makeDualTime(contestId, peopleId, {dualTime: ""}, (err, res)=>{
+						if(err!=null){
+							view.alert('error', err)
+						}else{
+							updateView()
+						}
+					})
+				}
+			}
+			
+			function updateView(){
+				model.loadContext((err, ctx)=>{
+					if(err != null){
+						view.alert('error', err)
+					}else{
+						view.updateContestListView(ctx, model.getId())
+						view.updateContestDetailView(ctx, model.getCurrentContestId())
+						view.updateContestPeopleListView(ctx, model.getCurrentContestId())
+						view.updateContestFlowView(ctx, model.getCurrentContestId())
+						view.updatePeoplePowerForm(ctx, model.getCurrentContestId(), model.getCurrentPeopleId())
+						view.updateCards(ctx, model.getCurrentContestId())
+						view.updateMessageListView(ctx, model.getCurrentContestId())
+						view.updateWinnerForm(ctx, model.getId(), model.getCurrentPos())
+						
+						model.getDuals((err,duals)=>{
+							if(err != null){
+								view.alert('error', err)
+							}else{
+								view.updateDualsListView(ctx, model.getId(), duals)
+							}
+						})
+						
+						model.getOwnerDuals((err,info)=>{
+							if(err != null){
+								view.alert('error', err)
+							}else{
+								var duals = info.Duals
+								var states = info.States
+								view.updateOwnerDualsListView(ctx, model.getId(), duals, states)
+							}
+						})
+					}
+				})
+			}
+			function init(){
+				// 自動登入FB
+				fb.init((err, res)=>{
+					if(err != null){
+						view.alert('error', '請先登入FB')
+					}else{
+						// 設定使用者ID
+						var fbId = res.userID
+						model.setId(fbId)
+						
+						// 顯示使用者ID
+						$(document.form_player).form('load', {
+							id: fbId
+						})
+						
+						// 更新遊戲選單
+						var options = admin.ary_games.map(info=>{
+							var gameName = info.name
+							var gameValue = info.game
+							return {label: gameName, value: gameValue}
+						})					
+						$('#select_game').combobox("loadData", options)
+						
+						// 更新所有視圖
+						updateView()
+						
+						// 背景更新使用者小名
+						fb.me((err, res)=>{
+							var name = res.name
+							model.setCurrentName(name)
+						})
+						
+						// 隱藏登入按鈕
+						$('#btn_login').hide()
+						
+						// google分析
+						googleTracking.init( 'UA-55273266-3' );
+					}
+				})
+			}
+			window.onload = init
+		</script>
+
+
+	</body>
+</html>

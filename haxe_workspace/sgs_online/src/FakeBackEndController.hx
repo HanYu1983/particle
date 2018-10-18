@@ -7,7 +7,9 @@ package;
 class FakeBackEndController extends BasicController
 {
 	private var players:Array<Dynamic> = new Array<Dynamic>();
-
+	
+	private var tableInfo:Dynamic;
+	
 	public function new(_uid:String="") 
 	{
 		super(_uid);
@@ -18,17 +20,23 @@ class FakeBackEndController extends BasicController
 				hand:[]
 			}
 		);
+		
+		players.push(
+			{
+				deck:['ab','cc'],
+				hand:[]
+			}
+		);
 	}
 	
 	public function createPlayerDeck( callback:Dynamic -> Void ){
-		var ret = new Array<Dynamic>();
+		
 		clearDeckByPlayerId(0);
 		for ( i in 0...50 ) {
 			var uuid = Tools.uuid();
 			addPlayerDeckCard(0, uuid );
-			ret.push( uuid );
 		}
-		callback( {deck:ret} );
+		callback( getAll() );
 	}
 	
 	public function drawCardFromPlayerDeckToPlayerHand(fromPlayerId:Int, toPlayerId:Int, callback:Dynamic -> Void ) {
@@ -46,7 +54,40 @@ class FakeBackEndController extends BasicController
 	}
 	
 	public function getAll():Array<Dynamic>{
-		return players;
+		return tableInfo;
+		//return players;
+	}
+	/*
+	public function syncModel( ?cb:Dynamic -> Void ){
+		GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
+			if ( err == null ){
+				tableInfo = val;
+				if ( cb != null ) cb( tableInfo );
+			}
+		});
+	}
+	*/
+	public function syncModel( cb:Dynamic -> Void ){
+		GameInfo.tableInfo( function( err:Dynamic, val:Dynamic ){
+			if ( GameInfo.isMe( val ) ){
+				collectCommand();
+			}else{
+				mediator.clearCmdButton();
+			}
+			cb( val );
+		});
+	}
+	
+	public function collectCommand(){
+		GameInfo.collectCommand( function( err:Dynamic, val:Dynamic ){
+			mediator.createCmdButton( val );
+		});
+	}
+	
+	public function pushCommand( cmd:Dynamic, cb:Dynamic -> Void ){
+		GameInfo.pushCommand( cmd, function( err:Dynamic, val:Dynamic ){
+			syncModel( cb );
+		});
 	}
 	
 	private function getPlayerDeck( id:Int ):Dynamic {

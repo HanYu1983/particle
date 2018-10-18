@@ -15,3 +15,14 @@ indexes:
   properties:
   - name: Time
     direction: desc
+
+- kind: gameRoom
+  ancestor: yes
+  properties:
+  - name: Expiration
+
+- kind: gameRoom
+  ancestor: yes
+  properties:
+  - name: IsPrivate
+  - name: Expiration

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+	<style>
+	body{
+		margin:0;
+		overflow:hidden;
+	}
+	.relative{
+		position:relative;
+	}
+	.absolute{
+		position:absolute;
+	}
+	.top_left{
+		left:0;
+		top:0;
+	}
+	.full{
+		width:100%;
+		height:100%;
+	}
+	.group{
+		position:relative;
+		width:100%;
+	}
+	.hori{
+		display:inline-block;
+	}
+	.horiCenter{
+		text-align:center;
+	}
+	.hide{
+		display:none;
+	}
+	.menuButton{
+		width:48%;
+	}
+	.loginMenuButton{
+		width:70px;
+	}
+	</style>
+	<body class="easyui-layout">
+		
+		<div data-options="region:'west',title:'West',split:false" style="width:300px;">
+			<div id="acc_leftPanel" class="easyui-accordion" data-options="multiple:true" style="width:100%;">
+				<div title="卡片詳情" data-options="iconCls:'icon-save',selected:true" style="padding:10px;">
+					<img class="group top_left relative" src="asset/01030.jpg" />
+				</div>
+				<div title="指令" data-options="iconCls:'icon-reload',selected:true" style="padding:10px;">
+					<div id="div_cmdContainer" class="group hori">
+						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
+						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
+						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
+						<a id="btn" href="#" class="easyui-linkbutton menuButton" >使用</a>
+					</div>
+					<div class="group">
+						<a id="btn_refresh" href="#" class="easyui-linkbutton loginMenuButton" >refresh</a>
+						<div id="txt_tableInfo"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div data-options="region:'center',title:'center title'">
+			<div id="webgl" style='position:relative; width:100%; height:100%;'></div>
+		</div>
+		
+		
+		<div id="win_login" class="easyui-window" title="對戰列表" data-options="collapsible:false,minimizable:false,maximizable:false,closable:false,modal:true,draggable:false,resizable:false" style="width:800px; height:600px;">
+			<div class="easyui-layout full">
+				<div data-options="region:'west',title:'West',split:false" style="width:300px;">
+					<div class="group hori">
+						<a id="btn_login" href="#" class="easyui-linkbutton loginMenuButton" >FB登入</a>
+						<input id="txt_id" class="easyui-textbox" style="width:173px;">
+					</div>
+					<div class="group hori">
+						<a id="btn_create" href="#" class="easyui-linkbutton loginMenuButton" >創建</a>
+						<input id="chk_pri" class="easyui-switchbutton" data-options="onText:'私有',offText:'公開'">
+						<input id="txt_roomName" class="easyui-textbox"  style="width:110px;">
+					</div>
+					<!--
+					<div class="group hori">
+						<a id="btn_enter" href="#" class="easyui-linkbutton loginMenuButton" >進入</a>
+						<input id="txt_enterName" class="easyui-textbox"  style="width:173px">
+					</div>
+					-->
+					<div id="div_container" class="group">
+						<!-- for script -->
+					</div>
+				</div>
+				<div data-options="region:'center',title:'center title'">
+					<div class="group">
+						<div id="txt_channel">txt_channel</div>
+						<div id="txt_expiration">txt_expiration</div>
+						<div id="txt_gameId">txt_gameId</div>
+						<div id="txt_roomID">txt_id</div>
+						<div id="txt_isPrivate">txt_isPrivate</div>
+						<div id="txt_owner">txt_owner</div>
+						<div id="txt_players">txt_players</div>
+						<div id="txt_roles">txt_roles</div>
+						<div id="txt_state">txt_state</div>
+					</div>
+					<div class="group">
+						<!--
+						<input id="tog_priority" class="easyui-switchbutton" data-options="onText:'先攻',offText:'後攻'">
+							-->
+						<a id="btn_enter" href="#" class="easyui-linkbutton loginMenuButton" >進入</a>
+						<a id="btn_start" href="#" class="easyui-linkbutton loginMenuButton" >開始遊戲</a>
+					</div>
+					
+				</div>
+			</div>
+			
+		</div>
+		
+		<div id="dia_command" class="easyui-dialog" title="邀戰通知" data-options="iconCls:'icon-help',closed:true" style="width:300px; padding:10px">
+			<div class="group" style="text-align:center;">
+				<div id="txt_from" style="color:yellow;"></div>
+				<div >要求連線對戰！要求對象：</div>
+				<div id="txt_output" style="color:yellow;"></div>
+				<br/>
+				<a id="btn_receive" href="#" class="easyui-linkbutton" style="width:60px; height:40px; " data-options="iconCls:'icon-ok', disabled:false">連線</a>
+			</div>
+		</div>
+	
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/color.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+			
+		<script src='//cdnjs.cloudflare.com/ajax/libs/ramda/0.21.0/ramda.min.js'></script>
+		<script src='//cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js'></script>
+		<script src='//cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js'></script>
+		<script src="//code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+		<script src='//cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.min.js'></script>
+		<script src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/async/2.1.4/async.min.js"></script>
+		<script src='//tweener.ivank.net/tw.js'></script>
+		<script src="../common/js/lib/threejs/ColladaLoader.js"></script>
+		<script src="../common/js/lib/threejs/CopyShader.js"></script>
+		<script src="../common/js/lib/threejs/EffectComposer.js"></script>
+		<script src="../common/js/lib/threejs/RenderPass.js"></script>
+		<script src="../common/js/lib/threejs/ShaderPass.js"></script>
+		<script src="../common/js/lib/threejs/OutlinePass.js"></script>
+		
+		
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script src="js/vic.tools.js"></script>
+		<script src="js/Main.js"></script>
+
+		<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+
+		<script name="model" src="js/model.js"></script>
+
+		<script name="test">
+
+			model.joinLobby({
+                onopen: function(){
+                    console.log('onopen')
+				},
+                onmessage: function(path, option){
+                    console.log(path.data)
+                },
+                onerror: function(){
+                    console.log('onerror')
+				},
+                onclose: function(){
+                    console.log('onclose')
+				}
+            })
+		/*
+			var user = 'han'
+			model.newRoom(user, function(err, room){
+			    if( err ){
+			        console.log(err)
+				} else {
+			        model.joinRoom(room.ID, 'vic', function(err, res){
+			            if( err ){
+			                console.log(err)
+						} else {
+                            if( err ){
+                                console.log(err)
+                            } else {
+                                model.updateRoom(room.ID, {
+                                    userA: user,
+									userB: 'vic'
+								}, function(err, res){
+                                    if( err ){
+                                        console.log(err)
+									} else {
+                                        model.startGame(room.ID, function(err, res){
+                                            if( err ){
+                                                console.log(err)
+                                            } else {
+                                                model.collectCommand(room.ID, user, function(err, res){
+                                                    if( err ){
+                                                        console.log(err)
+                                                    } else {
+                                                        var passCmd = res[0]
+														model.pushCommand(room.ID, passCmd, function(err, res){
+														    if( err ){
+														        console.log(err)
+															} else {
+                                                                model.collectCommand(room.ID, user, function(err, res){
+                                                                    console.log(arguments)
+                                                                })
+															}
+														})
+                                                    }
+                                                })
+                                            }
+                                        })
+									}
+								})
+                            }
+						}
+					})
+				}
+			})*/
+		</script>
+
+		<script>
+
+		
+		$(document).ready( initPage );
+		
+		function initPage(){
+			var btn_login = $("#btn_login" );
+			var btn_refresh = $("#btn_refresh" );
+			var btn_create = $("#btn_create" );
+			var btn_enter = $("#btn_enter" );
+			var btn_start = $("#btn_start" );
+			var txt_id = $("#txt_id" );
+			var txt_roomName = $("#txt_roomName" );
+			var txt_enterName = $("#txt_enterName" );
+			var chk_pri = $("#chk_pri" );
+			var div_container = $("#div_container" );
+			var needPrivate = false;
+			var acc_leftPanel = $("#acc_leftPanel" );
+			var win_login = $("#win_login" );
+			var playerName = '';
+			
+			txt_id.textbox({
+				value:"vic"
+			});
+			
+			btn_refresh.linkbutton( {
+				onClick:function(){
+					onHtmlClick( 'onFreshClick' );
+				}
+			})
+			
+			selectRoom( 0 );
+			
+			function getUserName(){
+				return txt_id.textbox( 'getValue' );
+			}
+			
+			function showRoomDetail( room ){
+				var txt_channel = $("#txt_channel" );
+				var txt_expiration = $("#txt_expiration" );
+				var txt_gameId = $("#txt_gameId" );
+				var txt_roomID = $("#txt_roomID" );
+				var txt_isPrivate = $("#txt_isPrivate" );
+				var txt_owner = $("#txt_owner" );
+				var txt_players = $("#txt_players" );
+				var txt_roles = $("#txt_roles" );
+				var txt_state = $("#txt_state" );
+				
+				txt_channel.html( room.Channel );
+				txt_expiration.html( room.Expiration );
+				txt_gameId.html( room.GameID );
+				txt_roomID.html( room.ID );
+				txt_isPrivate.html( room.IsPrivate );
+				txt_owner.html( room.Owner );
+				txt_players.html( room.Players );
+				txt_roles.html( room.Roles );
+				txt_state.html( room.State );
+				
+				btn_enter.attr( 'roomId', room.ID);
+			}
+			
+			function selectRoom( id ){
+				showListRoom( function( val ){
+					if( val.length == 0 ) return;
+					var totalCount = val.length;
+					if( id > totalCount - 1 ){
+						id = totalCount - 1;
+					}
+					showRoomDetail( val[id] );
+				});
+			}
+			
+			function showListRoom( cb ){
+				model.roomList( function( error, val){
+					if( error == null ){
+						listRoom( val );
+						if( cb != null ) cb( val );
+					}
+				});
+			}
+			
+			chk_pri.switchbutton({
+				onChange:function( chk ){
+					pri = chk;
+				}
+			});
+			
+			btn_login.linkbutton({
+				onClick:function(){
+					// get facebook id
+				}
+			});
+			
+			btn_create.linkbutton({
+				onClick:function(){
+					var userName = getUserName();
+					if( userName != '' ){
+						model.newRoom(userName, function(err, room){
+							if( err == null ) {
+								selectRoom(1000);
+							}
+						});
+					}
+				}
+			});
+			
+			btn_start.linkbutton({
+				onClick:function(){
+					var enterId = btn_enter.attr( 'roomId' );
+					model.startGame(enterId, function(err, res){
+						if( err ){
+							console.log(err)
+						} else {
+							onHtmlClick( 'onGameStart', {room:res, user:getUserName()} );
+							$('#win_login' ).window( 'close' );
+						}
+					})
+				}
+			});
+			
+			btn_enter.linkbutton({
+				onClick:function(){
+					var enterId = btn_enter.attr( 'roomId' );
+					model.joinRoom(enterId, getUserName(), function(err, res){
+						if( err ){
+							console.log(err)
+						} else {
+						
+						}
+					})
+				}
+			});
+			
+			function listRoom( ary_room ){
+				acc_leftPanel.accordion( 'select', 1 );
+				div_container.empty();
+				for( var i = 0; i < ary_room.length; ++i ){
+					var roomButton = $('<a href="#" class="easyui-linkbutton roomButton" style="width:248px" >' + ary_room[i].Owner + '</a>' );
+					roomButton.attr( 'roomId', ary_room[i].ID );
+					roomButton.linkbutton( {
+						onClick:(function(pressId){
+							return function(){
+								selectRoom( pressId );
+							}
+						})(i)
+					});
+					div_container.append( roomButton );
+				}
+			}
+			
+			function createCmdButton( cmds ){
+				var div_cmdContainer = $('#div_cmdContainer');
+				div_cmdContainer.empty();
+				for( var i = 0; i < cmds.length; ++i ){
+					var cmd = cmds[i];
+					var dom = $('<a href="#" class="easyui-linkbutton menuButton" >' + cmd.Description + '</a>' );
+					dom.attr( 'cmdstr', JSON.stringify(cmd) );
+					dom.linkbutton( {
+						onClick:function(){
+							console.log( this );
+							var cmdstr = $(this).attr('cmdstr');
+							onHtmlClick( 'onCmdClick', JSON.parse(cmdstr));
+						}
+					});
+					div_cmdContainer.append( dom );
+				}
+				
+			}
+			
+			function clearCmdbutton(){
+				var div_cmdContainer = $('#div_cmdContainer');
+				div_cmdContainer.empty();
+			}
+			
+			var ary_phaseName = ['重置步驟','準備步驟','抓牌步驟','行動階段','結束步驟','棄牌步驟'];
+			function showTableInfo( info, extra ){
+				var txt_tableInfo = $('#txt_tableInfo' );
+				var isMeStr = extra.isMe ? '我的':'對方的';
+				var userName = extra.user;
+				txt_tableInfo.html( userName + ':' + isMeStr + ary_phaseName[info.CurrentPhase] );
+			}
+			
+			//export for haxe
+			window.createCmdButton = createCmdButton;
+			window.clearCmdbutton = clearCmdbutton;
+			window.showTableInfo = showTableInfo;
+		}
+		</script>
+	</body>
+</html>
