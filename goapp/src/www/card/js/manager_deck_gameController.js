@@ -12,6 +12,8 @@ var gameController = {};
 	
 	function getQueryStr( game, str ){
 		switch( game ){
+			case 'finalfantasy':
+				return finalfantasyQuerystring2fns( str )
 			case 'pokemon':
 				return pokemonQuerystring2fns( str )
 			case 'fighter':
@@ -47,6 +49,35 @@ var gameController = {};
 				return [obj=>true]	// array of function
 		}
 	}
+	
+	function finalfantasyQuerystring2fns(qstr){
+		var url = $.url("?" + qstr)
+		var query = url.data.param.query
+		var fns = []
+		for( var k in query ){
+			var v = query[k]
+			if( v == "" ){
+				continue
+			}
+			switch( k ){
+				case 'cid':
+				case 'id':
+				fns.push( cardsearch.attrEq( "id", v ) )
+				break;
+				case 'cost_1':
+				fns.push( cardsearch.attrGe( "Cost", parseInt(v) ) )
+				break;
+				case 'cost_2':
+				fns.push( cardsearch.attrLe( "Cost", parseInt(v) ) )
+				break;
+				default:
+				fns.push( cardsearch.attrEq( k, v ) )
+				break;
+			}
+		}
+		return fns
+	}
+	
 	
 	function pokemonRule( value ){
 		return function( obj ){	

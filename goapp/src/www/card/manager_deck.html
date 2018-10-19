@@ -82,6 +82,16 @@ body{
 		<img style="position:absolute; left:0; top:0; width:100%; height:100%;" src="images/sampleTxt.png"/>
 		<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
 		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:10px; padding-right:10px; padding-top:10px; ">
+			<div game="finalfantasy">${id}</div>
+			<div game="finalfantasy">${Type_EN}</div>
+			<div game="finalfantasy">${Name_EN}(${Name})</div>
+			<div game="finalfantasy">${Element}</div>
+			<div game="finalfantasy">${Text_EN}</div>
+			<div game="finalfantasy">${Job_EN}</div>
+			<div game="finalfantasy">${Text}</div>
+			<div game="finalfantasy">${Category_1}</div>
+			<div game="finalfantasy">${Category_2}</div>
+			
 			<div game="pokemon">${id}</div>
 			<div game="pokemon">${type}</div>
 			<div game="pokemon">{{html name}}</div>
@@ -216,6 +226,10 @@ body{
 			<img style="position:absolute; left:0; top:0; height:100%;" src=${url}  style="height:100%;" />
 		</div>
 		<div class="hori" style="overflow:hidden; width:150px; height:100%; vertical-align:top;">
+			<div game="finalfantasy">${id}</div>
+			<div game="finalfantasy">${Name_EN}(${Name})</div>
+			<div game="finalfantasy">${Type_EN}</div>
+			
 			<div game="pokemon">${id}</div>
 			<div game="pokemon">${type}</div>
 			
@@ -382,7 +396,8 @@ body{
 	<script src="../common/js/lib/async/async.js"></script>
 	<script src="../common/js/lib/google/ga.js"></script>
 	<script src="../common/js/lib/csv.js"></script>
-	<script src="../common/js/lib/purl.js"></script>	
+	<script src="../common/js/lib/purl.js"></script>
+	<script src="../common/js/finalfantasy.js"></script>
 	<script src="../common/js/pokemon.js"></script>
 	<script src="../common/js/fighter.js"></script>
 	<script src="../common/js/gundamCrossWar.js"></script>
@@ -440,8 +455,36 @@ body{
 			
 			
 
-
+			
 	var tmplAry = {
+		finalfantasy:{
+			default:[
+				[
+					{type:'label', val:'能量'},
+					{type:'select', span:2, val:{name:'Element', items:["火","氷","風","土","雷","水","光","闇"]}},
+					{type:'label',val:'卡片種類'},
+					{type:'select',span:2,val:{name:'Type_EN', items:["Forward","Backup","Summon","Monster"]}}
+				],
+				[
+					{type:'label', val:'hp以上'},
+					{type:'select', span:2,val:{name:'cost_1', items:["0","1","2","3","4","5","6","7","8","9","10"]}},
+					{type:'label',val:'hp以下'},
+					{type:'select', span:2, val:{name:'cost_2', items:["0","1","2","3","4","5","6","7","8","9","10"]}}
+				],
+				[	
+					{type:'label', val:'卡片名稱檢索'},
+					{type:'textbox', span:5,val:{name:'Name_EN'}}
+				],
+				[
+					{type:'label', val:'卡片規則檢索'},
+					{type:'textbox', span:5,val:{name:'Text_EN'}}
+				],
+				[	
+					{type:'label', val:'id檢索'},
+					{type:'textbox', span:5,val:{name:'id'}}
+				]
+			]
+		},
 		pokemon:{
 			default:[
 				[	
@@ -1269,6 +1312,7 @@ body{
 	}
 	
 	var titlemapping = {
+		finalfantasy:'最終幻想TCG',
 		pokemon:'寶可夢TCG',
 		sangoWar:'三國志大戰',
 		army:'軍武gogogo',

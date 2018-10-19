@@ -4,6 +4,9 @@ var cardinfoloader = {} || cardinfoloader;
 	
 	function load( game, lang, onLoadGameCallback ){
 		switch( game ){
+			case 'finalfantasy':
+				finalfantasy.load("../common/txt/finalfantasy.json", onLoadGameCallback)
+				break
 			case 'pokemon':
 				pokemon.load("../common/txt/pokemonEn.json", onLoadGameCallback)
 				break
@@ -76,6 +79,8 @@ var cardinfoloader = {} || cardinfoloader;
 	*/
 	function cardimageurl( game, id ){
 		switch( game ){
+		case 'finalfantasy':
+			return '//storage.googleapis.com/particle-resources/cardPackage/finalfantasy/'+ id +'_eg.jpg'
 		case 'pokemon':
 			return '//storage.googleapis.com/particle-resources/cardPackage/pokemon/'+ id
 		case 'gundamCrossWar':
