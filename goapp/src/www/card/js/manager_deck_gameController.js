@@ -70,6 +70,12 @@ var gameController = {};
 				case 'cost_2':
 				fns.push( cardsearch.attrLe( "Cost", parseInt(v) ) )
 				break;
+				case 'power_1':
+				fns.push( cardsearch.attrGe( "Power", parseInt(v) ) )
+				break;
+				case 'power_2':
+				fns.push( cardsearch.attrLe( "Power", parseInt(v) ) )
+				break;
 				default:
 				fns.push( cardsearch.attrEq( k, v ) )
 				break;
