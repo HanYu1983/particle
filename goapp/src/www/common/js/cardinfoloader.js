@@ -80,7 +80,12 @@ var cardinfoloader = {} || cardinfoloader;
 	function cardimageurl( game, id ){
 		switch( game ){
 		case 'finalfantasy':
-			return '//storage.googleapis.com/particle-resources/cardPackage/finalfantasy/'+ id +'_eg.jpg'
+			{
+				if( id.indexOf('/') != -1 ){
+					id = id.split('/')[0] 
+				}
+				return '//storage.googleapis.com/particle-resources/cardPackage/finalfantasy/'+ id +'_eg.jpg'
+			}
 		case 'pokemon':
 			return '//storage.googleapis.com/particle-resources/cardPackage/pokemon/'+ id
 		case 'gundamCrossWar':
