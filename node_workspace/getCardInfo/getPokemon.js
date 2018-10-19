@@ -106,7 +106,6 @@ async function getPackages(){
 	var row = 0
 	while(row = pkgNameReq.exec(page)){
 		var [ignore, pkgId, pkg] = row
-		//console.log(pkg)
 		ret.push([pkgId, pkg])
 	}
 	return ret
@@ -115,7 +114,6 @@ async function getPackages(){
 async function getPackage(pkgId){
 	var totalPageReq = /<span >\d+ of (\d+)<\/span>/
 	var cardLinkReq = /<a href="(\/us\/pokemon-tcg\/pokemon-cards\/.+?\/)">/g
-	
 	var pkgPageUrl = host + path + '1' + querystring + '&'+pkgId+'=on'
 	var pkgPage = await fetch(pkgPageUrl)
 	var parse = totalPageReq.exec(pkgPage)
@@ -125,13 +123,10 @@ async function getPackage(pkgId){
 	var detailPageUrls = []
 	for(var i=1; i<=totalPage; ++i){
 		pkgPageUrl = host + path + i + querystring + '&'+pkgId+'=on'
-		//console.log(pkgPageUrl)
 		pkgPage = await fetch(pkgPageUrl)
-		
 		var cardLinkRow = 0
 		while(cardLinkRow = cardLinkReq.exec(pkgPage)){
 			var [ignore, cardLink] = cardLinkRow
-			//console.log(cardLink)
 			detailPageUrls.push(cardLink)
 		}
 	}
@@ -140,7 +135,6 @@ async function getPackage(pkgId){
 }
 
 async function getDetails(detailPageUrls){
-	//var cardDetailReg = /<section class="mosaic section card-detail">\n\s+<div.+>\n\s+<!-- START: MAIN CARD PICTURE -->\n\s+<div.+>\n\s+<img src="(.+)"\n\s+.+>[\s\S]+<!-- START: POKEMON CARD BASIC DESCRIPTION -->([\s\S]+?)<!-- ENDS: POKEMON CARD BASIC DESCRIPTION -->[\s\S]+?<!-- START: POKEMON CARD ABILITIES -->([\s\S]+?)<!-- ENDS: POKEMON CARD ABILITIES -->[\s\S]+?<!-- START: POKEMON CARD STATS AND EXPANSIONS -->([\s\S]+?)<!-- ENDS: POKEMON CARD STATS AND EXPANSIONS -->/
 	var cardDetailReg = /<section class="mosaic section card-detail">\n\s+<div.+>\n\s+<!-- START: MAIN CARD PICTURE -->\n\s+<div.+>\n\s+<img src="(.+)"[\s\S]+?>[\s\S]+<!-- START: POKEMON CARD BASIC DESCRIPTION -->([\s\S]+?)<!-- ENDS: POKEMON CARD BASIC DESCRIPTION -->[\s\S]+?<!-- START: POKEMON CARD ABILITIES -->([\s\S]+?)<!-- ENDS: POKEMON CARD ABILITIES -->[\s\S]+?<!-- START: POKEMON CARD STATS AND EXPANSIONS -->([\s\S]+?)<!-- ENDS: POKEMON CARD STATS AND EXPANSIONS -->/
 	var nameTypeReg = /<div class="card-description">\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>/
 	var basicReg = /<div class=.+>\n\s+<div.+>\n\s+<h1>(.+)<\/h1>\n\s+<\/div>\n\s+<div.+>\n\s+<div.+>\n\s+<h2>(.+)<\/h2>\n\s+[\s\S]+?<\/div>\n\s+<div.+>\n\s+<span class="card-hp"><span>HP<\/span>(.+)<\/span>\n\s+.+"energy (.+)">/
@@ -149,10 +143,8 @@ async function getDetails(detailPageUrls){
 	var abiReg = /<div class="pokemon-abilities">\n\s+<!-- ABILITY -->([\s\S]+?)<!-- RESTORED POKEMON -->([\s\S]+?)<!-- EX RULE -->([\s\S]+?)<!-- POKE-BODY -->([\s\S]+?)<!-- POKE-POWER -->([\s\S]+?)<!-- LV RULE -->([\s\S]+?)<!-- POKE-BODY -->/
 	//var abiPowerReq = /<ul class="left">([\s\S]+?)<\/ul>\n\s+<h4 .+">(.+)<\/h4>\n\s+<span .+">(.+)<\/span>\n\s+<pre>([\s\S]*?)<\/pre>/g
 	//var abiPowerReg = /<ul class="left">([\s\S]+?)<\/ul>([\s\S]+?)<\/div>/g
-	
 	var abiPowerReg = /<ul class="left">([\s\S]+?)<\/ul>\n\s+<h4 .+">(.+)<\/h4>[\s\S]+?<pre>([\s\S]*?)<\/pre>/g
 	var abiPowerPowerReg = /<span .+">(.+)<\/span>/
-	
 	var abiPowerReg2 = /<pre>([\s\S]*?)<\/pre>/g
 	var abiPowerReg3 = /<p>([\s\S]*?)<\/p>/
 	var abiPowerCostReg = /<li rel="tooltip" title="(.+)">/g
@@ -164,14 +156,11 @@ async function getDetails(detailPageUrls){
 	var output = []
 	for(var i in detailPageUrls){
 		var cardPageUrl = host + detailPageUrls[i]
-		//console.log(i, "/", detailPageUrls.length, ":", cardPageUrl)
-		
 		var cardPage = await fetch(cardPageUrl)
 		var parseDetail = cardDetailReg.exec(cardPage)
 		
 		try{
 			var [ignore, img, basicSection, abiSection, stateSection] = parseDetail
-
 			var name = ""
 			var type = ""
 			var hp = ""
@@ -220,14 +209,6 @@ async function getDetails(detailPageUrls){
 			// abiSection
 			try{
 				var [ignore, ability, restorePokeman, exRule, pokeBody, pokePower, lvRule] = abiReg.exec(abiSection)
-				/*
-				ability = ability.trim()
-				restorePokeman = restorePokeman.trim()
-				exRule = exRule.trim()
-				pokeBody = pokeBody.trim()
-				pokePower = pokePower.trim()
-				lvRule = lvRule.trim()
-				*/
 				try{
 					var [ignore, exRuleTxt_] = abiRuleReg.exec(exRule)
 					exRuleTxt = exRuleTxt_
@@ -276,7 +257,7 @@ async function getDetails(detailPageUrls){
 				}
 				
 				// 不是Trainer並且有Pokémon的
-				if(type.indexOf('Trainer') == -1 && type.indexOf("Pokémon") != -1){					
+				if(type.indexOf('Trainer') == -1 && type.indexOf("Pokémon") != -1){
 					try{
 						var row = 0
 						while(row = abiPowerReg.exec(pokePower)){
