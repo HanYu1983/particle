@@ -95,6 +95,7 @@
 		{ game:'magic', name:'魔法風雲會', hot:false, 'public':false },
 		{ game:'battleSpirits', name:'戰魂', hot:false, 'public':false },
 		{ game:'pokemon', name:'寶可夢TCG', hot:false, 'public':false },
+		{ game:'finalfantasy', name:'最終幻想TCG', hot:false, 'public':false },
 		{ game:'ws', name:'黑白雙翼', hot:false, 'public':false },
 		{ game:'dragonZ', name:'七龍珠TCG', hot:false, 'public':false },
 		{ game:'yugioh', name:'遊戲王', hot:false, 'public':false }

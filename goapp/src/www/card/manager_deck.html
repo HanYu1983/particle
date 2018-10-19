@@ -83,13 +83,13 @@ body{
 		<div id="mc_black" style="position:absolute; left:0; top:0;  width:100%; height:100%; background-color:black; opacity:.5;"></div>
 		<div id="mc_detail" style="position:absolute; top:0; left:0; padding-left:10px; padding-right:10px; padding-top:10px; ">
 			<div game="finalfantasy">${id}</div>
-			<div game="finalfantasy">${Type_EN}</div>
-			<div game="finalfantasy">${Name_EN}(${Name})</div>
-			<div game="finalfantasy">${Element}</div>
-			<div game="finalfantasy">${Text_EN}</div>
-			<div game="finalfantasy">${Job_EN}</div>
-			<div game="finalfantasy">${Text}</div>
+			<div game="finalfantasy">${Element} ${Cost}</div>
+			<div game="finalfantasy">${Name_EN} (${Name})</div>
+			<div game="finalfantasy">${Type_EN} (${Type})</div>
+			<div game="finalfantasy">${Job_EN} (${Job})</div>
 			<div game="finalfantasy">${Category_1}</div>
+			<div game="finalfantasy">${Text_EN}</div>
+			<div game="finalfantasy">${Power}</div>
 			<div game="finalfantasy">${Category_2}</div>
 			
 			<div game="pokemon">${id}</div>
@@ -460,7 +460,7 @@ body{
 		finalfantasy:{
 			default:[
 				[
-					{type:'label', val:'能量'},
+					{type:'label', val:'元素'},
 					{type:'select', span:2, val:{name:'Element', items:["火","氷","風","土","雷","水","光","闇"]}},
 					{type:'label',val:'卡片種類'},
 					{type:'select',span:2,val:{name:'Type_EN', items:["Forward","Backup","Summon","Monster"]}}
@@ -472,16 +472,18 @@ body{
 					{type:'select', span:2, val:{name:'cost_2', items:["0","1","2","3","4","5","6","7","8","9","10"]}}
 				],
 				[	
-					{type:'label', val:'卡片名稱檢索'},
+					{type:'label', val:'卡片名稱'},
 					{type:'textbox', span:5,val:{name:'Name_EN'}}
 				],
 				[
-					{type:'label', val:'卡片規則檢索'},
+					{type:'label', val:'卡片規則'},
 					{type:'textbox', span:5,val:{name:'Text_EN'}}
 				],
 				[	
-					{type:'label', val:'id檢索'},
-					{type:'textbox', span:5,val:{name:'id'}}
+					{type:'label', val:'id'},
+					{type:'textbox', span:2,val:{name:'id'}},
+					{type:'label', val:'作品'},
+					{type:'select', span:2,val:{name:'Category_1', items:["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","DFF","FFT","LOV","TYPE-0","WOFF","FFCC","FFTA","FFTA2","MOBIUS","THEATRHYTHM","PICTLOGICA","Special"]}}
 				]
 			]
 		},

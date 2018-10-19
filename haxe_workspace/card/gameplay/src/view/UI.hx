@@ -544,6 +544,23 @@ class UI extends Mediator
 				if ( detail != null ) {
 					str = '';
 					switch( game ) {
+						case 'finalfantasy':
+							str += detail.Element + ' ' + detail.Cost;
+							str += '<br/>';
+							str += detail.Name_EN + '(' + detail.Name +')';
+							str += '<br/>';
+							str += detail.Type_EN + '(' + detail.Type +')';
+							str += '<br/>';
+							str += detail.Job_EN + '(' + detail.Job +')';
+							str += '<br/>';
+							str += detail.Category_1;
+							str += '<br/>';
+							str += detail.Text_EN;
+							str += '<br/>';
+							str += detail.Power;
+							str += '<br/>';
+							str += detail.Category_2;
+							str += '<br/>';
 						case 'pokemon':
 							str += detail.id;
 							str += '<br/>';
