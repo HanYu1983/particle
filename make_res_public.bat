@@ -1,1 +1,1 @@
-gsutil -m acl set -R -a public-read gs://particle-resources/cardPackage/finalfantasy
+gsutil -m acl set -R -a public-read gs://particle-resources/cardPackage/fighter
