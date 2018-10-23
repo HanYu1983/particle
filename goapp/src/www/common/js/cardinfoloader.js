@@ -119,7 +119,8 @@ var cardinfoloader = {} || cardinfoloader;
 		case 'army':
 			return '//storage.googleapis.com/particle-resources/cardPackage/army/'+id+'.jpg'
 		case 'fighter':
-			return '//storage.googleapis.com/particle-resources/cardPackage/fighter/'+id+'.jpg'
+			//return '//storage.googleapis.com/particle-resources/cardPackage/fighter/'+id+'.jpg'
+			return '//storage.googleapis.com/particle-resources/cardPackage/fighter/52.jpg'
 		case 'magic':
 			return '//storage.googleapis.com/particle-resources/cardPackage/magic/' +encodeURIComponent( id )+ '.jpg'
 		}
