@@ -2,8 +2,6 @@
 package db2
 
 import (
-	"appengine"
-	"appengine/datastore"
 	"archive/zip"
 	"bytes"
 	"encoding/json"
@@ -16,6 +14,9 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"appengine"
+	"appengine/datastore"
 )
 
 type DBFile struct {

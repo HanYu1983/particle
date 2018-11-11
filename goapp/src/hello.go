@@ -41,6 +41,8 @@ func init() {
 	http.HandleFunc("/deckwikidbfile2/", db2.Handler(appauth.User{Key: "deckWiki"}))
 	// 幽夢仙境用
 	http.HandleFunc("/particledbfile2/", db2.Handler(appauth.User{Key: "particle"}))
+	// 小跟班用
+	http.HandleFunc("/nightmarketssistentdbfile2/", db2.Handler(appauth.User{Key: "nightmarketassistent"}))
 	// 管理者
 	// 權限最大，可以看到所有user建立的檔案內容
 	http.HandleFunc("/admindbfile2/", db2.Handler(appauth.User{Key: "admin"}))
@@ -97,6 +99,8 @@ func init() {
 }
 
 func handler2(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	ctx.Infof("Hello, %v", "Han")
 	fmt.Fprint(w, "Hello, world3!")
 }
 
