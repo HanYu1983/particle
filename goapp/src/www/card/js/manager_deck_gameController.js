@@ -973,7 +973,9 @@ var gameController = {};
 			}
 			switch( k ){
 			case 'cid':
-				fns.push( cardsearch.attrEq( "id", v ) )
+				// 強制一起找cid和id
+				// 這裡是偷懶解法, 忘了為什麼點右下的小圖後, cid卻送id過來
+				fns.push( cardsearch.or([cardsearch.attrEq( "cid", v ), cardsearch.attrEq( "id", v )]) )
 				break
 			case "id":
 				fns.push( cardsearch.attrEq( "id", v ) )

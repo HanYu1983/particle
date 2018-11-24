@@ -1,1 +1,1 @@
-gsutil -m acl set -R -a public-read gs://particle-resources/cardPackage/fighter
+gsutil -m acl set -R -a public-read gs://particle-resources/cardPackage/sengoku
