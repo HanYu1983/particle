@@ -56,7 +56,7 @@ function fetch(url, dontUseCache){
 
 async function getFinalfantasy(outputPath){
 	var dataUrl = 'https://fftcg.square-enix-games.com/getcards'
-	var data = JSON.parse(await fetch(dataUrl))
+	var data = JSON.parse(await fetch(dataUrl, true))
 	for(var i in data.cards){
 		data.cards[i].id = data.cards[i].Code
 		delete data.cards[i].Name_DE

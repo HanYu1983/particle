@@ -1,2 +1,2 @@
-node getSgs.js
+node getFinalfantasy.js
 pause
