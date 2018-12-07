@@ -250,15 +250,21 @@ body{
 	<script type="text/javascript" src="../common/js/lib/date.js"></script>
 	<script type="text/javascript" src="../common/js/db2.js"></script>
 	<script type="text/javascript" src="../common/js/db2path.js"></script>
-	<script type="text/javascript" src="../common/cljs/goog/base.js"></script>
-	<script type="text/javascript" src="../common/cljs/cljs.js"></script>	
 	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript" src="js/api.js"></script>
-	<script src="../common/js/admin.js"></script>	
+	<script src="../common/js/admin.js"></script>
+	<script>
+	var CLOSURE_UNCOMPILED_DEFINES = {};
+	var CLOSURE_NO_DEPS = true;
+	</script>
+	<script src="../common/cljsout/main.out/goog/base.js"></script>
+	<script src="../common/cljsout/main.out/goog/deps.js"></script>
+	<script src="../common/cljsout/main.out/cljs_deps.js"></script>
 	<script type="text/javascript">
 	googleTracking.init( 'UA-55273266-3' );
-	goog.require("app.stock.main")
+	goog.require("process.env");
+	goog.require("app.stock.main");
 	admin.defaultMessageHandle( 'stock', $('#dia_message') );
 	</script>
 	<script type="text/javascript" src="js/haxe.js"></script>
