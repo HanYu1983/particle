@@ -634,7 +634,11 @@ model_PanelModel.prototype = $extend(model_Model.prototype,{
 			periodCount = 1;
 		}
 		Main.getStockInfo(this.currentStockId,periodCount).done(function(err,data) {
-			var state = data[0];
+			var err = data[0];
+			if(err != null){
+				js_Browser.alert(err);
+				return true;
+			}
 			var dataInfo = data[1];
 			var date = data[3];
 			var stock = _g.getStockById(_g.currentStockId);

@@ -2,27 +2,27 @@
   (:require-macros
     [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [cljs.core.async :refer [>! <! close! chan]]
+    [cljs.core.async :refer [>! <! close! chan alts!]]
     [clojure.string :as s]))
 
 (defn content [url]
   (let [ret (chan)]
     (.ajax js/$ (js-obj
-      "url" "/proxy"
-      "dataType" "text"
-      "data"
-      (js-obj
-        "url" url)
-      "success"
-      (fn [data]
-        (go
-          (>! ret [nil data])
-          (close! ret)))
-      "error"
-      (fn [xhr _ err]
-        (go
-          (>! ret [err])
-          (close! ret)))))
+                  "url" "/proxy"
+                  "dataType" "text"
+                  "data"
+                  (js-obj
+                    "url" url)
+                  "success"
+                  (fn [data]
+                    (go
+                      (>! ret [nil data])
+                      (close! ret)))
+                  "error"
+                  (fn [xhr _ err]
+                    (go
+                      (>! ret [err])
+                      (close! ret)))))
     ret))
     
 (defn goog-finance-info-url [id]
@@ -38,7 +38,7 @@
           volume 
           (->
             (.-vo json)
-            (.replace #"M" "")  ;有時候無法使用clojure內建的replace，所以改用js自帶的
+            (.replace #"M" "")  ;sometimes can not use clojure's builtin replace, so use js' replace
             (js/parseFloat)
             (* 1000000))]
       [date (.-op json) (.-hi json) (.-lo json) (.-l_fix json) volume])
@@ -87,8 +87,8 @@
     (for
       [
         [_ date close high low open volume]
-        infos
-      ]
+        infos]
+      
       [date (js/parseFloat open) (js/parseFloat high) (js/parseFloat low) (js/parseFloat close) (js/parseInt volume)])))
 
 (defn format-getprices [interval data]
@@ -110,7 +110,7 @@
               (if (and (string? d1) (string? d2))
                 (let [offset (- (js/parseInt d2) (js/parseInt d1))]
                   [(str offset) o h l c v])
-                  curr))
+                curr))
             pass1
             (rest pass1)))
         
@@ -146,7 +146,7 @@
           pass4)]
     pass5))
     
-(defn get-goog-stock-prices [id range]
+(defn get-goog-stock-prices-old [id range]
   (go
     (let [[err infos] (<! (content (goog-finance-getprices-url id range)))
           [err2 todayLine] (<! (todayPrice id))
@@ -193,8 +193,8 @@
     (for
       [
         [_ date open high low close volume]
-        infos
-      ]
+        infos]
+      
       [date (js/parseFloat open) (js/parseFloat high) (js/parseFloat low) (js/parseFloat close) (-> volume (.replace #"," "") js/parseInt)])))
 
 ; num最高為200
@@ -208,7 +208,57 @@
           (if (= num (count infos))
             (<! (goog-historical-info (concat all infos) id startdate (+ start num) num))
             [nil (concat all infos)]))))))
-            
+         
+(defn getUrl [url]
+  (let [retc (chan)
+        errc (chan)]
+    (.ajax js/$ (js-obj
+                  "url" url
+                  "method" "GET"
+                  "success"
+                  (fn [data]
+                    (go
+                      (let [err (aget data 0)
+                            info (aget data 1)]
+                        (if err
+                          (do
+                            (>! errc err)
+                            (close! retc)
+                            (close! errc))
+                          (do
+                            (>! retc info)
+                            (close! retc)
+                            (close! errc))))))
+                  "error"
+                  (fn [xhr _ err]
+                    (go
+                      (>! errc err)
+                      (close! retc)
+                      (close! errc)))))
+    [retc errc]))
+
+(defn get-goog-stock-prices2 [id range]
+  (go
+    [nil [["2018/3" 10 12 6 8 10]
+          ["2018/3" 12 14 8 8 6]
+          ["2018/3" 12 14 8 8 16]]]))
+
+(defn get-goog-stock-prices [id range]
+  (go
+    (let [[stockInfoc errc] (getUrl (str "/fn/stockInfo?symbol=" id "&chartLast=365"))
+          [v c] (alts! [stockInfoc errc])]
+      (condp = c
+        stockInfoc
+        (let [mapping 
+              (fn [obj]
+                (map (partial get obj) ["date" "open" "high" "low" "close" "volume"]))
+              info 
+              (-> 
+                (map mapping (js->clj v))
+                (reverse))]
+          [nil info])
+        errc
+          [v nil]))))
 
 (defn date [kline]
   (if (seq? kline)

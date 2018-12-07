@@ -25,14 +25,11 @@
       (recur))
     
     (am/go-loop 
-      [
-       ctx {
-            :onView onView
+      [ctx {:onView onView
             :onModel onModel
             :onSys onSys
             :store {}
             :temp {}}]
-      
       
       (let [[v ch] (a/alts! [onView onSys])]
         (recur

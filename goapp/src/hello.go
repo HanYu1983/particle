@@ -14,6 +14,8 @@ import (
 	"appengine/user"
 
 	"app/contestsys"
+		
+	"strconv"
 )
 
 func init() {
@@ -96,6 +98,47 @@ func init() {
 
 	// Test
 	http.HandleFunc("/fn/auth", welcome)
+		
+	http.HandleFunc("/fn/stockInfo", stock)
+}
+
+func stock(w http.ResponseWriter, r *http.Request) {
+		
+	defer tool.Recover(func(err error){
+		fmt.Fprintf(w, "[\"%s\", null]", err.Error())
+	})
+	w.Header().Set("Content-Type", "application/json")
+	
+	ctx := appengine.NewContext(r)
+	
+	r.ParseForm()
+	tool.Assert( tool.ParameterIsNotExist( r.Form, "symbol" ) )
+	
+	symbol := r.Form["symbol"][0]
+	chartLast := int64(200)
+	var err error
+	if len(r.Form["chartLast"]) > 0 {
+		chartLast, err = strconv.ParseInt(r.Form["chartLast"][0], 10, 32)
+	}
+		
+	url := fmt.Sprintf("https://api.iextrading.com/1.0/stock/%s/chart/ytd?chartLast=%d", symbol, chartLast)
+
+	req, err := tool.GetRequest( url, nil )
+	tool.Assert( tool.IfError( err ) )
+
+	res, err := tool.DoRequest( req, ctx )
+	tool.Assert( tool.IfError( err ) )
+	
+	body, err := tool.ReadAll( res )
+	tool.Assert( tool.IfError( err ) )
+	
+	bodyStr := string(body[:])
+	if bodyStr == "Unknown symbol" {
+		panic("Unknown symbol")
+		return
+	}
+	// w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d, public", 60* 60* 6))
+	fmt.Fprintf(w, "[null, %s]", bodyStr)
 }
 
 func handler2(w http.ResponseWriter, r *http.Request) {

@@ -6,6 +6,7 @@ var api = {};
 	var cbs = {}
 	
 	common.onModel.subscribe(function(param){
+		console.log(param)
 		var type = param[0]
 		var data = param[1]
 		var request = data.request

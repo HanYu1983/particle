@@ -83,8 +83,8 @@
                   o (get subd "o")
                   p (get subd "p")]
               [
-                {:type :line :line (stf/BBI n m o p vs) :color c3}
-              ])
+                {:type :line :line (stf/BBI n m o p vs) :color c3}])
+              
               
             "ebbi"
             (let [n (get subd "n")
@@ -92,8 +92,8 @@
                   o (get subd "o")
                   p (get subd "p")]
               [
-                {:type :line :line (stf/EBBI n m o p vs) :color c4}
-              ])
+                {:type :line :line (stf/EBBI n m o p vs) :color c4}])
+              
               
             "yu-car"
             (let [n (get subd "n")
@@ -103,8 +103,8 @@
                   avg (stf/average (stl/mid kline))]
               [
                 {:type :line :line (map + (stl/mid kline) (reverse ranges)) :color c1 :offset -1}
-                {:type :line :line (map - (stl/mid kline) (reverse ranges)) :color c1 :offset -1}
-              ])
+                {:type :line :line (map - (stl/mid kline) (reverse ranges)) :color c1 :offset -1}])
+              
               
             "yu-macd"
             (let [n (get subd "n")
@@ -117,8 +117,8 @@
                 {:type :line :line dif :color c1}
                 {:type :line :line (reverse (stf/sma-seq o (reverse dif))) :color c2}
                 {:type :grid :line dif :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
             
             "yu-clock"
             (let [n (get subd "n")
@@ -127,8 +127,8 @@
               [
                 {:type :line :line (reverse vs) :color c1}
                 {:type :grid :line (reverse vs) :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             "yu-sd"
             (let [n (get subd "n")
@@ -155,8 +155,8 @@
                 [
                   {:type :line :line (map (partial + offsets-avg) vs) :color c2 :offset -1}
                   {:type :line :line (map (partial + (+ sd2) offsets-avg) vs) :color c2 :offset -1}
-                  {:type :line :line (map (partial + (- sd2) offsets-avg) vs) :color c2 :offset -1}
-                ])
+                  {:type :line :line (map (partial + (- sd2) offsets-avg) vs) :color c2 :offset -1}])
+                
             
             "macd"
             (let [n (get subd "n")
@@ -167,8 +167,8 @@
                 {:type :line :line dif :color c1}
                 {:type :line :line (reverse (stf/sma-seq o (reverse dif))) :color c2}
                 {:type :line :line (repeat (count kline) 0) :color "white"}
-                {:type :grid :line dif :centerY 0 :color gridColor}
-              ])
+                {:type :grid :line dif :centerY 0 :color gridColor}])
+              
               
             "kd"
             (let [n (get subd "n")
@@ -181,8 +181,8 @@
                 {:type :line :line k :color c1}
                 {:type :line :line d :color c2}
                 {:type :grid :line rsv :center 0.5 :color gridColor}
-                {:type :line :line (repeat (count kline) 0.5) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0.5) :color "white"}])
+              
               
             "yu-kd"
             (let [n (get subd "n")
@@ -192,8 +192,8 @@
               [
                 {:type :line :line h9 :color c1}
                 {:type :line :line l9 :color c1}
-                {:type :line :line c :color c2}
-              ])
+                {:type :line :line c :color c2}])
+              
               
             "Chaikin"
             (let [n (get subd "n")
@@ -205,8 +205,8 @@
                 {:type :line :line vs :color c1}
                 {:type :line :line (reverse (stf/sma-seq o (reverse vs))) :color c2}
                 {:type :grid :line vs :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             "cv"
             (let [n (get subd "n")
@@ -225,8 +225,8 @@
               [
                 {:type :line :line vs :color c1}
                 {:type :grid :line vs :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
             
             "eom"
             (let [n (get subd "n")
@@ -236,15 +236,15 @@
                 {:type :line :line vs :color c1}
                 {:type :line :line (reverse (stf/sma-seq m (reverse vs))) :color c2}
                 {:type :grid :line vs :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             "sar"
             (let [n (get subd "n")
                   sar (reverse (stf/sar-seq n (reverse kline)))]
               [
-                {:type :line :line sar :color c1 :style :dot}
-              ])
+                {:type :line :line sar :color c1 :style :dot}])
+              
               
             "osc"
             (let [n (get subd "n")
@@ -254,8 +254,8 @@
                 {:type :line :line line :color c1}
                 {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
                 {:type :grid :line line :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
             
             "rsi"
             (let [n (get subd "n")
@@ -265,8 +265,8 @@
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line (reverse (stf/sma-seq m line)) :color c2}
                 {:type :grid :line (reverse line) :centerY 0.5 :color gridColor}
-                {:type :line :line (repeat (count kline) 0.5) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0.5) :color "white"}])
+              
               
             "atr"
             (let [n (get subd "n")
@@ -278,8 +278,8 @@
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line (reverse line2) :color c2}
                 {:type :grid :line (reverse line) :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             "dmi"
             (let [n (get subd "n")
@@ -303,8 +303,8 @@
                 {:type :line :line (reverse adid) :color "green"}
                 {:type :line :line (reverse (stf/sma-seq m dx)) :color c1}
                 {:type :grid :line (reverse (stf/sma-seq m dx)) :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             "AccDist"
             (let [n (get subd "n")
@@ -313,8 +313,8 @@
                 {:type :line :line (reverse line) :color c1}
                 {:type :line :line (reverse (stf/sma-seq n line)) :color c2}
                 {:type :grid :line line :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             "cci"
             (let [n (get subd "n")
@@ -322,8 +322,8 @@
               [
                 {:type :line :line (reverse line) :color c1}
                 {:type :grid :line line :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
             
             "dpo"
             (let [n (get subd "n")
@@ -331,8 +331,8 @@
               [
                 {:type :line :line line :color c1}
                 {:type :grid :line line :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             "trix"
             (let [n (get subd "n")
@@ -342,8 +342,8 @@
                 {:type :line :line line :color c1}
                 {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
                 {:type :grid :line line :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             "uos"
             (let [n (get subd "n")
@@ -358,8 +358,8 @@
                 {:type :line :line ma :color c2}
                 {:type :line :line ma2 :color c3}
                 {:type :grid :line line :centerY 50 :color gridColor}
-                {:type :line :line (repeat (count kline) 50) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 50) :color "white"}])
+              
               
             "nkline"
             (let [n (get subd "n")
@@ -369,8 +369,8 @@
                     (take (int (/ (count kline) n))))]
               [
                 {:type :grid :kline kline :color gridColor}
-                {:type :kline :kline kline}
-              ])
+                {:type :kline :kline kline}])
+              
               
             "yu-money"
             (let [n (get subd "n")
@@ -380,8 +380,8 @@
                 {:type :line :line line :color c1}
                 {:type :line :line (reverse (stf/sma-seq m (reverse line))) :color c2}
                 {:type :grid :line line :centerY 0 :color gridColor}
-                {:type :line :line (repeat (count kline) 0) :color "white"}
-              ])
+                {:type :line :line (repeat (count kline) 0) :color "white"}])
+              
               
             {:type nil})))
       sub)
@@ -412,23 +412,23 @@
                 "volume"
                 [
                   {:type :line :line (stl/volume kline) :color "red"}
-                  {:type :grid :line (stl/volume kline) :color "#555" :hideY true}
-                ]
+                  {:type :grid :line (stl/volume kline) :color "#555" :hideY true}]
+                
               
                 "clock"
                 (let [{cs :sma z :z v-z :v-z} (stf/clock 10 kline)]
                   [
-                    {:type :clock :cz z :vz v-z}
-                  ])
+                    {:type :clock :cz z :vz v-z}])
+                  
               
                 "kline"
                 [
                   {:type :grid :kline kline :color "#555"}
-                  {:type :kline :kline kline}
-                ]
+                  {:type :kline :kline kline}]
+                
                 {:type nil}))
-            (jsobj->drawer-info type kline sub))
-        }
+            (jsobj->drawer-info type kline sub))}
+        
         (.-width canvas) (.-height canvas)
         (.getContext canvas "2d")))
     ctx))
@@ -450,9 +450,12 @@
   (let [onSys (:onSys ctx)
         stockId (aget data "id")
         group (or (aget data "group") 1)
-        [err kline id date :as stock-info] (get-in ctx [:temp "stocks" stockId])]
+        [_ kline id date :as stock-info] (get-in ctx [:temp "stocks" stockId])]
+    (.log js/console (print-str stock-info))
     (am/go
-      (a/>! onSys ["view" [nil (clj->js [err (stf/nkline group kline) id date]) data]])))
+      (if stock-info
+        (a/>! onSys ["view" [nil (clj->js [nil (stf/nkline group kline) id date]) data]])
+        (a/>! onSys ["view" [nil (clj->js ["no data"]) data]]))))
   ctx)
   
 (defmethod abstract/onViewCommand "load" [type data {onSys :onSys :as ctx}]

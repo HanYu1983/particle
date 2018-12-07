@@ -47,6 +47,13 @@ func GetRequest(url string, data url.Values) (*http.Request, error) {
 }
 
 func PostRequest(url string, data url.Values) (*http.Request, error) {
+	if data == nil {
+		r, err := http.NewRequest("POST", url, nil)
+		if err != nil {
+			return nil, err
+		}
+		return r, nil
+	}
 	databytes := data.Encode()
 	r, err := http.NewRequest("POST", url, bytes.NewBufferString(databytes))
 	if err != nil {
