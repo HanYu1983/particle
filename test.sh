@@ -1,1 +1,1 @@
-../go_appengine/goapp serve goapp/src
+python /Users/hanyu/Documents/google-cloud-sdk/bin/dev_appserver.py goapp/src/app.yaml
