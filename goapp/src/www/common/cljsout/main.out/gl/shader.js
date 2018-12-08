@@ -16,12 +16,12 @@ return console.log(gl__$1.getShaderInfoLog(shader));
 });
 gl.shader.program = (function gl$shader$program(gl__$1,vs,fs){
 var p = gl__$1.createProgram();
-var G__8857_8858 = gl__$1;
-G__8857_8858.attachShader(p,vs);
+var G__5313_5314 = gl__$1;
+G__5313_5314.attachShader(p,vs);
 
-G__8857_8858.attachShader(p,fs);
+G__5313_5314.attachShader(p,fs);
 
-G__8857_8858.linkProgram(p);
+G__5313_5314.linkProgram(p);
 
 
 if(cljs.core.truth_(gl__$1.getProgramParameter(p,gl__$1.LINK_STATUS))){
@@ -30,63 +30,63 @@ return p;
 return console.log("Could not initialise shaders");
 }
 });
-gl.shader.closeAttrsUnifs = (function gl$shader$closeAttrsUnifs(gl__$1,p__8859){
-var map__8860 = p__8859;
-var map__8860__$1 = ((((!((map__8860 == null)))?(((((map__8860.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__8860.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__8860):map__8860);
-var info = map__8860__$1;
-var attrs = cljs.core.get.call(null,map__8860__$1,new cljs.core.Keyword(null,"attrs","attrs",-2090668713));
-var unifs = cljs.core.get.call(null,map__8860__$1,new cljs.core.Keyword(null,"unifs","unifs",-1297600433));
-var seq__8862_8872 = cljs.core.seq.call(null,attrs);
-var chunk__8863_8873 = null;
-var count__8864_8874 = (0);
-var i__8865_8875 = (0);
+gl.shader.closeAttrsUnifs = (function gl$shader$closeAttrsUnifs(gl__$1,p__5315){
+var map__5316 = p__5315;
+var map__5316__$1 = ((((!((map__5316 == null)))?(((((map__5316.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__5316.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__5316):map__5316);
+var info = map__5316__$1;
+var attrs = cljs.core.get.call(null,map__5316__$1,new cljs.core.Keyword(null,"attrs","attrs",-2090668713));
+var unifs = cljs.core.get.call(null,map__5316__$1,new cljs.core.Keyword(null,"unifs","unifs",-1297600433));
+var seq__5318_5328 = cljs.core.seq.call(null,attrs);
+var chunk__5319_5329 = null;
+var count__5320_5330 = (0);
+var i__5321_5331 = (0);
 while(true){
-if((i__8865_8875 < count__8864_8874)){
-var vec__8866_8876 = cljs.core._nth.call(null,chunk__8863_8873,i__8865_8875);
-var n_8877 = cljs.core.nth.call(null,vec__8866_8876,(0),null);
-var loc_8878 = cljs.core.nth.call(null,vec__8866_8876,(1),null);
-gl__$1.disableVertexAttribArray(loc_8878);
+if((i__5321_5331 < count__5320_5330)){
+var vec__5322_5332 = cljs.core._nth.call(null,chunk__5319_5329,i__5321_5331);
+var n_5333 = cljs.core.nth.call(null,vec__5322_5332,(0),null);
+var loc_5334 = cljs.core.nth.call(null,vec__5322_5332,(1),null);
+gl__$1.disableVertexAttribArray(loc_5334);
 
 
-var G__8879 = seq__8862_8872;
-var G__8880 = chunk__8863_8873;
-var G__8881 = count__8864_8874;
-var G__8882 = (i__8865_8875 + (1));
-seq__8862_8872 = G__8879;
-chunk__8863_8873 = G__8880;
-count__8864_8874 = G__8881;
-i__8865_8875 = G__8882;
+var G__5335 = seq__5318_5328;
+var G__5336 = chunk__5319_5329;
+var G__5337 = count__5320_5330;
+var G__5338 = (i__5321_5331 + (1));
+seq__5318_5328 = G__5335;
+chunk__5319_5329 = G__5336;
+count__5320_5330 = G__5337;
+i__5321_5331 = G__5338;
 continue;
 } else {
-var temp__5457__auto___8883 = cljs.core.seq.call(null,seq__8862_8872);
-if(temp__5457__auto___8883){
-var seq__8862_8884__$1 = temp__5457__auto___8883;
-if(cljs.core.chunked_seq_QMARK_.call(null,seq__8862_8884__$1)){
-var c__4319__auto___8885 = cljs.core.chunk_first.call(null,seq__8862_8884__$1);
-var G__8886 = cljs.core.chunk_rest.call(null,seq__8862_8884__$1);
-var G__8887 = c__4319__auto___8885;
-var G__8888 = cljs.core.count.call(null,c__4319__auto___8885);
-var G__8889 = (0);
-seq__8862_8872 = G__8886;
-chunk__8863_8873 = G__8887;
-count__8864_8874 = G__8888;
-i__8865_8875 = G__8889;
+var temp__5457__auto___5339 = cljs.core.seq.call(null,seq__5318_5328);
+if(temp__5457__auto___5339){
+var seq__5318_5340__$1 = temp__5457__auto___5339;
+if(cljs.core.chunked_seq_QMARK_.call(null,seq__5318_5340__$1)){
+var c__4319__auto___5341 = cljs.core.chunk_first.call(null,seq__5318_5340__$1);
+var G__5342 = cljs.core.chunk_rest.call(null,seq__5318_5340__$1);
+var G__5343 = c__4319__auto___5341;
+var G__5344 = cljs.core.count.call(null,c__4319__auto___5341);
+var G__5345 = (0);
+seq__5318_5328 = G__5342;
+chunk__5319_5329 = G__5343;
+count__5320_5330 = G__5344;
+i__5321_5331 = G__5345;
 continue;
 } else {
-var vec__8869_8890 = cljs.core.first.call(null,seq__8862_8884__$1);
-var n_8891 = cljs.core.nth.call(null,vec__8869_8890,(0),null);
-var loc_8892 = cljs.core.nth.call(null,vec__8869_8890,(1),null);
-gl__$1.disableVertexAttribArray(loc_8892);
+var vec__5325_5346 = cljs.core.first.call(null,seq__5318_5340__$1);
+var n_5347 = cljs.core.nth.call(null,vec__5325_5346,(0),null);
+var loc_5348 = cljs.core.nth.call(null,vec__5325_5346,(1),null);
+gl__$1.disableVertexAttribArray(loc_5348);
 
 
-var G__8893 = cljs.core.next.call(null,seq__8862_8884__$1);
-var G__8894 = null;
-var G__8895 = (0);
-var G__8896 = (0);
-seq__8862_8872 = G__8893;
-chunk__8863_8873 = G__8894;
-count__8864_8874 = G__8895;
-i__8865_8875 = G__8896;
+var G__5349 = cljs.core.next.call(null,seq__5318_5340__$1);
+var G__5350 = null;
+var G__5351 = (0);
+var G__5352 = (0);
+seq__5318_5328 = G__5349;
+chunk__5319_5329 = G__5350;
+count__5320_5330 = G__5351;
+i__5321_5331 = G__5352;
 continue;
 }
 } else {
@@ -97,38 +97,38 @@ break;
 
 return info;
 });
-gl.shader.openAttrsUnifs = (function gl$shader$openAttrsUnifs(gl__$1,p__8897){
-var map__8898 = p__8897;
-var map__8898__$1 = ((((!((map__8898 == null)))?(((((map__8898.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__8898.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__8898):map__8898);
-var info = map__8898__$1;
-var p = cljs.core.get.call(null,map__8898__$1,new cljs.core.Keyword(null,"program","program",781564284));
-var attrs = cljs.core.get.call(null,map__8898__$1,new cljs.core.Keyword(null,"attrs","attrs",-2090668713));
-var unifs = cljs.core.get.call(null,map__8898__$1,new cljs.core.Keyword(null,"unifs","unifs",-1297600433));
-var attrs__$1 = cljs.core.into.call(null,cljs.core.PersistentArrayMap.EMPTY,cljs.core.map.call(null,((function (map__8898,map__8898__$1,info,p,attrs,unifs){
+gl.shader.openAttrsUnifs = (function gl$shader$openAttrsUnifs(gl__$1,p__5353){
+var map__5354 = p__5353;
+var map__5354__$1 = ((((!((map__5354 == null)))?(((((map__5354.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__5354.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__5354):map__5354);
+var info = map__5354__$1;
+var p = cljs.core.get.call(null,map__5354__$1,new cljs.core.Keyword(null,"program","program",781564284));
+var attrs = cljs.core.get.call(null,map__5354__$1,new cljs.core.Keyword(null,"attrs","attrs",-2090668713));
+var unifs = cljs.core.get.call(null,map__5354__$1,new cljs.core.Keyword(null,"unifs","unifs",-1297600433));
+var attrs__$1 = cljs.core.into.call(null,cljs.core.PersistentArrayMap.EMPTY,cljs.core.map.call(null,((function (map__5354,map__5354__$1,info,p,attrs,unifs){
 return (function (n){
 var loc = gl__$1.getAttribLocation(p,cljs.core.name.call(null,n));
 gl__$1.enableVertexAttribArray(loc);
 
 return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [n,loc], null);
-});})(map__8898,map__8898__$1,info,p,attrs,unifs))
+});})(map__5354,map__5354__$1,info,p,attrs,unifs))
 ,attrs));
-var unifs__$1 = cljs.core.into.call(null,cljs.core.PersistentArrayMap.EMPTY,cljs.core.map.call(null,((function (attrs__$1,map__8898,map__8898__$1,info,p,attrs,unifs){
+var unifs__$1 = cljs.core.into.call(null,cljs.core.PersistentArrayMap.EMPTY,cljs.core.map.call(null,((function (attrs__$1,map__5354,map__5354__$1,info,p,attrs,unifs){
 return (function (n){
 return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [n,gl__$1.getUniformLocation(p,cljs.core.name.call(null,n))], null);
-});})(attrs__$1,map__8898,map__8898__$1,info,p,attrs,unifs))
+});})(attrs__$1,map__5354,map__5354__$1,info,p,attrs,unifs))
 ,unifs));
 return new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"program","program",781564284),p,new cljs.core.Keyword(null,"attrs","attrs",-2090668713),attrs__$1,new cljs.core.Keyword(null,"unifs","unifs",-1297600433),unifs__$1], null);
 });
 gl.shader.uniform = (function gl$shader$uniform(var_args){
 var args__4502__auto__ = [];
-var len__4499__auto___8925 = arguments.length;
-var i__4500__auto___8926 = (0);
+var len__4499__auto___5381 = arguments.length;
+var i__4500__auto___5382 = (0);
 while(true){
-if((i__4500__auto___8926 < len__4499__auto___8925)){
-args__4502__auto__.push((arguments[i__4500__auto___8926]));
+if((i__4500__auto___5382 < len__4499__auto___5381)){
+args__4502__auto__.push((arguments[i__4500__auto___5382]));
 
-var G__8927 = (i__4500__auto___8926 + (1));
-i__4500__auto___8926 = G__8927;
+var G__5383 = (i__4500__auto___5382 + (1));
+i__4500__auto___5382 = G__5383;
 continue;
 } else {
 }
@@ -140,37 +140,37 @@ return gl.shader.uniform.cljs$core$IFn$_invoke$arity$variadic((arguments[(0)]),(
 });
 
 gl.shader.uniform.cljs$core$IFn$_invoke$arity$variadic = (function (gl__$1,pobj,unifs){
-var seq__8903 = cljs.core.seq.call(null,unifs);
-var chunk__8904 = null;
-var count__8905 = (0);
-var i__8906 = (0);
+var seq__5359 = cljs.core.seq.call(null,unifs);
+var chunk__5360 = null;
+var count__5361 = (0);
+var i__5362 = (0);
 while(true){
-if((i__8906 < count__8905)){
-var vec__8907 = cljs.core._nth.call(null,chunk__8904,i__8906);
-var n = cljs.core.nth.call(null,vec__8907,(0),null);
-var type = cljs.core.nth.call(null,vec__8907,(1),null);
-var v = cljs.core.nth.call(null,vec__8907,(2),null);
-var pred__8910_8928 = cljs.core._EQ_;
-var expr__8911_8929 = type;
-if(cljs.core.truth_(pred__8910_8928.call(null,"s2d",expr__8911_8929))){
-var vec__8913_8930 = v;
-var tex_8931 = cljs.core.nth.call(null,vec__8913_8930,(0),null);
-var channel_8932 = cljs.core.nth.call(null,vec__8913_8930,(1),null);
-gl.texture.bind.call(null,gl__$1,tex_8931,channel_8932,cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)));
+if((i__5362 < count__5361)){
+var vec__5363 = cljs.core._nth.call(null,chunk__5360,i__5362);
+var n = cljs.core.nth.call(null,vec__5363,(0),null);
+var type = cljs.core.nth.call(null,vec__5363,(1),null);
+var v = cljs.core.nth.call(null,vec__5363,(2),null);
+var pred__5366_5384 = cljs.core._EQ_;
+var expr__5367_5385 = type;
+if(cljs.core.truth_(pred__5366_5384.call(null,"s2d",expr__5367_5385))){
+var vec__5369_5386 = v;
+var tex_5387 = cljs.core.nth.call(null,vec__5369_5386,(0),null);
+var channel_5388 = cljs.core.nth.call(null,vec__5369_5386,(1),null);
+gl.texture.bind.call(null,gl__$1,tex_5387,channel_5388,cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)));
 } else {
-if(cljs.core.truth_(pred__8910_8928.call(null,"1f",expr__8911_8929))){
+if(cljs.core.truth_(pred__5366_5384.call(null,"1f",expr__5367_5385))){
 gl__$1.uniform1f(cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)),v);
 } else {
-if(cljs.core.truth_(pred__8910_8928.call(null,"2f",expr__8911_8929))){
+if(cljs.core.truth_(pred__5366_5384.call(null,"2f",expr__5367_5385))){
 gl__$1.uniform2f(cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)),(v[(0)]),(v[(1)]));
 } else {
-if(cljs.core.truth_(pred__8910_8928.call(null,"m3fv",expr__8911_8929))){
+if(cljs.core.truth_(pred__5366_5384.call(null,"m3fv",expr__5367_5385))){
 gl__$1.uniformMatrix3fv(cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)),false,v);
 } else {
-if(cljs.core.truth_(pred__8910_8928.call(null,"m4fv",expr__8911_8929))){
+if(cljs.core.truth_(pred__5366_5384.call(null,"m4fv",expr__5367_5385))){
 gl__$1.uniformMatrix4fv(cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)),false,v);
 } else {
-throw (new Error(["No matching clause: ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(expr__8911_8929)].join('')));
+throw (new Error(["No matching clause: ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(expr__5367_5385)].join('')));
 }
 }
 }
@@ -178,56 +178,56 @@ throw (new Error(["No matching clause: ",cljs.core.str.cljs$core$IFn$_invoke$ari
 }
 
 
-var G__8933 = seq__8903;
-var G__8934 = chunk__8904;
-var G__8935 = count__8905;
-var G__8936 = (i__8906 + (1));
-seq__8903 = G__8933;
-chunk__8904 = G__8934;
-count__8905 = G__8935;
-i__8906 = G__8936;
+var G__5389 = seq__5359;
+var G__5390 = chunk__5360;
+var G__5391 = count__5361;
+var G__5392 = (i__5362 + (1));
+seq__5359 = G__5389;
+chunk__5360 = G__5390;
+count__5361 = G__5391;
+i__5362 = G__5392;
 continue;
 } else {
-var temp__5457__auto__ = cljs.core.seq.call(null,seq__8903);
+var temp__5457__auto__ = cljs.core.seq.call(null,seq__5359);
 if(temp__5457__auto__){
-var seq__8903__$1 = temp__5457__auto__;
-if(cljs.core.chunked_seq_QMARK_.call(null,seq__8903__$1)){
-var c__4319__auto__ = cljs.core.chunk_first.call(null,seq__8903__$1);
-var G__8937 = cljs.core.chunk_rest.call(null,seq__8903__$1);
-var G__8938 = c__4319__auto__;
-var G__8939 = cljs.core.count.call(null,c__4319__auto__);
-var G__8940 = (0);
-seq__8903 = G__8937;
-chunk__8904 = G__8938;
-count__8905 = G__8939;
-i__8906 = G__8940;
+var seq__5359__$1 = temp__5457__auto__;
+if(cljs.core.chunked_seq_QMARK_.call(null,seq__5359__$1)){
+var c__4319__auto__ = cljs.core.chunk_first.call(null,seq__5359__$1);
+var G__5393 = cljs.core.chunk_rest.call(null,seq__5359__$1);
+var G__5394 = c__4319__auto__;
+var G__5395 = cljs.core.count.call(null,c__4319__auto__);
+var G__5396 = (0);
+seq__5359 = G__5393;
+chunk__5360 = G__5394;
+count__5361 = G__5395;
+i__5362 = G__5396;
 continue;
 } else {
-var vec__8916 = cljs.core.first.call(null,seq__8903__$1);
-var n = cljs.core.nth.call(null,vec__8916,(0),null);
-var type = cljs.core.nth.call(null,vec__8916,(1),null);
-var v = cljs.core.nth.call(null,vec__8916,(2),null);
-var pred__8919_8941 = cljs.core._EQ_;
-var expr__8920_8942 = type;
-if(cljs.core.truth_(pred__8919_8941.call(null,"s2d",expr__8920_8942))){
-var vec__8922_8943 = v;
-var tex_8944 = cljs.core.nth.call(null,vec__8922_8943,(0),null);
-var channel_8945 = cljs.core.nth.call(null,vec__8922_8943,(1),null);
-gl.texture.bind.call(null,gl__$1,tex_8944,channel_8945,cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)));
+var vec__5372 = cljs.core.first.call(null,seq__5359__$1);
+var n = cljs.core.nth.call(null,vec__5372,(0),null);
+var type = cljs.core.nth.call(null,vec__5372,(1),null);
+var v = cljs.core.nth.call(null,vec__5372,(2),null);
+var pred__5375_5397 = cljs.core._EQ_;
+var expr__5376_5398 = type;
+if(cljs.core.truth_(pred__5375_5397.call(null,"s2d",expr__5376_5398))){
+var vec__5378_5399 = v;
+var tex_5400 = cljs.core.nth.call(null,vec__5378_5399,(0),null);
+var channel_5401 = cljs.core.nth.call(null,vec__5378_5399,(1),null);
+gl.texture.bind.call(null,gl__$1,tex_5400,channel_5401,cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)));
 } else {
-if(cljs.core.truth_(pred__8919_8941.call(null,"1f",expr__8920_8942))){
+if(cljs.core.truth_(pred__5375_5397.call(null,"1f",expr__5376_5398))){
 gl__$1.uniform1f(cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)),v);
 } else {
-if(cljs.core.truth_(pred__8919_8941.call(null,"2f",expr__8920_8942))){
+if(cljs.core.truth_(pred__5375_5397.call(null,"2f",expr__5376_5398))){
 gl__$1.uniform2f(cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)),(v[(0)]),(v[(1)]));
 } else {
-if(cljs.core.truth_(pred__8919_8941.call(null,"m3fv",expr__8920_8942))){
+if(cljs.core.truth_(pred__5375_5397.call(null,"m3fv",expr__5376_5398))){
 gl__$1.uniformMatrix3fv(cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)),false,v);
 } else {
-if(cljs.core.truth_(pred__8919_8941.call(null,"m4fv",expr__8920_8942))){
+if(cljs.core.truth_(pred__5375_5397.call(null,"m4fv",expr__5376_5398))){
 gl__$1.uniformMatrix4fv(cljs.core.get_in.call(null,pobj,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"unifs","unifs",-1297600433),n], null)),false,v);
 } else {
-throw (new Error(["No matching clause: ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(expr__8920_8942)].join('')));
+throw (new Error(["No matching clause: ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(expr__5376_5398)].join('')));
 }
 }
 }
@@ -235,14 +235,14 @@ throw (new Error(["No matching clause: ",cljs.core.str.cljs$core$IFn$_invoke$ari
 }
 
 
-var G__8946 = cljs.core.next.call(null,seq__8903__$1);
-var G__8947 = null;
-var G__8948 = (0);
-var G__8949 = (0);
-seq__8903 = G__8946;
-chunk__8904 = G__8947;
-count__8905 = G__8948;
-i__8906 = G__8949;
+var G__5402 = cljs.core.next.call(null,seq__5359__$1);
+var G__5403 = null;
+var G__5404 = (0);
+var G__5405 = (0);
+seq__5359 = G__5402;
+chunk__5360 = G__5403;
+count__5361 = G__5404;
+i__5362 = G__5405;
 continue;
 }
 } else {
@@ -256,23 +256,23 @@ break;
 gl.shader.uniform.cljs$lang$maxFixedArity = (2);
 
 /** @this {Function} */
-gl.shader.uniform.cljs$lang$applyTo = (function (seq8900){
-var G__8901 = cljs.core.first.call(null,seq8900);
-var seq8900__$1 = cljs.core.next.call(null,seq8900);
-var G__8902 = cljs.core.first.call(null,seq8900__$1);
-var seq8900__$2 = cljs.core.next.call(null,seq8900__$1);
+gl.shader.uniform.cljs$lang$applyTo = (function (seq5356){
+var G__5357 = cljs.core.first.call(null,seq5356);
+var seq5356__$1 = cljs.core.next.call(null,seq5356);
+var G__5358 = cljs.core.first.call(null,seq5356__$1);
+var seq5356__$2 = cljs.core.next.call(null,seq5356__$1);
 var self__4486__auto__ = this;
-return self__4486__auto__.cljs$core$IFn$_invoke$arity$variadic(G__8901,G__8902,seq8900__$2);
+return self__4486__auto__.cljs$core$IFn$_invoke$arity$variadic(G__5357,G__5358,seq5356__$2);
 });
 
 gl.shader.programObject = (function gl$shader$programObject(gl__$1,attrs,unifs,vs,fs){
 return new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"attrs","attrs",-2090668713),attrs,new cljs.core.Keyword(null,"unifs","unifs",-1297600433),unifs,new cljs.core.Keyword(null,"program","program",781564284),gl.shader.program.call(null,gl__$1,gl.shader.shader.call(null,gl__$1,gl__$1.VERTEX_SHADER,vs),gl.shader.shader.call(null,gl__$1,gl__$1.FRAGMENT_SHADER,fs))], null);
 });
-gl.shader.use = (function gl$shader$use(gl__$1,p__8950,draw_fn){
-var map__8951 = p__8950;
-var map__8951__$1 = ((((!((map__8951 == null)))?(((((map__8951.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__8951.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__8951):map__8951);
-var pobj = map__8951__$1;
-var program = cljs.core.get.call(null,map__8951__$1,new cljs.core.Keyword(null,"program","program",781564284));
+gl.shader.use = (function gl$shader$use(gl__$1,p__5406,draw_fn){
+var map__5407 = p__5406;
+var map__5407__$1 = ((((!((map__5407 == null)))?(((((map__5407.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__5407.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__5407):map__5407);
+var pobj = map__5407__$1;
+var program = cljs.core.get.call(null,map__5407__$1,new cljs.core.Keyword(null,"program","program",781564284));
 var p = gl.shader.openAttrsUnifs.call(null,gl__$1,pobj);
 gl__$1.useProgram(program);
 

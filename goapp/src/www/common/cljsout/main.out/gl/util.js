@@ -5,11 +5,11 @@ gl.util.getContext = (function gl$util$getContext(canvas,option){
 return cljs.core.reduce.call(null,(function (ctx,test_name){
 if((ctx == null)){
 try{return canvas.getContext(test_name,option);
-}catch (e9041){if((e9041 instanceof Object)){
-var e = e9041;
+}catch (e5497){if((e5497 instanceof Object)){
+var e = e5497;
 return null;
 } else {
-throw e9041;
+throw e5497;
 
 }
 }} else {

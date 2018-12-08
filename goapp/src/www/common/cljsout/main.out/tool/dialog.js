@@ -10,26 +10,26 @@ return cljs.core.flatten.call(null,cljs.core.map.call(null,(function (origin){
 return cljs.core.map.call(null,(function (parts){
 return cljs.core.apply.call(null,cljs.core.str,parts);
 }),origin);
-}),cljs.core.map.call(null,(function (p1__11557_SHARP_){
-return cljs.core.partition.call(null,length,length,null,p1__11557_SHARP_);
+}),cljs.core.map.call(null,(function (p1__5167_SHARP_){
+return cljs.core.partition.call(null,length,length,null,p1__5167_SHARP_);
 }),clojure.string.split_lines.call(null,msg))));
 });
 tool.dialog.requestNext = (function tool$dialog$requestNext(ctx){
 return cljs.core.assoc.call(null,ctx,new cljs.core.Keyword(null,"request-next","request-next",-1281096497),true);
 });
-tool.dialog.step = (function tool$dialog$step(p__11558){
-var map__11559 = p__11558;
-var map__11559__$1 = ((((!((map__11559 == null)))?(((((map__11559.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__11559.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__11559):map__11559);
-var ctx = map__11559__$1;
-var state = cljs.core.get.call(null,map__11559__$1,new cljs.core.Keyword(null,"state","state",-1988618099));
-var curr_idx = cljs.core.get.call(null,map__11559__$1,new cljs.core.Keyword(null,"curr-idx","curr-idx",784577584));
-var curr_line = cljs.core.get.call(null,map__11559__$1,new cljs.core.Keyword(null,"curr-line","curr-line",277562410));
-var max_line = cljs.core.get.call(null,map__11559__$1,new cljs.core.Keyword(null,"max-line","max-line",-919688481));
-var message = cljs.core.get.call(null,map__11559__$1,new cljs.core.Keyword(null,"message","message",-406056002));
-var request_next = cljs.core.get.call(null,map__11559__$1,new cljs.core.Keyword(null,"request-next","request-next",-1281096497));
-var pred__11561 = cljs.core._EQ_;
-var expr__11562 = state;
-if(cljs.core.truth_(pred__11561.call(null,new cljs.core.Keyword(null,"typing","typing",1090632888),expr__11562))){
+tool.dialog.step = (function tool$dialog$step(p__5168){
+var map__5169 = p__5168;
+var map__5169__$1 = ((((!((map__5169 == null)))?(((((map__5169.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__5169.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__5169):map__5169);
+var ctx = map__5169__$1;
+var state = cljs.core.get.call(null,map__5169__$1,new cljs.core.Keyword(null,"state","state",-1988618099));
+var curr_idx = cljs.core.get.call(null,map__5169__$1,new cljs.core.Keyword(null,"curr-idx","curr-idx",784577584));
+var curr_line = cljs.core.get.call(null,map__5169__$1,new cljs.core.Keyword(null,"curr-line","curr-line",277562410));
+var max_line = cljs.core.get.call(null,map__5169__$1,new cljs.core.Keyword(null,"max-line","max-line",-919688481));
+var message = cljs.core.get.call(null,map__5169__$1,new cljs.core.Keyword(null,"message","message",-406056002));
+var request_next = cljs.core.get.call(null,map__5169__$1,new cljs.core.Keyword(null,"request-next","request-next",-1281096497));
+var pred__5171 = cljs.core._EQ_;
+var expr__5172 = state;
+if(cljs.core.truth_(pred__5171.call(null,new cljs.core.Keyword(null,"typing","typing",1090632888),expr__5172))){
 var curr_msg = cljs.core.nth.call(null,message,curr_line);
 var curr_msg_length = cljs.core.count.call(null,curr_msg);
 var final_line_QMARK_ = cljs.core._EQ_.call(null,(curr_line + (1)),cljs.core.count.call(null,message));
@@ -55,14 +55,14 @@ return cljs.core.assoc.call(null,ctx,new cljs.core.Keyword(null,"curr-idx","curr
 }
 }
 } else {
-if(cljs.core.truth_(pred__11561.call(null,new cljs.core.Keyword(null,"wait","wait",-260664777),expr__11562))){
+if(cljs.core.truth_(pred__5171.call(null,new cljs.core.Keyword(null,"wait","wait",-260664777),expr__5172))){
 if(cljs.core.truth_(request_next)){
 return cljs.core.assoc.call(null,cljs.core.assoc.call(null,ctx,new cljs.core.Keyword(null,"request-next","request-next",-1281096497),false),new cljs.core.Keyword(null,"state","state",-1988618099),new cljs.core.Keyword(null,"next","next",-117701485));
 } else {
 return ctx;
 }
 } else {
-if(cljs.core.truth_(pred__11561.call(null,new cljs.core.Keyword(null,"next","next",-117701485),expr__11562))){
+if(cljs.core.truth_(pred__5171.call(null,new cljs.core.Keyword(null,"next","next",-117701485),expr__5172))){
 return cljs.core.assoc.call(null,cljs.core.assoc.call(null,cljs.core.assoc.call(null,cljs.core.assoc.call(null,ctx,new cljs.core.Keyword(null,"request-next","request-next",-1281096497),false),new cljs.core.Keyword(null,"curr-line","curr-line",277562410),(curr_line + (1))),new cljs.core.Keyword(null,"curr-idx","curr-idx",784577584),(0)),new cljs.core.Keyword(null,"state","state",-1988618099),new cljs.core.Keyword(null,"typing","typing",1090632888));
 } else {
 return ctx;
@@ -70,16 +70,16 @@ return ctx;
 }
 }
 });
-tool.dialog.showstr = (function tool$dialog$showstr(p__11564){
-var map__11565 = p__11564;
-var map__11565__$1 = ((((!((map__11565 == null)))?(((((map__11565.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__11565.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__11565):map__11565);
-var ctx = map__11565__$1;
-var curr_idx = cljs.core.get.call(null,map__11565__$1,new cljs.core.Keyword(null,"curr-idx","curr-idx",784577584));
-var curr_line = cljs.core.get.call(null,map__11565__$1,new cljs.core.Keyword(null,"curr-line","curr-line",277562410));
-var max_line = cljs.core.get.call(null,map__11565__$1,new cljs.core.Keyword(null,"max-line","max-line",-919688481));
-var message = cljs.core.get.call(null,map__11565__$1,new cljs.core.Keyword(null,"message","message",-406056002));
+tool.dialog.showstr = (function tool$dialog$showstr(p__5174){
+var map__5175 = p__5174;
+var map__5175__$1 = ((((!((map__5175 == null)))?(((((map__5175.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__5175.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__5175):map__5175);
+var ctx = map__5175__$1;
+var curr_idx = cljs.core.get.call(null,map__5175__$1,new cljs.core.Keyword(null,"curr-idx","curr-idx",784577584));
+var curr_line = cljs.core.get.call(null,map__5175__$1,new cljs.core.Keyword(null,"curr-line","curr-line",277562410));
+var max_line = cljs.core.get.call(null,map__5175__$1,new cljs.core.Keyword(null,"max-line","max-line",-919688481));
+var message = cljs.core.get.call(null,map__5175__$1,new cljs.core.Keyword(null,"message","message",-406056002));
 var prevcount = cljs.core.mod.call(null,curr_line,max_line);
-var showstr = cljs.core.reduce.call(null,((function (prevcount,map__11565,map__11565__$1,ctx,curr_idx,curr_line,max_line,message){
+var showstr = cljs.core.reduce.call(null,((function (prevcount,map__5175,map__5175__$1,ctx,curr_idx,curr_line,max_line,message){
 return (function (all,idx){
 var currstr = cljs.core.nth.call(null,message,(curr_line - idx));
 if((idx === (0))){
@@ -88,7 +88,7 @@ return cljs.core.cons.call(null,typingstr,all);
 } else {
 return cljs.core.cons.call(null,currstr,all);
 }
-});})(prevcount,map__11565,map__11565__$1,ctx,curr_idx,curr_line,max_line,message))
+});})(prevcount,map__5175,map__5175__$1,ctx,curr_idx,curr_line,max_line,message))
 ,cljs.core.List.EMPTY,cljs.core.range.call(null,(prevcount + (1))));
 return showstr;
 });
