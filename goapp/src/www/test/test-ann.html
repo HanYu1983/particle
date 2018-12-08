@@ -7,8 +7,14 @@
 <script src='../common/js/lib/rx.all.min.js'></script>
 <script src='../common/js/lib/three.min.js'></script>
 <script src='../common/js/lib/underscore-min.js'></script>
-<script src='../common/cljs/goog/base.js'></script>
-<script src='../common/cljs/cljs.js'></script>
 <script>
+var CLOSURE_UNCOMPILED_DEFINES = {};
+var CLOSURE_NO_DEPS = true;
+</script>
+<script src="../common/cljsout/main.out/goog/base.js"></script>
+<script src="../common/cljsout/main.out/goog/deps.js"></script>
+<script src="../common/cljsout/main.out/cljs_deps.js"></script>
+<script>
+goog.require("process.env");
 goog.require("test.ann");
 </script>

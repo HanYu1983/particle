@@ -1,0 +1,3 @@
+{:require  [app.stock.main app.particle.main test.webgl-tex test.ann-xor test.ann test.dialog test.dialogList]
+ :init-fns []
+ :compiler-options {}}
