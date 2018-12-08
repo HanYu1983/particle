@@ -1,15 +1,15 @@
 {
-  "name":"getMagicCard",
-  "dependencies":{
-    "mkdirp":"*",
-    "underscore":"*",
-    "async":"*",
+  "name": "getMagicCard",
+  "dependencies": {
+    "mkdirp": "*",
+    "underscore": "*",
+    "async": "*",
     "request": "*",
     "yargs": "3.26.0",
     "constant-db": "2.0.3",
-    "sqlite3":"*",
-    "rx":"4.0.7",
-    "imagemin":"4.0.0"
+    "sqlite3": "*",
+    "rx": "4.0.7",
+    "imagemin": "4.0.0"
   },
   "main": "main.js"
 }

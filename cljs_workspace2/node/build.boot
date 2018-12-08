@@ -11,7 +11,7 @@
   '[adzerk.boot-cljs :refer [cljs]]
   '[adzerk.boot-reload :refer [reload]])
 
-(def targetDir "../../node_workspace/cljs_node")
+(def targetDir "../../node_workspace/getMagicCard")
 
 (deftask run []
   (comp
