@@ -11,11 +11,31 @@
 		<script src="js/api.js"></script>
 		<script src="https://www.chartjs.org/dist/2.8.0/Chart.min.js"></script>
 		<script src='https://www.chartjs.org/samples/latest/utils.js'></script>
-    </head>
+		</head>
+		<style>
+		.container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+		.chart-container {
+			width: 600px;
+			margin-left: 40px;
+			margin-right: 40px;
+			margin-bottom: 40px;
+		}
+		</style>
     <body>
-				<div style="width:75%;">
-						<canvas id="canvas"></canvas>
+				<div class=container>
+					<div class=chart-container>
+							<canvas id="canvas"></canvas>
+					</div>
+					<div class=chart-container>
+						<canvas id="canvas2"></canvas>
+					</div>
 				</div>
+				
     </body>
     <script>
 
@@ -72,7 +92,6 @@
 				datasets.push( set );
 			}
 
-
 			var config = {
 				type: 'line',
 				data: {
@@ -98,20 +117,98 @@
 							display: true,
 							scaleLabel: {
 								display: true,
-								labelString: 'Month'
+								labelString: '日期'
 							}
 						}],
 						yAxes: [{
 							display: true,
 							scaleLabel: {
 								display: true,
-								labelString: 'Value'
+								labelString: '收入'
 							}
 						}]
 					}
 				}
 			};
 			return config;
+		}
+
+		function getTotalFromEarns( earn ){
+			var sum = 0;
+			for( var i = 0; i < earn.length; ++i){
+				sum += getTotalFromEarn(earn[i]);
+			}
+			return sum;
+		}
+
+		function getEarnConfig2(data){
+			console.log(data)
+
+			var colorId = 0;
+			var setData = [];
+			var names = [];
+			for( var k in data){
+				var name = k;
+				var earn = data[k];
+				names.push( name );
+				setData.push(getTotalFromEarns(earn));
+			}
+
+			var useColor = getColor(0);
+			var datasets = [];
+			var set = {
+				label: '總收入圖表',
+				backgroundColor: useColor,
+				borderColor: useColor,
+				data: setData,
+				fill: false,
+			};
+			datasets.push(set);
+
+			var config = {
+				type: 'line',
+				data: {
+					labels: names,
+					datasets: datasets
+				},
+				options: {
+					responsive: true,
+					title: {
+						display: true,
+						text: '總收入圖表'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false,
+					},
+					hover: {
+						mode: 'nearest',
+						intersect: true
+					},
+					scales: {
+						xAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: '攤位'
+							}
+						}],
+						yAxes: [{
+							display: true,
+							scaleLabel: {
+								display: true,
+								labelString: '收入'
+							}
+						}]
+					}
+				}
+			};
+			return config;
+		}
+
+		function drawChart(name, config){
+			var ctx = document.getElementById(name).getContext('2d');
+			new Chart(ctx, config);
 		}
 
 		async.parallel({
@@ -127,9 +224,8 @@
 			}
 		}, function(err, results) {
 			var data = results.two;
-			var config = getEarnConfig(data);
-			var ctx = document.getElementById('canvas').getContext('2d');
-			window.myLine = new Chart(ctx, config);
+			drawChart('canvas', getEarnConfig(data));
+			drawChart('canvas2', getEarnConfig2(data));
 		});
 
 		function queryData(  callback ){
