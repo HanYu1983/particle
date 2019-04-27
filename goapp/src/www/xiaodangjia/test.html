@@ -10,6 +10,9 @@
 
 console.log(new Date(api.formateTicks(636563062106140000)))
 api.earnsDetail((err, data)=>{
+	if(err){
+		return console.log(err)
+	}
 	var boothStates = data.boothStates;
 	var earns = data.earns;
 	var ret = api.groupEarns(boothStates, earns);
