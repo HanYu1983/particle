@@ -20,7 +20,7 @@
 			justify-content: center;
 		}
 		.chart-container {
-			width: 600px;
+			width: 800px;
 			margin-left: 40px;
 			margin-right: 40px;
 			margin-bottom: 40px;
@@ -28,9 +28,9 @@
 		</style>
     <body>
 				<div class=container>
-					<div class=chart-container>
+					<!-- <div class=chart-container>
 							<canvas id="canvas"></canvas>
-					</div>
+					</div> -->
 					<div class=chart-container>
 						<canvas id="canvas2"></canvas>
 					</div>
@@ -142,16 +142,24 @@
 		}
 
 		function getEarnConfig2(data){
-			console.log(data)
+			var dataList = []
+			for( var k in data ){
+				dataList.push({
+					name:k,
+					data:data[k]
+				});
+			}
+			dataList.sort( function(a, b ){
+				return a.data[0][0][0].date > b.data[0][0][0].date ? 1 : -1;
+			});
 
 			var colorId = 0;
 			var setData = [];
 			var names = [];
-			for( var k in data){
-				var name = k;
-				var earn = data[k];
-				names.push( name );
-				setData.push(getTotalFromEarns(earn));
+
+			for( var i = 0; i < dataList.length; ++i){
+				names.push(dataList[i].name);
+				setData.push(getTotalFromEarns(dataList[i].data));
 			}
 
 			var useColor = getColor(0);
@@ -224,7 +232,7 @@
 			}
 		}, function(err, results) {
 			var data = results.two;
-			drawChart('canvas', getEarnConfig(data));
+			// drawChart('canvas', getEarnConfig(data));
 			drawChart('canvas2', getEarnConfig2(data));
 		});
 
