@@ -1,7 +1,7 @@
 var api = api || {};
 (function(module){
 	var isLocalhost = location.hostname == "localhost" || location.hostname == "127.0.0.1"
-	var host = 'https://particle-979.appspot.com/nightmarketssistentdbfile2/'
+	var host = '//particle-979.appspot.com/nightmarketssistentdbfile2/'
 	var boothPath = 'root/NightmarketAssistant/1e13a986c7022ea2725e9cd7a7bd186c/booth.json'
 	var earnPath = 'root/NightmarketAssistant/1e13a986c7022ea2725e9cd7a7bd186c/earns/'
 
@@ -39,7 +39,7 @@ var api = api || {};
 					if( data.Error ){
 						return cb(err)
 					}
-					cb(data.Info)
+					cb(null, data.Info)
 				}
 			})
 		}
@@ -56,12 +56,15 @@ var api = api || {};
 				}
 				var gets = data.map(f => host + f.Name).map(name => cb => getUrl(name, cb))
 				async.parallel(gets, (err, rets)=>{
+					if(err){
+						return cb(err)
+					}
 					var total = rets.reduce((acc, ret)=>{
 						acc.boothStates = acc.boothStates.concat(ret.boothStates);
 						acc.earns = acc.earns.concat(ret.earns);
 						return acc;
 					}, {boothStates: [], earns: []})
-					cb(err, total);
+					cb(null, total);
 				})
 			})
 		}
