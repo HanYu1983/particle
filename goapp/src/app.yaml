@@ -28,8 +28,8 @@ handlers:
   static_dir: www/card
 - url: /deckWiki
   static_dir: www/deckWiki
-- url: /xiaodangjia
-  static_dir: www/xiaodangjia
+- url: /xiaogenban
+  static_dir: www/xiaogenban
 - url: /.*
   script: _go_app
   secure: always
