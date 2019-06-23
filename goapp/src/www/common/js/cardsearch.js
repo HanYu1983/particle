@@ -121,7 +121,7 @@ var cardsearch = cardsearch || {};
 		l.sort(() => Math.random() - 0.5);
 		var first = l.slice(0, time);
 		var ret = []
-		for(let i=0; i<time; ++i){
+		for(let i=0; i<count; ++i){
 			ret = ret.concat(first);
 		}
 		return ret;
