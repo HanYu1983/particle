@@ -119,8 +119,12 @@ var cardsearch = cardsearch || {};
 	function searchWithInfo( {time,count}, fns, cardlist ){
 		var l = search(fns, cardlist);
 		l.sort(() => Math.random() - 0.5);
-		var ret = l.slice(0, time);
-		return ret.concat(ret).concat(ret);
+		var first = l.slice(0, time);
+		var ret = []
+		for(let i=0; i<time; ++i){
+			ret = ret.concat(first);
+		}
+		return ret;
 	}
 	
 	module.filter = filter
