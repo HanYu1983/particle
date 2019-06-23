@@ -113,6 +113,15 @@ var cardsearch = cardsearch || {};
 	function search( fns, cardlist ){
 		return filter( and( fns ), cardlist )
 	}
+
+	// var ret = cardsearch.searchWithInfo({time: 5, count: 4}, fns, cardlist);
+	// console.log(ret);
+	function searchWithInfo( {time,count}, fns, cardlist ){
+		var l = search(fns, cardlist);
+		l.sort(() => Math.random() - 0.5);
+		var ret = l.slice(0, time);
+		return ret.concat(ret).concat(ret);
+	}
 	
 	module.filter = filter
 	module.and = and
@@ -126,5 +135,6 @@ var cardsearch = cardsearch || {};
 	module.indexEq = indexEq
 	module.search = search
 	module.fullMatch = fullMatch
+	module.searchWithInfo = searchWithInfo
 	
 }) ( cardsearch )
