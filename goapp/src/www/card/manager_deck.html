@@ -1619,6 +1619,7 @@ body{
 			var fns = gameController.getQueryStr( game,  $( document.form_value ).serialize() );
 			var ret = cardsearch.searchWithInfo({time: set, count: count}, fns, cardlist);
 			_.each( ret, function(card){
+				console.log(card);
 				copyCard = getCopyCard(card);
 				copyCard.url = gameController.getCardUrl( game, card );
 				ary_deck.push( copyCard );
