@@ -330,6 +330,19 @@ body{
 			</div>
 		</div>
 		<div data-options="region:'east',title:'組牌'" style="width:300px; overflow-x:hidden;">
+			<div class='group' style='text-align:center; margin-top:10px'>
+				<div class='hori'>
+					<input id="spr_set" class="easyui-numberspinner" style="width:60px;" required="required" data-options="value:1,min:1,max:60,editable:true">
+					組
+				</div>
+				<div class='hori'>
+					<input id="spr_count" class="easyui-numberspinner" style="width:60px;" required="required" data-options="value:1,min:1,max:60,editable:true">
+					張
+				</div>
+				<div class='hori'>
+						<a id="btn" href="#" class="easyui-linkbutton" onclick="app.view.onAutoCreate()" data-options="iconCls:'icon-add'">產生</a>
+				</div>
+			</div>
 			<div class="group" style="text-align:center; margin-top:10px;">
 				<div class="hori">
 					<span id="txt_count" style="color:yellow">0</span>張
@@ -1339,7 +1352,6 @@ body{
 	}
 	$('title').html(titlemapping[game] + '-組牌風雲' );
 	
-	
 	var lang = leo.utils.getHash().lang
 	/*
 	var tmplName = game
@@ -1599,6 +1611,10 @@ body{
 				createBigCard();
 			}});
 		}
+
+		function onAutoCreate(){
+
+		}
 		
 		function onClearClick(){
 			googleTracking.click( 'onClearClick' );
@@ -1750,6 +1766,7 @@ body{
 		module.onSearchClick = onSearchClick;
 		module.onTipClick = onTipClick;
 		module.onClearClick = onClearClick;
+		module.onAutoCreate = onAutoCreate;
 		module.onSaveClick = onSaveClick;
 		module.onLoadClick = onLoadClick;
 		module.onSetDeckClick = onSetDeckClick;
