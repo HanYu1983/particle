@@ -1377,7 +1377,6 @@ body{
 	$.messager.progress({text:'讀取資料中…'}); 
 	
 	function onLoadGameCallback( err, _cardlist ){
-		//console.log( _cardlist );
 		cardlist = _cardlist;
 		$("#btn_search").linkbutton( 'enable' );
 		$("#btn_output").linkbutton( 'enable' );
@@ -1481,6 +1480,7 @@ body{
 			});
 			
 			_.each( ary_toHasCount, function( card ){
+				
 				var cardItem = $("#tmpl_cardItem" ).tmpl( card );
 				cardItem.find( 'div[game]' ).hide();
 				cardItem.find( 'div[game=' + game + ']' ).show();
@@ -1540,10 +1540,14 @@ body{
 		}
 		
 		function pushToDeck( card ){
+			ary_deck.push( getCopyCard(card) );
+			setDeck();
+		}
+
+		function getCopyCard(card){
 			var copyCard = JSON.parse( JSON.stringify( card ) );
 			copyCard.itemId = getId();
-			ary_deck.push( copyCard );
-			setDeck();
+			return copyCard;
 		}
 		
 		function onSearchClick(){
@@ -1592,9 +1596,6 @@ body{
 			pag_bigCard.pagination( 'select', 1 );
 			
 			ary_cards = searchLib( searchstr ).slice();
-			
-			//console.log( ary_cards );
-			
 			createBigCard();
 			setPagination( ary_cards.length );
 		}
@@ -1613,7 +1614,16 @@ body{
 		}
 
 		function onAutoCreate(){
-
+			var set = $('#spr_set').numberspinner('getValue');
+			var count = $('#spr_count').numberspinner('getValue');
+			var fns = gameController.getQueryStr( game,  $( document.form_value ).serialize() );
+			var ret = cardsearch.searchWithInfo({time: set, count: count}, fns, cardlist);
+			_.each( ret, function(card){
+				copyCard = getCopyCard(card);
+				copyCard.url = gameController.getCardUrl( game, card );
+				ary_deck.push( copyCard );
+			})
+			setDeck();
 		}
 		
 		function onClearClick(){
