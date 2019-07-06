@@ -1,5 +1,5 @@
 package hello
-
+// C:\Users\johny\AppData\Local\Google\CloudSDK\google-cloud-sdk
 import (
 	"app"
 	"fmt"
@@ -16,6 +16,13 @@ import (
 	"app/contestsys"
 		
 	"strconv"
+	"io/ioutil"
+	"archive/zip"
+	"bytes"
+	_ "image"
+	_ "image/jpeg"
+	"path/filepath"
+	"encoding/base64"
 )
 
 func init() {
@@ -100,6 +107,97 @@ func init() {
 	http.HandleFunc("/fn/auth", welcome)
 		
 	http.HandleFunc("/fn/stockInfo", stock)
+
+	http.HandleFunc("/fn/testFile", testFile)
+}
+
+// =============== test ======================== //
+
+
+func testFile(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	ctx.Infof("Hello, %v", "Han")
+
+	w.Header().Add("Content-Type", "text/html; charset=utf-8")
+	ctx.Infof("Handling file upload...")
+
+	ctx.Infof("Parsing form...")
+	if err := r.ParseMultipartForm(32 << 20); err != nil {
+		ctx.Infof("Parsing form: %s", err)
+	}
+	f, h, err := r.FormFile("file")
+	if err != nil {
+		ctx.Infof( "Error accessing file: %s", err)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var _ = h
+	body, err := ioutil.ReadAll(f)
+	if err != nil {
+		ctx.Infof("Error accessing file: %s", err)
+	}
+
+	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+    if err != nil {
+        ctx.Infof("Error accessing file: %s", err)
+    }
+
+    // Read all the files from zip archive
+    for _, zipFile := range zipReader.File {
+		ctx.Infof("Reading file: %s", zipFile.Name)
+		fileExt := filepath.Ext(zipFile.Name)
+
+		unzippedFileBytes, err := readZipFile(zipFile)
+		var _ = unzippedFileBytes
+        if err != nil {
+            ctx.Infof("Error accessing file: %s", err)
+            continue
+		}
+		
+		if fileExt == ".jpg" {
+			subFile, err := zipFile.Open()
+			if err != nil {
+				ctx.Infof("Error accessing file: %s", err)
+			}
+			defer subFile.Close()
+			/*
+			image, _, err := image.Decode(subFile)
+			if err != nil {
+				ctx.Infof("Error accessing file: %s", err)
+			}
+			
+			w.Header().Set("Content-Type", "image/jpeg; charset=utf8")
+			err = jpeg.Encode(w, image, nil)
+			if err != nil {
+				ctx.Infof("Error accessing file: %s", err)
+			}*/
+
+			bytes, err := ioutil.ReadAll(subFile)
+			if err != nil {
+				ctx.Infof("Error accessing file: %s", err)
+			}
+			imgBase64Str := base64.StdEncoding.EncodeToString(bytes)
+
+			// Embed into an html without PNG file
+			img2html := "<html><body><img src=\"data:image/png;base64," + imgBase64Str + "\" /></body></html>"
+
+			w.Write([]byte(fmt.Sprintf(img2html)))
+		}
+	}
+	
+
+	//str := string(body)
+	//fmt.Fprintf(w, "%s", str)
+	defer f.Close()
+}
+
+func readZipFile(zf *zip.File) ([]byte, error) {
+    f, err := zf.Open()
+    if err != nil {
+        return nil, err
+    }
+    defer f.Close()
+    return ioutil.ReadAll(f)
 }
 
 func stock(w http.ResponseWriter, r *http.Request) {
@@ -140,6 +238,7 @@ func stock(w http.ResponseWriter, r *http.Request) {
 	// w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d, public", 60* 60* 6))
 	fmt.Fprintf(w, "[null, %s]", bodyStr)
 }
+
 
 func handler2(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
