@@ -100,6 +100,7 @@ func init() {
 	// 上傳自製卡
 	http.HandleFunc("/fn/tcg/addExtension", uploadcard.Serve_AddExtension)
 	http.HandleFunc("/fn/tcg/getExtension", uploadcard.Serve_GetExtension)
+	http.HandleFunc("/tcgdbfile2/", db2.Handler(appauth.User{Key: "tcg"}))
 	// Test
 	http.HandleFunc("/fn/auth", welcome)
 

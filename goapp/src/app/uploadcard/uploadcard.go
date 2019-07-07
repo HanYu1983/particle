@@ -16,6 +16,8 @@ import (
 
 	"errors"
 
+	"strconv"
+
 	"appengine"
 )
 
@@ -142,7 +144,7 @@ func WriteToDb(ctx appengine.Context, manifast ManifastInfo, override bool, zipR
 		}
 
 		if isManifast {
-			err = db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extension/%s/%s/%s", manifast.Game, manifast.ExtensionName, fileName), bytes, "admin", override)
+			err = db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extension/%s/%s/%s", manifast.Game, manifast.ExtensionName, fileName), bytes, "tcg", override)
 			if err == db2.ErrFileExist {
 				return fmt.Errorf("沒有override，必須無法寫入檔案:%s", fileName)
 			}
@@ -153,7 +155,7 @@ func WriteToDb(ctx appengine.Context, manifast ManifastInfo, override bool, zipR
 
 		if isJpg {
 			imgBase64Str := base64.StdEncoding.EncodeToString(bytes)
-			err = db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extension/%s/%s/imgs/%s", manifast.Game, manifast.ExtensionName, fileName), []byte(imgBase64Str), "admin", override)
+			err = db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extension/%s/%s/imgs/%s", manifast.Game, manifast.ExtensionName, fileName), []byte(imgBase64Str), "tcg", override)
 			if err == db2.ErrFileExist {
 				return fmt.Errorf("沒有override，必須無法寫入檔案:%s", fileName)
 			}
@@ -168,7 +170,7 @@ func WriteToDb(ctx appengine.Context, manifast ManifastInfo, override bool, zipR
 				return err
 			}
 			imgBase64Str := tool.PngToBase64(png)
-			err = db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extension/%s/%s/imgs/%s", manifast.Game, manifast.ExtensionName, fileName), imgBase64Str, "admin", override)
+			err = db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extension/%s/%s/imgs/%s", manifast.Game, manifast.ExtensionName, fileName), imgBase64Str, "tcg", override)
 			if err == db2.ErrFileExist {
 				return fmt.Errorf("沒有override，必須無法寫入檔案:%s", fileName)
 			}
@@ -229,15 +231,69 @@ func Serve_GetExtension(w http.ResponseWriter, r *http.Request) {
 	queryTable := r.URL.Query()
 
 	tool.Assert(tool.ParameterIsNotExist(queryTable, "game"))
-	tool.Assert(tool.ParameterIsNotExist(queryTable, "extensionName"))
+	//tool.Assert(tool.ParameterIsNotExist(queryTable, "extensionName"))
 
 	game := queryTable["game"][0]
-	extensionName := queryTable["extensionName"][0]
+	//extensionName := queryTable["extensionName"][0]
 
 	var _ = ctx
 	var _ = game
-	var _ = extensionName
+	//var _ = extensionName
 
+	list, err := db2.GetFileList(ctx, fmt.Sprintf("root/tcg/extension/%s", game), false)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+
+	output := []map[string]interface{}{}
+
+	for _, file := range list {
+		fileName := filepath.Base(file.Name)
+		if fileName != "manifast.txt" {
+			continue
+		}
+		content := string(file.Content)
+		content = strings.Replace(content, "\r", "", -1)
+		group := strings.Split(content, "===\n")
+		cards := group[2:]
+
+		info := strings.Split(group[0], "\n")
+		extensionName := info[1]
+
+		for _, card := range cards {
+			cardInfo := strings.Split(card, "\n")
+			cost1, err := strconv.Atoi(cardInfo[7])
+			if err != nil {
+				tool.Assert(tool.IfError(err))
+			}
+			cost2, err := strconv.Atoi(cardInfo[8])
+			if err != nil {
+				tool.Assert(tool.IfError(err))
+			}
+			output = append(output,
+				map[string]interface{}{
+					"imgUrl":  fmt.Sprintf("root/tcg/extension/%s/%s/imgs/%s", game, extensionName, cardInfo[0]),
+					"id":      cardInfo[1],
+					"cid":     cardInfo[1],
+					"cname":   cardInfo[2],
+					"set":     cardInfo[3],
+					"color":   cardInfo[4],
+					"atype":   cardInfo[5],
+					"atype2":  cardInfo[6],
+					"cost":    []interface{}{cost1, cost2},
+					"ability": cardInfo[9],
+					"power":   cardInfo[10],
+					"city":    cardInfo[11],
+					"symbol":  cardInfo[12],
+					"rarity":  cardInfo[13],
+					"content": cardInfo[14],
+					"counter": cardInfo[15],
+				},
+			)
+		}
+	}
+
+	tool.Output(w, output, nil)
 }
 
 func TestFile(w http.ResponseWriter, r *http.Request) {
