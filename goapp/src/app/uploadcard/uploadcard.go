@@ -270,8 +270,10 @@ func Serve_GetExtension(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				tool.Assert(tool.IfError(err))
 			}
-			output = append(output,
-				map[string]interface{}{
+
+			var json map[string]interface{}
+			if game == "sangoku" {
+				json = map[string]interface{}{
 					"imgUrl":  fmt.Sprintf("root/tcg/extension/%s/%s/imgs/%s", game, extensionName, cardInfo[0]),
 					"id":      cardInfo[1],
 					"cid":     cardInfo[1],
@@ -288,8 +290,9 @@ func Serve_GetExtension(w http.ResponseWriter, r *http.Request) {
 					"rarity":  cardInfo[13],
 					"content": cardInfo[14],
 					"counter": cardInfo[15],
-				},
-			)
+				}
+			}
+			output = append(output, json)
 		}
 	}
 
