@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"lib/db2"
 	tool "lib/tool"
@@ -18,6 +19,8 @@ import (
 
 	"strconv"
 
+	uuid "github.com/google/uuid"
+
 	"appengine"
 )
 
@@ -25,6 +28,7 @@ type ManifastInfo struct {
 	Game              string
 	ExtensionName     string
 	ExtensionDescribe string
+	CardInfo          [][]string
 }
 
 func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, error) {
@@ -60,8 +64,7 @@ func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, erro
 	}
 
 	var game, extensionName, extensionDescribe string
-	var cardFieldCount int
-	var cards []string
+	var cardInfos [][]string
 
 	for _, zipFile := range zipReader.File {
 		isMatch, err := filepath.Match("*/manifast.txt", zipFile.Name)
@@ -87,14 +90,14 @@ func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, erro
 		group := strings.Split(content, "===\n")
 		info := strings.Split(group[0], "\n")
 		field := strings.Split(group[1], "\n")
-		cards = group[2:]
+		cards := group[2:]
 		if len(info) < 3 {
 			return ManifastInfo{}, errors.New("header格式錯誤")
 		}
 		game = info[0]
 		extensionName = info[1]
 		extensionDescribe = info[2]
-		cardFieldCount = len(field)
+		cardFieldCount := len(field)
 
 		for _, card := range cards {
 			cardInfo := strings.Split(card, "\n")
@@ -108,6 +111,8 @@ func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, erro
 			if isExist == false {
 				return ManifastInfo{}, fmt.Errorf("沒有找到圖片:%s", imgName)
 			}
+
+			cardInfos = append(cardInfos, cardInfo)
 		}
 	}
 
@@ -115,6 +120,7 @@ func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, erro
 		Game:              game,
 		ExtensionName:     extensionName,
 		ExtensionDescribe: extensionDescribe,
+		CardInfo:          cardInfos,
 	}, nil
 }
 
@@ -180,6 +186,169 @@ func WriteToDb(ctx appengine.Context, manifast ManifastInfo, override bool, zipR
 		}
 	}
 	return nil
+}
+
+var (
+	director = map[string]map[string]string{
+		"addExtensionZip": map[string]string{
+			"showParseResult": "app/uploadcard/parseResult.html",
+		},
+	}
+)
+
+func FrontController(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+
+	values := r.URL.Query()
+	tool.Assert(tool.ParameterIsNotExist(values, "action"))
+	action := values["action"][0]
+	result := ""
+	if len(values["result"]) > 0 {
+		result = values["result"][0]
+	}
+
+	if len(result) > 0 {
+		page, isExist := director[action][result]
+		if isExist == false {
+			panic("no page")
+		}
+		var _ = page
+	}
+
+	model := map[string]interface{}{}
+	tmpl := director[action][result]
+	var _, _ = model, tmpl
+}
+
+func Serve_ShowParseResult(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+
+	r.ParseForm()
+	tool.Assert(tool.ParameterIsNotExist(r.Form, "id"))
+
+	id := r.Form["id"][0]
+	path := fmt.Sprintf("root/tcg/extensionZip/%s", id)
+	fileList, err := db2.GetFileList(ctx, path, true)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	if len(fileList) == 0 {
+		panic("no file")
+	}
+	file := fileList[0]
+
+	zipReader, err := zip.NewReader(bytes.NewReader(file.Content), int64(len(file.Content)))
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+
+	manifast, err := VerifyZip(ctx, zipReader)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	var _ = manifast
+	imgs := map[string]string{}
+
+	for _, zipFile := range zipReader.File {
+		isJpg, err := filepath.Match("*/*.jpg", zipFile.Name)
+		if err != nil {
+			tool.Assert(tool.IfError(err))
+		}
+		isPng, err := filepath.Match("*/*.png", zipFile.Name)
+		if err != nil {
+			tool.Assert(tool.IfError(err))
+		}
+		fileName := filepath.Base(zipFile.Name)
+		subFile, err := zipFile.Open()
+		if err != nil {
+			tool.Assert(tool.IfError(err))
+		}
+		defer subFile.Close()
+		bytes, err := ioutil.ReadAll(subFile)
+		if err != nil {
+			tool.Assert(tool.IfError(err))
+		}
+
+		if isJpg {
+			imgBase64Str := base64.StdEncoding.EncodeToString(bytes)
+			imgs[fileName] = imgBase64Str
+		}
+
+		if isPng {
+			png, _, err := image.Decode(subFile)
+			if err != nil {
+				tool.Assert(tool.IfError(err))
+			}
+			imgBase64Str := string(tool.PngToBase64(png))
+			imgs[fileName] = imgBase64Str
+		}
+	}
+
+	model := map[string]interface{}{
+		"imgs":  imgs,
+		"infos": manifast.CardInfo,
+	}
+
+	t, err := template.ParseFiles("app/uploadcard/parseResult.html", "app/uploadcard/footer.html")
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	err = t.Execute(w, model)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+
+}
+
+func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+	var _ = ctx
+
+	if err := r.ParseMultipartForm(32 << 20); err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	f, h, err := r.FormFile("file")
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	var _ = h
+	body, err := ioutil.ReadAll(f)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+
+	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+
+	manifast, err := VerifyZip(ctx, zipReader)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	var _ = manifast
+
+	uuid := uuid.New()
+
+	err = tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+		err2 := db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extensionZip/%s/%s", uuid, h.Filename), body, "tcg", true)
+		if err2 == db2.ErrFileExist {
+			return fmt.Errorf("沒有override，必須無法寫入檔案:%s", h.Filename)
+		}
+		return err2
+	})
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	http.Redirect(w, r, fmt.Sprintf("./showResult?id=%s", uuid), http.StatusMovedPermanently)
 }
 
 func Serve_AddExtension(w http.ResponseWriter, r *http.Request) {

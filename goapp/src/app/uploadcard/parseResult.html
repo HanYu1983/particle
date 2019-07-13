@@ -1,0 +1,20 @@
+<html>
+
+<head>
+    <meta charset="utf8">
+</head>
+
+<body>
+    {template "footer" .}}
+
+    {{$imgs := .imgs}}
+    {{range $i, $v := .infos}}
+    {{$imgName := index $v 0}}
+    {{$img := index $imgs $imgName}}
+    {{$i}}
+    <img src={{(print "data:image;base64," $img)}}>
+    {{$v}}
+    {{end}}
+</body>
+
+</html>
