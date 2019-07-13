@@ -4,9 +4,9 @@ var gameController = {};
 	function getCardUrl( game, card ){
 		switch( game ){
 			case 'sangoWar':
-				return api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ) );
+				return api.getCardImageWithPackageName( 'sangoWar', sangoWar.formatKey( card.id ), card );
 			default:
-				return api.getCardImageWithPackageName( game, card.id );
+				return api.getCardImageWithPackageName( game, card.id, card );
 		}
 	}
 	

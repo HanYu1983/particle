@@ -204,8 +204,8 @@ var api = api || {};
 	取得圖片路徑
 	pkgName: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
 	*/
-	function getCardImageWithPackageName( pkgName, id ){
-		return cardinfoloader.cardimageurl( pkgName, id )
+	function getCardImageWithPackageName( pkgName, id, obj ){
+		return cardinfoloader.cardimageurl( pkgName, id, obj )
 	}
 	
 	
