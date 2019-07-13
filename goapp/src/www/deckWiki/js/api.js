@@ -39,8 +39,8 @@ var api = api || {};
 		return ( _cardInfo[game].state() == 'resolved' );
 	}
 	
-	function cardimageurl(game, id, obj){
-		return cardinfoloader.cardimageurl(game, id, obj)
+	function cardimageurl(game, id){
+		return cardinfoloader.cardimageurl(game, id)
 	}
 	
 	function load(cb){
