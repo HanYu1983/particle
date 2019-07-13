@@ -290,11 +290,16 @@ func Serve_ShowParseResult(w http.ResponseWriter, r *http.Request) {
 	}
 
 	model := map[string]interface{}{
-		"imgs":  imgs,
-		"infos": manifast.CardInfo,
+		"id":                id,
+		"fileName":          filepath.Base(file.Name),
+		"game":              manifast.Game,
+		"extensionName":     manifast.ExtensionName,
+		"extensionDescribe": manifast.ExtensionDescribe,
+		"imgs":              imgs,
+		"infos":             manifast.CardInfo,
 	}
 
-	t, err := template.ParseFiles("app/uploadcard/parseResult.html", "app/uploadcard/footer.html")
+	t, err := template.ParseFiles("app/uploadcard/parseResult.html", "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
 	if err != nil {
 		tool.Assert(tool.IfError(err))
 	}
@@ -303,6 +308,67 @@ func Serve_ShowParseResult(w http.ResponseWriter, r *http.Request) {
 		tool.Assert(tool.IfError(err))
 	}
 
+}
+
+func Serve_ExtensionZipList(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+	var _ = ctx
+
+	fileList, err := db2.GetFileList(ctx, "root/tcg/extensionZip", true)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+
+	names := [][]string{}
+	for _, file := range fileList {
+		fileName := filepath.Base(file.Name)
+		id := filepath.Base(filepath.Dir(file.Name))
+		names = append(names, []string{id, fileName})
+	}
+
+	model := map[string]interface{}{
+		"extensionZips": names,
+	}
+
+	t, err := template.ParseFiles("app/uploadcard/extensionZipList.html", "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	err = t.Execute(w, model)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+}
+
+func Serve_DeleteExtensionZip(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	ctx := appengine.NewContext(r)
+	var _ = ctx
+
+	if r.Method != "POST" {
+		panic("can not delete")
+	}
+
+	r.ParseForm()
+	tool.Assert(tool.ParameterIsNotExist(r.PostForm, "id"))
+	id := r.PostForm["id"][0]
+	path := fmt.Sprintf("root/tcg/extensionZip/%s", id)
+	fileList, err := db2.GetFileList(ctx, path, true)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	if len(fileList) == 0 {
+		panic("no file")
+	}
+	for _, file := range fileList {
+		db2.Delete(ctx, file.Name)
+	}
+	http.Redirect(w, r, "/fn/tcg/extensionZipList", http.StatusMovedPermanently)
 }
 
 func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {

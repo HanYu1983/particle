@@ -99,6 +99,8 @@ func init() {
 
 	// 上傳自製卡
 	http.HandleFunc("/fn/tcg/showResult", uploadcard.Serve_ShowParseResult)
+	http.HandleFunc("/fn/tcg/extensionZipList", uploadcard.Serve_ExtensionZipList)
+	http.HandleFunc("/fn/tcg/deleteExtensionZip", uploadcard.Serve_DeleteExtensionZip)
 	http.HandleFunc("/fn/tcg/addExtension", uploadcard.Serve_AddExtension)
 	http.HandleFunc("/fn/tcg/getExtension", uploadcard.Serve_GetExtension)
 	http.HandleFunc("/fn/tcg/addExtensionZip", uploadcard.Serve_AddExtensionZip)
