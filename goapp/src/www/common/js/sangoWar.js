@@ -125,12 +125,16 @@ var sangoWar = sangoWar || {};
 				dataType:'json',
 				success:function(data){
 					if(data.Error){
-						return cb(data.Error)
+						console.log("取得擴充包失敗")
+						console.log(data.Error)
+						return cb(null, [])
 					}
 					cb(null, data.Info)
 				},
 				error: function(xhr, res, err){
-					cb(err)
+					console.log("取得擴充包失敗")
+					console.log(err)
+					return cb(null, [])
 				}
 			})
 		}
