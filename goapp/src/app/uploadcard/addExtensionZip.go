@@ -14,6 +14,19 @@ import (
 	"appengine"
 )
 
+var (
+	validExtensionNames = []string{"sangoWar"}
+)
+
+func IsValidExtensionName(name string) bool {
+	for _, n := range validExtensionNames {
+		if n == name {
+			return true
+		}
+	}
+	return false
+}
+
 func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		err2 := OutputMessage(w, err.Error())
@@ -46,10 +59,11 @@ func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		tool.Assert(tool.IfError(err))
 	}
-	var _ = manifast
+	if IsValidExtensionName(manifast.Game) == false {
+		panic(fmt.Sprintf("遊戲名稱錯誤:%s", manifast.Game))
+	}
 
 	uuid := uuid.New()
-
 	err = tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
 		err2 := db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extensionZip/%s/%s", uuid, h.Filename), body, "tcg", true)
 		if err2 == db2.ErrFileExist {
