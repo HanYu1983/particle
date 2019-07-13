@@ -100,7 +100,7 @@ class ModelController extends Mediator
 				#else
 				var url = 'https://' + Browser.window.location.host + Browser.window.location.pathname + '?uid=' + uid;
 				#end
-				var picture = 'https:' + Helper.getImageUrlByGameAndId( shareobj.game, shareobj.cards[0] );
+				var picture = 'https:' + Helper.getImageUrlByGameAndId( shareobj.game, shareobj.cards[0], null );
 				sendNotification( ViewController.do_show_loading, { show:true } );
 				Helper.shareFb( Helper.getMeta().desc, url, picture, Helper.getMeta().name, shareobj.desc, function( ret ) {
 					sendNotification( ViewController.do_show_loading, { show:false } );

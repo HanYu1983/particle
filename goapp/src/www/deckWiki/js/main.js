@@ -62,7 +62,7 @@ Helper.saveDeck = function(fbid,token,model,cb) {
 	}));
 };
 Helper.createItem = function(model) {
-	model.url = Helper.getImageUrlByGameAndId(model.game,model.cards[0]);
+	model.url = Helper.getImageUrlByGameAndId(model.game,model.cards[0],null);
 	var copymodel = JSON.parse(JSON.stringify(model));
 	if(copymodel.name.length > 15) {
 		copymodel.name = Std.string(copymodel.name.substr(0,15)) + "…";
@@ -86,14 +86,14 @@ Helper.saveRead = function(data,cb) {
 Helper.loadList = function(cb) {
 	api.load(cb);
 };
-Helper.getImageUrlByGameAndId = function(game,id) {
-	return api.cardimageurl(game,id);
+Helper.getImageUrlByGameAndId = function(game,id,obj) {
+	return api.cardimageurl(game,id,obj);
 };
 Helper.createDetail = function(game,card) {
 	if(game == "sangoWar") {
-		card.url = Helper.getImageUrlByGameAndId(game,sangoWar.formatKey(card.id));
+		card.url = Helper.getImageUrlByGameAndId(game,sangoWar.formatKey(card.id),card);
 	} else {
-		card.url = Helper.getImageUrlByGameAndId(game,card.id);
+		card.url = Helper.getImageUrlByGameAndId(game,card.id,card);
 	}
 	if(card.url == null) {
 		card.url = "../common/images/card/cardback_0.png";
@@ -675,7 +675,7 @@ model_ModelController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Med
 			var uid1 = notification.getBody().deckuid;
 			var shareobj = this.findDataById(this.ary_result,uid1);
 			var url1 = "https://" + window.location.host + window.location.pathname + "?uid=" + uid1;
-			var picture = "https:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0]);
+			var picture = "https:" + Helper.getImageUrlByGameAndId(shareobj.game,shareobj.cards[0],null);
 			this.sendNotification(view_ViewController.do_show_loading,{ show : true});
 			Helper.shareFb(Helper.getMeta().desc,url1,picture,Helper.getMeta().name,shareobj.desc,function(ret1) {
 				_gthis.sendNotification(view_ViewController.do_show_loading,{ show : false});
@@ -1804,7 +1804,7 @@ view_ViewController.prototype = $extend(org_puremvc_haxe_patterns_mediator_Media
 			this.mc_detail_panel.find(".shareTxt").eq(0).html(detail.viewCount);
 			this.mc_detail_panel.find(".shareTxt").eq(1).html(detail.shareCount);
 			this.mc_detail_panel.find(".shareTxt").eq(2).html(detail.outputCount);
-			this.mc_detail_panel.find("#img_title").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0]));
+			this.mc_detail_panel.find("#img_title").attr("src",Helper.getImageUrlByGameAndId(detail.game,detail.cards[0],null));
 		}
 	}
 	,showBigList: function(uid,game,ary_showData) {
