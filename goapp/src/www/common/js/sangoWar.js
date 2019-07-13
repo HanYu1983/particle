@@ -93,6 +93,9 @@ var sangoWar = sangoWar || {};
 	}
 	
 	function formatKey( id ){
+		if(id.indexOf(".jpg") != -1){
+			return id
+		}
 		if( id.indexOf("(") == -1 ){
 			return id + ".jpg"
 		}
@@ -139,8 +142,10 @@ var sangoWar = sangoWar || {};
 				return all.concat(curr)
 			}, [])
 			list = _.map(list, function(info){
+				var cid = info[1].replace(/\t/g, '')
 				var parse = {
-					id:info[1].replace(/\t/g, ''),
+					id:cid,
+					cid:cid,
 					rare:info[0],
 					ntype:info[5][2],
 					ctype:"",
@@ -154,8 +159,10 @@ var sangoWar = sangoWar || {};
 					content:info[9],
 					counter:info[10]
 				}
+				// 如果有第12項資料, 代表是三國擴充包來的
+				// 這個資料是圖片路徑(也是圖片ID)
 				if(info[11]){
-					parse.imgUrl = info[11]
+					parse.id = info[11]
 				}
 				return parse
 			})

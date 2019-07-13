@@ -540,7 +540,7 @@ func Serve_GetExtension(w http.ResponseWriter, r *http.Request) {
 
 		for _, card := range cards {
 			cardInfo := strings.Split(card, "\n")
-			imgUrl := fmt.Sprintf("root/tcg/extension/%s/%s/imgs/%s", game, extensionId, cardInfo[0])
+			imgUrl := fmt.Sprintf("%s/%s/imgs/%s", game, extensionId, cardInfo[0])
 
 			var json interface{}
 			if game == "sengoku" {

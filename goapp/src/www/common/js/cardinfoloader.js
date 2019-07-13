@@ -77,7 +77,7 @@ var cardinfoloader = {} || cardinfoloader;
 	取得圖片路徑
 	game: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
 	*/
-	function cardimageurl( game, id, obj ){
+	function cardimageurl( game, id ){
 		switch( game ){
 		case 'finalfantasy':
 			{
@@ -111,8 +111,9 @@ var cardinfoloader = {} || cardinfoloader;
 		case 'battleSpirits':
 			return '//storage.googleapis.com/particle-resources/cardPackage/battleSpirits/' +id + '.jpg'
 		case 'sangoWar':
-			if(obj && obj.imgUrl){
-				return '/tcgdbfile2/' + obj.imgUrl
+			// 三國擴充包的ID前綴
+			if( id.indexOf("sangoWar") != -1){
+				return '/tcgdbfile2/root/tcg/extension/' + id
 			}
 			return '//storage.googleapis.com/particle-resources/cardPackage/sangoWar/' +id
 		case 'gundamWar':
