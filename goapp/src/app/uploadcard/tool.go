@@ -5,10 +5,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"image"
 	"io/ioutil"
 	"lib/db2"
-	tool "lib/tool"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -126,6 +124,9 @@ func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, erro
 			}
 
 			imgName := cardInfo[0]
+			if filepath.Ext(imgName) == ".png" {
+				return ManifastInfo{}, errors.New(fmt.Sprintf("不能使用png, 請使用jpg: %s", imgName))
+			}
 			_, isExist := imgNames[imgName]
 			if isExist == false {
 				return ManifastInfo{}, fmt.Errorf("沒有找到圖片:%s", imgName)
@@ -190,6 +191,17 @@ func WriteToDb(ctx appengine.Context, id string, manifast ManifastInfo, override
 		}
 
 		if isPng {
+			imgBase64Str := base64.StdEncoding.EncodeToString(bytes)
+			err = db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extension/%s/%s/imgs/%s", manifast.Game, id, fileName), []byte(imgBase64Str), "tcg", override)
+			if err == db2.ErrFileExist {
+				return fmt.Errorf("沒有override，必須無法寫入檔案:%s", fileName)
+			}
+			if err != nil {
+				return err
+			}
+		}
+
+		/*if isPng {
 			png, _, err := image.Decode(subFile)
 			if err != nil {
 				return err
@@ -202,7 +214,7 @@ func WriteToDb(ctx appengine.Context, id string, manifast ManifastInfo, override
 			if err != nil {
 				return err
 			}
-		}
+		}*/
 	}
 	return nil
 }

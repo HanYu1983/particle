@@ -342,6 +342,11 @@ func Handler(user abstract.IUser) http.HandlerFunc {
 					img := tool.DecodeBase64ToImage(string(file.Content))
 					tool.WriteJpg(w, img)
 				},
+				"png": func(file DBFile) {
+					w.Header().Set("Content-Type", "image/png; charset=utf8")
+					img := tool.DecodeBase64ToImage(string(file.Content))
+					tool.WriteJpg(w, img)
+				},
 				"zip": func(file DBFile) {
 					body := file.Content
 					w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filepath.Base(file.Name)))

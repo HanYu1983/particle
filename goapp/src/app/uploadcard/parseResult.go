@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"image"
 	"io/ioutil"
 	"lib/db2"
 	tool "lib/tool"
@@ -64,11 +63,15 @@ func Serve_ParseResult(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if isPng {
+			imgBase64Str := base64.StdEncoding.EncodeToString(bytes)
+			imgs[fileName] = imgBase64Str
+		}
+		/*if isPng {
 			png, _, err := image.Decode(subFile)
 			tool.Assert(tool.IfError(err))
 			imgBase64Str := string(tool.PngToBase64(png))
 			imgs[fileName] = imgBase64Str
-		}
+		}*/
 	}
 
 	model := map[string]interface{}{

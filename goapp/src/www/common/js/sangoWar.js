@@ -96,6 +96,9 @@ var sangoWar = sangoWar || {};
 		if(id.indexOf(".jpg") != -1){
 			return id
 		}
+		if(id.indexOf(".png") != -1){
+			return id
+		}
 		if( id.indexOf("(") == -1 ){
 			return id + ".jpg"
 		}
