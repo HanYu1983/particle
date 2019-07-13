@@ -119,12 +119,27 @@ var sangoWar = sangoWar || {};
 						})
 					}
 				}).value()
-		async.parallel(fns, function(err, datas){
+		var getExtension = function(cb){
+			$.ajax({
+				url: "/fn/tcg/getExtension?game=sangoWar",
+				dataType:'json',
+				success:function(data){
+					if(data.Error){
+						return cb(data.Error)
+					}
+					cb(null, data.Info)
+				},
+				error: function(xhr, res, err){
+					cb(err)
+				}
+			})
+		}
+		async.parallel(fns.concat([getExtension]), function(err, datas){
 			var list = _.reduce(datas, function(all, curr){
 				return all.concat(curr)
 			}, [])
 			list = _.map(list, function(info){
-				return {
+				var parse = {
 					id:info[1].replace(/\t/g, ''),
 					rare:info[0],
 					ntype:info[5][2],
@@ -139,6 +154,10 @@ var sangoWar = sangoWar || {};
 					content:info[9],
 					counter:info[10]
 				}
+				if(info[11]){
+					parse.imgUrl = info[11]
+				}
+				return parse
 			})
 			cb(err, list)
 		})

@@ -101,6 +101,7 @@ func init() {
 	http.HandleFunc("/fn/tcg/showResult", uploadcard.Serve_ShowParseResult)
 	http.HandleFunc("/fn/tcg/extensionZipList", uploadcard.Serve_ExtensionZipList)
 	http.HandleFunc("/fn/tcg/deleteExtensionZip", uploadcard.Serve_DeleteExtensionZip)
+	http.HandleFunc("/fn/tcg/extractExtensionZip", uploadcard.Serve_ExtractExtensionZip)
 	http.HandleFunc("/fn/tcg/addExtension", uploadcard.Serve_AddExtension)
 	http.HandleFunc("/fn/tcg/getExtension", uploadcard.Serve_GetExtension)
 	http.HandleFunc("/fn/tcg/addExtensionZip", uploadcard.Serve_AddExtensionZip)

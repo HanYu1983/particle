@@ -77,7 +77,7 @@ var cardinfoloader = {} || cardinfoloader;
 	取得圖片路徑
 	game: 'sangoWar' | 'gundamWar' | 'yugioh' | 'army'
 	*/
-	function cardimageurl( game, id ){
+	function cardimageurl( game, id, obj ){
 		switch( game ){
 		case 'finalfantasy':
 			{
@@ -111,6 +111,9 @@ var cardinfoloader = {} || cardinfoloader;
 		case 'battleSpirits':
 			return '//storage.googleapis.com/particle-resources/cardPackage/battleSpirits/' +id + '.jpg'
 		case 'sangoWar':
+			if(obj && obj.imgUrl){
+				return '/tcgdbfile2/' + obj.imgUrl
+			}
 			return '//storage.googleapis.com/particle-resources/cardPackage/sangoWar/' +id
 		case 'gundamWar':
 			return '//storage.googleapis.com/particle-resources/cardPackage/gundamWar/'+id
