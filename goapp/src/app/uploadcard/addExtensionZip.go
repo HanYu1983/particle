@@ -37,29 +37,32 @@ func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	var _ = ctx
 
+	fileList, err := db2.GetFileList(ctx, "root/tcg/extensionZip", true)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+	isExceedSize := len(fileList) >= 3
+	if isExceedSize {
+		panic("擴充包數量超過上限")
+	}
+
 	// 最大上傳5MB
 	if err := r.ParseMultipartForm(1024 * 1024 * 5); err != nil {
 		tool.Assert(tool.IfError(err))
 	}
 	f, h, err := r.FormFile("file")
-	if err != nil {
-		tool.Assert(tool.IfError(err))
-	}
+	tool.Assert(tool.IfError(err))
+
 	var _ = h
 	body, err := ioutil.ReadAll(f)
-	if err != nil {
-		tool.Assert(tool.IfError(err))
-	}
+	tool.Assert(tool.IfError(err))
 
 	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
-	if err != nil {
-		tool.Assert(tool.IfError(err))
-	}
+	tool.Assert(tool.IfError(err))
 
 	manifast, err := VerifyZip(ctx, zipReader)
-	if err != nil {
-		tool.Assert(tool.IfError(err))
-	}
+	tool.Assert(tool.IfError(err))
+
 	if IsValidExtensionName(manifast.Game) == false {
 		panic(fmt.Sprintf("遊戲名稱錯誤:%s", manifast.Game))
 	}
@@ -72,8 +75,6 @@ func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 		}
 		return err2
 	})
-	if err != nil {
-		tool.Assert(tool.IfError(err))
-	}
+	tool.Assert(tool.IfError(err))
 	http.Redirect(w, r, fmt.Sprintf("./parseResult?id=%s", uuid), http.StatusMovedPermanently)
 }

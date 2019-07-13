@@ -17,6 +17,18 @@ import (
 	"appengine"
 )
 
+func OutputModel(w http.ResponseWriter, r *http.Request, page string, model interface{}) error {
+	t, err := template.ParseFiles(page, "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
+	if err != nil {
+		return err
+	}
+	err = t.Execute(w, model)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func OutputMessage(w http.ResponseWriter, message string) error {
 	t, err := template.ParseFiles("app/uploadcard/message.html", "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
 	if err != nil {
