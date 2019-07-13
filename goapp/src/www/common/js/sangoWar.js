@@ -128,12 +128,16 @@ var sangoWar = sangoWar || {};
 				dataType:'json',
 				success:function(data){
 					if(data.Error){
-						return cb(data.Error)
+						console.log("取得擴充包失敗")
+						console.log(data.Error)
+						return cb(null, [])
 					}
 					cb(null, data.Info)
 				},
 				error: function(xhr, res, err){
-					cb(err)
+					console.log("取得擴充包失敗")
+					console.log(err)
+					return cb(null, [])
 				}
 			})
 		}
@@ -161,6 +165,7 @@ var sangoWar = sangoWar || {};
 				}
 				// 如果有第12項資料, 代表是三國擴充包來的
 				// 這個資料是圖片路徑(也是圖片ID)
+				// 前面要加上/tcgdbfile2/root/tcg/extension/
 				if(info[11]){
 					parse.id = info[11]
 				}
