@@ -63,6 +63,8 @@ func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 	manifast, err := VerifyZip(ctx, zipReader)
 	tool.Assert(tool.IfError(err))
 
+	ctx.Infof(manifast.Game)
+
 	if IsValidExtensionName(manifast.Game) == false {
 		panic(fmt.Sprintf("遊戲名稱錯誤:%s", manifast.Game))
 	}
