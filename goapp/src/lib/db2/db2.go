@@ -90,24 +90,28 @@ func GetFileList(ctx appengine.Context, filename string, filterLayer bool) ([]DB
 	return ret, nil
 }
 
+func DeleteWithoutTransaction(ctx appengine.Context, filename string) error {
+	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename).KeysOnly()
+	keys, err := q.GetAll(ctx, nil)
+	if err != nil {
+		return err
+	}
+	if len(keys) > 1 {
+		ctx.Infof("length shouldn't more then 1")
+	}
+	if len(keys) == 0 {
+		return nil
+	}
+	err = datastore.Delete(ctx, keys[0])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func Delete(ctx appengine.Context, filename string) error {
 	err := tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
-		q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename).KeysOnly()
-		keys, err := q.GetAll(ctx, nil)
-		if err != nil {
-			return err
-		}
-		if len(keys) > 1 {
-			ctx.Infof("length shouldn't more then 1")
-		}
-		if len(keys) == 0 {
-			return nil
-		}
-		err = datastore.Delete(ctx, keys[0])
-		if err != nil {
-			return err
-		}
-		return nil
+		return DeleteWithoutTransaction(ctx, filename)
 	})
 	return err
 }

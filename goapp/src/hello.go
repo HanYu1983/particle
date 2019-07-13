@@ -98,6 +98,7 @@ func init() {
 	http.Handle("/fn/contestsys/", router)
 
 	// 上傳自製卡
+	http.HandleFunc("/fn/tcg/", uploadcard.Serve_ExtensionZipList)
 	http.HandleFunc("/fn/tcg/showResult", uploadcard.Serve_ShowParseResult)
 	http.HandleFunc("/fn/tcg/extensionZipList", uploadcard.Serve_ExtensionZipList)
 	http.HandleFunc("/fn/tcg/deleteExtensionZip", uploadcard.Serve_DeleteExtensionZip)
