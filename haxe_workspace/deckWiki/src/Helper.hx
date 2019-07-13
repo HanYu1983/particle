@@ -105,7 +105,7 @@ class Helper
 	*/
 
 	public static function createItem( model:Dynamic ) {
-		model.url = getImageUrlByGameAndId( model.game, model.cards[0], null );
+		model.url = getImageUrlByGameAndId( model.game, model.cards[0] );
 		var copymodel:Dynamic = Json.parse( Json.stringify( model ) );
 		if ( copymodel.name.length > 15 ) {
 			copymodel.name = copymodel.name.substr( 0, 15 ) + '…';
@@ -135,16 +135,16 @@ class Helper
 		untyped __js__('api.load')( cb );
 	}
 	
-	public static function getImageUrlByGameAndId( game:String, id:String, ?obj:Dynamic ) {
-		return untyped __js__('api.cardimageurl')( game, id, obj );
+	public static function getImageUrlByGameAndId( game:String, id:String ) {
+		return untyped __js__('api.cardimageurl')( game, id );
 	}
 	
 	public static function createDetail( game:String, card:Dynamic ) {
 		switch( game ) {
 			case 'sangoWar':
-				card.url = getImageUrlByGameAndId( game, untyped __js__( 'sangoWar.formatKey' )( card.id ), card );
+				card.url = getImageUrlByGameAndId( game, untyped __js__( 'sangoWar.formatKey' )( card.id ) );
 			case _:
-				card.url = getImageUrlByGameAndId( game, card.id, card );
+				card.url = getImageUrlByGameAndId( game, card.id );
 		}
 		if( card.url == null ) {
 			card.url = '../common/images/card/cardback_0.png';
