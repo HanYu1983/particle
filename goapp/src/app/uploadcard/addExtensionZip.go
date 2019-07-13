@@ -37,7 +37,8 @@ func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	var _ = ctx
 
-	if err := r.ParseMultipartForm(32 << 20); err != nil {
+	// 最大上傳5MB
+	if err := r.ParseMultipartForm(1024 * 1024 * 5); err != nil {
 		tool.Assert(tool.IfError(err))
 	}
 	f, h, err := r.FormFile("file")
