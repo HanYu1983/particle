@@ -13,7 +13,10 @@ import (
 
 func Serve_ExtractExtensionZip(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		tool.Output(w, nil, err.Error())
+		err2 := OutputMessage(w, err.Error())
+		if err2 != nil {
+			tool.Output(w, nil, err2.Error())
+		}
 	})
 	ctx := appengine.NewContext(r)
 	var _ = ctx
@@ -53,6 +56,5 @@ func Serve_ExtractExtensionZip(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		tool.Assert(tool.IfError(err))
 	}
-
-	tool.Output(w, true, nil)
+	http.Redirect(w, r, "./", http.StatusMovedPermanently)
 }

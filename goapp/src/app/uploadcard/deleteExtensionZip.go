@@ -12,7 +12,10 @@ import (
 
 func Serve_DeleteExtensionZip(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		tool.Output(w, nil, err.Error())
+		err2 := OutputMessage(w, err.Error())
+		if err2 != nil {
+			tool.Output(w, nil, err2.Error())
+		}
 	})
 	ctx := appengine.NewContext(r)
 	var _ = ctx
@@ -66,5 +69,5 @@ func Serve_DeleteExtensionZip(w http.ResponseWriter, r *http.Request) {
 		tool.Assert(tool.IfError(err))
 	}
 
-	http.Redirect(w, r, "/fn/tcg/extensionZipList", http.StatusMovedPermanently)
+	http.Redirect(w, r, "./", http.StatusMovedPermanently)
 }

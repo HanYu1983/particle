@@ -16,7 +16,10 @@ import (
 
 func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
-		tool.Output(w, nil, err.Error())
+		err2 := OutputMessage(w, err.Error())
+		if err2 != nil {
+			tool.Output(w, nil, err2.Error())
+		}
 	})
 	ctx := appengine.NewContext(r)
 	var _ = ctx

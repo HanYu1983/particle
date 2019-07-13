@@ -22,11 +22,27 @@ func Serve_ExtensionZipList(w http.ResponseWriter, r *http.Request) {
 		tool.Assert(tool.IfError(err))
 	}
 
-	names := [][]string{}
+	extractList, err := db2.GetFileList(ctx, "root/tcg/extension", true)
+	if err != nil {
+		tool.Assert(tool.IfError(err))
+	}
+
+	names := [][]interface{}{}
 	for _, file := range fileList {
 		fileName := filepath.Base(file.Name)
 		id := filepath.Base(filepath.Dir(file.Name))
-		names = append(names, []string{id, fileName})
+
+		alreadyExtract := false
+		for _, extractFile := range extractList {
+			extractFileName := filepath.Base(extractFile.Name)
+			extractId := filepath.Base(filepath.Dir(extractFile.Name))
+			if extractFileName == "manifast.txt" && extractId == id {
+				alreadyExtract = true
+				break
+			}
+		}
+
+		names = append(names, []interface{}{id, fileName, alreadyExtract})
 	}
 
 	model := map[string]interface{}{

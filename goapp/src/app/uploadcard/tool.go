@@ -9,11 +9,27 @@ import (
 	"io/ioutil"
 	"lib/db2"
 	tool "lib/tool"
+	"net/http"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"appengine"
 )
+
+func OutputMessage(w http.ResponseWriter, message string) error {
+	t, err := template.ParseFiles("app/uploadcard/message.html", "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
+	if err != nil {
+		return err
+	}
+	err = t.Execute(w, map[string]string{
+		"message": message,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 type ManifastInfo struct {
 	Game              string
