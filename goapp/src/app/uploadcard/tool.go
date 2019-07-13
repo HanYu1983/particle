@@ -120,7 +120,7 @@ func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, erro
 			cardInfo := strings.Split(card, "\n")
 			// 記得文件最後要多空一行(換行符號), 不然欄位數量會解錯
 			if len(cardInfo) != cardFieldCount {
-				return ManifastInfo{}, errors.New("卡片欄位數量錯誤")
+				return ManifastInfo{}, errors.New("卡片欄位數量錯誤. 記得文件最後要多空一行(換行符號), 不然欄位數量會解錯")
 			}
 
 			imgName := cardInfo[0]
