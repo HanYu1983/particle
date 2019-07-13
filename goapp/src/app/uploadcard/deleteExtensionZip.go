@@ -1,10 +1,12 @@
 package uploadcard
 
 import (
+	"errors"
 	"fmt"
 	"lib/db2"
 	tool "lib/tool"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"appengine"
@@ -26,7 +28,9 @@ func Serve_DeleteExtensionZip(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 	tool.Assert(tool.ParameterIsNotExist(r.PostForm, "id"))
+	tool.Assert(tool.ParameterIsNotExist(r.PostForm, "zipName"))
 	id := r.PostForm["id"][0]
+	zipName := r.PostForm["zipName"][0]
 
 	err := tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
 		// 刪除zip
@@ -37,6 +41,11 @@ func Serve_DeleteExtensionZip(w http.ResponseWriter, r *http.Request) {
 		}
 		if len(fileList) > 0 {
 			for _, file := range fileList {
+				originZipFileName := filepath.Base(file.Name)
+				isFileNameVerifyOk := zipName == originZipFileName
+				if isFileNameVerifyOk == false {
+					return errors.New(fmt.Sprintf("請輸入正確的檔案名稱:%s", zipName))
+				}
 				err2 = db2.DeleteWithoutTransaction(ctx, file.Name)
 				if err2 != nil {
 					return err2
