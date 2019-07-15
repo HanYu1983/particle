@@ -17,32 +17,32 @@ return test.crusade.fs.readdir(test.crusade.output,(function (err,files){
 return console.log(files);
 }));
 });
-test.crusade.fetchImage = (function test$crusade$fetchImage(p__4819,cb){
-var vec__4820 = p__4819;
-var prod = cljs.core.nth.call(null,vec__4820,(0),null);
-var id = cljs.core.nth.call(null,vec__4820,(1),null);
+test.crusade.fetchImage = (function test$crusade$fetchImage(p__4795,cb){
+var vec__4796 = p__4795;
+var prod = cljs.core.nth.call(null,vec__4796,(0),null);
+var id = cljs.core.nth.call(null,vec__4796,(1),null);
 console.log(["fetchImage",cljs.core.str.cljs$core$IFn$_invoke$arity$1(prod),"_",cljs.core.str.cljs$core$IFn$_invoke$arity$1(id),".jpg"].join(''));
 
-return test.crusade.request.call(null,test.crusade.imageUrl.call(null,prod,id)).pipe(test.crusade.fs.createWriteStream([cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.crusade.outputImageDir),cljs.core.str.cljs$core$IFn$_invoke$arity$1(prod),"_",cljs.core.str.cljs$core$IFn$_invoke$arity$1(id),".jpg"].join(''))).on("close",((function (vec__4820,prod,id){
+return test.crusade.request.call(null,test.crusade.imageUrl.call(null,prod,id)).pipe(test.crusade.fs.createWriteStream([cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.crusade.outputImageDir),cljs.core.str.cljs$core$IFn$_invoke$arity$1(prod),"_",cljs.core.str.cljs$core$IFn$_invoke$arity$1(id),".jpg"].join(''))).on("close",((function (vec__4796,prod,id){
 return (function (){
 console.log("ok for fetchImage",id);
 
 return setTimeout(cb,(3000));
-});})(vec__4820,prod,id))
+});})(vec__4796,prod,id))
 );
 });
 test.crusade.fetchAllImage = (function test$crusade$fetchAllImage(){
 return test.crusade.async.waterfall([(function (cb){
-return test.crusade.async.map(cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__4823_SHARP_){
-return [cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.crusade.output),cljs.core.str.cljs$core$IFn$_invoke$arity$1(p1__4823_SHARP_)].join('');
+return test.crusade.async.map(cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__4799_SHARP_){
+return [cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.crusade.output),cljs.core.str.cljs$core$IFn$_invoke$arity$1(p1__4799_SHARP_)].join('');
 }),test.crusade.prods)),lib.tool.getFile,cb);
 }),(function (datas,cb){
-var alls = cljs.core.reduce.call(null,(function (p1__4826_SHARP_,p2__4827_SHARP_){
-return cljs.core.concat.call(null,p1__4826_SHARP_,p2__4827_SHARP_);
-}),cljs.core.List.EMPTY,cljs.core.map.call(null,(function (p1__4825_SHARP_){
-return p1__4825_SHARP_.data;
-}),cljs.core.map.call(null,(function (p1__4824_SHARP_){
-return JSON.parse(p1__4824_SHARP_);
+var alls = cljs.core.reduce.call(null,(function (p1__4802_SHARP_,p2__4803_SHARP_){
+return cljs.core.concat.call(null,p1__4802_SHARP_,p2__4803_SHARP_);
+}),cljs.core.List.EMPTY,cljs.core.map.call(null,(function (p1__4801_SHARP_){
+return p1__4801_SHARP_.data;
+}),cljs.core.map.call(null,(function (p1__4800_SHARP_){
+return JSON.parse(p1__4800_SHARP_);
 }),cljs.core.js__GT_clj.call(null,datas))));
 console.log("start fetch image length:",cljs.core.count.call(null,alls));
 

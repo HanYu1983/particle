@@ -9,10 +9,10 @@ test.yugioh.config = new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Ke
 test.yugioh.parseStrings = (function test$yugioh$parseStrings(stringsPath,cb){
 return test.yugioh.fs.readFile(stringsPath,"utf8",(function (err,data){
 var parseRow = (function (row){
-var vec__4645 = cljs.core.js__GT_clj.call(null,row.split(" "));
-var _ = cljs.core.nth.call(null,vec__4645,(0),null);
-var value = cljs.core.nth.call(null,vec__4645,(1),null);
-var text = cljs.core.nth.call(null,vec__4645,(2),null);
+var vec__4628 = cljs.core.js__GT_clj.call(null,row.split(" "));
+var _ = cljs.core.nth.call(null,vec__4628,(0),null);
+var value = cljs.core.nth.call(null,vec__4628,(1),null);
+var text = cljs.core.nth.call(null,vec__4628,(2),null);
 return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [value,text], null);
 });
 var rows = data.split("\n");

@@ -20,32 +20,32 @@ return cb.call(null,err__$1);
 }));
 }));
 });
-test.gundamWarN.fetchImage = (function test$gundamWarN$fetchImage(p__4830,cb){
-var vec__4831 = p__4830;
-var prod = cljs.core.nth.call(null,vec__4831,(0),null);
-var id = cljs.core.nth.call(null,vec__4831,(1),null);
+test.gundamWarN.fetchImage = (function test$gundamWarN$fetchImage(p__4832,cb){
+var vec__4833 = p__4832;
+var prod = cljs.core.nth.call(null,vec__4833,(0),null);
+var id = cljs.core.nth.call(null,vec__4833,(1),null);
 console.log(["fetchImage ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.gundamWarN.imageUrl.call(null,prod,id))].join(''));
 
-return test.gundamWarN.request.call(null,test.gundamWarN.imageUrl.call(null,prod,id)).pipe(test.gundamWarN.fs.createWriteStream([cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.gundamWarN.outputImageDir),cljs.core.str.cljs$core$IFn$_invoke$arity$1(prod),"_",cljs.core.str.cljs$core$IFn$_invoke$arity$1(id),".jpg"].join(''))).on("close",((function (vec__4831,prod,id){
+return test.gundamWarN.request.call(null,test.gundamWarN.imageUrl.call(null,prod,id)).pipe(test.gundamWarN.fs.createWriteStream([cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.gundamWarN.outputImageDir),cljs.core.str.cljs$core$IFn$_invoke$arity$1(prod),"_",cljs.core.str.cljs$core$IFn$_invoke$arity$1(id),".jpg"].join(''))).on("close",((function (vec__4833,prod,id){
 return (function (){
 console.log("ok for fetchImage",id);
 
 return setTimeout(cb,(3000));
-});})(vec__4831,prod,id))
+});})(vec__4833,prod,id))
 );
 });
 test.gundamWarN.fetchAllImage = (function test$gundamWarN$fetchAllImage(){
 return test.gundamWarN.async.waterfall([(function (cb){
-return test.gundamWarN.async.map(cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__4834_SHARP_){
-return [cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.gundamWarN.output),cljs.core.str.cljs$core$IFn$_invoke$arity$1(p1__4834_SHARP_),".json"].join('');
+return test.gundamWarN.async.map(cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__4836_SHARP_){
+return [cljs.core.str.cljs$core$IFn$_invoke$arity$1(test.gundamWarN.output),cljs.core.str.cljs$core$IFn$_invoke$arity$1(p1__4836_SHARP_),".json"].join('');
 }),test.gundamWarN.prods)),lib.tool.getFile,cb);
 }),(function (datas,cb){
-var alls = cljs.core.reduce.call(null,(function (p1__4837_SHARP_,p2__4838_SHARP_){
-return cljs.core.concat.call(null,p1__4837_SHARP_,p2__4838_SHARP_);
-}),cljs.core.List.EMPTY,cljs.core.map.call(null,(function (p1__4836_SHARP_){
-return p1__4836_SHARP_.data;
-}),cljs.core.map.call(null,(function (p1__4835_SHARP_){
-return JSON.parse(p1__4835_SHARP_);
+var alls = cljs.core.reduce.call(null,(function (p1__4839_SHARP_,p2__4840_SHARP_){
+return cljs.core.concat.call(null,p1__4839_SHARP_,p2__4840_SHARP_);
+}),cljs.core.List.EMPTY,cljs.core.map.call(null,(function (p1__4838_SHARP_){
+return p1__4838_SHARP_.data;
+}),cljs.core.map.call(null,(function (p1__4837_SHARP_){
+return JSON.parse(p1__4837_SHARP_);
 }),cljs.core.js__GT_clj.call(null,datas))));
 console.log("start fetch image length:",cljs.core.count.call(null,alls));
 

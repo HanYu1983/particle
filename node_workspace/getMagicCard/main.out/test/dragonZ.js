@@ -40,8 +40,8 @@ return cb.call(null,null,test.dragonZ.parsePage.call(null,data));
 });
 test.dragonZ.fetchAllImage = (function test$dragonZ$fetchAllImage(){
 return test.dragonZ.async.waterfall([test.dragonZ.getJson,(function (datas,cb){
-var ids = cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__4759_SHARP_){
-return cljs.core.get.call(null,p1__4759_SHARP_,"id");
+var ids = cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__4742_SHARP_){
+return cljs.core.get.call(null,p1__4742_SHARP_,"id");
 }),datas));
 return test.dragonZ.async.eachSeries(ids,test.dragonZ.fetchImage,cljs.core.partial.call(null,cb,null));
 })],(function (err,rets){

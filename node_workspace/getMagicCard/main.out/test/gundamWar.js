@@ -52,10 +52,10 @@ throw "data lost!!";
 }
 
 return cljs.core.map.call(null,((function (ids,images,names,pkgs,context){
-return (function (p__4762,image,name,pkg,context__$1){
-var vec__4763 = p__4762;
-var color = cljs.core.nth.call(null,vec__4763,(0),null);
-var id = cljs.core.nth.call(null,vec__4763,(1),null);
+return (function (p__4592,image,name,pkg,context__$1){
+var vec__4593 = p__4592;
+var color = cljs.core.nth.call(null,vec__4593,(0),null);
+var id = cljs.core.nth.call(null,vec__4593,(1),null);
 var cost = cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.second,cljs.core.re_seq.call(null,test.gundamWar.regex_cost,context__$1)));
 var atkadj = cljs.core.clj__GT_js.call(null,cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.rest,cljs.core.re_seq.call(null,test.gundamWar.regex_atkadj,context__$1))));
 var atk = cljs.core.clj__GT_js.call(null,cljs.core.first.call(null,cljs.core.map.call(null,cljs.core.rest,cljs.core.re_seq.call(null,test.gundamWar.regex_atk,context__$1))));
@@ -77,8 +77,8 @@ return cljs.core.flatten.call(null,ret);
 });
 test.gundamWar.parseInfo = (function test$gundamWar$parseInfo(){
 return test.gundamWar.async.waterfall([(function (cb){
-return test.gundamWar.async.parallel(cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__4766_SHARP_){
-return cljs.core.partial.call(null,lib.tool.getFile,["downloadPages/",cljs.core.str.cljs$core$IFn$_invoke$arity$1(p1__4766_SHARP_),".html"].join(''));
+return test.gundamWar.async.parallel(cljs.core.clj__GT_js.call(null,cljs.core.map.call(null,(function (p1__4596_SHARP_){
+return cljs.core.partial.call(null,lib.tool.getFile,["downloadPages/",cljs.core.str.cljs$core$IFn$_invoke$arity$1(p1__4596_SHARP_),".html"].join(''));
 }),cljs.core.range.call(null,(1),(214)))),cb);
 }),(function (pages,cb){
 return cb.call(null,null,cljs.core.clj__GT_js.call(null,cljs.core.reduce.call(null,(function (all,curr){
