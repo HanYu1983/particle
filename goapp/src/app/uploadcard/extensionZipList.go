@@ -31,6 +31,7 @@ func Serve_ExtensionZipList(w http.ResponseWriter, r *http.Request) {
 	for _, file := range fileList {
 		fileName := filepath.Base(file.Name)
 		id := filepath.Base(filepath.Dir(file.Name))
+		fileSize := float32(len(file.Content)) / (1024)
 
 		alreadyExtract := false
 		for _, extractFile := range extractList {
@@ -42,7 +43,7 @@ func Serve_ExtensionZipList(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		names = append(names, []interface{}{id, fileName, alreadyExtract})
+		names = append(names, []interface{}{id, fileName, alreadyExtract, fileSize})
 	}
 
 	model := map[string]interface{}{
