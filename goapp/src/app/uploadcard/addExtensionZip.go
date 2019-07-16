@@ -18,6 +18,12 @@ var (
 	validExtensionNames = []string{"sangoWar"}
 )
 
+const (
+	//5 MB
+	maxUploadSize     = 1024 * 1024 * 5
+	maxUploadZipCount = 20
+)
+
 func IsValidExtensionName(name string) bool {
 	for _, n := range validExtensionNames {
 		if n == name {
@@ -41,13 +47,13 @@ func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		tool.Assert(tool.IfError(err))
 	}
-	isExceedSize := len(fileList) >= 3
+	isExceedSize := len(fileList) >= maxUploadZipCount
 	if isExceedSize {
 		panic("擴充包數量超過上限")
 	}
 
 	// 最大上傳5MB
-	if err := r.ParseMultipartForm(1024 * 1024 * 5); err != nil {
+	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
 		tool.Assert(tool.IfError(err))
 	}
 	f, h, err := r.FormFile("file")
