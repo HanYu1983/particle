@@ -54,11 +54,11 @@ func Serve_GetExtension(w http.ResponseWriter, r *http.Request) {
 			if game == "sengoku" {
 				cost1, err := strconv.Atoi(cardInfo[7])
 				if err != nil {
-					tool.Assert(tool.IfError(err))
+					cost1 = 0
 				}
 				cost2, err := strconv.Atoi(cardInfo[8])
 				if err != nil {
-					tool.Assert(tool.IfError(err))
+					cost2 = 0
 				}
 				json = map[string]interface{}{
 					"imgUrl":  imgUrl,
@@ -84,11 +84,11 @@ func Serve_GetExtension(w http.ResponseWriter, r *http.Request) {
 
 				cost1, err := strconv.Atoi(cardInfo[6])
 				if err != nil {
-					tool.Assert(tool.IfError(err))
+					cost1 = 0
 				}
 				cost2, err := strconv.Atoi(cardInfo[7])
 				if err != nil {
-					tool.Assert(tool.IfError(err))
+					cost2 = 0
 				}
 
 				json = []interface{}{
