@@ -3,11 +3,32 @@ var sangoWar = sangoWar || {};
 (function( module ){
 	
 	function load( path, cb ){
+		var get14_16 = function(cb){
+			$.ajax({
+				url: "/common/txt/sangoWarJp14_16.json",
+				dataType:'json',
+				success:function(data){
+					cb(null, data)
+				},
+				error: function(xhr, res, err){
+					console.log("取得sangoWarJp14_16失敗")
+					console.log(err)
+					return cb(null, [])
+				}
+			})
+		}
+
 		$.get(path)
 			.pipe( CSV.parse )
 			.done( function(rows) {
 				var cardlist = sangoWar.csv2json( rows )
-				cb( null, cardlist )
+				get14_16(function(err, info){
+					if( err ){
+						return cb(err)
+					}
+					cardlist = cardlist.concat(info)
+					cb(null, cardlist)
+				})
 			})
 	}
 	
@@ -89,6 +110,7 @@ var sangoWar = sangoWar || {};
 				break
 			}
 		}
+		console.log(cardlist)
 		return cardlist
 	}
 	
