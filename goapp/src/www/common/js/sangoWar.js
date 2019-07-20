@@ -46,6 +46,11 @@ var sangoWar = sangoWar || {};
 					if (err) {
 						return cb(err)
 					}
+					// 補上cid
+					info = info.map((i)=>{
+						i.cid = i.id;
+						return i
+					})
 					cardlist = cardlist.concat(info)
 					
 					getExtension(function (err, info) {
@@ -56,6 +61,7 @@ var sangoWar = sangoWar || {};
 						}
 
 						var list = _.map(info, function (info) {
+							// 補上cid
 							var cid = info[1].replace(/\t/g, '')
 							var parse = {
 								id: info[11],
@@ -142,6 +148,8 @@ var sangoWar = sangoWar || {};
 					}
 					//用這個檢查他是不是少打-
 					//console.log( ability );
+
+					// 補上cid
 					cardlist.push({
 						id: id,
 						cid: id,
