@@ -136,7 +136,7 @@ class Main
 		if ( cardSuitsDetailsIsLoading.field( game ) != null ) return;
 		cardSuitsDetailsIsLoading.setField( game, true );
 		if ( cardSuitsDetails.field( game ) == null ) {
-			CallJs.cardinfoloader_load( game, 'ch', onLoadGameCallback( game ) );
+			CallJs.cardinfoloader_load( game, game == 'sangoWar' ? 'jp' : 'ch', onLoadGameCallback( game ) );
 		}
 	}
 	
