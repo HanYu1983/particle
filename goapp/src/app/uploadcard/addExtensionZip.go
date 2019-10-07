@@ -21,7 +21,7 @@ var (
 const (
 	//5 MB
 	maxUploadSize     = 1024 * 1024 * 5
-	maxUploadZipCount = 20
+	maxUploadZipCount = 100
 )
 
 func IsValidExtensionName(name string) bool {
