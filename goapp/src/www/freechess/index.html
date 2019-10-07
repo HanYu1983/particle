@@ -1,0 +1,100 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+		<link rel="stylesheet" type="text/css" href="../common/css/vic.css">
+			
+		<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
+		<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
+			
+		<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+	</head>
+	<style>
+	body{
+		background-color:#333333;
+	}
+	</style>
+	<body>
+		<div id="mc_layoutMain" class="easyui-layout" style="position:fixed; right:0; top:0; width:100%;height:100%;">
+			<div data-options="region:'east',split:false" title="West" style="width:350px;">
+				<table id="tab_tables" class="easyui-datagrid" style="width:100%;height:300px"
+						title="全部遊戲" singleSelect="true"
+						singleSort="true" remoteSort="false"
+						rownumbers="true" pagination="false">
+					<thead>
+						<tr>
+							<th field="id" align="center" sortable="true">ID</th>
+							<th field="host" align="center" sortable="true">房主</th>
+							<th field="type" align="center">遊戲類型</th>
+							<th field="playerCount" align="center" sortable="true">遊玩人數</th>
+							<th field="watchCount" align="center">觀看人數</th>
+						</tr>
+					</thead>
+				</table>
+				<table id="tab_inTables" class="easyui-datagrid" style="width:100%;height:160px"
+						title="參與遊戲" rownumbers="true"  singleSelect="true"
+						sortName="itemid" sortOrder="asc">
+					<thead>
+						<tr>
+							<th field="id" align="center" sortable="true">ID</th>
+							<th field="type" align="center">遊戲類型</th>
+							<th field="host" align="center" sortable="true">房主</th>
+							<th field="playerCount" align="center">遊玩人數</th>
+							<th field="watchCount" align="center">觀看人數</th>
+						</tr>
+					</thead>
+				</table>
+				<div class="group center vgap_5">
+					<select class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
+						<option value="AL">井字遊戲</option>
+						<option value="AK">五子棋</option>
+						<option value="AZ">中國象棋</option>
+					</select>
+					<a id="btn_connect" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="disabled:false">創房</a>	
+					<a id="btn_connect" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="disabled:false">進房</a>
+					<a id="btn_connect" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="disabled:false">退房</a>
+				</div>
+			</div>
+			<div data-options="region:'center'"></div>
+		</div>
+	</body>
+	<script>
+	
+	function addRoom( table, host, type, player, watch){
+		$(table).datagrid('appendRow',{
+			id:player,
+			type:type,
+			host: host,
+			playerCount: player,
+			watchCount:watch
+		});
+	}
+	
+	function addGameRoom( host, type, player, watch){
+		addRoom("#tab_tables", type, player, watch );
+	}	
+	
+	function addMyRoom( host, type, player, watch){
+		addRoom("#tab_inTables", type, player, watch );
+	}
+	
+	$(document).ready( function(){
+		
+		for( var i = 0; i < 30; ++i){
+			addGameRoom('vic', 'game', i, 2 );
+		}
+		/*
+		for( var i = 0; i < 4; ++i){
+			addMyRoom('vic', 'game', i, 2 );
+		}
+		*/
+	})
+	</script>
+</html>

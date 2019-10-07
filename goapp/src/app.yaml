@@ -30,6 +30,8 @@ handlers:
   static_dir: www/deckWiki
 - url: /xiaogenban
   static_dir: www/xiaogenban
+- url: /freechess
+  static_dir: www/freechess  
 - url: /.*
   script: _go_app
   secure: always
