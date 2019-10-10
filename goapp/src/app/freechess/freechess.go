@@ -35,6 +35,7 @@ func Serve_CreateGame(w http.ResponseWriter, r *http.Request) {
 	})
 	params := mux.Vars(r)
 	t := params["type"]
+	playerID := params["player"]
 	var ret interface{}
 	ctx := appengine.NewContext(r)
 	err := tool.WithTransaction(ctx, 3, func(c appengine.Context) error {
@@ -42,11 +43,20 @@ func Serve_CreateGame(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		appCtx, err = CreateGame(ctx, appCtx, t)
+		appCtx, gameIdx, game, err := CreateGame(ctx, appCtx, t)
 		if err != nil {
 			return err
 		}
-		ret = appCtx
+		game, err = AddPlayer(ctx, game, playerID)
+		if err != nil {
+			return err
+		}
+		game, err = AppendOrder(ctx, game, playerID, false)
+		if err != nil {
+			return err
+		}
+		appCtx.Games[gameIdx] = game
+		ret = []interface{}{appCtx, game}
 		return SaveContext(ctx, appCtx)
 	})
 	tool.Assert(tool.IfError(err))

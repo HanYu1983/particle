@@ -23,8 +23,13 @@ var api = api || {};
         return get(`../fn/freechess`, cb)
     }
 
-    function createGame(type, cb){
-        return get(`../fn/freechess/create/${type}`, cb)
+    function createGame(type, player, cb){
+        return get(`../fn/freechess/create/${type}/${player}`, (err, data)=>{
+            if(err){
+                return cb(err)
+            }
+            cb(null, data[0], data[1])
+        })
     }
 
     function joinGame(game, player, cb){

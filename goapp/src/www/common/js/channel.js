@@ -30,28 +30,19 @@ var channel = channel || {};
     var database = firebase.database();
     var channelRef = database.ref(address);
     
-    console.log(address)
     setTimeout(function(){
       cbObj.onopen()
     }, 0)
   
     channelRef.on('value', function(snapshot) {
-      console.log("value change")
-      console.log(snapshot)
       if(snapshot == null){
         return
       }
       var value = snapshot.val()
-      console.log(value)
       if(value == null){
         return
       }
       cbObj.onmessage(JSON.parse(value))
-      /*
-      var path = {data: value}
-      var option = {}
-      cbObj.onmessage(path, option)
-      */
     });
   }
   

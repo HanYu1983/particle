@@ -122,7 +122,7 @@ type Context struct {
 	Games []Game `json:"games"`
 }
 
-func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, error) {
+func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, int, Game, error) {
 	var game = Game{
 		ID:          uuid.New().String(),
 		Type:        gameType,
@@ -132,8 +132,9 @@ func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, e
 		PlayerOrder: []int{},
 		CreateTime:  time.Now(),
 	}
+	var idx = len(app.Games)
 	app.Games = append(app.Games, game)
-	return app, nil
+	return app, idx, game, nil
 }
 
 func GetGame(ctx appengine.Context, app Context, id string) (int, Game, error) {

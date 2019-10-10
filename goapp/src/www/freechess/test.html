@@ -6,34 +6,26 @@
         if (err) {
             return;
         }
-        api.createGame("ooxx", (err, data) => {
+        api.createGame("ooxx", "han", (err, data, game) => {
             console.log(err, data)
             if (err) {
                 return;
             }
-            const games = data.games;
-            const game = games[games.length - 1]
-            api.joinGame(game.id, "han", (err, data) => {
+            api.joinGame(game.id, "vic", (err, data) => {
                 console.log(err, data)
                 if (err) {
                     return;
                 }
-                api.joinGame(game.id, "vic", (err, data) => {
+                api.put(game.id, "han", [0, 0], (err, data) => {
                     console.log(err, data)
                     if (err) {
                         return;
                     }
-                    api.put(game.id, "han", [0, 0], (err, data) => {
+                    api.put(game.id, "vic", [1, 1], (err, data) => {
                         console.log(err, data)
                         if (err) {
                             return;
                         }
-                        api.put(game.id, "vic", [1, 1], (err, data) => {
-                            console.log(err, data)
-                            if (err) {
-                                return;
-                            }
-                        })
                     })
                 })
             })
