@@ -48,8 +48,20 @@ var api = api || {};
         return uuid();
     }
 
-    function getRandomFourRoom(){
-        return undefined;
+    function getRandomFourRoom(ctx){
+        const games = ctx.games.slice()
+        games.sort(() => Math.random() - 0.5)
+        return games.slice(0, Math.min(4, games.length))
+    }
+
+    function isMyTurn(game, player){
+        const orderIdx = game.playerOrder.indexOf(game.currOrderIdx);
+        return game.players[orderIdx] == player
+    }
+
+    function isFirst(game, player){
+        const playerIdx = game.players.indexOf(player)
+        return game.playerOrder[playerIdx] == 0
     }
 
     module.context = context
@@ -59,4 +71,6 @@ var api = api || {};
     module.put = put
     module.getUUID = getUUID
     module.getRandomFourRoom = getRandomFourRoom
+    module.isMyTurn = isMyTurn
+    module.isFirst = isFirst
 })(api);
