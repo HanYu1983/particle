@@ -1,11 +1,12 @@
 package freechess
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"lib/db2"
 	"time"
+
+	uuid "github.com/google/uuid"
 
 	"appengine"
 )
@@ -21,31 +22,40 @@ type Token struct {
 }
 
 const (
-	Pending = iota
-	WaitOpponent
-	Play
-	Finish
+	Pending      = "Pending"
+	WaitOpponent = "WaitOpponent"
+	Play         = "Play"
+	Finish       = "Finish"
 )
 
 type Game struct {
-	ID                string
-	Type              string
-	Tokens            []Token
-	State             int
-	Players           []string
-	PlayerOrder       []int
-	Winner            string
-	ActivePlayerIndex int
-	Create            time.Time
+	ID           string
+	Type         string
+	Tokens       []Token
+	State        string
+	Players      []string
+	PlayerOrder  []int
+	Winner       string
+	CurrOrderIdx int
+	CreateTime   time.Time
 }
 
-func AddPlayer(ctx context.Context, game Game, player string) (Game, error) {
+func GetPlayerOrder(ctx appengine.Context, game Game, player string) (int, error) {
+	for order, playerID := range game.Players {
+		if playerID == player {
+			return game.PlayerOrder[order], nil
+		}
+	}
+	return 0, errors.New(player + " player not found")
+}
+
+func AddPlayer(ctx appengine.Context, game Game, player string) (Game, error) {
 	// TODO check player exist
 	game.Players = append(game.Players, player)
 	return game, nil
 }
 
-func RemovePlayer(ctx context.Context, game Game, player string) (Game, error) {
+func RemovePlayer(ctx appengine.Context, game Game, player string) (Game, error) {
 	var idx = -1
 	for i := 0; i < len(game.Players); i++ {
 		if game.Players[i] == player {
@@ -57,18 +67,7 @@ func RemovePlayer(ctx context.Context, game Game, player string) (Game, error) {
 		return game, nil
 	}
 	game.Players = append(game.Players[:idx], game.Players[idx+1:]...)
-
-	var idx2 = -1
-	for i := 0; i < len(game.PlayerOrder); i++ {
-		if game.PlayerOrder[i] == idx {
-			idx2 = i
-			break
-		}
-	}
-	if idx2 == -1 {
-		return game, nil
-	}
-	game.PlayerOrder = append(game.PlayerOrder[:idx2], game.PlayerOrder[idx2+1:]...)
+	game.PlayerOrder = append(game.PlayerOrder[:idx], game.PlayerOrder[idx+1:]...)
 	if len(game.PlayerOrder) == 0 {
 		game.State = Pending
 	}
@@ -78,7 +77,7 @@ func RemovePlayer(ctx context.Context, game Game, player string) (Game, error) {
 	return game, nil
 }
 
-func AppendOrder(ctx context.Context, game Game, player string, isFirst bool) (Game, error) {
+func AppendOrder(ctx appengine.Context, game Game, player string, isFirst bool) (Game, error) {
 	var idx = -1
 	for i := 0; i < len(game.Players); i++ {
 		if game.Players[i] == player {
@@ -92,7 +91,22 @@ func AppendOrder(ctx context.Context, game Game, player string, isFirst bool) (G
 	if isFirst {
 		game.PlayerOrder = []int{}
 	}
-	game.PlayerOrder = append(game.PlayerOrder, idx)
+
+	var curr = len(game.PlayerOrder)
+	for j := 0; j < len(game.PlayerOrder); j++ {
+		var notFound = true
+		for _, orderID := range game.PlayerOrder {
+			if j == orderID {
+				notFound = false
+			}
+		}
+		if notFound {
+			curr = j
+			break
+		}
+	}
+
+	game.PlayerOrder = append(game.PlayerOrder, curr)
 	if len(game.PlayerOrder) == 1 {
 		game.State = WaitOpponent
 	}
@@ -103,12 +117,35 @@ func AppendOrder(ctx context.Context, game Game, player string, isFirst bool) (G
 }
 
 type IGame interface {
-	Put(ctx context.Context, game Game, token Token, player string) (Game, error)
-	CheckWin(ctx context.Context, game Game) (Game, error)
+	Put(ctx appengine.Context, game Game, token Token, player string) (Game, error)
+	CheckWin(ctx appengine.Context, game Game) (Game, error)
 }
 
 type Context struct {
 	Games []Game
+}
+
+func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, error) {
+	var game = Game{
+		ID:          uuid.New().String(),
+		Type:        gameType,
+		Tokens:      []Token{},
+		Players:     []string{},
+		PlayerOrder: []int{},
+		CreateTime:  time.Now(),
+	}
+	app.Games = append(app.Games, game)
+	return app, nil
+}
+
+func GetGame(ctx appengine.Context, app Context, id string) (int, Game, error) {
+	for i, game := range app.Games {
+		if game.ID == id {
+			return i, game, nil
+		}
+	}
+	var game Game
+	return 0, game, errors.New(id + " not found")
 }
 
 const (

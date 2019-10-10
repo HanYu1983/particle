@@ -111,8 +111,14 @@ func init() {
 
 	// freechess
 	router = mux.NewRouter()
-	router.HandleFunc("/fn/freechess/", freechess.Serve_CreateGame).Methods("GET")
-	http.HandleFunc("/freechessdbfile2/", db2.Handler(appauth.User{Key: "freechess"}))
+	router.HandleFunc("/fn/freechess/", freechess.Serve_App).Methods("GET")
+	router.HandleFunc("/fn/freechess/create/{type}", freechess.Serve_CreateGame).Methods("GET")
+	router.HandleFunc("/fn/freechess/game/{game}", freechess.Serve_GetGame).Methods("GET")
+	router.HandleFunc("/fn/freechess/game/{game}/viwer/{player}/join", freechess.Serve_JoinGame).Methods("GET")
+	router.HandleFunc("/fn/freechess/game/{game}/viwer/{player}/leave", freechess.Serve_LeaveGame).Methods("GET")
+	router.HandleFunc("/fn/freechess/game/{game}/player/{player}/join", freechess.Serve_JoinGame).Methods("GET")
+	router.HandleFunc("/fn/freechess/game/{game}/player/{player}/leave", freechess.Serve_LeaveGame).Methods("GET")
+	router.HandleFunc("/fn/freechess/game/{game}/player/{player}/chess/{x}/{y}/put", freechess.Serve_PutChess).Methods("GET")
 	http.Handle("/fn/freechess/", router)
 
 	// Test

@@ -1,25 +1,49 @@
 package freechess
 
 import (
-	"context"
 	"errors"
+
+	"appengine"
 )
 
 type OOXX struct{}
 
-func (OOXX) Put(ctx context.Context, game Game, token Token, player string) (Game, error) {
+const (
+	TypeOOXX = "ooxx"
+)
+
+func (OOXX) Put(ctx appengine.Context, game Game, token Token, player string) (Game, error) {
 	if game.State != Play {
 		return game, errors.New("game not start yet")
 	}
-	if game.Players[game.PlayerOrder[game.ActivePlayerIndex]] != player {
-		return game, errors.New("you are not active player")
+
+	var orderID = -1
+	for playerIdx, playerID := range game.Players {
+		if playerID == player {
+			orderID = game.PlayerOrder[playerIdx]
+			break
+		}
 	}
+	if orderID == -1 {
+		return game, errors.New("player not found " + player)
+	}
+
+	if len(game.Tokens) != 0 {
+		for playerIdx, orderID := range game.PlayerOrder {
+			if orderID == game.CurrOrderIdx {
+				if game.Players[playerIdx] != player {
+					return game, errors.New("you are not active player")
+				}
+			}
+		}
+	}
+
 	game.Tokens = append(game.Tokens, token)
-	game.ActivePlayerIndex = (game.ActivePlayerIndex + 1) % len(game.PlayerOrder)
+	game.CurrOrderIdx = (orderID + 1) % len(game.PlayerOrder)
 	return game, nil
 }
 
-func (OOXX) CheckWin(ctx context.Context, game Game) (Game, error) {
+func (OOXX) CheckWin(ctx appengine.Context, game Game) (Game, error) {
 	game.State = Finish
 	return game, nil
 }
