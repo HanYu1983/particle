@@ -59,8 +59,8 @@ var api = api || {};
         return game.players[orderIdx] == player
     }
 
-    function isFirst(game, chessType){
-        return chessType == 0
+    function isFirst(game, { type }){
+        return type == 0
     }
 
     module.context = context
