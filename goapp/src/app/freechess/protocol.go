@@ -12,32 +12,32 @@ import (
 )
 
 type Position struct {
-	X int
-	Y int
+	X int `json:"x"`
+	Y int `json:"y"`
 }
 
 type Token struct {
-	Position Position
-	Type     string
+	Position Position `json:"position"`
+	Type     string   `json:"type"`
 }
 
 const (
-	Pending      = "Pending"
-	WaitOpponent = "WaitOpponent"
-	Play         = "Play"
-	Finish       = "Finish"
+	Pending    = "Pending"
+	WaitPlayer = "WaitPlayer"
+	Play       = "Play"
+	Finish     = "Finish"
 )
 
 type Game struct {
-	ID           string
-	Type         string
-	Tokens       []Token
-	State        string
-	Players      []string
-	PlayerOrder  []int
-	Winner       string
-	CurrOrderIdx int
-	CreateTime   time.Time
+	ID           string    `json:"id"`
+	Type         string    `json:"type"`
+	Tokens       []Token   `json:"tokens"`
+	State        string    `json:"state"`
+	Players      []string  `json:"players"`
+	PlayerOrder  []int     `json:"playerOrder"`
+	Winner       string    `json:"winner"`
+	CurrOrderIdx int       `json:"currOrderIdx"`
+	CreateTime   time.Time `json:"createTime"`
 }
 
 func GetPlayerOrder(ctx appengine.Context, game Game, player string) (int, error) {
@@ -68,11 +68,8 @@ func RemovePlayer(ctx appengine.Context, game Game, player string) (Game, error)
 	}
 	game.Players = append(game.Players[:idx], game.Players[idx+1:]...)
 	game.PlayerOrder = append(game.PlayerOrder[:idx], game.PlayerOrder[idx+1:]...)
-	if len(game.PlayerOrder) == 0 {
-		game.State = Pending
-	}
-	if len(game.PlayerOrder) == 1 {
-		game.State = WaitOpponent
+	if len(game.PlayerOrder) < 2 {
+		game.State = WaitPlayer
 	}
 	return game, nil
 }
@@ -107,8 +104,8 @@ func AppendOrder(ctx appengine.Context, game Game, player string, isFirst bool) 
 	}
 
 	game.PlayerOrder = append(game.PlayerOrder, curr)
-	if len(game.PlayerOrder) == 1 {
-		game.State = WaitOpponent
+	if len(game.PlayerOrder) < 2 {
+		game.State = WaitPlayer
 	}
 	if len(game.PlayerOrder) >= 2 {
 		game.State = Play
@@ -122,13 +119,14 @@ type IGame interface {
 }
 
 type Context struct {
-	Games []Game
+	Games []Game `json:"games"`
 }
 
 func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, error) {
 	var game = Game{
 		ID:          uuid.New().String(),
 		Type:        gameType,
+		State:       Pending,
 		Tokens:      []Token{},
 		Players:     []string{},
 		PlayerOrder: []int{},

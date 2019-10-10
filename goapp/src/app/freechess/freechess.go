@@ -108,8 +108,6 @@ func Serve_JoinGame(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		appCtx.Games[gameIdx] = game
-		appCtx.Games = append(appCtx.Games, game)
-
 		ret = game
 		return SaveContext(ctx, appCtx)
 	})
@@ -142,8 +140,6 @@ func Serve_LeaveGame(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		appCtx.Games[gameIdx] = game
-		appCtx.Games = append(appCtx.Games, game)
-
 		ret = game
 		return SaveContext(ctx, appCtx)
 	})
@@ -197,7 +193,6 @@ func Serve_PutChess(w http.ResponseWriter, r *http.Request) {
 			return errors.New("game type not found " + game.Type)
 		}
 		appCtx.Games[gameIdx] = game
-		appCtx.Games = append(appCtx.Games, game)
 		ret = game
 		return SaveContext(ctx, appCtx)
 	})
