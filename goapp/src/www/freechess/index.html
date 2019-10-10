@@ -8,17 +8,85 @@
 			
 		<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
 		<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
-			
+		
 		<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+		<script type="text/javascript" src="../common/js/lib/underscore/underscore-min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
 		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
+		<script src="js/api.js"></script>
 	</head>
 	<style>
 	body{
 		background-color:#333333;
+	}
+	</style>
+	<script id="tmpl_ooxxContent" type="jquery-x-tmpl">
+		<div class="abs pivot" style="left:50%; top:50%;">
+			<img id="table" class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\table.png">
+		</div>
+		<div id="selection" class="abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\selection.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="xx abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+		</div>
+		<div class="xx abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+		</div>
+		<div class="xx abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+		</div>
+		<div class="xx abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+		</div>
+	</script>
+	<script id="tmpl_singleIconData" type="jquery-x-tmpl">
+		<div class="group singleIconData">
+			<div class="hori">
+				<a buttonid=${buttonId} href="#" class="easyui-linkbutton" style="width:60px;  " data-options="iconCls:'icon-add', disabled:false">生成</a>
+			</div>
+			<div class="hori">
+				<input value=${content} class="easyui-textbox" style="width:130px;" />
+			</div>
+			<div class="hori">
+				<img class="img_token" style="position:relative; top:7px; left:0; height:20px;" src=${tokenPath} />
+			</div>
+		</div>
+	</script>
+	<style>
+	.gameView{
+		width:100%;
+		height:100%;
+		transition: .3s ease-in-out;
+		overflow:hidden;
+	}
+	.gameUILayer{
+		
+	}
+	.scaleBig{
+		transform:scale(1);
+	}
+	.scaleSmall{
+		transform:scale(.5);
 	}
 	</style>
 	<body>
@@ -38,6 +106,7 @@
 						</tr>
 					</thead>
 				</table>
+<!-- 				
 				<table id="tab_inTables" class="easyui-datagrid" style="width:100%;height:160px"
 						title="參與遊戲" rownumbers="true"  singleSelect="true"
 						sortName="itemid" sortOrder="asc">
@@ -50,51 +119,268 @@
 							<th field="watchCount" align="center">觀看人數</th>
 						</tr>
 					</thead>
-				</table>
+				</table> -->
 				<div class="group center vgap_5">
-					<select class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
-						<option value="AL">井字遊戲</option>
-						<option value="AK">五子棋</option>
-						<option value="AZ">中國象棋</option>
+					<select id="combo_type" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
+						<option value="ooxx">井字遊戲</option>
+						<option value="a">五子棋</option>
+						<option value="b">中國象棋</option>
 					</select>
-					<a id="btn_connect" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="disabled:false">創房</a>	
-					<a id="btn_connect" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="disabled:false">進房</a>
-					<a id="btn_connect" class="easyui-linkbutton" onclick="onHtmlClick('onBtnStartServer')"  data-options="disabled:false">退房</a>
+					<a id="btn_createRoom" class="easyui-linkbutton" data-options="disabled:false">創房</a>
 				</div>
 			</div>
-			<div data-options="region:'center'"></div>
+			<div data-options="region:'center'">
+				<div class="group full">
+					<div class="rel full left top">
+						<div id="gameContent1" style="transform-origin: left top; background-color: darkred" class="rel left top gameView" >
+							
+						</div>
+						<div id="gameContent2" style="transform-origin: right top; background-color: darkgreen" class="abs right top gameView" >
+							
+						</div>
+						<div id="gameContent3" style="transform-origin: left bottom; background-color: darkgoldenrod" class="abs left top gameView" >
+							
+						</div>
+						<div id="gameContent4" style="transform-origin: right bottom; background-color: darkblue" class="abs left top gameView" >
+							
+						</div>
+						<div id="bigUIContainer" class="abs" style="padding:5px; left:0; top:0;">
+							<a class="easyui-linkbutton">對奕</a>
+							<a class="easyui-linkbutton">觀戰</a>
+							<a id="btn_scaleSmall" class="easyui-linkbutton">縮小</a>
+						</div>
+					</div>
+					<div class="abs gameUILayer" style="left:0; top:0;">
+						<div class="rel" style="padding:5px; left:0; top:0;">
+							<a class="easyui-linkbutton">對奕</a>
+							<a class="easyui-linkbutton">觀戰</a>
+							<a class="easyui-linkbutton">放大</a>
+						</div>
+					</div>
+					<div class="abs gameUILayer" style="left:50%; top:0;">
+						<div class="rel" style="padding:5px; left:0; top:0;">
+							<a class="easyui-linkbutton">對奕</a>
+							<a class="easyui-linkbutton">觀戰</a>
+							<a class="easyui-linkbutton">放大</a>
+						</div>
+					</div>
+					<div class="abs gameUILayer" style="left:0; top:50%;">
+						<div class="rel" style="padding:5px; left:0; top:0;">
+							<a class="easyui-linkbutton">對奕</a>
+							<a class="easyui-linkbutton">觀戰</a>
+							<a class="easyui-linkbutton">放大</a>
+						</div>
+					</div>
+					<div class="abs gameUILayer" style="left:50%; top:50%;">
+						<div class="rel" style="padding:5px; left:0; top:0;">
+							<a class="easyui-linkbutton">對奕</a>
+							<a class="easyui-linkbutton">觀戰</a>
+							<a class="easyui-linkbutton">放大</a>
+						</div>
+					</div>
+					<!-- </div> -->
+				</div>
+			</div>
 		</div>
+		
 	</body>
 	<script>
 	
-	function addRoom( table, host, type, player, watch){
-		$(table).datagrid('appendRow',{
-			id:player,
-			type:type,
-			host: host,
-			playerCount: player,
-			watchCount:watch
-		});
-	}
-	
-	function addGameRoom( host, type, player, watch){
-		addRoom("#tab_tables", type, player, watch );
-	}	
-	
-	function addMyRoom( host, type, player, watch){
-		addRoom("#tab_inTables", type, player, watch );
-	}
-	
 	$(document).ready( function(){
+
+		function addRoom( table, host, type, player, watch){
+			$(table).datagrid('appendRow',{
+				id:player,
+				type:type,
+				host: host,
+				playerCount: player,
+				watchCount:watch
+			});
+		}
+
+		function refreshList(data){
+			var setData = [];
+			_.each(data, ( g )=>{
+				var host = g.players[0];
+				var type = g.type;
+				var playerCount = g.players.length;
+
+				setData.push({
+					id:0,
+					type:type,
+					host: host,
+					playerCount: playerCount,
+					watchCount:0
+				})
+			});
+
+			$('#tab_tables').datagrid({
+				data: setData
+			});
+		}
 		
+		function addGameRoom( host, type, player, watch){
+			addRoom("#tab_tables", type, player, watch );
+		}	
+		
+		function addMyRoom( host, type, player, watch){
+			addRoom("#tab_inTables", type, player, watch );
+		}
+
+		function setGameToTable(table, game){
+			table.empty();
+			table.append(game);
+		}
+
+		function setOOXX( table ){
+			var dom = $("#tmpl_ooxxContent").tmpl();
+			setGameToTable(table, dom);
+
+			var land = table.find("#table");
+			var selection = table.find("#selection");
+			var oo = table.find(".oo");
+			var xx = table.find(".xx");
+
+			oo.each(function(i, o){
+				$(o).hide();
+			});
+
+			xx.each(function(i, x){
+				$(x).hide();
+			})
+			
+			land.load(function(){
+				var landWidth = land.width();
+				var landHeight = land.height();
+				var gridSize = landWidth / 3;
+
+				land.click(function(e){
+
+					// grid id position
+					var x = Math.floor(e.offsetX / (landWidth / 3));
+					var y = Math.floor(e.offsetY / (landHeight / 3));
+
+					console.log(table.attr("id") + ", click grid:" + x + ":" + y);
+				});
+
+				land.on("mousemove", function(e){
+
+					// grid id position
+					var x = Math.floor(e.offsetX / (landWidth / 3));
+					var y = Math.floor(e.offsetY / (landHeight / 3));
+					
+					// global position 
+					globalX = (x * gridSize) + gridSize / 2 - (landWidth / 2) + parseInt(land.parent().css('left'));
+					globalY = (y * gridSize) + gridSize / 2 - (landHeight / 2) + parseInt(land.parent().css('top'));
+					
+					selection.css({
+						left:globalX + 'px',
+						top:globalY + 'px'
+					});
+				});
+			})
+
+			return {
+				type:'ooxx',
+				update:function( ary_chess ){
+					
+				}
+			}
+		}
+
+		function smallTable(table){
+			bigUIContainer.hide();
+			smallUIContainer.show();
+
+			_.each(ary_table, function(t){
+				t.show();
+			});
+			table.removeClass("scaleBig").addClass("scaleSmall");
+		}
+
+		function bigTable(table){
+			bigUIContainer.show();
+			smallUIContainer.hide();
+
+			_.each(ary_table, function(t){
+				t.hide();
+			});
+			table.show();
+			table.removeClass("scaleSmall").addClass("scaleBig");
+
+			currentBigTable = table;
+		}
+
+		function getGameList( cb = undefined ){
+			api.context((err, data) => {
+				console.log(err, data)
+				if (err) {
+					return;
+				}
+				refreshList(data.games);
+				if(cb) cb();
+			});
+		}
+
+		getGameList();
+
+		var myId = api.getUUID();
+		var ary_table = [$("#gameContent1"),$("#gameContent2"),$("#gameContent3"),$("#gameContent4")];
+		var ary_game = [$("#tmpl_ooxxContent")]
+		var bigUIContainer = $("#bigUIContainer");
+		var smallUIContainer = $(".gameUILayer");
+		var btn_createRoom = $("#btn_createRoom");
+		var combo_type = $("#combo_type");
+
+		bigUIContainer.hide();
+
+		btn_createRoom.click( ()=>{
+			selectType = combo_type.combobox('getValue');
+			api.createGame(selectType, (err, data) => {
+				console.log(data);
+				if (err) {
+					return;
+				}
+				// api.joinGame(game.id, myId, (err, data) => {
+                //     console.log(err, data)
+                //     if (err) {
+                //         return;
+				// 	}
+				// });
+				getGameList();
+			});
+		});
+
+		currentBigTable = undefined;
+
+		_.each(ary_table, function(t){
+			setOOXX(t);
+			smallTable(t);
+		});
+
+		smallUIContainer.each(function(id, dom){
+			$(dom).find("a").eq(2).click(function(){
+				bigTable(ary_table[id])
+			});
+		});
+
+		btn_scaleSmall = $("#btn_scaleSmall");
+		btn_scaleSmall.click(function(e){
+			if( currentBigTable ){
+				smallTable(currentBigTable);
+			}
+		});
+
+		/*
 		for( var i = 0; i < 30; ++i){
 			addGameRoom('vic', 'game', i, 2 );
-		}
+		}*/
 		/*
 		for( var i = 0; i < 4; ++i){
 			addMyRoom('vic', 'game', i, 2 );
 		}
 		*/
+
 	})
 	</script>
 </html>

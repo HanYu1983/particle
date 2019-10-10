@@ -12,6 +12,10 @@ body{
 	width:100%;
 	height:100%;
 }
+.outline_1{
+	outline: 1px;
+	outline-style: solid;
+}
 .focus{
 	border:1px yellow solid;
 }
@@ -21,6 +25,18 @@ body{
 .group{
 	position:relative;
 	width:100%;
+}
+.left{
+	left:0;
+}
+.top{
+	top:0;
+}
+.right{
+	right:0;
+}
+.bottom{
+	bottom:0;
 }
 .center{
 	text-align:center;
@@ -33,4 +49,27 @@ body{
 }
 .hide{
 	display:none;
+}
+.full{
+	width:100%;
+	height:100%;
+}
+.hfull{
+	width:100%;
+}
+.vfull{
+	height:100%;
+}
+.rel{
+	position:relative;
+}
+.abs{
+	position:absolute;
+}
+.fix{
+	position: fixed;
+}
+.pivot{
+	width:0; 
+	height:0;
 }

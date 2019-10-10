@@ -38,9 +38,20 @@ var api = api || {};
     function put(game, player, [x, y], cb){
         return get(`../fn/freechess/game/${game}/player/${player}/chess/${x}/${y}/put`, cb)
     }
+
+    function getUUID(){
+        return 'uuid'
+    }
+
+    function getRandomFourRoom(){
+        return undefined;
+    }
+
     module.context = context
     module.createGame = createGame
     module.joinGame = joinGame
     module.leaveGame = leaveGame
     module.put = put
+    module.getUUID = getUUID
+    module.getRandomFourRoom = getRandomFourRoom
 })(api);
