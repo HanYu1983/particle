@@ -45,7 +45,7 @@ var api = api || {};
     }
 
     function getUUID(){
-        return 'uuid'
+        return uuid();
     }
 
     function getRandomFourRoom(){

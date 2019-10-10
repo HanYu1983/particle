@@ -1,12 +1,14 @@
 <script type="text/javascript" src="js/api.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
 <script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 <script>
+    const player = api.getUUID();
     api.context((err, data) => {
         console.log(err, data)
         if (err) {
             return;
         }
-        api.createGame("ooxx", "han", (err, data, game) => {
+        api.createGame("ooxx", player, (err, data, game) => {
             console.log(err, data)
             if (err) {
                 return;
@@ -16,7 +18,7 @@
                 if (err) {
                     return;
                 }
-                api.put(game.id, "han", [0, 0], (err, data) => {
+                api.put(game.id, player, [0, 0], (err, data) => {
                     console.log(err, data)
                     if (err) {
                         return;
