@@ -2,7 +2,12 @@ package freechess
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"lib/db2"
+	"time"
+
+	"appengine"
 )
 
 type Position struct {
@@ -31,6 +36,7 @@ type Game struct {
 	PlayerOrder       []int
 	Winner            string
 	ActivePlayerIndex int
+	Create            time.Time
 }
 
 func AddPlayer(ctx context.Context, game Game, player string) (Game, error) {
@@ -40,6 +46,35 @@ func AddPlayer(ctx context.Context, game Game, player string) (Game, error) {
 }
 
 func RemovePlayer(ctx context.Context, game Game, player string) (Game, error) {
+	var idx = -1
+	for i := 0; i < len(game.Players); i++ {
+		if game.Players[i] == player {
+			idx = i
+			break
+		}
+	}
+	if idx == -1 {
+		return game, nil
+	}
+	game.Players = append(game.Players[:idx], game.Players[idx+1:]...)
+
+	var idx2 = -1
+	for i := 0; i < len(game.PlayerOrder); i++ {
+		if game.PlayerOrder[i] == idx {
+			idx2 = i
+			break
+		}
+	}
+	if idx2 == -1 {
+		return game, nil
+	}
+	game.PlayerOrder = append(game.PlayerOrder[:idx2], game.PlayerOrder[idx2+1:]...)
+	if len(game.PlayerOrder) == 0 {
+		game.State = Pending
+	}
+	if len(game.PlayerOrder) == 1 {
+		game.State = WaitOpponent
+	}
 	return game, nil
 }
 
@@ -72,6 +107,43 @@ type IGame interface {
 	CheckWin(ctx context.Context, game Game) (Game, error)
 }
 
-type Freechess struct {
+type Context struct {
 	Games []Game
+}
+
+const (
+	contextPath = "root/freechess/context.json"
+	user        = "freechess"
+)
+
+func NewContext() Context {
+	return Context{}
+}
+
+func LoadContext(ctx appengine.Context) (Context, error) {
+	file, err := db2.GetFile(ctx, contextPath)
+	if err != nil {
+		return Context{}, err
+	}
+	if file == nil {
+		return NewContext(), nil
+	}
+	var dc Context
+	err = json.Unmarshal(file.Content, &dc)
+	return dc, err
+}
+
+func SaveContext(ctx appengine.Context, appContext Context) error {
+	// 先將結構平面化成字串
+	code, err := json.Marshal(appContext)
+	if err != nil {
+		return err
+	}
+
+	err = db2.WriteFileWithoutTransaction(ctx, contextPath, code, user, true)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

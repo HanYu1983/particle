@@ -15,6 +15,7 @@ import (
 	"appengine/user"
 
 	"app/contestsys"
+	"app/freechess"
 	"app/uploadcard"
 	"strconv"
 )
@@ -107,6 +108,13 @@ func init() {
 	http.HandleFunc("/fn/tcg/getExtension", uploadcard.Serve_GetExtension)
 	http.HandleFunc("/fn/tcg/addExtensionZip", uploadcard.Serve_AddExtensionZip)
 	http.HandleFunc("/tcgdbfile2/", db2.Handler(appauth.User{Key: "tcg"}))
+
+	// freechess
+	router = mux.NewRouter()
+	router.HandleFunc("/fn/freechess/", freechess.Serve_CreateGame).Methods("GET")
+	http.HandleFunc("/freechessdbfile2/", db2.Handler(appauth.User{Key: "freechess"}))
+	http.Handle("/fn/freechess/", router)
+
 	// Test
 	http.HandleFunc("/fn/auth", welcome)
 
