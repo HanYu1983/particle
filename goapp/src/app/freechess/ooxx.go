@@ -8,6 +8,9 @@ import (
 type OOXX struct{}
 
 func (OOXX) Put(ctx context.Context, game Game, token Token, player string) (Game, error) {
+	if game.State != Play {
+		return game, errors.New("game not start yet")
+	}
 	if game.Players[game.PlayerOrder[game.ActivePlayerIndex]] != player {
 		return game, errors.New("you are not active player")
 	}
