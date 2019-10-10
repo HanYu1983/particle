@@ -1,7 +1,19 @@
 <script type="text/javascript" src="js/api.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
 <script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+<script src="../common/js/admin.js"></script>
+<script>admin.init()</script>
 <script>
+    api.listenGame("abc", {
+        onopen: ()=>{
+            api.sendMessageToGame("abc", "test", ()=>{})
+        },
+        onmessage: msg=>{
+            console.log(msg)
+        }
+    })
     const player = api.getUUID();
     api.context((err, data) => {
         console.log(err, data)

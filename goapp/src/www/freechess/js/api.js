@@ -1,66 +1,101 @@
 var api = api || {};
-(function(module){
+(function (module) {
 
-    function get(url, cb){
+    function get(url, cb) {
         return $.ajax({
             url: url,
             method: "get",
             dataType: "json",
-            success: data=>{
-                if(data.Error){
+            success: data => {
+                if (data.Error) {
                     cb(data.Error)
                 } else {
                     cb(null, data.Info)
                 }
             },
-            error: function(){
+            error: function () {
                 cb(arguments)
             }
         })
     }
 
-    function context(cb){
+    function context(cb) {
         return get(`../fn/freechess`, cb)
     }
 
-    function createGame(type, player, cb){
-        return get(`../fn/freechess/create/${type}/${player}`, (err, data)=>{
-            if(err){
+    function createGame(type, player, cb) {
+        return get(`../fn/freechess/create/${type}/${player}`, (err, data) => {
+            if (err) {
                 return cb(err)
             }
             cb(null, data[0], data[1])
         })
     }
 
-    function joinGame(game, player, cb){
+    function joinGame(game, player, cb) {
         return get(`../fn/freechess/game/${game}/player/${player}/join`, cb)
     }
 
-    function leaveGame(game, player, cb){
+    function leaveGame(game, player, cb) {
         return get(`../fn/freechess/game/${game}/player/${player}/leave`, cb)
     }
 
-    function put(game, player, [x, y], cb){
+    function put(game, player, [x, y], cb) {
         return get(`../fn/freechess/game/${game}/player/${player}/chess/${x}/${y}/put`, cb)
     }
 
-    function getUUID(){
+    function getUUID() {
         return uuid();
     }
 
-    function getRandomFourRoom(ctx){
+    function getRandomFourRoom(ctx) {
         const games = ctx.games.slice()
         games.sort(() => Math.random() - 0.5)
         return games.slice(0, Math.min(4, games.length))
     }
 
-    function isMyTurn(game, player){
+    function isMyTurn(game, player) {
         const orderIdx = game.playerOrder.indexOf(game.currOrderIdx);
         return game.players[orderIdx] == player
     }
 
-    function isFirst(game, { type }){
+    function isFirst(game, { type }) {
         return type == 0
+    }
+
+    function listenGame(game, {onopen, onmessage}) {
+        // 聽自己的信箱
+        var address = `app/freechess/${game}`
+        var database = firebase.database();
+        var channelRef = database.ref(address);
+
+        setTimeout(function () {
+            onopen()
+        }, 0)
+
+        channelRef.on('value', function (snapshot) {
+            if (snapshot == null) {
+                return
+            }
+            var value = snapshot.val()
+            if (value == null) {
+                return
+            }
+            onmessage(value)
+        });
+    }
+
+
+    /**
+    傳送訊息
+    */
+    function sendMessageToGame(game, msg, cb) {
+        // 送到指定的信箱
+        var address = `app/freechess/${game}`
+        var database = firebase.database();
+        var testRef = database.ref(address);
+        testRef.set(msg)
+        cb(null)
     }
 
     module.context = context
@@ -72,4 +107,6 @@ var api = api || {};
     module.getRandomFourRoom = getRandomFourRoom
     module.isMyTurn = isMyTurn
     module.isFirst = isFirst
+    module.listenGame = listenGame
+    module.sendMessageToGame = sendMessageToGame
 })(api);
