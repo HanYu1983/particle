@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"lib/db2"
+	"strconv"
 	"time"
-
-	uuid "github.com/google/uuid"
 
 	"appengine"
 )
@@ -120,11 +119,12 @@ type IGame interface {
 
 type Context struct {
 	Games []Game `json:"games"`
+	SeqId int    `json:"seqId"`
 }
 
 func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, int, Game, error) {
 	var game = Game{
-		ID:          uuid.New().String(),
+		ID:          strconv.Itoa(app.SeqId),
 		Type:        gameType,
 		State:       Pending,
 		Tokens:      []Token{},
@@ -134,6 +134,7 @@ func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, i
 	}
 	var idx = len(app.Games)
 	app.Games = append(app.Games, game)
+	app.SeqId = app.SeqId + 1
 	return app, idx, game, nil
 }
 
