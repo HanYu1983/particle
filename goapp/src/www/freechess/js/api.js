@@ -49,6 +49,7 @@ var api = api || {};
     }
 
     function getRandomFourRoom(ctx) {
+        // TODO 自己進入的優先
         const games = ctx.games.slice()
         games.sort(() => Math.random() - 0.5)
         return games.slice(0, Math.min(4, games.length))
@@ -65,7 +66,7 @@ var api = api || {};
 
     function listenGame(game, {onopen, onmessage}) {
         // 聽自己的信箱
-        var address = `app/freechess/${game}`
+        var address = `app/freechess/game/${game}`
         var database = firebase.database();
         var channelRef = database.ref(address);
 
@@ -91,11 +92,15 @@ var api = api || {};
     */
     function sendMessageToGame(game, msg, cb) {
         // 送到指定的信箱
-        var address = `app/freechess/${game}`
+        var address = `app/freechess/game/${game}`
         var database = firebase.database();
         var testRef = database.ref(address);
         testRef.set(msg)
         cb(null)
+    }
+
+    function sendHeartbeatToGame(game, cb){
+        sendMessageToGame(game, JSON.stringify({type:"heartbeat", seq: 0}), cb)
     }
 
     module.context = context
