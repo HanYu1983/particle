@@ -50,7 +50,7 @@ var api = api || {};
 
     /**
      * 取得隨機四間房，以自己有進的房優先
-     * @param {*} ctx 
+     * @param {所有資料} ctx 
      */
     function getRandomFourRoom(ctx) {
         const games = ctx.games.slice()
