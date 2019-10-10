@@ -28,35 +28,35 @@
 		<div class="abs pivot" style="left:50%; top:50%;">
 			<img id="table" class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\table.png">
 		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="oo abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+		</div>
+		<div class="xx abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+		</div>
+		<div class="xx abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+		</div>
+		<div class="xx abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+		</div>
+		<div class="xx abs pivot lock" >
+			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+		</div>
 		<div id="selection" class="abs pivot lock" >
 			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\selection.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="xx abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
-		</div>
-		<div class="xx abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
-		</div>
-		<div class="xx abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
-		</div>
-		<div class="xx abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
 		</div>
 	</script>
 	<script id="tmpl_singleIconData" type="jquery-x-tmpl">
@@ -99,7 +99,7 @@
 					<thead>
 						<tr>
 							<th field="id" align="center" sortable="true">ID</th>
-							<th field="host" align="center" sortable="true">房主</th>
+							<!-- <th field="host" align="center" sortable="true">房主</th> -->
 							<th field="type" align="center">遊戲類型</th>
 							<th field="playerCount" align="center" sortable="true">遊玩人數</th>
 							<th field="watchCount" align="center">觀看人數</th>
@@ -150,28 +150,28 @@
 							<a id="btn_scaleSmall" class="easyui-linkbutton">縮小</a>
 						</div>
 					</div>
-					<div class="abs gameUILayer" style="left:0; top:0;">
+					<div tableSamllUiID="1" class="abs gameUILayer" style="left:0; top:0;">
 						<div class="rel" style="padding:5px; left:0; top:0;">
 							<a class="easyui-linkbutton">對奕</a>
 							<a class="easyui-linkbutton">觀戰</a>
 							<a class="easyui-linkbutton">放大</a>
 						</div>
 					</div>
-					<div class="abs gameUILayer" style="left:50%; top:0;">
+					<div tableSamllUiID="2" class="abs gameUILayer" style="left:50%; top:0;">
 						<div class="rel" style="padding:5px; left:0; top:0;">
 							<a class="easyui-linkbutton">對奕</a>
 							<a class="easyui-linkbutton">觀戰</a>
 							<a class="easyui-linkbutton">放大</a>
 						</div>
 					</div>
-					<div class="abs gameUILayer" style="left:0; top:50%;">
+					<div tableSamllUiID="3" class="abs gameUILayer" style="left:0; top:50%;">
 						<div class="rel" style="padding:5px; left:0; top:0;">
 							<a class="easyui-linkbutton">對奕</a>
 							<a class="easyui-linkbutton">觀戰</a>
 							<a class="easyui-linkbutton">放大</a>
 						</div>
 					</div>
-					<div class="abs gameUILayer" style="left:50%; top:50%;">
+					<div tableSamllUiID="4" class="abs gameUILayer" style="left:50%; top:50%;">
 						<div class="rel" style="padding:5px; left:0; top:0;">
 							<a class="easyui-linkbutton">對奕</a>
 							<a class="easyui-linkbutton">觀戰</a>
@@ -188,27 +188,25 @@
 	
 	$(document).ready( function(){
 
-		function addRoom( table, host, type, player, watch){
+		function addRoom( table, type, player, watch){
 			$(table).datagrid('appendRow',{
 				id:player,
 				type:type,
-				host: host,
 				playerCount: player,
 				watchCount:watch
 			});
 		}
 
 		function refreshList(data){
+			log("更新列表", data);
 			var setData = [];
 			_.each(data, ( g )=>{
-				var host = g.players[0];
 				var type = g.type;
 				var playerCount = g.players.length;
 
 				setData.push({
 					id:0,
 					type:type,
-					host: host,
 					playerCount: playerCount,
 					watchCount:0
 				})
@@ -219,20 +217,12 @@
 			});
 		}
 		
-		function addGameRoom( host, type, player, watch){
-			addRoom("#tab_tables", type, player, watch );
-		}	
-		
-		function addMyRoom( host, type, player, watch){
-			addRoom("#tab_inTables", type, player, watch );
-		}
-
 		function setGameToTable(table, game){
 			table.empty();
 			table.append(game);
 		}
 
-		function setOOXX( table ){
+		function setOOXX( table, game ){
 			var dom = $("#tmpl_ooxxContent").tmpl();
 			setGameToTable(table, dom);
 
@@ -241,18 +231,58 @@
 			var oo = table.find(".oo");
 			var xx = table.find(".xx");
 
-			oo.each(function(i, o){
-				$(o).hide();
-			});
+			hideAllChess();
 
-			xx.each(function(i, x){
-				$(x).hide();
-			})
-			
+			function hideAllChess(){
+				oo.each(function(i, o){
+					$(o).hide();
+				});
+
+				xx.each(function(i, x){
+					$(x).hide();
+				})
+			}
+
 			land.load(function(){
+				function putChess(chess, x, y){
+					// global position 
+					var globalX = (x * gridSize) + gridSize / 2 - (landWidth / 2) + parseInt(land.parent().css('left'));
+					var globalY = (y * gridSize) + gridSize / 2 - (landHeight / 2) + parseInt(land.parent().css('top'));
+					chess.css({
+						left:globalX + 'px',
+						top:globalY + 'px'
+					});
+				}
+
+				function updateChess(tokens){
+					log("更新盤面", tokens);
+
+					hideAllChess();
+
+					var oid = 0;
+					var xid = 0;
+					_.each(tokens, (t)=>{
+						isFirst = api.isFirst(game, t);
+						var x = t.position.x;
+						var y = t.position.y;
+						if(isFirst){
+							ochess = oo.eq(oid);
+							ochess.show();
+							putChess(ochess, x, y);
+							oid++;
+						}else{
+							xchess = xx.eq(oid);
+							xchess.show();
+							putChess(xchess, x, y);
+							xid++;
+						}
+					});
+				}
 				var landWidth = land.width();
 				var landHeight = land.height();
 				var gridSize = landWidth / 3;
+
+				updateChess(game.tokens);
 
 				land.click(function(e){
 
@@ -260,7 +290,15 @@
 					var x = Math.floor(e.offsetX / (landWidth / 3));
 					var y = Math.floor(e.offsetY / (landHeight / 3));
 
-					console.log(table.attr("id") + ", click grid:" + x + ":" + y);
+					var roomId = table.attr("roomId");
+					api.put(roomId, myId, [x, y], (err, data) => {
+						console.log(err);
+						if (err) {
+							return;
+						}
+						log("下子", data);
+						updateChess(data.tokens);
+					});
 				});
 
 				land.on("mousemove", function(e){
@@ -270,20 +308,20 @@
 					var y = Math.floor(e.offsetY / (landHeight / 3));
 					
 					// global position 
-					globalX = (x * gridSize) + gridSize / 2 - (landWidth / 2) + parseInt(land.parent().css('left'));
-					globalY = (y * gridSize) + gridSize / 2 - (landHeight / 2) + parseInt(land.parent().css('top'));
-					
-					selection.css({
-						left:globalX + 'px',
-						top:globalY + 'px'
-					});
+					putChess(selection, x, y);
 				});
 			})
 
 			return {
 				type:'ooxx',
-				update:function( ary_chess ){
-					
+				update:function( data ){
+					log("更新遊戲", data);
+					updateChess(data.tokens);
+				}, 
+				clear:function(){
+					land.off("mousemove");
+					land.off("click");
+					table.empty();
 				}
 			}
 		}
@@ -322,7 +360,38 @@
 			});
 		}
 
+		function getFourGameList(){
+			var gameObj = {};
+			api.context((err, data) => {
+				console.log(err, data)
+				if (err) {
+					return;
+				}
+				if(data.games){
+					log("更新四間房", data.games);
+					var tid = 0;
+					_.each(data.games, (game)=>{
+						if(tid < 4){
+							table = ary_table[tid];
+							table.attr('roomId', game.id);
+							gameObj[game.id] = setOOXX(table, game);
+							smallTable(table);
+						}
+						tid++;
+					});
+				}
+			});
+			return gameObj;
+		}
+
+		function log(title, msg){
+			console.log("====[" + title + "]====")
+			console.log(msg);
+			console.log("====[end]====")
+		}
+
 		getGameList();
+		gameObj = getFourGameList();
 
 		var myId = api.getUUID();
 		var ary_table = [$("#gameContent1"),$("#gameContent2"),$("#gameContent3"),$("#gameContent4")];
@@ -336,29 +405,40 @@
 
 		btn_createRoom.click( ()=>{
 			selectType = combo_type.combobox('getValue');
-			api.createGame(selectType, (err, data) => {
-				console.log(data);
+			api.createGame(selectType, myId, (err, data, room) => {
+				log("創建方間", room);
 				if (err) {
 					return;
 				}
-				// api.joinGame(game.id, myId, (err, data) => {
-                //     console.log(err, data)
-                //     if (err) {
-                //         return;
-				// 	}
-				// });
-				getGameList();
+				refreshList(data.games);
+
+				if(data.games.length >= 4){
+					gameObj = getFourGameList();
+				}
 			});
 		});
 
 		currentBigTable = undefined;
 
-		_.each(ary_table, function(t){
-			setOOXX(t);
-			smallTable(t);
-		});
-
 		smallUIContainer.each(function(id, dom){
+
+			// join and play
+			$(dom).find("a").eq(0).click(function(e){
+				
+				var ui = $(e.currentTarget);
+				var tableSamllUiID = ui.parent().parent().attr("tableSamllUiID");
+				var table = $("#gameContent" + tableSamllUiID);
+				var tableId = table.attr('roomId');
+				api.joinGame(tableId, myId, (err, data) => {
+					log("加入房", data);
+					if (err) {
+						return;
+					}
+					getGameList();
+				});
+			});
+
+			// scale up
 			$(dom).find("a").eq(2).click(function(){
 				bigTable(ary_table[id])
 			});
@@ -370,17 +450,6 @@
 				smallTable(currentBigTable);
 			}
 		});
-
-		/*
-		for( var i = 0; i < 30; ++i){
-			addGameRoom('vic', 'game', i, 2 );
-		}*/
-		/*
-		for( var i = 0; i < 4; ++i){
-			addMyRoom('vic', 'game', i, 2 );
-		}
-		*/
-
 	})
 	</script>
 </html>
