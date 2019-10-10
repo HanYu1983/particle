@@ -48,6 +48,10 @@ var api = api || {};
         return uuid();
     }
 
+    /**
+     * 取得隨機四間房，以自己有進的房優先
+     * @param {所有資料} ctx 
+     */
     function getRandomFourRoom(ctx) {
         // TODO 自己進入的優先
         const games = ctx.games.slice()
@@ -103,6 +107,20 @@ var api = api || {};
         sendMessageToGame(game, JSON.stringify({type:"heartbeat", seq: 0}), cb)
     }
 
+    /**
+     * 是否已進指定房間
+     */
+    function canEnterRoom(){
+
+    }
+
+    /**
+     * 是否已觀戰指定房間
+     */
+    function canWatchRoom(){
+
+    }
+    
     module.context = context
     module.createGame = createGame
     module.joinGame = joinGame
@@ -114,4 +132,6 @@ var api = api || {};
     module.isFirst = isFirst
     module.listenGame = listenGame
     module.sendMessageToGame = sendMessageToGame
+    module.canEnterRoom = canEnterRoom
+    module.canWatchRoom = canWatchRoom
 })(api);
