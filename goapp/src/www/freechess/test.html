@@ -20,14 +20,14 @@
                 if (err) {
                     return;
                 }
-                console.log("isFirst ", api.isFirst(game, player))
+                console.log("isFirst ", api.isFirst(game, "0"))
                 console.log("isMyTurn ", api.isMyTurn(game, player))
                 api.put(game.id, player, [0, 0], (err, game) => {
                     console.log(err, game)
                     if (err) {
                         return;
                     }
-                    console.log("isFirst ", api.isFirst(game, player))
+                    console.log("isFirst ", api.isFirst(game, "0"))
                     console.log("isMyTurn ", api.isMyTurn(game, player))
                     api.put(game.id, "vic", [1, 1], (err, game) => {
                         console.log(err, game)
