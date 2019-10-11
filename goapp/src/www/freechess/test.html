@@ -39,6 +39,12 @@
                     })
                 })
 
+            setTimeout(()=>{
+                console.log("leave")
+                api.quickLeave(game.id, "vic", (err, info)=>{
+                    console.log(err, info)
+                })
+            }, 1000*20)
             /*
             api.joinGame(game.id, "vic", (err, game) => {
                 console.log(err, game)
