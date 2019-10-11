@@ -14,7 +14,7 @@
         if (err) {
             return;
         }
-        console.log(api.getRandomFourRoom(data))
+        console.log(api.getRandomFourRoom(data, "han"))
 
         api.createGame("ooxx", player, (err, data, game) => {
             console.log(err, data)

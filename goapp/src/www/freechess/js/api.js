@@ -213,11 +213,23 @@ var api = api || {};
      * 取得隨機四間房，以自己有進的房優先
      * @param {所有資料} ctx 
      */
-    function getRandomFourRoom(ctx) {
-        // TODO 自己進入的優先
-        const games = ctx.games.slice()
-        games.sort(() => Math.random() - 0.5)
-        return games.slice(0, Math.min(4, games.length))
+    function getRandomFourRoom(ctx, player) {
+        const isEnter = g=>{
+            return g.players.indexOf(player) != -1 || g.visitors.indexOf(player) != -1
+        }
+        const not = fn =>{
+            return g=>{
+                return !fn(g)
+            }
+        }
+        const lockGames = ctx.games.filter(isEnter)
+        if(lockGames.length >= 4){
+            return lockGames
+        }
+        const remainSize = 4 - lockGames.length;
+        const unlockGames = ctx.games.filter(not(isEnter))
+        unlockGames.sort(() => Math.random() - 0.5)
+        return [...lockGames,  ...unlockGames.slice(0, Math.min(remainSize, unlockGames.length))]
     }
 
     function isMyTurn(game, player) {
@@ -235,7 +247,10 @@ var api = api || {};
     /**
      * 是否已進指定房間
      */
-    function canEnterRoom(game) {
+    function canEnterRoom(game, player) {
+        if(game.players.indexOf(player) != -1){
+            return false;
+        }
         return game.players.length < 2
     }
     /**

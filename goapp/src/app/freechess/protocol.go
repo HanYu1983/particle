@@ -148,6 +148,7 @@ func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, i
 		State:       Pending,
 		Tokens:      []Token{},
 		Players:     []string{},
+		Visitors:    []string{},
 		PlayerOrder: []int{},
 		CreateTime:  time.Now(),
 	}
@@ -173,7 +174,9 @@ const (
 )
 
 func NewContext() Context {
-	return Context{}
+	return Context{
+		Games: []Game{},
+	}
 }
 
 func LoadContext(ctx appengine.Context) (Context, error) {
