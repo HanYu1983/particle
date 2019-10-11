@@ -1,0 +1,66 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<h1>
+		admin
+		</h1>
+		mkfile
+		<form action={{.Path}} method="post">
+			position:<input name="Parent"></input><br>
+			name:<input name="Name"></input><br>
+			content:<input name="Content"></input><br>
+			override:<input type="CheckBox" name="Override"></input><br>
+			<button>go</button>
+		</form>
+		
+		<br>
+		
+		mkdir
+		<form action={{.Path}} method="post">
+			position:<input name="Parent"></input><br>
+			name:<input name="Name"></input><br>
+			<button>go</button>
+		</form>
+		
+		<br>
+		
+		delete
+		<form action={{.Path}} method="post">
+			<input type=hidden name="Delete">
+			key:<input name="Key"></input><br>
+			<button>go</button>
+		</form>
+		
+		<h1>
+		particle
+		</h1>
+		
+		mkfile
+		<form action=/dbfile/particle/ method="post">
+			position:<input name="Parent"></input><br>
+			name:<input name="Name"></input><br>
+			content:<input name="Content"></input><br>
+			override:<input type="CheckBox" name="Override"></input><br>
+			<button>go</button>
+		</form>
+		
+		<br>
+		
+		mkdir
+		<form action=/dbfile/particle/ method="post">
+			position:<input name="Parent"></input><br>
+			name:<input name="Name"></input><br>
+			<button>go</button>
+		</form>
+		
+		<br>
+		
+		delete
+		<form action=/dbfile/particle/ method="post">
+			<input type=hidden name="Delete">
+			key:<input name="Key"></input><br>
+			<button>go</button>
+		</form>
+	</body>
+</html>

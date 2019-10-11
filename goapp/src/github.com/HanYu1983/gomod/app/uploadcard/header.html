@@ -1,0 +1,13 @@
+{{define "header"}}
+<div>
+    <a href="extensionZipList" class="easyui-linkbutton" data-options="iconCls:'icon-search'">上傳檔案列表</a>
+    <a href="info" class="easyui-linkbutton">上傳說明</a>
+    <form enctype="multipart/form-data" action="./addExtensionZip" method="POST">
+        <input name="file" type="file" class="easyui-linkbutton"/><br />
+        <input type="submit" value="上傳"/>
+    </form>
+    <a href="../../card/manager_deck.html" class="easyui-linkbutton">組牌去</a>
+    <a href="../../card/index.html" class="easyui-linkbutton">去打牌去</a>
+    <a href="../../contestsys/index.html" class="easyui-linkbutton">比賽去</a>
+</div>
+{{end}}
