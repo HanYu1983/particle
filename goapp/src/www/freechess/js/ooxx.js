@@ -1,7 +1,8 @@
 var view = view || {};
 view.ooxx = view.ooxx || {};
 (function(module){
-    function setGame( table, game ){
+    function setGame( table, game, myId ){
+        
         var dom = $("#tmpl_ooxxContent").tmpl();
         table.empty();
 		table.append(dom);
@@ -28,7 +29,7 @@ view.ooxx = view.ooxx || {};
                 // global position 
                 var globalX = (x * gridSize) + gridSize / 2 - (landWidth / 2) + parseInt(land.parent().css('left'));
                 var globalY = (y * gridSize) + gridSize / 2 - (landHeight / 2) + parseInt(land.parent().css('top'));
-                
+
                 chess.css({
                     left:globalX + 'px',
                     top:globalY + 'px'
