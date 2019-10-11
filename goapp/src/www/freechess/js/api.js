@@ -32,11 +32,11 @@ var api = api || {};
                     cb(null, data.Info)
                 }
             },
-            error: function () {
+            error: function (xhr, textStatus, err) {
                 const ignore = serviceInfo.callbacks.filter(cb=>{
-                    cb(arguments)
+                    cb(err)
                 })
-                cb(arguments)
+                cb(err)
             }
         })
     }
