@@ -16,9 +16,6 @@ body{
 	outline: 1px;
 	outline-style: solid;
 }
-.focus{
-	border:1px yellow solid;
-}
 .lock{
 	pointer-events:none;
 }
