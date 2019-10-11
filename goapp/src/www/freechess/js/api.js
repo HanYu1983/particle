@@ -343,7 +343,7 @@ var api = api || {};
                 return cb(err)
             }
             cb(null, info)
-            sendMessageToGame(gameID, { type: "update", position: [x, y], sender: player, gameID: gameID })
+            sendMessageToGame(gameID, { type: "update", game: info, sender: player, gameID: gameID })
         })
     }
 
