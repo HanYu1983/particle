@@ -91,8 +91,7 @@
 	}
 	</style>
 	<body>
-
-		<div class="easyui-panel group center" style="padding:5px;">
+		<div class="easyui-panel group center left top" style="padding:5px;">
 			<select id="combo_type" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
 				<option value="ooxx">井字遊戲</option>
 				<option value="a">五子棋</option>
@@ -101,8 +100,6 @@
 			<a id="btn_createRoom" class="easyui-linkbutton" data-options="disabled:false">創房</a>
 			<a id="btn_refreshRoom" class="easyui-linkbutton" data-options="disabled:false">隨機房</a>
 		</div>	
-		
-		
 		<div class="group full">
 			<div class="rel full left top">
 				<div id="gameContent1" style="transform-origin: left top; background-color: darkred" class="rel left top gameView" >
@@ -152,83 +149,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div id="mc_layoutMain" class="easyui-layout" style="position:fixed; right:0; top:0; width:100%;height:100%;">
-			<div data-options="region:'east',split:false" title="West" style="width:350px;">
-				<table id="tab_tables" class="easyui-datagrid" style="width:100%;height:300px"
-						title="全部遊戲" singleSelect="true"
-						singleSort="true" remoteSort="false"
-						rownumbers="true" pagination="false">
-					<thead>
-						<tr>
-							<th field="id" align="center" sortable="true">ID</th>
-							
-							<th field="type" align="center">遊戲類型</th>
-							<th field="playerCount" align="center" sortable="true">遊玩人數</th>
-							<th field="watchCount" align="center">觀看人數</th>
-						</tr>
-					</thead>
-				</table>
-				<div class="group center vgap_5">
-					<select id="combo_type" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
-						<option value="ooxx">井字遊戲</option>
-						<option value="a">五子棋</option>
-						<option value="b">中國象棋</option>
-					</select>
-					<a id="btn_createRoom" class="easyui-linkbutton" data-options="disabled:false">創房</a>
-				</div>
-			</div>
-			<div data-options="region:'center'">
-				<div class="group full">
-					<div class="rel full left top">
-						<div id="gameContent1" style="transform-origin: left top; background-color: darkred" class="rel left top gameView" >
-							
-						</div>
-						<div id="gameContent2" style="transform-origin: right top; background-color: darkgreen" class="abs right top gameView" >
-							
-						</div>
-						<div id="gameContent3" style="transform-origin: left bottom; background-color: darkgoldenrod" class="abs left top gameView" >
-							
-						</div>
-						<div id="gameContent4" style="transform-origin: right bottom; background-color: darkblue" class="abs left top gameView" >
-							
-						</div>
-						<div id="bigUIContainer" class="abs" style="padding:5px; left:0; top:0;">
-							<a class="easyui-linkbutton">對奕</a>
-							<a class="easyui-linkbutton">觀戰</a>
-							<a id="btn_scaleSmall" class="easyui-linkbutton">縮小</a>
-						</div>
-					</div>
-					<div tableSamllUiID="1" class="abs gameUILayer" style="left:0; top:0;">
-						<div class="rel" style="padding:5px; left:0; top:0;">
-							<a class="easyui-linkbutton">對奕</a>
-							<a class="easyui-linkbutton">觀戰</a>
-							<a class="easyui-linkbutton">放大</a>
-						</div>
-					</div>
-					<div tableSamllUiID="2" class="abs gameUILayer" style="left:50%; top:0;">
-						<div class="rel" style="padding:5px; left:0; top:0;">
-							<a class="easyui-linkbutton">對奕</a>
-							<a class="easyui-linkbutton">觀戰</a>
-							<a class="easyui-linkbutton">放大</a>
-						</div>
-					</div>
-					<div tableSamllUiID="3" class="abs gameUILayer" style="left:0; top:50%;">
-						<div class="rel" style="padding:5px; left:0; top:0;">
-							<a class="easyui-linkbutton">對奕</a>
-							<a class="easyui-linkbutton">觀戰</a>
-							<a class="easyui-linkbutton">放大</a>
-						</div>
-					</div>
-					<div tableSamllUiID="4" class="abs gameUILayer" style="left:50%; top:50%;">
-						<div class="rel" style="padding:5px; left:0; top:0;">
-							<a class="easyui-linkbutton">對奕</a>
-							<a class="easyui-linkbutton">觀戰</a>
-							<a class="easyui-linkbutton">放大</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div> -->
 		
 	</body>
 	<script>
