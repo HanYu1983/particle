@@ -5,12 +5,27 @@ var api = api || {};
     // GAE Service
     /////////////////////////////////////////////
 
+    const serviceInfo = {
+        callbacks: []
+    }
+
+    function insertServiceCallback(cb){
+        serviceInfo.callbacks.push(cb)
+    }
+
     function get(url, cb) {
         return $.ajax({
             url: url,
             method: "get",
             dataType: "json",
             success: data => {
+                const ignore = serviceInfo.callbacks.filter(cb=>{
+                    if (data.Error) {
+                        cb(data.Error)
+                    } else {
+                        cb(null, data.Info)
+                    }
+                })
                 if (data.Error) {
                     cb(data.Error)
                 } else {
@@ -18,6 +33,9 @@ var api = api || {};
                 }
             },
             error: function () {
+                const ignore = serviceInfo.callbacks.filter(cb=>{
+                    cb(arguments)
+                })
                 cb(arguments)
             }
         })
@@ -376,4 +394,5 @@ var api = api || {};
     module.quickPut = quickPut
     module.getMyId = getMyId
     module.getGameById = getGameById
+    module.insertServiceCallback = insertServiceCallback
 })(api);

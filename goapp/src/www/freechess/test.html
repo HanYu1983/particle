@@ -6,6 +6,10 @@
 <script src="../common/js/admin.js"></script>
 <script>admin.init()</script>
 <script>
+    api.insertServiceCallback((err, data)=>{
+        console.log("AOP ", err, data)
+    })
+
     const player = api.getMyId();
     console.log("player ", player)
     api.context((err, data) => {
