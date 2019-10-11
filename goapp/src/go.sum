@@ -1,5 +1,9 @@
 github.com/HanYu1983/gomod v0.0.0-20191011170131-b9925e264847 h1:AakN18IME+Y/YA1WOF0JnT2/teaJS0vP7V40pKy6dG4=
 github.com/HanYu1983/gomod v0.0.0-20191011170131-b9925e264847/go.mod h1:8Ch2HeL2C+PnKi2azKJXfo9Opcc4ZmzgQ4w0lzbmtPc=
+github.com/HanYu1983/gomod v0.0.0-20191011183313-e8e5914b6553 h1:/BOboy4pKrrGDLatQPZcwkUrTtBkpVnD5Yiq5/HEDV8=
+github.com/HanYu1983/gomod v0.0.0-20191011183313-e8e5914b6553/go.mod h1:8Ch2HeL2C+PnKi2azKJXfo9Opcc4ZmzgQ4w0lzbmtPc=
+github.com/HanYu1983/gomod v0.0.0-20191011183526-2fe9fe4fd1ba h1:ASNyZlx25p+0CXXPnrJkfMhajw1I6HpwQn1x7se1PNI=
+github.com/HanYu1983/gomod v0.0.0-20191011183526-2fe9fe4fd1ba/go.mod h1:8Ch2HeL2C+PnKi2azKJXfo9Opcc4ZmzgQ4w0lzbmtPc=
 github.com/golang/protobuf v1.3.1 h1:YF8+flBXS5eO826T4nzqPrxfhQThhXl0YzfuUPu4SBg=
 github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=

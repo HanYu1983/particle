@@ -16,7 +16,7 @@ import (
 )
 
 func OutputModel(w http.ResponseWriter, r *http.Request, page string, model interface{}) error {
-	t, err := template.ParseFiles(page, "github.com/HanYu1983/gomod/app/uploadcard/header.html", "github.com/HanYu1983/gomod/app/uploadcard/htmlHeader.html")
+	t, err := template.ParseFiles(page, "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func OutputModel(w http.ResponseWriter, r *http.Request, page string, model inte
 }
 
 func OutputMessage(w http.ResponseWriter, message string) error {
-	t, err := template.ParseFiles("github.com/HanYu1983/gomod/app/uploadcard/message.html", "github.com/HanYu1983/gomod/app/uploadcard/header.html", "github.com/HanYu1983/gomod/app/uploadcard/htmlHeader.html")
+	t, err := template.ParseFiles("app/uploadcard/message.html", "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
 	if err != nil {
 		return err
 	}

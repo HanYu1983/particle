@@ -85,7 +85,7 @@ func Serve_ParseResult(w http.ResponseWriter, r *http.Request) {
 		"infos":             manifast.CardInfo,
 	}
 
-	t, err := template.ParseFiles("github.com/HanYu1983/gomod/app/uploadcard/parseResult.html", "github.com/HanYu1983/gomod/app/uploadcard/header.html", "github.com/HanYu1983/gomod/app/uploadcard/htmlHeader.html")
+	t, err := template.ParseFiles("app/uploadcard/parseResult.html", "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
 	tool.Assert(tool.IfError(err))
 	err = t.Execute(w, model)
 	tool.Assert(tool.IfError(err))

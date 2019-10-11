@@ -51,7 +51,7 @@ func Serve_ExtensionZipList(w http.ResponseWriter, r *http.Request) {
 		"extensionZips": names,
 	}
 
-	t, err := template.ParseFiles("github.com/HanYu1983/gomod/app/uploadcard/extensionZipList.html", "github.com/HanYu1983/gomod/app/uploadcard/header.html", "github.com/HanYu1983/gomod/app/uploadcard/htmlHeader.html")
+	t, err := template.ParseFiles("app/uploadcard/extensionZipList.html", "app/uploadcard/header.html", "app/uploadcard/htmlHeader.html")
 	if err != nil {
 		tool.Assert(tool.IfError(err))
 	}

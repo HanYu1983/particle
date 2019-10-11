@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    {{template "htmlHeader"}}
+</head>
+
+<body>
+    <div class="easyui-layout" style="width:100%;height:100%;">
+        <div data-options="region:'west',title:'',split:true" style="width:200px;">
+            {{template "header" .}}
+        </div>
+        <div data-options="region:'center',title:''" style="padding:5px;">
+            <table border="1" style="border: 1px solid;">
+                <thead>
+                    <th>檔名</th>
+                    <th>大小</th>
+                    <th>狀態</th>
+                    <th>功能</th>
+                    <th>刪除</th>
+                </thead>
+                <tbody>
+                    {{range $i, $idPair := .extensionZips}}
+                    {{$id := index $idPair 0}}
+                    {{$fileName := index $idPair 1}}
+                    {{$alreadyExtract := index $idPair 2}}
+                    {{$fileSize := index $idPair 3}}
+                    <tr>
+                        <td>
+                            {{$fileName}}
+                        </td>
+                        <td>
+                            {{$fileSize}} KB
+                        </td>
+                        <td>
+                            {{if $alreadyExtract}}
+                            已導入
+                            {{else}}
+                            <form action="./extractExtensionZip" method="POST">
+                                <input type="hidden" name="id" value={{ $id }}>
+                                <input type="submit" value="導入">
+                            </form>
+                            {{end}}
+                        </td>
+                        <td>
+                            <a href={{(print "/tcgdbfile2/root/tcg/extensionZip/" $id "/" $fileName)}}
+                                class="easyui-linkbutton">下載</a>
+                            <a href={{(print "parseResult?id=" $id)}} class="easyui-linkButton">詳細</a>
+                        </td>
+                        <td>
+                            <form method="POST" action="./deleteExtensionZip">
+                                <input type="hidden" name="id" value={{ $id }}>
+                                <input name="zipName" autocomplete="off" placeholder="請輸入檔案名稱來刪除">
+                                <input type="submit" value={{print "刪除" $id}}>
+                            </form>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
