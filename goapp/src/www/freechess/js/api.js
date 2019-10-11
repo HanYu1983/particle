@@ -209,6 +209,24 @@ var api = api || {};
         return uuid();
     }
 
+    let myId = null
+
+    function getMyId(){
+        if(myId == null){
+            if(localStorage){
+                if(localStorage.getItem("myId") != null){
+                    myId = localStorage.getItem("myId")
+                    return myId
+                }
+                myId = getUUID();
+                localStorage.setItem("myId", myId)
+            } else {
+                myId = getUUID();
+            }
+        }
+        return myId
+    }
+
     /**
      * 取得隨機四間房，以自己有進的房優先
      * @param {所有資料} ctx 
@@ -351,4 +369,5 @@ var api = api || {};
     module.quickLeave = quickLeave
     module.quickPut = quickPut
     module.getRoomById = getRoomById
+    module.getMyId = getMyId
 })(api);
