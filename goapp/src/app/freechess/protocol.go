@@ -33,6 +33,7 @@ type Game struct {
 	Tokens       []Token   `json:"tokens"`
 	State        string    `json:"state"`
 	Players      []string  `json:"players"`
+	Visitors     []string  `json:"visitors"`
 	PlayerOrder  []int     `json:"playerOrder"`
 	Winner       string    `json:"winner"`
 	CurrOrderIdx int       `json:"currOrderIdx"`
@@ -54,6 +55,12 @@ func AddPlayer(ctx appengine.Context, game Game, player string) (Game, error) {
 	return game, nil
 }
 
+func AddVisitor(ctx appengine.Context, game Game, player string) (Game, error) {
+	// TODO check player exist
+	game.Visitors = append(game.Visitors, player)
+	return game, nil
+}
+
 func RemovePlayer(ctx appengine.Context, game Game, player string) (Game, error) {
 	var idx = -1
 	for i := 0; i < len(game.Players); i++ {
@@ -62,13 +69,25 @@ func RemovePlayer(ctx appengine.Context, game Game, player string) (Game, error)
 			break
 		}
 	}
-	if idx == -1 {
+	if idx != -1 {
+		game.Players = append(game.Players[:idx], game.Players[idx+1:]...)
+		game.PlayerOrder = append(game.PlayerOrder[:idx], game.PlayerOrder[idx+1:]...)
+		if len(game.PlayerOrder) < 2 {
+			game.State = WaitPlayer
+		}
 		return game, nil
 	}
-	game.Players = append(game.Players[:idx], game.Players[idx+1:]...)
-	game.PlayerOrder = append(game.PlayerOrder[:idx], game.PlayerOrder[idx+1:]...)
-	if len(game.PlayerOrder) < 2 {
-		game.State = WaitPlayer
+
+	idx = -1
+	for i := 0; i < len(game.Visitors); i++ {
+		if game.Visitors[i] == player {
+			idx = i
+			break
+		}
+	}
+	if idx != -1 {
+		game.Visitors = append(game.Visitors[:idx], game.Visitors[idx+1:]...)
+		return game, nil
 	}
 	return game, nil
 }
