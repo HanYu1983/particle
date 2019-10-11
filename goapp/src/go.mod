@@ -7,3 +7,5 @@ require (
 	github.com/gorilla/mux v1.7.3
 	google.golang.org/appengine v1.6.5
 )
+
+replace github.com/HanYu1983/gomod => /github.com/HanYu1983/gomod
