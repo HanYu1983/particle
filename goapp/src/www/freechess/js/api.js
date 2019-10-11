@@ -287,13 +287,13 @@ var api = api || {};
      * @param {*} cb 
      */
     function quickCreateGame(type, player, onmessage, onheartbeat, cb) {
-        createGame(type, player, (err, info) => {
+        createGame(type, player, (err, info, game) => {
             if (err) {
                 return cb(err)
             }
-            cb(null, info)
-            openBasicChannel(gameID, player, onmessage)
-            openGameHeartbeat(gameID, player, onheartbeat)
+            cb(null, info, game)
+            openBasicChannel(game.id, player, onmessage)
+            openGameHeartbeat(game.id, player, onheartbeat)
         })
     }
     /**
