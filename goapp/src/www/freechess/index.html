@@ -10,7 +10,7 @@
 	<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
 	<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
 
-	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+
 	<script type="text/javascript" src="../common/js/lib/underscore/underscore-min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
 	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
@@ -20,6 +20,12 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
 	<script src="js/api.js"></script>
 	<script src="js/ooxx.js"></script>
+
+	<!-- firebase -->
+	<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script src="../common/js/admin.js"></script>
+	<script>admin.init()</script>
 </head>
 <style>
 	body {
@@ -198,10 +204,21 @@
 			bigUIContainer.hide();
 		}
 
-		function refreshFourGameSmallUI(ctx){
+		function refreshFourGameSmallUI(ctx) {
 			smallUIContainer.each(function (id, dom) {
 				refreshSmallUI(ctx, dom);
 			});
+		}
+
+		function onOOXXTableClick(ooxx, roomId, x, y){
+			api.quickPut(roomId, myId, [x, y], (err, info) => {
+				console.log(err);
+				if (err) {
+					return;
+				}
+				log("下子", info);
+				ooxx.update(info);
+			})
 		}
 
 		function refreshFourGame(ctx) {
@@ -216,7 +233,7 @@
 			_.each(randomList, (room) => {
 				table = ary_table[tid];
 				table.attr('roomId', room.id);
-				retGames[room.id] = view.ooxx.setGame(table, room, myId);
+				retGames[room.id] = view.ooxx.setGame(table, room, myId, {onTableClick:onOOXXTableClick});
 				tid++;
 			});
 			refreshFourGameSmallUI(ctx);
@@ -261,15 +278,44 @@
 				return;
 			}
 
-			var canEnterRoom = api.canEnterRoom(api.getRoomById(data, roomId), myId);
-			var canWatchRoom = api.canWatchRoom(api.getRoomById(data, roomId), myId);
+			var canEnterGame = api.canEnterGame(api.getGameById(data, roomId), myId);
+			var canWatchGame = api.canWatchGame(api.getGameById(data, roomId), myId);
 
-			if (!canEnterRoom) {
+			if (!canEnterGame) {
 				btn_join.linkbutton('disable');
 			}
 
-			if (!canWatchRoom) {
+			if (!canWatchGame) {
 				btn_watch.linkbutton('disable');
+			}
+		}
+
+		function getViewByModelId(id){
+			var views = _.filter(gameObj, (g)=>{
+				if (g.id == id ){
+					return g;
+				}
+			});
+			if(views.length == 0){
+				throw Error("應該要有房間,id:" + id);
+			}
+			return views[0];
+		}
+
+		function updateGameByData(roomId){
+			// var view = getViewByModelId(room.id);
+			// view.update(room);
+
+			api.game(roomId, (err, room)=>{
+				var view = getViewByModelId(room.id);
+				view.update(room);
+			});
+		}
+
+		function handleMsg(msg){
+			switch(msg.type){
+				case 'update':
+					updateGameByData(msg.gameID);
 			}
 		}
 
@@ -292,25 +338,55 @@
 				btn_join.click(function (e) {
 					var ui = $(e.currentTarget);
 					var gameId = getGameIDBySmallUIButton(ui);
-					api.joinGame(gameId, myId, (err, room) => {
-						log("加入對奕", room);
-						if (err) {
-							return;
-						}
-						btn_join.linkbutton('disable');
-					});
+					api.quickJoin(
+						gameId,
+						myId,
+						false,
+						msg => {
+							handleMsg(msg);
+							//updateGameByData(gameId);
+						},
+						(isSuccess, info) => {
+							console.log("target alive ", isSuccess, info)
+						},
+						(err, ctx) => {
+							console.log(err, ctx);
+							if (err) {
+								return;
+							}
+							log("加入對奕", ctx);
+							btn_join.linkbutton('disable');
+						})
 				});
 
 				btn_watch.click(function (e) {
 					var ui = $(e.currentTarget);
 					var gameId = getGameIDBySmallUIButton(ui);
-					api.visitGame(gameId, myId, (err, room) => {
-						log("加入觀戰", room);
-						if (err) {
-							return;
-						}
-						btn_watch.linkbutton('disable');
-					});
+					// api.visitGame(gameId, myId, (err, room) => {
+					// 	log("加入觀戰", room);
+					// 	if (err) {
+					// 		return;
+					// 	}
+					// 	btn_watch.linkbutton('disable');
+					// });
+					api.quickJoin(
+						gameId,
+						myId,
+						true,
+						msg => {
+							console.log("msg", msg)
+						},
+						(isSuccess, info) => {
+							console.log("target alive ", isSuccess, info)
+						},
+						(err, ctx) => {
+							console.log(err, ctx);
+							if (err) {
+								return;
+							}
+							log("加入觀戰", ctx);
+							btn_watch.linkbutton('disable');
+						})
 				});
 
 				btn_scale.click(function () {
@@ -331,13 +407,34 @@
 
 		btn_createRoom.click(() => {
 			selectType = combo_type.combobox('getValue');
-			api.createGame(selectType, myId, (err, data, room) => {
-				log("創建方間", room);
-				if (err) {
-					return;
-				}
-				gameObj = refreshFourGame(data);
-			});
+			api.quickCreateGame(
+				selectType, myId,
+				msg => {
+					console.log("msg", msg)
+					//updateGameByData()
+					handleMsg(msg);
+					// switch(msg.type){
+					// 	case 'update':
+					// 		updateGameByData(msg.gameID);
+					// }
+				},
+				(isSuccess, info) => {
+					console.log("target alive ", isSuccess, info)
+				},
+				(err, ctx, room) => {
+					log("創建方間", ctx);
+					if (err) {
+						return;
+					}
+					gameObj = refreshFourGame(ctx);
+				});
+			// api.createGame(selectType, myId, (err, data, room) => {
+			// 	log("創建方間", room);
+			// 	if (err) {
+			// 		return;
+			// 	}
+			// 	gameObj = refreshFourGame(data);
+			// });
 		});
 
 		btn_refreshRoom.click(() => {
