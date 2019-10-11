@@ -110,8 +110,8 @@ var api = api || {};
         openSocket(gameID, listenInfo.basicCallback)
     }
 
-    function closeBasicChannel(gameID){
-        if(listenInfo.basicCallback){
+    function closeBasicChannel(gameID) {
+        if (listenInfo.basicCallback) {
             closeSocket(gameID, listenInfo.basicCallback)
             listenInfo.basicCallback = null
         }
@@ -157,7 +157,7 @@ var api = api || {};
         })
     }
 
-    function closeGameHeartbeat(gameID){
+    function closeGameHeartbeat(gameID) {
         if (heartbeatInfo.id[gameID] != null) {
             clearTimeout(heartbeatInfo.id[gameID])
             heartbeatInfo.id[gameID] = null
@@ -214,22 +214,22 @@ var api = api || {};
      * @param {所有資料} ctx 
      */
     function getRandomFourRoom(ctx, player) {
-        const isEnter = g=>{
+        const isEnter = g => {
             return g.players.indexOf(player) != -1 || g.visitors.indexOf(player) != -1
         }
-        const not = fn =>{
-            return g=>{
+        const not = fn => {
+            return g => {
                 return !fn(g)
             }
         }
         const lockGames = ctx.games.filter(isEnter)
-        if(lockGames.length >= 4){
+        if (lockGames.length >= 4) {
             return lockGames
         }
         const remainSize = 4 - lockGames.length;
         const unlockGames = ctx.games.filter(not(isEnter))
         unlockGames.sort(() => Math.random() - 0.5)
-        return [...lockGames,  ...unlockGames.slice(0, Math.min(remainSize, unlockGames.length))]
+        return [...lockGames, ...unlockGames.slice(0, Math.min(remainSize, unlockGames.length))]
     }
 
     function isMyTurn(game, player) {
@@ -248,7 +248,7 @@ var api = api || {};
      * 是否已進指定房間
      */
     function canEnterRoom(game, player) {
-        if(game.players.indexOf(player) != -1){
+        if (game.players.indexOf(player) != -1) {
             return false;
         }
         return game.players.length < 2
@@ -258,6 +258,25 @@ var api = api || {};
      */
     function canWatchRoom(game, player) {
         return game.visitors.indexOf(player) == -1
+    }
+    /**
+     * 
+     * @param {*} gameID 
+     * @param {*} player 
+     * @param {*} isVisitor 
+     * @param {*} onmessage 
+     * @param {*} onheartbeat 
+     * @param {*} cb 
+     */
+    function quickCreateGame(type, player, onmessage, onheartbeat, cb) {
+        createGame(type, player, (err, info) => {
+            if (err) {
+                return cb(err)
+            }
+            cb(null, info)
+            openBasicChannel(gameID, player, onmessage)
+            openGameHeartbeat(gameID, player, onheartbeat)
+        })
     }
     /**
      * 加入房間
@@ -285,9 +304,9 @@ var api = api || {};
      * @param {*} player 
      * @param {*} cb 
      */
-    function quickLeave(gameID, player, cb){
-        leaveGame(gameID, player, (err, info)=>{
-            if(err){
+    function quickLeave(gameID, player, cb) {
+        leaveGame(gameID, player, (err, info) => {
+            if (err) {
                 return cb(err)
             }
             cb(null, info)
@@ -296,19 +315,19 @@ var api = api || {};
         })
     }
 
-    function quickPut(gameID, player, [x, y], cb){
-        put(gameID, player, [x, y], (err, info)=>{
-            if(err){
+    function quickPut(gameID, player, [x, y], cb) {
+        put(gameID, player, [x, y], (err, info) => {
+            if (err) {
                 return cb(err)
             }
-            cb( null, info)
-            sendMessageToGame(gameID, {type: "update", position: [x, y], sender: player})
+            cb(null, info)
+            sendMessageToGame(gameID, { type: "update", position: [x, y], sender: player })
         })
     }
 
-    function getRoomById(ctx, gameId){
-        const ret = ctx.games.filter(({id})=> id == gameId)
-        if(ret.length==0){
+    function getRoomById(ctx, gameId) {
+        const ret = ctx.games.filter(({ id }) => id == gameId)
+        if (ret.length == 0) {
             throw new Error(`${gameId} not found by getRoomById`)
         }
         return ret[0]
@@ -327,6 +346,7 @@ var api = api || {};
     module.isFirst = isFirst
     module.canEnterRoom = canEnterRoom
     module.canWatchRoom = canWatchRoom
+    module.quickCreateGame = quickCreateGame
     module.quickJoin = quickJoin
     module.quickLeave = quickLeave
     module.quickPut = quickPut
