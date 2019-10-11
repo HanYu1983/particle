@@ -18,6 +18,7 @@
 		<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
 		<script src="js/api.js"></script>
+		<script src="js/ooxx.js"></script>
 	</head>
 	<style>
 	body{
@@ -90,7 +91,68 @@
 	}
 	</style>
 	<body>
-		<div id="mc_layoutMain" class="easyui-layout" style="position:fixed; right:0; top:0; width:100%;height:100%;">
+
+		<div class="easyui-panel group center" style="padding:5px;">
+			<select id="combo_type" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
+				<option value="ooxx">井字遊戲</option>
+				<option value="a">五子棋</option>
+				<option value="b">中國象棋</option>
+			</select>
+			<a id="btn_createRoom" class="easyui-linkbutton" data-options="disabled:false">創房</a>
+			<a id="btn_refreshRoom" class="easyui-linkbutton" data-options="disabled:false">隨機房</a>
+		</div>	
+		
+		
+		<div class="group full">
+			<div class="rel full left top">
+				<div id="gameContent1" style="transform-origin: left top; background-color: darkred" class="rel left top gameView" >
+					
+				</div>
+				<div id="gameContent2" style="transform-origin: right top; background-color: darkgreen" class="abs right top gameView" >
+					
+				</div>
+				<div id="gameContent3" style="transform-origin: left bottom; background-color: darkgoldenrod" class="abs left top gameView" >
+					
+				</div>
+				<div id="gameContent4" style="transform-origin: right bottom; background-color: darkblue" class="abs left top gameView" >
+					
+				</div>
+				<div id="bigUIContainer" class="abs" style="padding:5px; left:0; top:0;">
+					<a class="easyui-linkbutton">對奕</a>
+					<a class="easyui-linkbutton">觀戰</a>
+					<a id="btn_scaleSmall" class="easyui-linkbutton">縮小</a>
+				</div>
+			</div>
+			<div tableSamllUiID="1" class="abs gameUILayer" style="left:0; top:0;">
+				<div class="rel" style="padding:5px; left:0; top:0;">
+					<a class="easyui-linkbutton">對奕</a>
+					<a class="easyui-linkbutton">觀戰</a>
+					<a class="easyui-linkbutton">放大</a>
+				</div>
+			</div>
+			<div tableSamllUiID="2" class="abs gameUILayer" style="left:50%; top:0;">
+				<div class="rel" style="padding:5px; left:0; top:0;">
+					<a class="easyui-linkbutton">對奕</a>
+					<a class="easyui-linkbutton">觀戰</a>
+					<a class="easyui-linkbutton">放大</a>
+				</div>
+			</div>
+			<div tableSamllUiID="3" class="abs gameUILayer" style="left:0; top:50%;">
+				<div class="rel" style="padding:5px; left:0; top:0;">
+					<a class="easyui-linkbutton">對奕</a>
+					<a class="easyui-linkbutton">觀戰</a>
+					<a class="easyui-linkbutton">放大</a>
+				</div>
+			</div>
+			<div tableSamllUiID="4" class="abs gameUILayer" style="left:50%; top:50%;">
+				<div class="rel" style="padding:5px; left:0; top:0;">
+					<a class="easyui-linkbutton">對奕</a>
+					<a class="easyui-linkbutton">觀戰</a>
+					<a class="easyui-linkbutton">放大</a>
+				</div>
+			</div>
+		</div>
+		<!-- <div id="mc_layoutMain" class="easyui-layout" style="position:fixed; right:0; top:0; width:100%;height:100%;">
 			<div data-options="region:'east',split:false" title="West" style="width:350px;">
 				<table id="tab_tables" class="easyui-datagrid" style="width:100%;height:300px"
 						title="全部遊戲" singleSelect="true"
@@ -99,27 +161,13 @@
 					<thead>
 						<tr>
 							<th field="id" align="center" sortable="true">ID</th>
-							<!-- <th field="host" align="center" sortable="true">房主</th> -->
+							
 							<th field="type" align="center">遊戲類型</th>
 							<th field="playerCount" align="center" sortable="true">遊玩人數</th>
 							<th field="watchCount" align="center">觀看人數</th>
 						</tr>
 					</thead>
 				</table>
-<!-- 				
-				<table id="tab_inTables" class="easyui-datagrid" style="width:100%;height:160px"
-						title="參與遊戲" rownumbers="true"  singleSelect="true"
-						sortName="itemid" sortOrder="asc">
-					<thead>
-						<tr>
-							<th field="id" align="center" sortable="true">ID</th>
-							<th field="type" align="center">遊戲類型</th>
-							<th field="host" align="center" sortable="true">房主</th>
-							<th field="playerCount" align="center">遊玩人數</th>
-							<th field="watchCount" align="center">觀看人數</th>
-						</tr>
-					</thead>
-				</table> -->
 				<div class="group center vgap_5">
 					<select id="combo_type" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
 						<option value="ooxx">井字遊戲</option>
@@ -178,153 +226,20 @@
 							<a class="easyui-linkbutton">放大</a>
 						</div>
 					</div>
-					<!-- </div> -->
 				</div>
 			</div>
-		</div>
+		</div> -->
 		
 	</body>
 	<script>
+
+	function log(title, msg){
+		console.log("====[" + title + "]====");
+		console.log(msg);
+		console.log("=======================");
+	}
 	
 	$(document).ready( function(){
-
-		function addRoom( table, type, player, watch){
-			$(table).datagrid('appendRow',{
-				id:player,
-				type:type,
-				playerCount: player,
-				watchCount:watch
-			});
-		}
-
-		function refreshList(data){
-			log("更新列表", data);
-			var setData = [];
-			_.each(data, ( g )=>{
-				var type = g.type;
-				var playerCount = g.players.length;
-
-				setData.push({
-					id:0,
-					type:type,
-					playerCount: playerCount,
-					watchCount:0
-				})
-			});
-
-			$('#tab_tables').datagrid({
-				data: setData
-			});
-		}
-		
-		function setGameToTable(table, game){
-			table.empty();
-			table.append(game);
-		}
-
-		function setOOXX( table, game ){
-			var dom = $("#tmpl_ooxxContent").tmpl();
-			setGameToTable(table, dom);
-
-			var land = table.find("#table");
-			var selection = table.find("#selection");
-			var oo = table.find(".oo");
-			var xx = table.find(".xx");
-
-			hideAllChess();
-
-			function hideAllChess(){
-				oo.each(function(i, o){
-					$(o).hide();
-				});
-
-				xx.each(function(i, x){
-					$(x).hide();
-				})
-			}
-
-			land.load(function(){
-				function putChess(chess, x, y){
-					// global position 
-					var globalX = (x * gridSize) + gridSize / 2 - (landWidth / 2) + parseInt(land.parent().css('left'));
-					var globalY = (y * gridSize) + gridSize / 2 - (landHeight / 2) + parseInt(land.parent().css('top'));
-					chess.css({
-						left:globalX + 'px',
-						top:globalY + 'px'
-					});
-				}
-
-				function updateChess(tokens){
-					log("更新盤面", tokens);
-
-					hideAllChess();
-
-					var oid = 0;
-					var xid = 0;
-					_.each(tokens, (t)=>{
-						isFirst = api.isFirst(game, t);
-						var x = t.position.x;
-						var y = t.position.y;
-						if(isFirst){
-							ochess = oo.eq(oid);
-							ochess.show();
-							putChess(ochess, x, y);
-							oid++;
-						}else{
-							xchess = xx.eq(oid);
-							xchess.show();
-							putChess(xchess, x, y);
-							xid++;
-						}
-					});
-				}
-				var landWidth = land.width();
-				var landHeight = land.height();
-				var gridSize = landWidth / 3;
-
-				updateChess(game.tokens);
-
-				land.click(function(e){
-
-					// grid id position
-					var x = Math.floor(e.offsetX / (landWidth / 3));
-					var y = Math.floor(e.offsetY / (landHeight / 3));
-
-					var roomId = table.attr("roomId");
-					api.put(roomId, myId, [x, y], (err, data) => {
-						console.log(err);
-						if (err) {
-							return;
-						}
-						log("下子", data);
-						updateChess(data.tokens);
-					});
-				});
-
-				land.on("mousemove", function(e){
-
-					// grid id position
-					var x = Math.floor(e.offsetX / (landWidth / 3));
-					var y = Math.floor(e.offsetY / (landHeight / 3));
-					
-					// global position 
-					putChess(selection, x, y);
-				});
-			})
-
-			return {
-				type:'ooxx',
-				update:function( data ){
-					log("更新遊戲", data);
-					updateChess(data.tokens);
-				}, 
-				clear:function(){
-					land.off("mousemove");
-					land.off("click");
-					table.empty();
-				}
-			}
-		}
 
 		function smallTable(table){
 			bigUIContainer.hide();
@@ -349,59 +264,48 @@
 			currentBigTable = table;
 		}
 
-		function getGameList( cb = undefined ){
-			api.context((err, data) => {
-				console.log(err, data)
-				if (err) {
-					return;
-				}
-				refreshList(data.games);
-				if(cb) cb();
+		function smallAllTable(){
+			_.each( ary_table, (t)=>{
+				smallTable(t);
 			});
+			bigUIContainer.hide();
 		}
 
-		function getFourGameList(){
-			var gameObj = {};
-			api.context((err, data) => {
-				console.log(err, data)
-				if (err) {
-					return;
-				}
-				if(data.games){
-					log("更新四間房", data.games);
-					var tid = 0;
-					_.each(data.games, (game)=>{
-						if(tid < 4){
-							table = ary_table[tid];
-							table.attr('roomId', game.id);
-							gameObj[game.id] = setOOXX(table, game);
-							smallTable(table);
-						}
-						tid++;
-					});
-				}
+		function refreshFourGame(ctx){
+			console.log(ctx);
+			if(!ctx.games){
+				return {};
+			}
+			var retGames = {};
+			var randomList = api.getRandomFourRoom(ctx);
+			log("更新四間房", randomList);
+			var tid = 0;
+			_.each(randomList, (game)=>{
+				table = ary_table[tid];
+				table.attr('roomId', game.id);
+				retGames[game.id] = view.ooxx.setGame(table, game, myId);
+				tid++;
 			});
-			return gameObj;
+			return retGames;
 		}
 
-		function log(title, msg){
-			console.log("====[" + title + "]====")
-			console.log(msg);
-			console.log("====[end]====")
-		}
-
-		getGameList();
-		gameObj = getFourGameList();
-
+		var gameObj = undefined;
+		api.context((err, data) => {
+			console.log(err, data)
+			if (err) {
+				return;
+			}
+			gameObj = refreshFourGame(data);
+			smallAllTable();
+		});
 		var myId = api.getUUID();
 		var ary_table = [$("#gameContent1"),$("#gameContent2"),$("#gameContent3"),$("#gameContent4")];
 		var ary_game = [$("#tmpl_ooxxContent")]
 		var bigUIContainer = $("#bigUIContainer");
 		var smallUIContainer = $(".gameUILayer");
 		var btn_createRoom = $("#btn_createRoom");
+		var btn_refreshRoom = $("#btn_refreshRoom");
 		var combo_type = $("#combo_type");
-
-		bigUIContainer.hide();
 
 		btn_createRoom.click( ()=>{
 			selectType = combo_type.combobox('getValue');
@@ -410,10 +314,18 @@
 				if (err) {
 					return;
 				}
-				refreshList(data.games);
+				gameObj = refreshFourGame(data);
+			});
+		});
 
-				if(data.games.length >= 4){
-					gameObj = getFourGameList();
+		btn_refreshRoom.click( () =>{
+			api.context((err, data) => {
+				console.log(err, data)
+				if (err) {
+					return;
+				}
+				if(data.games){
+					gameObj = refreshFourGame(data);
 				}
 			});
 		});
@@ -434,7 +346,6 @@
 					if (err) {
 						return;
 					}
-					getGameList();
 				});
 			});
 
