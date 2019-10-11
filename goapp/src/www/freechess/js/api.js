@@ -281,6 +281,16 @@ var api = api || {};
         })
     }
 
+    function quickPut(gameID, player, [x, y], cb){
+        put(gameID, player, [x, y], (err, info)=>{
+            if(err){
+                return cb(err)
+            }
+            cb( null, info)
+            sendMessageToGame(gameID, {type: "update", position: [x, y], sender: player})
+        })
+    }
+
     module.context = context
     module.createGame = createGame
     module.joinGame = joinGame
@@ -296,4 +306,5 @@ var api = api || {};
     module.canWatchRoom = canWatchRoom
     module.quickJoin = quickJoin
     module.quickLeave = quickLeave
+    module.quickPut = quickPut
 })(api);

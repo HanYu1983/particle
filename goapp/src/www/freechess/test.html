@@ -6,19 +6,7 @@
 <script src="../common/js/admin.js"></script>
 <script>admin.init()</script>
 <script>
-    api.quickJoin(
-        "9823baf6-673f-4c37-8c1a-22f485c777d4",
-        "han",
-        false,
-        msg => {
-            console.log("msg", msg)
-        },
-        (isSuccess, info) => {
-            console.log("target alive ", isSuccess, info)
-        }, 
-        (err, info)=>{
-            console.log(err, info)
-        })
+
 
     const player = api.getUUID();
     api.context((err, data) => {
@@ -33,6 +21,31 @@
             if (err) {
                 return;
             }
+
+            api.quickJoin(
+                game.id,
+                "vic",
+                false,
+                msg => {
+                    console.log("msg", msg)
+                },
+                (isSuccess, info) => {
+                    console.log("target alive ", isSuccess, info)
+                },
+                (err, info) => {
+                    console.log(err, info)
+                    api.quickPut(game.id, player, [0, 1], (err, info) => {
+                        console.log(err, info)
+                    })
+                })
+
+            setTimeout(()=>{
+                console.log("leave")
+                api.quickLeave(game.id, "vic", (err, info)=>{
+                    console.log(err, info)
+                })
+            }, 1000*20)
+            /*
             api.joinGame(game.id, "vic", (err, game) => {
                 console.log(err, game)
                 if (err) {
@@ -54,7 +67,7 @@
                         }
                     })
                 })
-            })
+            })*/
         })
     })
 </script>
