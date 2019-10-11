@@ -1,0 +1,74 @@
+<html>
+
+<head>
+    {{template "htmlHeader"}}
+    <style>
+    li{
+        font-size: 18px
+    }
+    </style>
+</head>
+<body>
+    <div class="easyui-layout" style="width:100%;height:100%;">
+        <div data-options="region:'west',title:'',split:true" style="width:200px;">
+            {{template "header" .}}
+        </div>
+        <div data-options="region:'center',title:''" style="padding:5px;">
+            <h1>擴充包上傳說明</h1>
+            <ol>
+                <li>
+                    請注意閱讀下方的上傳限制
+                </li>
+                <li>
+                    下載<a
+                        href="https://storage.googleapis.com/particle-resources/files/%E4%B8%89%E5%9C%8B%E5%BF%97%E5%A4%A7%E6%88%B0%E6%93%B4%E5%85%85%E5%8C%85%E7%A4%BA%E7%AF%84.zip">三國志大戰擴充包示範.zip</a>
+                </li>
+                <li>
+                    解壓並使用<a href="https://notepad-plus-plus.org/">notepad++</a>修改內容manifast.txt與新增jpg圖片
+                </li>
+                <li>
+                    重新打包成zip(注意, 檔案結構要和下載時一樣), 並修改檔名(為了好分辨)
+                </li>
+                <li>
+                    畫面左側選擇上傳檔案選完後按上傳
+                </li>
+                <li>
+                    經過驗証並確認內容無誤後按導入
+                </li>
+            </ol>
+            <h1>上傳限制</h1>
+            <ol>
+                <li>
+                    每個擴充包大小不能超過5MB, 會示使用情況調整
+                </li>
+                <li>
+                    擴充包數量最大限制為100個, 會示使用情況調整
+                </li>
+                <li>
+                    <span style="color: red;">因為編碼問題, 不得使用純文字編輯器</span>,
+                    windows用戶請下載<a href="https://notepad-plus-plus.org/">notepad++</a>,
+                    mac用戶請下載<a href="https://macromates.com/">textmat</a>
+                </li>
+                <li>
+                    請注意文字檔下方的空行, 只得空1行. 最後一行也不得有===
+                </li>
+                <li>
+                    圖片只支援jpg
+                </li>
+                <li>
+                    支援遊戲: 三國志大戰sangoWar中文版
+                </li>
+                <li>
+                    一張卡指向一個擴充包, 意思是重新上傳同樣的包並將舊的包刪除的話, 卡組要重新編輯才行
+                </li>
+                <li>
+                    為了測試上傳可以先小包上傳測試, 上傳了再刪除沒關係(若已導入會一並刪除導入的卡), 只要不要刪到別人傳的就好
+                </li>
+            </ol>
+            <h1>更多資訊</h1>
+            請加入<a href="https://www.facebook.com/groups/1521526761495948/">線上卡牌遊戲社</a>追蹤資訊或發問問題哦, 想新增支援遊戲也歡迎提出哦
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,2 +1,2 @@
-set GOPATH=D:\Documents\git\particle\goapp
+set GO111MODULE=on
 gcloud app deploy goapp\src

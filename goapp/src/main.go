@@ -2,22 +2,25 @@ package main
 
 // C:\Users\johny\AppData\Local\Google\CloudSDK\google-cloud-sdk
 import (
-	"app"
 	"fmt"
-	appauth "lib/auth"
-	"lib/db2"
-	"lib/tool"
 	"net/http"
+
+	"hanlib.org/mod/app"
+
+	appauth "hanlib.org/mod/lib/auth"
+	"hanlib.org/mod/lib/db2"
+	"hanlib.org/mod/lib/tool"
 
 	"github.com/gorilla/mux"
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/user"
 
-	"app/contestsys"
-	"app/freechess"
-	"app/uploadcard"
 	"strconv"
+
+	"hanlib.org/mod/app/contestsys"
+	"hanlib.org/mod/app/freechess"
+	"hanlib.org/mod/app/uploadcard"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {

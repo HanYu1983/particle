@@ -1,2 +1,2 @@
-set GOPATH=D:\Documents\git\particle\goapp
+set GO111MODULE=on
 dev_appserver.py goapp\src\app.yaml
