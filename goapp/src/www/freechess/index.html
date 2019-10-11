@@ -1,31 +1,32 @@
 <html>
-	<head>
-		<meta charset="utf-8"/>
-		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
-		<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
-		<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
-		<link rel="stylesheet" type="text/css" href="../common/css/vic.css">
-			
-		<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
-		<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
-		
-		<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
-		<script type="text/javascript" src="../common/js/lib/underscore/underscore-min.js"></script>
-		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
-		<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
-		<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
-		<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
-		<script src="js/api.js"></script>
-		<script src="js/ooxx.js"></script>
-	</head>
-	<style>
-	body{
-		background-color:#333333;
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/black/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/normalize.css">
+	<link rel="stylesheet" type="text/css" href="../common/css/vic.css">
+
+	<script type="text/javascript" src="../common/js/lib/rectSelect/rectSelect.js"></script>
+	<link rel="stylesheet" type="text/css" href="../common/js/lib/rectSelect/rectSelect.css">
+
+	<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+	<script type="text/javascript" src="../common/js/lib/underscore/underscore-min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
+	<script src="js/api.js"></script>
+	<script src="js/ooxx.js"></script>
+</head>
+<style>
+	body {
+		background-color: #333333;
 	}
-	</style>
-	<script id="tmpl_ooxxContent" type="jquery-x-tmpl">
+</style>
+<script id="tmpl_ooxxContent" type="jquery-x-tmpl">
 		<div class="abs pivot" style="left:50%; top:50%;">
 			<img id="table" class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\table.png">
 		</div>
@@ -60,7 +61,7 @@
 			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\selection.png">
 		</div>
 	</script>
-	<script id="tmpl_singleIconData" type="jquery-x-tmpl">
+<script id="tmpl_singleIconData" type="jquery-x-tmpl">
 		<div class="group singleIconData">
 			<div class="hori">
 				<a buttonid=${buttonId} href="#" class="easyui-linkbutton" style="width:60px;  " data-options="iconCls:'icon-add', disabled:false">生成</a>
@@ -73,109 +74,115 @@
 			</div>
 		</div>
 	</script>
-	<style>
-	.gameView{
-		width:100%;
-		height:100%;
+<style>
+	.gameView {
+		width: 100%;
+		height: 100%;
 		transition: .3s ease-in-out;
-		overflow:hidden;
+		overflow: hidden;
 	}
-	.gameUILayer{
-		
+
+	.gameUILayer {}
+
+	.scaleBig {
+		transform: scale(1);
 	}
-	.scaleBig{
-		transform:scale(1);
+
+	.scaleSmall {
+		transform: scale(.5);
 	}
-	.scaleSmall{
-		transform:scale(.5);
-	}
-	</style>
-	<body>
-		<div class="easyui-panel group center left top" style="padding:5px;">
-			<select id="combo_type" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
-				<option value="ooxx">井字遊戲</option>
-				<option value="a">五子棋</option>
-				<option value="b">中國象棋</option>
-			</select>
-			<a id="btn_createRoom" class="easyui-linkbutton" data-options="disabled:false">創房</a>
-			<a id="btn_refreshRoom" class="easyui-linkbutton" data-options="disabled:false">隨機房</a>
-		</div>	
-		<div class="group full">
-			<div class="rel full left top">
-				<div id="gameContent1" style="transform-origin: left top; background-color: darkred" class="rel left top gameView" >
-					
-				</div>
-				<div id="gameContent2" style="transform-origin: right top; background-color: darkgreen" class="abs right top gameView" >
-					
-				</div>
-				<div id="gameContent3" style="transform-origin: left bottom; background-color: darkgoldenrod" class="abs left top gameView" >
-					
-				</div>
-				<div id="gameContent4" style="transform-origin: right bottom; background-color: darkblue" class="abs left top gameView" >
-					
-				</div>
-				<div id="bigUIContainer" class="abs" style="padding:5px; left:0; top:0;">
-					<a class="easyui-linkbutton">對奕</a>
-					<a class="easyui-linkbutton">觀戰</a>
-					<a id="btn_scaleSmall" class="easyui-linkbutton">縮小</a>
-				</div>
+</style>
+
+<body>
+	<div class="easyui-panel group center left top" style="padding:5px;">
+		<select id="combo_type" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="">
+			<option value="ooxx">井字遊戲</option>
+			<option value="a">五子棋</option>
+			<option value="b">中國象棋</option>
+		</select>
+		<a id="btn_createRoom" class="easyui-linkbutton" data-options="disabled:false">創房</a>
+		<a id="btn_refreshRoom" class="easyui-linkbutton" data-options="disabled:false">隨機房</a>
+	</div>
+	<div class="group full">
+		<div class="rel full left top">
+			<div id="gameContent1" style="transform-origin: left top; background-color: darkred"
+				class="rel left top gameView">
+
 			</div>
-			<div tableSamllUiID="1" class="abs gameUILayer" style="left:0; top:0;">
-				<div class="rel" style="padding:5px; left:0; top:0;">
-					<a class="easyui-linkbutton">對奕</a>
-					<a class="easyui-linkbutton">觀戰</a>
-					<a class="easyui-linkbutton">放大</a>
-				</div>
+			<div id="gameContent2" style="transform-origin: right top; background-color: darkgreen"
+				class="abs right top gameView">
+
 			</div>
-			<div tableSamllUiID="2" class="abs gameUILayer" style="left:50%; top:0;">
-				<div class="rel" style="padding:5px; left:0; top:0;">
-					<a class="easyui-linkbutton">對奕</a>
-					<a class="easyui-linkbutton">觀戰</a>
-					<a class="easyui-linkbutton">放大</a>
-				</div>
+			<div id="gameContent3" style="transform-origin: left bottom; background-color: darkgoldenrod"
+				class="abs left top gameView">
+
 			</div>
-			<div tableSamllUiID="3" class="abs gameUILayer" style="left:0; top:50%;">
-				<div class="rel" style="padding:5px; left:0; top:0;">
-					<a class="easyui-linkbutton">對奕</a>
-					<a class="easyui-linkbutton">觀戰</a>
-					<a class="easyui-linkbutton">放大</a>
-				</div>
+			<div id="gameContent4" style="transform-origin: right bottom; background-color: darkblue"
+				class="abs left top gameView">
+
 			</div>
-			<div tableSamllUiID="4" class="abs gameUILayer" style="left:50%; top:50%;">
-				<div class="rel" style="padding:5px; left:0; top:0;">
-					<a class="easyui-linkbutton">對奕</a>
-					<a class="easyui-linkbutton">觀戰</a>
-					<a class="easyui-linkbutton">放大</a>
-				</div>
+			<div id="bigUIContainer" class="abs" style="padding:5px; left:0; top:0;">
+				<a class="easyui-linkbutton">對奕</a>
+				<a class="easyui-linkbutton">觀戰</a>
+				<a id="btn_scaleSmall" class="easyui-linkbutton">縮小</a>
 			</div>
 		</div>
-		
-	</body>
-	<script>
+		<div tableSamllUiID="1" class="abs gameUILayer" style="left:0; top:0;">
+			<div class="rel" style="padding:5px; left:0; top:0;">
+				<a class="easyui-linkbutton">對奕</a>
+				<a class="easyui-linkbutton">觀戰</a>
+				<a class="easyui-linkbutton">放大</a>
+			</div>
+		</div>
+		<div tableSamllUiID="2" class="abs gameUILayer" style="left:50%; top:0;">
+			<div class="rel" style="padding:5px; left:0; top:0;">
+				<a class="easyui-linkbutton">對奕</a>
+				<a class="easyui-linkbutton">觀戰</a>
+				<a class="easyui-linkbutton">放大</a>
+			</div>
+		</div>
+		<div tableSamllUiID="3" class="abs gameUILayer" style="left:0; top:50%;">
+			<div class="rel" style="padding:5px; left:0; top:0;">
+				<a class="easyui-linkbutton">對奕</a>
+				<a class="easyui-linkbutton">觀戰</a>
+				<a class="easyui-linkbutton">放大</a>
+			</div>
+		</div>
+		<div tableSamllUiID="4" class="abs gameUILayer" style="left:50%; top:50%;">
+			<div class="rel" style="padding:5px; left:0; top:0;">
+				<a class="easyui-linkbutton">對奕</a>
+				<a class="easyui-linkbutton">觀戰</a>
+				<a class="easyui-linkbutton">放大</a>
+			</div>
+		</div>
+	</div>
 
-	function log(title, msg){
+</body>
+<script>
+
+	function log(title, msg) {
 		console.log("====[" + title + "]====");
 		console.log(msg);
 		console.log("=======================");
 	}
-	
-	$(document).ready( function(){
 
-		function smallTable(table){
+	$(document).ready(function () {
+
+		function smallTable(table) {
 			bigUIContainer.hide();
 			smallUIContainer.show();
 
-			_.each(ary_table, function(t){
+			_.each(ary_table, function (t) {
 				t.show();
 			});
 			table.removeClass("scaleBig").addClass("scaleSmall");
 		}
 
-		function bigTable(table){
+		function bigTable(table) {
 			bigUIContainer.show();
 			smallUIContainer.hide();
 
-			_.each(ary_table, function(t){
+			_.each(ary_table, function (t) {
 				t.hide();
 			});
 			table.show();
@@ -184,110 +191,137 @@
 			currentBigTable = table;
 		}
 
-		function smallAllTable(){
-			_.each( ary_table, (t)=>{
+		function smallAllTable() {
+			_.each(ary_table, (t) => {
 				smallTable(t);
 			});
 			bigUIContainer.hide();
 		}
 
-		function refreshFourGame(ctx){
-			console.log(ctx);
-			if(!ctx.games){
+		function refreshFourGameSmallUI(ctx){
+			smallUIContainer.each(function (id, dom) {
+				refreshSmallUI(ctx, dom);
+			});
+		}
+
+		function refreshFourGame(ctx) {
+			if (!ctx.games) {
 				return {};
 			}
 			var retGames = {};
 			var randomList = api.getRandomFourRoom(ctx);
+
 			log("更新四間房", randomList);
 			var tid = 0;
-			_.each(randomList, (game)=>{
+			_.each(randomList, (room) => {
 				table = ary_table[tid];
-				table.attr('roomId', game.id);
-				retGames[game.id] = view.ooxx.setGame(table, game, myId);
+				table.attr('roomId', room.id);
+				retGames[room.id] = view.ooxx.setGame(table, room, myId);
 				tid++;
 			});
+			refreshFourGameSmallUI(ctx);
 			return retGames;
 		}
 
-		function getGameIDBySmallUIButton(ui){
+		function getGameIDBySmallUIButton(ui) {
 			return getGameIDBySmallUI(ui.parent().parent());
 		}
 
-		function getGameIDBySmallUI(uidom){
+		function getGameIDBySmallUI(uidom) {
 			id = uidom.attr("tableSamllUiID");
 			return $("#gameContent" + id).attr('roomId');
 		}
 
-		function getBtnJoin(ui){
+		function getBtnJoin(ui) {
 			return ui.find("a").eq(0);
 		}
 
-		function getBtnWatch(ui){
+		function getBtnWatch(ui) {
 			return ui.find("a").eq(1);
 		}
 
-		function getBtnScale(ui){
+		function getBtnScale(ui) {
 			return ui.find("a").eq(2);
 		}
 
+		function refreshSmallUI(data, dom) {
+			var roomId = getGameIDBySmallUI($(dom));
+			var btn_join = getBtnJoin($(dom));
+			var btn_watch = getBtnWatch($(dom));
+			var btn_scale = getBtnScale($(dom));
+
+			btn_join.linkbutton('enable');
+			btn_watch.linkbutton('enable');
+			btn_scale.linkbutton('enable');
+
+			if (!roomId) {
+				btn_join.linkbutton('disable');
+				btn_watch.linkbutton('disable');
+				btn_scale.linkbutton('disable');
+				return;
+			}
+
+			var canEnterRoom = api.canEnterRoom(api.getRoomById(data, roomId), myId);
+			var canWatchRoom = api.canWatchRoom(api.getRoomById(data, roomId), myId);
+
+			if (!canEnterRoom) {
+				btn_join.linkbutton('disable');
+			}
+
+			if (!canWatchRoom) {
+				btn_watch.linkbutton('disable');
+			}
+		}
+
 		var gameObj = undefined;
-		api.context((err, data) => {
-			console.log(err, data)
+		api.context((err, ctx) => {
+			console.log(err, ctx)
 			if (err) {
 				return;
 			}
-			gameObj = refreshFourGame(data);
+			gameObj = refreshFourGame(ctx);
 			smallAllTable();
 
-			console.log(data);
-
-			smallUIContainer.each(function(id, dom){		
-				var roomId = getGameIDBySmallUI($(dom));
-				if(!roomId) return;
-				var canEnterRoom = api.canEnterRoom(api.getRoomById(data, roomId), myId);
-				var canWatchRoom = api.canWatchRoom(api.getRoomById(data, roomId), myId);
+			smallUIContainer.each(function (id, dom) {
+				//refreshSmallUI(data, dom);
 
 				var btn_join = getBtnJoin($(dom));
 				var btn_watch = getBtnWatch($(dom));
 				var btn_scale = getBtnScale($(dom));
 
-				if( !canEnterRoom ){
-					btn_join.linkbutton('disable');
-				}
-
-				if( !canWatchRoom ){
-					btn_watch.linkbutton('disable');
-				}
-
-				btn_join.click(function(e){
+				btn_join.click(function (e) {
 					var ui = $(e.currentTarget);
 					var gameId = getGameIDBySmallUIButton(ui);
-					api.joinGame(gameId, myId, (err, data) => {
-						log("加入對奕", data);
+					api.joinGame(gameId, myId, (err, room) => {
+						log("加入對奕", room);
 						if (err) {
 							return;
 						}
+						btn_join.linkbutton('disable');
 					});
 				});
 
-				btn_watch.click(function(e){
+				btn_watch.click(function (e) {
 					var ui = $(e.currentTarget);
 					var gameId = getGameIDBySmallUIButton(ui);
-					api.visitGame(gameId, myId, (err, data) => {
-						log("加入觀戰", data);
+					api.visitGame(gameId, myId, (err, room) => {
+						log("加入觀戰", room);
 						if (err) {
 							return;
 						}
+						btn_watch.linkbutton('disable');
 					});
 				});
 
-				btn_scale.click(function(){
+				btn_scale.click(function () {
 					bigTable(ary_table[id])
 				});
 			});
 		});
+
+		//var myId = api.getMyId();
 		var myId = api.getUUID();
-		var ary_table = [$("#gameContent1"),$("#gameContent2"),$("#gameContent3"),$("#gameContent4")];
+		var ary_table = [$("#gameContent1"), $("#gameContent2"), $("#gameContent3"), $("#gameContent4")];
 		var ary_game = [$("#tmpl_ooxxContent")]
 		var bigUIContainer = $("#bigUIContainer");
 		var smallUIContainer = $(".gameUILayer");
@@ -295,7 +329,7 @@
 		var btn_refreshRoom = $("#btn_refreshRoom");
 		var combo_type = $("#combo_type");
 
-		btn_createRoom.click( ()=>{
+		btn_createRoom.click(() => {
 			selectType = combo_type.combobox('getValue');
 			api.createGame(selectType, myId, (err, data, room) => {
 				log("創建方間", room);
@@ -306,27 +340,27 @@
 			});
 		});
 
-		btn_refreshRoom.click( () =>{
+		btn_refreshRoom.click(() => {
 			api.context((err, data) => {
 				console.log(err, data)
 				if (err) {
 					return;
 				}
-				if(data.games){
+				if (data.games) {
 					gameObj = refreshFourGame(data);
 				}
 			});
 		});
 
 		currentBigTable = undefined;
-		
 
 		btn_scaleSmall = $("#btn_scaleSmall");
-		btn_scaleSmall.click(function(e){
-			if( currentBigTable ){
+		btn_scaleSmall.click(function (e) {
+			if (currentBigTable) {
 				smallTable(currentBigTable);
 			}
 		});
 	})
-	</script>
+</script>
+
 </html>
