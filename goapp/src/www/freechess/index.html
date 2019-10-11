@@ -210,9 +210,8 @@
 			});
 		}
 
-		function onOOXXTableClick(ooxx, roomId, x, y){
+		function onOOXXTableClick(ooxx, roomId, x, y) {
 			api.quickPut(roomId, myId, [x, y], (err, info) => {
-				console.log(err);
 				if (err) {
 					return;
 				}
@@ -233,7 +232,7 @@
 			_.each(randomList, (room) => {
 				table = ary_table[tid];
 				table.attr('roomId', room.id);
-				retGames[room.id] = view.ooxx.setGame(table, room, myId, {onTableClick:onOOXXTableClick});
+				retGames[room.id] = view.ooxx.setGame(table, room, myId, { onTableClick: onOOXXTableClick });
 				tid++;
 			});
 			refreshFourGameSmallUI(ctx);
@@ -290,35 +289,46 @@
 			}
 		}
 
-		function getViewByModelId(id){
-			var views = _.filter(gameObj, (g)=>{
-				if (g.id == id ){
+		function getViewByModelId(id) {
+			var views = _.filter(gameObj, (g) => {
+				if (g.id == id) {
 					return g;
 				}
 			});
-			if(views.length == 0){
+			if (views.length == 0) {
 				throw Error("應該要有房間,id:" + id);
 			}
 			return views[0];
 		}
 
-		function updateGameByData(roomId){
-			api.game(roomId, (err, room)=>{
+		function updateGameByData(roomId) {
+			api.game(roomId, (err, room) => {
 				var view = getViewByModelId(room.id);
 				view.update(room);
 			});
 		}
 
-		function handleMsg(msg){
-			switch(msg.type){
+		function handleMsg(msg) {
+			log("接到指令", msg);
+			switch (msg.type) {
 				case 'update':
 					updateGameByData(msg.gameID);
 			}
 		}
 
+		api.insertServiceCallback((err, data) => {
+			if( err ){
+				$.messager.show({
+					title: '提示',
+					msg: err,
+					timeout: 5000,
+					showType: 'slide'
+				});
+			}
+		})
+
 		var gameObj = undefined;
 		api.context((err, ctx) => {
-			console.log(err, ctx)
 			if (err) {
 				return;
 			}
@@ -326,8 +336,6 @@
 			smallAllTable();
 
 			smallUIContainer.each(function (id, dom) {
-				//refreshSmallUI(data, dom);
-
 				var btn_join = getBtnJoin($(dom));
 				var btn_watch = getBtnWatch($(dom));
 				var btn_scale = getBtnScale($(dom));
@@ -341,13 +349,11 @@
 						false,
 						msg => {
 							handleMsg(msg);
-							//updateGameByData(gameId);
 						},
 						(isSuccess, info) => {
 							console.log("target alive ", isSuccess, info)
 						},
 						(err, ctx) => {
-							console.log(err, ctx);
 							if (err) {
 								return;
 							}
@@ -359,25 +365,17 @@
 				btn_watch.click(function (e) {
 					var ui = $(e.currentTarget);
 					var gameId = getGameIDBySmallUIButton(ui);
-					// api.visitGame(gameId, myId, (err, room) => {
-					// 	log("加入觀戰", room);
-					// 	if (err) {
-					// 		return;
-					// 	}
-					// 	btn_watch.linkbutton('disable');
-					// });
 					api.quickJoin(
 						gameId,
 						myId,
 						true,
 						msg => {
-							console.log("msg", msg)
+							handleMsg(msg);
 						},
 						(isSuccess, info) => {
 							console.log("target alive ", isSuccess, info)
 						},
 						(err, ctx) => {
-							console.log(err, ctx);
 							if (err) {
 								return;
 							}
@@ -407,36 +405,22 @@
 			api.quickCreateGame(
 				selectType, myId,
 				msg => {
-					console.log("msg", msg)
-					//updateGameByData()
 					handleMsg(msg);
-					// switch(msg.type){
-					// 	case 'update':
-					// 		updateGameByData(msg.gameID);
-					// }
 				},
 				(isSuccess, info) => {
 					console.log("target alive ", isSuccess, info)
 				},
 				(err, ctx, room) => {
-					log("創建方間", ctx);
 					if (err) {
 						return;
 					}
+					log("創建方間", ctx);
 					gameObj = refreshFourGame(ctx);
 				});
-			// api.createGame(selectType, myId, (err, data, room) => {
-			// 	log("創建方間", room);
-			// 	if (err) {
-			// 		return;
-			// 	}
-			// 	gameObj = refreshFourGame(data);
-			// });
 		});
 
 		btn_refreshRoom.click(() => {
 			api.context((err, data) => {
-				console.log(err, data)
 				if (err) {
 					return;
 				}
