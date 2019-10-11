@@ -1,10 +1,8 @@
 package tool
 
 import (
-	"appengine"
-	"appengine/datastore"
-	"appengine/urlfetch"
 	"bytes"
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -16,6 +14,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/urlfetch"
 )
 
 func TemplateWithFile(key string, path string) *template.Template {
@@ -64,7 +65,7 @@ func PostRequest(url string, data url.Values) (*http.Request, error) {
 	return r, nil
 }
 
-func DoRequest(r *http.Request, ctx appengine.Context) (*http.Response, error) {
+func DoRequest(r *http.Request, ctx context.Context) (*http.Response, error) {
 	client := urlfetch.Client(ctx)
 	return client.Do(r)
 }
@@ -208,7 +209,7 @@ func AssertParametersNotMatch(cfg map[string]string, form url.Values) {
 	}
 }
 
-func AuthFB(ctx appengine.Context, fbid string, token string) (bool, error) {
+func AuthFB(ctx context.Context, fbid string, token string) (bool, error) {
 	param := url.Values{}
 	param.Set("access_token", token)
 	r, err := GetRequest("https://graph.facebook.com/"+fbid, param)
@@ -237,7 +238,7 @@ func AuthFB(ctx appengine.Context, fbid string, token string) (bool, error) {
 	return true, nil
 }
 
-func AssertFBIDIsInvalid(ctx appengine.Context, fbid, accessToken string) func() (bool, string) {
+func AssertFBIDIsInvalid(ctx context.Context, fbid, accessToken string) func() (bool, string) {
 	return func() (bool, string) {
 		_, err := AuthFB(ctx, fbid, accessToken)
 		if err != nil {
@@ -263,7 +264,7 @@ func Output(w http.ResponseWriter, info, err interface{}) {
 
 }
 
-func WithTransaction(ctx appengine.Context, retry int, fn func(c appengine.Context) error) error {
+func WithTransaction(ctx context.Context, retry int, fn func(c context.Context) error) error {
 	var err error
 	var times int
 	for times < retry {

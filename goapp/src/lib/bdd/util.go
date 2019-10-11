@@ -1,19 +1,19 @@
 package bdd
 
 import (
-  "fmt"
-  "testing"
-  "lib/tool"
-  "appengine"
+	"context"
+	"fmt"
+	"lib/tool"
+	"testing"
 )
 
-type ItFn func( msg string, fn func(c appengine.Context) )
+type ItFn func(msg string, fn func(c context.Context))
 
-func GenIt( ctx appengine.Context, t *testing.T ) ItFn {
-  return func( msg string, fn func(c appengine.Context) ){
-    defer tool.Recover( func( err error ){
-      t.Fatal( fmt.Sprintf("[%s]%s", msg, err.Error()) )
-    })
-    fn( ctx )
-  }
+func GenIt(ctx context.Context, t *testing.T) ItFn {
+	return func(msg string, fn func(c context.Context)) {
+		defer tool.Recover(func(err error) {
+			t.Fatal(fmt.Sprintf("[%s]%s", msg, err.Error()))
+		})
+		fn(ctx)
+	}
 }

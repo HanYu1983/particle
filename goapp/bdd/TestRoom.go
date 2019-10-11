@@ -12,7 +12,7 @@ var _ = fmt.Printf
 func Room (It bdd.ItFn) {
   var gameCtx game.Context
   
-  It( "create room", func( ctx appengine.Context ){
+  It( "create room", func( ctx context.Context ){
     gameCtx.Room("room1")
     gameCtx.Room("room2")
     gameCtx.Room("room1")
@@ -22,7 +22,7 @@ func Room (It bdd.ItFn) {
     }
   })
   
-  It( "create user", func( ctx appengine.Context ){
+  It( "create user", func( ctx context.Context ){
     gameCtx.User("han")
     gameCtx.User("vic")
     gameCtx.User("han")
@@ -32,7 +32,7 @@ func Room (It bdd.ItFn) {
     }
   })
   
-  It( "user in room", func( ctx appengine.Context ){
+  It( "user in room", func( ctx context.Context ){
     han := gameCtx.User("han")
     room := gameCtx.Room("room1")
     han.Room = room.Key
@@ -48,7 +48,7 @@ func Room (It bdd.ItFn) {
     }
   })
   
-  It( "leave room", func( ctx appengine.Context ){
+  It( "leave room", func( ctx context.Context ){
     han := gameCtx.User("han")
     vic := gameCtx.User("vic")
     room := gameCtx.Room("room1")
@@ -85,7 +85,7 @@ func Room (It bdd.ItFn) {
     
   })
   
-  It( "message", func( ctx appengine.Context ){
+  It( "message", func( ctx context.Context ){
     
     room1 := gameCtx.Room("room1")
     room2 := gameCtx.Room("room2")
@@ -114,7 +114,7 @@ func Room (It bdd.ItFn) {
     gameCtx.Messages = []game.Message{}
   })
   
-  It( "message 2", func( ctx appengine.Context ){
+  It( "message 2", func( ctx context.Context ){
     
     han := gameCtx.User("han")
     vic := gameCtx.User("vic")
@@ -176,7 +176,7 @@ func Room (It bdd.ItFn) {
     
   })
   
-  It( "delete room", func( ctx appengine.Context ){
+  It( "delete room", func( ctx context.Context ){
     
     gameCtx.DeleteRoomIfNoUser()
     if len( gameCtx.Rooms ) != 0 {

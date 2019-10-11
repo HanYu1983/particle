@@ -2,6 +2,7 @@ package uploadcard
 
 import (
 	"archive/zip"
+	"context"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -11,8 +12,6 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
-
-	"appengine"
 )
 
 func OutputModel(w http.ResponseWriter, r *http.Request, page string, model interface{}) error {
@@ -48,7 +47,7 @@ type ManifastInfo struct {
 	CardInfo          [][]string
 }
 
-func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, error) {
+func VerifyZip(ctx context.Context, zipReader *zip.Reader) (ManifastInfo, error) {
 	hasManifast := false
 	for _, zipFile := range zipReader.File {
 		isMatch, err := filepath.Match("*/manifast.txt", zipFile.Name)
@@ -144,7 +143,7 @@ func VerifyZip(ctx appengine.Context, zipReader *zip.Reader) (ManifastInfo, erro
 	}, nil
 }
 
-func WriteToDb(ctx appengine.Context, id string, manifast ManifastInfo, override bool, zipReader *zip.Reader) error {
+func WriteToDb(ctx context.Context, id string, manifast ManifastInfo, override bool, zipReader *zip.Reader) error {
 	for _, zipFile := range zipReader.File {
 		isManifast, err := filepath.Match("*/manifast.txt", zipFile.Name)
 		if err != nil {

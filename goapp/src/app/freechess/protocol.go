@@ -1,13 +1,12 @@
 package freechess
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"lib/db2"
 	"strconv"
 	"time"
-
-	"appengine"
 )
 
 type Position struct {
@@ -40,7 +39,7 @@ type Game struct {
 	CreateTime   time.Time `json:"createTime"`
 }
 
-func GetPlayerOrder(ctx appengine.Context, game Game, player string) (int, error) {
+func GetPlayerOrder(ctx context.Context, game Game, player string) (int, error) {
 	for order, playerID := range game.Players {
 		if playerID == player {
 			return game.PlayerOrder[order], nil
@@ -49,19 +48,19 @@ func GetPlayerOrder(ctx appengine.Context, game Game, player string) (int, error
 	return 0, errors.New(player + " player not found")
 }
 
-func AddPlayer(ctx appengine.Context, game Game, player string) (Game, error) {
+func AddPlayer(ctx context.Context, game Game, player string) (Game, error) {
 	// TODO check player exist
 	game.Players = append(game.Players, player)
 	return game, nil
 }
 
-func AddVisitor(ctx appengine.Context, game Game, player string) (Game, error) {
+func AddVisitor(ctx context.Context, game Game, player string) (Game, error) {
 	// TODO check player exist
 	game.Visitors = append(game.Visitors, player)
 	return game, nil
 }
 
-func RemovePlayer(ctx appengine.Context, game Game, player string) (Game, error) {
+func RemovePlayer(ctx context.Context, game Game, player string) (Game, error) {
 	var idx = -1
 	for i := 0; i < len(game.Players); i++ {
 		if game.Players[i] == player {
@@ -92,7 +91,7 @@ func RemovePlayer(ctx appengine.Context, game Game, player string) (Game, error)
 	return game, nil
 }
 
-func AppendOrder(ctx appengine.Context, game Game, player string, isFirst bool) (Game, error) {
+func AppendOrder(ctx context.Context, game Game, player string, isFirst bool) (Game, error) {
 	var idx = -1
 	for i := 0; i < len(game.Players); i++ {
 		if game.Players[i] == player {
@@ -132,8 +131,8 @@ func AppendOrder(ctx appengine.Context, game Game, player string, isFirst bool) 
 }
 
 type IGame interface {
-	Put(ctx appengine.Context, game Game, token Token, player string) (Game, error)
-	CheckWin(ctx appengine.Context, game Game) (Game, error)
+	Put(ctx context.Context, game Game, token Token, player string) (Game, error)
+	CheckWin(ctx context.Context, game Game) (Game, error)
 }
 
 type Context struct {
@@ -141,7 +140,7 @@ type Context struct {
 	SeqId int    `json:"seqId"`
 }
 
-func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, int, Game, error) {
+func CreateGame(ctx context.Context, app Context, gameType string) (Context, int, Game, error) {
 	var game = Game{
 		ID:          strconv.Itoa(app.SeqId),
 		Type:        gameType,
@@ -158,7 +157,7 @@ func CreateGame(ctx appengine.Context, app Context, gameType string) (Context, i
 	return app, idx, game, nil
 }
 
-func GetGame(ctx appengine.Context, app Context, id string) (int, Game, error) {
+func GetGame(ctx context.Context, app Context, id string) (int, Game, error) {
 	for i, game := range app.Games {
 		if game.ID == id {
 			return i, game, nil
@@ -179,7 +178,7 @@ func NewContext() Context {
 	}
 }
 
-func LoadContext(ctx appengine.Context) (Context, error) {
+func LoadContext(ctx context.Context) (Context, error) {
 	file, err := db2.GetFile(ctx, contextPath)
 	if err != nil {
 		return Context{}, err
@@ -192,7 +191,7 @@ func LoadContext(ctx appengine.Context) (Context, error) {
 	return dc, err
 }
 
-func SaveContext(ctx appengine.Context, appContext Context) error {
+func SaveContext(ctx context.Context, appContext Context) error {
 	// 先將結構平面化成字串
 	code, err := json.Marshal(appContext)
 	if err != nil {

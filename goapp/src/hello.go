@@ -1,4 +1,4 @@
-package hello
+package main
 
 // C:\Users\johny\AppData\Local\Google\CloudSDK\google-cloud-sdk
 import (
@@ -11,8 +11,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"appengine"
-	"appengine/user"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/user"
 
 	"app/contestsys"
 	"app/freechess"
@@ -165,8 +165,6 @@ func stock(w http.ResponseWriter, r *http.Request) {
 }
 
 func handler2(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-	ctx.Infof("Hello, %v", "Han")
 	fmt.Fprint(w, "Hello, world3!")
 }
 

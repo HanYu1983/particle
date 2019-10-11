@@ -3,13 +3,14 @@
 package app
 
 import (
-	"appengine"
-	"appengine/datastore"
 	"encoding/json"
-	"lib/db/file"
+	dbfile "lib/db/file"
 	"lib/db2"
 	"lib/tool"
 	"net/http"
+
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/datastore"
 )
 
 func Dbtodb2(w http.ResponseWriter, r *http.Request) {

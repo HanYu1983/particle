@@ -1,8 +1,9 @@
 package db2
 
 import (
-	"appengine/aetest"
 	"testing"
+
+	"google.golang.org/appengine/aetest"
 )
 
 func TestBasic(t *testing.T) {

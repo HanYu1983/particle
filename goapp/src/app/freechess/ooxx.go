@@ -1,9 +1,8 @@
 package freechess
 
 import (
+	"context"
 	"errors"
-
-	"appengine"
 )
 
 type OOXX struct{}
@@ -12,7 +11,7 @@ const (
 	TypeOOXX = "ooxx"
 )
 
-func (OOXX) Put(ctx appengine.Context, game Game, token Token, player string) (Game, error) {
+func (OOXX) Put(ctx context.Context, game Game, token Token, player string) (Game, error) {
 	if game.State != Play {
 		return game, errors.New("game not start yet")
 	}
@@ -43,7 +42,7 @@ func (OOXX) Put(ctx appengine.Context, game Game, token Token, player string) (G
 	return game, nil
 }
 
-func (OOXX) CheckWin(ctx appengine.Context, game Game) (Game, error) {
+func (OOXX) CheckWin(ctx context.Context, game Game) (Game, error) {
 	game.State = Finish
 	return game, nil
 }

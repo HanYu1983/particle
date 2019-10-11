@@ -1,13 +1,14 @@
 package auth
 
 import (
-	"appengine"
 	"lib/abstract"
-	"lib/db/file"
+	dbfile "lib/db/file"
 	"lib/db2"
 	. "lib/tool"
 	"net/http"
 	"net/url"
+
+	"google.golang.org/appengine"
 )
 
 type User struct {

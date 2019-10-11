@@ -2,10 +2,11 @@
 package app
 
 import (
-	"appengine"
-	"appengine/channel"
 	"lib/tool"
 	"net/http"
+
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/channel"
 )
 
 // 輸入一個名稱建立channel

@@ -3,6 +3,7 @@ package uploadcard
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"lib/db2"
@@ -11,7 +12,7 @@ import (
 
 	uuid "github.com/google/uuid"
 
-	"appengine"
+	"google.golang.org/appengine"
 )
 
 var (
@@ -69,14 +70,14 @@ func Serve_AddExtensionZip(w http.ResponseWriter, r *http.Request) {
 	manifast, err := VerifyZip(ctx, zipReader)
 	tool.Assert(tool.IfError(err))
 
-	ctx.Infof(manifast.Game)
+	// ctx.Infof(manifast.Game)
 
 	if IsValidExtensionName(manifast.Game) == false {
 		panic(fmt.Sprintf("遊戲名稱錯誤:%s", manifast.Game))
 	}
 
 	uuid := uuid.New()
-	err = tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+	err = tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		err2 := db2.WriteFileWithoutTransaction(ctx, fmt.Sprintf("root/tcg/extensionZip/%s/%s", uuid, h.Filename), body, "tcg", true)
 		if err2 == db2.ErrFileExist {
 			return fmt.Errorf("沒有override，必須無法寫入檔案:%s", h.Filename)

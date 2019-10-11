@@ -1,12 +1,13 @@
 package dbfile
 
 import (
-	"appengine"
-	"appengine/datastore"
+	"context"
 	"encoding/json"
 	"errors"
 	db "lib/db"
 	"time"
+
+	"google.golang.org/appengine/datastore"
 )
 
 // Kind不能使用__xxx__雙底線！！！是保留字。正式機會存取不到db
@@ -22,11 +23,11 @@ type DBFile struct {
 	Time     int64
 }
 
-func AncestorKey(ctx appengine.Context) *datastore.Key {
+func AncestorKey(ctx context.Context) *datastore.Key {
 	return datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil)
 }
 
-func QueryKeys(ctx appengine.Context, position int64, name string) ([]DBFile, []*datastore.Key, error) {
+func QueryKeys(ctx context.Context, position int64, name string) ([]DBFile, []*datastore.Key, error) {
 	akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil)
 	q := db.NewQuery(Kind).Ancestor(akey).Filter("Position =", position).Filter("Name =", name)
 
@@ -38,7 +39,7 @@ func QueryKeys(ctx appengine.Context, position int64, name string) ([]DBFile, []
 	return entities, keys, err
 }
 
-func MakeFile(ctx appengine.Context, position int64, name string, content []byte, override bool, owner string) (int64, error) {
+func MakeFile(ctx context.Context, position int64, name string, content []byte, override bool, owner string) (int64, error) {
 
 	// 0 代表為桌面，不必檢查
 	if position != 0 {
@@ -84,7 +85,7 @@ func MakeFile(ctx appengine.Context, position int64, name string, content []byte
 	return nkey.IntID(), err
 }
 
-func MakeDir(ctx appengine.Context, position int64, name string, owner string) (int64, error) {
+func MakeDir(ctx context.Context, position int64, name string, owner string) (int64, error) {
 
 	// 0 代表為桌面，不必檢查
 	if position != 0 {
@@ -118,7 +119,7 @@ func MakeDir(ctx appengine.Context, position int64, name string, owner string) (
 	return nkey.IntID(), err
 }
 
-func FileList(ctx appengine.Context, position int64) ([]DBFile, error) {
+func FileList(ctx context.Context, position int64) ([]DBFile, error) {
 	akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil)
 	q := db.NewQuery(Kind).Ancestor(akey)
 	if position > -1 {
@@ -133,7 +134,7 @@ func FileList(ctx appengine.Context, position int64) ([]DBFile, error) {
 	return entities, err
 }
 
-func GetFile(ctx appengine.Context, id int64) (DBFile, error) {
+func GetFile(ctx context.Context, id int64) (DBFile, error) {
 	var file DBFile
 	akey := datastore.NewKey(ctx, "dbfile-admin", "han", 0, nil)
 	key := db.GetKey(ctx, Kind, id, akey)
@@ -141,7 +142,7 @@ func GetFile(ctx appengine.Context, id int64) (DBFile, error) {
 	return file, err
 }
 
-func DeleteFile(ctx appengine.Context, id int64) error {
+func DeleteFile(ctx context.Context, id int64) error {
 	file, err := GetFile(ctx, id)
 	if err != nil {
 		return err
@@ -180,7 +181,7 @@ func DeleteFile(ctx appengine.Context, id int64) error {
 
 }
 
-func GetMemento(ctx appengine.Context) ([]byte, error) {
+func GetMemento(ctx context.Context) ([]byte, error) {
 	fileList, err := FileList(ctx, -1)
 	if err != nil {
 		return nil, err
@@ -205,7 +206,7 @@ func GetMemento(ctx appengine.Context) ([]byte, error) {
 	return jsonstr, nil
 }
 
-func SetMemento(ctx appengine.Context, memento []byte) error {
+func SetMemento(ctx context.Context, memento []byte) error {
 	var fileList []DBFile
 	err := json.Unmarshal(memento, &fileList)
 	if err != nil {

@@ -1,6 +1,7 @@
 package uploadcard
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"lib/db2"
@@ -9,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"appengine"
+	"google.golang.org/appengine"
 )
 
 func Serve_DeleteExtensionZip(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +33,7 @@ func Serve_DeleteExtensionZip(w http.ResponseWriter, r *http.Request) {
 	id := r.PostForm["id"][0]
 	zipName := r.PostForm["zipName"][0]
 
-	err := tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		// 刪除zip
 		path := fmt.Sprintf("root/tcg/extensionZip/%s", id)
 		fileList, err2 := db2.GetFileList(ctx, path, true)

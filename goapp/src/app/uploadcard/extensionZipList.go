@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"appengine"
+	"google.golang.org/appengine"
 )
 
 func Serve_ExtensionZipList(w http.ResponseWriter, r *http.Request) {

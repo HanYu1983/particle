@@ -4,6 +4,7 @@ package db2
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"appengine"
-	"appengine/datastore"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/datastore"
 )
 
 type DBFile struct {
@@ -35,18 +36,18 @@ var (
 	ErrFileExist = errors.New("db2: file exist!")
 )
 
-func AncestorKey(ctx appengine.Context) *datastore.Key {
+func AncestorKey(ctx context.Context) *datastore.Key {
 	return datastore.NewKey(ctx, AdminKind, "han", 0, nil)
 }
 
-func GetFile(ctx appengine.Context, filename string) (*DBFile, error) {
+func GetFile(ctx context.Context, filename string) (*DBFile, error) {
 	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename).KeysOnly()
 	keys, err := q.GetAll(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
 	if len(keys) > 1 {
-		ctx.Infof("length shouldn't more then 1")
+		// ctx.Infof("length shouldn't more then 1")
 	}
 	if len(keys) == 0 {
 		return nil, nil
@@ -56,7 +57,7 @@ func GetFile(ctx appengine.Context, filename string) (*DBFile, error) {
 	return &file, err
 }
 
-func GetFileList(ctx appengine.Context, filename string, filterLayer bool) ([]DBFile, error) {
+func GetFileList(ctx context.Context, filename string, filterLayer bool) ([]DBFile, error) {
 	isAccept := func(file *DBFile) bool {
 		accept := true
 		if strings.Index(file.Name, filename) != 0 {
@@ -90,14 +91,14 @@ func GetFileList(ctx appengine.Context, filename string, filterLayer bool) ([]DB
 	return ret, nil
 }
 
-func DeleteWithoutTransaction(ctx appengine.Context, filename string) error {
+func DeleteWithoutTransaction(ctx context.Context, filename string) error {
 	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename).KeysOnly()
 	keys, err := q.GetAll(ctx, nil)
 	if err != nil {
 		return err
 	}
 	if len(keys) > 1 {
-		ctx.Infof("length shouldn't more then 1")
+		// ctx.Infof("length shouldn't more then 1")
 	}
 	if len(keys) == 0 {
 		return nil
@@ -109,14 +110,14 @@ func DeleteWithoutTransaction(ctx appengine.Context, filename string) error {
 	return nil
 }
 
-func Delete(ctx appengine.Context, filename string) error {
-	err := tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+func Delete(ctx context.Context, filename string) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		return DeleteWithoutTransaction(ctx, filename)
 	})
 	return err
 }
 
-func WriteFileWithoutTransaction(ctx appengine.Context, filename string, content []byte, owner string, override bool) error {
+func WriteFileWithoutTransaction(ctx context.Context, filename string, content []byte, owner string, override bool) error {
 	// 取出若已存在的檔案
 	q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).Filter("Name =", filename)
 	var list []DBFile
@@ -156,14 +157,14 @@ func WriteFileWithoutTransaction(ctx appengine.Context, filename string, content
 	return nil
 }
 
-func WriteFile(ctx appengine.Context, filename string, content []byte, owner string, override bool) error {
-	err := tool.WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+func WriteFile(ctx context.Context, filename string, content []byte, owner string, override bool) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		return WriteFileWithoutTransaction(ctx, filename, content, owner, override)
 	})
 	return err
 }
 
-func GetMemento(ctx appengine.Context) ([]byte, error) {
+func GetMemento(ctx context.Context) ([]byte, error) {
 	list, err := GetFileList(ctx, "", false)
 	if err != nil {
 		return nil, err
@@ -175,7 +176,7 @@ func GetMemento(ctx appengine.Context) ([]byte, error) {
 	return jsonstr, nil
 }
 
-func SetMemento(ctx appengine.Context, memento []byte) error {
+func SetMemento(ctx context.Context, memento []byte) error {
 	var list []DBFile
 	err := json.Unmarshal(memento, &list)
 	if err != nil {
@@ -266,12 +267,12 @@ func HandleClearDataAndDownloadArchive(w http.ResponseWriter, r *http.Request) {
 		q := datastore.NewQuery(Kind).Ancestor(AncestorKey(ctx)).KeysOnly()
 		keys, err := q.GetAll(ctx, nil)
 		if err != nil {
-			ctx.Infof(err.Error())
+			// ctx.Infof(err.Error())
 		}
 		for _, key := range keys {
 			err = datastore.Delete(ctx, key)
 			if err != nil {
-				ctx.Infof(err.Error())
+				// tx.Infof(err.Error())
 			}
 		}
 	}

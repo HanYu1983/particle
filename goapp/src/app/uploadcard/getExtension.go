@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"appengine"
+	"google.golang.org/appengine"
 )
 
 func Serve_GetExtension(w http.ResponseWriter, r *http.Request) {

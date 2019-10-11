@@ -28,7 +28,7 @@ func TestSuit(t *testing.T){
 
 
 func FB ( It bdd.ItFn ){
-  It( "test auth", func( ctx appengine.Context ){
+  It( "test auth", func( ctx context.Context ){
     
     _, err := tool.AuthFB( ctx, "922170944477800", "CAACEdEose0cBAJoTJPxWUIbWZAhfP4dQ3XOn7IdhrjjyU0rYMuHGebsgdOE8ZC9jZAqfLpZCw7NxBEAiZCanr0weWhCUA61iFqz5qrHr8yyMVJQsJZAA8GWqLOcWUloyhLuqUVWWRlfu563FqCymJGZA3OleXsNYILZBKI8DQnpBmSjQxN1aQ05ilrqzxjHVV92PaFPqKjsnjz9ZBPHwFbXPe" )
     if err != nil {
@@ -42,7 +42,7 @@ func DBFileSystem ( It bdd.ItFn ){
   
   var keyId int64
   
-  It( "create file to root", func( ctx appengine.Context ){
+  It( "create file to root", func( ctx context.Context ){
     
     var err error
     keyId, err = dbfile.MakeFile( ctx, 0, "test.txt", []byte("ahaha"), false)
@@ -77,7 +77,7 @@ func DBFileSystem ( It bdd.ItFn ){
     
   })
   
-  It( "make dir and save to dir", func(ctx appengine.Context){
+  It( "make dir and save to dir", func(ctx context.Context){
     
     dirPosition, err := dbfile.MakeDir( ctx, 0, "dir" )
     

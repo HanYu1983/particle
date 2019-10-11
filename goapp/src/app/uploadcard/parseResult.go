@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"appengine"
+	"google.golang.org/appengine"
 )
 
 func Serve_ParseResult(w http.ResponseWriter, r *http.Request) {

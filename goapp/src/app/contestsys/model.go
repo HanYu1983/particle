@@ -1,10 +1,9 @@
 package contestsys
 
 import (
+	"context"
 	"encoding/json"
 	"lib/db2"
-
-	"appengine"
 
 	"errors"
 	"time"
@@ -30,7 +29,7 @@ func NewContext() Context {
 	}
 }
 
-func LoadContext(ctx appengine.Context) (Context, error) {
+func LoadContext(ctx context.Context) (Context, error) {
 	file, err := db2.GetFile(ctx, contextPath)
 	if err != nil {
 		return Context{}, err
@@ -43,7 +42,7 @@ func LoadContext(ctx appengine.Context) (Context, error) {
 	return dc, err
 }
 
-func SaveContext(ctx appengine.Context, appContext Context) error {
+func SaveContext(ctx context.Context, appContext Context) error {
 	// 先將結構平面化成字串
 	code, err := json.Marshal(appContext)
 	if err != nil {

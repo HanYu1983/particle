@@ -41,7 +41,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request){
   fbid := form["FBID"][0]
   tool.Assert( tool.ParameterIsNotExist( form, "Name" ) )
   
-  err = WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+  err = WithTransaction(ctx, 3, func(ctx context.Context) error {
     gameCtx, err := LoadGameContext( ctx )
     if err != nil {
       return err
@@ -86,7 +86,7 @@ func CreateRoom (w http.ResponseWriter, r *http.Request){
   
   tool.Assert( tool.ParameterIsNotExist( form, "Name" ) )
   
-  err = WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+  err = WithTransaction(ctx, 3, func(ctx context.Context) error {
     gameCtx, err := LoadGameContext( ctx )
     if err != nil {
       return err
@@ -131,7 +131,7 @@ func EnterRoom (w http.ResponseWriter, r *http.Request){
   
   tool.Assert( tool.ParameterIsNotExist( form, "Room" ) )
   
-  err = WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+  err = WithTransaction(ctx, 3, func(ctx context.Context) error {
     gameCtx, err := LoadGameContext( ctx )
     if err != nil {
       return err
@@ -183,7 +183,7 @@ func LeaveMessage (w http.ResponseWriter, r *http.Request){
   unixTime, err := strconv.ParseInt(form["UnixTime"][0], 10, 64)
   tool.Assert( tool.IfError( err ) )
   
-  err = WithTransaction(ctx, 3, func(ctx appengine.Context) error {
+  err = WithTransaction(ctx, 3, func(ctx context.Context) error {
     gameCtx, err := LoadGameContext( ctx )
     if err != nil {
       return err
@@ -215,7 +215,7 @@ func Clear (w http.ResponseWriter, r *http.Request){
   })
   
   ctx := appengine.NewContext( r )
-  err := datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
+  err := datastore.RunInTransaction(ctx, func(ctx context.Context) error {
     gameCtx, err := LoadGameContext( ctx )
     if err != nil {
       return err
@@ -271,7 +271,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
     
     for times < maxtime {
       // 忽略回傳的任何錯誤，直到timeout或取得資料
-      datastore.RunInTransaction(ctx, func(ctx appengine.Context) error {
+      datastore.RunInTransaction(ctx, func(ctx context.Context) error {
         gameCtx, err := LoadGameContext( ctx )
         if err != nil {
           return err
@@ -324,7 +324,7 @@ func LongPollingTargetMessage (w http.ResponseWriter, r *http.Request){
 }
 
 
-func WithTransaction ( ctx appengine.Context, retry int, fn func(c appengine.Context)error ) error {
+func WithTransaction ( ctx context.Context, retry int, fn func(c context.Context)error ) error {
   var err error
   var times int
   for times < retry {
@@ -347,7 +347,7 @@ func InitContext ( gameContextPosition_ int64 ){
   gameContextPosition = gameContextPosition_
 }
 
-func LoadGameContext (ctx appengine.Context) (Context, error) {
+func LoadGameContext (ctx context.Context) (Context, error) {
   
   file, err := dbfile.GetFile( ctx, gameContextPosition )
   if err != nil {
@@ -401,7 +401,7 @@ func LoadGameContext (ctx appengine.Context) (Context, error) {
   */
 }
 
-func SaveGameContext (ctx appengine.Context, gameCtx Context) error {
+func SaveGameContext (ctx context.Context, gameCtx Context) error {
   data, err := json.Marshal( gameCtx )
   if err != nil {
     return err
