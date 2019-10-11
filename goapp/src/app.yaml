@@ -1,6 +1,4 @@
 ﻿runtime: go111
-api_version: go1
-threadsafe: true
 handlers:
 - url: /works
   static_dir: www/works
@@ -33,5 +31,5 @@ handlers:
 - url: /freechess
   static_dir: www/freechess  
 - url: /.*
-  script: _go_app
+  script: auto
   secure: always
