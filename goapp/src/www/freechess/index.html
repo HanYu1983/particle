@@ -303,9 +303,6 @@
 		}
 
 		function updateGameByData(roomId){
-			// var view = getViewByModelId(room.id);
-			// view.update(room);
-
 			api.game(roomId, (err, room)=>{
 				var view = getViewByModelId(room.id);
 				view.update(room);
