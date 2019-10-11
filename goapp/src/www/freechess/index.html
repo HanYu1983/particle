@@ -209,6 +209,15 @@
 			return retGames;
 		}
 
+		function getGameIDBySmallUIButton(ui){
+			return getGameIDBySmallUI(ui.parent().parent());
+		}
+
+		function getGameIDBySmallUI(uidom){
+			id = uidom.attr("tableSamllUiID");
+			return $("#gameContent" + id).attr('roomId');
+		}
+
 		var gameObj = undefined;
 		api.context((err, data) => {
 			console.log(err, data)
@@ -217,6 +226,31 @@
 			}
 			gameObj = refreshFourGame(data);
 			smallAllTable();
+
+			smallUIContainer.each(function(id, dom){
+				console.log(dom);
+				var roomId = getGameIDBySmallUI($(dom));
+				console.log(roomId, myId);
+				var canEnterRoom = api.canEnterRoom(getRoomById(roomId), myId);
+				console.log( canEnterRoom );
+
+				// join and play
+				$(dom).find("a").eq(0).click(function(e){
+					var ui = $(e.currentTarget);
+					var gameId = getGameIDBySmallUIButton(ui);
+					api.joinGame(gameId, myId, (err, data) => {
+						log("加入房", data);
+						if (err) {
+							return;
+						}
+					});
+				});
+
+				// scale up
+				$(dom).find("a").eq(2).click(function(){
+					bigTable(ary_table[id])
+				});
+			});
 		});
 		var myId = api.getUUID();
 		var ary_table = [$("#gameContent1"),$("#gameContent2"),$("#gameContent3"),$("#gameContent4")];
@@ -251,29 +285,7 @@
 		});
 
 		currentBigTable = undefined;
-
-		smallUIContainer.each(function(id, dom){
-
-			// join and play
-			$(dom).find("a").eq(0).click(function(e){
-				
-				var ui = $(e.currentTarget);
-				var tableSamllUiID = ui.parent().parent().attr("tableSamllUiID");
-				var table = $("#gameContent" + tableSamllUiID);
-				var tableId = table.attr('roomId');
-				api.joinGame(tableId, myId, (err, data) => {
-					log("加入房", data);
-					if (err) {
-						return;
-					}
-				});
-			});
-
-			// scale up
-			$(dom).find("a").eq(2).click(function(){
-				bigTable(ary_table[id])
-			});
-		});
+		
 
 		btn_scaleSmall = $("#btn_scaleSmall");
 		btn_scaleSmall.click(function(e){

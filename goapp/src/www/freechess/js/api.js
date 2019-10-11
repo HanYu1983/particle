@@ -306,6 +306,10 @@ var api = api || {};
         })
     }
 
+    function getRoomById(ctx, gameId){
+        return 1;
+    }
+
     module.context = context
     module.createGame = createGame
     module.joinGame = joinGame
@@ -322,4 +326,5 @@ var api = api || {};
     module.quickJoin = quickJoin
     module.quickLeave = quickLeave
     module.quickPut = quickPut
+    module.getRoomById = getRoomById
 })(api);
