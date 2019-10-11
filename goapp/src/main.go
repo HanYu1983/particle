@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/HanYu1983/gomod/app"
+	"src/app"
 
-	appauth "github.com/HanYu1983/gomod/lib/auth"
-	"github.com/HanYu1983/gomod/lib/db2"
-	"github.com/HanYu1983/gomod/lib/tool"
+	appauth "src/lib/auth"
+	"src/lib/db2"
+	"src/lib/tool"
 
 	"github.com/gorilla/mux"
 
@@ -18,9 +18,9 @@ import (
 
 	"strconv"
 
-	"github.com/HanYu1983/gomod/app/contestsys"
-	"github.com/HanYu1983/gomod/app/freechess"
-	"github.com/HanYu1983/gomod/app/uploadcard"
+	"src/app/contestsys"
+	"src/app/freechess"
+	"src/app/uploadcard"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
