@@ -27,6 +27,10 @@ var api = api || {};
         return get(`../fn/freechess`, cb)
     }
 
+    function game(gameID, cb){
+        return get(`../fn/freechess/game/${gameID}`, cb)
+    }
+
     function createGame(type, player, cb) {
         return get(`../fn/freechess/create/${type}/${player}`, (err, data) => {
             if (err) {
@@ -353,6 +357,7 @@ var api = api || {};
     }
 
     module.context = context
+    module.game = game
     module.createGame = createGame
     module.joinGame = joinGame
     module.visitGame = visitGame
