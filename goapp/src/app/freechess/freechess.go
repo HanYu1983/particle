@@ -94,6 +94,9 @@ func Serve_JoinGame(w http.ResponseWriter, r *http.Request) {
 		tool.Output(w, nil, err.Error())
 	})
 
+	visitorStr := r.URL.Query().Get("visitor")
+	isVisitor := visitorStr != ""
+
 	params := mux.Vars(r)
 	gameID := params["game"]
 	playerID := params["player"]
@@ -109,14 +112,23 @@ func Serve_JoinGame(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		game, err = AddPlayer(ctx, game, playerID)
-		if err != nil {
-			return err
+
+		if isVisitor {
+			game, err = AddVisitor(ctx, game, playerID)
+			if err != nil {
+				return err
+			}
+		} else {
+			game, err = AddPlayer(ctx, game, playerID)
+			if err != nil {
+				return err
+			}
+			game, err = AppendOrder(ctx, game, playerID, false)
+			if err != nil {
+				return err
+			}
 		}
-		game, err = AppendOrder(ctx, game, playerID, false)
-		if err != nil {
-			return err
-		}
+
 		appCtx.Games[gameIdx] = game
 		ret = game
 		return SaveContext(ctx, appCtx)

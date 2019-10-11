@@ -114,8 +114,6 @@ func init() {
 	router.HandleFunc("/fn/freechess/", freechess.Serve_App).Methods("GET")
 	router.HandleFunc("/fn/freechess/create/{type}/{player}", freechess.Serve_CreateGame).Methods("GET")
 	router.HandleFunc("/fn/freechess/game/{game}", freechess.Serve_GetGame).Methods("GET")
-	router.HandleFunc("/fn/freechess/game/{game}/viwer/{player}/join", freechess.Serve_JoinGame).Methods("GET")
-	router.HandleFunc("/fn/freechess/game/{game}/viwer/{player}/leave", freechess.Serve_LeaveGame).Methods("GET")
 	router.HandleFunc("/fn/freechess/game/{game}/player/{player}/join", freechess.Serve_JoinGame).Methods("GET")
 	router.HandleFunc("/fn/freechess/game/{game}/player/{player}/leave", freechess.Serve_LeaveGame).Methods("GET")
 	router.HandleFunc("/fn/freechess/game/{game}/player/{player}/chess/{x}/{y}/put", freechess.Serve_PutChess).Methods("GET")

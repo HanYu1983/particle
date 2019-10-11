@@ -6,14 +6,20 @@
 <script src="../common/js/admin.js"></script>
 <script>admin.init()</script>
 <script>
-    api.listenGame("abc", {
-        onopen: () => {
-            api.sendMessageToGame("abc", "test", () => { })
+    api.quickJoin(
+        "9823baf6-673f-4c37-8c1a-22f485c777d4",
+        "han",
+        false,
+        msg => {
+            console.log("msg", msg)
         },
-        onmessage: msg => {
-            console.log(msg)
-        }
-    })
+        (isSuccess, info) => {
+            console.log("target alive ", isSuccess, info)
+        }, 
+        (err, info)=>{
+            console.log(err, info)
+        })
+
     const player = api.getUUID();
     api.context((err, data) => {
         console.log(err, data)
