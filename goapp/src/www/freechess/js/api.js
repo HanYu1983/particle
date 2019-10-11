@@ -307,7 +307,11 @@ var api = api || {};
     }
 
     function getRoomById(ctx, gameId){
-        return 1;
+        const ret = ctx.games.filter(({id})=> id == gameId)
+        if(ret.length==0){
+            throw new Error(`${gameId} not found by getRoomById`)
+        }
+        return ret[0]
     }
 
     module.context = context
