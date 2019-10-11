@@ -344,6 +344,7 @@ var api = api || {};
     }
 
     function getRoomById(ctx, gameId) {
+        console.log(ctx);
         const ret = ctx.games.filter(({ id }) => id == gameId)
         if (ret.length == 0) {
             throw new Error(`${gameId} not found by getRoomById`)
