@@ -269,7 +269,7 @@ var api = api || {};
     /**
      * 是否已進指定房間
      */
-    function canEnterRoom(game, player) {
+    function canEnterGame(game, player) {
         if (game.players.indexOf(player) != -1) {
             return false;
         }
@@ -278,7 +278,7 @@ var api = api || {};
     /**
      * 是否已觀戰指定房間
      */
-    function canWatchRoom(game, player) {
+    function canWatchGame(game, player) {
         return game.visitors.indexOf(player) == -1
     }
     /**
@@ -347,11 +347,11 @@ var api = api || {};
         })
     }
 
-    function getRoomById(ctx, gameId) {
+    function getGameById(ctx, gameId) {
         console.log(ctx);
         const ret = ctx.games.filter(({ id }) => id == gameId)
         if (ret.length == 0) {
-            throw new Error(`${gameId} not found by getRoomById`)
+            throw new Error(`${gameId} not found by getGameById`)
         }
         return ret[0]
     }
@@ -368,12 +368,12 @@ var api = api || {};
     module.getRandomFourRoom = getRandomFourRoom
     module.isMyTurn = isMyTurn
     module.isFirst = isFirst
-    module.canEnterRoom = canEnterRoom
-    module.canWatchRoom = canWatchRoom
+    module.canEnterGame = canEnterGame
+    module.canWatchGame = canWatchGame
     module.quickCreateGame = quickCreateGame
     module.quickJoin = quickJoin
     module.quickLeave = quickLeave
     module.quickPut = quickPut
-    module.getRoomById = getRoomById
     module.getMyId = getMyId
+    module.getGameById = getGameById
 })(api);

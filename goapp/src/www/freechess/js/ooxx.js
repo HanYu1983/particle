@@ -1,11 +1,11 @@
 var view = view || {};
 view.ooxx = view.ooxx || {};
-(function(module){
-    function setGame( table, game, myId ){
-        
+(function (module) {
+    function setGame(table, game, myId, evts) {
+
         var dom = $("#tmpl_ooxxContent").tmpl();
         table.empty();
-		table.append(dom);
+        table.append(dom);
 
         var land = table.find("#table");
         var selection = table.find("#selection");
@@ -14,98 +14,115 @@ view.ooxx = view.ooxx || {};
 
         hideAllChess();
 
-        function hideAllChess(){
-            oo.each(function(i, o){
+        function hideAllChess() {
+            oo.each(function (i, o) {
                 $(o).hide();
             });
 
-            xx.each(function(i, x){
+            xx.each(function (i, x) {
                 $(x).hide();
             })
         }
 
-        land.load(function(){
-            function putChess(chess, x, y){
-                // global position 
-                var globalX = (x * gridSize) + gridSize / 2 - (landWidth / 2) + parseInt(land.parent().css('left'));
-                var globalY = (y * gridSize) + gridSize / 2 - (landHeight / 2) + parseInt(land.parent().css('top'));
+        function putChess(chess, x, y) {
+            // global position 
+            var globalX = (x * gridSize) + gridSize / 2 - (landWidth / 2) + parseInt(land.parent().css('left'));
+            var globalY = (y * gridSize) + gridSize / 2 - (landHeight / 2) + parseInt(land.parent().css('top'));
 
-                chess.css({
-                    left:globalX + 'px',
-                    top:globalY + 'px'
-                });
-            }
+            chess.css({
+                left: globalX + 'px',
+                top: globalY + 'px'
+            });
+        }
 
-            function updateChess(tokens){
-                log("更新盤面", tokens);
+        function updateChess(tokens) {
+            log("更新盤面", tokens);
 
-                hideAllChess();
+            hideAllChess();
 
-                var oid = 0;
-                var xid = 0;
-                _.each(tokens, (t)=>{
-                    isFirst = api.isFirst(game, t);
-                    var x = t.position.x;
-                    var y = t.position.y;
-                    if(isFirst){
-                        ochess = oo.eq(oid);
-                        ochess.show();
-                        putChess(ochess, x, y);
-                        oid++;
-                    }else{
-                        xchess = xx.eq(oid);
-                        xchess.show();
-                        putChess(xchess, x, y);
-                        xid++;
-                    }
-                });
-            }
-            var landWidth = land.width();
-            var landHeight = land.height();
-            var gridSize = landWidth / 3;
+            var oid = 0;
+            var xid = 0;
+            _.each(tokens, (t) => {
+                isFirst = api.isFirst(game, t);
+                var x = t.position.x;
+                var y = t.position.y;
+                if (isFirst) {
+                    ochess = oo.eq(oid);
+                    ochess.show();
+                    putChess(ochess, x, y);
+                    oid++;
+                } else {
+                    xchess = xx.eq(oid);
+                    xchess.show();
+                    putChess(xchess, x, y);
+                    xid++;
+                }
+            });
+        }
+
+        var landWidth = undefined;
+        var landHeight = undefined;
+        var gridSize = undefined;
+
+        land.load(function () {
+            
+            landWidth = land.width();
+            landHeight = land.height();
+            gridSize = landWidth / 3;
 
             updateChess(game.tokens);
 
-            land.click(function(e){
+            land.click(function (e) {
 
                 // grid id position
                 var x = Math.floor(e.offsetX / (landWidth / 3));
                 var y = Math.floor(e.offsetY / (landHeight / 3));
 
                 var roomId = table.attr("roomId");
-                api.put(roomId, myId, [x, y], (err, data) => {
-                    console.log(err);
-                    if (err) {
-                        return;
-                    }
-                    log("下子", data);
-                    updateChess(data.tokens);
-                });
+                if (evts.onTableClick) {
+                    evts.onTableClick(view, roomId, x, y);
+                }
             });
 
-            land.on("mousemove", function(e){
+            land.on("mousemove", function (e) {
 
                 // grid id position
                 var x = Math.floor(e.offsetX / (landWidth / 3));
                 var y = Math.floor(e.offsetY / (landHeight / 3));
-                
+
                 // global position 
                 putChess(selection, x, y);
             });
         })
 
-        return {
-            type:'ooxx',
-            update:function( data ){
+        var view = {
+            id:game.id,
+            game:game,
+            type: 'ooxx',
+            update: function (data) {
                 log("更新遊戲", data);
                 updateChess(data.tokens);
-            }, 
-            clear:function(){
+            },
+            clear: function () {
                 land.off("mousemove");
                 land.off("click");
                 table.empty();
             }
         }
+
+        return view;
+        // return {
+        //         type: 'ooxx',
+        //         update: function (data) {
+        //             log("更新遊戲", data);
+        //             updateChess(data.tokens);
+        //         },
+        //         clear: function () {
+        //             land.off("mousemove");
+        //             land.off("click");
+        //             table.empty();
+        //         }
+        //     }
     }
 
     module.setGame = setGame;
