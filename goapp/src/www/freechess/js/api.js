@@ -99,7 +99,7 @@ var api = api || {};
 
     const listenInfo = {
         callbacks: [],
-        basicCallback: null
+        basicCallback: {}
     }
 
     function registerHandler(cb) {
@@ -128,14 +128,14 @@ var api = api || {};
 
     function openBasicChannel(gameID, player, onmessage) {
         closeBasicChannel(gameID)
-        listenInfo.basicCallback = handleBasicChannel(player, onmessage)
-        openSocket(gameID, listenInfo.basicCallback)
+        listenInfo.basicCallback[gameID] = handleBasicChannel(player, onmessage)
+        openSocket(gameID, listenInfo.basicCallback[gameID])
     }
 
     function closeBasicChannel(gameID) {
-        if (listenInfo.basicCallback) {
-            closeSocket(gameID, listenInfo.basicCallback)
-            listenInfo.basicCallback = null
+        if (listenInfo.basicCallback[gameID]) {
+            closeSocket(gameID, basicCallback[gameID])
+            delete listenInfo.basicCallback[gameID]
         }
     }
 
