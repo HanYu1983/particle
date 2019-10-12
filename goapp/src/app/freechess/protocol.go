@@ -57,26 +57,18 @@ func AddPlayer(ctx context.Context, game Game, player string) (Game, error) {
 			return game, errors.New("you already join the room " + game.ID)
 		}
 	}
-	for _, p := range game.Visitors {
-		if p == player {
-			return game, errors.New("you already visit the room " + game.ID)
-		}
-	}
+	game, _ = RemoveVisitor(ctx, game, player)
 	game.Players = append(game.Players, player)
 	return game, nil
 }
 
 func AddVisitor(ctx context.Context, game Game, player string) (Game, error) {
-	for _, p := range game.Players {
-		if p == player {
-			return game, errors.New("you already join the room " + game.ID)
-		}
-	}
 	for _, p := range game.Visitors {
 		if p == player {
 			return game, errors.New("you already visit the room " + game.ID)
 		}
 	}
+	game, _ = RemovePlayer(ctx, game, player)
 	game.Visitors = append(game.Visitors, player)
 	return game, nil
 }
@@ -92,13 +84,17 @@ func RemovePlayer(ctx context.Context, game Game, player string) (Game, error) {
 	if idx != -1 {
 		game.Players = append(game.Players[:idx], game.Players[idx+1:]...)
 		game.PlayerOrder = append(game.PlayerOrder[:idx], game.PlayerOrder[idx+1:]...)
+	}
+	if game.State != Finish {
 		if len(game.PlayerOrder) < 2 {
 			game.State = WaitPlayer
 		}
-		return game, nil
 	}
+	return game, nil
+}
 
-	idx = -1
+func RemoveVisitor(ctx context.Context, game Game, player string) (Game, error) {
+	var idx = -1
 	for i := 0; i < len(game.Visitors); i++ {
 		if game.Visitors[i] == player {
 			idx = i
@@ -107,8 +103,13 @@ func RemovePlayer(ctx context.Context, game Game, player string) (Game, error) {
 	}
 	if idx != -1 {
 		game.Visitors = append(game.Visitors[:idx], game.Visitors[idx+1:]...)
-		return game, nil
 	}
+	return game, nil
+}
+
+func LeavePlayer(ctx context.Context, game Game, player string) (Game, error) {
+	game, _ = RemovePlayer(ctx, game, player)
+	game, _ = RemoveVisitor(ctx, game, player)
 	return game, nil
 }
 

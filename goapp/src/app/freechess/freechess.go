@@ -159,7 +159,7 @@ func Serve_LeaveGame(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		game, err = RemovePlayer(ctx, game, playerID)
+		game, err = LeavePlayer(ctx, game, playerID)
 		if err != nil {
 			return err
 		}
