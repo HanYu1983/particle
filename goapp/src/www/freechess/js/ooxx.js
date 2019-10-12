@@ -35,15 +35,15 @@ view.ooxx = view.ooxx || {};
             });
         }
 
-        function updateChess(tokens) {
-            log("更新盤面", tokens);
+        function updateChess(_game) {
+            log("更新盤面", _game.tokens);
 
             hideAllChess();
 
             var oid = 0;
             var xid = 0;
-            _.each(tokens, (t) => {
-                isFirst = api.isFirst(game, t);
+            _.each(_game.tokens, (t) => {
+                isFirst = api.isFirst(_game, t);
                 var x = t.position.x;
                 var y = t.position.y;
                 if (isFirst) {
@@ -59,7 +59,7 @@ view.ooxx = view.ooxx || {};
                 }
             });
 
-            if(evts.onUpdate) evts.onUpdate(game, view);
+            if(evts.onUpdate) evts.onUpdate(_game, view);
         }
 
         var landWidth = undefined;
@@ -72,7 +72,7 @@ view.ooxx = view.ooxx || {};
             landHeight = land.height();
             gridSize = landWidth / 3;
 
-            updateChess(game.tokens);
+            updateChess(game);
 
             land.click(function (e) {
 
@@ -101,10 +101,11 @@ view.ooxx = view.ooxx || {};
             id: game.id,
             game: game,
             table: table,
+            tableId: table.attr("gameContent"),
             type: 'ooxx',
             update: function (data) {
                 log("更新遊戲", data);
-                updateChess(data.tokens);
+                updateChess(data);
             },
             clear: function () {
                 land.off("mousemove");
