@@ -57,6 +57,16 @@ body{
 .vfull{
 	height:100%;
 }
+.half{
+	width:49.8%;
+	height:49.8%;
+}
+.hhalf{
+	width:49.8%;
+}
+.vhalf{
+	height:49.8%;
+}
 .rel{
 	position:relative;
 }

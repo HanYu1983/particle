@@ -33,53 +33,54 @@
 	}
 </style>
 <script id="tmpl_ooxxContent" type="jquery-x-tmpl">
-		<div class="abs pivot" style="left:50%; top:50%;">
-			<img id="table" class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\table.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="oo abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
-		</div>
-		<div class="xx abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
-		</div>
-		<div class="xx abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
-		</div>
-		<div class="xx abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
-		</div>
-		<div class="xx abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
-		</div>
-		<div id="selection" class="abs pivot lock" >
-			<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\selection.png">
-		</div>
-	</script>
+	<div class="abs pivot" style="left:50%; top:50%;">
+		<img id="table" class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\table.png">
+	</div>
+	<div class="oo abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+	</div>
+	<div class="oo abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+	</div>
+	<div class="oo abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+	</div>
+	<div class="oo abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+	</div>
+	<div class="oo abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\o.png">
+	</div>
+	<div class="xx abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+	</div>
+	<div class="xx abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+	</div>
+	<div class="xx abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+	</div>
+	<div class="xx abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
+	</div>
+	<div id="selection" class="abs pivot lock" >
+		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\selection.png">
+	</div>
+	<!-- <img class="abs full left top" src="imgs/inroom.png"> -->
+</script>
 <script id="tmpl_singleIconData" type="jquery-x-tmpl">
-		<div class="group singleIconData">
-			<div class="hori">
-				<a buttonid=${buttonId} href="#" class="easyui-linkbutton" style="width:60px;  " data-options="iconCls:'icon-add', disabled:false">生成</a>
-			</div>
-			<div class="hori">
-				<input value=${content} class="easyui-textbox" style="width:130px;" />
-			</div>
-			<div class="hori">
-				<img class="img_token" style="position:relative; top:7px; left:0; height:20px;" src=${tokenPath} />
-			</div>
+	<div class="group singleIconData">
+		<div class="hori">
+			<a buttonid=${buttonId} href="#" class="easyui-linkbutton" style="width:60px;  " data-options="iconCls:'icon-add', disabled:false">生成</a>
 		</div>
-	</script>
+		<div class="hori">
+			<input value=${content} class="easyui-textbox" style="width:130px;" />
+		</div>
+		<div class="hori">
+			<img class="img_token" style="position:relative; top:7px; left:0; height:20px;" src=${tokenPath} />
+		</div>
+	</div>
+</script>
 <style>
 	.gameView {
 		width: 100%;
@@ -88,8 +89,6 @@
 		overflow: hidden;
 	}
 
-	.gameUILayer {}
-
 	.scaleBig {
 		transform: scale(1);
 	}
@@ -97,6 +96,7 @@
 	.scaleSmall {
 		transform: scale(.5);
 	}
+
 </style>
 
 <body>
@@ -133,28 +133,42 @@
 				<a id="btn_scaleSmall" class="easyui-linkbutton">縮小</a>
 			</div>
 		</div>
-		<div tableSamllUiID="1" class="abs gameUILayer" style="left:0; top:0;">
+		<div class="abs group left top full lock">
+			<div class="rel hori half">
+				<img inroom="1" class="rel full left top" src="imgs/inroom.png">
+			</div>
+			<div class="rel hori half">
+				<img inroom="2" class="rel full left top" src="imgs/inroom.png">
+			</div>
+			<div class="rel hori half">
+				<img inroom="3" class="rel full left top" src="imgs/inroom.png">
+			</div>
+			<div class="rel hori half">
+				<img inroom="4" class="rel full left top" src="imgs/inroom.png">
+			</div>
+		</div>
+		<div tableSamllUiID="1" class="abs" style="left:0; top:0;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
 				<a class="easyui-linkbutton">觀戰</a>
 				<a class="easyui-linkbutton">放大</a>
 			</div>
 		</div>
-		<div tableSamllUiID="2" class="abs gameUILayer" style="left:50%; top:0;">
+		<div tableSamllUiID="2" class="abs" style="left:50%; top:0;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
 				<a class="easyui-linkbutton">觀戰</a>
 				<a class="easyui-linkbutton">放大</a>
 			</div>
 		</div>
-		<div tableSamllUiID="3" class="abs gameUILayer" style="left:0; top:50%;">
+		<div tableSamllUiID="3" class="abs" style="left:0; top:50%;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
 				<a class="easyui-linkbutton">觀戰</a>
 				<a class="easyui-linkbutton">放大</a>
 			</div>
 		</div>
-		<div tableSamllUiID="4" class="abs gameUILayer" style="left:50%; top:50%;">
+		<div tableSamllUiID="4" class="abs" style="left:50%; top:50%;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
 				<a class="easyui-linkbutton">觀戰</a>
@@ -205,9 +219,29 @@
 		}
 
 		function refreshFourGameSmallUI(ctx) {
-			smallUIContainer.each(function (id, dom) {
-				refreshSmallUI(ctx, dom);
+			// smallUIContainer.each((id, dom) => {
+			// 	refreshSmallUI(ctx, dom);
+			// });
+
+			// inroomContainer.each((id, dom)=>{
+
+			// })
+
+			//console.log(inroomContainer.toArray());
+
+			// _.each( inroomContainer.toArray(), (dom)=>{
+			// 	$(dom).hide();
+			// });
+
+			_.each(_.zip(inroomContainer.toArray(), smallUIContainer.toArray()), (map)=>{
+				//console.log(map);
+
+				refreshSmallUI(ctx, map);
 			});
+
+			// $.merge(smallUIContainer, inroomContainer).each((id, map)=>{
+			// 	console.log(id, map);
+			// })
 		}
 
 		function onOOXXTableClick(ooxx, roomId, x, y) {
@@ -225,7 +259,7 @@
 				return {};
 			}
 			var retGames = {};
-			var randomList = api.getRandomFourRoom(ctx);
+			var randomList = api.getRandomFourRoom(ctx, myId);
 
 			log("更新四間房", randomList);
 			var tid = 0;
@@ -260,15 +294,21 @@
 			return ui.find("a").eq(2);
 		}
 
-		function refreshSmallUI(data, dom) {
-			var roomId = getGameIDBySmallUI($(dom));
-			var btn_join = getBtnJoin($(dom));
-			var btn_watch = getBtnWatch($(dom));
-			var btn_scale = getBtnScale($(dom));
+		function refreshSmallUI(data, doms) {
+
+			var inroomLayer = $(doms[0]);
+			var btnLayer = $(doms[1]);
+
+			var roomId = getGameIDBySmallUI($(btnLayer));
+			var btn_join = getBtnJoin($(btnLayer));
+			var btn_watch = getBtnWatch($(btnLayer));
+			var btn_scale = getBtnScale($(btnLayer));
 
 			btn_join.linkbutton('enable');
 			btn_watch.linkbutton('enable');
 			btn_scale.linkbutton('enable');
+
+			
 
 			if (!roomId) {
 				btn_join.linkbutton('disable');
@@ -277,8 +317,15 @@
 				return;
 			}
 
-			var canEnterGame = api.canEnterGame(api.getGameById(data, roomId), myId);
-			var canWatchGame = api.canWatchGame(api.getGameById(data, roomId), myId);
+			var game = api.getGameById(data, roomId);
+			var canEnterGame = api.canEnterGame(game, myId);
+			var canWatchGame = api.canWatchGame(game, myId);
+
+			var isInRoom = api.isInGame(game, myId);
+			inroomLayer.hide();
+			if(isInRoom){
+				inroomLayer.show();
+			}
 
 			if (!canEnterGame) {
 				btn_join.linkbutton('disable');
@@ -317,7 +364,7 @@
 		}
 
 		api.insertServiceCallback((err, data) => {
-			if( err ){
+			if (err) {
 				$.messager.show({
 					title: '提示',
 					msg: err,
@@ -395,7 +442,8 @@
 		var ary_table = [$("#gameContent1"), $("#gameContent2"), $("#gameContent3"), $("#gameContent4")];
 		var ary_game = [$("#tmpl_ooxxContent")]
 		var bigUIContainer = $("#bigUIContainer");
-		var smallUIContainer = $(".gameUILayer");
+		var smallUIContainer = $("[tableSamllUiID]");
+		var inroomContainer = $("[inroom]");
 		var btn_createRoom = $("#btn_createRoom");
 		var btn_refreshRoom = $("#btn_refreshRoom");
 		var combo_type = $("#combo_type");

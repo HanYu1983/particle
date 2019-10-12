@@ -284,8 +284,18 @@ var api = api || {};
     function isFirst(game, { type }) {
         return type == 0
     }
+
     /**
-     * 是否已進指定房間
+     * 是否已進入指定房間
+     * @param {*} game 
+     * @param {*} player 
+     */
+    function isInGame(game, player){
+        return true;
+    }
+
+    /**
+     * 是否能進指定房間
      */
     function canEnterGame(game, player) {
         if (game.players.indexOf(player) != -1) {
@@ -388,6 +398,7 @@ var api = api || {};
     module.isFirst = isFirst
     module.canEnterGame = canEnterGame
     module.canWatchGame = canWatchGame
+    module.isInGame = isInGame
     module.quickCreateGame = quickCreateGame
     module.quickJoin = quickJoin
     module.quickLeave = quickLeave
