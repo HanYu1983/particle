@@ -2,7 +2,7 @@ var view = view || {};
 view.ooxx = view.ooxx || {};
 (function (module) {
     function setGame(table, game, myId, evts) {
-
+        console.log(table);
         var dom = $("#tmpl_ooxxContent").tmpl();
         table.empty();
         table.append(dom);
@@ -58,6 +58,8 @@ view.ooxx = view.ooxx || {};
                     xid++;
                 }
             });
+
+            if(evts.onUpdate) evts.onUpdate(game, view);
         }
 
         var landWidth = undefined;
@@ -65,7 +67,7 @@ view.ooxx = view.ooxx || {};
         var gridSize = undefined;
 
         land.load(function () {
-            
+
             landWidth = land.width();
             landHeight = land.height();
             gridSize = landWidth / 3;
@@ -96,8 +98,9 @@ view.ooxx = view.ooxx || {};
         })
 
         var view = {
-            id:game.id,
-            game:game,
+            id: game.id,
+            game: game,
+            table: table,
             type: 'ooxx',
             update: function (data) {
                 log("更新遊戲", data);
@@ -111,18 +114,6 @@ view.ooxx = view.ooxx || {};
         }
 
         return view;
-        // return {
-        //         type: 'ooxx',
-        //         update: function (data) {
-        //             log("更新遊戲", data);
-        //             updateChess(data.tokens);
-        //         },
-        //         clear: function () {
-        //             land.off("mousemove");
-        //             land.off("click");
-        //             table.empty();
-        //         }
-        //     }
     }
 
     module.setGame = setGame;

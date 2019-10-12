@@ -96,7 +96,6 @@
 	.scaleSmall {
 		transform: scale(.5);
 	}
-
 </style>
 
 <body>
@@ -111,19 +110,19 @@
 	</div>
 	<div class="group full">
 		<div class="rel full left top">
-			<div id="gameContent1" style="transform-origin: left top; background-color: darkred"
+			<div gameContent="0" style="transform-origin: left top; background-color: darkred"
 				class="rel left top gameView">
 
 			</div>
-			<div id="gameContent2" style="transform-origin: right top; background-color: darkgreen"
-				class="abs right top gameView">
-
-			</div>
-			<div id="gameContent3" style="transform-origin: left bottom; background-color: darkgoldenrod"
+			<div gameContent="1" style="transform-origin: right top; background-color: darkgreen"
 				class="abs left top gameView">
 
 			</div>
-			<div id="gameContent4" style="transform-origin: right bottom; background-color: darkblue"
+			<div gameContent="2" style="transform-origin: left bottom; background-color: darkgoldenrod"
+				class="abs left top gameView">
+
+			</div>
+			<div gameContent="3" style="transform-origin: right bottom; background-color: darkblue"
 				class="abs left top gameView">
 
 			</div>
@@ -135,40 +134,44 @@
 		</div>
 		<div class="abs group left top full lock">
 			<div class="rel hori half">
-				<img inroom="1" class="rel full left top" src="imgs/inroom.png">
+				<img isMyTurn="0" class="rel full left top" src="imgs/isMyTurn.png">
+				<img inroom="0" class="abs full left top" src="imgs/inroom.png">
 			</div>
 			<div class="rel hori half">
-				<img inroom="2" class="rel full left top" src="imgs/inroom.png">
+				<img isMyTurn="1" class="rel full left top" src="imgs/isMyTurn.png">
+				<img inroom="1" class="abs full left top" src="imgs/inroom.png">
 			</div>
 			<div class="rel hori half">
-				<img inroom="3" class="rel full left top" src="imgs/inroom.png">
+				<img isMyTurn="2" class="rel full left top" src="imgs/isMyTurn.png">
+				<img inroom="2" class="abs full left top" src="imgs/inroom.png">
 			</div>
 			<div class="rel hori half">
-				<img inroom="4" class="rel full left top" src="imgs/inroom.png">
+				<img isMyTurn="3" class="rel full left top" src="imgs/isMyTurn.png">
+				<img inroom="3" class="abs full left top" src="imgs/inroom.png">
 			</div>
 		</div>
-		<div tableSamllUiID="1" class="abs" style="left:0; top:0;">
+		<div tableSamllUiID="0" class="abs" style="left:0; top:0;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
 				<a class="easyui-linkbutton">觀戰</a>
 				<a class="easyui-linkbutton">放大</a>
 			</div>
 		</div>
-		<div tableSamllUiID="2" class="abs" style="left:50%; top:0;">
+		<div tableSamllUiID="1" class="abs" style="left:50%; top:0;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
 				<a class="easyui-linkbutton">觀戰</a>
 				<a class="easyui-linkbutton">放大</a>
 			</div>
 		</div>
-		<div tableSamllUiID="3" class="abs" style="left:0; top:50%;">
+		<div tableSamllUiID="2" class="abs" style="left:0; top:50%;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
 				<a class="easyui-linkbutton">觀戰</a>
 				<a class="easyui-linkbutton">放大</a>
 			</div>
 		</div>
-		<div tableSamllUiID="4" class="abs" style="left:50%; top:50%;">
+		<div tableSamllUiID="3" class="abs" style="left:50%; top:50%;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
 				<a class="easyui-linkbutton">觀戰</a>
@@ -191,10 +194,6 @@
 		function smallTable(table) {
 			bigUIContainer.hide();
 			smallUIContainer.show();
-
-			_.each(ary_table, function (t) {
-				t.show();
-			});
 			table.removeClass("scaleBig").addClass("scaleSmall");
 		}
 
@@ -202,8 +201,8 @@
 			bigUIContainer.show();
 			smallUIContainer.hide();
 
-			_.each(ary_table, function (t) {
-				t.hide();
+			ary_table.each((id, dom) => {
+				$(dom).hide();
 			});
 			table.show();
 			table.removeClass("scaleSmall").addClass("scaleBig");
@@ -212,46 +211,43 @@
 		}
 
 		function smallAllTable() {
-			_.each(ary_table, (t) => {
-				smallTable(t);
+			ary_table.each((id, dom) => {
+				smallTable($(dom))
 			});
 			bigUIContainer.hide();
 		}
 
 		function refreshFourGameSmallUI(ctx) {
-			// smallUIContainer.each((id, dom) => {
-			// 	refreshSmallUI(ctx, dom);
-			// });
-
-			// inroomContainer.each((id, dom)=>{
-
-			// })
-
-			//console.log(inroomContainer.toArray());
-
-			// _.each( inroomContainer.toArray(), (dom)=>{
-			// 	$(dom).hide();
-			// });
-
-			_.each(_.zip(inroomContainer.toArray(), smallUIContainer.toArray()), (map)=>{
-				//console.log(map);
-
-				refreshSmallUI(ctx, map);
-			});
-
-			// $.merge(smallUIContainer, inroomContainer).each((id, map)=>{
-			// 	console.log(id, map);
-			// })
+			_.each(
+				_.zip(
+					inroomContainer.toArray(),
+					smallUIContainer.toArray(),
+					isMyTurnContainer.toArray()), (map) => {
+						refreshSmallUI(ctx, map);
+					});
 		}
 
-		function onOOXXTableClick(ooxx, roomId, x, y) {
+		function onOOXXTableClick(view, roomId, x, y) {
 			api.quickPut(roomId, myId, [x, y], (err, info) => {
 				if (err) {
 					return;
 				}
 				log("下子", info);
-				ooxx.update(info);
+				view.update(info);
 			})
+		}
+
+		function onTableUpdate(game, view) {
+			var isMyTurn = api.isMyTurn(game, myId);
+			var tableId = view.table.attr('gameContent');
+
+			console.log("tableId: " + tableId);
+
+			if (isMyTurn) {
+				isMyTurnContainer.eq(tableId).show();
+			} else {
+				isMyTurnContainer.eq(tableId).hide();
+			}
 		}
 
 		function refreshFourGame(ctx) {
@@ -264,9 +260,9 @@
 			log("更新四間房", randomList);
 			var tid = 0;
 			_.each(randomList, (room) => {
-				table = ary_table[tid];
+				table = ary_table.eq(tid);
 				table.attr('roomId', room.id);
-				retGames[room.id] = view.ooxx.setGame(table, room, myId, { onTableClick: onOOXXTableClick });
+				retGames[room.id] = view.ooxx.setGame(table, room, myId, { onTableClick: onOOXXTableClick, onUpdate: onTableUpdate });
 				tid++;
 			});
 			refreshFourGameSmallUI(ctx);
@@ -279,7 +275,7 @@
 
 		function getGameIDBySmallUI(uidom) {
 			id = uidom.attr("tableSamllUiID");
-			return $("#gameContent" + id).attr('roomId');
+			return $("[gameContent='" + id + "']").attr("roomId");
 		}
 
 		function getBtnJoin(ui) {
@@ -298,17 +294,18 @@
 
 			var inroomLayer = $(doms[0]);
 			var btnLayer = $(doms[1]);
+			var isMyTurnLayer = $(doms[2]);
 
-			var roomId = getGameIDBySmallUI($(btnLayer));
-			var btn_join = getBtnJoin($(btnLayer));
-			var btn_watch = getBtnWatch($(btnLayer));
-			var btn_scale = getBtnScale($(btnLayer));
+			var roomId = getGameIDBySmallUI(btnLayer);
+			var btn_join = getBtnJoin(btnLayer);
+			var btn_watch = getBtnWatch(btnLayer);
+			var btn_scale = getBtnScale(btnLayer);
 
 			btn_join.linkbutton('enable');
 			btn_watch.linkbutton('enable');
 			btn_scale.linkbutton('enable');
-
-			
+			inroomLayer.hide();
+			isMyTurnLayer.hide();
 
 			if (!roomId) {
 				btn_join.linkbutton('disable');
@@ -320,11 +317,17 @@
 			var game = api.getGameById(data, roomId);
 			var canEnterGame = api.canEnterGame(game, myId);
 			var canWatchGame = api.canWatchGame(game, myId);
-
 			var isInRoom = api.isInGame(game, myId);
-			inroomLayer.hide();
-			if(isInRoom){
+			var isMyTurn = api.isMyTurn(game, myId);
+
+			console.log("canEnterGame:", canEnterGame);
+
+			if (isInRoom) {
 				inroomLayer.show();
+			}
+
+			if (isMyTurn) {
+				isMyTurnLayer.show();
 			}
 
 			if (!canEnterGame) {
@@ -348,10 +351,21 @@
 			return views[0];
 		}
 
-		function updateGameByData(roomId) {
-			api.game(roomId, (err, room) => {
-				var view = getViewByModelId(room.id);
-				view.update(room);
+		function updateGameByData(gameId) {
+			api.game(gameId, (err, game) => {
+				var view = getViewByModelId(game.id);
+				view.update(game);
+
+				// var isMyTurn = api.isMyTurn(game, myId);
+				// var tableId = view.table.attr('gameContent');
+
+				// console.log("tableId: " + tableId);
+
+				// if(isMyTurn){
+				// 	isMyTurnContainer.eq(tableId).show();
+				// }else{
+				// 	isMyTurnContainer.eq(tableId).hide();
+				// }
 			});
 		}
 
@@ -363,19 +377,7 @@
 			}
 		}
 
-		api.insertServiceCallback((err, data) => {
-			if (err) {
-				$.messager.show({
-					title: '提示',
-					msg: err,
-					timeout: 5000,
-					showType: 'slide'
-				});
-			}
-		})
-
-		var gameObj = undefined;
-		api.context((err, ctx) => {
+		function main(err, ctx) {
 			if (err) {
 				return;
 			}
@@ -435,15 +437,91 @@
 					bigTable(ary_table[id])
 				});
 			});
-		});
+		}
+
+		function aiTest(err, ctx){
+			gameObj = refreshFourGame(ctx);
+			smallAllTable();
+
+			smallUIContainer.each(function (id, dom) {
+				var btn_join = getBtnJoin($(dom));
+				var btn_watch = getBtnWatch($(dom));
+				var btn_scale = getBtnScale($(dom));
+
+				btn_join.click(function (e) {
+					var ui = $(e.currentTarget);
+					var gameId = getGameIDBySmallUIButton(ui);
+					api.quickJoin(
+						gameId,
+						myId,
+						false,
+						msg => {
+							handleMsg(msg);
+						},
+						(isSuccess, info) => {
+							console.log("target alive ", isSuccess, info)
+						},
+						(err, ctx) => {
+							if (err) {
+								return;
+							}
+							log("加入對奕", ctx);
+							btn_join.linkbutton('disable');
+						})
+				});
+
+				btn_watch.click(function (e) {
+					var ui = $(e.currentTarget);
+					var gameId = getGameIDBySmallUIButton(ui);
+					api.quickJoin(
+						gameId,
+						myId,
+						true,
+						msg => {
+							handleMsg(msg);
+						},
+						(isSuccess, info) => {
+							console.log("target alive ", isSuccess, info)
+						},
+						(err, ctx) => {
+							if (err) {
+								return;
+							}
+							log("加入觀戰", ctx);
+							btn_watch.linkbutton('disable');
+						})
+				});
+
+				btn_scale.click(function () {
+					bigTable(ary_table[id])
+				});
+			});
+
+
+		}
+
+		api.insertServiceCallback((err, data) => {
+			if (err) {
+				$.messager.show({
+					title: '提示',
+					msg: err,
+					timeout: 5000,
+					showType: 'slide'
+				});
+			}
+		})
+
+		var gameObj = undefined;
+		api.context(main);
 
 		//var myId = api.getMyId();
 		var myId = api.getUUID();
-		var ary_table = [$("#gameContent1"), $("#gameContent2"), $("#gameContent3"), $("#gameContent4")];
+		var ary_table = $("[gameContent]");
 		var ary_game = [$("#tmpl_ooxxContent")]
 		var bigUIContainer = $("#bigUIContainer");
 		var smallUIContainer = $("[tableSamllUiID]");
 		var inroomContainer = $("[inroom]");
+		var isMyTurnContainer = $("[isMyTurn]");
 		var btn_createRoom = $("#btn_createRoom");
 		var btn_refreshRoom = $("#btn_refreshRoom");
 		var combo_type = $("#combo_type");
