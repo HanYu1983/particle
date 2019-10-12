@@ -291,7 +291,7 @@ var api = api || {};
      * @param {*} player 
      */
     function isInGame(game, player){
-        return game.players.indexOf(player) != -1
+        return game.players.indexOf(player) != -1 || game.visitors.indexOf(player) != -1
     }
 
     /**
