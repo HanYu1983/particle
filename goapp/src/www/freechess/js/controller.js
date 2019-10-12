@@ -3,7 +3,6 @@ var controller = controller || {};
 
     var myId = undefined;
     var ary_table = undefined;
-    var ary_game = undefined;
     var bigUIContainer = undefined;
     var smallUIContainer = undefined;
     var inroomContainer = undefined;
@@ -11,12 +10,13 @@ var controller = controller || {};
     var btn_createRoom = undefined;
     var btn_refreshRoom = undefined;
     var combo_type = undefined;
+    var gameObj = {};
 
-    function showAllTable( show ){
-        ary_table.each((id, dom)=>{
-            if(show){
+    function showAllTable(show) {
+        ary_table.each((id, dom) => {
+            if (show) {
                 $(dom).show();
-            }else{
+            } else {
                 $(dom).hide();
             }
         });
@@ -57,6 +57,12 @@ var controller = controller || {};
     }
 
     function onOOXXTableClick(view, roomId, x, y) {
+        putOOXXToTargetTable(view.id, x, y);
+    }
+
+    function putOOXXToTargetTable(id, x, y) {
+        var view = gameObj[id];
+        var roomId = view.id;
         api.quickPut(roomId, myId, [x, y], (err, info) => {
             if (err) {
                 return;
@@ -68,8 +74,11 @@ var controller = controller || {};
 
     function onTableUpdate(game, view) {
         var isMyTurn = api.isMyTurn(game, myId);
-        var tableId = view.table.attr('gameContent');
+        var tableId = view.tableId;
 
+        console.log("onTableUpdate,tableId: " + tableId)
+        console.log(isMyTurnContainer.eq(tableId));
+        console.log("isMyTurn:" + isMyTurn);
         if (isMyTurn) {
             isMyTurnContainer.eq(tableId).show();
         } else {
@@ -202,11 +211,61 @@ var controller = controller || {};
         }
     }
 
-    function init() {
-        //myId = api.getMyId();
-        myId = api.getUUID();
+    function onBtnCreateGameClick(e) {
+        selectType = combo_type.combobox('getValue');
+        api.quickCreateGame(
+            selectType, myId,
+            msg => {
+                handleMsg(msg);
+            },
+            (isSuccess, info) => {
+                console.log("target alive ", isSuccess, info)
+            },
+            (err, ctx, room) => {
+                if (err) {
+                    return;
+                }
+                log("創建方間", ctx);
+                gameObj = refreshFourGame(ctx);
+            });
+    }
+
+    function onBtnRefreshGameClick() {
+        api.context((err, data) => {
+            if (err) {
+                return;
+            }
+            if (data.games) {
+                gameObj = refreshFourGame(data);
+            }
+        });
+    }
+
+    function onBtnJoinClick(e) {
+        var btn_join = $(e.currentTarget);
+        var gameId = getGameIDBySmallUIButton(btn_join);
+        api.quickJoin(
+            gameId,
+            myId,
+            false,
+            msg => {
+                handleMsg(msg);
+            },
+            (isSuccess, info) => {
+                console.log("target alive ", isSuccess, info)
+            },
+            (err, ctx) => {
+                if (err) {
+                    return;
+                }
+                log("加入對奕", ctx);
+                btn_join.linkbutton('disable');
+            })
+    }
+
+    function init(id, cb = undefined) {
+        myId = id;
         ary_table = $("[gameContent]");
-        ary_game = [$("#tmpl_ooxxContent")];
         bigUIContainer = $("#bigUIContainer");
         smallUIContainer = $("[tableSamllUiID]");
         inroomContainer = $("[inroom]");
@@ -215,7 +274,6 @@ var controller = controller || {};
         btn_refreshRoom = $("#btn_refreshRoom");
         combo_type = $("#combo_type");
 
-        var gameObj = undefined;
         api.context((err, ctx) => {
             if (err) {
                 return;
@@ -228,28 +286,7 @@ var controller = controller || {};
                 var btn_watch = getBtnWatch($(dom));
                 var btn_scale = getBtnScale($(dom));
 
-                btn_join.click(function (e) {
-                    var ui = $(e.currentTarget);
-                    var gameId = getGameIDBySmallUIButton(ui);
-                    api.quickJoin(
-                        gameId,
-                        myId,
-                        false,
-                        msg => {
-                            handleMsg(msg);
-                        },
-                        (isSuccess, info) => {
-                            console.log("target alive ", isSuccess, info)
-                        },
-                        (err, ctx) => {
-                            if (err) {
-                                return;
-                            }
-                            log("加入對奕", ctx);
-                            btn_join.linkbutton('disable');
-                        })
-                });
-
+                btn_join.click(onBtnJoinClick);
                 btn_watch.click(function (e) {
                     var ui = $(e.currentTarget);
                     var gameId = getGameIDBySmallUIButton(ui);
@@ -276,6 +313,8 @@ var controller = controller || {};
                     bigTable(ary_table.eq(id))
                 });
             });
+
+            if (cb) cb();
         });
 
         api.insertServiceCallback((err, data) => {
@@ -289,35 +328,8 @@ var controller = controller || {};
             }
         })
 
-        btn_createRoom.click(() => {
-            selectType = combo_type.combobox('getValue');
-            api.quickCreateGame(
-                selectType, myId,
-                msg => {
-                    handleMsg(msg);
-                },
-                (isSuccess, info) => {
-                    console.log("target alive ", isSuccess, info)
-                },
-                (err, ctx, room) => {
-                    if (err) {
-                        return;
-                    }
-                    log("創建方間", ctx);
-                    gameObj = refreshFourGame(ctx);
-                });
-        });
-
-        btn_refreshRoom.click(() => {
-            api.context((err, data) => {
-                if (err) {
-                    return;
-                }
-                if (data.games) {
-                    gameObj = refreshFourGame(data);
-                }
-            });
-        });
+        btn_createRoom.click(onBtnCreateGameClick);
+        btn_refreshRoom.click(onBtnRefreshGameClick);
 
         currentBigTable = undefined;
 
@@ -330,4 +342,8 @@ var controller = controller || {};
     }
 
     module.init = init;
+    module.onBtnCreateGameClick = onBtnCreateGameClick;
+    module.onBtnRefreshGameClick = onBtnRefreshGameClick;
+    module.onBtnJoinClick = onBtnJoinClick;
+    module.putOOXXToTargetTable = putOOXXToTargetTable;
 })(controller);
