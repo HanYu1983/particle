@@ -53,10 +53,6 @@ func Serve_CreateGame(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		game, err = AppendOrder(ctx, game, playerID, false)
-		if err != nil {
-			return err
-		}
 		appCtx.Games[gameIdx] = game
 		ret = []interface{}{appCtx, game}
 		return SaveContext(ctx, appCtx)
@@ -122,10 +118,6 @@ func Serve_JoinGame(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			game, err = AddPlayer(ctx, game, playerID)
-			if err != nil {
-				return err
-			}
-			game, err = AppendOrder(ctx, game, playerID, false)
 			if err != nil {
 				return err
 			}

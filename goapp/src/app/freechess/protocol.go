@@ -59,6 +59,10 @@ func AddPlayer(ctx context.Context, game Game, player string) (Game, error) {
 	}
 	game, _ = RemoveVisitor(ctx, game, player)
 	game.Players = append(game.Players, player)
+	game, err := AppendOrder(ctx, game, player, false)
+	if err != nil {
+		return game, err
+	}
 	return game, nil
 }
 
