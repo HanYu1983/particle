@@ -16,6 +16,7 @@ type Position struct {
 }
 
 type Token struct {
+	ID       string   `json:"id"`
 	Position Position `json:"position"`
 	Type     string   `json:"type"`
 }
@@ -38,6 +39,7 @@ type Game struct {
 	Winner       string    `json:"winner"`
 	CurrOrderIdx int       `json:"currOrderIdx"`
 	CreateTime   time.Time `json:"createTime"`
+	SeqID        int       `json:"seqId"`
 }
 
 func GetPlayerOrder(ctx context.Context, game Game, player string) (int, error) {
@@ -50,13 +52,31 @@ func GetPlayerOrder(ctx context.Context, game Game, player string) (int, error) 
 }
 
 func AddPlayer(ctx context.Context, game Game, player string) (Game, error) {
-	// TODO check player exist
+	for _, p := range game.Players {
+		if p == player {
+			return game, errors.New("you already join the room " + game.ID)
+		}
+	}
+	for _, p := range game.Visitors {
+		if p == player {
+			return game, errors.New("you already visit the room " + game.ID)
+		}
+	}
 	game.Players = append(game.Players, player)
 	return game, nil
 }
 
 func AddVisitor(ctx context.Context, game Game, player string) (Game, error) {
-	// TODO check player exist
+	for _, p := range game.Players {
+		if p == player {
+			return game, errors.New("you already join the room " + game.ID)
+		}
+	}
+	for _, p := range game.Visitors {
+		if p == player {
+			return game, errors.New("you already visit the room " + game.ID)
+		}
+	}
 	game.Visitors = append(game.Visitors, player)
 	return game, nil
 }
@@ -138,12 +158,12 @@ type IGame interface {
 
 type Context struct {
 	Games []Game `json:"games"`
-	SeqId int    `json:"seqId"`
+	SeqID int    `json:"seqId"`
 }
 
 func CreateGame(ctx context.Context, app Context, gameType string) (Context, int, Game, error) {
 	var game = Game{
-		ID:          strconv.Itoa(app.SeqId),
+		ID:          strconv.Itoa(app.SeqID),
 		Type:        gameType,
 		State:       Pending,
 		Tokens:      []Token{},
@@ -154,7 +174,7 @@ func CreateGame(ctx context.Context, app Context, gameType string) (Context, int
 	}
 	var idx = len(app.Games)
 	app.Games = append(app.Games, game)
-	app.SeqId = app.SeqId + 1
+	app.SeqID = app.SeqID + 1
 	return app, idx, game, nil
 }
 
@@ -165,7 +185,7 @@ func GetGame(ctx context.Context, app Context, id string) (int, Game, error) {
 		}
 	}
 	var game Game
-	return 0, game, errors.New(id + " not found")
+	return 0, game, errors.New(id + " game not found")
 }
 
 const (
