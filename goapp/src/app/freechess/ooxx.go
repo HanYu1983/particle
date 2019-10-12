@@ -79,6 +79,12 @@ func (OOXX) CheckWin(ctx context.Context, game Game) Game {
 	completed = completed || checkLine(ctx, game, []Position{{0, 0}, {1, 1}, {2, 2}}, "0")
 	completed = completed || checkLine(ctx, game, []Position{{0, 2}, {1, 1}, {2, 0}}, "0")
 
+	if completed {
+		game.Winner = "0"
+		game.State = Finish
+		return game
+	}
+
 	completed = completed || checkLine(ctx, game, []Position{{0, 0}, {0, 1}, {0, 2}}, "1")
 	completed = completed || checkLine(ctx, game, []Position{{1, 0}, {1, 1}, {1, 2}}, "1")
 	completed = completed || checkLine(ctx, game, []Position{{2, 0}, {2, 1}, {2, 2}}, "1")
@@ -89,7 +95,9 @@ func (OOXX) CheckWin(ctx context.Context, game Game) Game {
 	completed = completed || checkLine(ctx, game, []Position{{0, 2}, {1, 1}, {2, 0}}, "1")
 
 	if completed {
+		game.Winner = "1"
 		game.State = Finish
+		return game
 	}
 	return game
 }
