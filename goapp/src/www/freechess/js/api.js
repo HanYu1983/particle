@@ -291,15 +291,15 @@ var api = api || {};
      * @param {*} player 
      */
     function isInGame(game, player){
-        return true;
+        return game.players.indexOf(player) != -1
     }
 
     /**
      * 是否能進指定房間
      */
     function canEnterGame(game, player) {
-        if (game.players.indexOf(player) != -1) {
-            return false;
+        if(isInGame(game, player)){
+            return false
         }
         return game.players.length < 2
     }
