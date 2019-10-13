@@ -205,7 +205,7 @@ var controller = controller || {};
         }
     }
 
-    function onBtnCreateGameClick(e) {
+    function createGame(){
         selectType = combo_type.combobox('getValue');
         api.quickCreateGame(
             selectType, myId,
@@ -224,7 +224,7 @@ var controller = controller || {};
             });
     }
 
-    function onBtnRefreshGameClick() {
+    function refreshGame(){
         api.context((err, data) => {
             if (err) {
                 return;
@@ -235,14 +235,23 @@ var controller = controller || {};
         });
     }
 
+    function onBtnCreateGameClick(e) {
+        createGame();
+    }
+
+    function onBtnRefreshGameClick(e) {
+        refreshGame();
+    }
+
     function onBtnExitClick(e) {
-        var btn_join = $(e.currentTarget);
-        var gameId = getGameIDBySmallUIButton(btn_join);
+        var btn_exit = $(e.currentTarget);
+        var gameId = getGameIDBySmallUIButton(btn_exit);
         api.quickLeave(gameId, myId, (err, info) => {
             if (err) {
                 return;
             }
             log("退房成功，重新整理", info);
+            refreshGame();
         })
     }
 
@@ -264,7 +273,7 @@ var controller = controller || {};
                     return;
                 }
                 log("加入對奕", ctx);
-                btn_join.linkbutton('disable');
+                refreshGame();
             })
     }
 
