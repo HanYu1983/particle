@@ -292,6 +292,7 @@ var controller = controller || {};
             if (err) {
                 return;
             }
+
             api.restoreListening(ctx,
                 myId,
                 msg => {
@@ -299,7 +300,7 @@ var controller = controller || {};
                 },
                 (isSuccess, info) => {
                     console.log("target alive ", isSuccess, info);
-                })
+                });
 
             gameObj = refreshFourGame(ctx);
             smallAllTable();
