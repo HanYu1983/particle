@@ -122,8 +122,12 @@ var controller = controller || {};
         return ui.find("a").eq(1);
     }
 
-    function getBtnScale(ui) {
+    function getBtnExit(ui) {
         return ui.find("a").eq(2);
+    }
+
+    function getBtnScale(ui) {
+        return ui.find("a").eq(3);
     }
 
     function refreshSmallUI(data, doms) {
@@ -135,11 +139,13 @@ var controller = controller || {};
         var roomId = getGameIDBySmallUI(btnLayer);
         var btn_join = getBtnJoin(btnLayer);
         var btn_watch = getBtnWatch(btnLayer);
+        var btn_exit = getBtnExit(btnLayer);
         var btn_scale = getBtnScale(btnLayer);
 
         btn_join.linkbutton('enable');
         btn_watch.linkbutton('enable');
         btn_scale.linkbutton('enable');
+        btn_exit.linkbutton('enable');
         inroomLayer.hide();
         isMyTurnLayer.hide();
 
@@ -147,6 +153,7 @@ var controller = controller || {};
             btn_join.linkbutton('disable');
             btn_watch.linkbutton('disable');
             btn_scale.linkbutton('disable');
+            btn_exit.linkbutton('disable');
             return;
         }
 
@@ -158,6 +165,7 @@ var controller = controller || {};
 
         if (isInRoom) {
             inroomLayer.show();
+            isInRoom.linkbutton('enable');
         }
 
         if (isMyTurn) {
@@ -241,6 +249,20 @@ var controller = controller || {};
         });
     }
 
+    function onBtnExitClick(e) {
+        var btn_join = $(e.currentTarget);
+        var gameId = getGameIDBySmallUIButton(btn_join);
+        api.quickLeave(
+            gameId,
+            myId,
+            (err, info) => {
+                if(err){
+                    return;
+                }
+                gameObj =  refreshFourGame();
+            });
+    }
+
     function onBtnJoinClick(e) {
         var btn_join = $(e.currentTarget);
         var gameId = getGameIDBySmallUIButton(btn_join);
@@ -285,8 +307,11 @@ var controller = controller || {};
                 var btn_join = getBtnJoin($(dom));
                 var btn_watch = getBtnWatch($(dom));
                 var btn_scale = getBtnScale($(dom));
+                var btn_exit = getBtnExit($(dom));
 
                 btn_join.click(onBtnJoinClick);
+                btn_exit.click()
+
                 btn_watch.click(function (e) {
                     var ui = $(e.currentTarget);
                     var gameId = getGameIDBySmallUIButton(ui);
@@ -309,9 +334,13 @@ var controller = controller || {};
                         })
                 });
 
+
+
                 btn_scale.click(function () {
                     bigTable(ary_table.eq(id))
                 });
+
+
             });
 
             if (cb) cb();
