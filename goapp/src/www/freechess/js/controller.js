@@ -283,6 +283,16 @@ var controller = controller || {};
             if (err) {
                 return;
             }
+            // TODO
+            /*api.restoreListening(ctx,
+                myId,
+                msg => {
+                    handleMsg(msg);
+                },
+                (isSuccess, info) => {
+                    console.log("target alive ", isSuccess, info)
+                })*/
+
             gameObj = refreshFourGame(ctx);
             smallAllTable();
 
