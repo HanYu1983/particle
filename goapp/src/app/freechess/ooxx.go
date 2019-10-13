@@ -60,7 +60,11 @@ func checkLine(ctx context.Context, game Game, line []Position, t string) bool {
 		mapping[t.Position] = t.Type
 	}
 	for _, p := range line {
-		if mapping[p] != t {
+		t2, isExist := mapping[p]
+		if isExist == false {
+			return false
+		}
+		if t2 != t {
 			return false
 		}
 	}
