@@ -309,6 +309,15 @@ var api = api || {};
     function canWatchGame(game, player) {
         return game.visitors.indexOf(player) == -1
     }
+
+    function restoreListening(ctx, player, onmessage, onheartbeat){
+        const myGame = ctx.games.filter(g=> isInGame(g, player))
+        for(let i in myGame){
+            let game = ctx.games[i]
+            openBasicChannel(game.id, player, onmessage)
+            openGameHeartbeat(game.id, player, onheartbeat)
+        }
+    }
     /**
      * 
      * @param {*} gameID 
@@ -406,4 +415,5 @@ var api = api || {};
     module.getMyId = getMyId
     module.getGameById = getGameById
     module.insertServiceCallback = insertServiceCallback
+    module.restoreListening = restoreListening
 })(api);
