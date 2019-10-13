@@ -231,12 +231,21 @@
 	}
 
 	debug = true;
+	ai = false;
 	$(document).ready(function () {
 		if(debug){
 			var id = location.hash.replace("#", "");
-			controller.init(id, id == "vic" ? host : guest);
+			if(id=='') id = api.getUUID();
+
+			if( ai ){
+				controller.init(id, id == "vic" ? host : guest);
+			}else{
+				controller.init(id);
+			}
+			
 		}else{
-			var id = api.getMyId();
+			//var id = api.getMyId();
+			var id = api.getUUID();
 			controller.init(id);
 		}
 	})

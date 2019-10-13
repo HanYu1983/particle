@@ -75,10 +75,6 @@ var controller = controller || {};
     function onTableUpdate(game, view) {
         var isMyTurn = api.isMyTurn(game, myId);
         var tableId = view.tableId;
-
-        console.log("onTableUpdate,tableId: " + tableId)
-        console.log(isMyTurnContainer.eq(tableId));
-        console.log("isMyTurn:" + isMyTurn);
         if (isMyTurn) {
             isMyTurnContainer.eq(tableId).show();
         } else {
@@ -165,7 +161,8 @@ var controller = controller || {};
 
         if (isInRoom) {
             inroomLayer.show();
-            isInRoom.linkbutton('enable');
+        } else {
+            btn_exit.linkbutton('disable');
         }
 
         if (isMyTurn) {
@@ -197,17 +194,6 @@ var controller = controller || {};
         api.game(gameId, (err, game) => {
             var view = getViewByModelId(game.id);
             view.update(game);
-
-            // var isMyTurn = api.isMyTurn(game, myId);
-            // var tableId = view.table.attr('gameContent');
-
-            // console.log("tableId: " + tableId);
-
-            // if(isMyTurn){
-            // 	isMyTurnContainer.eq(tableId).show();
-            // }else{
-            // 	isMyTurnContainer.eq(tableId).hide();
-            // }
         });
     }
 
@@ -252,15 +238,12 @@ var controller = controller || {};
     function onBtnExitClick(e) {
         var btn_join = $(e.currentTarget);
         var gameId = getGameIDBySmallUIButton(btn_join);
-        api.quickLeave(
-            gameId,
-            myId,
-            (err, info) => {
-                if(err){
-                    return;
-                }
-                gameObj =  refreshFourGame();
-            });
+        api.quickLeave(gameId, myId, (err, info) => {
+            if (err) {
+                return;
+            }
+            log("退房成功，重新整理", info);
+        })
     }
 
     function onBtnJoinClick(e) {
@@ -310,7 +293,7 @@ var controller = controller || {};
                 var btn_exit = getBtnExit($(dom));
 
                 btn_join.click(onBtnJoinClick);
-                btn_exit.click()
+                btn_exit.click(onBtnExitClick);
 
                 btn_watch.click(function (e) {
                     var ui = $(e.currentTarget);
