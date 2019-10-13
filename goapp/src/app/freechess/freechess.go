@@ -31,6 +31,24 @@ func Serve_App(w http.ResponseWriter, r *http.Request) {
 	tool.Output(w, ret, nil)
 }
 
+func Serve_Clear(w http.ResponseWriter, r *http.Request) {
+	defer tool.Recover(func(err error) {
+		tool.Output(w, nil, err.Error())
+	})
+	/*if appengine.IsDevAppServer() == false {
+
+	}*/
+	var ret interface{}
+	ctx := appengine.NewContext(r)
+	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+		appCtx := NewContext()
+		ret = appCtx
+		return SaveContext(ctx, appCtx)
+	})
+	tool.Assert(tool.IfError(err))
+	tool.Output(w, ret, nil)
+}
+
 func Serve_CreateGame(w http.ResponseWriter, r *http.Request) {
 	defer tool.Recover(func(err error) {
 		tool.Output(w, nil, err.Error())
