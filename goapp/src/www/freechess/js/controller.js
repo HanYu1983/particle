@@ -205,7 +205,7 @@ var controller = controller || {};
         }
     }
 
-    function createGame(){
+    function createGame() {
         selectType = combo_type.combobox('getValue');
         api.quickCreateGame(
             selectType, myId,
@@ -224,7 +224,7 @@ var controller = controller || {};
             });
     }
 
-    function refreshGame(){
+    function refreshGame() {
         api.context((err, data) => {
             if (err) {
                 return;
@@ -292,15 +292,14 @@ var controller = controller || {};
             if (err) {
                 return;
             }
-            // TODO
-            /*api.restoreListening(ctx,
+            api.restoreListening(ctx,
                 myId,
                 msg => {
                     handleMsg(msg);
                 },
                 (isSuccess, info) => {
-                    console.log("target alive ", isSuccess, info)
-                })*/
+                    console.log("target alive ", isSuccess, info);
+                })
 
             gameObj = refreshFourGame(ctx);
             smallAllTable();
