@@ -5,8 +5,6 @@ var controller = controller || {};
     var ary_table = undefined;
     var bigUIContainer = undefined;
     var smallUIContainer = undefined;
-    //var inroomContainer = undefined;
-    //var isMyTurnContainer = undefined;
     var btn_createRoom = undefined;
     var btn_refreshRoom = undefined;
     var combo_type = undefined;
@@ -47,9 +45,6 @@ var controller = controller || {};
     }
 
     function refreshFourGameSmallUI(ctx) {
-        // smallUIContainer.each((id, dom)=>{
-        //     refreshSmallUI(ctx, dom);
-        // });
         _.each(
             _.zip(
                 ary_table.toArray(),
@@ -96,15 +91,6 @@ var controller = controller || {};
         var tableId = view.tableId;
         var table = ary_table.eq(tableId);
         checkGameColor(game, table);
-        // table.removeClass('notInTable').removeClass('inTable').removeClass('myTurnTable');
-        
-        // if (isMyTurn) {
-        //     table.addClass('myTurnTable');
-        //     //isMyTurnContainer.eq(tableId).show();
-        // } else {
-        //     table.addClass('inTable');
-        //     //isMyTurnContainer.eq(tableId).hide();
-        // }
     }
 
     function refreshFourGame(ctx) {
@@ -152,10 +138,6 @@ var controller = controller || {};
     }
 
     function refreshSmallUI(data, doms) {
-
-        // var inroomLayer = $(doms[0]);
-        // var btnLayer = $(doms[1]);
-        // var isMyTurnLayer = $(doms[2]);
 
         var table = $(doms[0]);
         var btnLayer = $(doms[1]);
@@ -307,8 +289,6 @@ var controller = controller || {};
         ary_table = $("[gameContent]");
         bigUIContainer = $("#bigUIContainer");
         smallUIContainer = $("[tableSamllUiID]");
-        //inroomContainer = $("[inroom]");
-        //isMyTurnContainer = $("[isMyTurn]");
         btn_createRoom = $("#btn_createRoom");
         btn_refreshRoom = $("#btn_refreshRoom");
         combo_type = $("#combo_type");
