@@ -273,6 +273,9 @@ var api = api || {};
     }
 
     function isMyTurn(game, player) {
+        if( game.state != "Play" ){
+            return false
+        }
         const orderIdx = game.playerOrder.indexOf(game.currOrderIdx);
         return game.players[orderIdx] == player
     }
