@@ -2,7 +2,6 @@ var view = view || {};
 view.ooxx = view.ooxx || {};
 (function (module) {
     function setGame(table, game, myId, evts) {
-        console.log(table);
         var dom = $("#tmpl_ooxxContent").tmpl();
         table.empty();
         table.append(dom);
@@ -52,7 +51,7 @@ view.ooxx = view.ooxx || {};
                     putChess(ochess, x, y);
                     oid++;
                 } else {
-                    xchess = xx.eq(oid);
+                    xchess = xx.eq(xid);
                     xchess.show();
                     putChess(xchess, x, y);
                     xid++;

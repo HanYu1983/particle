@@ -64,13 +64,9 @@
 	<div class="xx abs pivot lock" >
 		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
 	</div>
-	<div class="xx abs pivot lock" >
-		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\x.png">
-	</div>
 	<div id="selection" class="abs pivot lock" >
 		<img class="rel" style="left:-256px; top:-256px" src="imgs\ooxx\selection.png">
 	</div>
-	<!-- <img class="abs full left top" src="imgs/inroom.png"> -->
 </script>
 <script id="tmpl_singleIconData" type="jquery-x-tmpl">
 	<div class="group singleIconData">
@@ -100,6 +96,18 @@
 	.scaleSmall {
 		transform: scale(.5);
 	}
+
+	.inTable{
+		background-color: darkgreen;
+	}
+
+	.myTurnTable{
+		background-color: darkred;
+	}
+
+	.notInTable{
+		background-color: darkslategray;
+	}
 </style>
 
 <body>
@@ -114,20 +122,20 @@
 	</div>
 	<div class="group full">
 		<div class="rel full left top">
-			<div gameContent="0" style="transform-origin: left top; background-color: darkred"
-				class="rel left top gameView">
+			<div gameContent="0" style="transform-origin: left top;"
+				class="rel left top gameView notInTable outline_1">
 
 			</div>
-			<div gameContent="1" style="transform-origin: right top; background-color: darkgreen"
-				class="abs left top gameView">
+			<div gameContent="1" style="transform-origin: right top;"
+				class="abs left top gameView notInTable outline_1">
 
 			</div>
-			<div gameContent="2" style="transform-origin: left bottom; background-color: darkgoldenrod"
-				class="abs left top gameView">
+			<div gameContent="2" style="transform-origin: left bottom;"
+				class="abs left top gameView notInTable outline_1">
 
 			</div>
-			<div gameContent="3" style="transform-origin: right bottom; background-color: darkblue"
-				class="abs left top gameView">
+			<div gameContent="3" style="transform-origin: right bottom;"
+				class="abs left top gameView notInTable outline_1">
 
 			</div>
 			<div id="bigUIContainer" class="abs" style="padding:5px; left:0; top:0;">
@@ -136,6 +144,7 @@
 				<a id="btn_scaleSmall" class="easyui-linkbutton">縮小</a>
 			</div>
 		</div>
+		<!-- 		
 		<div class="abs group left top full lock">
 			<div class="rel hori half">
 				<img isMyTurn="0" class="rel full left top" src="imgs/isMyTurn.png">
@@ -153,7 +162,7 @@
 				<img isMyTurn="3" class="rel full left top" src="imgs/isMyTurn.png">
 				<img inroom="3" class="abs full left top" src="imgs/inroom.png">
 			</div>
-		</div>
+		</div> -->
 		<div tableSamllUiID="0" class="abs" style="left:0; top:0;">
 			<div class="rel" style="padding:5px; left:0; top:0;">
 				<a class="easyui-linkbutton">對奕</a>
@@ -233,8 +242,8 @@
 		}, 5000);
 	}
 
-	debug = true;
-	ai = false;
+	debug = false;
+	ai = true;
 	$(document).ready(function () {
 		if(debug){
 			var id = location.hash.replace("#", "");

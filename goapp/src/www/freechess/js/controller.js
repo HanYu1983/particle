@@ -5,8 +5,8 @@ var controller = controller || {};
     var ary_table = undefined;
     var bigUIContainer = undefined;
     var smallUIContainer = undefined;
-    var inroomContainer = undefined;
-    var isMyTurnContainer = undefined;
+    //var inroomContainer = undefined;
+    //var isMyTurnContainer = undefined;
     var btn_createRoom = undefined;
     var btn_refreshRoom = undefined;
     var combo_type = undefined;
@@ -47,11 +47,13 @@ var controller = controller || {};
     }
 
     function refreshFourGameSmallUI(ctx) {
+        // smallUIContainer.each((id, dom)=>{
+        //     refreshSmallUI(ctx, dom);
+        // });
         _.each(
             _.zip(
-                inroomContainer.toArray(),
-                smallUIContainer.toArray(),
-                isMyTurnContainer.toArray()), (map) => {
+                ary_table.toArray(),
+                smallUIContainer.toArray()), (map) => {
                     refreshSmallUI(ctx, map);
                 });
     }
@@ -72,14 +74,37 @@ var controller = controller || {};
         })
     }
 
+    function checkGameColor(game, table){
+        table.removeClass('notInTable').removeClass('inTable').removeClass('myTurnTable');
+
+        var isInRoom = api.isInGame(game, myId);
+        var isMyTurn = api.isMyTurn(game, myId);
+        if (isInRoom) {
+            if(isMyTurn){
+                table.addClass('myTurnTable');
+            }else{
+                table.addClass("inTable");
+            }
+        } else {
+            table.addClass('notInTable');
+        }
+    }
+
     function onTableUpdate(game, view) {
+        var isInRoom = api.isInGame(game, myId);
         var isMyTurn = api.isMyTurn(game, myId);
         var tableId = view.tableId;
-        if (isMyTurn) {
-            isMyTurnContainer.eq(tableId).show();
-        } else {
-            isMyTurnContainer.eq(tableId).hide();
-        }
+        var table = ary_table.eq(tableId);
+        checkGameColor(game, table);
+        // table.removeClass('notInTable').removeClass('inTable').removeClass('myTurnTable');
+        
+        // if (isMyTurn) {
+        //     table.addClass('myTurnTable');
+        //     //isMyTurnContainer.eq(tableId).show();
+        // } else {
+        //     table.addClass('inTable');
+        //     //isMyTurnContainer.eq(tableId).hide();
+        // }
     }
 
     function refreshFourGame(ctx) {
@@ -128,9 +153,12 @@ var controller = controller || {};
 
     function refreshSmallUI(data, doms) {
 
-        var inroomLayer = $(doms[0]);
+        // var inroomLayer = $(doms[0]);
+        // var btnLayer = $(doms[1]);
+        // var isMyTurnLayer = $(doms[2]);
+
+        var table = $(doms[0]);
         var btnLayer = $(doms[1]);
-        var isMyTurnLayer = $(doms[2]);
 
         var roomId = getGameIDBySmallUI(btnLayer);
         var btn_join = getBtnJoin(btnLayer);
@@ -142,14 +170,15 @@ var controller = controller || {};
         btn_watch.linkbutton('enable');
         btn_scale.linkbutton('enable');
         btn_exit.linkbutton('enable');
-        inroomLayer.hide();
-        isMyTurnLayer.hide();
 
+        table.removeClass('notInTable').removeClass('inTable').removeClass('myTurnTable');
+        
         if (!roomId) {
             btn_join.linkbutton('disable');
             btn_watch.linkbutton('disable');
             btn_scale.linkbutton('disable');
             btn_exit.linkbutton('disable');
+            table.addClass('notInTable');
             return;
         }
 
@@ -159,14 +188,10 @@ var controller = controller || {};
         var isInRoom = api.isInGame(game, myId);
         var isMyTurn = api.isMyTurn(game, myId);
 
-        if (isInRoom) {
-            inroomLayer.show();
-        } else {
-            btn_exit.linkbutton('disable');
-        }
+        checkGameColor(game, table);
 
-        if (isMyTurn) {
-            isMyTurnLayer.show();
+        if (!isInRoom) {
+            btn_exit.linkbutton('disable');
         }
 
         if (!canEnterGame) {
@@ -282,8 +307,8 @@ var controller = controller || {};
         ary_table = $("[gameContent]");
         bigUIContainer = $("#bigUIContainer");
         smallUIContainer = $("[tableSamllUiID]");
-        inroomContainer = $("[inroom]");
-        isMyTurnContainer = $("[isMyTurn]");
+        //inroomContainer = $("[inroom]");
+        //isMyTurnContainer = $("[isMyTurn]");
         btn_createRoom = $("#btn_createRoom");
         btn_refreshRoom = $("#btn_refreshRoom");
         combo_type = $("#combo_type");
@@ -313,7 +338,6 @@ var controller = controller || {};
 
                 btn_join.click(onBtnJoinClick);
                 btn_exit.click(onBtnExitClick);
-
                 btn_watch.click(function (e) {
                     var ui = $(e.currentTarget);
                     var gameId = getGameIDBySmallUIButton(ui);
