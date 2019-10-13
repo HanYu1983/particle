@@ -134,7 +134,7 @@ var api = api || {};
 
     function closeBasicChannel(gameID) {
         if (listenInfo.basicCallback[gameID]) {
-            closeSocket(gameID, basicCallback[gameID])
+            closeSocket(gameID, listenInfo.basicCallback[gameID])
             delete listenInfo.basicCallback[gameID]
         }
     }
