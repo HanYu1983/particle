@@ -218,7 +218,7 @@ var controller = controller || {};
     }
 
     function updateViewIsFirst(game){
-        var isFirst = api.isFirst(game, myId);
+        var isFirst = api.isFirstByPlayer(game, myId);
 
         var view = getViewByModelId(game.id);
         view.table.find(".isFirst").html( isFirst ? "先手" : "後手")
