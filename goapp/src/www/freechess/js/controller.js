@@ -206,6 +206,28 @@ var controller = controller || {};
         log("接到指令", msg);
         if(msg.game){
             updateGameByData(msg.game);
+            updateViewIsFirst(msg.game);
+        }
+    }
+
+    function updateViewPlyer(gameId, playerInfo){
+        var playerCount = Object.keys(playerInfo).length;
+
+        var view = getViewByModelId(gameId);
+        view.table.find(".playerCount").html("人數:" + playerCount);
+    }
+
+    function updateViewIsFirst(game){
+        var isFirst = api.isFirst(game, myId);
+
+        var view = getViewByModelId(game.id);
+        view.table.find(".isFirst").html( isFirst ? "先手" : "後手")
+    }
+
+    function handleAlive(alive){
+        log("接到在線狀態", alive);
+        for (var gameId in alive) {
+            updateViewPlyer(gameId, alive[gameId]);
         }
     }
 
@@ -300,8 +322,8 @@ var controller = controller || {};
                 msg => {
                     handleMsg(msg);
                 },
-                (isSuccess, info) => {
-                    console.log("target alive ", isSuccess, info);
+                alive => {
+                    handleAlive(alive);
                 });
 
             gameObj = refreshFourGame(ctx);
@@ -325,8 +347,8 @@ var controller = controller || {};
                         msg => {
                             handleMsg(msg);
                         },
-                        (isSuccess, info) => {
-                            console.log("target alive ", isSuccess, info)
+                        alive => {
+                            handleAlive(alive)
                         },
                         (err, ctx) => {
                             if (err) {

@@ -3,8 +3,8 @@ view.ooxx = view.ooxx || {};
 (function (module) {
     function setGame(table, game, myId, evts) {
         var dom = $("#tmpl_ooxxContent").tmpl();
-        table.empty();
-        table.append(dom);
+        table.find("#canvas").empty();
+        table.find("#canvas").append(dom);
 
         var land = table.find("#table");
         var selection = table.find("#selection");

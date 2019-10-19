@@ -73,6 +73,9 @@ body{
 .abs{
 	position:absolute;
 }
+.inherit{
+	position:inherit;
+}
 .fix{
 	position: fixed;
 }
