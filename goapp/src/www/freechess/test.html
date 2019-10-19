@@ -6,12 +6,13 @@
 <script src="../common/js/admin.js"></script>
 <script>admin.init()</script>
 <script>
-    api.insertServiceCallback((err, data)=>{
+    api.insertServiceCallback((err, data) => {
         console.log("AOP ", err, data)
     })
 
-    const player = api.getMyId();
+    const player = "han"
     console.log("player ", player)
+
     api.context((err, data) => {
         console.log(err, data)
         if (err) {
@@ -19,59 +20,58 @@
         }
         console.log(api.getRandomFourRoom(data, "han"))
 
-        api.createGame("ooxx", player, (err, data, game) => {
-            console.log(err, data)
-            if (err) {
-                return;
-            }
-            console.log(api.getGameById(data, game.id))
-
-            api.quickJoin(
-                game.id,
-                "vic",
-                false,
-                msg => {
-                    console.log("msg", msg)
-                },
-                (isSuccess, info) => {
-                    console.log("target alive ", isSuccess, info)
-                },
-                (err, info) => {
-                    console.log(err, info)
-                    api.quickPut(game.id, player, [0, 1], (err, info) => {
-                        console.log(err, info)
-                    })
-                })
-
-            setTimeout(()=>{
-                console.log("leave")
-                api.quickLeave(game.id, "vic", (err, info)=>{
-                    console.log(err, info)
-                })
-            }, 1000*20)
-            /*
-            api.joinGame(game.id, "vic", (err, game) => {
-                console.log(err, game)
+        api.quickCreateGame(
+            "ooxx",
+            player,
+            msg => {
+                console.log(player+" msg", msg)
+                if(msg.game){
+                    // updateGame(msg.game.id, msg.game)
+                }
+            },
+            (isSuccess, info) => {
+                console.log(player + " target alive ", isSuccess, info)
+            },
+            (err, data, game) => {
+                console.log(err, data)
                 if (err) {
                     return;
                 }
-                console.log("isFirst ", api.isFirst(game, { type: "0" }))
-                console.log("isMyTurn ", api.isMyTurn(game, player))
-                api.put(game.id, player, [0, 0], (err, game) => {
-                    console.log(err, game)
-                    if (err) {
-                        return;
-                    }
-                    console.log("isFirst ", api.isFirst(game, { type: "0" }))
-                    console.log("isMyTurn ", api.isMyTurn(game, player))
-                    api.put(game.id, "vic", [1, 1], (err, game) => {
-                        console.log(err, game)
-                        if (err) {
-                            return;
-                        }
+                console.log(api.getGameById(data, game.id))
+
+                api.quickJoin(
+                    game.id,
+                    "vic",
+                    false,
+                    msg => {
+                        console.log("msg", msg)
+                    },
+                    (isSuccess, info) => {
+                        console.log("target alive ", isSuccess, info)
+                    },
+                    (err, info) => {
+                        console.log(err, info)
+                        api.quickPut(game.id, player, [0, 1], (err, info) => {
+                            console.log(err, info)
+                        })
+                        api.quickPut(game.id, player, [0, 2], (err, info) => {
+                            console.log(err, info)
+                        })
+                        api.quickPut(game.id, "vic", [1, 1], (err, info) => {
+                            console.log(err, info)
+                        })
+                        api.quickPut(game.id, "vic", [2, 1], (err, info) => {
+                            console.log(err, info)
+                        })
                     })
-                })
-            })*/
-        })
+
+                setTimeout(() => {
+                    console.log("leave")
+                    api.quickLeave(game.id, "vic", (err, info) => {
+                        console.log(err, info)
+                    })
+                }, 1000 * 20)
+            }
+        )
     })
 </script>

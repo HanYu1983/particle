@@ -41,7 +41,7 @@ func Serve_CreateContest(w http.ResponseWriter, r *http.Request) {
 
 	ctx := appengine.NewContext(r)
 	var id string
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -66,7 +66,7 @@ func Serve_DeleteContest(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["owner"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -99,7 +99,7 @@ func Serve_UpdateContest(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["owner"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -154,7 +154,7 @@ func Serve_UpgradeContestState(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["owner"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -203,7 +203,7 @@ func Serve_FailEndContest(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["owner"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -252,7 +252,7 @@ func Serve_JoinContest(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -278,7 +278,7 @@ func Serve_LeaveContest(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -303,7 +303,7 @@ func Serve_PrepareDual(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -328,7 +328,7 @@ func Serve_GetDuals(w http.ResponseWriter, r *http.Request) {
 
 	duals := []Dual{}
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -350,7 +350,7 @@ func Serve_ConfirmWinner(w http.ResponseWriter, r *http.Request) {
 	winner := params["winner"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -375,7 +375,7 @@ func Serve_CancelWinner(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -404,7 +404,7 @@ func Serve_Upgrade(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -434,7 +434,7 @@ func Serve_UpdatePower(w http.ResponseWriter, r *http.Request) {
 	tool.Assert(tool.IfError(err))
 
 	ctx := appengine.NewContext(r)
-	err = tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err = tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -476,7 +476,7 @@ func Serve_GetDualInfoWithContestOwner(w http.ResponseWriter, r *http.Request) {
 	states := map[string]int{}
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -524,7 +524,7 @@ func Serve_LeaveMessage(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -559,7 +559,7 @@ func Serve_DeleteMessage(w http.ResponseWriter, r *http.Request) {
 	msgId := params["msgId"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -600,7 +600,7 @@ func Serve_MakeDualTime(w http.ResponseWriter, r *http.Request) {
 	peopleId := params["peopleId"]
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err

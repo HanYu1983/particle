@@ -19,7 +19,7 @@ func Serve_App(w http.ResponseWriter, r *http.Request) {
 	})
 	var ret interface{}
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -40,7 +40,7 @@ func Serve_Clear(w http.ResponseWriter, r *http.Request) {
 	}*/
 	var ret interface{}
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx := NewContext()
 		ret = appCtx
 		return SaveContext(ctx, appCtx)
@@ -58,7 +58,7 @@ func Serve_CreateGame(w http.ResponseWriter, r *http.Request) {
 	playerID := params["player"]
 	var ret interface{}
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -89,7 +89,7 @@ func Serve_GetGame(w http.ResponseWriter, r *http.Request) {
 	var ret interface{}
 
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -119,7 +119,7 @@ func Serve_JoinGame(w http.ResponseWriter, r *http.Request) {
 
 	var ret interface{}
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -160,7 +160,7 @@ func Serve_LeaveGame(w http.ResponseWriter, r *http.Request) {
 
 	var ret interface{}
 	ctx := appengine.NewContext(r)
-	err := tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err := tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err
@@ -199,7 +199,7 @@ func Serve_PutChess(w http.ResponseWriter, r *http.Request) {
 
 	var ret interface{}
 	ctx := appengine.NewContext(r)
-	err = tool.WithTransaction(ctx, 3, func(c context.Context) error {
+	err = tool.WithTransaction(ctx, 3, func(ctx context.Context) error {
 		appCtx, err := LoadContext(ctx)
 		if err != nil {
 			return err

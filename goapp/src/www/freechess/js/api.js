@@ -42,6 +42,7 @@ var api = api || {};
     }
 
     function context(cb) {
+        //cb( null, {"games":[{"id":"0","type":"ooxx","tokens":[{"id":"","position":{"x":1,"y":1},"type":"0"},{"id":"","position":{"x":0,"y":0},"type":"1"},{"id":"","position":{"x":1,"y":0},"type":"0"},{"id":"","position":{"x":1,"y":2},"type":"1"},{"id":"","position":{"x":0,"y":1},"type":"0"},{"id":"","position":{"x":2,"y":0},"type":"1"},{"id":"","position":{"x":2,"y":2},"type":"0"},{"id":"","position":{"x":2,"y":1},"type":"1"},{"id":"","position":{"x":0,"y":2},"type":"0"}],"state":"Play","players":["c257deb1-4085-45ce-9b3d-26445ea8e987","875dfbf3-84cb-47be-9574-7fb72c38053a"],"visitors":[],"playerOrder":[0,1],"winner":"","currOrderIdx":1,"createTime":"2019-10-13T07:46:38.872894373Z","seqId":0},{"id":"1","type":"ooxx","tokens":[{"id":"","position":{"x":1,"y":1},"type":"0"},{"id":"","position":{"x":0,"y":0},"type":"1"},{"id":"","position":{"x":2,"y":0},"type":"0"},{"id":"","position":{"x":0,"y":2},"type":"1"},{"id":"","position":{"x":0,"y":1},"type":"0"},{"id":"","position":{"x":2,"y":1},"type":"1"},{"id":"","position":{"x":2,"y":2},"type":"0"},{"id":"","position":{"x":1,"y":2},"type":"1"},{"id":"","position":{"x":1,"y":0},"type":"0"}],"state":"Play","players":["c257deb1-4085-45ce-9b3d-26445ea8e987","875dfbf3-84cb-47be-9574-7fb72c38053a"],"visitors":[],"playerOrder":[0,1],"winner":"","currOrderIdx":1,"createTime":"2019-10-13T07:46:39.592450338Z","seqId":0},{"id":"2","type":"ooxx","tokens":[{"id":"","position":{"x":0,"y":0},"type":"0"},{"id":"","position":{"x":1,"y":0},"type":"1"},{"id":"","position":{"x":2,"y":0},"type":"0"},{"id":"","position":{"x":2,"y":1},"type":"1"},{"id":"","position":{"x":1,"y":1},"type":"0"},{"id":"","position":{"x":2,"y":2},"type":"1"},{"id":"","position":{"x":0,"y":2},"type":"0"}],"state":"Finish","players":["c257deb1-4085-45ce-9b3d-26445ea8e987","875dfbf3-84cb-47be-9574-7fb72c38053a"],"visitors":[],"playerOrder":[0,1],"winner":"0","currOrderIdx":1,"createTime":"2019-10-13T07:46:40.372991339Z","seqId":0},{"id":"3","type":"ooxx","tokens":[{"id":"","position":{"x":1,"y":0},"type":"0"},{"id":"","position":{"x":1,"y":1},"type":"1"},{"id":"","position":{"x":0,"y":0},"type":"0"},{"id":"","position":{"x":2,"y":0},"type":"1"},{"id":"","position":{"x":2,"y":2},"type":"0"},{"id":"","position":{"x":0,"y":2},"type":"1"}],"state":"Finish","players":["c257deb1-4085-45ce-9b3d-26445ea8e987","875dfbf3-84cb-47be-9574-7fb72c38053a"],"visitors":[],"playerOrder":[0,1],"winner":"1","currOrderIdx":0,"createTime":"2019-10-13T07:46:41.49102659Z","seqId":0}],"seqId":4})
         return get(`../fn/freechess`, cb)
     }
 
@@ -115,14 +116,9 @@ var api = api || {};
             if (value == null) {
                 return
             }
-            const info = JSON.parse(value)
-            const isHandled = listenInfo.callbacks.filter(i => i(info)).length > 0
-            if (isHandled == false) {
-                if (info.sender == player) {
-                    return
-                }
-                onmessage(info)
-            }
+            const info = value
+            listenInfo.callbacks.forEach(i => i(info))
+            onmessage(value)
         }
     }
 
@@ -149,7 +145,7 @@ var api = api || {};
         var address = `app/freechess/game/${gameID}`
         var database = firebase.database();
         var testRef = database.ref(address);
-        testRef.set(JSON.stringify(info))
+        testRef.set(info)
     }
 
     /////////////////////////////////////////////
@@ -157,26 +153,21 @@ var api = api || {};
     /////////////////////////////////////////////
 
     const heartbeatInfo = {
-        callbackPool: {},
-        seq: 0,
-        timeout: 1000 * 3,
+        callback: null,
+        timeout: 1000 * 15,
         duration: 1000 * 10,
-        id: {},
-        player: null
+        id: {}
     }
 
     registerHandler(listenHeartbeatFromGame)
-    registerHandler(listenReplyHeartbeatFromGame)
 
     function openGameHeartbeat(gameID, player, cb) {
-        heartbeatInfo.player = player
+        heartbeatInfo.callback = cb
         closeGameHeartbeat(gameID)
-        sendGameHeartbeat(gameID, player, (isSuccess, info) => {
-            cb(isSuccess, info)
-            heartbeatInfo.id[gameID] = setTimeout(() => {
-                openGameHeartbeat(gameID, player, cb)
-            }, heartbeatInfo.duration)
-        })
+        sendGameHeartbeat(gameID, player)
+        heartbeatInfo.id[gameID] = setTimeout(() => {
+            openGameHeartbeat(gameID, player, cb)
+        }, heartbeatInfo.duration)
     }
 
     function closeGameHeartbeat(gameID) {
@@ -186,41 +177,21 @@ var api = api || {};
         }
     }
 
-    function sendGameHeartbeat(gameID, player, cb) {
-        const seq = heartbeatInfo.seq++
-        heartbeatInfo.callbackPool[seq] = cb
-        const info = { type: "heartbeat", seq: seq, gameID: gameID, sender: player }
-        setTimeout(() => {
-            if (heartbeatInfo.callbackPool[seq]) {
-                heartbeatInfo.callbackPool[seq](false, info)
-                delete heartbeatInfo.callbackPool[seq]
-            }
-        }, heartbeatInfo.timeout)
-        sendMessageToGame(gameID, info)
-    }
-
-    function listenReplyHeartbeatFromGame(info) {
-        if (info.type != "replyHeartbeat") {
-            return false
-        }
-        const { seq } = info;
-        if (heartbeatInfo.callbackPool[seq]) {
-            heartbeatInfo.callbackPool[seq](true, info)
-            delete heartbeatInfo.callbackPool[seq]
-        }
-        return true
+    function sendGameHeartbeat(gameID, player) {
+        const info = { time: new Date().getTime(), gameID: gameID }
+        sendMessageToGame(`${gameID}/player/${player}`, info)
     }
 
     function listenHeartbeatFromGame(info) {
-        if (info.type != "heartbeat") {
-            return false
+        if(info.player){
+            const now = new Date().getTime();
+            for(let name in info.player){
+                const {time, gameID} = info.player[name]
+                const diff = now - time
+                const isOnline = (diff / 1000) < heartbeatInfo.timeout
+                heartbeatInfo.callback(isOnline, {gameID, player: name})
+            }
         }
-        if (info.sender == heartbeatInfo.player) {
-            return true
-        }
-        info.type = "replyHeartbeat"
-        sendMessageToGame(info.gameID, info)
-        return true
     }
 
     /////////////////////////////////////////////
@@ -383,12 +354,11 @@ var api = api || {};
                 return cb(err)
             }
             cb(null, info)
-            sendMessageToGame(gameID, { type: "update", sender: player, gameID: gameID })
+            sendMessageToGame(`${gameID}/game`, info)
         })
     }
 
     function getGameById(ctx, gameId) {
-        console.log(ctx);
         const ret = ctx.games.filter(({ id }) => id == gameId)
         if (ret.length == 0) {
             throw new Error(`${gameId} not found by getGameById`)

@@ -271,10 +271,9 @@ func WithTransaction(ctx context.Context, retry int, fn func(c context.Context) 
 		err = datastore.RunInTransaction(ctx, fn, nil)
 		if err == datastore.ErrConcurrentTransaction {
 			// redo RunTransaction
-
+			fmt.Printf("ErrConcurrentTransaction retry time %d\n", times)
 		} else {
 			break
-
 		}
 		times += 1
 	}
