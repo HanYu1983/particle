@@ -238,8 +238,8 @@ var controller = controller || {};
             msg => {
                 handleMsg(msg);
             },
-            (isSuccess, info) => {
-                console.log("target alive ", isSuccess, info)
+            alive => {
+                handleAlive(alive);
             },
             (err, ctx, room) => {
                 if (err) {
@@ -291,8 +291,8 @@ var controller = controller || {};
             msg => {
                 handleMsg(msg);
             },
-            (isSuccess, info) => {
-                console.log("target alive ", isSuccess, info)
+            alive => {
+                handleAlive(alive);
             },
             (err, ctx) => {
                 if (err) {
