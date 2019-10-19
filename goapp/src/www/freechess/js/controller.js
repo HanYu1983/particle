@@ -197,18 +197,15 @@ var controller = controller || {};
         return views[0];
     }
 
-    function updateGameByData(gameId) {
-        api.game(gameId, (err, game) => {
-            var view = getViewByModelId(game.id);
-            view.update(game);
-        });
+    function updateGameByData(game) {
+        var view = getViewByModelId(game.id);
+        view.update(game);
     }
 
     function handleMsg(msg) {
         log("接到指令", msg);
-        switch (msg.type) {
-            case 'update':
-                updateGameByData(msg.gameID);
+        if(msg.game){
+            updateGameByData(msg.game);
         }
     }
 
