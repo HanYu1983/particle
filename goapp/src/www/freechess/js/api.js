@@ -182,6 +182,10 @@ var api = api || {};
         sendMessageToGame(`${gameID}/player/${player}`, info)
     }
 
+    const playersInRoom = {
+
+    }
+
     function listenHeartbeatFromGame(info) {
         if(info.player){
             const now = new Date().getTime();
@@ -189,8 +193,19 @@ var api = api || {};
                 const {time, gameID} = info.player[name]
                 const diff = now - time
                 const isOnline = (diff / 1000) < heartbeatInfo.timeout
-                heartbeatInfo.callback(isOnline, {gameID, player: name})
+                if(isOnline){
+                    if(playersInRoom[gameID] == null){
+                        playersInRoom[gameID] = {}
+                    }
+                    playersInRoom[gameID][name] = {gameID, player:name}
+                } else {
+                    if(playersInRoom[gameID] == null){
+                        continue
+                    }
+                    delete playersInRoom[gameID][name]
+                }
             }
+            heartbeatInfo.callback(playersInRoom)
         }
     }
 

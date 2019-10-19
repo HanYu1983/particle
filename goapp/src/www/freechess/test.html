@@ -29,8 +29,8 @@
                     // updateGame(msg.game.id, msg.game)
                 }
             },
-            (isSuccess, info) => {
-                console.log(player + " target alive ", isSuccess, info)
+            (info) => {
+                console.log(player + " target alive ", info)
             },
             (err, data, game) => {
                 console.log(err, data)
@@ -46,8 +46,8 @@
                     msg => {
                         console.log("msg", msg)
                     },
-                    (isSuccess, info) => {
-                        console.log("target alive ", isSuccess, info)
+                    (info) => {
+                        console.log("target alive ", info)
                     },
                     (err, info) => {
                         console.log(err, info)
