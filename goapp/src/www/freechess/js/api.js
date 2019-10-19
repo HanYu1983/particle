@@ -274,6 +274,11 @@ var api = api || {};
         return type == 0
     }
 
+    function isFirstByPlayer(game, player){
+        const idx = game.players.indexOf(player)
+        return game.playerOrder[idx] == 0
+    }
+
     /**
      * 是否已進入指定房間
      * @param {*} game 
@@ -393,6 +398,7 @@ var api = api || {};
     module.getRandomFourRoom = getRandomFourRoom
     module.isMyTurn = isMyTurn
     module.isFirst = isFirst
+    module.isFirstByPlayer = isFirstByPlayer
     module.canEnterGame = canEnterGame
     module.canWatchGame = canWatchGame
     module.isInGame = isInGame

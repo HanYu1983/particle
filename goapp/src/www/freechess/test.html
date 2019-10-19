@@ -19,6 +19,7 @@
             return;
         }
         console.log(api.getRandomFourRoom(data, "han"))
+        
 
         api.quickCreateGame(
             "ooxx",
@@ -38,6 +39,7 @@
                     return;
                 }
                 console.log(api.getGameById(data, game.id))
+                console.log("isFirstByPlayer", api.isFirstByPlayer(game, player))
 
                 api.quickJoin(
                     game.id,
