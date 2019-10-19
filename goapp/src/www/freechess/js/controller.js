@@ -86,8 +86,6 @@ var controller = controller || {};
     }
 
     function onTableUpdate(game, view) {
-        var isInRoom = api.isInGame(game, myId);
-        var isMyTurn = api.isMyTurn(game, myId);
         var tableId = view.tableId;
         var table = ary_table.eq(tableId);
         checkGameColor(game, table);
@@ -355,7 +353,7 @@ var controller = controller || {};
                                 return;
                             }
                             log("加入觀戰", ctx);
-                            btn_watch.linkbutton('disable');
+                            gameObj =  refreshFourGame(ctx);
                         })
                 });
 
