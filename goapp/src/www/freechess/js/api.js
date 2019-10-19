@@ -9,7 +9,7 @@ var api = api || {};
         callbacks: []
     }
 
-    function insertServiceCallback(cb){
+    function insertServiceCallback(cb) {
         serviceInfo.callbacks.push(cb)
     }
 
@@ -19,7 +19,7 @@ var api = api || {};
             method: "get",
             dataType: "json",
             success: data => {
-                const ignore = serviceInfo.callbacks.filter(cb=>{
+                const ignore = serviceInfo.callbacks.filter(cb => {
                     if (data.Error) {
                         cb(data.Error)
                     } else {
@@ -33,7 +33,7 @@ var api = api || {};
                 }
             },
             error: function (xhr, textStatus, err) {
-                const ignore = serviceInfo.callbacks.filter(cb=>{
+                const ignore = serviceInfo.callbacks.filter(cb => {
                     cb(err)
                 })
                 cb(err)
@@ -46,7 +46,7 @@ var api = api || {};
         return get(`../fn/freechess`, cb)
     }
 
-    function game(gameID, cb){
+    function game(gameID, cb) {
         return get(`../fn/freechess/game/${gameID}`, cb)
     }
 
@@ -187,19 +187,19 @@ var api = api || {};
     }
 
     function listenHeartbeatFromGame(info) {
-        if(info.player){
+        if (info.player) {
             const now = new Date().getTime();
-            for(let name in info.player){
-                const {time, gameID} = info.player[name]
+            for (let name in info.player) {
+                const { time, gameID } = info.player[name]
                 const diff = now - time
                 const isOnline = (diff / 1000) < heartbeatInfo.timeout
-                if(isOnline){
-                    if(playersInRoom[gameID] == null){
+                if (isOnline) {
+                    if (playersInRoom[gameID] == null) {
                         playersInRoom[gameID] = {}
                     }
-                    playersInRoom[gameID][name] = {gameID, player:name}
+                    playersInRoom[gameID][name] = { gameID, player: name }
                 } else {
-                    if(playersInRoom[gameID] == null){
+                    if (playersInRoom[gameID] == null) {
                         continue
                     }
                     delete playersInRoom[gameID][name]
@@ -219,10 +219,10 @@ var api = api || {};
 
     let myId = null
 
-    function getMyId(){
-        if(myId == null){
-            if(localStorage){
-                if(localStorage.getItem("myId") != null){
+    function getMyId() {
+        if (myId == null) {
+            if (localStorage) {
+                if (localStorage.getItem("myId") != null) {
                     myId = localStorage.getItem("myId")
                     return myId
                 }
@@ -259,8 +259,11 @@ var api = api || {};
     }
 
     function isMyTurn(game, player) {
-        if( game.state != "Play" ){
+        if (game.state != "Play") {
             return false
+        }
+        if (game.tokens.length == 0) {
+            return true
         }
         const orderIdx = game.playerOrder.indexOf(game.currOrderIdx);
         return game.players[orderIdx] == player
@@ -274,7 +277,7 @@ var api = api || {};
         return type == 0
     }
 
-    function isFirstByPlayer(game, player){
+    function isFirstByPlayer(game, player) {
         const idx = game.players.indexOf(player)
         return game.playerOrder[idx] == 0
     }
@@ -284,7 +287,7 @@ var api = api || {};
      * @param {*} game 
      * @param {*} player 
      */
-    function isInGame(game, player){
+    function isInGame(game, player) {
         return game.players.indexOf(player) != -1 || game.visitors.indexOf(player) != -1
     }
 
@@ -292,7 +295,7 @@ var api = api || {};
      * 是否能進指定房間
      */
     function canEnterGame(game, player) {
-        if(isInGame(game, player)){
+        if (isInGame(game, player)) {
             return false
         }
         return game.players.length < 2
@@ -304,9 +307,9 @@ var api = api || {};
         return game.visitors.indexOf(player) == -1
     }
 
-    function restoreListening(ctx, player, onmessage, onheartbeat){
-        const myGame = ctx.games.filter(g=> isInGame(g, player))
-        for(let i in myGame){
+    function restoreListening(ctx, player, onmessage, onheartbeat) {
+        const myGame = ctx.games.filter(g => isInGame(g, player))
+        for (let i in myGame) {
             let game = ctx.games[i]
             openBasicChannel(game.id, player, onmessage)
             openGameHeartbeat(game.id, player, onheartbeat)
