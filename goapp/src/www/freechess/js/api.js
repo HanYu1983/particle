@@ -278,8 +278,15 @@ var api = api || {};
     }
 
     function isFirstByPlayer(game, player) {
+        if(game.tokens.length == 0){
+            return false
+        }
         const idx = game.players.indexOf(player)
-        return game.playerOrder[idx] == 0
+        const order = game.playerOrder[idx]
+        if(game.tokens[0].type == order){
+            return true
+        }
+        return false
     }
 
     /**
@@ -332,6 +339,7 @@ var api = api || {};
             cb(null, info, game)
             openBasicChannel(game.id, player, onmessage)
             openGameHeartbeat(game.id, player, onheartbeat)
+            sendMessageToGame(game.id, {})
         })
     }
     /**

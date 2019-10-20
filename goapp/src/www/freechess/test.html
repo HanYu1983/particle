@@ -1,79 +1,155 @@
-<script type="text/javascript" src="js/api.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
-<script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
-<script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
-<script src="../common/js/admin.js"></script>
-<script>admin.init()</script>
-<script>
-    api.insertServiceCallback((err, data) => {
-        console.log("AOP ", err, data)
-    })
+<html>
 
-    const player = "han"
-    console.log("player ", player)
+<head>
+    <meta charset="utf-8">
+</head>
 
-    api.context((err, data) => {
-        console.log(err, data)
-        if (err) {
-            return;
-        }
-        console.log(api.getRandomFourRoom(data, "han"))
-        
-
-        api.quickCreateGame(
-            "ooxx",
-            player,
-            msg => {
-                console.log(player+" msg", msg)
-                if(msg.game){
-                    // updateGame(msg.game.id, msg.game)
-                }
-            },
-            (info) => {
-                console.log(player + " target alive ", info)
-            },
-            (err, data, game) => {
-                console.log(err, data)
-                if (err) {
-                    return;
-                }
-                console.log(api.getGameById(data, game.id))
-                console.log("isFirstByPlayer", api.isFirstByPlayer(game, player))
-
-                api.quickJoin(
-                    game.id,
-                    "vic",
-                    false,
-                    msg => {
-                        console.log("msg", msg)
-                    },
-                    (info) => {
-                        console.log("target alive ", info)
-                    },
-                    (err, info) => {
-                        console.log(err, info)
-                        api.quickPut(game.id, player, [0, 1], (err, info) => {
-                            console.log(err, info)
-                        })
-                        api.quickPut(game.id, player, [0, 2], (err, info) => {
-                            console.log(err, info)
-                        })
-                        api.quickPut(game.id, "vic", [1, 1], (err, info) => {
-                            console.log(err, info)
-                        })
-                        api.quickPut(game.id, "vic", [2, 1], (err, info) => {
-                            console.log(err, info)
-                        })
-                    })
-
-                setTimeout(() => {
-                    console.log("leave")
-                    api.quickLeave(game.id, "vic", (err, info) => {
-                        console.log(err, info)
-                    })
-                }, 1000 * 20)
+<body>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
+    <script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+    <script type="text/javascript" src="../common/js/lib/leo.utils.js"></script>
+    <script src="../common/js/admin.js"></script>
+    <script>admin.init()</script>
+    <script>
+        const player = "han"
+        const opponent = "vic"
+        console.log("context")
+        api.context((err, data) => {
+            if (err) {
+                throw err
             }
-        )
-    })
-</script>
+            console.log(`${player} quickCreateGame`)
+            api.quickCreateGame(
+                "ooxx",
+                player,
+                msg => {
+                    console.log(msg)
+                },
+                (info) => {
+                    console.log(info)
+                },
+                (err, data, game) => {
+                    if (err) {
+                        throw err
+                    }
+                    const findGame = api.getGameById(data, game.id)
+                    if(findGame.id != game.id){
+                        console.log(findGame)
+                        throw new Error(`getGameById error`)
+                    }
+
+                    console.log(`${player}在遊戲中, ${opponent}則反`)
+                    if (api.isInGame(game, player) != true) {
+                        throw new Error(`${player} must isInGame`)
+                    }
+                    if (api.isInGame(game, opponent) != false) {
+                        throw new Error(`${opponent} must not isInGame`)
+                    }
+
+                    console.log(`${player}不能進遊戲, ${opponent}則反`)
+                    if (api.canEnterGame(game, player) != false) {
+                        throw new Error(`${player} must not canEnterGame`)
+                    }
+                    if (api.canEnterGame(game, opponent) != true) {
+                        throw new Error(`${opponent} must canEnterGame`)
+                    }
+
+                    console.log(`${opponent} quickJoin`)
+                    api.quickJoin(
+                        game.id,
+                        opponent,
+                        false,
+                        msg => {
+                            console.log(msg)
+                        },
+                        (info) => {
+                            console.log(info)
+                        },
+                        (err, game) => {
+                            if (err) {
+                                throw err
+                            }
+                            console.log(`雙方都不能進遊戲`)
+                            if (api.canEnterGame(game, player) != false) {
+                                throw new Error(`${player} must not canEnterGame`)
+                            }
+                            if (api.canEnterGame(game, opponent) != false) {
+                                throw new Error(`${opponent} must not canEnterGame`)
+                            }
+
+
+                            console.log("雙方都必須在遊戲裡")
+                            if (api.isInGame(game, player) != true) {
+                                throw new Error(`${player} must isInGame`)
+                            }
+                            if (api.isInGame(game, opponent) != true) {
+                                throw new Error(`${opponent} must isInGame`)
+                            }
+
+                            console.log("湊集二個人後, 可以開始下子, 這個時候雙方必須都是isMyTurn")
+                            if (api.isMyTurn(game, player) != true) {
+                                throw new Error(`${player} must isMyTurn`)
+                            }
+                            if (api.isMyTurn(game, opponent) != true) {
+                                throw new Error(`${opponent} must isMyTurn`)
+                            }
+
+                            console.log("還沒下子前, 雙方都不是先攻玩家")
+                            if (api.isFirstByPlayer(game, player) != false) {
+                                throw new Error(`${player} isFirstByPlayer must be false`)
+                            }
+                            if (api.isFirstByPlayer(game, opponent) != false) {
+                                throw new Error(`${opponent} isFirstByPlayer must be false`)
+                            }
+
+                            console.log("quickPut")
+                            api.quickPut(game.id, player, [0, 1], (err, game) => {
+                                if (err) {
+                                    throw err
+                                }
+                                console.log(`${player}下子後, ${player}必須不是isMyTurn. ${opponent}則反`)
+                                if (api.isMyTurn(game, player) != false) {
+                                    throw new Error(`${player} must not isMyTurn`)
+                                }
+                                if (api.isMyTurn(game, opponent) != true) {
+                                    throw new Error(`${opponent} must isMyTurn`)
+                                }
+
+                                console.log(`${player}先下後, 整場都是先攻玩家. ${opponent}則反`)
+                                if (api.isFirstByPlayer(game, player) != true) {
+                                    throw new Error(`${player} isFirstByPlayer must be true`)
+                                }
+                                if (api.isFirstByPlayer(game, opponent) != false) {
+                                    throw new Error(`${opponent} isFirstByPlayer must be false`)
+                                }
+                                api.quickPut(game.id, opponent, [1, 1], (err, game) => {
+                                    if (err) {
+                                        throw err
+                                    }
+                                    console.log(`${opponent}下子後, ${opponent}必須不是isMyTurn. ${player}則反`)
+                                    if (api.isMyTurn(game, player) != true) {
+                                        throw new Error(`${player} must not isMyTurn`)
+                                    }
+                                    if (api.isMyTurn(game, opponent) != false) {
+                                        throw new Error(`${opponent} must isMyTurn`)
+                                    }
+
+                                    console.log(`${player}先下後, 整場都是先攻玩家. ${opponent}則反`)
+                                    if (api.isFirstByPlayer(game, player) != true) {
+                                        throw new Error(`${player} isFirstByPlayer must be true`)
+                                    }
+                                    if (api.isFirstByPlayer(game, opponent) != false) {
+                                        throw new Error(`${opponent} isFirstByPlayer must be false`)
+                                    }
+                                })
+                            })
+                        })
+                }
+            )
+        })
+    </script>
+</body>
+
+</html>
