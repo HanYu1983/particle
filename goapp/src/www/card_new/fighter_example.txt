@@ -1,0 +1,54 @@
+[
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>name<br>星1重3<br>雙手刀<br>斬擊 5 3</div>",
+			"斬肉斷骨<br>招式 斬<br>手牌內文"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:aqua; width:100%; height:100%; left:0; top:0; text-align:right'>name<br>星1重3<br>雙手刀<br>斬擊 5 3</div>",
+			"斬肉斷骨<br>狀態 斬<br>狀態內文"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>name<br>星1重3<br>雙手刀<br>斬擊 5 3</div>",
+			"場上內文"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:green; width:100%; height:100%; left:0; top:0; text-align:right'>name<br>星1重3<br>雙手刀<br>斬擊 5 3</div>",
+			"斬肉斷骨<br>反應 斬<br>反應內文"
+		]
+	}
+]
