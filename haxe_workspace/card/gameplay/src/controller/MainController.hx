@@ -250,6 +250,7 @@ class MainController extends Mediator
 		var item:Mediator;
 		switch( model.type ) {
 			case 'data':
+				// 這是自創卡的修改地方
 				item = new DataItem( model.id, Tool.createItemDiv( model.type, model ) );
 			case 'card':
 				var parseData = Json.parse( Json.stringify( model ) );

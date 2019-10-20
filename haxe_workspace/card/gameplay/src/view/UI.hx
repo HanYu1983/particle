@@ -509,7 +509,7 @@ class UI extends Mediator
 			var game = card.extra[2];
 			var cardId = card.extra[0];
 			var url = Main.getCardImageUrlWithPackage( game, cardId );
-			if ( url == null ) url = '../common/images/card/cardback_0.png';
+			if ( url == null ) url = '../common/images/card/cardback_0.jpg';
 			var div = Main.j( '<div></div>' );
 			div.css( 'position', 'relative' );
 			

@@ -3022,7 +3022,7 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			var cardId = card.extra[0];
 			var url = Main.getCardImageUrlWithPackage(game,cardId);
 			if(url == null) {
-				url = "../common/images/card/cardback_0.png";
+				url = "../common/images/card/cardback_0.jpg";
 			}
 			var div = Main.j("<div></div>");
 			div.css("position","relative");
