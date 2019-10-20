@@ -1,0 +1,98 @@
+[
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>狂斬<br>近招 斬</div>",
+      "外功+2."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>兇斬<br>近招 斬氣</div>",
+      "外功+4. 機率3麻痺. (麻痺: 不能做任何行動. 回合結束時丟掉)."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>刀斬<br>近招 斬氣氣</div>",
+      "外功+6"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>巨劍格擋<br>防招 斬<br></div>",
+      "外功=0. 對抗值+6. 若出擊成功, 機率3交戰武器回手."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>破光擊<br>遠招 斬</div>",
+      "內功+2"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>流星雨<br>遠招 斬</div>",
+      "這張卡不產生攻擊. 這招只能攻擊時使用. y=內攻+0. 使用x張[塤石/內功=y/攻擊成功時抽1張卡]的攻擊替代卡. x=1+丟掉手牌的張數, x最大為3."
+    ]
+  }
+]
