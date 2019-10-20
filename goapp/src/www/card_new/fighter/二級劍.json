@@ -1,0 +1,28 @@
+[
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>單手劍<br>星2重2<br>龍泉劍<br>劍 5 5</div>",
+			"當對方宣告進攻時，可以支付2TP，重置這張卡。"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>單手劍<br>星2重2<br>魚腸劍<br>劍 5 5</div>",
+			"一、這張卡進場時，可以放置一個指示物在這張卡上。<br>二、這張卡上的指示物可以代替支付TP。<br>三、這張卡造成傷害時。放兩張指示物在這張卡上。這個能力一回合只能一次。"
+		]
+	}
+]

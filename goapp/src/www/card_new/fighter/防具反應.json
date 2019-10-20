@@ -1,0 +1,41 @@
+[
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:green; width:100%; height:100%; left:0; top:0; text-align:right'>衣服<br>星1重1<br>短打<br>衣 2 2<br>運氣防守<br>反應</div>",
+			"+6內防+6外防直到回合結束"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:green; width:100%; height:100%; left:0; top:0; text-align:right'>護甲<br>星1重1<br>護甲<br>甲 3 1<br>運氣防守<br>反應</div>",
+			"+9內防+3外防直到回合結束"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:green; width:100%; height:100%; left:0; top:0; text-align:right'>法袍<br>星1重1<br>白袍<br>袍 3 1<br>運氣防守<br>反應</div>",
+			"+3內防+9外防直到回合結束"
+		]
+	}
+]

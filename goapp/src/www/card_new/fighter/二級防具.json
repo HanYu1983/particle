@@ -1,0 +1,41 @@
+[
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>衣服<br>星1重2<br>武鬥服<br>衣 3 3</div>",
+			"當這張卡升級上場時，可以選擇:1、抽一張牌。2、回血6。3、回TP3。"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>護甲<br>星1重2<br>革甲<br>衣 4 2</div>",
+			"當這張卡升級上場時，可以選擇:1、抽一張牌。2、回血6。3、回TP3。"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>法袍<br>星1重2<br>道家法袍<br>袍 2 4</div>",
+			"當這張卡升級上場時，可以選擇:1、抽一張牌。2、回血6。3、回TP3。"
+		]
+	}
+]

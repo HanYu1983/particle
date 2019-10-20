@@ -508,29 +508,22 @@ class UI extends Mediator
 		if ( !card.back || ( card.owner == SocketController.playerId && card.viewer == SocketController.playerId )) {
 			var game = card.extra[2];
 			var cardId = card.extra[0];
-			var url = Main.getCardImageUrlWithPackage( game, cardId );
-			if ( url == null ) url = '../common/images/card/cardback_0.jpg';
+			
 			var div = Main.j( '<div></div>' );
 			div.css( 'position', 'relative' );
 			
-			var img = Main.j( '<img></img>' );
-			img.attr( 'src', url );
-			img.css( 'position', 'relative' );
-			img.css( 'top', '0' );
-			img.css( 'left', '0' );
-			img.load( function() {
-				img.css( 'width', '100%' );
-			});
-			div.append( img );
-			
-			var img2 = Main.j( '<img></img>' );
-			img2.css( 'position', 'absolute' );
-			img2.load( function() {
-				img2.css( 'width', '100%' );
-				img2.css( 'top', '0' );
-				img2.css( 'left', '0' );
-			});
-			div.append( img2 );
+			var url = Main.getCardImageUrlWithPackage( game, cardId );
+			if ( url != null ){
+				var img = Main.j( '<img></img>' );
+				img.attr( 'src', url );
+				img.css( 'position', 'relative' );
+				img.css( 'top', '0' );
+				img.css( 'left', '0' );
+				img.load( function() {
+					img.css( 'width', '100%' );
+				});
+				div.append( img );
+			}
 			
 			if ( game != 'other' && game != 'poker' ) {
 				var detail = Main.getCardDetailById( game, cardId );
@@ -679,7 +672,7 @@ class UI extends Mediator
 						str += card.extra[1];
 					}
 				}
-				detaildiv.html( str );
+				detaildiv.text( str );
 				div.append( detaildiv );
 			}
 			
