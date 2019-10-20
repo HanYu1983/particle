@@ -1,0 +1,18 @@
+[
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>鋼鞋<br>星2重1<br>鞋<br>鞋 5 1</div>",
+      "進功時外功+1"
+    ]
+  }
+]

@@ -1,0 +1,226 @@
+[
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>奮力一擊<br>近招 格</div>",
+            "外功+2."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>雙撐掌<br>近招 格格</div>",
+            "外功+2."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>箭疾步<br>近招 格格格</div>",
+            "外功+2."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>大纏崩捶<br>近招 格格格格</div>",
+            "外功+2."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>鞋<br>鞋 3 1<br>側踢<br>近招 鞋</div>",
+            "外功+3."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>鞋<br>鞋 3 1<br>旋風腿<br>近招 鞋鞋</div>",
+            "外功+5."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>緊急防守<br>防招 格<br></div>",
+            "外功=0. 對抗值+6."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>移花接木<br>防招 格格</div>",
+            "外功=0. 對抗值+6."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>鋼拳套<br>星2重1<br>拳套<br>格鬥 3 3</div>",
+            "進攻時外功+1"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>鋼拳套<br>星2重1<br>拳套<br>格鬥 3 3</div>",
+            "進攻時外功+1"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>鋼鞋<br>星2重1<br>鞋<br>鞋 5 1</div>",
+            "進功時外功+1"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>波動擊<br>遠招 格格</div>",
+            "內功+2"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>五雷轟頂<br>遠招 格格格</div>",
+            "內功+2"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>拳套<br>星1重1<br>拳套<br>格鬥 2 2<br>最終天堂<br>遠招 格格格格</div>",
+            "內功+2"
+        ]
+    }
+]
