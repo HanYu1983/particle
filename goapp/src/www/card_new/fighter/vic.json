@@ -41,10 +41,26 @@
     ],
     "back": true,
     "lock": false,
-    "count": 6,
+    "count": 3,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>單手劍<br>星1重2<br>單手劍<br>刺擊 3 3<br>弓步刺劍<br>近招 刺格</div>",
+      "外功+2."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
     "extra": [
       "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>單手劍<br>星1重2<br>單手劍<br>刺擊 3 3<br>劍氣縱橫<br>遠招 刺格</div>",
-      "外功+2."
+      "內功+2"
     ]
   },
   {
