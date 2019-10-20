@@ -1,0 +1,50 @@
+[
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>巨劍<br>星1重4<br>巨劍<br>斬擊 5 5<br>斬擊<br>近招 斬</div>",
+      "外功+2."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>巨劍<br>星1重4<br>巨劍<br>斬擊 5 5<br>舉劍<br>防招 斬</div>",
+      "外功=0. 對抗值+6."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>巨劍<br>星1重4<br>巨劍<br>斬擊 5 5<br>巨劍氣<br>遠招 斬</div>",
+      "內功+2"
+    ]
+  }
+]
