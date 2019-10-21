@@ -1,0 +1,130 @@
+[
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>護甲<br>星1重1<br>武鬥服<br>2 1</div>",
+            "上場時，可以選擇:1、抽一張牌。2、回血3。3、回TP1。"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>護甲<br>星1重1<br>革甲<br>3 0</div>",
+            "上場時，可以選擇:1、抽一張牌。2、回血3。3、回TP1。"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>護甲<br>星1重1<br>道家法袍<br>0 3</div>",
+            "上場時，可以選擇:1、抽一張牌。2、回血3。3、回TP1。"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>披風<br>星1重1<br>閃避披風<br>0 1</div>",
+            "閃避行動力-2. 機率+2"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>披風<br>星1重1<br>狂暴披風<br>0 1</div>",
+            "衝刺行動力可以改用血來支付"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>披風<br>星1重1<br>力量圍巾<br>1 0</div>",
+            "外功+1"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>戒指<br>星1重1<br>力量戒指<br>0 1</div>",
+            "外功+1"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>戒指<br>星1重1<br>專注戒指<br>0 1</div>",
+            "横置這張卡當成支付行動力2"
+        ]
+    }
+]

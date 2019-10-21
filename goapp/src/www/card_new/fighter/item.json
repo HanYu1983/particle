@@ -1,0 +1,66 @@
+[
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:purple; width:100%; height:100%; left:0; top:0; text-align:right'>道具<br>星1重0<br>回復瓶</div>",
+      "回復10血"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:purple; width:100%; height:100%; left:0; top:0; text-align:right'>道具<br>星1重0<br>以太</div>",
+      "回復4氣"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:purple; width:100%; height:100%; left:0; top:0; text-align:right'>道具<br>星1重0<br>萬能藥</div>",
+      "解除所有負面狀態"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 1,
+    "extra": [
+      "<div style='background-color:purple; width:100%; height:100%; left:0; top:0; text-align:right'>道具<br>星1重0<br>活力藥</div>",
+      "行動力+3"
+    ]
+  }
+]
