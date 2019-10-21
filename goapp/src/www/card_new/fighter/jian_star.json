@@ -22,7 +22,20 @@
 		"count":1,
 		"extra":[
 			"<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>單手劍<br>星2重2<br>魚腸劍<br>劍 5 5</div>",
-			"一、這張卡進場時，可以放置一個指示物在這張卡上。<br>二、這張卡上的指示物可以代替支付TP。<br>三、這張卡造成傷害時。放兩張指示物在這張卡上。這個能力一回合只能一次。"
+			"一、這張卡進場時，可以放置一個指示物在這張卡上。<br>二、這張卡上的指示物可以代替支付TP。<br>三、這張卡出擊時。放一張指示物在這張卡上。"
+		]
+	},
+	{
+		"type":"data",
+		"width":50,
+		"height":75,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":1,
+		"extra":[
+			"<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>單手劍<br>星2重2<br>利劍<br>劍 5 5</div>",
+			"於自己或者敵方回合的時候，這張卡上的行動卡可以使用一張。"
 		]
 	}
 ]
