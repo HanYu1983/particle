@@ -1,0 +1,274 @@
+[
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:purple; width:100%; height:100%; left:0; top:0; text-align:right'>道具<br>星1重0<br>以太</div>",
+            "回復4氣"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:purple; width:100%; height:100%; left:0; top:0; text-align:right'>道具<br>星1重0<br>加速藥</div>",
+            "獲得加速. 加速: 得到2張行動力替代卡, 持續2次重置. "
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 2,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>護甲<br>星1重1<br>武鬥服<br>2 2</div>",
+            "上場時，可以選擇:1、抽一張牌。2、回血3。3、回TP1。"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 2,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>護甲<br>星1重1<br>革甲<br>3 1</div>",
+            "上場時，可以選擇:1、抽一張牌。2、回血3。3、回TP1。"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 2,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>兇斬<br>近招 斬氣</div>",
+            "外功+4. 機率3麻痺. (麻痺: 不能做任何行動. 回合結束時丟掉)."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 2,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>刀斬<br>近招 斬氣氣</div>",
+            "外功+6"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 2,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>披風<br>星1重1<br>狂暴披風<br>1 3</div>",
+            "衝刺行動力可以改用血來支付"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 2,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>戒指<br>星1重1<br>專注戒指<br>0 1</div>",
+            "横置這張卡當成支付行動力2"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 1,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星2重4<br>水晶劍<br>斬擊 9 9</div>",
+            "回合開始時, 可以將1張手牌丟到氣庫並抽一張牌"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>鞋<br>鞋 2 2<br>側踢<br>近招 鞋</div>",
+            "外功+3."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>狂斬<br>近招 斬</div>",
+            "外功+2."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 2,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>兇斬<br>近招 斬氣</div>",
+            "外功+4. 機率3麻痺. (麻痺: 不能做任何行動. 回合結束時丟掉)."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>狂斬<br>近招 斬</div>",
+            "外功+2."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星2重4<br>巨型鋼劍<br>斬擊 9 9</div>",
+            "攻擊出擊時對抗值+2"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>鞋<br>鞋 2 2<br>旋風腿<br>近招 鞋鞋</div>",
+            "外功+5."
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>破光擊<br>遠招 斬</div>",
+            "內功+2"
+        ]
+    },
+    {
+        "type": "data",
+        "width": 50,
+        "height": 75,
+        "pos": [
+            100,
+            100
+        ],
+        "back": true,
+        "lock": false,
+        "count": 3,
+        "extra": [
+            "<div style='background-color:green; width:100%; height:100%; left:0; top:0; text-align:right'>大劍<br>星1重4<br>大劍<br>斬擊 5 5<br>巨力反擊<br>反應 斬</div>",
+            "對方扣x血. x為交戰武器的外功/2. 交戰武器的外功值減去x. 若x>5的情況, 對方無條件丟掉1張手牌."
+        ]
+    }
+]
