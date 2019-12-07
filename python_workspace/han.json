@@ -1,0 +1,610 @@
+[
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>居合</div>", 
+            "居合/ 主動 / [刀類] 指定一個玩家行動力減1, 若指家的玩家生命等於小於你的話, 則1改為使用武器重量.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>拔刀術</div>", 
+            "拔刀術/ 出招 / [刀類]  外功+1. 防禦時使用時對抗值+3.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:aqua; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br></div>", 
+            "信劍/ 2 / 對抗值+2. 使用攻擊招式時移除這張卡.<br>信劍/ 2 / 對抗值+2. 使用攻擊招式時移除這張卡."
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>龍卷閃</div>", 
+            "龍卷閃/ 防招 / [刀類] 外功變0. 對抗值+6<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>掌破刀勢</div>", 
+            "掌破刀勢/ 出招 / [刀類][格] 外功+2.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>蹴擊刀勢</div>", 
+            "蹴擊刀勢/ 出招 / [刀類][格][1] 外功+4.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>龍槌閃 </div>", 
+            "龍槌閃 / 出招 / [刀類] 外功+2. <br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星2重3<br>倭刀<br>9 5<br></div>", 
+            "宣告招式時若招式包含格的話, 氣+1. 補4滴.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星2重3<br>菊一文字<br>9 5<br></div>", 
+            "對方使用宣告反應與防招時必須額外支付2TP. 否則不能宣告.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>居合</div>", 
+            "居合/ 主動 / [刀類] 指定一個玩家行動力減1, 若指家的玩家生命等於小於你的話, 則1改為使用武器重量.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>拔刀術</div>", 
+            "拔刀術/ 出招 / [刀類]  外功+1. 防禦時使用時對抗值+3.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:aqua; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br></div>", 
+            "信劍/ 2 / 對抗值+2. 使用攻擊招式時移除這張卡.<br>信劍/ 2 / 對抗值+2. 使用攻擊招式時移除這張卡."
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>龍卷閃</div>", 
+            "龍卷閃/ 防招 / [刀類] 外功變0. 對抗值+6<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>掌破刀勢</div>", 
+            "掌破刀勢/ 出招 / [刀類][格] 外功+2.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>蹴擊刀勢</div>", 
+            "蹴擊刀勢/ 出招 / [刀類][格][1] 外功+4.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>龍槌閃 </div>", 
+            "龍槌閃 / 出招 / [刀類] 外功+2. <br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星2重3<br>倭刀<br>9 5<br></div>", 
+            "宣告招式時若招式包含格的話, 氣+1. 補4滴.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星2重3<br>菊一文字<br>9 5<br></div>", 
+            "對方使用宣告反應與防招時必須額外支付2TP. 否則不能宣告.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>居合</div>", 
+            "居合/ 主動 / [刀類] 指定一個玩家行動力減1, 若指家的玩家生命等於小於你的話, 則1改為使用武器重量.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>拔刀術</div>", 
+            "拔刀術/ 出招 / [刀類]  外功+1. 防禦時使用時對抗值+3.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:aqua; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br></div>", 
+            "信劍/ 2 / 對抗值+2. 使用攻擊招式時移除這張卡.<br>信劍/ 2 / 對抗值+2. 使用攻擊招式時移除這張卡."
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>龍卷閃</div>", 
+            "龍卷閃/ 防招 / [刀類] 外功變0. 對抗值+6<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>掌破刀勢</div>", 
+            "掌破刀勢/ 出招 / [刀類][格] 外功+2.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>蹴擊刀勢</div>", 
+            "蹴擊刀勢/ 出招 / [刀類][格][1] 外功+4.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星1重3<br>太刀<br>5 3<br>龍槌閃 </div>", 
+            "龍槌閃 / 出招 / [刀類] 外功+2. <br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星2重3<br>倭刀<br>9 5<br></div>", 
+            "宣告招式時若招式包含格的話, 氣+1. 補4滴.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>雙手刀<br>星2重3<br>菊一文字<br>9 5<br></div>", 
+            "對方使用宣告反應與防招時必須額外支付2TP. 否則不能宣告.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>布靴<br>2 2<br>勾踢 </div>", 
+            "勾踢 / 變招 / 【脚】+0.被擊中的玩家無條件丟棄一張手牌。<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>布靴<br>2 2<br>勾踢 </div>", 
+            "勾踢 / 變招 / 【脚】+0.被擊中的玩家無條件丟棄一張手牌。<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>布靴<br>2 2<br>勾踢 </div>", 
+            "勾踢 / 變招 / 【脚】+0.被擊中的玩家無條件丟棄一張手牌。<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>布靴<br>2 2<br>前踢 </div>", 
+            "前踢 / 變招 / 【脚】+2.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>布靴<br>2 2<br>前踢 </div>", 
+            "前踢 / 變招 / 【脚】+2.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:red; width:100%; height:100%; left:0; top:0; text-align:right'>鞋<br>星1重1<br>布靴<br>2 2<br>前踢 </div>", 
+            "前踢 / 變招 / 【脚】+2.<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>服<br>星1重1<br>布衣<br>2 2<br>深呼吸 </div>", 
+            "<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>服<br>星1重1<br>布衣<br>2 2<br>深呼吸 </div>", 
+            "<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:yellow; width:100%; height:100%; left:0; top:0; text-align:right'>服<br>星1重1<br>布衣<br>2 2<br>深呼吸 </div>", 
+            "<br>"
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:purple; width:100%; height:100%; left:0; top:0; text-align:right'>道具<br>星重<br>分身藥<br> <br></div>", 
+            "<br>分身術/ 0 / 使用在自身. 對方攻擊出擊時必定落空. 回合開始時移掉這張."
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }, 
+    {
+        "back": true, 
+        "width": 50, 
+        "count": 1, 
+        "lock": false, 
+        "extra": [
+            "<div style='background-color:purple; width:100%; height:100%; left:0; top:0; text-align:right'>道具<br>星重<br>毒藥瓶<br> <br></div>", 
+            "<br>中毒/ 0 / 持續3回合. 每回合扣2滴."
+        ], 
+        "type": "data", 
+        "pos": [
+            100, 
+            100
+        ], 
+        "height": 75
+    }
+]
