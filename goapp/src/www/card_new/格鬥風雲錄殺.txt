@@ -1,16 +1,4 @@
 [
-	{
-		"type":"data",
-		"width":100,
-		"height":150,
-		"pos":[100,100],
-		"back":true,
-		"lock":false,
-		"count":2,
-		"extra":[
-			"戰士 體力5 金錢3\n天賦:可以代替一個玩家扣1體力。"
-		]
-	},
     {
 		"type":"data",
 		"width":100,
@@ -18,43 +6,7 @@
 		"pos":[100,100],
 		"back":true,
 		"lock":false,
-		"count":2,
-		"extra":[
-			"盜賊 體力4 金錢4\n天賦:每當隊友成功【殺】。自己+1金。"
-		]
-	},
-    {
-		"type":"data",
-		"width":100,
-		"height":150,
-		"pos":[100,100],
-		"back":true,
-		"lock":false,
-		"count":2,
-		"extra":[
-			"法師 體力3 金錢5\n天賦:在一個玩家受傷害時，可以-1金或者棄掉一張卡。對那個玩家再一次【殺】"
-		]
-	},
-    {
-		"type":"data",
-		"width":100,
-		"height":150,
-		"pos":[100,100],
-		"back":true,
-		"lock":false,
-		"count":2,
-		"extra":[
-			"鐵匠 體力4 金錢4\n天賦:棄掉裝備卡獲得的金錢變爲2。一回合只能出發一次。"
-		]
-	},
-    {
-		"type":"data",
-		"width":100,
-		"height":150,
-		"pos":[100,100],
-		"back":true,
-		"lock":false,
-		"count":30,
+		"count":50,
 		"extra":[
 			"殺 指定一個玩家，如果那個玩家沒有閃，那個玩家扣1體力"
 		]
