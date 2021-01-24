@@ -26,20 +26,7 @@ public class Card : MonoBehaviour, ICardTemplate
         Debug.Log("這裡很像不會呼叫到?");
         GetComponent<RectTransform>().SetPositionAndRotation(Vector3.zero, Quaternion.identity);
     }
-
-    public IEnumerator CreateTexture(string url)
-    {
-        WWW www = new WWW(url);
-        yield return www;
-
-        Texture2D texture = new Texture2D(260, 390);
-        www.LoadImageIntoTexture(texture);
-        www.Dispose();
-        www = null;
-    }
-
     
-
     public IEnumerator PrintImage(string output, string[] info)
     {
         var url = info[0];
@@ -67,7 +54,7 @@ public class Card : MonoBehaviour, ICardTemplate
             Debug.Log("WriteCachedFile: " + cachedPath);
         }
         // ================================= //
-
+        
         Sprite s = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
         myImg.sprite = s;
         

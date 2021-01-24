@@ -24,3 +24,12 @@ package-lock.json
 build/
 tmp/
 .vscode/
+Library/
+Temp/
+Logs/
+obj/
+Packages/
+UnityPackageManager/
+.vs/
+*.sln
+*.csproj
