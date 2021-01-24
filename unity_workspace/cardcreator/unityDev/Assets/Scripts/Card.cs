@@ -14,22 +14,22 @@ public class Card : MonoBehaviour
     {
         yourMethod();
 
-        CanvasScreenShot.OnPictureTaken += receivePNGScreenShot;
+        //CanvasScreenShot.OnPictureTaken += receivePNGScreenShot;
     }
 
-    void receivePNGScreenShot(byte[] pngArray)
-    {
-        //Debug.Log(GetComponent<RectTransform>().position);
-        Debug.Log("Picture taken");
+    //void receivePNGScreenShot(byte[] pngArray)
+    //{
+    //    //Debug.Log(GetComponent<RectTransform>().position);
+    //    Debug.Log("Picture taken");
 
-        GetComponent<RectTransform>().SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+    //    GetComponent<RectTransform>().SetPositionAndRotation(Vector3.zero, Quaternion.identity);
 
-        //Do Something With the Image (Save)
+    //    //Do Something With the Image (Save)
 
-       // string path = Application.persistentDataPath + "/CanvasScreenShot.png";
-       // System.IO.File.WriteAllBytes(path, pngArray);
-       // Debug.Log(path);
-    }
+    //   // string path = Application.persistentDataPath + "/CanvasScreenShot.png";
+    //   // System.IO.File.WriteAllBytes(path, pngArray);
+    //   // Debug.Log(path);
+    //}
 
     public void yourMethod()
     {
@@ -60,6 +60,6 @@ public class Card : MonoBehaviour
         ScreenCapture.CaptureScreenshot(path);
 
         Debug.Log(path);
-
+        
     }
 }
