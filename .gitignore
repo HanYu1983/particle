@@ -24,3 +24,11 @@ package-lock.json
 build/
 tmp/
 .vscode/
+
+
+unity_workspace/cardcreator/unityDev/.vs
+unity_workspace/cardcreator/unityDev/Library/
+unity_workspace/cardcreator/unityDev/Logs/
+unity_workspace/cardcreator/unityDev/Packages/
+unity_workspace/cardcreator/unityDev/Temp/
+unity_workspace/cardcreator/unityDev/UnityPackageManager/
