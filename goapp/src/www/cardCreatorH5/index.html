@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.min.js"></script>
+        <script type="text/javascript" src="../common/js/lib/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+        <script type="text/javascript" src="../common/js/lib/jquery/jquery.tmpl.min.js"></script>
+        <script src="http://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    </head>
+    <style>
+        .rel{
+            position: relative;
+        }
+        .abs{
+            position: absolute;
+        }
+        .card{
+            width:260px;
+            height:390px;
+        }
+        .full{
+            top:0;
+            left:0;
+            width:100%;
+            height:100%
+        }
+        .icon{
+            left:9px;
+            top:12px;
+            width:30px;
+            height:30px;
+        }
+        .card_name{
+            top:16px;
+            left:38px;
+            width:160px;
+            text-align: center;
+        }
+        .card_cost{
+            top:8;
+            right:28;
+        }
+        .card_type{
+            left:25px;
+            top:237px;
+            width: 160px;
+            text-align: left;
+            color: white;
+            font-size: 12px;
+        }
+        .card_content{
+            left:32px;
+            top:258px;
+            width: 205px;
+            text-align: left;
+            font-size: 11px;
+        }
+
+        .card_atk{
+            right:6px;
+            bottom:20px;
+            width:160px;
+            text-align: center;
+            font-size: 11px;
+        }
+    </style>
+    <body>
+        <div class="rel card">
+            <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQQ0G_OFWeKfnAAQ4Vg_KJfFH9Eyxl9R-Q67vVSdrinMbMzJcaA" class="rel full">
+            <img src="ref/cardback.png" class="abs full">
+            <img src="ref/icon_city.png" class="abs icon">
+            <div id="name" class="abs card_name">99式主力戰車</div>
+            <div id="cost" class="abs card_cost">3</div>
+            <div id="type" class="abs card_type">部隊-戰車</div>
+            <div id="content" class="abs card_content">配置階段開始時：翻開牌頂一張牌，那張牌的費用為2的倍數時：自軍錢+1。指定一個敵軍錢-1。這張卡在炮擊階段還在戰場上的時候，可以廢棄這張卡。之後，指定一個敵軍部隊或建築變為我軍操控並移置自軍場上。</div>
+            <div id="atk" class="abs card_atk">[陸強] [空弱] [兵弱] [城-]</div>
+        </div>
+        <div id="draw_example" class="rel card">
+            <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQQ0G_OFWeKfnAAQ4Vg_KJfFH9Eyxl9R-Q67vVSdrinMbMzJcaA" class="rel full">
+            <img src="ref/cardback.png" class="abs full">
+            <img src="ref/icon_city.png" class="abs icon">
+            <div id="name" class="abs card_name">99式主力戰車</div>
+            <div id="cost" class="abs card_cost">3</div>
+            <div id="type" class="abs card_type">部隊-戰車</div>
+            <div id="content" class="abs card_content">配置階段開始時：翻開牌頂一張牌，那張牌的費用為2的倍數時：自軍錢+1。指定一個敵軍錢-1。這張卡在炮擊階段還在戰場上的時候，可以廢棄這張卡。之後，指定一個敵軍部隊或建築變為我軍操控並移置自軍場上。</div>
+            <div id="atk" class="abs card_atk">[陸強] [空弱] [兵弱] [城弱]</div>
+        </div>
+    </body>
+    <script>
+        window.onload = function() {
+
+            // setInterval(function(){
+            //     html2canvas(document.querySelector("#draw_example")).then(canvas => {
+            //         document.body.appendChild(canvas)
+            //     });
+            // }, 1000);
+            
+            html2canvas(document.querySelector("#draw_example")).then(canvas => {
+                document.body.appendChild(canvas)
+            });
+        };
+        
+    </script>
+</html>
