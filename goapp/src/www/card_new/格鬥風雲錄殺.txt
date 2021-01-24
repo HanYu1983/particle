@@ -1,0 +1,134 @@
+[
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":50,
+		"extra":[
+			"殺 指定一個玩家，如果那個玩家沒有閃，那個玩家扣1體力"
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":30,
+		"extra":[
+			"閃 可以閃掉【殺】、【劫】、【盜】"
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":10,
+		"extra":[
+			"劫 指定一個玩家，取得對方的1金。如果對方沒有金錢，這張卡等於【殺】"
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":5,
+		"extra":[
+			"盜 指定一個玩家，取得對方的一件裝備。如果對方沒有裝備，取得對方的1錢。（都沒有的話就不能指定）"
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":5,
+		"extra":[
+			"打工 錢+2"
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":5,
+		"extra":[
+			"製造 抽兩張卡"
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":5,
+		"extra":[
+			"壁壘 放在自己的場上，在對方造成己方傷害的時候，可以廢棄這張卡。那個傷害-1."
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":5,
+		"extra":[
+			"研磨 放在自己的場上，在己方造成對方傷害的時候，可以廢棄這張卡。那個傷害+1."
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":5,
+		"extra":[
+			"武器 裝備后激活角色卡的武器技能。或者從手牌棄掉這張卡，獲得1金。"
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":5,
+		"extra":[
+			"防具 裝備后激活角色卡的防具技能。或者從手牌棄掉這張卡，獲得1金。"
+		]
+	},
+    {
+		"type":"data",
+		"width":100,
+		"height":150,
+		"pos":[100,100],
+		"back":true,
+		"lock":false,
+		"count":5,
+		"extra":[
+			"配飾：裝備后激活角色卡的配飾技能。或者從手牌棄掉這張卡，獲得1金。"
+		]
+	}    
+]
