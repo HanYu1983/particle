@@ -29,7 +29,9 @@ handlers:
 - url: /xiaogenban
   static_dir: www/xiaogenban
 - url: /freechess
-  static_dir: www/freechess  
+  static_dir: www/freechess
+- url: /cardCreator
+  static_dir: www/cardCreator
 - url: /.*
   script: auto
   secure: always
