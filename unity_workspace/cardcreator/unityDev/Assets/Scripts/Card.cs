@@ -19,9 +19,13 @@ public class Card : MonoBehaviour, ICardTemplate
     public Image CardImage;
     Texture2D texture;
 
-    void Start()
+    void Awake()
     {
         texture = new Texture2D(260, 390);
+    }
+
+    void Start()
+    {
         if (runTest)
         {
             StartCoroutine(PrintImage(Application.persistentDataPath + "/CanvasScreenShot.png", new string[] { "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQQ0G_OFWeKfnAAQ4Vg_KJfFH9Eyxl9R-Q67vVSdrinMbMzJcaA" }));

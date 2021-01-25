@@ -33,20 +33,35 @@ public class Helper
 
 public class Controller : MonoBehaviour
 {
+    public string envPath;
     public Card cardTemplate;
 
     void Start()
     {
-        var env = LoadEnv(Application.persistentDataPath + "/env.json");
+        envPath = Application.persistentDataPath + "/env.json";
+        AssertEnv();
+        var env = LoadEnv(envPath);
         var csv = LoadCsv(Application.persistentDataPath + "/"+env.input);
         StartCoroutine(StartPrint(env.output, csv));
+    }
+
+    void AssertEnv()
+    {
+        if (File.Exists(envPath) == false)
+        {
+            throw new System.Exception(envPath+" not found");
+        }
+        if(Directory.Exists(Application.persistentDataPath + "/cache") == false)
+        {
+            throw new System.Exception("cache folder not found");
+        }
     }
 
     Env LoadEnv(string path)
     {
         if (File.Exists(path) == false)
         {
-            throw new System.Exception("env.json not found");
+            throw new System.Exception(path+" not found");
         }
         var text = File.ReadAllText(path);
         return JsonUtility.FromJson<Env>(text);
