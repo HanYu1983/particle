@@ -11,9 +11,15 @@ public class Card : MonoBehaviour, ICardTemplate
 
     public GameObject CardType;
     public GameObject[] CardTypeIcons;
-
     public GameObject[] CardFronts;
 
+    public GameObject valueBar;
+    public Text height;
+    public Text bullet;
+    public Text detect;
+    public Text hide;
+    public Text armor;
+    public Text heal;
 
     public Image CardImage;
     Texture2D texture;
