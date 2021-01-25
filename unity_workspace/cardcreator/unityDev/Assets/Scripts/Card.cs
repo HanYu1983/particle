@@ -36,7 +36,7 @@ public class Card : MonoBehaviour, ICardTemplate
     {
         var url = info[13];
         // ========= get texture ============= //
-        GetTexture:
+        
         if (url != null && url.Length >= 0)
         {
             var cachedFileName = UnityWebRequest.EscapeURL(url);
@@ -55,7 +55,7 @@ public class Card : MonoBehaviour, ICardTemplate
                 if (www.error != null) {
                     Debug.Log("load error: " + www.error);
                     Debug.Log("error url:" + url);
-                    goto GetTexture;
+                    goto OutputImage;
                 }
 
                 www.LoadImageIntoTexture(texture);
@@ -69,6 +69,7 @@ public class Card : MonoBehaviour, ICardTemplate
             CardImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
         }
         // ================================= //
+        OutputImage:
 
         ScreenCapture.CaptureScreenshot(output);
 

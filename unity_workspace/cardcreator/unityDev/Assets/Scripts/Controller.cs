@@ -86,6 +86,8 @@ public class Controller : MonoBehaviour
             {
                 info[x] = csv[y][x];
             }
+            Debug.Log("===========");
+            Debug.Log(y);
             var outputPath = Application.persistentDataPath + "/" + outputDir + "/" + info[0] + ".png";
             yield return cardTemplate.PrintImage(outputPath, info);
         }
