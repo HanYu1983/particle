@@ -1,0 +1,1 @@
+gsutil defacl set public-read gs://particle-resources
