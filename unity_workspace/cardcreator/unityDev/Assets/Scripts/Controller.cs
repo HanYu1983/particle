@@ -88,7 +88,7 @@ public class Controller : MonoBehaviour
             }
             Debug.Log("===========");
             Debug.Log(y);
-            var outputPath = Application.persistentDataPath + "/" + outputDir + "/" + info[0] + ".png";
+            var outputPath = Application.persistentDataPath + "/" + outputDir + "/" + info[0] + ".jpg";
             yield return cardTemplate.PrintImage(outputPath, info);
         }
     }
