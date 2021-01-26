@@ -87,8 +87,10 @@ public class Controller : MonoBehaviour
             {
                 info[x] = csv[y][x];
             }
+            Debug.Log("Draw:" + info[0]);
             var outputPath = Application.persistentDataPath + "/" + outputDir + "/" + info[0] + ".jpg";
             yield return cardTemplate.PrintImage(outputPath, info);
+            yield return new WaitForSeconds(1);
             if (isPreview)
             {
                 yield break;
