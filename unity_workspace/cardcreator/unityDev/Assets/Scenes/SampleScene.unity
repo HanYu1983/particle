@@ -152,6 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   envPath: 
   cardTemplate: {fileID: 1930704252}
+  isPreview: 0
 --- !u!4 &75291711
 Transform:
   m_ObjectHideFlags: 0
@@ -2118,15 +2119,15 @@ MonoBehaviour:
   - {fileID: 1790720155}
   - {fileID: 1609343732}
   CardTypeColors:
-  - {r: 0.8207547, g: 0.8207547, b: 0.8207547, a: 1}
-  - {r: 0.9245283, g: 0.5538448, b: 0.5538448, a: 1}
-  - {r: 0.6194375, g: 0.6766821, b: 0.9056604, a: 1}
+  - {r: 0.7877358, g: 0.82622355, b: 1, a: 1}
+  - {r: 0.990566, g: 0.81768423, b: 0.9797609, a: 1}
+  - {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
   ValueColors:
-  - {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
+  - {r: 0.5283019, g: 0.002491996, b: 0.002491996, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 0, a: 1}
-  - {r: 0.54901963, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0.4245283, b: 0.032319203, a: 1}
   valueBar: {fileID: 998968703}
   lblCardName: {fileID: 1049525305}
   lblCost: {fileID: 1347088025}
