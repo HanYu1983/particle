@@ -218,9 +218,16 @@ public class Card : MonoBehaviour, ICardTemplate
                 www.Dispose();
                 www = null;
 
-                byte[] bytes = texture.EncodeToPNG();
-                File.WriteAllBytes(cachedPath, bytes);
-                Debug.Log("WriteCachedFile: " + cachedPath);
+                try
+                {
+                    byte[] bytes = texture.EncodeToPNG();
+                    File.WriteAllBytes(cachedPath, bytes);
+                    Debug.Log("WriteCachedFile: " + cachedPath);
+                }
+                catch(Exception e)
+                {
+                    Debug.Log("WriteCachedError: " + e.Message);
+                }
             }
             CardImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
         }

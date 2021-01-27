@@ -90,7 +90,7 @@ public class Controller : MonoBehaviour
             Debug.Log("Draw:" + info[0]);
             var outputPath = Application.persistentDataPath + "/" + outputDir + "/" + info[0] + ".jpg";
             yield return cardTemplate.PrintImage(outputPath, info);
-            yield return new WaitForSeconds(1);
+            yield return new WaitForEndOfFrame();
             if (isPreview)
             {
                 yield break;
