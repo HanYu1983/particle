@@ -18,6 +18,7 @@ func GetCardString(w http.ResponseWriter, r *http.Request) {
 	var times = 1
 	for _, token := range tokens {
 		if len(token) == 0 {
+			times++
 			continue
 		}
 		ids := strings.Split(token, ",")
