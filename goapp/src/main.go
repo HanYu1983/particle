@@ -20,6 +20,7 @@ import (
 
 	"src/app/contestsys"
 	"src/app/freechess"
+	"src/app/helper"
 	"src/app/uploadcard"
 )
 
@@ -134,6 +135,12 @@ func main() {
 	router.HandleFunc("/fn/freechess/game/{game}/player/{player}/chess/{x}/{y}/put", freechess.Serve_PutChess).Methods("GET")
 	router.HandleFunc("/fn/freechess/clear", freechess.Serve_Clear).Methods("GET")
 	http.Handle("/fn/freechess/", router)
+
+	// tool
+	// 來用產生卡牌風雲的牌組字串, 比如
+	// input = 1,2|3,4|5
+	// output = "1","2","3","4","3","4","5","5","5"
+	http.HandleFunc("/fn/helper/GetCardString", helper.GetCardString)
 
 	// Test
 	http.HandleFunc("/fn/auth", welcome)
