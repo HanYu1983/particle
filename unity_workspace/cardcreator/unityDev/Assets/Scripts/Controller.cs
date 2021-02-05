@@ -33,39 +33,16 @@ public class Helper
 
 public class Controller : MonoBehaviour
 {
-    public string envPath;
+    public string inputPath;
     public Card cardTemplate;
     public bool isPreview;
 
     void Start()
     {
-        envPath = Application.persistentDataPath + "/env.json";
-        AssertEnv();
-        var env = LoadEnv(envPath);
-        var csv = LoadCsv(Application.persistentDataPath + "/"+env.input);
-        StartCoroutine(StartPrint(env.output, csv));
-    }
-
-    void AssertEnv()
-    {
-        if (File.Exists(envPath) == false)
-        {
-            throw new System.Exception(envPath+" not found");
-        }
-        if(Directory.Exists(Application.persistentDataPath + "/cache") == false)
-        {
-            throw new System.Exception("cache folder not found");
-        }
-    }
-
-    Env LoadEnv(string path)
-    {
-        if (File.Exists(path) == false)
-        {
-            throw new System.Exception(path+" not found");
-        }
-        var text = File.ReadAllText(path);
-        return JsonUtility.FromJson<Env>(text);
+        string path = Application.dataPath +"/"+ inputPath;
+        var csv = LoadCsv(path);
+        StartCoroutine(StartPrint("output", csv));
+        
     }
 
     string[][] LoadCsv(string path)
@@ -87,10 +64,10 @@ public class Controller : MonoBehaviour
             {
                 info[x] = csv[y][x];
             }
-            Debug.Log("Draw:" + info[0]);
             var outputPath = Application.persistentDataPath + "/" + outputDir + "/" + info[0] + ".jpg";
+            Debug.Log("outputPath:" + outputPath);
             yield return cardTemplate.PrintImage(outputPath, info);
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(0.1f);
             if (isPreview)
             {
                 yield break;

@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e74680036cd1804aa5c0592813c8243, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  envPath: 
+  inputPath: "Resources/\u8ECD\u6B66TCG - \u8CC7\u6599.tsv"
   cardTemplate: {fileID: 1930704252}
   isPreview: 0
 --- !u!4 &75291711

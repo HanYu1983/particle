@@ -192,7 +192,7 @@ public class Card : MonoBehaviour, ICardTemplate
         SetValueColor(lblHeal, heal, 3, 8);
 
         // ========= get texture ============= //
-
+        CardImage.sprite = null;
         if (url != null && url.Length >= 0)
         {
             var cachedFileName = UnityWebRequest.EscapeURL(url);
