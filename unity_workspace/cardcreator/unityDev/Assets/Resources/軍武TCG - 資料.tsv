@@ -1,6 +1,6 @@
-0_id	1_牌種	2_名字	3_師	4_國家	5_指揮點數(1~10)	6_高度	7_偵查(1~6)	8_隱蔽(1~6)	9_裝甲(1~30)	10_耐久(1~10)	11_內文	12_彈藥費(0~5)	13_url	待討論事項
-0	部隊	豹式二型A5	坦克	美	6	陸	3	2	22		滑膛砲 穿甲(21) 動能 陸 滑膛砲 爆炸(1,4) 動能 兵 機槍 槍擊(1) 動能 陸,低空	1	https://i.ytimg.com/vi/2_ZdIrgaf7c/maxresdefault.jpg	
-1	部隊	ADATS	坦克	美	4	陸	2	2	4		對地飛彈 穿甲(26) 火箭(7) 陸 對空飛彈 爆炸(1,10) 火箭(7) 低空	1	https://pm1.narvii.com/6410/028288b58dab338a52efb02fae8c56063e32fcb5_00.jpg	
+0_id	1_牌種	2_名字	3_師	4_國家	5_指揮點數 0~15:0 16~45: 1 46~75: 2 76~105:3 106~135:4 136~165:5 166~195:6	6_高度	7_偵查(1~6) Pool:1 Bad: 2 Medium: 3 Good: 4 Very Good: 5 Exceptional: 6	8_隱蔽 Pool:1 Bad: 2 Medium: 3 Good: 4 Very Good: 5 Exceptional: 6	9_裝甲(1~30)	10_耐久(1~10)	11_內文	12_彈藥費(0~5)	13_url	待討論事項
+0	部隊	豹式二型A5	坦克	美	6	陸	2	1	22		滑膛砲 穿甲(21) 動能 陸 滑膛砲 爆炸(1,4) 動能 兵 機槍 槍擊(1) 動能 陸,低空	1	https://i.ytimg.com/vi/2_ZdIrgaf7c/maxresdefault.jpg	
+1	部隊	ADATS	坦克	美	4	陸	1	1	4		對地飛彈 穿甲(26) 火箭(7) 陸 對空飛彈 爆炸(1,10) 火箭(7) 低空	1	https://pm1.narvii.com/6410/028288b58dab338a52efb02fae8c56063e32fcb5_00.jpg	
 2	部隊	AH-64	直升機	美	5	低空	2	2		10	對地飛彈 穿甲(26) 火箭(7) 陸 對空飛彈 爆炸(1,10) 火箭(7) 低空 地獄火飛彈 爆炸(2,10) 火箭(10) 陸 (起動攻擊出擊時, 可指定一張正面部隊卡不能攻擊這張卡.	2	https://www.defenseworld.net/uploads//news/big/ah-64_apa_1559303274.jpg	
 3	部隊	PAH-1	直升機	德	2	低空	2	2		5	對地飛彈 穿甲(15) 火箭(7) 陸	2	https://www.helis.com/h2/bo105_heer.jpg	
 4	部隊	PAH-1對空武裝	直升機	德	2	低空	2	2		5	對空飛彈 爆炸(1,10) 火箭(7) 低空	2	https://www.italeri.com/uploads/products/2742_illustrazioneLR.jpg	
@@ -9,15 +9,15 @@
 7	建築	彈藥庫		所有	1	陸				5	所在線的部隊所有彈藥費-1	1	https://www.newton.com.tw/img/3/5ef/cGcq5SZ2AjNhZGZmZTMkljYxMzYilTMxMjZxImZlBTOxEzNlRGZ1UWNzQDOv0WZ0l2LjlGcvU2apFmYv02bj5SdklWYi5yYyN3Ztl2LvoDc0RHa.jpg	
 8	部隊	A10	攻擊機	美	3	高空	2	2		10	炸彈 爆炸(3,10) 動能 陸, 低空	3	https://www.squadronposters.com/wp-content/uploads/140224213401-a-10-warthog-jet-exlarge-169.jpg	
 9	部隊	對空導彈	對空炮	所有	2	陸	2	2	10		對空飛彈 爆炸(1,10) 火箭(10) 低空 高空	2	https://image2.sina.com.cn/dy/w/2002-12-09/1_1-1-21-295_2002120914618.jpg	
-10	部隊	豹式一型指揮坦克	坦克	德	3	陸	3	2	11		滑膛砲 穿甲(12) 動能 陸 滑膛砲 爆炸(1,2) 動能 兵 機槍 槍擊(3) 動能 陸,低空 指揮官.	1	https://i.redd.it/f6vs56dke6l21.jpg	
-11	部隊	豹式一型偵查坦克	坦克	德	1	陸	4	3	11		滑膛砲 穿甲(12) 動能 陸 滑膛砲 爆炸(1,2) 動能 兵 機槍 槍擊(3) 動能 陸,低空	1	https://redhavoc.co.uk/wp-content/uploads/2020/09/Leopard_1v.jpg	
+10	部隊	豹式一型指揮坦克	坦克	德	3	陸	2	1	11		滑膛砲 穿甲(12) 動能 陸 滑膛砲 爆炸(1,2) 動能 兵 機槍 槍擊(3) 動能 陸,低空 指揮官.	1	https://i.redd.it/f6vs56dke6l21.jpg	
+11	部隊	豹式一型偵查坦克	坦克	德	1	陸	3	2	11		滑膛砲 穿甲(12) 動能 陸 滑膛砲 爆炸(1,2) 動能 兵 機槍 槍擊(3) 動能 陸,低空	1	https://redhavoc.co.uk/wp-content/uploads/2020/09/Leopard_1v.jpg	
 12	部隊	長毛象	坦克	所有	6	陸	3	1	25		雙炮管主炮 穿甲(20) 動能 陸 雙炮管主炮 爆炸(1,4) 動能 兵 飛彈 爆炸(3,7) 火箭(5) 陸,兵 飛彈 爆炸(1,7) 火箭(7) 低空 這個單位不能進攻出擊。 (自軍攻擊)支付1點指揮點。可以進攻出擊直到回合結束。 這個單位的(雙炮管主炮)在炮擊時，可以連續執行兩次(沒有切入時間)。	1	https://i.imgur.com/PdCFn.png	
 13	部隊	戰神	坦克	中	3	陸	2	2	13		滑膛砲 穿甲(16) 動能 陸 機槍 槍擊(3) 動能 陸,低空 這張卡在防守時，不用支付彈藥費。	1	https://static.wikia.nocookie.net/cncfanon/images/f/f4/Ztz59%E2%80%9Cbattlemaster%E2%80%9Dtank.jpg/revision/latest/scale-to-width-down/340?cb=20180817164830	
 14	部隊	前哨監聽車	坦克	中	2	陸	4	4	6		機槍 槍擊(3) 動能 陸 這個單位行軍不用花費 (常時)支付1指揮點。指定一隻同區域的己方單位獲得隱蔽(6)直到回合結束	1	https://alioss.youdubook.com/uploads/20201112/6cace00d8b3b502fca4bc707db8c1dca.jpeg	
 15	部隊	輕型雷達車	吉普車	所有	1	陸	4	2	6		機槍 槍擊(3) 動能 陸 進場時，指定敵軍一支防守部隊。展示那張卡。之後，蓋回來。	1	https://www.ncsist.org.tw/upload/G_Product_635608880025861712.jpg	
 16	建築	碉堡		所有	1	陸	3	3	10		重機槍 槍擊(2,4) 動能 陸 低空 如果目標陸軍單位的裝甲小於等於4，可以被這張卡指定爲炮擊對象，武器視爲爆炸(1,3)	0	https://mypaper.pchome.com.tw/show/article/mig2178_mypaper/A1283104826	
 17	建築	炮塔		所有	2	陸	3	3	14		滑膛砲 穿甲(20) 動能 陸 滑膛砲 爆炸(1,4) 動能 兵	1	https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Redoutable-barbette.jpg/220px-Redoutable-barbette.jpg	
-18	部隊	豹式二型坦克	坦克	德	3	陸	2	2	15		滑膛砲 穿甲(16) 動能 陸 滑膛砲 爆炸(1,4) 動能 兵 機槍 槍擊(3) 動能 陸,低空	1	https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwy-LzTH_c3Zydw7LACfAJX_jpexO8xl9MeQ&usqp=CAU	
+18	部隊	Leopard 2	坦克	德	3	陸	1	1	15		滑膛砲 穿甲(16) 動能 陸 滑膛砲 爆炸(1,4) 動能 兵 機槍 槍擊(3) 動能 陸,低空	1	https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwy-LzTH_c3Zydw7LACfAJX_jpexO8xl9MeQ&usqp=CAU	
 19	部隊	精英偵查兵	步兵	所有	2	陸	4	6		6	機槍 槍擊(3) 動能 陸 兵 自軍戰鬥階段開始時，可以放開對方一張同戰區的卡片。再決定是否蓋起來。	0	https://s.zimedia.com.tw/s/5QJwwe-0	
 20	部隊	PAH-2	直升機	德	5	低空	6	3		10	對地飛彈 穿甲(15) 火箭(7) 陸 對空飛彈 爆炸(1,10) 火箭(7) 低空 機砲 槍擊(5) 動能 陸 低空	2	https://besthqwallpapers.com/Uploads/13-3-2018/43998/thumb2-eurocopter-tiger-tiger-had-pah-2-ec-665-tiger-attack-helicopter.jpg	
 21	情境	電射反導試驗		所有	1						(常時)回合結束前, 火箭失效.	1		
@@ -26,7 +26,7 @@
 24	部隊	復仇者防空車輛	坦克	美	4	陸	3	3	8		防空鐳射 爆炸(1,10) 動能 低空 高空 這個區域的自軍部隊如果迎擊空軍，那個部隊的隱蔽當成+1來看待。 (自軍攻擊)支付x指揮點。自軍所有火箭類武器，火箭的數值+(x+1)。直到回合結束。x的值為0~2	3	https://media.nownews.com/nn_media/thumbnail/2017/01/a8a4f06813224aa67b259f686abd0f43-800x534.jpg	
 25	情境	情報搜集		所有	1						(自軍配置)展示敵方一支部隊。之後，決定那支部隊要翻開或者蓋起來。在展示的時候，就要結算出牌支付。	1	https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp69qOKmWJpE8CBT8qU1E4aRyXb8fSjnYXOg&usqp=CAU	
 26	情境	潛入破壞		所有	1						(自軍配置)把敵方所有大於1的預支點減到1。被減掉的數目回復自己的指揮點。這個能力最多減掉3個預支點。	1	https://vthumb.ykimg.com/0541040857E127256A0A4A044B3831EF	
-27	部隊	核巨炮	裝甲車	中	6	陸	1	1	15		核炮彈 爆炸(2,20) 動能 陸	1	https://i.ytimg.com/vi/fb9UUOn97hs/maxresdefault.jpg	
+27	部隊	核巨炮	裝甲車	中	6	陸	1	1	15		核炮彈 爆炸(2,20) 動能 陸 這張卡炮擊對方本國時，可以破壞對方6張卡	2	https://i.ytimg.com/vi/fb9UUOn97hs/maxresdefault.jpg	
 28	情境	暗殺		所有	4						選擇下面一項 1. (自軍配置)指定敵方一張兵指揮官破壞. 2. (自軍配置)指定一個玩家丟一張手牌.	1	https://ohsir.tw/wp-content/uploads/2020/04/%E4%BC%8A%E8%97%A4%E5%8D%9A%E6%96%87%E5%88%BA%E6%AE%BA%E6%A1%88-0-1024x681.jpg	
 29	部隊	豹式一型A5	坦克	德	2	陸	2	2	10		滑膛砲 穿甲(16) 動能 陸 滑膛砲 爆炸(1,4) 動能 兵 機槍 槍擊(3) 動能 陸,低空	1	https://lh3.googleusercontent.com/proxy/S6CwVn9vxH-ly6oXwEtbP-YoiczI83oSxQfzPbqeI_XCQYFVyOboGvRC_9ptV2YfpxGAEmR2SpQ9c3z1Vng4FFJXA8K14GDofuaBQFu0i98W	
 30	部隊	超級轟炸機	攻擊機	所有	4	高空	2	2		5	炸彈 瀏霰戰(3, 5) 動能 陸	5	https://img.ruten.com.tw/s2/4/98/f4/21525867084020_314.jpg	
@@ -43,10 +43,10 @@
 41	情境	戰略變更		所有	1						(自軍配置)自軍任意1~3支部隊行軍		https://imgs.gvm.com.tw/upload/gallery/20201230/76933_01.jpg	
 42	部隊	及時後援		所有	1						(敵軍攻擊)這個回合的所有自軍部隊的預支點當成+1使用		https://i.ytimg.com/vi/V_YFKCju7oc/hqdefault.jpg	
 43	建築	兵營		所有	1	陸			12		(啓動)自軍回合結束時，回復一支兵部隊的士氣。或者行軍一支自步兵 (自軍配備)支付1指揮點。放兩個【榴彈指示物(爆炸(1,8) 動能 陸 兵)】給任意自軍同區域的兵部隊。使用時棄掉1個。相當于彈藥費用		https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/%E9%9D%92%E5%B2%9B%E4%BC%8A%E5%B0%94%E8%92%82%E6%96%AF%E5%85%B5%E8%90%A5.jpg/440px-%E9%9D%92%E5%B2%9B%E4%BC%8A%E5%B0%94%E8%92%82%E6%96%AF%E5%85%B5%E8%90%A5.jpg	
-44	部隊	PTZ-89	坦克	中	2	陸	2	3	5		炮 穿甲(21) 動能 陸 (啟動)這個部隊進攻出擊時。武器命中率為3	1	https://aw.my.games/sites/aw.my.com/files/styles/news_body_image_1/public/u183517/screenshot2526.jpg	
-45	部隊	PTZ-59	坦克	中	1	陸	2	2	7		炮 穿甲(18) 動能 陸 (啟動)這個部隊進攻出擊時。武器命中率為4	1	https://static.wikia.nocookie.net/wargameeuropeanescalation/images/2/2e/WRD_Ingame_PTZ-59.png/revision/latest/top-crop/width/360/height/450?cb=20140430215939	
-46	部隊	WZ-550	裝甲車	中	3	陸	2	3		10	紅箭9 穿甲(26) 火箭(7) 陸 這張卡在自軍回合結束時，如果是攻擊狀態且直立的場合。可以行軍	1	https://preview.redd.it/k1esmz4g7ho51.jpg?width=542&format=pjpg&auto=webp&s=8f3995b7652599f97acafbf008f12a1430933a9b	
-47	部隊	WZ-551	裝甲車	中	1	陸	2	2		7	機槍 槍擊(3) 動能 陸 兵 低空	1	https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPfVf821IaBomiXppGOcSBoakXGRPzBeevQg&usqp=CAU	
+44	部隊	PTZ-89	坦克	中	2	陸	1	1	5		炮 穿甲(21) 動能 陸 (啟動)這個部隊進攻出擊時。武器命中率為4	1	https://aw.my.games/sites/aw.my.com/files/styles/news_body_image_1/public/u183517/screenshot2526.jpg	
+45	部隊	PTZ-59	坦克	中	2	陸	1	1	7		炮 穿甲(18) 動能 陸 (啟動)這個部隊進攻出擊時。武器命中率為4	1	https://static.wikia.nocookie.net/wargameeuropeanescalation/images/2/2e/WRD_Ingame_PTZ-59.png/revision/latest/top-crop/width/360/height/450?cb=20140430215939	
+46	部隊	WZ-550	裝甲車	中	3	陸	1	1	1		紅箭9 穿甲(26) 火箭(7) 陸 這張卡在支援綫可以迎擊 這張卡在自軍回合結束時，可以行軍一次	2	https://preview.redd.it/k1esmz4g7ho51.jpg?width=542&format=pjpg&auto=webp&s=8f3995b7652599f97acafbf008f12a1430933a9b	
+47	部隊	WZ-551	裝甲車	中	0	陸	1	1	1		機槍 爆炸(1,3) 動能 陸 兵 低空 這張卡如果炮擊破壞對方的低空部隊，那個部隊不被破壞，用橫置取代（本來已經是橫置，就不影響）	0	https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPfVf821IaBomiXppGOcSBoakXGRPzBeevQg&usqp=CAU	
 48	情境	偷襲珍珠港			1						(常時)這張卡可以切入敵方的空軍砲擊堆疊, 這個堆疊效果解決後, 指定的空軍的玩家無條件棄掉2張手牌或是横置4點支揮點.		https://images.chinatimes.com/newsphoto/2017-12-07/656/20171207005582.jpg	
 49	情境	沙漠之狐隆美爾		德	2						(配置)將指定1個敵方正面部隊移敵方任一線.		https://www.itsfun.com.tw/cacheimg/4a/21/790c5804111b4893643071c7687b.jpg	
 50	情境	馬其諾防線		德	1						這張卡放在場上. 對方防守建築不能防守我方陸上部隊. (常時) 任何玩家可以支付3點指揮點破壞這張卡.		https://qqpublic.qpic.cn/qq_public/0/0-2563081924-E97AB8DBF4F4EAF80F656656CBDDD565/0?fmt=jpg&size=17&h=270&w=500&ppv=1	
@@ -55,15 +55,15 @@
 53	情境	瘋狂的U艇		德	1						(配置)指定敵方任一張卡移除遊戲直到回合結束.		https://s.zimedia.com.tw/s/V22cVD-0	
 54	情境	失意的將領		所有	1						這回合所有玩家不能使用指揮點數.		https://inews.gtimg.com/newsapp_bt/0/12737711583/641	
 55	情境	指揮混亂		所有	1						(自軍攻擊)指定一個敵軍。對那個敵軍的所有防守狀態(含預支)的部隊，各做一次判定5。如果判定成功。這個回合不能迎擊		https://img.nextmag.com.tw//campaign/28/640x_6347b8554fb64ebb533eee80c1841816.jpg	
-56	部隊	T-62	坦克	蘇	2	陸	2	2	12		砲射導彈 穿甲(21) 火箭(7) 機槍 槍擊(3) 動能 陸,低空 裝甲車迎擊這張卡.		https://upload.wikimedia.org/wikipedia/commons/0/06/T-62_tank%2C_National_Training_Cente.JPEG	
-57	部隊													
-58	部隊													
-59	部隊													
-60	部隊													
-61	部隊													
+56	部隊	T-62MV-1	坦克	蘇	3	陸	3	2	12		砲射導彈 穿甲(21) 火箭(7) 滑膛砲 穿甲(15) 動能 陸 機槍 槍擊(3) 動能 陸,低空 裝甲車不能迎擊這張卡.		https://upload.wikimedia.org/wikipedia/commons/0/06/T-62_tank%2C_National_Training_Cente.JPEG	
+57	部隊	紅旗-61A	對空炮	中	2	陸	4	1	1		導彈 爆炸(1,9) 火箭(6) 高空 低空 這張卡可以全域迎擊	2	https://c.share.photo.xuite.net/m1a2tankusa/1c6bd07/14506919/767209824_m.jpg	
+58	部隊	紅旗-7	對空炮	中	2	陸	4	1	1		導彈 爆炸(1,6) 火箭(6) 高空 低空 這張卡迎擊時，火箭命中+1	1	https://en.missilery.info/files/m/hq-7/hq-7-crotale-p4r-telar-launch-1s.jpg	
+59	部隊	M/727 Hawk	對空炮	加	1	陸	4	1	1		導彈 爆炸(1,9) 火箭(4) 高空 低空 這張卡可以全域迎擊	2	https://upload.wikimedia.org/wikipedia/commons/e/e7/M727-Hawk-hatzerim-1.jpg	
+60	部隊	M727 I-HAWK PIP III	對空炮	美	3	陸	4	1	1		導彈 爆炸(1,9) 火箭(8) 高空 低空 這張卡可以全域迎擊	2	https://lh3.googleusercontent.com/proxy/iO-jN69F1qS6ya_j920Vm7ttuDvEQE6YwNOPt3Jis-E50ateuNy--H58sjOEt-hkS7ckyz_X175WULh0zjchhhMRZ2fBVk5kAMUWvOC0eg	
+61	部隊	M109A3	裝甲車	美	3	陸	2	1	2		火炮 爆炸(1,7) 動能 陸 機槍 槍擊(1) 動能 兵 支援綫部隊	1		
 62	部隊													
-63	部隊													
-64	部隊													
+63	部隊	Leopard 1A4	坦克	德	1	陸	2	1	8		滑膛砲 穿甲(12) 動能 陸 滑膛砲 爆炸(1,3) 動能 兵 機槍 槍擊(3) 動能 陸,低空			
+64	部隊	Leopard 1A1NO	坦克	德	1	陸	1	1	8		滑膛砲 穿甲(15) 動能 陸 滑膛砲 爆炸(1,3) 動能 兵 機槍 槍擊(3) 動能 陸,低空			
 65	部隊													
 66	部隊													
 67	部隊													
