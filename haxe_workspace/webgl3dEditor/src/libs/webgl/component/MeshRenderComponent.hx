@@ -1,0 +1,21 @@
+package libs.webgl.component;
+
+import libs.webgl.material.Material;
+import libs.webgl.mesh.Mesh;
+
+class MeshRenderComponent extends Component{
+    
+    public var mesh:Mesh;
+    public var material(default, set):Null<Material>;
+
+    public function new(mesh:Mesh) {
+        super();
+        this.mesh = mesh;
+    }
+
+    function set_material(material:Material):Null<Material> {
+        this.material = material;
+        material.pushNode(owner);
+        return this.material;
+    }
+}
