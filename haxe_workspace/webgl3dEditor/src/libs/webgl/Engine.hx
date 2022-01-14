@@ -9,6 +9,7 @@ import libs.webgl.component.CameraComponent;
 import libs.webgl.component.MeshRenderComponent;
 import libs.webgl.material.Material;
 import libs.webgl.material.shader.BasicShader;
+import libs.webgl.material.shader.ColorShader;
 
 class Engine{
 
@@ -19,7 +20,7 @@ class Engine{
 
     public var textures:Array<Dynamic> = [];
     public var objMeshs:Array<ObjMesh> = [];
-    var materials:Array<Material> = [];
+    public var materials:Array<Material> = [];
 
     function new() {
        
@@ -33,6 +34,7 @@ class Engine{
 
     public function init(gl) {
         this.gl = gl;
+        shaders.push(new ColorShader());
         shaders.push(new BasicShader());
 
         defaultCamera.transform.position.z = 20;
@@ -66,7 +68,11 @@ class Engine{
     }
 
     public function addMaterials(materials:Array<Material>) {
-        this.materials = materials;
+        this.materials = this.materials.concat(materials);
+    }
+
+    public function addMaterial(material:Material) {
+        this.materials.push(material);
     }
 
     public function addObjMesh(mesh:Dynamic) {

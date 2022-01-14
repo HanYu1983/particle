@@ -75,8 +75,8 @@ class BasicShader extends Shader{
                 out vec4 outColor;
                 void main() {
                     
-                    vec3 worldLightDir = normalize(u_lightWorldPos - v_worldPos);
-                    vec3 worldViewDir = normalize(u_viewWorldPos - v_worldPos);
+                    vec3 worldLightDir = normalize( u_lightWorldPos - v_worldPos);
+                    vec3 worldViewDir = normalize( u_viewWorldPos - v_worldPos);
                     vec3 tangentNormal = texture( u_image1, v_uv ).rgb;
                     tangentNormal.rg *= 2.0;
                     tangentNormal.rg -= 1.0;

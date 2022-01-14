@@ -27,10 +27,53 @@
     </style>
     <div class="easyui-layout full">
         <div data-options="region:'north'" style="height:50px"></div>
-        <div data-options="region:'east',split:true" title="East" style="width:350px;">
+		<div data-options="region:'west',split:true" title="材質" style="width:350px;">
+			<div class='margin'>
+				<div class="widthFull">
+					<ul id="tree_mats" class="easyui-tree" data-options="dnd:false">
+						<!-- by script -->
+					</ul>
+				</div>
+				<a id="btn_addMaterial" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">Add</a>
+				<div class="widthFull">
+					<label id="lbl_materialName"></label> 
+					
+				</div>
+				<div class="widthFull">
+					著色器
+					<select id="sel_shader" class="easyui-combobox" labelPosition="top" style="width:100px;">
+						<option value="0">顔色</option>
+						<option value="1">基本光照</option>
+					</select>
+				</div>
+				<div id="div_colorShader" class='widthFull'>
+					<div class="easyui-panel" title="基本顔色著色器" style="width:100%;padding:10px;">
+						擴散光顔色
+						<input id="col_diffuse" type="color" value="#ffffff">
+						高光顔色
+						<input id="col_specular" type="color" value="#ffffff">
+						<p>光澤度</p>
+						<input id="spn_gloss" class="easyui-slider" style="width:100%" data-options="showTip:true, value:40">
+					</div>
+				</div>
+				<div id="div_basicShader" class='widthFull'>
+					<div class="easyui-panel" title="基本貼圖著色器" style="width:100%;padding:10px;">
+						擴散光顔色
+						<input id="col_diffuse1" type="color" value="#ffffff">
+						高光顔色
+						<input id="col_specular1" type="color" value="#ffffff">
+						<p>光澤度</p>
+						<input id="spn_gloss1" class="easyui-slider" style="width:100%" data-options="showTip:true, value:40">
+						<p>凹凸度</p>
+						<input id="spn_bump1" class="easyui-slider" style="width:100%" data-options="showTip:true, value:.4, min:-2, max:2, step:.01">
+					</div>
+				</div>
+			</div>
+		</div>
+        <div data-options="region:'east',split:true" title="物件" style="width:350px;">
 			<div class="margin">
 				<div class="widthFull">
-					<ul id="treeList" class="easyui-tree" data-options="dnd:false">
+					<ul id="tree_actors" class="easyui-tree" data-options="dnd:false">
 						<!-- by script -->
 					</ul>
 				</div>
@@ -45,40 +88,63 @@
 					<label id="nodeName"></label>
 				</div>
 				<div class="widthFull">
-					位置:
-					<input id="posx" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
-					<input id="posy" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
-					<input id="posz" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
+					<div class="easyui-panel" title="坐標變換組件" style="width:100%;padding:10px;">
+						<div class="widthFull">
+							位置:
+							<input id="posx" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
+							<input id="posy" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
+							<input id="posz" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
+						</div>
+						<div class="widthFull">
+							旋轉:
+							<input id="rotx" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:1, editable:true, precision:2">
+							<input id="roty" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:1, editable:true, precision:2">
+							<input id="rotz" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:1, editable:true, precision:2">
+						</div>
+						<div class="widthFull">
+							縮放:
+							<input id="scax" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
+							<input id="scay" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
+							<input id="scaz" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
+						</div>
+					</div>
 				</div>
-				<div class="widthFull">
-					旋轉:
-					<input id="rotx" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:1, editable:true, precision:2">
-					<input id="roty" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:1, editable:true, precision:2">
-					<input id="rotz" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:1, editable:true, precision:2">
+				<div id='div_light' class='widthFull'>
+					<div class="easyui-panel" title="燈光組件" style="width:100%;padding:10px;">
+						燈光顔色
+						<input id="col_light" type="color" value="#ffffff">
+					</div>
 				</div>
-				<div class="widthFull">
-					縮放:
-					<input id="scax" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
-					<input id="scay" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
-					<input id="scaz" class="easyui-numberspinner" style="width:80px;" data-options="value:0.0, increment:.1, editable:true, precision:2">
+				<div id='div_meshRenderer' class='widthFull'>
+					<div class="easyui-panel" title="多邊形渲染組件" style="width:100%;padding:10px;">
+						多邊形設置
+						<select id="sel_setMesh" class="easyui-combobox" labelPosition="top" style="width:200px;">
+							<option value="0">球體</option>
+							<option value="1">猴子</option>
+						</select>
+						<p></p>
+						材質球設置
+						<select id="sel_setMaterial" class="easyui-combobox" labelPosition="top" style="width:200px;">
+							<!-- by script -->
+						</select>
+					</div>
 				</div>
-				<div id="div_light">
-					<p>燈光:</p>
-					<input id="col_light" type="color" value="#ffffff">
-				</div>
-				<p>預設攝影機:</p>
-				<div class="widthFull">
-					<p>FOV:</p>
-					<input id="spn_fov" class="easyui-slider" style="width:100%" data-options="showTip:true, value:40">
-					<p>Near:</p>
-					<input id="spn_near" class="easyui-slider" style="width:100%" data-options="showTip:true, value:0">
-					<p>Far:</p>
-					<input id="spn_far" class="easyui-slider" style="width:100%" data-options="showTip:true, value:100">
+				<div id='div_camera' class='widthFull'>
+					<div class="easyui-panel" title="攝像機組件" style="width:100%;padding:20px;">
+						<div class="widthFull">
+							<p>FOV:</p>
+							<input id="spn_fov" class="easyui-slider" style="width:100%" data-options="showTip:true, value:40">
+							<p>Near:</p>
+							<input id="spn_near" class="easyui-slider" style="width:100%" data-options="showTip:true, value:0">
+							<p>Far:</p>
+							<input id="spn_far" class="easyui-slider" style="width:100%" data-options="showTip:true, value:100">
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
         <div class="full" data-options="region:'center',title:'Main Title',iconCls:'icon-ok'">
-            <canvas class="full" width='1280' height='960px' id='webgl2'></canvas>
+            <canvas width='960px' height='960px' id='webgl2'></canvas>
         </div>
     </div>
 	<script src='js/vic.webgl.importer.js'></script>

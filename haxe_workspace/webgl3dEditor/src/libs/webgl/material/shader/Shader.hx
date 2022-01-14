@@ -1,7 +1,5 @@
 package libs.webgl.material.shader;
 
-import js.html.webgl.UniformLocation;
-
 class Shader{
 
     public var program(default, null):Dynamic;

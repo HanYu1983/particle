@@ -5,6 +5,19 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var HxOverrides = function() { };
+HxOverrides.__name__ = true;
+HxOverrides.remove = function(a,obj) {
+	var i = a.indexOf(obj);
+	if(i == -1) {
+		return false;
+	}
+	a.splice(i,1);
+	return true;
+};
+HxOverrides.now = function() {
+	return Date.now();
+};
 var Main = function() {
 	var _gthis = this;
 	var engine = libs_webgl_Engine.inst();
@@ -20,11 +33,31 @@ Main.main = function() {
 	new Main();
 };
 Main.prototype = {
-	startApplication: function(engine) {
+	getColorFromString: function(colorStr) {
+		var r = parseInt("0x" + colorStr.substring(1,3),16);
+		var g = parseInt("0x" + colorStr.substring(3,5),16);
+		var b = parseInt("0x" + colorStr.substring(5,7),16);
+		return [r / 255.0,g / 255.0,b / 255.0];
+	}
+	,getStringFromColor: function(r,g,b) {
+		var changeTo = ((r * 255 | 0) << 16) + ((g * 255 | 0) << 8) + (b * 255 | 0);
+		var colorStr = "#" + StringTools.hex(changeTo,6);
+		return colorStr;
+	}
+	,startApplication: function(engine) {
+		var _gthis = this;
 		var q = $;
 		var div_light = q("#div_light");
-		var hideAll = function() {
+		var div_meshRenderer = q("#div_meshRenderer");
+		var hideAllEntityParameter = function() {
 			div_light.hide();
+			div_meshRenderer.hide();
+		};
+		var div_colorShader = q("#div_colorShader");
+		var div_basicShader = q("#div_basicShader");
+		var hideAllMaterialParameter = function() {
+			div_colorShader.hide();
+			div_basicShader.hide();
 		};
 		q("#spn_fov").slider({ "onChange" : function(n,o) {
 			engine.defaultCamera.getComponent(libs_webgl_component_CameraComponent).fieldOfView = n;
@@ -38,16 +71,17 @@ Main.prototype = {
 		var col_light = q("#col_light");
 		col_light.change(function(e) {
 			var col = col_light.val();
-			var r = parseInt("0x" + col.substring(1,3),16);
-			var g = parseInt("0x" + col.substring(3,5),16);
-			var b = parseInt("0x" + col.substring(5,7),16);
-			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).color[0] = r / 255.0;
-			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).color[1] = g / 255.0;
-			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).color[2] = b / 255.0;
+			var rgb = _gthis.getColorFromString(col);
+			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).color[0] = rgb[0];
+			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).color[1] = rgb[1];
+			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).color[2] = rgb[2];
 		});
-		var treeList = q("#treeList");
+		var tree_actors = q("#tree_actors");
+		var tree_mats = q("#tree_mats");
 		var selMesh = q("#selMesh");
 		var btnAdd = q("#btnAdd");
+		var btn_addMaterial = q("#btn_addMaterial");
+		var lbl_materialName = q("#lbl_materialName");
 		var nodeName = q("#nodeName");
 		var posx = q("#posx");
 		var posy = q("#posy");
@@ -58,9 +92,18 @@ Main.prototype = {
 		var scax = q("#scax");
 		var scay = q("#scay");
 		var scaz = q("#scaz");
-		var updateParameter = function(item) {
-			nodeName.html(item.text);
-			var node = item.node;
+		var sel_setMesh = q("#sel_setMesh");
+		var sel_setMaterial = q("#sel_setMaterial");
+		var sel_shader = q("#sel_shader");
+		var col_diffuse = q("#col_diffuse");
+		var col_specular = q("#col_specular");
+		var spn_gloss = q("#spn_gloss");
+		var col_diffuse1 = q("#col_diffuse1");
+		var col_specular1 = q("#col_specular1");
+		var spn_gloss1 = q("#spn_gloss1");
+		var spn_bump1 = q("#spn_bump1");
+		var updateActorParameter = function(node) {
+			nodeName.html(node.name);
 			posx.numberspinner("setValue",node.transform.position[0]);
 			posy.numberspinner("setValue",node.transform.position[1]);
 			posz.numberspinner("setValue",node.transform.position[2]);
@@ -70,7 +113,7 @@ Main.prototype = {
 			scax.numberspinner("setValue",node.transform.scale[0]);
 			scay.numberspinner("setValue",node.transform.scale[1]);
 			scaz.numberspinner("setValue",node.transform.scale[2]);
-			hideAll();
+			hideAllEntityParameter();
 			var comps = node.getComponents();
 			var _g_current = 0;
 			var _g_array = comps;
@@ -79,12 +122,126 @@ Main.prototype = {
 				var _g1_key = _g_current++;
 				var index = _g1_key;
 				var value = _g1_value;
-				if(js_Boot.getClass(value) == libs_webgl_component_LightComponent) {
+				switch(js_Boot.getClass(value)) {
+				case libs_webgl_component_LightComponent:
 					div_light.show();
+					break;
+				case libs_webgl_component_MeshRenderComponent:
+					div_meshRenderer.show();
+					var meshComp = node.getComponent(libs_webgl_component_MeshRenderComponent);
+					var mesh = meshComp.mesh;
+					if(js_Boot.getClass(mesh) == libs_webgl_mesh_ObjMesh) {
+						var temp = js_Boot.__cast(mesh , libs_webgl_mesh_ObjMesh);
+						var meshId = engine.objMeshs.indexOf(temp);
+						sel_setMesh.combobox("setValue",meshId);
+					}
+					var material = meshComp.material;
+					var materialId = engine.materials.indexOf(material);
+					sel_setMaterial.combobox("setValue",materialId);
+					break;
 				}
 			}
 		};
+		var updateMaterialParameter = function(mat) {
+			lbl_materialName.html(mat.name);
+			var shaderId = engine.shaders.indexOf(mat.shader);
+			sel_shader.combobox("setValue",shaderId);
+			hideAllMaterialParameter();
+			switch(js_Boot.getClass(mat.shader)) {
+			case libs_webgl_material_shader_BasicShader:
+				div_basicShader.show();
+				var c = mat.uniforms[0][2];
+				var changeTo = _gthis.getStringFromColor(c[0],c[1],c[2]);
+				col_diffuse1.val(changeTo);
+				c = mat.uniforms[1][2];
+				changeTo = _gthis.getStringFromColor(c[0],c[1],c[2]);
+				col_specular1.val(changeTo);
+				var gloss = mat.uniforms[2][2];
+				spn_gloss1.slider("setValue",gloss);
+				var bump = mat.uniforms[3][2];
+				spn_bump1.slider("setValue",bump);
+				break;
+			case libs_webgl_material_shader_ColorShader:
+				div_colorShader.show();
+				var c = mat.uniforms[0][2];
+				var changeTo = _gthis.getStringFromColor(c[0],c[1],c[2]);
+				col_diffuse.val(changeTo);
+				c = mat.uniforms[1][2];
+				changeTo = _gthis.getStringFromColor(c[0],c[1],c[2]);
+				col_specular.val(changeTo);
+				var gloss = mat.uniforms[2][2];
+				spn_gloss.slider("setValue",gloss);
+				break;
+			}
+		};
 		var currentNode = null;
+		var currentMaterial = null;
+		col_diffuse.change(function(e) {
+			if(currentMaterial != null) {
+				var col = col_diffuse.val();
+				var rgb = _gthis.getColorFromString(col);
+				currentMaterial.uniforms[0][2] = rgb;
+			}
+		});
+		col_specular.change(function(e) {
+			if(currentMaterial != null) {
+				var col = col_specular.val();
+				var rgb = _gthis.getColorFromString(col);
+				currentMaterial.uniforms[1][2] = rgb;
+			}
+		});
+		spn_gloss.slider({ onChange : function(n,o) {
+			if(currentMaterial != null) {
+				currentMaterial.uniforms[2][2] = n;
+			}
+		}});
+		col_diffuse1.change(function(e) {
+			if(currentMaterial != null) {
+				var col = col_diffuse1.val();
+				var rgb = _gthis.getColorFromString(col);
+				currentMaterial.uniforms[0][2] = rgb;
+			}
+		});
+		col_specular1.change(function(e) {
+			if(currentMaterial != null) {
+				var col = col_specular1.val();
+				var rgb = _gthis.getColorFromString(col);
+				currentMaterial.uniforms[1][2] = rgb;
+			}
+		});
+		spn_gloss1.slider({ onChange : function(n,o) {
+			if(currentMaterial != null) {
+				currentMaterial.uniforms[2][2] = n;
+			}
+		}});
+		spn_bump1.slider({ onChange : function(n,o) {
+			if(currentMaterial != null) {
+				currentMaterial.uniforms[3][2] = n;
+			}
+		}});
+		sel_shader.combobox({ onChange : function() {
+			if(currentMaterial != null) {
+				var shaderId = sel_shader.combobox("getValue");
+				currentMaterial.shader = engine.shaders[shaderId];
+				var tmp = js_Boot.getClass(currentMaterial.shader) == libs_webgl_material_shader_BasicShader;
+				updateMaterialParameter(currentMaterial);
+			}
+		}});
+		sel_setMesh.combobox({ onChange : function() {
+			if(currentNode != null) {
+				var meshId = sel_setMesh.combobox("getValue");
+				currentNode.getComponent(libs_webgl_component_MeshRenderComponent).mesh = engine.objMeshs[meshId];
+			}
+		}});
+		sel_setMaterial.combobox({ onChange : function() {
+			if(currentNode != null) {
+				var oldMaterial = currentNode.getComponent(libs_webgl_component_MeshRenderComponent).material;
+				oldMaterial.removeNode(currentNode);
+				var matId = sel_setMaterial.combobox("getValue");
+				var material = engine.materials[matId];
+				material.pushNode(currentNode);
+			}
+		}});
 		var onPosXChange = function(newValue,oldValue) {
 			if(currentNode != null) {
 				currentNode.transform.position[0] = newValue;
@@ -139,11 +296,14 @@ Main.prototype = {
 		scax.numberspinner({ onChange : onScaleXChange});
 		scay.numberspinner({ onChange : onScaleYChange});
 		scaz.numberspinner({ onChange : onScaleZChange});
-		treeList.tree({ onClick : function(item) {
+		tree_actors.tree({ onClick : function(item) {
 			currentNode = item.node;
-			updateParameter(item);
+			updateActorParameter(currentNode);
 		}});
-		var mats = [new libs_webgl_material_Material(engine.shaders[0])];
+		tree_mats.tree({ onClick : function(item) {
+			currentMaterial = item.material;
+			updateMaterialParameter(item.material);
+		}});
 		var updateTree = function() {
 			var nodes = engine.getNodes();
 			var data = [{ text : "DefaultLight", node : engine.defaultLight}];
@@ -156,19 +316,77 @@ Main.prototype = {
 				var node = _g1_value;
 				data.push({ text : node.name, node : node});
 			}
-			treeList.tree({ data : data});
+			tree_actors.tree({ data : data});
 		};
-		var createNode = function(meshId) {
+		var updateMaterialTree = function() {
+			var materials = engine.materials;
+			var data = [];
+			var _g_current = 0;
+			var _g_array = materials;
+			while(_g_current < _g_array.length) {
+				var _g1_value = _g_array[_g_current];
+				var _g1_key = _g_current++;
+				var index = _g1_key;
+				var material = _g1_value;
+				data.push({ text : material.name, material : material});
+			}
+			tree_mats.tree({ data : data});
+		};
+		var updateMaterialSet = function() {
+			var info = [];
+			var _g_current = 0;
+			var _g_array = engine.materials;
+			while(_g_current < _g_array.length) {
+				var _g1_value = _g_array[_g_current];
+				var _g1_key = _g_current++;
+				var index = _g1_key;
+				var value = _g1_value;
+				info.push({ label : value.name, value : index});
+			}
+			sel_setMaterial.combobox({ valueField : "value", textField : "label", data : info});
+			if(currentNode != null) {
+				updateActorParameter(currentNode);
+			}
+		};
+		var createNode = function(meshId,materialId) {
+			if(materialId == null) {
+				materialId = 0;
+			}
+			if(meshId == null) {
+				meshId = 0;
+			}
 			var node = new libs_webgl_actor_MeshActor();
 			node.getComponent(libs_webgl_component_MeshRenderComponent).mesh = engine.objMeshs[meshId];
 			node.name = "node_" + new Date().getTime();
-			mats[0].pushNode(node);
-			engine.addMaterials(mats);
+			engine.materials[materialId].pushNode(node);
 			updateTree();
+			return node;
 		};
 		btnAdd.bind("click",function(e) {
 			var meshId = selMesh.combobox("getValue");
-			createNode(meshId);
+			createNode(meshId,0);
+		});
+		var createMaterial = function(name,shaderId) {
+			if(shaderId == null) {
+				shaderId = 0;
+			}
+			if(name == null) {
+				name = "";
+			}
+			var mat = new libs_webgl_material_Material(engine.shaders[shaderId]);
+			mat.name = name == "" ? "Material_" + new Date().getTime() : name;
+			mat.pushTextures(engine.textures[4]);
+			mat.pushTextures(engine.textures[5]);
+			mat.pushUniform("uniform3fv","u_diffuseColor",[1.,1.,1.]);
+			mat.pushUniform("uniform3fv","u_specColor",[1.,1.,1.]);
+			mat.pushUniform("uniform1f","u_gloss",90);
+			mat.pushUniform("uniform1f","u_bump",1.0);
+			engine.addMaterial(mat);
+			updateMaterialTree();
+			updateMaterialSet();
+		};
+		btn_addMaterial.bind("click",function(e) {
+			createMaterial();
 		});
 		var this1 = new Array(3);
 		var this2 = this1;
@@ -306,14 +524,14 @@ Main.prototype = {
 				mme_math_glmatrix_Vec3Tools.zero(rotForce);
 			}
 		});
-		hideAll();
-		createNode(0);
+		createMaterial("DefaultColorMaterial");
+		createMaterial("DefaultBasicMaterial",1);
+		var n1 = createNode();
+		var n2 = createNode(1,1);
+		n2.transform.position[0] = -2;
 		updateTree();
-		mats[0].pushTextures(engine.textures[4]);
-		mats[0].pushTextures(engine.textures[5]);
-		mats[0].pushUniform("uniform1f","u_bump",.8);
-		mats[0].pushUniform("uniform1f","u_gloss",80);
-		mats[0].pushUniform("uniform3fv","u_diffuseColor",[1.,1.,1.]);
+		hideAllEntityParameter();
+		hideAllMaterialParameter();
 		var animate = null;
 		animate = function(time) {
 			mme_math_glmatrix_Vec3Tools.zero(totalForce);
@@ -325,9 +543,6 @@ Main.prototype = {
 			mme_math_glmatrix_Vec3Tools.add(totalForce,backwardForce,totalForce);
 			defaultCamera.getComponent(libs_webgl_component_ParticleComponent).applyForce(totalForce);
 			defaultCamera.update();
-			engine.defaultLight.transform.position[0] = Math.cos(time / 1000) * 10;
-			engine.defaultLight.transform.position[1] = 10;
-			engine.defaultLight.transform.position[2] = Math.sin(time / 1000) * 10;
 			engine.render(time);
 			window.requestAnimationFrame(animate);
 		};
@@ -344,6 +559,28 @@ Reflect.field = function(o,field) {
 	} catch( _g ) {
 		return null;
 	}
+};
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var StringTools = function() { };
+StringTools.__name__ = true;
+StringTools.hex = function(n,digits) {
+	var s = "";
+	var hexChars = "0123456789ABCDEF";
+	while(true) {
+		s = hexChars.charAt(n & 15) + s;
+		n >>>= 4;
+		if(!(n > 0)) {
+			break;
+		}
+	}
+	if(digits != null) {
+		while(s.length < digits) s = "0" + s;
+	}
+	return s;
 };
 var haxe_Exception = function(message,previous,native) {
 	Error.call(this,message);
@@ -409,6 +646,70 @@ js_Boot.getClass = function(o) {
 			return js_Boot.__resolveNativeClass(name);
 		}
 		return null;
+	}
+};
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) {
+		return "null";
+	}
+	if(s.length >= 5) {
+		return "<...>";
+	}
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) {
+		t = "object";
+	}
+	switch(t) {
+	case "function":
+		return "<function>";
+	case "object":
+		if(((o) instanceof Array)) {
+			var str = "[";
+			s += "\t";
+			var _g = 0;
+			var _g1 = o.length;
+			while(_g < _g1) {
+				var i = _g++;
+				str += (i > 0 ? "," : "") + js_Boot.__string_rec(o[i],s);
+			}
+			str += "]";
+			return str;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( _g ) {
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") {
+				return s2;
+			}
+		}
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		var k = null;
+		for( k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) {
+			str += ", \n";
+		}
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "string":
+		return o;
+	default:
+		return String(o);
 	}
 };
 js_Boot.__interfLoop = function(cc,cl) {
@@ -488,6 +789,13 @@ js_Boot.__downcastCheck = function(o,cl) {
 		return true;
 	}
 };
+js_Boot.__cast = function(o,t) {
+	if(o == null || js_Boot.__instanceof(o,t)) {
+		return o;
+	} else {
+		throw haxe_Exception.thrown("Cannot cast " + Std.string(o) + " to " + Std.string(t));
+	}
+};
 js_Boot.__nativeClassName = function(o) {
 	var name = js_Boot.__toStr.call(o).slice(8,-1);
 	if(name == "Object" || name == "Function" || name == "Math" || name == "JSON") {
@@ -516,6 +824,7 @@ libs_webgl_Engine.inst = function() {
 libs_webgl_Engine.prototype = {
 	init: function(gl) {
 		this.gl = gl;
+		this.shaders.push(new libs_webgl_material_shader_ColorShader());
 		this.shaders.push(new libs_webgl_material_shader_BasicShader());
 		this.defaultCamera.transform.position[2] = 20;
 		this.defaultLight.transform.position[0] = 5;
@@ -548,7 +857,10 @@ libs_webgl_Engine.prototype = {
 		}
 	}
 	,addMaterials: function(materials) {
-		this.materials = materials;
+		this.materials = this.materials.concat(materials);
+	}
+	,addMaterial: function(material) {
+		this.materials.push(material);
 	}
 	,addObjMesh: function(mesh) {
 		this.objMeshs.push(new libs_webgl_mesh_ObjMesh(mesh));
@@ -745,12 +1057,7 @@ var libs_webgl_component_MeshRenderComponent = function(mesh) {
 libs_webgl_component_MeshRenderComponent.__name__ = true;
 libs_webgl_component_MeshRenderComponent.__super__ = libs_webgl_component_Component;
 libs_webgl_component_MeshRenderComponent.prototype = $extend(libs_webgl_component_Component.prototype,{
-	set_material: function(material) {
-		this.material = material;
-		material.pushNode(this.owner);
-		return this.material;
-	}
-	,__class__: libs_webgl_component_MeshRenderComponent
+	__class__: libs_webgl_component_MeshRenderComponent
 });
 var libs_webgl_component_ParticleComponent = function() {
 	var this2 = new Array(3);
@@ -963,6 +1270,7 @@ libs_webgl_component_TransformComponent.prototype = $extend(libs_webgl_component
 	,__class__: libs_webgl_component_TransformComponent
 });
 var libs_webgl_material_Material = function(shader) {
+	this.name = "";
 	this.nodes = [];
 	this.uniforms = [];
 	this.textures = [];
@@ -977,8 +1285,16 @@ libs_webgl_material_Material.prototype = {
 		this.uniforms.push([glMethod,location,value]);
 	}
 	,pushNode: function(node) {
-		if(this.nodes.indexOf(node) == -1) {
-			this.nodes.push(node);
+		if(node.getComponent(libs_webgl_component_MeshRenderComponent) != null) {
+			if(this.nodes.indexOf(node) == -1) {
+				this.nodes.push(node);
+				node.getComponent(libs_webgl_component_MeshRenderComponent).material = this;
+			}
+		}
+	}
+	,removeNode: function(node) {
+		if(this.nodes.indexOf(node) > -1) {
+			HxOverrides.remove(this.nodes,node);
 		}
 	}
 	,glSetTextureAndUniform: function() {
@@ -1043,7 +1359,7 @@ libs_webgl_material_shader_Shader.createShader = function(gl,type,source) {
 	if(success) {
 		return shader;
 	}
-	console.log("src/libs/webgl/material/shader/Shader.hx:39:",gl.getShaderInfoLog(shader));
+	console.log("src/libs/webgl/material/shader/Shader.hx:37:",gl.getShaderInfoLog(shader));
 	gl.deleteShader(shader);
 	return null;
 };
@@ -1070,13 +1386,32 @@ libs_webgl_material_shader_BasicShader.prototype = $extend(libs_webgl_material_s
 		return s;
 	}
 	,getFS: function() {
-		var s = "#version 300 es\r\n                precision highp float;\r\n                \r\n                in vec3 v_worldNormal;\r\n                in vec3 v_worldPos;\r\n                in vec3 v_worldTangent;\r\n                in vec3 v_worldBinormal;\r\n                in vec2 v_uv;\r\n                in vec3 v_lightDir;\r\n                in vec3 v_viewDir;\r\n                \r\n                uniform vec3 u_lightColor;\r\n                uniform vec3 u_lightWorldPos;\r\n                uniform vec3 u_viewWorldPos;\r\n                uniform vec3 u_diffuseColor;\r\n                uniform vec3 u_specularColor;\r\n                uniform float u_gloss;\r\n                uniform float u_bump;\r\n                uniform sampler2D u_image0;\r\n                uniform sampler2D u_image1;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    \r\n                    vec3 worldLightDir = normalize(u_lightWorldPos - v_worldPos);\r\n                    vec3 worldViewDir = normalize(u_viewWorldPos - v_worldPos);\r\n                    vec3 tangentNormal = texture( u_image1, v_uv ).rgb;\r\n                    tangentNormal.rg *= 2.0;\r\n                    tangentNormal.rg -= 1.0;\r\n                    tangentNormal.b = sqrt( 1.0 - clamp( dot( tangentNormal.xy, tangentNormal.xy ), 0., 1.));\r\n                    tangentNormal.xy *= u_bump;\r\n                    vec3 worldNormal = mat3(v_worldTangent, v_worldBinormal, v_worldNormal ) * tangentNormal;\r\n                    worldNormal = normalize(worldNormal);\r\n                    \r\n                    vec3 albedo = texture( u_image0, v_uv ).rgb * u_diffuseColor;\r\n                    vec3 ambient = vec3(.2) * albedo;\r\n                    vec3 diffuse = u_lightColor * albedo * max(0., dot(worldNormal, worldLightDir));\r\n                    vec3 halfDir = normalize( worldLightDir + worldViewDir );\r\n                    vec3 specualr = u_lightColor * u_specularColor * pow(max(0., dot(worldNormal, halfDir)), u_gloss);\r\n                    outColor = vec4(ambient + diffuse + specualr,1);\r\n                }\r\n                ";
+		var s = "#version 300 es\r\n                precision highp float;\r\n                \r\n                in vec3 v_worldNormal;\r\n                in vec3 v_worldPos;\r\n                in vec3 v_worldTangent;\r\n                in vec3 v_worldBinormal;\r\n                in vec2 v_uv;\r\n                in vec3 v_lightDir;\r\n                in vec3 v_viewDir;\r\n                \r\n                uniform vec3 u_lightColor;\r\n                uniform vec3 u_lightWorldPos;\r\n                uniform vec3 u_viewWorldPos;\r\n                uniform vec3 u_diffuseColor;\r\n                uniform vec3 u_specularColor;\r\n                uniform float u_gloss;\r\n                uniform float u_bump;\r\n                uniform sampler2D u_image0;\r\n                uniform sampler2D u_image1;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    \r\n                    vec3 worldLightDir = normalize( u_lightWorldPos - v_worldPos);\r\n                    vec3 worldViewDir = normalize( u_viewWorldPos - v_worldPos);\r\n                    vec3 tangentNormal = texture( u_image1, v_uv ).rgb;\r\n                    tangentNormal.rg *= 2.0;\r\n                    tangentNormal.rg -= 1.0;\r\n                    tangentNormal.b = sqrt( 1.0 - clamp( dot( tangentNormal.xy, tangentNormal.xy ), 0., 1.));\r\n                    tangentNormal.xy *= u_bump;\r\n                    vec3 worldNormal = mat3(v_worldTangent, v_worldBinormal, v_worldNormal ) * tangentNormal;\r\n                    worldNormal = normalize(worldNormal);\r\n                    \r\n                    vec3 albedo = texture( u_image0, v_uv ).rgb * u_diffuseColor;\r\n                    vec3 ambient = vec3(.2) * albedo;\r\n                    vec3 diffuse = u_lightColor * albedo * max(0., dot(worldNormal, worldLightDir));\r\n                    vec3 halfDir = normalize( worldLightDir + worldViewDir );\r\n                    vec3 specualr = u_lightColor * u_specularColor * pow(max(0., dot(worldNormal, halfDir)), u_gloss);\r\n                    outColor = vec4(ambient + diffuse + specualr,1);\r\n                }\r\n                ";
 		return s;
 	}
 	,getUniformList: function() {
 		return ["u_modelMat","u_viewMat","u_projectMat","u_viewWorldPos","u_lightWorldPos","u_lightColor","u_diffuseColor","u_specularColor","u_gloss","u_bump","u_image0","u_image1"];
 	}
 	,__class__: libs_webgl_material_shader_BasicShader
+});
+var libs_webgl_material_shader_ColorShader = function() {
+	libs_webgl_material_shader_Shader.call(this);
+};
+libs_webgl_material_shader_ColorShader.__name__ = true;
+libs_webgl_material_shader_ColorShader.__super__ = libs_webgl_material_shader_Shader;
+libs_webgl_material_shader_ColorShader.prototype = $extend(libs_webgl_material_shader_Shader.prototype,{
+	getVS: function() {
+		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n                in vec2 a_texcoord;\r\n                in vec3 a_normal;\r\n                in vec3 a_tangent;\r\n                \r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n                uniform vec3 u_lightWorldPos;\r\n                uniform vec3 u_viewWorldPos;\r\n                \r\n                out vec3 v_worldNormal;\r\n                out vec3 v_worldPos;\r\n                \r\n                void main(){\r\n                    mat4 fixScaleMatrix = transpose(inverse(u_modelMat));\r\n                    v_worldNormal = normalize((fixScaleMatrix * vec4(a_normal, 0)).xyz);\r\n                    v_worldPos = (fixScaleMatrix * vec4(a_vertex, 1)).xyz;\r\n                    \r\n                    mat4 mvp = u_projectMat * inverse(u_viewMat) * u_modelMat;\r\n                    gl_Position = mvp * vec4(a_vertex, 1.);\r\n                }\r\n                ";
+		return s;
+	}
+	,getFS: function() {
+		var s = "#version 300 es\r\n                precision highp float;\r\n                \r\n                in vec3 v_worldNormal;\r\n                in vec3 v_worldPos;\r\n                \r\n                uniform vec3 u_lightWorldPos;\r\n                uniform vec3 u_viewWorldPos;\r\n                uniform vec3 u_lightColor;\r\n                uniform vec3 u_diffuseColor;\r\n                uniform vec3 u_specColor;\r\n                uniform float u_gloss;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    vec3 worldLightDir = normalize( u_lightWorldPos - v_worldPos);\r\n                    vec3 worldViewDir = normalize( u_viewWorldPos - v_worldPos);\r\n                    vec3 worldNormal = normalize(v_worldNormal);\r\n                    vec3 albedo = u_diffuseColor;\r\n                    vec3 ambient = vec3(.2) * albedo;\r\n                    vec3 diffuse = u_lightColor * albedo * max(0., dot(worldNormal, worldLightDir));\r\n                    vec3 halfDir = normalize( worldLightDir + worldViewDir );\r\n                    vec3 specualr = u_lightColor * u_specColor * pow(max(0., dot(worldNormal, halfDir)), u_gloss);\r\n                    outColor = vec4(ambient + diffuse + specualr,1);\r\n                    //outColor = vec4(u_specColor, 1.);\r\n                }\r\n                ";
+		return s;
+	}
+	,getUniformList: function() {
+		return ["u_modelMat","u_viewMat","u_projectMat","u_viewWorldPos","u_lightWorldPos","u_lightColor","u_diffuseColor","u_specColor","u_specColor","u_gloss"];
+	}
+	,__class__: libs_webgl_material_shader_ColorShader
 });
 var libs_webgl_mesh_Mesh = function() {
 	this.bitangents = [];
@@ -9833,6 +10168,9 @@ mme_math_glmatrix_Vec4Tools.equals = function(a,b) {
 		return false;
 	}
 };
+if(typeof(performance) != "undefined" ? typeof(performance.now) == "function" : false) {
+	HxOverrides.now = performance.now.bind(performance);
+}
 String.prototype.__class__ = String;
 String.__name__ = true;
 Array.__name__ = true;

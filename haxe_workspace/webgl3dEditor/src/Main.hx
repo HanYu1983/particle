@@ -1,4 +1,9 @@
 
+import libs.webgl.component.TransformComponent;
+import js.lib.intl.DateTimeFormat.SecondRepresentation;
+import haxe.macro.Expr.Catch;
+import haxe.macro.Type.Ref;
+import libs.webgl.mesh.ObjMesh;
 import libs.webgl.component.LightComponent;
 import js.Browser;
 import js.html.Window;
@@ -15,6 +20,8 @@ import libs.webgl.material.Material;
 import libs.webgl.Engine;
 import js.Syntax;
 import libs.webgl.mesh.CubeMesh;
+import libs.webgl.material.shader.ColorShader;
+import libs.webgl.material.shader.BasicShader;
 
 typedef ImageLoadInfo = {
     name:String,
@@ -36,13 +43,35 @@ class Main{
         });
     }
 
+	function getColorFromString(colorStr:String) {
+		var r = Syntax.code('parseInt')('0x' + colorStr.substring(1,3), 16);
+		var g = Syntax.code('parseInt')('0x' + colorStr.substring(3,5), 16);
+		var b = Syntax.code('parseInt')('0x' + colorStr.substring(5,7), 16);
+		return [r / 255.0, g / 255.0, b / 255.0];
+	}
+
+	function getStringFromColor(r:Float, g:Float, b:Float){
+		var changeTo = (Std.int(r * 255) << 16) + (Std.int(g*255) << 8) + Std.int(b * 255);
+		var colorStr = '#' + StringTools.hex(changeTo, 6);
+		return colorStr;
+	}
+
     function startApplication(engine:Engine) {
 		var q:Dynamic = Syntax.code('$');
 
 		var div_light:Dynamic = q('#div_light');
-
-		function hideAll(){
+		var div_meshRenderer:Dynamic = q('#div_meshRenderer');
+		
+		function hideAllEntityParameter(){
 			div_light.hide();
+			div_meshRenderer.hide();
+		}
+
+		var div_colorShader:Dynamic = q('#div_colorShader');
+		var div_basicShader:Dynamic = q('#div_basicShader');
+		function hideAllMaterialParameter(){
+			div_colorShader.hide();
+			div_basicShader.hide();
 		}
 
         q('#spn_fov').slider({
@@ -66,22 +95,26 @@ class Main{
 		var col_light:Dynamic = q('#col_light');
 		col_light.change(function(e){
 			var col = col_light.val();
-			var r = Syntax.code('parseInt')('0x' + col.substring(1,3), 16);
-			var g = Syntax.code('parseInt')('0x' + col.substring(3,5), 16);
-			var b = Syntax.code('parseInt')('0x' + col.substring(5,7), 16);
-			engine.defaultLight.getComponent(LightComponent).color.x = r / 255.0;
-			engine.defaultLight.getComponent(LightComponent).color.y = g / 255.0;
-			engine.defaultLight.getComponent(LightComponent).color.z = b / 255.0;
+			var rgb:Array<Dynamic> = getColorFromString(col);
+			engine.defaultLight.getComponent(LightComponent).color.x = rgb[0];
+			engine.defaultLight.getComponent(LightComponent).color.y = rgb[1];
+			engine.defaultLight.getComponent(LightComponent).color.z = rgb[2];
 		});
+
+		
+
 
         //==========================
 		// 控制物件
 		//==========================
 
-        var treeList:Dynamic = q("#treeList");
+        var tree_actors:Dynamic = q("#tree_actors");
+		var tree_mats:Dynamic = q('#tree_mats');
 		var selMesh:Dynamic = q("#selMesh");
 		var btnAdd:Dynamic = q("#btnAdd");
-		
+		var btn_addMaterial:Dynamic = q('#btn_addMaterial');
+
+		var lbl_materialName:Dynamic = q('#lbl_materialName');
         var nodeName:Dynamic = q("#nodeName");
         var posx:Dynamic = q("#posx");
 		var posy:Dynamic = q("#posy");
@@ -92,11 +125,22 @@ class Main{
 		var scax:Dynamic = q("#scax");
 		var scay:Dynamic = q("#scay");
 		var scaz:Dynamic = q("#scaz");
+		var sel_setMesh:Dynamic = q('#sel_setMesh');
+		var sel_setMaterial:Dynamic = q('#sel_setMaterial');
+		
+		var sel_shader:Dynamic = q('#sel_shader');
+		var col_diffuse:Dynamic = q('#col_diffuse');
+		var col_specular:Dynamic = q('#col_specular');
+		var spn_gloss:Dynamic = q('#spn_gloss');
 
-        function updateParameter(item){
-			nodeName.html(item.text);
-			
-			var node:Actor = item.node;
+		var col_diffuse1:Dynamic = q('#col_diffuse1');
+		var col_specular1:Dynamic = q('#col_specular1');
+		var spn_gloss1:Dynamic = q('#spn_gloss1');
+		var spn_bump1:Dynamic = q('#spn_bump1');
+
+        function updateActorParameter(node:Actor){
+
+			nodeName.html(node.name);
 			posx.numberspinner( 'setValue', node.transform.position.x );
 			posy.numberspinner( 'setValue', node.transform.position.y );
 			posz.numberspinner( 'setValue', node.transform.position.z );
@@ -109,17 +153,169 @@ class Main{
 			scay.numberspinner( 'setValue', node.transform.scale.y );
 			scaz.numberspinner( 'setValue', node.transform.scale.z );
 
-			hideAll();
+			hideAllEntityParameter();
+
 			var comps = node.getComponents();
 			for (index => value in comps) {
 				switch(Type.getClass(value)){
 					case LightComponent:
 						div_light.show();
+					case MeshRenderComponent:
+						div_meshRenderer.show();
+						var meshComp = node.getComponent(MeshRenderComponent);
+						var mesh = meshComp.mesh;
+						if(Type.getClass(mesh) == ObjMesh){
+							var temp = cast(mesh, ObjMesh);
+							var meshId = engine.objMeshs.indexOf(temp);
+							sel_setMesh.combobox('setValue', meshId);
+						}
+
+						var material = meshComp.material;
+						var materialId = engine.materials.indexOf(material);
+						sel_setMaterial.combobox('setValue', materialId);
 				}
 			}
 		}
 
-        var currentNode:Actor = null;
+		function updateMaterialParameter(mat:Material){
+			
+			lbl_materialName.html(mat.name);
+
+			var shaderId = engine.shaders.indexOf( mat.shader );
+			sel_shader.combobox('setValue', shaderId);
+
+			hideAllMaterialParameter();
+			switch(Type.getClass(mat.shader)){
+				case ColorShader:
+					div_colorShader.show();
+
+					var c = mat.uniforms[0][2];
+					var changeTo = getStringFromColor(c[0], c[1], c[2]);
+					col_diffuse.val(changeTo);
+
+					c = mat.uniforms[1][2];
+					changeTo = getStringFromColor(c[0], c[1], c[2]);
+					col_specular.val(changeTo);
+
+					var gloss = mat.uniforms[2][2];
+					spn_gloss.slider('setValue', gloss);
+				case BasicShader:
+					div_basicShader.show();
+
+					var c = mat.uniforms[0][2];
+					var changeTo = getStringFromColor(c[0], c[1], c[2]);
+					col_diffuse1.val(changeTo);
+
+					c = mat.uniforms[1][2];
+					changeTo = getStringFromColor(c[0], c[1], c[2]);
+					col_specular1.val(changeTo);
+
+					var gloss = mat.uniforms[2][2];
+					spn_gloss1.slider('setValue', gloss);
+
+					var bump = mat.uniforms[3][2];
+					spn_bump1.slider('setValue', bump);
+					
+			}
+
+			
+		}
+
+		var currentNode:Actor = null;
+		var currentMaterial:Material = null;
+
+		col_diffuse.change(function(e){
+			if(currentMaterial != null){
+				var col = col_diffuse.val();
+				var rgb:Array<Dynamic> = getColorFromString(col);
+				currentMaterial.uniforms[0][2] = rgb;
+			}
+		});
+
+		col_specular.change(function(e){
+			if(currentMaterial != null){
+				var col = col_specular.val();
+				var rgb:Array<Dynamic> = getColorFromString(col);
+				currentMaterial.uniforms[1][2] = rgb;
+			}
+		});
+
+		spn_gloss.slider({
+			onChange:function(n, o){
+				if(currentMaterial != null){
+					currentMaterial.uniforms[2][2] = n;
+				}
+			}
+		});
+
+		col_diffuse1.change(function(e){
+			if(currentMaterial != null){
+				var col = col_diffuse1.val();
+				var rgb:Array<Dynamic> = getColorFromString(col);
+				currentMaterial.uniforms[0][2] = rgb;
+			}
+		});
+
+		col_specular1.change(function(e){
+			if(currentMaterial != null){
+				var col = col_specular1.val();
+				var rgb:Array<Dynamic> = getColorFromString(col);
+				currentMaterial.uniforms[1][2] = rgb;
+			}
+		});
+
+		spn_gloss1.slider({
+			onChange:function(n, o){
+				if(currentMaterial != null){
+					currentMaterial.uniforms[2][2] = n;
+				}
+			}
+		});
+
+		spn_bump1.slider({
+			onChange:function(n, o){
+				if(currentMaterial != null){
+					currentMaterial.uniforms[3][2] = n;
+				}
+			}
+		});
+
+		sel_shader.combobox({
+			onChange:function(){
+				if(currentMaterial != null){
+					var shaderId = sel_shader.combobox('getValue');
+					currentMaterial.shader = engine.shaders[shaderId];
+					switch (Type.getClass(currentMaterial.shader)){
+						case BasicShader:
+
+					}
+					updateMaterialParameter(currentMaterial);
+				}
+			}
+		});
+
+		sel_setMesh.combobox({
+			onChange:function(){
+				if(currentNode != null){
+					var meshId = sel_setMesh.combobox('getValue');
+					currentNode.getComponent(MeshRenderComponent).mesh = engine.objMeshs[meshId];
+				}
+			}
+		});
+
+		sel_setMaterial.combobox({
+			onChange:function(){
+				if(currentNode != null){
+					var oldMaterial = currentNode.getComponent(MeshRenderComponent).material;
+					oldMaterial.removeNode(currentNode);
+
+					var matId = sel_setMaterial.combobox('getValue');
+					var material = engine.materials[matId];
+					material.pushNode(currentNode);
+				}
+			}
+		});
+
         function onPosXChange(newValue, oldValue){
 			if(currentNode != null){
 				currentNode.transform.position.x = newValue;
@@ -202,15 +398,19 @@ class Main{
 			onChange:onScaleZChange
 		});
 
-		
-		treeList.tree({
+		tree_actors.tree({
 			onClick:function(item:Dynamic){
 				currentNode = item.node;
-				updateParameter(item);
+				updateActorParameter(currentNode);
 			}
 		});
 		
-        var mats = [new Material(engine.shaders[0])];
+		tree_mats.tree({
+			onClick:function(item:Dynamic){
+				currentMaterial = item.material;
+				updateMaterialParameter(item.material);
+			}
+		});
 
         function updateTree(){
 			var nodes = engine.getNodes();
@@ -220,21 +420,67 @@ class Main{
             for (index => node in nodes) {
 				data.push({text:node.name, node:node});
 			}
-			treeList.tree({data:data});
+			tree_actors.tree({data:data});
 		}
 
-        function createNode(meshId){
+		function updateMaterialTree(){
+			var materials = engine.materials;
+			var data:Array<{text:String, material:Material}> = [];
+            for (index => material in materials) {
+				data.push({text:material.name, material:material});
+			}
+			tree_mats.tree({data:data});
+		}
+
+		function updateMaterialSet(){
+			var info:Array<{label:String, value:Int}> = [];
+			for (index => value in engine.materials) {
+				info.push({
+					label: value.name,
+					value:index
+				});
+			}
+			sel_setMaterial.combobox({
+				valueField: 'value',
+				textField: 'label',
+				data:info
+			});
+
+			if(currentNode != null){
+				updateActorParameter(currentNode);
+			}
+		}
+
+        function createNode(meshId = 0, materialId = 0){
 			var node = new MeshActor();
             node.getComponent(MeshRenderComponent).mesh = engine.objMeshs[meshId];
 			node.name = 'node_' + Date.now().getTime();
-			mats[0].pushNode(node);
-            engine.addMaterials(mats);
+			engine.materials[materialId].pushNode(node);
 			updateTree();
+			return node;
 		}
 
 		btnAdd.bind('click', function(e:Dynamic){
 			var meshId = selMesh.combobox('getValue');
-			createNode(meshId);
+			createNode(meshId, 0);
+		});
+
+		function createMaterial(name:String = "", shaderId = 0){
+			var mat = new Material(engine.shaders[shaderId]);
+			mat.name = name == "" ? 'Material_' + Date.now().getTime() : name;
+			mat.pushTextures(engine.textures[4]);
+			mat.pushTextures(engine.textures[5]);
+			mat.pushUniform('uniform3fv', 'u_diffuseColor', [1., 1., 1.]);
+			mat.pushUniform('uniform3fv', 'u_specColor', [1., 1., 1.]);
+			mat.pushUniform('uniform1f', 'u_gloss', 90);
+			mat.pushUniform('uniform1f', 'u_bump', 1.0);
+			engine.addMaterial(mat);
+			updateMaterialTree();
+			updateMaterialSet();
+		}
+
+		btn_addMaterial.bind('click', function(e){
+			createMaterial();
 		});
 
         //==========================
@@ -349,21 +595,15 @@ class Main{
 		// 物件設置
 		//==========================
 
-		hideAll();
-        createNode(0);
+		createMaterial('DefaultColorMaterial');
+		createMaterial('DefaultBasicMaterial', 1);
+
+        var n1:Actor = createNode();
+		var n2:Actor = createNode(1, 1);
+		n2.transform.position.x = -2;
         updateTree();
-
-        mats[0].pushTextures(engine.textures[4]);
-        mats[0].pushTextures(engine.textures[5]);
-        mats[0].pushUniform('uniform1f', 'u_bump', .8);
-		mats[0].pushUniform('uniform1f', 'u_gloss', 80);
-		mats[0].pushUniform('uniform3fv', 'u_diffuseColor', [1., 1., 1.]);
-        
-        
-
-        //==========================
-		// 物件設置
-		//==========================
+		hideAllEntityParameter();
+		hideAllMaterialParameter();
 
         function animate(time) {
 			//var thisLoop = new Date();
@@ -382,9 +622,9 @@ class Main{
 			defaultCamera.getComponent(ParticleComponent).applyForce(totalForce);
 			defaultCamera.update();
             
-			engine.defaultLight.transform.position.x = Math.cos(time / 1000) * 10;
-			engine.defaultLight.transform.position.y = 10;
-			engine.defaultLight.transform.position.z = Math.sin(time / 1000) * 10;
+			// engine.defaultLight.transform.position.x = Math.cos(time / 1000) * 10;
+			// engine.defaultLight.transform.position.y = 10;
+			// engine.defaultLight.transform.position.z = Math.sin(time / 1000) * 10;
 			
 			engine.render(time);
             Syntax.code('window').requestAnimationFrame(animate);
