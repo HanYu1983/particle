@@ -40,7 +40,9 @@ class Mesh{
             var stride = info[4]; // 0 = move forward size * sizeof(type) each iteration to get the next position
             var offset = info[5]; // start at the beginning of the buffer
             gl.vertexAttribPointer(attriLocation, size, type, normalize, stride, offset);
+            gl.bindBuffer(gl.ARRAY_BUFFER, null);
         }
+        gl.bindVertexArray(null);
     }
 
     function getBindingInfo():Array<Dynamic> {
@@ -56,17 +58,17 @@ class Mesh{
     }
 
     @:abstract function getVertices():Array<Float> {
-        throw ('plz override this function!');
+        throw ('plz override getVertices!');
     }
 
     @:abstract function getIndices():Array<Int> {
-        throw ('plz override this function!');
+        throw ('plz override getIndices!');
     }
     @:abstract function getTexCoords():Array<Float> {
-        throw ('plz override this function!');
+        throw ('plz override getTexCoords!');
     }
     @:abstract function getNormals():Array<Float> {
-        throw ('plz override this function!');
+        throw ('plz override getNormals!');
     }
     function getTangents():Array<Float>{
         return tangents;

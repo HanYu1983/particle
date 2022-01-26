@@ -25,6 +25,8 @@ var Main = function() {
 		engine.init(assets.gl);
 		engine.addTextures(assets.images);
 		engine.addObjMeshs(assets.objs);
+		_gthis.generateCubeMap(engine);
+		_gthis.generateCubeMap2(engine);
 		_gthis.startApplication(engine);
 	});
 };
@@ -44,14 +46,95 @@ Main.prototype = {
 		var colorStr = "#" + StringTools.hex(changeTo,6);
 		return colorStr;
 	}
+	,generateFace: function(ctx,faceColor,textColor,text) {
+		var width = ctx.canvas.width;
+		var height = ctx.canvas.height;
+		ctx.fillStyle = faceColor;
+		ctx.fillRect(0,0,width,height);
+		ctx.font = "{" + width * 0.7 + "}px sans-serif";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.fillStyle = textColor;
+		ctx.fillText(text,width / 2,height / 2);
+	}
+	,generateCubeMap2: function(engine) {
+		var gl = engine.gl;
+		var texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
+		var faceInfos = [{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_X, url : "images/enviroment/001/pos-x.jpg"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url : "images/enviroment/001/neg-x.jpg"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url : "images/enviroment/001/pos-y.jpg"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url : "images/enviroment/001/neg-y.jpg"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url : "images/enviroment/001/pos-z.jpg"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url : "images/enviroment/001/neg-z.jpg"}];
+		var _g_current = 0;
+		var _g_array = faceInfos;
+		while(_g_current < _g_array.length) {
+			var _g1_value = _g_array[_g_current];
+			var _g1_key = _g_current++;
+			var index = _g1_key;
+			var faceInfo = _g1_value;
+			var target = [faceInfo.target];
+			var url = faceInfo.url;
+			var level = [0];
+			var internalFormat = [gl.RGBA];
+			var width = 512;
+			var height = 512;
+			var format = [gl.RGBA];
+			var type = [gl.UNSIGNED_BYTE];
+			gl.texImage2D(target[0],level[0],internalFormat[0],width,height,0,format[0],type[0],null);
+			var image = [new Image()];
+			image[0].src = url;
+			image[0].addEventListener("load",(function(image,type,format,internalFormat,level,target) {
+				return function() {
+					gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
+					gl.texImage2D(target[0],level[0],internalFormat[0],format[0],type[0],image[0]);
+					gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+				};
+			})(image,type,format,internalFormat,level,target));
+		}
+		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP,null);
+		engine.cubeTextures.push(texture);
+	}
+	,generateCubeMap: function(engine) {
+		var gl = engine.gl;
+		var ctx = document.createElement("canvas").getContext("2d");
+		var texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
+		ctx.canvas.width = 128;
+		ctx.canvas.height = 128;
+		var faceInfos = [{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_X, faceColor : "#F00", textColor : "#0FF", text : "+X"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_X, faceColor : "#FF0", textColor : "#00F", text : "-X"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Y, faceColor : "#0F0", textColor : "#F0F", text : "+Y"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, faceColor : "#0FF", textColor : "#F00", text : "-Y"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Z, faceColor : "#00F", textColor : "#FF0", text : "+Z"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, faceColor : "#F0F", textColor : "#0F0", text : "-Z"}];
+		var _g_current = 0;
+		var _g_array = faceInfos;
+		while(_g_current < _g_array.length) {
+			var _g1_value = _g_array[_g_current];
+			var _g1_key = _g_current++;
+			var index = _g1_key;
+			var faceInfo = _g1_value;
+			var target = faceInfo.target;
+			var faceColor = faceInfo.faceColor;
+			var textColor = faceInfo.textColor;
+			var text = faceInfo.text;
+			this.generateFace(ctx,faceColor,textColor,text);
+			gl.texImage2D(target,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,ctx.canvas);
+			ctx.canvas.toBlob(function(blob) {
+				var img = new Image();
+				img.src = URL.createObjectURL(blob);
+				window.document.body.appendChild(img);
+			});
+		}
+		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP,null);
+		engine.cubeTextures.push(texture);
+	}
 	,startApplication: function(engine) {
 		var _gthis = this;
 		var q = $;
 		var div_light = q("#div_light");
 		var div_meshRenderer = q("#div_meshRenderer");
+		var div_camera = q("#div_camera");
 		var hideAllEntityParameter = function() {
 			div_light.hide();
 			div_meshRenderer.hide();
+			div_camera.hide();
 		};
 		var div_colorShader = q("#div_colorShader");
 		var div_basicShader = q("#div_basicShader");
@@ -59,15 +142,6 @@ Main.prototype = {
 			div_colorShader.hide();
 			div_basicShader.hide();
 		};
-		q("#spn_fov").slider({ "onChange" : function(n,o) {
-			engine.defaultCamera.getComponent(libs_webgl_component_CameraComponent).fieldOfView = n;
-		}});
-		q("#spn_near").slider({ "onChange" : function(n,o) {
-			engine.defaultCamera.getComponent(libs_webgl_component_CameraComponent).near = n;
-		}});
-		q("#spn_far").slider({ "onChange" : function(n,o) {
-			engine.defaultCamera.getComponent(libs_webgl_component_CameraComponent).far = n;
-		}});
 		var col_light = q("#col_light");
 		col_light.change(function(e) {
 			var col = col_light.val();
@@ -76,6 +150,29 @@ Main.prototype = {
 			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).color[1] = rgb[1];
 			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).color[2] = rgb[2];
 		});
+		var spn_lightOuter = q("#spn_lightOuter");
+		spn_lightOuter.slider({ onChange : function(n,o) {
+			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).limitOuter = n;
+		}});
+		var spn_lightInner = q("#spn_lightInner");
+		spn_lightInner.slider({ onChange : function(n,o) {
+			engine.defaultLight.getComponent(libs_webgl_component_LightComponent).limitInner = n;
+		}});
+		var col_outlineColor = q("#col_outlineColor");
+		col_outlineColor.change(function(e) {
+			var col = col_outlineColor.val();
+			var rgb = _gthis.getColorFromString(col);
+			engine.outlineMaterial.uniforms[0][1] = rgb;
+		});
+		var spn_outlineThickness = q("#spn_outlineThickness");
+		spn_outlineThickness.slider({ onChange : function(n,o) {
+			engine.outlineMaterial.uniforms[1][1] = n;
+		}});
+		var c = engine.outlineMaterial.uniforms[0][1];
+		var changeTo = this.getStringFromColor(c[0],c[1],c[2]);
+		col_outlineColor.val(changeTo);
+		var t = engine.outlineMaterial.uniforms[1][1];
+		spn_outlineThickness.slider("setValue",t);
 		var tree_actors = q("#tree_actors");
 		var tree_mats = q("#tree_mats");
 		var selMesh = q("#selMesh");
@@ -102,17 +199,22 @@ Main.prototype = {
 		var col_specular1 = q("#col_specular1");
 		var spn_gloss1 = q("#spn_gloss1");
 		var spn_bump1 = q("#spn_bump1");
+		var spn_fov = q("#spn_fov");
+		var spn_near = q("#spn_near");
+		var spn_far = q("#spn_far");
 		var updateActorParameter = function(node) {
 			nodeName.html(node.name);
-			posx.numberspinner("setValue",node.transform.position[0]);
-			posy.numberspinner("setValue",node.transform.position[1]);
-			posz.numberspinner("setValue",node.transform.position[2]);
-			rotx.numberspinner("setValue",node.transform.rotation[0]);
-			roty.numberspinner("setValue",node.transform.rotation[1]);
-			rotz.numberspinner("setValue",node.transform.rotation[2]);
-			scax.numberspinner("setValue",node.transform.scale[0]);
-			scay.numberspinner("setValue",node.transform.scale[1]);
-			scaz.numberspinner("setValue",node.transform.scale[2]);
+			if(node.name != engine.defaultCamera.name) {
+				posx.numberspinner("setValue",node.transform.position[0]);
+				posy.numberspinner("setValue",node.transform.position[1]);
+				posz.numberspinner("setValue",node.transform.position[2]);
+				rotx.numberspinner("setValue",node.transform.rotation[0]);
+				roty.numberspinner("setValue",node.transform.rotation[1]);
+				rotz.numberspinner("setValue",node.transform.rotation[2]);
+				scax.numberspinner("setValue",node.transform.scale[0]);
+				scay.numberspinner("setValue",node.transform.scale[1]);
+				scaz.numberspinner("setValue",node.transform.scale[2]);
+			}
 			hideAllEntityParameter();
 			var comps = node.getComponents();
 			var _g_current = 0;
@@ -123,6 +225,13 @@ Main.prototype = {
 				var index = _g1_key;
 				var value = _g1_value;
 				switch(js_Boot.getClass(value)) {
+				case libs_webgl_component_CameraComponent:
+					div_camera.show();
+					var cameraComp = node.getComponent(libs_webgl_component_CameraComponent);
+					spn_fov.slider("setValue",cameraComp.fieldOfView);
+					spn_near.slider("setValue",cameraComp.near);
+					spn_far.slider("setValue",cameraComp.far);
+					break;
 				case libs_webgl_component_LightComponent:
 					div_light.show();
 					break;
@@ -150,26 +259,26 @@ Main.prototype = {
 			switch(js_Boot.getClass(mat.shader)) {
 			case libs_webgl_material_shader_BasicShader:
 				div_basicShader.show();
-				var c = mat.uniforms[0][2];
+				var c = mat.uniforms[0][1];
 				var changeTo = _gthis.getStringFromColor(c[0],c[1],c[2]);
 				col_diffuse1.val(changeTo);
-				c = mat.uniforms[1][2];
+				c = mat.uniforms[1][1];
 				changeTo = _gthis.getStringFromColor(c[0],c[1],c[2]);
 				col_specular1.val(changeTo);
-				var gloss = mat.uniforms[2][2];
+				var gloss = mat.uniforms[2][1];
 				spn_gloss1.slider("setValue",gloss);
-				var bump = mat.uniforms[3][2];
+				var bump = mat.uniforms[3][1];
 				spn_bump1.slider("setValue",bump);
 				break;
 			case libs_webgl_material_shader_ColorShader:
 				div_colorShader.show();
-				var c = mat.uniforms[0][2];
+				var c = mat.uniforms[0][1];
 				var changeTo = _gthis.getStringFromColor(c[0],c[1],c[2]);
 				col_diffuse.val(changeTo);
-				c = mat.uniforms[1][2];
+				c = mat.uniforms[1][1];
 				changeTo = _gthis.getStringFromColor(c[0],c[1],c[2]);
 				col_specular.val(changeTo);
-				var gloss = mat.uniforms[2][2];
+				var gloss = mat.uniforms[2][1];
 				spn_gloss.slider("setValue",gloss);
 				break;
 			}
@@ -180,50 +289,49 @@ Main.prototype = {
 			if(currentMaterial != null) {
 				var col = col_diffuse.val();
 				var rgb = _gthis.getColorFromString(col);
-				currentMaterial.uniforms[0][2] = rgb;
+				currentMaterial.uniforms[0][1] = rgb;
 			}
 		});
 		col_specular.change(function(e) {
 			if(currentMaterial != null) {
 				var col = col_specular.val();
 				var rgb = _gthis.getColorFromString(col);
-				currentMaterial.uniforms[1][2] = rgb;
+				currentMaterial.uniforms[1][1] = rgb;
 			}
 		});
 		spn_gloss.slider({ onChange : function(n,o) {
 			if(currentMaterial != null) {
-				currentMaterial.uniforms[2][2] = n;
+				currentMaterial.uniforms[2][1] = n;
 			}
 		}});
 		col_diffuse1.change(function(e) {
 			if(currentMaterial != null) {
 				var col = col_diffuse1.val();
 				var rgb = _gthis.getColorFromString(col);
-				currentMaterial.uniforms[0][2] = rgb;
+				currentMaterial.uniforms[0][1] = rgb;
 			}
 		});
 		col_specular1.change(function(e) {
 			if(currentMaterial != null) {
 				var col = col_specular1.val();
 				var rgb = _gthis.getColorFromString(col);
-				currentMaterial.uniforms[1][2] = rgb;
+				currentMaterial.uniforms[1][1] = rgb;
 			}
 		});
 		spn_gloss1.slider({ onChange : function(n,o) {
 			if(currentMaterial != null) {
-				currentMaterial.uniforms[2][2] = n;
+				currentMaterial.uniforms[2][1] = n;
 			}
 		}});
 		spn_bump1.slider({ onChange : function(n,o) {
 			if(currentMaterial != null) {
-				currentMaterial.uniforms[3][2] = n;
+				currentMaterial.uniforms[3][1] = n;
 			}
 		}});
 		sel_shader.combobox({ onChange : function() {
 			if(currentMaterial != null) {
 				var shaderId = sel_shader.combobox("getValue");
 				currentMaterial.shader = engine.shaders[shaderId];
-				var tmp = js_Boot.getClass(currentMaterial.shader) == libs_webgl_material_shader_BasicShader;
 				updateMaterialParameter(currentMaterial);
 			}
 		}});
@@ -236,10 +344,29 @@ Main.prototype = {
 		sel_setMaterial.combobox({ onChange : function() {
 			if(currentNode != null) {
 				var oldMaterial = currentNode.getComponent(libs_webgl_component_MeshRenderComponent).material;
-				oldMaterial.removeNode(currentNode);
+				if(oldMaterial != null) {
+					oldMaterial.removeNode(currentNode);
+				}
 				var matId = sel_setMaterial.combobox("getValue");
 				var material = engine.materials[matId];
-				material.pushNode(currentNode);
+				if(material != null) {
+					material.pushNode(currentNode);
+				}
+			}
+		}});
+		spn_fov.slider({ onChange : function(n,o) {
+			if(currentNode != null) {
+				currentNode.getComponent(libs_webgl_component_CameraComponent).fieldOfView = n;
+			}
+		}});
+		spn_near.slider({ onChange : function(n,o) {
+			if(currentNode != null) {
+				currentNode.getComponent(libs_webgl_component_CameraComponent).near = n;
+			}
+		}});
+		spn_far.slider({ onChange : function(n,o) {
+			if(currentNode != null) {
+				currentNode.getComponent(libs_webgl_component_CameraComponent).far = n;
 			}
 		}});
 		var onPosXChange = function(newValue,oldValue) {
@@ -298,6 +425,8 @@ Main.prototype = {
 		scaz.numberspinner({ onChange : onScaleZChange});
 		tree_actors.tree({ onClick : function(item) {
 			currentNode = item.node;
+			engine.outlineMaterial.clearNodes();
+			engine.outlineMaterial.pushNode(currentNode);
 			updateActorParameter(currentNode);
 		}});
 		tree_mats.tree({ onClick : function(item) {
@@ -306,7 +435,7 @@ Main.prototype = {
 		}});
 		var updateTree = function() {
 			var nodes = engine.getNodes();
-			var data = [{ text : "DefaultLight", node : engine.defaultLight}];
+			var data = [{ text : "DefaultCamera", node : engine.defaultCamera},{ text : "DefaultLight", node : engine.defaultLight}];
 			var _g_current = 0;
 			var _g_array = nodes;
 			while(_g_current < _g_array.length) {
@@ -348,23 +477,28 @@ Main.prototype = {
 				updateActorParameter(currentNode);
 			}
 		};
-		var createNode = function(meshId,materialId) {
+		var createNode = function(name,meshId,materialId) {
 			if(materialId == null) {
 				materialId = 0;
 			}
 			if(meshId == null) {
 				meshId = 0;
 			}
-			var node = new libs_webgl_actor_MeshActor();
+			if(name == null) {
+				name = "";
+			}
+			var node = new libs_webgl_actor_MeshActor(name);
 			node.getComponent(libs_webgl_component_MeshRenderComponent).mesh = engine.objMeshs[meshId];
-			node.name = "node_" + new Date().getTime();
-			engine.materials[materialId].pushNode(node);
+			if(materialId >= 0) {
+				engine.materials[materialId].pushNode(node);
+			}
+			engine.solidMaterial.pushNode(node);
 			updateTree();
 			return node;
 		};
 		btnAdd.bind("click",function(e) {
 			var meshId = selMesh.combobox("getValue");
-			createNode(meshId,0);
+			createNode("node_" + new Date().getTime(),meshId,0);
 		});
 		var createMaterial = function(name,shaderId) {
 			if(shaderId == null) {
@@ -375,15 +509,17 @@ Main.prototype = {
 			}
 			var mat = new libs_webgl_material_Material(engine.shaders[shaderId]);
 			mat.name = name == "" ? "Material_" + new Date().getTime() : name;
-			mat.pushTextures(engine.textures[4]);
-			mat.pushTextures(engine.textures[5]);
-			mat.pushUniform("uniform3fv","u_diffuseColor",[1.,1.,1.]);
-			mat.pushUniform("uniform3fv","u_specColor",[1.,1.,1.]);
-			mat.pushUniform("uniform1f","u_gloss",90);
-			mat.pushUniform("uniform1f","u_bump",1.0);
+			mat.pushTexture("u_diffuseMap",engine.textures[0],engine.gl.TEXTURE_2D);
+			mat.pushTexture("u_normalMap",engine.textures[1],engine.gl.TEXTURE_2D);
+			mat.pushTexture("u_depthMap",engine.depthTexture,engine.gl.TEXTURE_2D);
+			mat.pushUniform("u_diffuseColor",[1.,1.,1.]);
+			mat.pushUniform("u_specColor",[1.,1.,1.]);
+			mat.pushUniform("u_gloss",90);
+			mat.pushUniform("u_bump",1.0);
 			engine.addMaterial(mat);
 			updateMaterialTree();
 			updateMaterialSet();
+			return mat;
 		};
 		btn_addMaterial.bind("click",function(e) {
 			createMaterial();
@@ -492,6 +628,13 @@ Main.prototype = {
 		this2[1] = 0.0;
 		this2[2] = 0.0;
 		var currentRot = this2;
+		var this1 = new Array(9);
+		var this2 = this1;
+		this2[0] = 0.0;
+		this2[1] = 0.0;
+		this2[2] = 0.0;
+		this2[3] = 1.0;
+		var currentQuat = this2;
 		document.addEventListener("mousedown",function(event) {
 			if(event.button == 0) {
 				currentRot = mme_math_glmatrix_Vec3Tools.clone(defaultCamera.transform.rotation);
@@ -524,11 +667,46 @@ Main.prototype = {
 				mme_math_glmatrix_Vec3Tools.zero(rotForce);
 			}
 		});
-		createMaterial("DefaultColorMaterial");
-		createMaterial("DefaultBasicMaterial",1);
-		var n1 = createNode();
-		var n2 = createNode(1,1);
-		n2.transform.position[0] = -2;
+		var normalMapMaterial = createMaterial("NormalMapMaterial",1);
+		normalMapMaterial.pushTexture("u_diffuseMap",engine.textures[0],engine.gl.TEXTURE_2D);
+		normalMapMaterial.pushTexture("u_normalMap",engine.textures[1],engine.gl.TEXTURE_2D);
+		var colorMapMaterial = createMaterial("ColorMapMaterial",0);
+		var cubeMapMateral = createMaterial("CubeMapMaterial",2);
+		cubeMapMateral.pushTexture("u_texture",engine.cubeTextures[0],engine.gl.TEXTURE_CUBE_MAP);
+		var enviromentMapMaterial = createMaterial("enviromentMapMaterial",3);
+		enviromentMapMaterial.pushTexture("u_texture",engine.cubeTextures[1],engine.gl.TEXTURE_CUBE_MAP);
+		var lightTarget = createNode("DefaultLightTarget",0,0);
+		var y = lightTarget.transform.scale[2] = .1;
+		var x = lightTarget.transform.scale[1] = y;
+		lightTarget.transform.scale[0] = x;
+		var lookAtComp = new libs_webgl_component_LookAtComponent();
+		lookAtComp.target = lightTarget;
+		engine.defaultLight.addComponent(lookAtComp);
+		var showList = [["NormalMapActor",1,0],["ColorMapActor",1,1],["CubeMapActor",1,2],["EnviromentMapActor",0,3]];
+		var _g_current = 0;
+		var _g_array = showList;
+		while(_g_current < _g_array.length) {
+			var _g1_value = _g_array[_g_current];
+			var _g1_key = _g_current++;
+			var index = _g1_key;
+			var value = _g1_value;
+			var name = value[0];
+			var meshId = value[1];
+			var materialId = value[2];
+			var actor = createNode(name,meshId,materialId);
+			actor.transform.position[0] = index * 2.5;
+		}
+		var table = createNode("Table",0,-1);
+		normalMapMaterial.pushNode(table);
+		table.transform.position[1] = -1;
+		var x = table.transform.scale[2] = 10;
+		table.transform.scale[0] = x;
+		table.transform.scale[1] = .1;
+		var skyboxMaterial = new libs_webgl_material_Material(new libs_webgl_material_shader_SkyboxShader());
+		skyboxMaterial.pushTexture("u_texture",engine.cubeTextures[1],engine.gl.TEXTURE_CUBE_MAP);
+		var skybox = new libs_webgl_actor_MeshActor("Skybox");
+		skybox.getComponent(libs_webgl_component_MeshRenderComponent).mesh = new libs_webgl_mesh_QuadMesh();
+		skyboxMaterial.pushNode(skybox);
 		updateTree();
 		hideAllEntityParameter();
 		hideAllMaterialParameter();
@@ -543,7 +721,40 @@ Main.prototype = {
 			mme_math_glmatrix_Vec3Tools.add(totalForce,backwardForce,totalForce);
 			defaultCamera.getComponent(libs_webgl_component_ParticleComponent).applyForce(totalForce);
 			defaultCamera.update();
-			engine.render(time);
+			engine.defaultLight.transform.position[0] = Math.cos(time / 1000) * 10;
+			engine.defaultLight.transform.position[1] = 7;
+			engine.defaultLight.transform.position[2] = Math.sin(time / 1000) * 10;
+			engine.defaultLight.update();
+			var gl = engine.gl;
+			gl.bindFramebuffer(gl.FRAMEBUFFER,engine.depthFramebuffer);
+			gl.viewport(0,0,512,512);
+			gl.clearColor(0,0,0,0);
+			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+			gl.enable(gl.DEPTH_TEST);
+			engine.renderMaterial(engine.solidMaterial,engine.defaultLight);
+			gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+			gl.viewport(0,0,gl.canvas.width,gl.canvas.height);
+			gl.clearColor(0,0,0,0);
+			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+			gl.disable(gl.DEPTH_TEST);
+			gl.cullFace(gl.BACK);
+			gl.depthFunc(gl.LESS);
+			engine.renderMaterial(skyboxMaterial,null,false);
+			gl.enable(gl.DEPTH_TEST);
+			gl.enable(gl.CULL_FACE);
+			gl.cullFace(gl.FRONT);
+			engine.renderMaterial(engine.outlineMaterial);
+			gl.cullFace(gl.BACK);
+			var _g_current = 0;
+			var _g_array = engine.materials;
+			while(_g_current < _g_array.length) {
+				var _g1_value = _g_array[_g_current];
+				var _g1_key = _g_current++;
+				var index = _g1_key;
+				var material = _g1_value;
+				engine.renderMaterial(material);
+			}
+			engine.renderMaterial(engine.depthMaterial);
 			window.requestAnimationFrame(animate);
 		};
 		animate(0);
@@ -812,9 +1023,8 @@ js_Boot.__resolveNativeClass = function(name) {
 var libs_webgl_Engine = function() {
 	this.materials = [];
 	this.objMeshs = [];
+	this.cubeTextures = [];
 	this.textures = [];
-	this.defaultLight = new libs_webgl_actor_LightActor();
-	this.defaultCamera = new libs_webgl_actor_CameraActor();
 	this.shaders = [];
 };
 libs_webgl_Engine.__name__ = true;
@@ -826,10 +1036,52 @@ libs_webgl_Engine.prototype = {
 		this.gl = gl;
 		this.shaders.push(new libs_webgl_material_shader_ColorShader());
 		this.shaders.push(new libs_webgl_material_shader_BasicShader());
-		this.defaultCamera.transform.position[2] = 20;
-		this.defaultLight.transform.position[0] = 5;
+		this.shaders.push(new libs_webgl_material_shader_CubeMapShader());
+		this.shaders.push(new libs_webgl_material_shader_EnviromentMapShader());
+		this.defaultCamera = new libs_webgl_actor_CameraActor("DefaultCamera");
+		this.defaultLight = new libs_webgl_actor_LightActor("DefaultLight");
+		this.defaultCamera.transform.position[2] = 10;
+		this.defaultLight.transform.position[0] = 0;
 		this.defaultLight.transform.position[1] = 5;
-		this.defaultLight.transform.position[2] = 5;
+		this.defaultLight.transform.position[2] = 10;
+		this.outlineMaterial = new libs_webgl_material_Material(new libs_webgl_material_shader_OutlineShader());
+		this.outlineMaterial.pushUniform("u_color",[1.,1.,0.]);
+		this.outlineMaterial.pushUniform("u_thickness",.2);
+		this.outlineMaterial.autoAssignToMeshRender = false;
+		this.solidMaterial = new libs_webgl_material_Material(new libs_webgl_material_shader_SolidColorShader());
+		this.solidMaterial.pushUniform("u_color",[1.,1.,1.]);
+		this.solidMaterial.autoAssignToMeshRender = false;
+		this.solidMaterial.pushNode(this.defaultLight);
+		this.createDepthTexture();
+		this.createDepthBuffer();
+		this.depthMaterial = new libs_webgl_material_Material(new libs_webgl_material_shader_OnlyTextureShader());
+		this.depthMaterial.pushTexture("u_texture",this.depthTexture,gl.TEXTURE_2D);
+		this.depthMaterial.autoAssignToMeshRender = false;
+		var depth = new libs_webgl_actor_MeshActor("DepthPass");
+		depth.getComponent(libs_webgl_component_MeshRenderComponent).mesh = new libs_webgl_mesh_PlaneMesh();
+		depth.transform.position[0] = 1;
+		depth.transform.position[1] = 3;
+		depth.transform.rotation[0] = 90;
+		depth.transform.set_parent(this.defaultCamera.transform);
+		this.depthMaterial.pushNode(depth);
+		gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+	}
+	,createDepthTexture: function() {
+		this.depthTexture = this.gl.createTexture();
+		var depthTextureSize = 512;
+		this.gl.bindTexture(this.gl.TEXTURE_2D,this.depthTexture);
+		this.gl.texImage2D(this.gl.TEXTURE_2D,0,this.gl.DEPTH_COMPONENT32F,depthTextureSize,depthTextureSize,0,this.gl.DEPTH_COMPONENT,this.gl.FLOAT,null);
+		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MAG_FILTER,this.gl.NEAREST);
+		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MIN_FILTER,this.gl.NEAREST);
+		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_WRAP_S,this.gl.CLAMP_TO_EDGE);
+		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_WRAP_T,this.gl.CLAMP_TO_EDGE);
+		this.gl.bindTexture(this.gl.TEXTURE_2D,null);
+		return this.depthTexture;
+	}
+	,createDepthBuffer: function() {
+		this.depthFramebuffer = this.gl.createFramebuffer();
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,this.depthFramebuffer);
+		this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER,this.gl.DEPTH_ATTACHMENT,this.gl.TEXTURE_2D,this.depthTexture,0);
 	}
 	,addTexture: function(image) {
 		var texture = this.gl.createTexture();
@@ -843,6 +1095,7 @@ libs_webgl_Engine.prototype = {
 		var srcFormat = this.gl.RGBA;
 		var srcType = this.gl.UNSIGNED_BYTE;
 		this.gl.texImage2D(this.gl.TEXTURE_2D,mipLevel,internalFormat,srcFormat,srcType,image);
+		this.gl.bindTexture(this.gl.TEXTURE_2D,null);
 		this.textures.push(texture);
 	}
 	,addTextures: function(images) {
@@ -876,38 +1129,57 @@ libs_webgl_Engine.prototype = {
 			this.addObjMesh(value);
 		}
 	}
+	,renderMaterial: function(material,view,debug) {
+		if(debug == null) {
+			debug = false;
+		}
+		var program = material.shader.program;
+		this.gl.useProgram(program);
+		material.glSetTextureAndUniform();
+		var usingView = view != null ? view : this.defaultCamera;
+		this.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_lightColor"),mme_math_glmatrix_Vec3.toArray(this.defaultLight.getComponent(libs_webgl_component_LightComponent).color));
+		this.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_specularColor"),[1,1,1]);
+		this.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_viewWorldPos"),mme_math_glmatrix_Vec3.toArray(usingView.transform.position));
+		this.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_lightWorldPos"),mme_math_glmatrix_Vec3.toArray(this.defaultLight.transform.position));
+		this.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_lightWorldDirection"),mme_math_glmatrix_Vec3.toArray(this.defaultLight.transform.getLeft()));
+		this.gl.uniform1f(Reflect.field(material.shader.uniformKey,"u_lightOuter"),this.defaultLight.getComponent(libs_webgl_component_LightComponent).limitOuter);
+		this.gl.uniform1f(Reflect.field(material.shader.uniformKey,"u_lightInner"),this.defaultLight.getComponent(libs_webgl_component_LightComponent).limitInner);
+		this.gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey,"u_viewMat"),false,mme_math_glmatrix_Mat4.toArray(usingView.transform.getMatrix()));
+		this.gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey,"u_projectMat"),false,mme_math_glmatrix_Mat4.toArray(usingView.getComponent(libs_webgl_component_CameraComponent).getProjectMatrix()));
+		this.gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey,"u_lightViewMat"),false,mme_math_glmatrix_Mat4.toArray(this.defaultLight.transform.getMatrix()));
+		this.gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey,"u_lightProjectMat"),false,mme_math_glmatrix_Mat4.toArray(this.defaultLight.getComponent(libs_webgl_component_CameraComponent).getProjectMatrix()));
+		var nodes = material.nodes;
+		var _g_current = 0;
+		var _g_array = nodes;
+		while(_g_current < _g_array.length) {
+			var _g1_value = _g_array[_g_current];
+			var _g1_key = _g_current++;
+			var index = _g1_key;
+			var node = _g1_value;
+			var meshRender = node.getComponent(libs_webgl_component_MeshRenderComponent);
+			var vao = meshRender.mesh.vao;
+			this.gl.bindVertexArray(vao);
+			this.gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey,"u_modelMat"),false,mme_math_glmatrix_Mat4.toArray(node.transform.getMatrix()));
+			this.gl.drawArrays(this.gl.TRIANGLES,0,meshRender.mesh.getCount());
+		}
+	}
 	,render: function(time) {
-		var _gthis = this;
-		var renderMaterial = function(material) {
-			var program = material.shader.program;
-			_gthis.gl.useProgram(program);
-			material.glSetTextureAndUniform();
-			_gthis.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_lightColor"),mme_math_glmatrix_Vec3.toArray(_gthis.defaultLight.getComponent(libs_webgl_component_LightComponent).color));
-			_gthis.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_specularColor"),[1,1,1]);
-			_gthis.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_viewWorldPos"),mme_math_glmatrix_Vec3.toArray(_gthis.defaultCamera.transform.position));
-			_gthis.gl.uniform3fv(Reflect.field(material.shader.uniformKey,"u_lightWorldPos"),mme_math_glmatrix_Vec3.toArray(_gthis.defaultLight.transform.position));
-			var nodes = material.nodes;
-			var _g_current = 0;
-			var _g_array = nodes;
-			while(_g_current < _g_array.length) {
-				var _g1_value = _g_array[_g_current];
-				var _g1_key = _g_current++;
-				var index = _g1_key;
-				var node = _g1_value;
-				var meshRender = node.getComponent(libs_webgl_component_MeshRenderComponent);
-				var vao = meshRender.mesh.vao;
-				_gthis.gl.bindVertexArray(vao);
-				_gthis.gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey,"u_modelMat"),false,mme_math_glmatrix_Mat4.toArray(node.transform.getMatrix()));
-				_gthis.gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey,"u_viewMat"),false,mme_math_glmatrix_Mat4.toArray(_gthis.defaultCamera.transform.getMatrix()));
-				_gthis.gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey,"u_projectMat"),false,mme_math_glmatrix_Mat4.toArray(_gthis.defaultCamera.getComponent(libs_webgl_component_CameraComponent).getProjectMatrix()));
-				_gthis.gl.enable(_gthis.gl.DEPTH_TEST);
-				_gthis.gl.drawArrays(_gthis.gl.TRIANGLES,0,meshRender.mesh.getCount());
-			}
-		};
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,this.depthFramebuffer);
+		this.gl.viewport(0,0,512,512);
+		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+		this.gl.enable(this.gl.DEPTH_TEST);
+		this.renderMaterial(this.solidMaterial,this.defaultLight);
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,null);
 		this.gl.viewport(0,0,this.gl.canvas.width,this.gl.canvas.height);
 		this.gl.clearColor(0,0,0,0);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 		this.gl.enable(this.gl.DEPTH_TEST);
+		this.gl.enable(this.gl.CULL_FACE);
+		this.gl.cullFace(this.gl.FRONT);
+		this.renderMaterial(this.outlineMaterial);
+		this.gl.enable(this.gl.DEPTH_TEST);
+		this.gl.disable(this.gl.CULL_FACE);
+		this.gl.depthFunc(this.gl.LESS);
 		var _g_current = 0;
 		var _g_array = this.materials;
 		while(_g_current < _g_array.length) {
@@ -915,8 +1187,9 @@ libs_webgl_Engine.prototype = {
 			var _g1_key = _g_current++;
 			var index = _g1_key;
 			var material = _g1_value;
-			renderMaterial(material);
+			this.renderMaterial(material);
 		}
+		this.renderMaterial(this.depthMaterial);
 	}
 	,getNodes: function() {
 		var actors = [];
@@ -931,11 +1204,28 @@ libs_webgl_Engine.prototype = {
 		}
 		return actors;
 	}
+	,getNodeByName: function(name) {
+		var nodes = this.getNodes();
+		var node = null;
+		var _g_current = 0;
+		var _g_array = nodes;
+		while(_g_current < _g_array.length) {
+			var _g1_value = _g_array[_g_current];
+			var _g1_key = _g_current++;
+			var index = _g1_key;
+			var value = _g1_value;
+			if(value.name == name) {
+				node = value;
+			}
+		}
+		return node;
+	}
 	,__class__: libs_webgl_Engine
 };
-var libs_webgl_actor_Actor = function() {
+var libs_webgl_actor_Actor = function(name) {
 	this.transform = new libs_webgl_component_TransformComponent();
 	this.components = [];
+	this.name = name;
 };
 libs_webgl_actor_Actor.__name__ = true;
 libs_webgl_actor_Actor.prototype = {
@@ -977,8 +1267,8 @@ libs_webgl_actor_Actor.prototype = {
 	}
 	,__class__: libs_webgl_actor_Actor
 };
-var libs_webgl_actor_CameraActor = function() {
-	libs_webgl_actor_Actor.call(this);
+var libs_webgl_actor_CameraActor = function(name) {
+	libs_webgl_actor_Actor.call(this,name);
 	this.addComponent(new libs_webgl_component_CameraComponent());
 	this.addComponent(new libs_webgl_component_ParticleComponent());
 };
@@ -987,17 +1277,20 @@ libs_webgl_actor_CameraActor.__super__ = libs_webgl_actor_Actor;
 libs_webgl_actor_CameraActor.prototype = $extend(libs_webgl_actor_Actor.prototype,{
 	__class__: libs_webgl_actor_CameraActor
 });
-var libs_webgl_actor_LightActor = function() {
-	libs_webgl_actor_Actor.call(this);
+var libs_webgl_actor_LightActor = function(name) {
+	libs_webgl_actor_Actor.call(this,name);
+	this.addComponent(new libs_webgl_component_MeshRenderComponent(new libs_webgl_mesh_CubeMesh()));
+	this.addComponent(new libs_webgl_component_CameraComponent());
 	this.addComponent(new libs_webgl_component_LightComponent());
+	this.getComponent(libs_webgl_component_CameraComponent).fieldOfView = 100.0;
 };
 libs_webgl_actor_LightActor.__name__ = true;
 libs_webgl_actor_LightActor.__super__ = libs_webgl_actor_Actor;
 libs_webgl_actor_LightActor.prototype = $extend(libs_webgl_actor_Actor.prototype,{
 	__class__: libs_webgl_actor_LightActor
 });
-var libs_webgl_actor_MeshActor = function() {
-	libs_webgl_actor_Actor.call(this);
+var libs_webgl_actor_MeshActor = function(name) {
+	libs_webgl_actor_Actor.call(this,name);
 	var mesh = new libs_webgl_mesh_CubeMesh();
 	this.addComponent(new libs_webgl_component_MeshRenderComponent(mesh));
 };
@@ -1034,6 +1327,8 @@ libs_webgl_component_CameraComponent.prototype = $extend(libs_webgl_component_Co
 	,__class__: libs_webgl_component_CameraComponent
 });
 var libs_webgl_component_LightComponent = function() {
+	this.limitInner = .65;
+	this.limitOuter = .7;
 	var this2 = new Array(3);
 	var this1 = this2;
 	this1[0] = 0.0;
@@ -1049,6 +1344,113 @@ libs_webgl_component_LightComponent.__name__ = true;
 libs_webgl_component_LightComponent.__super__ = libs_webgl_component_Component;
 libs_webgl_component_LightComponent.prototype = $extend(libs_webgl_component_Component.prototype,{
 	__class__: libs_webgl_component_LightComponent
+});
+var libs_webgl_component_LookAtComponent = function() {
+	var this2 = new Array(3);
+	var this1 = this2;
+	this1[0] = 0.0;
+	this1[1] = 0.0;
+	this1[2] = 0.0;
+	this.upDir = this1;
+	libs_webgl_component_Component.call(this);
+	this.upDir[1] = 1.0;
+};
+libs_webgl_component_LookAtComponent.__name__ = true;
+libs_webgl_component_LookAtComponent.__super__ = libs_webgl_component_Component;
+libs_webgl_component_LookAtComponent.prototype = $extend(libs_webgl_component_Component.prototype,{
+	update: function() {
+		libs_webgl_component_Component.prototype.update.call(this);
+		if(this.target != null) {
+			this.lookAt(this.target.transform.position,this.upDir);
+		}
+	}
+	,lookAt: function(target,up) {
+		var position = this.owner.transform.position;
+		var zDir = mme_math_glmatrix_Vec3Tools.subtract(target,position);
+		zDir = mme_math_glmatrix_Vec3Tools.normalize(zDir);
+		zDir = mme_math_glmatrix_Vec3Tools.negate(zDir);
+		var temp = up != null ? up : mme_math_glmatrix_Vec3.fromArray([0,1,0]);
+		var xDir = mme_math_glmatrix_Vec3Tools.cross(temp,zDir);
+		xDir = mme_math_glmatrix_Vec3Tools.normalize(xDir);
+		var yDir = mme_math_glmatrix_Vec3Tools.cross(zDir,xDir);
+		yDir = mme_math_glmatrix_Vec3Tools.normalize(yDir);
+		var this1 = new Array(16);
+		var this2 = this1;
+		this2[1] = 0.0;
+		this2[2] = 0.0;
+		this2[3] = 0.0;
+		this2[4] = 0.0;
+		this2[6] = 0.0;
+		this2[7] = 0.0;
+		this2[8] = 0.0;
+		this2[9] = 0.0;
+		this2[11] = 0.0;
+		this2[12] = 0.0;
+		this2[13] = 0.0;
+		this2[14] = 0.0;
+		this2[0] = 1.0;
+		this2[5] = 1.0;
+		this2[10] = 1.0;
+		this2[15] = 1.0;
+		var out = this2;
+		var mat = out;
+		var v = xDir[0];
+		mat[0] = v;
+		var v = xDir[1];
+		mat[1] = v;
+		var v = xDir[2];
+		mat[2] = v;
+		var v = yDir[0];
+		mat[4] = v;
+		var v = yDir[1];
+		mat[5] = v;
+		var v = yDir[2];
+		mat[6] = v;
+		var v = zDir[0];
+		mat[8] = v;
+		var v = zDir[1];
+		mat[9] = v;
+		var v = zDir[2];
+		mat[10] = v;
+		var euler = this.rotationMatrixToEuler(mme_math_glmatrix_Mat4.toArray(mat));
+		this.owner.transform.rotation[0] = euler[0];
+		this.owner.transform.rotation[1] = euler[1];
+		this.owner.transform.rotation[2] = euler[2];
+	}
+	,rotationMatrixToEuler: function(m) {
+		var te = m;
+		var m11 = te[0];
+		var m12 = te[4];
+		var m13 = te[8];
+		var m21 = te[1];
+		var m22 = te[5];
+		var m23 = te[9];
+		var m31 = te[2];
+		var m32 = te[6];
+		var m33 = te[10];
+		var this1 = new Array(3);
+		var this2 = this1;
+		this2[0] = 0.0;
+		this2[1] = 0.0;
+		this2[2] = 0.0;
+		var angles = this2;
+		angles[1] = Math.asin(this.clamp(m13,-1,1));
+		if(Math.abs(m13) < 0.9999999) {
+			angles[0] = Math.atan2(-m23,m33);
+			angles[2] = Math.atan2(-m12,m11);
+		} else {
+			angles[0] = Math.atan2(m32,m22);
+			angles[2] = 0;
+		}
+		angles[0] = angles[0] / Math.PI * 180;
+		angles[1] = angles[1] / Math.PI * 180;
+		angles[2] = angles[2] / Math.PI * 180;
+		return angles;
+	}
+	,clamp: function(m13,arg1,arg2) {
+		return m13;
+	}
+	,__class__: libs_webgl_component_LookAtComponent
 });
 var libs_webgl_component_MeshRenderComponent = function(mesh) {
 	libs_webgl_component_Component.call(this);
@@ -1135,7 +1537,45 @@ var libs_webgl_component_TransformComponent = function() {
 	this1[5] = 1.0;
 	this1[10] = 1.0;
 	this1[15] = 1.0;
-	this.matrix = this1;
+	this.parentMatrix = this1;
+	var this2 = new Array(16);
+	var this1 = this2;
+	this1[1] = 0.0;
+	this1[2] = 0.0;
+	this1[3] = 0.0;
+	this1[4] = 0.0;
+	this1[6] = 0.0;
+	this1[7] = 0.0;
+	this1[8] = 0.0;
+	this1[9] = 0.0;
+	this1[11] = 0.0;
+	this1[12] = 0.0;
+	this1[13] = 0.0;
+	this1[14] = 0.0;
+	this1[0] = 1.0;
+	this1[5] = 1.0;
+	this1[10] = 1.0;
+	this1[15] = 1.0;
+	this.localMatrix = this1;
+	var this2 = new Array(16);
+	var this1 = this2;
+	this1[1] = 0.0;
+	this1[2] = 0.0;
+	this1[3] = 0.0;
+	this1[4] = 0.0;
+	this1[6] = 0.0;
+	this1[7] = 0.0;
+	this1[8] = 0.0;
+	this1[9] = 0.0;
+	this1[11] = 0.0;
+	this1[12] = 0.0;
+	this1[13] = 0.0;
+	this1[14] = 0.0;
+	this1[0] = 1.0;
+	this1[5] = 1.0;
+	this1[10] = 1.0;
+	this1[15] = 1.0;
+	this.globalMatrix = this1;
 	var this2 = new Array(16);
 	var this1 = this2;
 	this1[1] = 0.0;
@@ -1219,37 +1659,96 @@ var libs_webgl_component_TransformComponent = function() {
 libs_webgl_component_TransformComponent.__name__ = true;
 libs_webgl_component_TransformComponent.__super__ = libs_webgl_component_Component;
 libs_webgl_component_TransformComponent.prototype = $extend(libs_webgl_component_Component.prototype,{
-	getMatrix: function() {
+	set_parent: function(p) {
+		if(p == null) {
+			if(this.parent != null) {
+				this.parent = null;
+			}
+		} else {
+			var localMat = mme_math_glmatrix_Mat4Tools.multiply(mme_math_glmatrix_Mat4Tools.invert(p.getMatrix()),this.getMatrix());
+			var localPos = mme_math_glmatrix_Mat4Tools.getTranslation(localMat);
+			this.position[0] = localPos[0];
+			this.position[1] = localPos[1];
+			this.position[2] = localPos[2];
+			var euler = this.toEulerAngles(mme_math_glmatrix_Mat4Tools.getRotation(localMat));
+			this.rotation[0] = euler[0];
+			this.rotation[1] = euler[1];
+			this.rotation[2] = euler[2];
+			this.parent = p;
+		}
+		return p;
+	}
+	,toEulerAngles: function(q1) {
+		var this1 = new Array(3);
+		var this2 = this1;
+		this2[0] = 0.0;
+		this2[1] = 0.0;
+		this2[2] = 0.0;
+		var angles = this2;
+		var test = q1[0] * q1[1] + q1[2] * q1[3];
+		if(test > 0.499) {
+			angles[1] = 2 * Math.atan2(q1[0],q1[3]);
+			angles[2] = Math.PI / 2;
+			angles[0] = 0;
+			return angles;
+		}
+		if(test < -0.499) {
+			angles[1] = -2 * Math.atan2(q1[0],q1[3]);
+			angles[2] = -Math.PI / 2;
+			angles[0] = 0;
+			return angles;
+		}
+		var sqx = q1[0] * q1[0];
+		var sqy = q1[1] * q1[1];
+		var sqz = q1[2] * q1[2];
+		angles[1] = Math.atan2(2 * q1[1] * q1[3] - 2 * q1[0] * q1[2],1 - 2 * sqy - 2 * sqz);
+		angles[2] = Math.asin(2 * test);
+		angles[0] = Math.atan2(2 * q1[0] * q1[3] - 2 * q1[1] * q1[2],1 - 2 * sqx - 2 * sqz);
+		angles[0] = angles[0] / Math.PI * 180;
+		angles[1] = angles[1] / Math.PI * 180;
+		angles[2] = angles[2] / Math.PI * 180;
+		return angles;
+	}
+	,getLocalMatrix: function() {
 		mme_math_glmatrix_Mat4Tools.identity(this.positionMatrix);
 		mme_math_glmatrix_Mat4Tools.identity(this.rotateMatrix);
 		mme_math_glmatrix_Mat4Tools.identity(this.scaleMatrix);
-		mme_math_glmatrix_Mat4Tools.identity(this.matrix);
+		mme_math_glmatrix_Mat4Tools.identity(this.localMatrix);
 		mme_math_glmatrix_Mat4Tools.translate(this.positionMatrix,this.position,this.positionMatrix);
 		mme_math_glmatrix_Mat4Tools.rotateX(this.rotateMatrix,this.rotation[0] / 180 * Math.PI,this.rotateMatrix);
 		mme_math_glmatrix_Mat4Tools.rotateY(this.rotateMatrix,this.rotation[1] / 180 * Math.PI,this.rotateMatrix);
 		mme_math_glmatrix_Mat4Tools.rotateZ(this.rotateMatrix,this.rotation[2] / 180 * Math.PI,this.rotateMatrix);
 		mme_math_glmatrix_Mat4Tools.scale(this.scaleMatrix,this.scale,this.scaleMatrix);
-		mme_math_glmatrix_Mat4Tools.multiply(this.matrix,this.positionMatrix,this.matrix);
-		mme_math_glmatrix_Mat4Tools.multiply(this.matrix,this.rotateMatrix,this.matrix);
-		mme_math_glmatrix_Mat4Tools.multiply(this.matrix,this.scaleMatrix,this.matrix);
-		return this.matrix;
+		mme_math_glmatrix_Mat4Tools.multiply(this.localMatrix,this.positionMatrix,this.localMatrix);
+		mme_math_glmatrix_Mat4Tools.multiply(this.localMatrix,this.rotateMatrix,this.localMatrix);
+		mme_math_glmatrix_Mat4Tools.multiply(this.localMatrix,this.scaleMatrix,this.localMatrix);
+		return mme_math_glmatrix_Mat4Tools.clone(this.localMatrix);
+	}
+	,getMatrix: function() {
+		mme_math_glmatrix_Mat4Tools.identity(this.globalMatrix);
+		if(this.parent != null) {
+			this.parentMatrix = mme_math_glmatrix_Mat4Tools.clone(this.parent.getMatrix());
+		}
+		mme_math_glmatrix_Mat4Tools.multiply(this.globalMatrix,this.parentMatrix,this.globalMatrix);
+		mme_math_glmatrix_Mat4Tools.multiply(this.globalMatrix,this.getLocalMatrix(),this.globalMatrix);
+		return mme_math_glmatrix_Mat4Tools.clone(this.globalMatrix);
 	}
 	,getForward: function() {
-		this.direction[0] = this.matrix[0];
-		this.direction[1] = this.matrix[1];
-		this.direction[2] = this.matrix[2];
+		this.direction[0] = this.globalMatrix[0];
+		this.direction[1] = this.globalMatrix[1];
+		this.direction[2] = this.globalMatrix[2];
 		return this.direction;
 	}
 	,getRight: function() {
-		this.direction[0] = this.matrix[8];
-		this.direction[1] = this.matrix[9];
-		this.direction[2] = this.matrix[10];
+		this.direction[0] = this.globalMatrix[8];
+		this.direction[1] = this.globalMatrix[9];
+		this.direction[2] = this.globalMatrix[10];
 		return this.direction;
 	}
 	,getUp: function() {
-		this.direction[0] = this.matrix[4];
-		this.direction[1] = this.matrix[5];
-		this.direction[2] = this.matrix[6];
+		this.direction[0] = this.globalMatrix[4];
+		this.direction[1] = this.globalMatrix[5];
+		this.direction[2] = this.globalMatrix[6];
 		return this.direction;
 	}
 	,getBackward: function() {
@@ -1270,6 +1769,7 @@ libs_webgl_component_TransformComponent.prototype = $extend(libs_webgl_component
 	,__class__: libs_webgl_component_TransformComponent
 });
 var libs_webgl_material_Material = function(shader) {
+	this.autoAssignToMeshRender = true;
 	this.name = "";
 	this.nodes = [];
 	this.uniforms = [];
@@ -1278,17 +1778,22 @@ var libs_webgl_material_Material = function(shader) {
 };
 libs_webgl_material_Material.__name__ = true;
 libs_webgl_material_Material.prototype = {
-	pushTextures: function(t) {
-		this.textures.push(t);
+	pushTexture: function(name,t,type) {
+		this.textures.push([name,t,type]);
 	}
-	,pushUniform: function(glMethod,location,value) {
-		this.uniforms.push([glMethod,location,value]);
+	,pushUniform: function(location,value) {
+		this.uniforms.push([location,value]);
+	}
+	,clearNodes: function() {
+		while(this.nodes.length > 0) HxOverrides.remove(this.nodes,this.nodes[0]);
 	}
 	,pushNode: function(node) {
 		if(node.getComponent(libs_webgl_component_MeshRenderComponent) != null) {
 			if(this.nodes.indexOf(node) == -1) {
 				this.nodes.push(node);
-				node.getComponent(libs_webgl_component_MeshRenderComponent).material = this;
+				if(this.autoAssignToMeshRender) {
+					node.getComponent(libs_webgl_component_MeshRenderComponent).material = this;
+				}
 			}
 		}
 	}
@@ -1306,10 +1811,13 @@ libs_webgl_material_Material.prototype = {
 			var _g1_key = _g_current++;
 			var index = _g1_key;
 			var value = _g1_value;
-			var location = Reflect.field(this.shader.uniformKey,"u_image" + index);
+			var locationKey = value[0];
+			var texture = value[1];
+			var type = value[2];
+			var location = Reflect.field(this.shader.uniformKey,locationKey);
 			gl.uniform1i(location,index);
 			gl.activeTexture(gl.TEXTURE0 + index);
-			gl.bindTexture(gl.TEXTURE_2D,this.textures[index]);
+			gl.bindTexture(type,texture);
 		}
 		var _g_current = 0;
 		var _g_array = this.uniforms;
@@ -1318,11 +1826,13 @@ libs_webgl_material_Material.prototype = {
 			var _g1_key = _g_current++;
 			var index = _g1_key;
 			var item = _g1_value;
-			var glMethod = item[0];
-			var location = Reflect.field(this.shader.uniformKey,item[1]);
-			var value = item[2];
-			var method = Reflect.field(gl,glMethod);
-			method.apply(gl,[location,value]);
+			var location = Reflect.field(this.shader.uniformKey,item[0]);
+			var value = item[1];
+			if(js_Boot.getClass(value) == Array) {
+				gl.uniform3fv(location,value);
+			} else {
+				gl.uniform1f(location,value);
+			}
 		}
 	}
 	,__class__: libs_webgl_material_Material
@@ -1382,15 +1892,15 @@ libs_webgl_material_shader_BasicShader.__name__ = true;
 libs_webgl_material_shader_BasicShader.__super__ = libs_webgl_material_shader_Shader;
 libs_webgl_material_shader_BasicShader.prototype = $extend(libs_webgl_material_shader_Shader.prototype,{
 	getVS: function() {
-		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n                in vec2 a_texcoord;\r\n                in vec3 a_normal;\r\n                in vec3 a_tangent;\r\n                \r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n                uniform vec3 u_lightWorldPos;\r\n                uniform vec3 u_viewWorldPos;\r\n                \r\n                out vec3 v_worldNormal;\r\n                out vec3 v_worldPos;\r\n                out vec3 v_worldTangent;\r\n                out vec3 v_worldBinormal;\r\n                out vec2 v_uv;\r\n                out vec3 v_tangent;\r\n                out mat3 v_tangentMat;\r\n                out vec3 v_lightDir;\r\n                out vec3 v_viewDir;\r\n                \r\n                void main(){\r\n                    mat4 fixScaleMatrix = transpose(inverse(u_modelMat));\r\n                    v_worldNormal = normalize((fixScaleMatrix * vec4(a_normal, 0)).xyz);\r\n                    v_worldPos = (fixScaleMatrix * vec4(a_vertex, 1)).xyz;\r\n                    v_worldTangent = normalize((fixScaleMatrix * vec4(a_tangent, 0)).xyz);\r\n                    v_worldBinormal = normalize(cross(v_worldNormal, v_worldTangent));\r\n                    \r\n                    v_uv = a_texcoord;\r\n                    \r\n                    vec3 binormal = cross(normalize(a_normal), normalize(a_tangent));\r\n                    v_tangentMat = mat3(a_tangent, binormal, a_normal);\r\n                    \r\n                    vec4 localLightDir = inverse(u_modelMat) * vec4(normalize(u_lightWorldPos - v_worldPos), 0);\r\n                    v_lightDir = inverse(v_tangentMat) * localLightDir.xyz;\r\n                    \r\n                    vec4 localViewDir = inverse(u_modelMat) * vec4(normalize(u_viewWorldPos - v_worldPos), 0);\r\n                    v_viewDir = inverse(v_tangentMat) * localViewDir.xyz;\r\n                    \r\n                    mat4 mvp = u_projectMat * inverse(u_viewMat) * u_modelMat;\r\n                    gl_Position = mvp * vec4(a_vertex, 1.);\r\n                }\r\n                ";
+		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n                in vec2 a_texcoord;\r\n                in vec3 a_normal;\r\n                in vec3 a_tangent;\r\n                \r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n                uniform vec3 u_lightWorldPos;\r\n                uniform vec3 u_viewWorldPos;\r\n\r\n                out vec3 v_worldNormal;\r\n                out vec3 v_worldPos;\r\n                out vec3 v_worldTangent;\r\n                out vec3 v_worldBinormal;\r\n                out vec2 v_uv;\r\n                out vec3 v_tangent;\r\n                out mat3 v_tangentMat;\r\n                out vec3 v_lightDir;\r\n                out vec3 v_viewDir;\r\n\r\n                uniform mat4 u_lightViewMat;\r\n                uniform mat4 u_lightProjectMat;\r\n                out vec4 v_projectedTexcoord;\r\n                \r\n                void main(){\r\n                    mat4 fixScaleMatrix = transpose(inverse(u_modelMat));\r\n                    v_worldNormal = normalize((fixScaleMatrix * vec4(a_normal, 0)).xyz);\r\n                    v_worldPos = (u_modelMat * vec4(a_vertex, 1)).xyz;\r\n                    v_worldTangent = normalize((fixScaleMatrix * vec4(a_tangent, 0)).xyz);\r\n                    v_worldBinormal = normalize(cross(v_worldNormal, v_worldTangent));\r\n                    \r\n                    v_uv = a_texcoord;\r\n\r\n                    // 把物件的點坐標轉換成燈光的局部坐標，拿來檢查是否產生陰影\r\n                    mat4 lightMvp = u_lightProjectMat * inverse(u_lightViewMat) * u_modelMat;\r\n                    v_projectedTexcoord = lightMvp * vec4(a_vertex, 1.);\r\n                    \r\n                    vec3 binormal = cross(normalize(a_normal), normalize(a_tangent));\r\n                    v_tangentMat = mat3(a_tangent, binormal, a_normal);\r\n                    \r\n                    vec4 localLightDir = inverse(u_modelMat) * vec4(normalize(u_lightWorldPos - v_worldPos), 0);\r\n                    v_lightDir = inverse(v_tangentMat) * localLightDir.xyz;\r\n                    \r\n                    vec4 localViewDir = inverse(u_modelMat) * vec4(normalize(u_viewWorldPos - v_worldPos), 0);\r\n                    v_viewDir = inverse(v_tangentMat) * localViewDir.xyz;\r\n                    \r\n                    mat4 mvp = u_projectMat * inverse(u_viewMat) * u_modelMat;\r\n                    gl_Position = mvp * vec4(a_vertex, 1.);\r\n                }\r\n                ";
 		return s;
 	}
 	,getFS: function() {
-		var s = "#version 300 es\r\n                precision highp float;\r\n                \r\n                in vec3 v_worldNormal;\r\n                in vec3 v_worldPos;\r\n                in vec3 v_worldTangent;\r\n                in vec3 v_worldBinormal;\r\n                in vec2 v_uv;\r\n                in vec3 v_lightDir;\r\n                in vec3 v_viewDir;\r\n                \r\n                uniform vec3 u_lightColor;\r\n                uniform vec3 u_lightWorldPos;\r\n                uniform vec3 u_viewWorldPos;\r\n                uniform vec3 u_diffuseColor;\r\n                uniform vec3 u_specularColor;\r\n                uniform float u_gloss;\r\n                uniform float u_bump;\r\n                uniform sampler2D u_image0;\r\n                uniform sampler2D u_image1;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    \r\n                    vec3 worldLightDir = normalize( u_lightWorldPos - v_worldPos);\r\n                    vec3 worldViewDir = normalize( u_viewWorldPos - v_worldPos);\r\n                    vec3 tangentNormal = texture( u_image1, v_uv ).rgb;\r\n                    tangentNormal.rg *= 2.0;\r\n                    tangentNormal.rg -= 1.0;\r\n                    tangentNormal.b = sqrt( 1.0 - clamp( dot( tangentNormal.xy, tangentNormal.xy ), 0., 1.));\r\n                    tangentNormal.xy *= u_bump;\r\n                    vec3 worldNormal = mat3(v_worldTangent, v_worldBinormal, v_worldNormal ) * tangentNormal;\r\n                    worldNormal = normalize(worldNormal);\r\n                    \r\n                    vec3 albedo = texture( u_image0, v_uv ).rgb * u_diffuseColor;\r\n                    vec3 ambient = vec3(.2) * albedo;\r\n                    vec3 diffuse = u_lightColor * albedo * max(0., dot(worldNormal, worldLightDir));\r\n                    vec3 halfDir = normalize( worldLightDir + worldViewDir );\r\n                    vec3 specualr = u_lightColor * u_specularColor * pow(max(0., dot(worldNormal, halfDir)), u_gloss);\r\n                    outColor = vec4(ambient + diffuse + specualr,1);\r\n                }\r\n                ";
+		var s = "#version 300 es\r\n                precision highp float;\r\n                \r\n                in vec3 v_worldNormal;\r\n                in vec3 v_worldPos;\r\n                in vec3 v_worldTangent;\r\n                in vec3 v_worldBinormal;\r\n                in vec2 v_uv;\r\n                in vec3 v_lightDir;\r\n                in vec3 v_viewDir;\r\n\r\n                in vec4 v_projectedTexcoord;\r\n                \r\n                uniform vec3 u_lightColor;\r\n                uniform vec3 u_lightWorldPos;\r\n                uniform vec3 u_lightWorldDirection;\r\n                uniform float u_lightInner;\r\n                uniform float u_lightOuter;\r\n                \r\n                uniform vec3 u_viewWorldPos;\r\n                uniform vec3 u_diffuseColor;\r\n                uniform vec3 u_specularColor;\r\n                uniform float u_gloss;\r\n                uniform float u_bump;\r\n                uniform sampler2D u_diffuseMap;\r\n                uniform sampler2D u_normalMap;\r\n                uniform sampler2D u_depthMap;\r\n                \r\n                out vec4 outColor;\r\n\r\n                float getShadowLight(vec3 projectUv){\r\n                    vec3 projectedDepth = texture(u_depthMap, projectUv.xy).rgb;\r\n                    bool inRange = \r\n                        projectUv.x >= .0 && \r\n                        projectUv.x <= 1.0 &&\r\n                        projectUv.y >= .0 &&\r\n                        projectUv.y <= 1.0;\r\n                    float shadowLight = (inRange && projectedDepth.r <= projectUv.z) ? 0.0 : 1.0;\r\n                    return shadowLight;\r\n                }\r\n\r\n                void main() {\r\n                    \r\n                    vec3 worldLightDir = normalize( u_lightWorldPos - v_worldPos);\r\n                    vec3 worldViewDir = normalize( u_viewWorldPos - v_worldPos);\r\n                    vec3 tangentNormal = texture( u_normalMap, v_uv ).rgb;\r\n                    tangentNormal.rg *= 2.0;\r\n                    tangentNormal.rg -= 1.0;\r\n                    tangentNormal.b = sqrt( 1.0 - clamp( dot( tangentNormal.xy, tangentNormal.xy ), 0., 1.));\r\n                    tangentNormal.xy *= u_bump;\r\n                    vec3 worldNormal = mat3(v_worldTangent, v_worldBinormal, v_worldNormal ) * tangentNormal;\r\n                    worldNormal = normalize(worldNormal);\r\n                    \r\n                    float dotFromDirection = dot(worldLightDir, -normalize(u_lightWorldDirection));\r\n                    float limitRange = u_lightOuter - u_lightInner;\r\n                    float inLight = smoothstep(u_lightInner, u_lightOuter, dotFromDirection);\r\n                    float light = inLight * max(0., dot(worldNormal, worldLightDir));\r\n                    vec3 albedo = texture( u_diffuseMap, v_uv ).rgb * u_diffuseColor;\r\n                    vec3 ambient = vec3(.0) * albedo;\r\n                    vec3 diffuse = u_lightColor * albedo * light;\r\n                    vec3 halfDir = normalize( worldLightDir + worldViewDir );\r\n                    vec3 specualr = u_lightColor * u_specularColor * pow(max(0., dot(worldNormal, halfDir)), u_gloss);\r\n                    vec3 col = ambient + diffuse + specualr;\r\n\r\n                    vec3 projectUv = v_projectedTexcoord.xyz; // 此時拿到的投影坐標還不是-1~1\r\n                    projectUv /= v_projectedTexcoord.w; // 把各分量除以w之後才會得到-1~1\r\n                    projectUv *= .5; // 轉換為-0.5~0.5\r\n                    projectUv += .5; // 轉換為0~1\r\n                    projectUv.z += -0.005; // 做一點偏離，解決阴影痤疮（shadow acne）\r\n                    \r\n                    // 假的pcss\r\n                    // float radius = smoothstep(.91, .93, projectUv.z) * 1.0 / 512.0;\r\n                    float radius = 1.0 / 512.0;\r\n\r\n                    // 軟陰影計算PCF\r\n                    float factor = 0.0;\r\n                    int calcuCount = 0;\r\n                    for (int y = -3; y <= 3; y++ ){\r\n                        for( int x = -3; x <= 3; x++){\r\n                            vec3 offsets = vec3(float(x) * radius, float(y) * radius, 0.0);\r\n                            vec3 uvc = projectUv + offsets;\r\n\r\n                            // 得到燈光投影的深度圖，用以上得出的uv坐標\r\n                            factor += getShadowLight(uvc);\r\n                            calcuCount += 1;\r\n                        }\r\n                    }\r\n                    factor /= float(calcuCount);\r\n                    outColor = vec4(vec3(factor * col), 1.0);\r\n\r\n\r\n                    // outColor = vec4(vec3(smoothstep(.91, .93, projectUv.z)), 1.0);\r\n                }\r\n                ";
 		return s;
 	}
 	,getUniformList: function() {
-		return ["u_modelMat","u_viewMat","u_projectMat","u_viewWorldPos","u_lightWorldPos","u_lightColor","u_diffuseColor","u_specularColor","u_gloss","u_bump","u_image0","u_image1"];
+		return ["u_modelMat","u_viewMat","u_projectMat","u_viewWorldPos","u_lightViewMat","u_lightProjectMat","u_lightWorldPos","u_lightWorldDirection","u_lightOuter","u_lightInner","u_lightColor","u_diffuseColor","u_specularColor","u_gloss","u_bump","u_diffuseMap","u_normalMap","u_depthMap"];
 	}
 	,__class__: libs_webgl_material_shader_BasicShader
 });
@@ -1412,6 +1922,120 @@ libs_webgl_material_shader_ColorShader.prototype = $extend(libs_webgl_material_s
 		return ["u_modelMat","u_viewMat","u_projectMat","u_viewWorldPos","u_lightWorldPos","u_lightColor","u_diffuseColor","u_specColor","u_specColor","u_gloss"];
 	}
 	,__class__: libs_webgl_material_shader_ColorShader
+});
+var libs_webgl_material_shader_CubeMapShader = function() {
+	libs_webgl_material_shader_Shader.call(this);
+};
+libs_webgl_material_shader_CubeMapShader.__name__ = true;
+libs_webgl_material_shader_CubeMapShader.__super__ = libs_webgl_material_shader_Shader;
+libs_webgl_material_shader_CubeMapShader.prototype = $extend(libs_webgl_material_shader_Shader.prototype,{
+	getVS: function() {
+		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n                in vec2 a_texcoord;\r\n\r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n\r\n                out vec3 v_normal;\r\n                \r\n                void main(){\r\n                    mat4 mvp = u_projectMat * inverse(u_viewMat) * u_modelMat;\r\n                    gl_Position = mvp * vec4(a_vertex, 1.);\r\n\r\n                    v_normal = normalize(a_vertex);\r\n                }\r\n                ";
+		return s;
+	}
+	,getFS: function() {
+		var s = "#version 300 es\r\n                precision highp float;\r\n                \r\n                in vec3 v_normal;\r\n\r\n                uniform samplerCube u_texture;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    outColor = texture(u_texture, normalize(v_normal));\r\n                }\r\n                ";
+		return s;
+	}
+	,getUniformList: function() {
+		return ["u_modelMat","u_viewMat","u_projectMat","u_texture"];
+	}
+	,__class__: libs_webgl_material_shader_CubeMapShader
+});
+var libs_webgl_material_shader_EnviromentMapShader = function() {
+	libs_webgl_material_shader_Shader.call(this);
+};
+libs_webgl_material_shader_EnviromentMapShader.__name__ = true;
+libs_webgl_material_shader_EnviromentMapShader.__super__ = libs_webgl_material_shader_Shader;
+libs_webgl_material_shader_EnviromentMapShader.prototype = $extend(libs_webgl_material_shader_Shader.prototype,{
+	getVS: function() {
+		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n                in vec2 a_texcoord;\r\n                in vec3 a_normal;\r\n\r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n\r\n                out vec3 v_worldVertex;\r\n                out vec3 v_worldNormal;\r\n                \r\n                void main(){\r\n                    mat4 mvp = u_projectMat * inverse(u_viewMat) * u_modelMat;\r\n                    gl_Position = mvp * vec4(a_vertex, 1.);\r\n\r\n                    v_worldVertex = (u_modelMat * vec4(a_vertex, 1.)).xyz;\r\n                    v_worldNormal = mat3(u_modelMat) * a_normal;\r\n                }\r\n                ";
+		return s;
+	}
+	,getFS: function() {
+		var s = "#version 300 es\r\n                precision highp float;\r\n                \r\n                in vec3 v_worldVertex;\r\n                in vec3 v_worldNormal;\r\n\r\n                uniform samplerCube u_texture;\r\n                uniform vec3 u_viewWorldPos;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    vec3 worldNormal = normalize(v_worldNormal);\r\n                    vec3 eyeToSurfaceDir = normalize(v_worldVertex - u_viewWorldPos);\r\n                    vec3 direction = reflect(eyeToSurfaceDir,worldNormal);\r\n                    outColor = texture(u_texture, normalize(direction));\r\n                    // outColor = vec4(direction, 1.0);\r\n                }\r\n                ";
+		return s;
+	}
+	,getUniformList: function() {
+		return ["u_modelMat","u_viewMat","u_projectMat","u_texture","u_viewWorldPos"];
+	}
+	,__class__: libs_webgl_material_shader_EnviromentMapShader
+});
+var libs_webgl_material_shader_OnlyTextureShader = function() {
+	libs_webgl_material_shader_Shader.call(this);
+};
+libs_webgl_material_shader_OnlyTextureShader.__name__ = true;
+libs_webgl_material_shader_OnlyTextureShader.__super__ = libs_webgl_material_shader_Shader;
+libs_webgl_material_shader_OnlyTextureShader.prototype = $extend(libs_webgl_material_shader_Shader.prototype,{
+	getVS: function() {
+		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n                in vec2 a_texcoord;\r\n                \r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n\r\n                out vec2 v_uv;\r\n                \r\n                void main(){\r\n                    mat4 mvp = u_projectMat * inverse(u_viewMat) * u_modelMat;\r\n                    gl_Position = mvp * vec4(a_vertex, 1.);\r\n\r\n                    v_uv = a_texcoord;\r\n                }\r\n                ";
+		return s;
+	}
+	,getFS: function() {
+		var s = "#version 300 es\r\n                precision highp float;\r\n\r\n                in vec2 v_uv;\r\n\r\n                uniform sampler2D u_texture;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    outColor = vec4( texture(u_texture, v_uv).rrr, 1.);\r\n                }\r\n                ";
+		return s;
+	}
+	,getUniformList: function() {
+		return ["u_modelMat","u_viewMat","u_projectMat","u_texture"];
+	}
+	,__class__: libs_webgl_material_shader_OnlyTextureShader
+});
+var libs_webgl_material_shader_OutlineShader = function() {
+	libs_webgl_material_shader_Shader.call(this);
+};
+libs_webgl_material_shader_OutlineShader.__name__ = true;
+libs_webgl_material_shader_OutlineShader.__super__ = libs_webgl_material_shader_Shader;
+libs_webgl_material_shader_OutlineShader.prototype = $extend(libs_webgl_material_shader_Shader.prototype,{
+	getVS: function() {
+		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n                in vec2 a_texcoord;\r\n                in vec3 a_normal;\r\n                in vec3 a_tangent;\r\n                \r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n\r\n                uniform float u_thickness;\r\n                \r\n                void main(){\r\n                    vec3 extend = a_vertex + normalize(a_vertex) * u_thickness;\r\n                    mat4 mvp = u_projectMat * inverse(u_viewMat) * u_modelMat;\r\n                    gl_Position = mvp * vec4(extend, 1.);\r\n                }\r\n                ";
+		return s;
+	}
+	,getFS: function() {
+		var s = "#version 300 es\r\n                precision highp float;\r\n                uniform vec3 u_color;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    outColor = vec4( u_color, 1);\r\n                }\r\n                ";
+		return s;
+	}
+	,getUniformList: function() {
+		return ["u_modelMat","u_viewMat","u_projectMat","u_color","u_thickness"];
+	}
+	,__class__: libs_webgl_material_shader_OutlineShader
+});
+var libs_webgl_material_shader_SkyboxShader = function() {
+	libs_webgl_material_shader_Shader.call(this);
+};
+libs_webgl_material_shader_SkyboxShader.__name__ = true;
+libs_webgl_material_shader_SkyboxShader.__super__ = libs_webgl_material_shader_Shader;
+libs_webgl_material_shader_SkyboxShader.prototype = $extend(libs_webgl_material_shader_Shader.prototype,{
+	getVS: function() {
+		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n\r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n\r\n                out vec3 v_vertex;\r\n                out mat4 v_mat;\r\n                \r\n                void main(){\r\n                    v_vertex = a_vertex;\r\n                    gl_Position = vec4(a_vertex.xy, -.9, 1.);\r\n\r\n                    // 環境貼圖不需要平移，所以這裏把攝像機的坐標設爲0\r\n                    mat4 ignoreTransformViewMat = u_viewMat;\r\n                    ignoreTransformViewMat[3][0] = 0.0;\r\n                    ignoreTransformViewMat[3][1] = 0.0;\r\n                    ignoreTransformViewMat[3][2] = 0.0;\r\n\r\n                    // 把投影空間坐標xyz為-1~1轉換囘3d坐標的矩陣\r\n                    v_mat = ignoreTransformViewMat * inverse(u_projectMat);\r\n                }\r\n                ";
+		return s;
+	}
+	,getFS: function() {
+		var s = "#version 300 es\r\n                precision highp float;\r\n                \r\n                in vec3 v_vertex;\r\n                in mat4 v_mat;\r\n\r\n                uniform samplerCube u_texture;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n\r\n                    vec4 t = v_mat * vec4(v_vertex, 1.0);\r\n                    outColor = texture(u_texture, normalize(t.xyz / t.w));\r\n                }\r\n                ";
+		return s;
+	}
+	,getUniformList: function() {
+		return ["u_modelMat","u_viewMat","u_projectMat","u_texture"];
+	}
+	,__class__: libs_webgl_material_shader_SkyboxShader
+});
+var libs_webgl_material_shader_SolidColorShader = function() {
+	libs_webgl_material_shader_Shader.call(this);
+};
+libs_webgl_material_shader_SolidColorShader.__name__ = true;
+libs_webgl_material_shader_SolidColorShader.__super__ = libs_webgl_material_shader_Shader;
+libs_webgl_material_shader_SolidColorShader.prototype = $extend(libs_webgl_material_shader_Shader.prototype,{
+	getVS: function() {
+		var s = "#version 300 es\r\n        \r\n                in vec3 a_vertex;\r\n                in vec2 a_texcoord;\r\n                \r\n                uniform mat4 u_modelMat;\r\n                uniform mat4 u_viewMat;\r\n                uniform mat4 u_projectMat;\r\n                \r\n                void main(){\r\n                    mat4 mvp = u_projectMat * inverse(u_viewMat) * u_modelMat;\r\n                    gl_Position = mvp * vec4(a_vertex, 1.);\r\n                }\r\n                ";
+		return s;
+	}
+	,getFS: function() {
+		var s = "#version 300 es\r\n                precision highp float;\r\n                uniform vec3 u_color;\r\n                \r\n                out vec4 outColor;\r\n                void main() {\r\n                    outColor = vec4( u_color, 1);\r\n                }\r\n                ";
+		return s;
+	}
+	,getUniformList: function() {
+		return ["u_modelMat","u_viewMat","u_projectMat","u_color"];
+	}
+	,__class__: libs_webgl_material_shader_SolidColorShader
 });
 var libs_webgl_mesh_Mesh = function() {
 	this.bitangents = [];
@@ -1445,23 +2069,25 @@ libs_webgl_mesh_Mesh.prototype = {
 			var stride = info[4];
 			var offset = info[5];
 			gl.vertexAttribPointer(attriLocation,size,type,normalize,stride,offset);
+			gl.bindBuffer(gl.ARRAY_BUFFER,null);
 		}
+		gl.bindVertexArray(null);
 	}
 	,getBindingInfo: function() {
 		var gl = libs_webgl_Engine.inst().gl;
 		return [["a_vertex",3,gl.FLOAT,false,0,0,new Float32Array(this.getGLVertices())],["a_texcoord",2,gl.FLOAT,false,0,0,new Float32Array(this.getTexCoords())],["a_normal",3,gl.FLOAT,false,0,0,new Float32Array(this.getNormals())],["a_tangent",3,gl.FLOAT,false,0,0,new Float32Array(this.getTangents())],["a_bitangent",3,gl.FLOAT,false,0,0,new Float32Array(this.getBITangents())]];
 	}
 	,getVertices: function() {
-		throw haxe_Exception.thrown("plz override this function!");
+		throw haxe_Exception.thrown("plz override getVertices!");
 	}
 	,getIndices: function() {
-		throw haxe_Exception.thrown("plz override this function!");
+		throw haxe_Exception.thrown("plz override getIndices!");
 	}
 	,getTexCoords: function() {
-		throw haxe_Exception.thrown("plz override this function!");
+		throw haxe_Exception.thrown("plz override getTexCoords!");
 	}
 	,getNormals: function() {
-		throw haxe_Exception.thrown("plz override this function!");
+		throw haxe_Exception.thrown("plz override getNormals!");
 	}
 	,getTangents: function() {
 		return this.tangents;
@@ -1586,6 +2212,50 @@ libs_webgl_mesh_ObjMesh.prototype = $extend(libs_webgl_mesh_Mesh.prototype,{
 		return this.obj.position;
 	}
 	,__class__: libs_webgl_mesh_ObjMesh
+});
+var libs_webgl_mesh_PlaneMesh = function() {
+	libs_webgl_mesh_Mesh.call(this);
+};
+libs_webgl_mesh_PlaneMesh.__name__ = true;
+libs_webgl_mesh_PlaneMesh.__super__ = libs_webgl_mesh_Mesh;
+libs_webgl_mesh_PlaneMesh.prototype = $extend(libs_webgl_mesh_Mesh.prototype,{
+	getVertices: function() {
+		return [0.5,0,0.5,0.5,0,-0.5,-0.5,0,-0.5,-0.5,0,0.5];
+	}
+	,getIndices: function() {
+		return [0,1,3,1,2,3];
+	}
+	,getTexCoords: function() {
+		return [1,0,1,1,0,0,1,1,0,1,0,0];
+	}
+	,getNormals: function() {
+		return [0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0];
+	}
+	,__class__: libs_webgl_mesh_PlaneMesh
+});
+var libs_webgl_mesh_QuadMesh = function() {
+	libs_webgl_mesh_Mesh.call(this);
+};
+libs_webgl_mesh_QuadMesh.__name__ = true;
+libs_webgl_mesh_QuadMesh.__super__ = libs_webgl_mesh_Mesh;
+libs_webgl_mesh_QuadMesh.prototype = $extend(libs_webgl_mesh_Mesh.prototype,{
+	getVertices: function() {
+		return [-1,-1,1,-1,-1,1,-1,1,1,-1,1,1];
+	}
+	,getBindingInfo: function() {
+		var gl = libs_webgl_Engine.inst().gl;
+		return [["a_vertex",2,gl.FLOAT,false,0,0,new Float32Array(this.getVertices())]];
+	}
+	,getCount: function() {
+		return this.getVertices().length;
+	}
+	,getIndices: function() {
+		return [];
+	}
+	,getTexCoords: function() {
+		return [];
+	}
+	,__class__: libs_webgl_mesh_QuadMesh
 });
 var mme_math_glmatrix_GLMatrix = function() { };
 mme_math_glmatrix_GLMatrix.__name__ = true;

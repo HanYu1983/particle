@@ -8,14 +8,18 @@ class MeshRenderComponent extends Component{
     public var mesh:Mesh;
     public var material(default, default):Null<Material>;
 
-    public function new(mesh:Mesh) {
+    public function new(?mesh:Mesh) {
         super();
         this.mesh = mesh;
     }
 
-    // function set_material(material:Material):Null<Material> {
-    //     this.material = material;
-    //     // material.pushNode(owner);
-    //     return this.material;
+    // public function set_material(material:Material) {
+    //     return material;
+
+    //     if(this.material != null){
+    //         this.material.removeNode(owner);
+    //     }
+    //     material.pushNode(owner);
+    //     return material;
     // }
 }

@@ -1,5 +1,6 @@
 package libs.webgl.material;
 
+import libs.webgl.material.shader.OutlineShader;
 import libs.webgl.component.MeshRenderComponent;
 import libs.webgl.actor.Actor;
 import haxe.Constraints.Function;
@@ -12,22 +13,32 @@ class Material{
     public var nodes:Array<Actor> = [];
     public var shader(default, default):Shader;
     public var name:String = "";
+    public var autoAssignToMeshRender:Bool = true;
 
     public function new(shader:Shader) {
         this.shader = shader;
     }
-    public function pushTextures(t) {
-        textures.push(t);
+    public function pushTexture(name:String, t:Dynamic, type:Dynamic ) {
+        textures.push([name, t, type]);
     }
-    public function pushUniform(glMethod:String, location:Dynamic, value:Dynamic) {
-        uniforms.push([glMethod, location, value]);
+    public function pushUniform(location:Dynamic, value:Dynamic) {
+        uniforms.push([location, value]);
+    }
+
+    public function clearNodes() {
+        while(nodes.length > 0){
+            nodes.remove(nodes[0]);
+        }
     }
 
     public function pushNode(node:Actor){
         if(node.getComponent(MeshRenderComponent) != null){
             if(nodes.indexOf(node) == -1){
                 nodes.push(node);
-                node.getComponent(MeshRenderComponent).material = this;
+
+                if(autoAssignToMeshRender){
+                    node.getComponent(MeshRenderComponent).material = this;
+                }
             }
         }
     }
@@ -40,19 +51,25 @@ class Material{
 
     public function glSetTextureAndUniform() {
         var gl = Engine.inst().gl;
+
         for (index => value in textures) {
-            var location = Reflect.field(shader.uniformKey, 'u_image' + index);
+            var locationKey = value[0];
+            var texture = value[1];
+            var type = value[2];
+            var location = Reflect.field(shader.uniformKey, locationKey);
             gl.uniform1i(location, index);
             gl.activeTexture(gl.TEXTURE0 + index);
-            gl.bindTexture(gl.TEXTURE_2D, textures[index]);
+            gl.bindTexture(type, texture);
         }
         
         for (index => item in uniforms) {
-            var glMethod:String = item[0];
-            var location = Reflect.field(shader.uniformKey, item[1]);
-            var value:Dynamic = item[2];
-            var method:Function = Reflect.field(gl, glMethod);
-            Reflect.callMethod(gl, method, [location, value]);
+            var location = Reflect.field(shader.uniformKey, item[0]);
+            var value:Dynamic = item[1];
+            if(Type.getClass(value) == Array){
+                gl.uniform3fv(location, value);
+            }else{
+                gl.uniform1f(location, value);
+            }
         }
     }
 }

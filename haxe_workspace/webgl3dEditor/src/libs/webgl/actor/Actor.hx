@@ -10,8 +10,8 @@ class Actor{
     public var transform(default, null):TransformComponent = new TransformComponent();
     public var name:String;
     
-    public function new() {
-        
+    public function new(name:String) {
+        this.name = name;
     }
 
     public function addComponent(component:Component) {
