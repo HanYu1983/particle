@@ -6,17 +6,20 @@ import libs.webgl.actor.Actor;
 import haxe.Constraints.Function;
 import libs.webgl.material.shader.Shader;
 
-class Material{
+class Material extends AObject{
 
     public var textures:Array<Dynamic> = [];
     public var uniforms:Array<Dynamic> = [];
     public var nodes:Array<Actor> = [];
     public var shader(default, default):Shader;
-    public var name:String = "";
     public var autoAssignToMeshRender:Bool = true;
 
-    public function new(shader:Shader) {
+    public function new(shader:Shader, name:Null<String> = null) {
+        super(name);
         this.shader = shader;
+    }
+    public function clearTextures() {
+        textures = [];
     }
     public function pushTexture(name:String, t:Dynamic, type:Dynamic ) {
         textures.push([name, t, type]);

@@ -1,4 +1,6 @@
 
+
+import js.html.TableColElement;
 import libs.webgl.mesh.QuadMesh;
 import libs.webgl.material.shader.SkyboxShader;
 import libs.webgl.component.LookAtComponent;
@@ -25,6 +27,7 @@ import libs.webgl.actor.Actor;
 import libs.webgl.component.MeshRenderComponent;
 import libs.webgl.material.Material;
 import libs.webgl.Engine;
+import libs.webgl.TextureTool;
 import js.Syntax;
 import libs.webgl.mesh.CubeMesh;
 import libs.webgl.material.shader.ColorShader;
@@ -44,11 +47,31 @@ class Main{
 
         Syntax.code('$(window)').on('onAssetsLoaded', function(evt:Dynamic, assets:Dynamic){
            
-            engine.init(assets.gl);
-            engine.addTextures(assets.images);
+			engine.gl = assets.gl;
+
+			var gl:Dynamic = assets.gl;
+
+			var images:Array<String> = assets.images;
+			for (index => image in images) {
+				var t = TextureTool.createTexture(gl, image);
+				engine.pushTexture2D(t);
+			}
+
             engine.addObjMeshs(assets.objs);
-			generateCubeMap(engine);
-			generateCubeMap2(engine);
+
+			var t = TextureTool.createCubeMap(gl);
+			engine.pushCubeTexture(t);
+			
+			t = TextureTool.createCubeMapByURL(gl, 512, 512,
+				'images/enviroment/001/pos-x.jpg',
+				'images/enviroment/001/neg-x.jpg',
+				'images/enviroment/001/pos-y.jpg',
+				'images/enviroment/001/neg-y.jpg',
+				'images/enviroment/001/pos-z.jpg',
+				'images/enviroment/001/neg-z.jpg');
+			engine.pushCubeTexture(t);
+
+			engine.init();
             startApplication(engine);
         });
     }
@@ -64,124 +87,6 @@ class Main{
 		var changeTo = (Std.int(r * 255) << 16) + (Std.int(g*255) << 8) + Std.int(b * 255);
 		var colorStr = '#' + StringTools.hex(changeTo, 6);
 		return colorStr;
-	}
-
-	function generateFace(ctx, faceColor, textColor, text) {
-		// var {width, height} = ctx.canvas;
-		var width = ctx.canvas.width;
-		var height = ctx.canvas.height;
-		ctx.fillStyle = faceColor;
-		ctx.fillRect(0, 0, width, height);
-		ctx.font = '{' + width * 0.7 + '}px sans-serif';
-		ctx.textAlign = 'center';
-		ctx.textBaseline = 'middle';
-		ctx.fillStyle = textColor;
-		ctx.fillText(text, width / 2, height / 2);
-	}
-
-	function generateCubeMap2(engine) {
-		var gl:Dynamic = engine.gl;
-
-		// Create a texture.
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-	   
-		var faceInfos:Array<Dynamic> = [
-			{
-				target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-				url: 'images/enviroment/001/pos-x.jpg',
-			},
-			{
-				target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-				url: 'images/enviroment/001/neg-x.jpg',
-			},
-			{
-				target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-				url: 'images/enviroment/001/pos-y.jpg',
-			},
-			{
-				target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-				url: 'images/enviroment/001/neg-y.jpg',
-			},
-			{
-				target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-				url: 'images/enviroment/001/pos-z.jpg',
-			},
-			{
-				target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
-				url: 'images/enviroment/001/neg-z.jpg',
-			},
-		];
-		for (index => faceInfo in faceInfos) {
-			
-			var target = faceInfo.target;
-			var url = faceInfo.url;
-			// Upload the canvas to the cubemap face.
-			var level = 0;
-			var internalFormat = gl.RGBA;
-			var width = 512;
-			var height = 512;
-			var format = gl.RGBA;
-			var type = gl.UNSIGNED_BYTE;
-		
-			// setup each face so it's immediately renderable
-			gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
-		
-			// Asynchronously load an image
-			var image:Dynamic = Syntax.code('new Image()');
-			image.src = url;
-			image.addEventListener('load', function() {
-				// Now that the image has loaded make copy it to the texture.
-				gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-				gl.texImage2D(target, level, internalFormat, format, type, image);
-				gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-			});
-		}
-		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
-		engine.cubeTextures.push(texture);
-	}
-
-	function generateCubeMap(engine:Engine){
-		var gl:Dynamic = engine.gl;
-		var ctx:Dynamic = Syntax.code('document.createElement("canvas").getContext("2d")');
-
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-
-		ctx.canvas.width = 128;
-		ctx.canvas.height = 128;
-
-		var faceInfos = [
-			{ target:gl.TEXTURE_CUBE_MAP_POSITIVE_X, faceColor: '#F00', textColor: '#0FF', text: '+X' },
-			{ target:gl.TEXTURE_CUBE_MAP_NEGATIVE_X,faceColor: '#FF0', textColor: '#00F', text: '-X' },
-			{ target:gl.TEXTURE_CUBE_MAP_POSITIVE_Y,faceColor: '#0F0', textColor: '#F0F', text: '+Y' },
-			{ target:gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,faceColor: '#0FF', textColor: '#F00', text: '-Y' },
-			{ target:gl.TEXTURE_CUBE_MAP_POSITIVE_Z,faceColor: '#00F', textColor: '#FF0', text: '+Z' },
-			{ target:gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,faceColor: '#F0F', textColor: '#0F0', text: '-Z' },
-		];
-		for (index => faceInfo in faceInfos) {
-			var target = faceInfo.target;
-			var faceColor = faceInfo.faceColor;
-			var textColor = faceInfo.textColor;
-			var text = faceInfo.text;
-			generateFace(ctx, faceColor, textColor, text);
-
-			gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ctx.canvas);
-			
-			ctx.canvas.toBlob(function(blob){
-				var img:Dynamic = Syntax.code('new Image();');
-				img.src = Syntax.code('URL.createObjectURL')(blob);
-				Browser.window.document.body.appendChild(img);
-			});
-		}
-		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
-
-		engine.cubeTextures.push(texture);
 	}
 
     function startApplication(engine:Engine) {
@@ -661,8 +566,8 @@ class Main{
 		});
 
 		function createMaterial(name:String = "", shaderId = 0){
-			var mat = new Material(engine.shaders[shaderId]);
-			mat.name = name == "" ? 'Material_' + Date.now().getTime() : name;
+			var n = name == "" ? 'Material_' + Date.now().getTime() : name;
+			var mat = new Material(engine.shaders[shaderId], n);
 			mat.pushTexture('u_diffuseMap', engine.textures[0], engine.gl.TEXTURE_2D);
 			mat.pushTexture('u_normalMap', engine.textures[1], engine.gl.TEXTURE_2D);
 			mat.pushTexture('u_depthMap', engine.depthTexture, engine.gl.TEXTURE_2D);
@@ -796,18 +701,7 @@ class Main{
 		// 物件設置
 		//==========================
 
-		// createMaterial('DefaultColorMaterial');
-		// createMaterial('DefaultBasicMaterial', 1);
-
-        // var cube:Actor = createNode('Cube', 0, 1);
-		// // cube.transform.position.y = -5;
-		
-
-		// var sphere:Actor = createNode('Sphere', 1, 1);
-		// sphere.transform.position.x = -2;
-		// // sphere.transform.position.y = -5;
-
-		
+		engine.setSkyboxTexture(1);
 
 		var normalMapMaterial = createMaterial('NormalMapMaterial', 1);
 		normalMapMaterial.pushTexture('u_diffuseMap', engine.textures[0], engine.gl.TEXTURE_2D);
@@ -818,7 +712,7 @@ class Main{
 		var cubeMapMateral = createMaterial('CubeMapMaterial', 2);
 		cubeMapMateral.pushTexture('u_texture', engine.cubeTextures[0], engine.gl.TEXTURE_CUBE_MAP);
 
-		var enviromentMapMaterial = createMaterial('enviromentMapMaterial', 3);
+		var enviromentMapMaterial = createMaterial('EnviromentMapMaterial', 3);
 		enviromentMapMaterial.pushTexture('u_texture', engine.cubeTextures[1], engine.gl.TEXTURE_CUBE_MAP);
 
 		var lightTarget:Actor = createNode('DefaultLightTarget', 0, 0);
@@ -829,10 +723,10 @@ class Main{
 		engine.defaultLight.addComponent(lookAtComp);
 
 		var showList:Array<Dynamic> = [
-			['NormalMapActor', 1, 0],
-			['ColorMapActor', 1, 1],
-			['CubeMapActor', 1, 2],
-			['EnviromentMapActor', 0, 3],
+			['ExNormalMap', 1, 0],
+			['ExColorMap', 1, 1],
+			['ExCubeMap', 1, 2],
+			['ExEnviromentMap', 0, 3],
 		];
 
 		for (index => value in showList) {
@@ -843,26 +737,12 @@ class Main{
 			actor.transform.position.x = index * 2.5;
 		}
 
-		var table:Actor = createNode('Table', 0, -1);
+		var table:Actor = createNode('ExTable', 0, -1);
 		normalMapMaterial.pushNode(table);
-		table.transform.position.y = -1;
-		table.transform.scale.x = table.transform.scale.z = 10;
+		table.transform.position.y = -2;
+		table.transform.scale.x = table.transform.scale.z = 20;
 		table.transform.scale.y = .1;
-
-		var skyboxMaterial = new Material(new SkyboxShader());
-		skyboxMaterial.pushTexture('u_texture', engine.cubeTextures[1], engine.gl.TEXTURE_CUBE_MAP);
-
-		var skybox:Actor = new MeshActor('Skybox');
-		skybox.getComponent(MeshRenderComponent).mesh = new QuadMesh();
-		skyboxMaterial.pushNode(skybox);
-
-		// var depth = createNode('Depth', 0, 1);
-		// depth.getComponent(MeshRenderComponent).mesh = new PlaneMesh();
-		// depth.transform.position.x = 1;
-		// depth.transform.position.y = 3;
-		// depth.transform.rotation.x = 90;
-		// depth.transform.parent = defaultCamera.transform;
-
+		
         updateTree();
 		hideAllEntityParameter();
 		hideAllMaterialParameter();
@@ -889,51 +769,7 @@ class Main{
 			engine.defaultLight.transform.position.z = Math.sin(time / 1000) * 10;
 			engine.defaultLight.update();
 
-			// engine.getNodeByName('EnviromentMapActor').transform.rotation.y += .1;
-			
-			//engine.defaultLight.transform.lookAt(lightTarget.transform.position);
-			// trace(engine.defaultLight.transform.rotation.x);
-			
-			var gl = engine.gl;
-
-			// 畫出燈光為視角的深度圖
-			gl.bindFramebuffer(gl.FRAMEBUFFER, engine.depthFramebuffer);
-			gl.viewport(0, 0, 512, 512);
-			gl.clearColor(0, 0, 0, 0);
-			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-			gl.enable(gl.DEPTH_TEST);
-			engine.renderMaterial(engine.solidMaterial, engine.defaultLight);
-			gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	
-
-			gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-			gl.clearColor(0, 0, 0, 0);
-			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-			// skybox
-			gl.disable(gl.DEPTH_TEST);
-			gl.cullFace(gl.BACK);
-			gl.depthFunc(gl.LESS);
-
-			engine.renderMaterial(skyboxMaterial, false);
-
-			// 畫出外框綫
-			gl.enable(gl.DEPTH_TEST);
-			gl.enable(gl.CULL_FACE);
-			gl.cullFace(gl.FRONT);
-			engine.renderMaterial(engine.outlineMaterial);
-
-			// 畫出物件
-			gl.cullFace(gl.BACK);
-			for (index => material in engine.materials) {
-				engine.renderMaterial(material);
-			}
-	
-			engine.renderMaterial(engine.depthMaterial);
-
-			// engine.render(time);
-
-			
+			engine.render(time);
 
             Syntax.code('window').requestAnimationFrame(animate);
 		}

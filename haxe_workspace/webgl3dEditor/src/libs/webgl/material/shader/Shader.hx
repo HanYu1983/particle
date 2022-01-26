@@ -1,13 +1,14 @@
 package libs.webgl.material.shader;
 
-class Shader{
+class Shader extends AObject{
 
     public var program(default, null):Dynamic;
     public var uniformKey(default, null):Dynamic = {};
     var gl:Dynamic;
     
-    public function new() {
-        
+    public function new(name:Null<String> = null) {
+        super(name);
+
         gl = Engine.inst().gl;
         program = gl.createProgram();
         var vertexShader = Shader.createShader(gl, gl.VERTEX_SHADER, getVS());

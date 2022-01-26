@@ -22,11 +22,25 @@ var Main = function() {
 	var _gthis = this;
 	var engine = libs_webgl_Engine.inst();
 	$(window).on("onAssetsLoaded",function(evt,assets) {
-		engine.init(assets.gl);
-		engine.addTextures(assets.images);
+		engine.gl = assets.gl;
+		var gl = assets.gl;
+		var images = assets.images;
+		var _g_current = 0;
+		var _g_array = images;
+		while(_g_current < _g_array.length) {
+			var _g1_value = _g_array[_g_current];
+			var _g1_key = _g_current++;
+			var index = _g1_key;
+			var image = _g1_value;
+			var t = libs_webgl_TextureTool.createTexture(gl,image);
+			engine.pushTexture2D(t);
+		}
 		engine.addObjMeshs(assets.objs);
-		_gthis.generateCubeMap(engine);
-		_gthis.generateCubeMap2(engine);
+		var t = libs_webgl_TextureTool.createCubeMap(gl);
+		engine.pushCubeTexture(t);
+		t = libs_webgl_TextureTool.createCubeMapByURL(gl,512,512,"images/enviroment/001/pos-x.jpg","images/enviroment/001/neg-x.jpg","images/enviroment/001/pos-y.jpg","images/enviroment/001/neg-y.jpg","images/enviroment/001/pos-z.jpg","images/enviroment/001/neg-z.jpg");
+		engine.pushCubeTexture(t);
+		engine.init();
 		_gthis.startApplication(engine);
 	});
 };
@@ -45,85 +59,6 @@ Main.prototype = {
 		var changeTo = ((r * 255 | 0) << 16) + ((g * 255 | 0) << 8) + (b * 255 | 0);
 		var colorStr = "#" + StringTools.hex(changeTo,6);
 		return colorStr;
-	}
-	,generateFace: function(ctx,faceColor,textColor,text) {
-		var width = ctx.canvas.width;
-		var height = ctx.canvas.height;
-		ctx.fillStyle = faceColor;
-		ctx.fillRect(0,0,width,height);
-		ctx.font = "{" + width * 0.7 + "}px sans-serif";
-		ctx.textAlign = "center";
-		ctx.textBaseline = "middle";
-		ctx.fillStyle = textColor;
-		ctx.fillText(text,width / 2,height / 2);
-	}
-	,generateCubeMap2: function(engine) {
-		var gl = engine.gl;
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
-		var faceInfos = [{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_X, url : "images/enviroment/001/pos-x.jpg"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url : "images/enviroment/001/neg-x.jpg"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url : "images/enviroment/001/pos-y.jpg"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url : "images/enviroment/001/neg-y.jpg"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url : "images/enviroment/001/pos-z.jpg"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url : "images/enviroment/001/neg-z.jpg"}];
-		var _g_current = 0;
-		var _g_array = faceInfos;
-		while(_g_current < _g_array.length) {
-			var _g1_value = _g_array[_g_current];
-			var _g1_key = _g_current++;
-			var index = _g1_key;
-			var faceInfo = _g1_value;
-			var target = [faceInfo.target];
-			var url = faceInfo.url;
-			var level = [0];
-			var internalFormat = [gl.RGBA];
-			var width = 512;
-			var height = 512;
-			var format = [gl.RGBA];
-			var type = [gl.UNSIGNED_BYTE];
-			gl.texImage2D(target[0],level[0],internalFormat[0],width,height,0,format[0],type[0],null);
-			var image = [new Image()];
-			image[0].src = url;
-			image[0].addEventListener("load",(function(image,type,format,internalFormat,level,target) {
-				return function() {
-					gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
-					gl.texImage2D(target[0],level[0],internalFormat[0],format[0],type[0],image[0]);
-					gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-				};
-			})(image,type,format,internalFormat,level,target));
-		}
-		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-		gl.texParameteri(gl.TEXTURE_CUBE_MAP,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP,null);
-		engine.cubeTextures.push(texture);
-	}
-	,generateCubeMap: function(engine) {
-		var gl = engine.gl;
-		var ctx = document.createElement("canvas").getContext("2d");
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
-		ctx.canvas.width = 128;
-		ctx.canvas.height = 128;
-		var faceInfos = [{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_X, faceColor : "#F00", textColor : "#0FF", text : "+X"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_X, faceColor : "#FF0", textColor : "#00F", text : "-X"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Y, faceColor : "#0F0", textColor : "#F0F", text : "+Y"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, faceColor : "#0FF", textColor : "#F00", text : "-Y"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Z, faceColor : "#00F", textColor : "#FF0", text : "+Z"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, faceColor : "#F0F", textColor : "#0F0", text : "-Z"}];
-		var _g_current = 0;
-		var _g_array = faceInfos;
-		while(_g_current < _g_array.length) {
-			var _g1_value = _g_array[_g_current];
-			var _g1_key = _g_current++;
-			var index = _g1_key;
-			var faceInfo = _g1_value;
-			var target = faceInfo.target;
-			var faceColor = faceInfo.faceColor;
-			var textColor = faceInfo.textColor;
-			var text = faceInfo.text;
-			this.generateFace(ctx,faceColor,textColor,text);
-			gl.texImage2D(target,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,ctx.canvas);
-			ctx.canvas.toBlob(function(blob) {
-				var img = new Image();
-				img.src = URL.createObjectURL(blob);
-				window.document.body.appendChild(img);
-			});
-		}
-		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-		gl.texParameteri(gl.TEXTURE_CUBE_MAP,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP,null);
-		engine.cubeTextures.push(texture);
 	}
 	,startApplication: function(engine) {
 		var _gthis = this;
@@ -507,8 +442,8 @@ Main.prototype = {
 			if(name == null) {
 				name = "";
 			}
-			var mat = new libs_webgl_material_Material(engine.shaders[shaderId]);
-			mat.name = name == "" ? "Material_" + new Date().getTime() : name;
+			var n = name == "" ? "Material_" + new Date().getTime() : name;
+			var mat = new libs_webgl_material_Material(engine.shaders[shaderId],n);
 			mat.pushTexture("u_diffuseMap",engine.textures[0],engine.gl.TEXTURE_2D);
 			mat.pushTexture("u_normalMap",engine.textures[1],engine.gl.TEXTURE_2D);
 			mat.pushTexture("u_depthMap",engine.depthTexture,engine.gl.TEXTURE_2D);
@@ -667,13 +602,14 @@ Main.prototype = {
 				mme_math_glmatrix_Vec3Tools.zero(rotForce);
 			}
 		});
+		engine.setSkyboxTexture(1);
 		var normalMapMaterial = createMaterial("NormalMapMaterial",1);
 		normalMapMaterial.pushTexture("u_diffuseMap",engine.textures[0],engine.gl.TEXTURE_2D);
 		normalMapMaterial.pushTexture("u_normalMap",engine.textures[1],engine.gl.TEXTURE_2D);
 		var colorMapMaterial = createMaterial("ColorMapMaterial",0);
 		var cubeMapMateral = createMaterial("CubeMapMaterial",2);
 		cubeMapMateral.pushTexture("u_texture",engine.cubeTextures[0],engine.gl.TEXTURE_CUBE_MAP);
-		var enviromentMapMaterial = createMaterial("enviromentMapMaterial",3);
+		var enviromentMapMaterial = createMaterial("EnviromentMapMaterial",3);
 		enviromentMapMaterial.pushTexture("u_texture",engine.cubeTextures[1],engine.gl.TEXTURE_CUBE_MAP);
 		var lightTarget = createNode("DefaultLightTarget",0,0);
 		var y = lightTarget.transform.scale[2] = .1;
@@ -682,7 +618,7 @@ Main.prototype = {
 		var lookAtComp = new libs_webgl_component_LookAtComponent();
 		lookAtComp.target = lightTarget;
 		engine.defaultLight.addComponent(lookAtComp);
-		var showList = [["NormalMapActor",1,0],["ColorMapActor",1,1],["CubeMapActor",1,2],["EnviromentMapActor",0,3]];
+		var showList = [["ExNormalMap",1,0],["ExColorMap",1,1],["ExCubeMap",1,2],["ExEnviromentMap",0,3]];
 		var _g_current = 0;
 		var _g_array = showList;
 		while(_g_current < _g_array.length) {
@@ -696,17 +632,12 @@ Main.prototype = {
 			var actor = createNode(name,meshId,materialId);
 			actor.transform.position[0] = index * 2.5;
 		}
-		var table = createNode("Table",0,-1);
+		var table = createNode("ExTable",0,-1);
 		normalMapMaterial.pushNode(table);
-		table.transform.position[1] = -1;
-		var x = table.transform.scale[2] = 10;
+		table.transform.position[1] = -2;
+		var x = table.transform.scale[2] = 20;
 		table.transform.scale[0] = x;
 		table.transform.scale[1] = .1;
-		var skyboxMaterial = new libs_webgl_material_Material(new libs_webgl_material_shader_SkyboxShader());
-		skyboxMaterial.pushTexture("u_texture",engine.cubeTextures[1],engine.gl.TEXTURE_CUBE_MAP);
-		var skybox = new libs_webgl_actor_MeshActor("Skybox");
-		skybox.getComponent(libs_webgl_component_MeshRenderComponent).mesh = new libs_webgl_mesh_QuadMesh();
-		skyboxMaterial.pushNode(skybox);
 		updateTree();
 		hideAllEntityParameter();
 		hideAllMaterialParameter();
@@ -725,36 +656,7 @@ Main.prototype = {
 			engine.defaultLight.transform.position[1] = 7;
 			engine.defaultLight.transform.position[2] = Math.sin(time / 1000) * 10;
 			engine.defaultLight.update();
-			var gl = engine.gl;
-			gl.bindFramebuffer(gl.FRAMEBUFFER,engine.depthFramebuffer);
-			gl.viewport(0,0,512,512);
-			gl.clearColor(0,0,0,0);
-			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-			gl.enable(gl.DEPTH_TEST);
-			engine.renderMaterial(engine.solidMaterial,engine.defaultLight);
-			gl.bindFramebuffer(gl.FRAMEBUFFER,null);
-			gl.viewport(0,0,gl.canvas.width,gl.canvas.height);
-			gl.clearColor(0,0,0,0);
-			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-			gl.disable(gl.DEPTH_TEST);
-			gl.cullFace(gl.BACK);
-			gl.depthFunc(gl.LESS);
-			engine.renderMaterial(skyboxMaterial,null,false);
-			gl.enable(gl.DEPTH_TEST);
-			gl.enable(gl.CULL_FACE);
-			gl.cullFace(gl.FRONT);
-			engine.renderMaterial(engine.outlineMaterial);
-			gl.cullFace(gl.BACK);
-			var _g_current = 0;
-			var _g_array = engine.materials;
-			while(_g_current < _g_array.length) {
-				var _g1_value = _g_array[_g_current];
-				var _g1_key = _g_current++;
-				var index = _g1_key;
-				var material = _g1_value;
-				engine.renderMaterial(material);
-			}
-			engine.renderMaterial(engine.depthMaterial);
+			engine.render(time);
 			window.requestAnimationFrame(animate);
 		};
 		animate(0);
@@ -1020,6 +922,13 @@ js_Boot.__isNativeObj = function(o) {
 js_Boot.__resolveNativeClass = function(name) {
 	return $global[name];
 };
+var libs_webgl_AObject = function(name) {
+	this.name = name != null ? name : "";
+};
+libs_webgl_AObject.__name__ = true;
+libs_webgl_AObject.prototype = {
+	__class__: libs_webgl_AObject
+};
 var libs_webgl_Engine = function() {
 	this.materials = [];
 	this.objMeshs = [];
@@ -1032,8 +941,7 @@ libs_webgl_Engine.inst = function() {
 	return libs_webgl_Engine._inst;
 };
 libs_webgl_Engine.prototype = {
-	init: function(gl) {
-		this.gl = gl;
+	init: function() {
 		this.shaders.push(new libs_webgl_material_shader_ColorShader());
 		this.shaders.push(new libs_webgl_material_shader_BasicShader());
 		this.shaders.push(new libs_webgl_material_shader_CubeMapShader());
@@ -1052,10 +960,9 @@ libs_webgl_Engine.prototype = {
 		this.solidMaterial.pushUniform("u_color",[1.,1.,1.]);
 		this.solidMaterial.autoAssignToMeshRender = false;
 		this.solidMaterial.pushNode(this.defaultLight);
-		this.createDepthTexture();
 		this.createDepthBuffer();
 		this.depthMaterial = new libs_webgl_material_Material(new libs_webgl_material_shader_OnlyTextureShader());
-		this.depthMaterial.pushTexture("u_texture",this.depthTexture,gl.TEXTURE_2D);
+		this.depthMaterial.pushTexture("u_texture",this.depthTexture,this.gl.TEXTURE_2D);
 		this.depthMaterial.autoAssignToMeshRender = false;
 		var depth = new libs_webgl_actor_MeshActor("DepthPass");
 		depth.getComponent(libs_webgl_component_MeshRenderComponent).mesh = new libs_webgl_mesh_PlaneMesh();
@@ -1064,50 +971,45 @@ libs_webgl_Engine.prototype = {
 		depth.transform.rotation[0] = 90;
 		depth.transform.set_parent(this.defaultCamera.transform);
 		this.depthMaterial.pushNode(depth);
-		gl.bindFramebuffer(gl.FRAMEBUFFER,null);
 	}
-	,createDepthTexture: function() {
-		this.depthTexture = this.gl.createTexture();
-		var depthTextureSize = 512;
-		this.gl.bindTexture(this.gl.TEXTURE_2D,this.depthTexture);
-		this.gl.texImage2D(this.gl.TEXTURE_2D,0,this.gl.DEPTH_COMPONENT32F,depthTextureSize,depthTextureSize,0,this.gl.DEPTH_COMPONENT,this.gl.FLOAT,null);
-		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MAG_FILTER,this.gl.NEAREST);
-		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MIN_FILTER,this.gl.NEAREST);
-		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_WRAP_S,this.gl.CLAMP_TO_EDGE);
-		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_WRAP_T,this.gl.CLAMP_TO_EDGE);
-		this.gl.bindTexture(this.gl.TEXTURE_2D,null);
-		return this.depthTexture;
+	,setSkyboxTexture: function(textureId) {
+		if(this.skyboxMaterial == null) {
+			this.skyboxMaterial = new libs_webgl_material_Material(new libs_webgl_material_shader_SkyboxShader());
+			var skybox = new libs_webgl_actor_MeshActor("Skybox");
+			skybox.getComponent(libs_webgl_component_MeshRenderComponent).mesh = new libs_webgl_mesh_QuadMesh();
+			this.skyboxMaterial.pushNode(skybox);
+		}
+		this.skyboxMaterial.clearTextures();
+		this.skyboxMaterial.pushTexture("u_texture",this.cubeTextures[textureId],this.gl.TEXTURE_CUBE_MAP);
 	}
-	,createDepthBuffer: function() {
-		this.depthFramebuffer = this.gl.createFramebuffer();
-		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,this.depthFramebuffer);
-		this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER,this.gl.DEPTH_ATTACHMENT,this.gl.TEXTURE_2D,this.depthTexture,0);
-	}
-	,addTexture: function(image) {
-		var texture = this.gl.createTexture();
-		this.gl.bindTexture(this.gl.TEXTURE_2D,texture);
-		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_WRAP_S,this.gl.CLAMP_TO_EDGE);
-		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_WRAP_T,this.gl.CLAMP_TO_EDGE);
-		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MIN_FILTER,this.gl.NEAREST);
-		this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MAG_FILTER,this.gl.NEAREST);
-		var mipLevel = 0;
-		var internalFormat = this.gl.RGBA;
-		var srcFormat = this.gl.RGBA;
-		var srcType = this.gl.UNSIGNED_BYTE;
-		this.gl.texImage2D(this.gl.TEXTURE_2D,mipLevel,internalFormat,srcFormat,srcType,image);
-		this.gl.bindTexture(this.gl.TEXTURE_2D,null);
-		this.textures.push(texture);
-	}
-	,addTextures: function(images) {
+	,getShader: function(clz) {
+		var ret = null;
 		var _g_current = 0;
-		var _g_array = images;
+		var _g_array = this.shaders;
 		while(_g_current < _g_array.length) {
 			var _g1_value = _g_array[_g_current];
 			var _g1_key = _g_current++;
 			var index = _g1_key;
 			var value = _g1_value;
-			this.addTexture(value);
+			if(js_Boot.__instanceof(value,clz)) {
+				ret = value;
+				break;
+			}
 		}
+		return ret;
+	}
+	,createDepthBuffer: function() {
+		this.depthTexture = libs_webgl_TextureTool.createDepthTexture(this.gl,512,512);
+		this.depthFramebuffer = this.gl.createFramebuffer();
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,this.depthFramebuffer);
+		this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER,this.gl.DEPTH_ATTACHMENT,this.gl.TEXTURE_2D,this.depthTexture,0);
+		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,null);
+	}
+	,pushCubeTexture: function(t) {
+		this.cubeTextures.push(t);
+	}
+	,pushTexture2D: function(t) {
+		this.textures.push(t);
 	}
 	,addMaterials: function(materials) {
 		this.materials = this.materials.concat(materials);
@@ -1129,10 +1031,7 @@ libs_webgl_Engine.prototype = {
 			this.addObjMesh(value);
 		}
 	}
-	,renderMaterial: function(material,view,debug) {
-		if(debug == null) {
-			debug = false;
-		}
+	,renderMaterial: function(material,view) {
 		var program = material.shader.program;
 		this.gl.useProgram(program);
 		material.glSetTextureAndUniform();
@@ -1166,6 +1065,7 @@ libs_webgl_Engine.prototype = {
 	,render: function(time) {
 		this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,this.depthFramebuffer);
 		this.gl.viewport(0,0,512,512);
+		this.gl.clearColor(0,0,0,0);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 		this.gl.enable(this.gl.DEPTH_TEST);
 		this.renderMaterial(this.solidMaterial,this.defaultLight);
@@ -1173,13 +1073,17 @@ libs_webgl_Engine.prototype = {
 		this.gl.viewport(0,0,this.gl.canvas.width,this.gl.canvas.height);
 		this.gl.clearColor(0,0,0,0);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+		this.gl.depthFunc(this.gl.LESS);
+		if(this.skyboxMaterial != null) {
+			this.gl.disable(this.gl.DEPTH_TEST);
+			this.gl.cullFace(this.gl.BACK);
+			this.renderMaterial(this.skyboxMaterial);
+		}
 		this.gl.enable(this.gl.DEPTH_TEST);
 		this.gl.enable(this.gl.CULL_FACE);
 		this.gl.cullFace(this.gl.FRONT);
 		this.renderMaterial(this.outlineMaterial);
-		this.gl.enable(this.gl.DEPTH_TEST);
-		this.gl.disable(this.gl.CULL_FACE);
-		this.gl.depthFunc(this.gl.LESS);
+		this.gl.cullFace(this.gl.BACK);
 		var _g_current = 0;
 		var _g_array = this.materials;
 		while(_g_current < _g_array.length) {
@@ -1222,13 +1126,140 @@ libs_webgl_Engine.prototype = {
 	}
 	,__class__: libs_webgl_Engine
 };
+var libs_webgl_TextureTool = function() { };
+libs_webgl_TextureTool.__name__ = true;
+libs_webgl_TextureTool.createDepthTexture = function(gl,width,height) {
+	if(height == null) {
+		height = 128;
+	}
+	if(width == null) {
+		width = 128;
+	}
+	var texture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_2D,texture);
+	gl.texImage2D(gl.TEXTURE_2D,0,gl.DEPTH_COMPONENT32F,width,height,0,gl.DEPTH_COMPONENT,gl.FLOAT,null);
+	gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+	gl.bindTexture(gl.TEXTURE_2D,null);
+	return texture;
+};
+libs_webgl_TextureTool.createTexture = function(gl,image) {
+	var texture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_2D,texture);
+	gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+	var mipLevel = 0;
+	var internalFormat = gl.RGBA;
+	var srcFormat = gl.RGBA;
+	var srcType = gl.UNSIGNED_BYTE;
+	gl.texImage2D(gl.TEXTURE_2D,mipLevel,internalFormat,srcFormat,srcType,image);
+	gl.bindTexture(gl.TEXTURE_2D,null);
+	return texture;
+};
+libs_webgl_TextureTool.createCubeMap = function(gl,width,height,showInBrowser) {
+	if(showInBrowser == null) {
+		showInBrowser = false;
+	}
+	if(height == null) {
+		height = 128;
+	}
+	if(width == null) {
+		width = 128;
+	}
+	var generateFace = function(ctx,faceColor,textColor,text) {
+		var width = ctx.canvas.width;
+		var height = ctx.canvas.height;
+		ctx.fillStyle = faceColor;
+		ctx.fillRect(0,0,width,height);
+		ctx.font = "{" + width * 0.7 + "}px sans-serif";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.fillStyle = textColor;
+		ctx.fillText(text,width / 2,height / 2);
+	};
+	var ctx = document.createElement("canvas").getContext("2d");
+	var texture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
+	ctx.canvas.width = width;
+	ctx.canvas.height = height;
+	var faceInfos = [{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_X, faceColor : "#F00", textColor : "#0FF", text : "+X"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_X, faceColor : "#FF0", textColor : "#00F", text : "-X"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Y, faceColor : "#0F0", textColor : "#F0F", text : "+Y"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, faceColor : "#0FF", textColor : "#F00", text : "-Y"},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Z, faceColor : "#00F", textColor : "#FF0", text : "+Z"},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, faceColor : "#F0F", textColor : "#0F0", text : "-Z"}];
+	var _g_current = 0;
+	var _g_array = faceInfos;
+	while(_g_current < _g_array.length) {
+		var _g1_value = _g_array[_g_current];
+		var _g1_key = _g_current++;
+		var index = _g1_key;
+		var faceInfo = _g1_value;
+		var target = faceInfo.target;
+		var faceColor = faceInfo.faceColor;
+		var textColor = faceInfo.textColor;
+		var text = faceInfo.text;
+		generateFace(ctx,faceColor,textColor,text);
+		gl.texImage2D(target,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,ctx.canvas);
+		if(showInBrowser) {
+			ctx.canvas.toBlob(function(blob) {
+				var img = new Image();
+				img.src = URL.createObjectURL(blob);
+				window.document.body.appendChild(img);
+			});
+		}
+	}
+	gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP,null);
+	return texture;
+};
+libs_webgl_TextureTool.createCubeMapByURL = function(gl,width,height,posXUrl,negXUrl,posYUrl,negYUrl,posZUrl,negZUrl) {
+	if(height == null) {
+		height = 128;
+	}
+	if(width == null) {
+		width = 128;
+	}
+	var texture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
+	var faceInfos = [{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_X, url : posXUrl},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url : negXUrl},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url : posYUrl},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url : negYUrl},{ target : gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url : posZUrl},{ target : gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url : negZUrl}];
+	var _g_current = 0;
+	var _g_array = faceInfos;
+	while(_g_current < _g_array.length) {
+		var _g1_value = _g_array[_g_current];
+		var _g1_key = _g_current++;
+		var index = _g1_key;
+		var faceInfo = _g1_value;
+		var target = [faceInfo.target];
+		var url = faceInfo.url;
+		var level = [0];
+		var internalFormat = [gl.RGBA];
+		var format = [gl.RGBA];
+		var type = [gl.UNSIGNED_BYTE];
+		gl.texImage2D(target[0],level[0],internalFormat[0],width,height,0,format[0],type[0],null);
+		var image = [new Image()];
+		image[0].src = url;
+		image[0].addEventListener("load",(function(image,type,format,internalFormat,level,target) {
+			return function() {
+				gl.bindTexture(gl.TEXTURE_CUBE_MAP,texture);
+				gl.texImage2D(target[0],level[0],internalFormat[0],format[0],type[0],image[0]);
+				gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+			};
+		})(image,type,format,internalFormat,level,target));
+	}
+	gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+	gl.texParameteri(gl.TEXTURE_CUBE_MAP,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP,null);
+	return texture;
+};
 var libs_webgl_actor_Actor = function(name) {
 	this.transform = new libs_webgl_component_TransformComponent();
 	this.components = [];
-	this.name = name;
+	libs_webgl_AObject.call(this,name);
 };
 libs_webgl_actor_Actor.__name__ = true;
-libs_webgl_actor_Actor.prototype = {
+libs_webgl_actor_Actor.__super__ = libs_webgl_AObject;
+libs_webgl_actor_Actor.prototype = $extend(libs_webgl_AObject.prototype,{
 	addComponent: function(component) {
 		if(this.components.indexOf(component) == -1) {
 			this.components.push(component);
@@ -1266,7 +1297,7 @@ libs_webgl_actor_Actor.prototype = {
 		}
 	}
 	,__class__: libs_webgl_actor_Actor
-};
+});
 var libs_webgl_actor_CameraActor = function(name) {
 	libs_webgl_actor_Actor.call(this,name);
 	this.addComponent(new libs_webgl_component_CameraComponent());
@@ -1768,17 +1799,21 @@ libs_webgl_component_TransformComponent.prototype = $extend(libs_webgl_component
 	}
 	,__class__: libs_webgl_component_TransformComponent
 });
-var libs_webgl_material_Material = function(shader) {
+var libs_webgl_material_Material = function(shader,name) {
 	this.autoAssignToMeshRender = true;
-	this.name = "";
 	this.nodes = [];
 	this.uniforms = [];
 	this.textures = [];
+	libs_webgl_AObject.call(this,name);
 	this.shader = shader;
 };
 libs_webgl_material_Material.__name__ = true;
-libs_webgl_material_Material.prototype = {
-	pushTexture: function(name,t,type) {
+libs_webgl_material_Material.__super__ = libs_webgl_AObject;
+libs_webgl_material_Material.prototype = $extend(libs_webgl_AObject.prototype,{
+	clearTextures: function() {
+		this.textures = [];
+	}
+	,pushTexture: function(name,t,type) {
 		this.textures.push([name,t,type]);
 	}
 	,pushUniform: function(location,value) {
@@ -1836,9 +1871,10 @@ libs_webgl_material_Material.prototype = {
 		}
 	}
 	,__class__: libs_webgl_material_Material
-};
-var libs_webgl_material_shader_Shader = function() {
+});
+var libs_webgl_material_shader_Shader = function(name) {
 	this.uniformKey = { };
+	libs_webgl_AObject.call(this,name);
 	this.gl = libs_webgl_Engine.inst().gl;
 	this.program = this.gl.createProgram();
 	var vertexShader = libs_webgl_material_shader_Shader.createShader(this.gl,this.gl.VERTEX_SHADER,this.getVS());
@@ -1869,11 +1905,12 @@ libs_webgl_material_shader_Shader.createShader = function(gl,type,source) {
 	if(success) {
 		return shader;
 	}
-	console.log("src/libs/webgl/material/shader/Shader.hx:37:",gl.getShaderInfoLog(shader));
+	console.log("src/libs/webgl/material/shader/Shader.hx:38:",gl.getShaderInfoLog(shader));
 	gl.deleteShader(shader);
 	return null;
 };
-libs_webgl_material_shader_Shader.prototype = {
+libs_webgl_material_shader_Shader.__super__ = libs_webgl_AObject;
+libs_webgl_material_shader_Shader.prototype = $extend(libs_webgl_AObject.prototype,{
 	getVS: function() {
 		throw haxe_Exception.thrown("plz override this function!");
 	}
@@ -1884,9 +1921,9 @@ libs_webgl_material_shader_Shader.prototype = {
 		throw haxe_Exception.thrown("plz override this function!");
 	}
 	,__class__: libs_webgl_material_shader_Shader
-};
-var libs_webgl_material_shader_BasicShader = function() {
-	libs_webgl_material_shader_Shader.call(this);
+});
+var libs_webgl_material_shader_BasicShader = function(name) {
+	libs_webgl_material_shader_Shader.call(this,name);
 };
 libs_webgl_material_shader_BasicShader.__name__ = true;
 libs_webgl_material_shader_BasicShader.__super__ = libs_webgl_material_shader_Shader;
@@ -1904,8 +1941,8 @@ libs_webgl_material_shader_BasicShader.prototype = $extend(libs_webgl_material_s
 	}
 	,__class__: libs_webgl_material_shader_BasicShader
 });
-var libs_webgl_material_shader_ColorShader = function() {
-	libs_webgl_material_shader_Shader.call(this);
+var libs_webgl_material_shader_ColorShader = function(name) {
+	libs_webgl_material_shader_Shader.call(this,name);
 };
 libs_webgl_material_shader_ColorShader.__name__ = true;
 libs_webgl_material_shader_ColorShader.__super__ = libs_webgl_material_shader_Shader;
@@ -1923,8 +1960,8 @@ libs_webgl_material_shader_ColorShader.prototype = $extend(libs_webgl_material_s
 	}
 	,__class__: libs_webgl_material_shader_ColorShader
 });
-var libs_webgl_material_shader_CubeMapShader = function() {
-	libs_webgl_material_shader_Shader.call(this);
+var libs_webgl_material_shader_CubeMapShader = function(name) {
+	libs_webgl_material_shader_Shader.call(this,name);
 };
 libs_webgl_material_shader_CubeMapShader.__name__ = true;
 libs_webgl_material_shader_CubeMapShader.__super__ = libs_webgl_material_shader_Shader;
@@ -1942,8 +1979,8 @@ libs_webgl_material_shader_CubeMapShader.prototype = $extend(libs_webgl_material
 	}
 	,__class__: libs_webgl_material_shader_CubeMapShader
 });
-var libs_webgl_material_shader_EnviromentMapShader = function() {
-	libs_webgl_material_shader_Shader.call(this);
+var libs_webgl_material_shader_EnviromentMapShader = function(name) {
+	libs_webgl_material_shader_Shader.call(this,name);
 };
 libs_webgl_material_shader_EnviromentMapShader.__name__ = true;
 libs_webgl_material_shader_EnviromentMapShader.__super__ = libs_webgl_material_shader_Shader;
@@ -1961,8 +1998,8 @@ libs_webgl_material_shader_EnviromentMapShader.prototype = $extend(libs_webgl_ma
 	}
 	,__class__: libs_webgl_material_shader_EnviromentMapShader
 });
-var libs_webgl_material_shader_OnlyTextureShader = function() {
-	libs_webgl_material_shader_Shader.call(this);
+var libs_webgl_material_shader_OnlyTextureShader = function(name) {
+	libs_webgl_material_shader_Shader.call(this,name);
 };
 libs_webgl_material_shader_OnlyTextureShader.__name__ = true;
 libs_webgl_material_shader_OnlyTextureShader.__super__ = libs_webgl_material_shader_Shader;
@@ -1980,8 +2017,8 @@ libs_webgl_material_shader_OnlyTextureShader.prototype = $extend(libs_webgl_mate
 	}
 	,__class__: libs_webgl_material_shader_OnlyTextureShader
 });
-var libs_webgl_material_shader_OutlineShader = function() {
-	libs_webgl_material_shader_Shader.call(this);
+var libs_webgl_material_shader_OutlineShader = function(name) {
+	libs_webgl_material_shader_Shader.call(this,name);
 };
 libs_webgl_material_shader_OutlineShader.__name__ = true;
 libs_webgl_material_shader_OutlineShader.__super__ = libs_webgl_material_shader_Shader;
@@ -1999,8 +2036,8 @@ libs_webgl_material_shader_OutlineShader.prototype = $extend(libs_webgl_material
 	}
 	,__class__: libs_webgl_material_shader_OutlineShader
 });
-var libs_webgl_material_shader_SkyboxShader = function() {
-	libs_webgl_material_shader_Shader.call(this);
+var libs_webgl_material_shader_SkyboxShader = function(name) {
+	libs_webgl_material_shader_Shader.call(this,name);
 };
 libs_webgl_material_shader_SkyboxShader.__name__ = true;
 libs_webgl_material_shader_SkyboxShader.__super__ = libs_webgl_material_shader_Shader;
@@ -2018,8 +2055,8 @@ libs_webgl_material_shader_SkyboxShader.prototype = $extend(libs_webgl_material_
 	}
 	,__class__: libs_webgl_material_shader_SkyboxShader
 });
-var libs_webgl_material_shader_SolidColorShader = function() {
-	libs_webgl_material_shader_Shader.call(this);
+var libs_webgl_material_shader_SolidColorShader = function(name) {
+	libs_webgl_material_shader_Shader.call(this,name);
 };
 libs_webgl_material_shader_SolidColorShader.__name__ = true;
 libs_webgl_material_shader_SolidColorShader.__super__ = libs_webgl_material_shader_Shader;

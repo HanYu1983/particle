@@ -40,13 +40,24 @@ vic.webgl.engine = {};
 				objs.push(data);
 				if(--count <= 0) {
 					resolve(objs);
+				}else{
+					loadOneObj();
 				}
 			}
-			for(let i = 0; i < objList.length; ++i) {
-				fetch(objList[i]).then((response) => {
+
+			function loadOneObj(){
+				fetch(objList[objList.length - count]).then((response) => {
 					return response.text();
 				}).then(onFetchComplete);
 			}
+
+			loadOneObj();
+
+			// for(let i = 0; i < objList.length; ++i) {
+			// 	fetch(objList[i]).then((response) => {
+			// 		return response.text();
+			// 	}).then(onFetchComplete);
+			// }
 		});
 	}
 	

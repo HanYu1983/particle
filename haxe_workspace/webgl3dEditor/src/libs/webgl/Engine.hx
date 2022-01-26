@@ -1,5 +1,7 @@
 package libs.webgl;
 
+import libs.webgl.material.shader.Shader;
+import libs.webgl.mesh.QuadMesh;
 import libs.webgl.material.shader.SkyboxShader;
 import libs.webgl.material.shader.EnviromentMapShader;
 import libs.webgl.material.shader.CubeMapShader;
@@ -24,8 +26,8 @@ import libs.webgl.material.shader.OnlyTextureShader;
 
 class Engine{
 
-    public var gl(default, null):Null<Dynamic>;
-    public var shaders:Array<Dynamic> = [];
+    public var gl(default, default):Null<Dynamic>;
+    public var shaders:Array<Shader> = [];
     public var defaultCamera:CameraActor;
     public var defaultLight:LightActor;
 
@@ -37,9 +39,10 @@ class Engine{
     public var outlineMaterial:Material;
     public var solidMaterial:Material;
     public var depthMaterial:Material;
+    public var skyboxMaterial:Material;
 
     public var depthTexture(default, null):Dynamic;
-    public var depthFramebuffer:Dynamic;
+    var depthFramebuffer:Dynamic;
 
     function new() {
        
@@ -50,8 +53,7 @@ class Engine{
         return Engine._inst;
     }
 
-    public function init(gl) {
-        this.gl = gl;
+    public function init() {
         shaders.push(new ColorShader());
         shaders.push(new BasicShader());
         shaders.push(new CubeMapShader());
@@ -75,7 +77,6 @@ class Engine{
         solidMaterial.autoAssignToMeshRender = false;
         solidMaterial.pushNode(defaultLight);
 
-        createDepthTexture();
         createDepthBuffer();
 
         depthMaterial = new Material(new OnlyTextureShader());
@@ -90,32 +91,38 @@ class Engine{
 		depth.transform.parent = defaultCamera.transform;
         depthMaterial.pushNode(depth);
 
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        // skyboxMaterial = new Material(new SkyboxShader());
+
+		// var skybox:Actor = new MeshActor('Skybox');
+		// skybox.getComponent(MeshRenderComponent).mesh = new QuadMesh();
+		// skyboxMaterial.pushNode(skybox);
     }
 
-    public function createDepthTexture() {
-        depthTexture = gl.createTexture();
-        var depthTextureSize = 512;
-        gl.bindTexture(gl.TEXTURE_2D, depthTexture);
-        gl.texImage2D(
-            gl.TEXTURE_2D,      // target
-            0,                  // mip level
-            gl.DEPTH_COMPONENT32F, // internal format
-            depthTextureSize,   // width
-            depthTextureSize,   // height
-            0,                  // border
-            gl.DEPTH_COMPONENT, // format
-            gl.FLOAT,           // type
-            null);              // data
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-        return depthTexture;
+    public function setSkyboxTexture(textureId:Int) {
+        if(skyboxMaterial == null){
+            skyboxMaterial = new Material(new SkyboxShader());
+
+            var skybox:Actor = new MeshActor('Skybox');
+            skybox.getComponent(MeshRenderComponent).mesh = new QuadMesh();
+            skyboxMaterial.pushNode(skybox);
+        }
+        skyboxMaterial.clearTextures();
+        skyboxMaterial.pushTexture('u_texture', cubeTextures[textureId], gl.TEXTURE_CUBE_MAP);
+    }
+
+    public function getShader<T>(clz:Class<T>):Null<T> {
+        var ret:Null<Dynamic> = null;
+        for (index => value in shaders) {
+            if(Std.isOfType(value, clz)) {
+                ret = value;
+                break;
+            }
+        }
+        return ret;
     }
 
     public function createDepthBuffer() {
+        depthTexture = TextureTool.createDepthTexture(gl, 512, 512);
         depthFramebuffer = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, depthFramebuffer);
         gl.framebufferTexture2D(
@@ -124,31 +131,15 @@ class Engine{
             gl.TEXTURE_2D,        // texture target
             depthTexture,         // texture
             0);                   // mip level
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
 
-    public function addTexture(image:Dynamic) {
-        var texture:Dynamic = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        // Set the parameters so we don't need mips and so we're not filtering
-        // and we don't repeat at the edges
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        // Upload the image into the texture.
-        var mipLevel = 0; // the largest mip
-        var internalFormat = gl.RGBA; // format we want in the texture
-        var srcFormat = gl.RGBA; // format of data we are supplying
-        var srcType = gl.UNSIGNED_BYTE; // type of data we are supplying
-        gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, srcFormat, srcType, image);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-        textures.push(texture);
+    public function pushCubeTexture(t:Dynamic) {
+        cubeTextures.push(t);
     }
 
-    public function addTextures(images:Array<Dynamic>) {
-        for (index => value in images) {
-            addTexture(value);
-        }
+    public function pushTexture2D(t:Dynamic) {
+        textures.push(t);
     }
 
     public function addMaterials(materials:Array<Material>) {
@@ -169,24 +160,18 @@ class Engine{
         }
     }
 
-    public function renderMaterial(material:Material, ?view:Actor = null, debug = false){
+    public function renderMaterial(material:Material, ?view:Actor = null){
             
         // 每一個材質都有自己的參數要設定
         // 1：取出要用哪一個shader(program)
         // 2：取出對應的vao
         // 3：放入這個shader需要的參數給buffer
         // 4：draw
-        // if(!debug){
-        //     var program:Dynamic = material.shader.program;
-        //     gl.useProgram(program);
-        // }
+
         var program:Dynamic = material.shader.program;
         gl.useProgram(program);
-
-
         material.glSetTextureAndUniform();
 
-        
         var usingView:Actor = (view != null) ? view : defaultCamera;
 
         gl.uniform3fv(Reflect.field(material.shader.uniformKey, 'u_lightColor'), defaultLight.getComponent(LightComponent).color.toArray());
@@ -209,7 +194,6 @@ class Engine{
             var vao = meshRender.mesh.vao;
             gl.bindVertexArray(vao);
             gl.uniformMatrix4fv(Reflect.field(material.shader.uniformKey, 'u_modelMat'), false, node.transform.getMatrix().toArray());
-
             gl.drawArrays(gl.TRIANGLES, 0, meshRender.mesh.getCount());
 
             // gl.drawArrays(gl.LINE_LOOP, 0, meshRender.mesh.getCount());
@@ -224,28 +208,38 @@ class Engine{
         // 畫出燈光為視角的深度圖
         gl.bindFramebuffer(gl.FRAMEBUFFER, depthFramebuffer);
         gl.viewport(0, 0, 512, 512);
+        gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.DEPTH_TEST);
         renderMaterial(solidMaterial, defaultLight);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-        // 畫出外框綫
+
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.depthFunc(gl.LESS);
+
+        // skybox
+        if(skyboxMaterial != null){
+            gl.disable(gl.DEPTH_TEST);
+            gl.cullFace(gl.BACK);
+            renderMaterial(skyboxMaterial);
+        }
+
+        // 畫出外框綫
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
         gl.cullFace(gl.FRONT);
         renderMaterial(outlineMaterial);
 
         // 畫出物件
-        gl.enable(gl.DEPTH_TEST);
-        gl.disable(gl.CULL_FACE);
-        gl.depthFunc(gl.LESS);
+        gl.cullFace(gl.BACK);
         for (index => material in materials) {
-            renderMaterial(material);
+        	renderMaterial(material);
         }
 
+        // 燈光視綫深度圖
         renderMaterial(depthMaterial);
     }
 

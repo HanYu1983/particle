@@ -4,15 +4,10 @@ import libs.webgl.component.Component;
 import libs.webgl.component.TransformComponent;
 
  
-class Actor{
+class Actor extends AObject{
 
     private var components:Array<Component> = [];
     public var transform(default, null):TransformComponent = new TransformComponent();
-    public var name:String;
-    
-    public function new(name:String) {
-        this.name = name;
-    }
 
     public function addComponent(component:Component) {
         if(components.indexOf(component) == -1){
