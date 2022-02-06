@@ -1,0 +1,82 @@
+[
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>破壞大劍<br>重4<br>巨 7 3<br>狂斬<br>近招 巨氣</div>",
+      "外功+3."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>破壞大劍<br>重4<br>巨 7 3<br>刀斬<br>近招 巨氣</div>",
+      "外功+2。對象沒有防具的時候，造成的傷害值+2."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>破壞大劍<br>重4<br>巨 7 3<br>流星雨<br>遠招 巨氣</div>",
+      "外功+2.這個招式不能被回避之類的效果指定。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>破壞大劍<br>重4<br>巨 7 3<br>兇斬<br>近招 巨氣</div>",
+      "外功+0.造成對方傷害時，幾率4麻痹。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>破壞大劍<br>重4<br>巨 7 3<br>畫龍點睛<br>遠招 巨氣</div>",
+      "外功+0。造成傷害時，對象所有裝備幾率3脫手。"
+    ]
+  }
+]
