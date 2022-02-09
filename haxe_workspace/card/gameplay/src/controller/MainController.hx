@@ -1,5 +1,6 @@
 package controller;
 
+import js.Syntax;
 import haxe.Json;
 import js.Browser;
 import js.html.KeyboardEvent;
@@ -43,7 +44,7 @@ class MainController extends Mediator
 	{
 		super(mediatorName, viewComponent);
 		
-		untyped __js__( 'leo.utils.initRectSelect' )( function( ary ) {
+		Syntax.code( 'leo.utils.initRectSelect' )( function( ary ) {
 			onSelectItems( ary, false, isCtrl );
 			zsorting();
 		});
@@ -255,7 +256,7 @@ class MainController extends Mediator
 			case 'card':
 				var parseData = Json.parse( Json.stringify( model ) );
 				parseData.extra = [ 
-					untyped __js__('api.getCardImageWithPackageName')( model.extra[2], model.extra[0] ),
+					Syntax.code('api.getCardImageWithPackageName')( model.extra[2], model.extra[0] ),
 					'../common/images/card/cardback_' + model.extra[1]  + '.jpg'
 				];	
 				item = new CardItem( model.id, Tool.createItemDiv( model.type, parseData ) );
@@ -264,7 +265,7 @@ class MainController extends Mediator
 			case 'token':
 				var parseData = Json.parse( Json.stringify( model ) );
 				parseData.extra = [ 
-					untyped __js__('api.getCardImageWithPackageName')( model.extra[1], model.extra[0] )
+					Syntax.code('api.getCardImageWithPackageName')( model.extra[1], model.extra[0] )
 				];
 				item = new TokenItem( model.id, Tool.createItemDiv( model.type, parseData ) );
 			case 'tokenString':

@@ -1,16 +1,15 @@
 package;
 
+import js.Syntax;
+import org.puremvc.haxe.patterns.facade.Facade;
 import haxe.Json;
 import haxe.Timer;
 import js.Browser;
 import js.html.BarProp;
-import js.html.NotifyPaintEvent;
 import js.Lib;
 import view.UI;
 import model.Model;
 import controller.*;
-import org.puremvc.haxe.patterns.facade.Facade;
-
 using Lambda;
 using Reflect;
 /**
@@ -28,7 +27,7 @@ class Main
 	public static inline var on_startTimer_click = 'on_startTimer_click';
 	public static inline var on_timer_update = 'on_timer_update';
 
-	public static var j:Dynamic = untyped __js__('$');
+	public static var j:Dynamic = Syntax.code('$');
 	
 	public static var fbid = '';
 	public static var token = '';
@@ -58,7 +57,8 @@ class Main
 			Facade.getInstance().registerMediator( new UI( 'UI', j('.easyui-layout')) );
 			
 			openLoading( '準備中...請稍等' );
-			var fbappId = untyped __js__( 'config.fbid[config.fbid.which]' );
+			
+			var fbappId = Syntax.code( 'config.fbid[config.fbid.which]' );
 			CallJs.myapp_facebook_init( fbappId, function() {
 				updateGameUI( currentSelect );
 				closeLoading();
@@ -535,7 +535,7 @@ class Main
 	}
 	
 	static function getId() {	
-		return untyped __js__('leo.utils.generateUUID')();
+		return Syntax.code('leo.utils.generateUUID')();
 	}
 	
 }

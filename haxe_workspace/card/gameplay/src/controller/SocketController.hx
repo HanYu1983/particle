@@ -1,5 +1,6 @@
 package controller;
 
+import js.Syntax;
 import haxe.CallStack;
 import haxe.Json;
 import js.Browser;
@@ -91,7 +92,7 @@ class SocketController extends Mediator
 			sendNotification( on_socket_error );
 		}
 		
-		untyped __js__( 'api.createChannel' )( id, {
+		Syntax.code( 'api.createChannel' )( id, {
 			onopen: function() {
 				isCanSendMessage = true;
 				sendNotification( on_socket_success );
@@ -112,7 +113,7 @@ class SocketController extends Mediator
 		
 		ary_ops.foreach( function( op ) {
 			if ( op != SocketController.playerId ) {
-				untyped __js__( 'api.sendMessageToSomeone' )( op, type, msg );
+				Syntax.code( 'api.sendMessageToSomeone' )( op, type, msg );
 			}
 			return true;
 		});

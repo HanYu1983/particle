@@ -1,5 +1,6 @@
 package;
 
+import js.Syntax;
 using Lambda;
 using Reflect;
 /**
@@ -8,7 +9,7 @@ using Reflect;
  */
 class Tool
 {
-	public static var j:Dynamic = untyped __js__( '$' );
+	public static var j:Dynamic = Syntax.code( '$' );
 	
 	public static function createItem( extra:Array<Dynamic>, pos:Array<Int>, ?type:String = 'card', ?width:Int = 100, ?height:Int = 100, ?back = true, ?lock = false, ?owner = 'desktop', ?viewer = '' ) {
 		return { 
@@ -48,7 +49,7 @@ class Tool
 	}
 	
 	public static function createDivId() {
-		return untyped __js__('leo.utils.generateUUID')();
+		return Syntax.code('leo.utils.generateUUID')();
 	}
 	
 	public static function slide( msg, ?time = 2000 ){

@@ -1,5 +1,6 @@
 package view;
 
+import js.Syntax;
 import haxe.Json;
 import haxe.Timer;
 import js.Browser;
@@ -69,7 +70,7 @@ class UI extends Mediator
 		
 		mc_messagePanel.find( '#mc_quickButton > a' ).linkbutton( {
 			onClick:function() {
-				var buttonself = untyped __js__('this' );
+				var buttonself = Syntax.code('this' );
 				var msg = switch( buttonself.id ) {
 					case 'btn_isCounter': '尊貴的閣下，請問你要康這張牌嗎？';
 					case 'btn_isMyTurn': '到我了嗎？我的朋友。';
@@ -215,7 +216,7 @@ class UI extends Mediator
 						}
 				}
 				if ( isShowNotify && ( browserNotify == null ) ) {
-					browserNotify = untyped __js__('google.notify')('你的對戰卡友動作囉! 趕快回去卡牌風雲應戰吧', '../common/images/logo.jpg');
+					browserNotify = Syntax.code('google.notify')('你的對戰卡友動作囉! 趕快回去卡牌風雲應戰吧', '../common/images/logo.jpg');
 				}
 			case SocketController.on_socket_success:
 				onSocketSuccess();
@@ -295,7 +296,7 @@ class UI extends Mediator
 				var user:Dynamic = timerData.users.field(k);
 				var name = user.field('name').substr(0, 5);
 				var t = CallJs.api_getTime( user.field('name') );
-				var t2:Dynamic = untyped __js__('new Date')(t);
+				var t2:Dynamic = Syntax.code('new Date')(t);
 				var h = t2.getUTCHours();
 				var m = t2.getUTCMinutes();
 				var s = t2.getUTCSeconds();
@@ -322,7 +323,7 @@ class UI extends Mediator
 		}
 		dia_iconGenerator.find('.easyui-linkbutton' ).linkbutton({
 			onClick:function(){
-				var dom = Main.j(untyped __js__('this'));
+				var dom = Main.j(Syntax.code('this'));
 				var createContent:String = dom.parents('.singleIconData').find('.easyui-textbox').textbox('getValue');
 				var path = dom.parents('.singleIconData').find('.img_token').attr('src');
 				quickCustomToken = {
@@ -340,7 +341,7 @@ class UI extends Mediator
 			}
 		});
 		dia_iconGenerator.find('.img_token').click(function(){
-			var dom:Dynamic = Main.j(untyped __js__("this"));
+			var dom:Dynamic = Main.j(Syntax.code("this"));
 			var imgPath:String = dom.attr('src');
 			if(imgPath.indexOf("token_0" ) != -1){
 				imgPath = StringTools.replace( imgPath, "token_0", "token_1" );
@@ -365,7 +366,7 @@ class UI extends Mediator
 	function saveIconContents(){
 		var saveAry = [];
 		dia_iconGenerator.find('.easyui-textbox').each( function(){
-			var dom:Dynamic = Main.j(untyped __js__("this"));
+			var dom:Dynamic = Main.j(Syntax.code("this"));
 			var content = dom.textbox('getValue');
 			if ( content == "" ) content = "天機桐人_1/1_宇";
 			var path = dom.parents('.singleIconData').find('.img_token').attr('src');
@@ -475,12 +476,12 @@ class UI extends Mediator
 			combo_deck.combobox();
 			return;
 		}
-		var i = 0;
+		
 		combo_deck.empty();
-		Lambda.foreach( cardSuit, function( deck ) {
-			combo_deck.append( '<option value="' + i++ + '">' + deck.name + '</option>' );
-			return true;
-		});
+		for (i in 0...cardSuit.length) {
+			var deck = cardSuit[i];
+			combo_deck.append( '<option value="' + i + '">' + deck.name + '</option>' );
+		}
 		combo_deck.combobox( {
 			onSelect:function( record ) {
 				sendNotification( on_combo_deck_change, { deckId: record.value } );
