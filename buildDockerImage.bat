@@ -1,0 +1,1 @@
+docker build -t particle_docker . --no-cache

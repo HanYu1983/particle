@@ -1,0 +1,1 @@
+docker run --rm -ti -p 8080:8080 -v d:\dev\particle\goapp:/goapp particle_docker dev_appserver.py --host 0.0.0.0 goapp/src/app.yaml
