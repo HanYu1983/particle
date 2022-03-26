@@ -1,0 +1,226 @@
+[
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極拳套<br>重1<br>拳 3 1<br>直拳<br>近招 拳氣</div>",
+      "外功+3."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極拳套<br>重1<br>拳 3 1<br>冲錘<br>近招 拳拳氣</div>",
+      "外功+3."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極拳套<br>重1<br>拳 3 1<br>馬步冲錘<br>近招 拳腿腿氣</div>",
+      "外功+3."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極拳套<br>重1<br>拳 3 1<br>揚炮<br>近招 拳腿氣</div>",
+      "外功+3."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極拳套<br>重1<br>拳 3 1<br>大纏崩捶<br>近招 拳拳腿腿氣</div>",
+      "外功+3."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極拳套<br>重1<br>拳 3 1<br>硬氣功<br>氣功 氣氣</div>",
+      "交戰時的整體外功+2."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極拳套<br>重1<br>拳 3 1<br>揚炮<br>反應 拳氣</div>",
+      "受到的外功傷害-3。對對象造成3外功傷害。如果對方沒有防具，這次的戰鬥不能接技。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極護腿<br>重1<br>腿 3 1<br>提籠換步<br>防守 拳腿氣</div>",
+      "外功+6。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極護腿<br>重1<br>腿 3 1<br>前踢<br>近招 腿氣</div>",
+      "外功+3。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極護腿<br>重1<br>腿 3 1<br>二起脚<br>近招 腿腿氣</div>",
+      "外功+3。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>八極護腿<br>重1<br>腿 3 1<br>震脚<br>近招 腿氣</div>",
+      "外功+2。如果交戰中有自己有兩隻脚，前項效果變爲+3。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>粗布麻衣<br>重1<br>衣 2 2<br>調息<br>氣功 氣</div>",
+      "配置步使用，回復5。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>粗布麻褲<br>重1<br>褲 2 2<br>閃避<br>反應 氣氣</div>",
+      "幾率7不受到這次傷害。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [
+      100,
+      100
+    ],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>粗布麻褲<br>重1<br>褲 2 2<br>還神<br>氣場 氣</div>",
+      "這張卡廢棄時，回復2。"
+    ]
+  }
+]

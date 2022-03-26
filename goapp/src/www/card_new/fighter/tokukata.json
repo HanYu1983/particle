@@ -1,0 +1,171 @@
+[
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>劇毒拳刃<br>重1<br>匕首 2 2<br>毒刺<br>近招 匕氣</div>",
+      "外功+2. 中毒5."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>劇毒拳刃<br>重1<br>匕首 2 2<br>毒背刺<br>近招 匕氣氣</div>",
+      "這招必須替代出擊。額外支付2行動力。對方必須額外支付3行動力。不然不能防禦出擊。外功+4. 中毒5."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>劇毒拳刃<br>重1<br>匕首 2 2<br>毒性反彈<br>反應 匕</div>",
+      "傷害判定後執行。將自身的1個中毒狀態移到對手上。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>劇毒拳刃<br>重1<br>匕首 2 2<br>毒性擴散<br>氣功 匕</div>",
+      "雙方中毒7."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>劇毒拳刃<br>重1<br>匕首 2 2<br>毒耐性<br>氣場 匕</div>",
+      "中毒狀態不執行。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>劇毒拳刃<br>重1<br>匕首 2 2<br>刃閃<br>反應 匕匕</div>",
+      "判定前執行。閃躲8。閃躲成功後，回氣1."
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>活力小刀<br>重1<br>匕首 2 2<br>奮發<br>氣場 匕匕2</div>",
+      "出場時重置自己合計重量2的武器卡。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>活力小刀<br>重1<br>匕首 2 2<br>努力<br>氣場 匕</div>",
+      "出場時回復2血。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>活力小刀<br>重1<br>匕首 2 2<br>再接再勵<br>氣場 氣氣氣氣</div>",
+      "回復20血。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>活力小刀<br>重1<br>匕首 2 2<br>移花接玉<br>氣場 氣氣氣氣氣氣氣氣</div>",
+      "這張卡可以當成反應：對方功擊落空，攻擊武器脫手。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>粗布麻衣<br>重1<br>衣 2 2<br>調息<br>氣功 氣</div>",
+      "配置步使用，回復5。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>粗布麻褲<br>重1<br>褲 2 2<br>閃避<br>反應 氣氣</div>",
+      "幾率7不受到這次傷害。"
+    ]
+  },
+  {
+    "type": "data",
+    "width": 50,
+    "height": 75,
+    "pos": [100, 100],
+    "back": true,
+    "lock": false,
+    "count": 3,
+    "extra": [
+      "<div style='font-size:4px; background-color:red; width:100%; height:100%; left:0; top:0; text-align:right; overflow:hidden'>粗布麻褲<br>重1<br>褲 2 2<br>還神<br>氣場 氣</div>",
+      "這張卡廢棄時，回復2。"
+    ]
+  }
+]
