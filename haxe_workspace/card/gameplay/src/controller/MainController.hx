@@ -293,16 +293,16 @@ class MainController extends Mediator
 	
 	function onBodyKeyDown( e ) {
 		if ( !isEnableCommand ) return;
-		switch( Std.parseInt( e.which ) ) {
+		switch(e.which ) {
 			case KeyboardEvent.DOM_VK_CONTROL:
 				isCtrl = true;
 		}
 	}
 	
-	function onBodyKeyUp( e ) {
+	function onBodyKeyUp( e:Dynamic ) {
 		if ( !isEnableCommand ) return;
 		sendNotification( on_press, null, e.which );
-		switch( Std.parseInt( e.which ) ) {
+		switch(e.which ) {
 			//不需要選擇任何牌也可以執行
 			case 	KeyboardEvent.DOM_VK_T,
 					KeyboardEvent.DOM_VK_D,
@@ -320,8 +320,8 @@ class MainController extends Mediator
 			case _:
 				if ( ary_select.length == 0 ) return;
 		}
-		
-		switch( Std.parseInt( e.which ) ) {
+
+		switch( e.which ) {
 			case KeyboardEvent.DOM_VK_Y:
 				isEnableCommand = false;
 			case KeyboardEvent.DOM_VK_B:
@@ -406,7 +406,7 @@ class MainController extends Mediator
 				updateView( ary_allItem );
 		}
 		
-		switch( Std.parseInt( e.which ) ) {
+		switch(e.which ) {
 			//ctrl事件只要到這裡就行了，不用傳指令出去
 			case KeyboardEvent.DOM_VK_CONTROL:
 			//骰子，不經過這邊，在上邊的時候就分發了

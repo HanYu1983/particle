@@ -1039,7 +1039,7 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 		if(!this.isEnableCommand) {
 			return;
 		}
-		if(Std.parseInt(e.which) == 17) {
+		if(e.which == 17) {
 			this.isCtrl = true;
 		}
 	}
@@ -1048,27 +1048,20 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			return;
 		}
 		this.sendNotification("on_press",null,e.which);
-		var _g = Std.parseInt(e.which);
-		if(_g == null) {
+		switch(e.which) {
+		case 1:
+			return;
+		case 17:
+			this.isCtrl = false;
+			break;
+		case 65:case 66:case 68:case 73:case 75:case 79:case 80:case 84:case 85:case 89:
+			break;
+		default:
 			if(this.ary_select.length == 0) {
 				return;
 			}
-		} else {
-			switch(_g) {
-			case 1:
-				return;
-			case 17:
-				this.isCtrl = false;
-				break;
-			case 65:case 66:case 68:case 73:case 75:case 79:case 80:case 84:case 85:case 89:
-				break;
-			default:
-				if(this.ary_select.length == 0) {
-					return;
-				}
-			}
 		}
-		switch(Std.parseInt(e.which)) {
+		switch(e.which) {
 		case 3:case 65:
 			this.moveModel();
 			this.updateView(this.ary_select);
@@ -1169,27 +1162,22 @@ controller_MainController.prototype = $extend(org_puremvc_haxe_patterns_mediator
 			this.updateView(this.ary_select);
 			break;
 		}
-		var _g = Std.parseInt(e.which);
-		if(_g == null) {
+		switch(e.which) {
+		case 17:
+			break;
+		case 72:
+			this.sendNotification("sendMessage",{ type : "deleteItem", msg : this.ary_select});
+			break;
+		case 75:
+			this.sendNotification("sendMessage",{ type : "applyTransform", msg : { ary_item : this.ary_allItem, zs : false}});
+			break;
+		case 73:case 79:case 80:case 84:
+			break;
+		case 81:case 83:case 87:
+			this.sendNotification("sendMessage",{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
+			break;
+		default:
 			this.sendNotification("sendMessage",{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : false}});
-		} else {
-			switch(_g) {
-			case 17:
-				break;
-			case 72:
-				this.sendNotification("sendMessage",{ type : "deleteItem", msg : this.ary_select});
-				break;
-			case 75:
-				this.sendNotification("sendMessage",{ type : "applyTransform", msg : { ary_item : this.ary_allItem, zs : false}});
-				break;
-			case 73:case 79:case 80:case 84:
-				break;
-			case 81:case 83:case 87:
-				this.sendNotification("sendMessage",{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : true}});
-				break;
-			default:
-				this.sendNotification("sendMessage",{ type : "applyTransform", msg : { ary_item : this.ary_select, zs : false}});
-			}
 		}
 	}
 	,rotateModel: function(deg) {
