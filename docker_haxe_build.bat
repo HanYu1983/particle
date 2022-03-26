@@ -1,0 +1,1 @@
+docker run --rm -ti -v d:\dev\particle\haxe_workspace:/haxe_workspace haxe:4.2.4 bash 
