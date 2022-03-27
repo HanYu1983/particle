@@ -563,26 +563,6 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
-Std.parseInt = function(x) {
-	if(x != null) {
-		var _g = 0;
-		var _g1 = x.length;
-		while(_g < _g1) {
-			var i = _g++;
-			var c = x.charCodeAt(i);
-			if(c <= 8 || c >= 14 && c != 32 && c != 45) {
-				var nc = x.charCodeAt(i + 1);
-				var v = parseInt(x,nc == 120 || nc == 88 ? 16 : 10);
-				if(isNaN(v)) {
-					return null;
-				} else {
-					return v;
-				}
-			}
-		}
-	}
-	return null;
-};
 var StringTools = function() { };
 StringTools.__name__ = true;
 StringTools.replace = function(s,sub,by) {
@@ -2730,7 +2710,7 @@ view_UI.prototype = $extend(org_puremvc_haxe_patterns_mediator_Mediator.prototyp
 			break;
 		case "on_press":
 			var which = notification.getType();
-			switch(Std.parseInt(which)) {
+			switch(which) {
 			case 85:
 				this.createCustomToken();
 				break;

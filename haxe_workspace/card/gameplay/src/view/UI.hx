@@ -229,8 +229,8 @@ class UI extends Mediator
 			case MainController.on_dice:
 				Main.showDiceMessage( notification.getBody().playerId, notification.getBody().dice );
 			case MainController.on_press:
-				var which = notification.getType();
-				switch(Std.parseInt(which)){
+				var which:Dynamic = notification.getType();
+				switch(which){
 					case KeyboardEvent.DOM_VK_U:
 						createCustomToken();
 					case KeyboardEvent.DOM_VK_Y:
