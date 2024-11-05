@@ -25,3 +25,6 @@
 
 # develop
     sh test.sh
+
+# deploy
+    sh deploy.sh
