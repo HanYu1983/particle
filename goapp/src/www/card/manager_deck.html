@@ -5136,8 +5136,10 @@
       }
 
       form_container.append(parseToTable(table));
-      gameController.loadCardData(game, lang, onLoadGameCallback);
-
+      $(()=>{
+        // fix bug: jquery.easyui.min.js:928 Uncaught TypeError: Cannot read properties of undefined (reading 'options')
+        gameController.loadCardData(game, lang, onLoadGameCallback);
+      })
       $.messager.progress({ text: "讀取資料中…" });
 
       function onLoadGameCallback(err, _cardlist) {
