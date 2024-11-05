@@ -13,3 +13,15 @@
 
 ##node_workspace
 用來寫小工具。比如上網抓資料，產生定義檔等需要操做桌面系統的輔助工具
+
+# install
+## go
+    https://go.dev/dl/
+
+## gcloud
+    https://cloud.google.com/sdk/docs/install-sdk
+    gcloud init
+    gcloud info
+
+# develop
+    sh test.sh

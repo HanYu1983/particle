@@ -1,1 +1,1 @@
-python /Users/hanyu/Documents/google-cloud-sdk/bin/dev_appserver.py goapp/src/app.yaml
+python3 /Users/han/Documents/google-cloud-sdk/bin/dev_appserver.py goapp/src/app.yaml
