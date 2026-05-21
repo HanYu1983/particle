@@ -6,12 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>卡牌 UI 設計 - MTG風格</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap');
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Noto Serif TC', serif;
+        }
+
         .card-container {
             position: relative;
-            width: 200px;
-            height: 280px;
-            padding: 5px;
-            background-color: rgb(0, 0, 0);
+            width: 300px;
+            height: 420px;
+            padding: 12px;
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border-radius: 16px;
+            border: 3px solid #c9a227;
+            box-shadow: 
+                0 0 20px rgba(201, 162, 39, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(201, 162, 39, 0.1);
+            overflow: hidden;
+        }
+
+        .card-container::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1px solid rgba(201, 162, 39, 0.4);
+            border-radius: 12px;
+            pointer-events: none;
         }
 
         .weapon-container {
@@ -19,7 +50,12 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 50%;
+            height: 48%;
+            background: linear-gradient(180deg, #0a0a15 0%, #151525 100%);
+            border-radius: 8px;
+            border: 2px solid #8b7355;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
         }
 
         .action-container {
@@ -27,7 +63,13 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 50%;
+            height: 48%;
+            margin-top: 8px;
+            background: linear-gradient(180deg, #0a0a15 0%, #151525 100%);
+            border-radius: 8px;
+            border: 2px solid #8b7355;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
         }
 
         .action-name {
@@ -35,11 +77,16 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 24px;
+            height: 28px;
             font-size: 16px;
-            font-weight: bold;
-            color: black;
-            background-color: white;
+            font-weight: 900;
+            color: #f4e4c1;
+            background: linear-gradient(90deg, #3a2a1a, #5a4a3a, #3a2a1a);
+            text-align: center;
+            line-height: 28px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+            border-bottom: 2px solid #c9a227;
+            letter-spacing: 2px;
         }
 
         .action-img {
@@ -47,7 +94,15 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: calc(100% - 24px);
+            height: calc(100% - 28px);
+            overflow: hidden;
+        }
+
+        .action-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) saturate(1.2);
         }
     </style>
 </head>
@@ -56,20 +111,26 @@
     <div class="card-container">
         <div class="weapon-container">
             <div class="action-name">
-                黑風拳套
+                黑風衣
             </div>
             <div class="action-img">
-                <img src="output_images/黑風拳套_1779345895.png" alt="Action Image"
+                
+                <img src="output_images/黑風衣_1779345908.png" alt="Action Image"
                     style="width: 100%; height: 100%;">
+                <!-- <img src="output_images/黑風拳套_1779345895.png" alt="Action Image"
+                    style="width: 100%; height: 100%;"> -->
             </div>
         </div>
         <div class="action-container">
             <div class="action-name">
-                名士振舞
+                吹雪
             </div>
             <div class="action-img">
-                <img src="action_output_images/名士振舞_1779345731.png" alt="Action Image"
+                
+                  <img src="action_output_images/吹雪_1779345778.png" alt="Action Image"
                     style="width: 100%; height: 100%;">
+                <!-- <img src="action_output_images/名士振舞_1779345731.png" alt="Action Image"
+                    style="width: 100%; height: 100%;"> -->
             </div>
         </div>
     </div>
