@@ -221,6 +221,15 @@ def main():
         page = browser.new_page()
         
         for i, card in enumerate(cards):
+            id = card['id']
+
+            # 檢查是否已經生成過圖片
+            output_path = os.path.join(output_dir, f"{id}.jpeg")
+
+            if os.path.exists(output_path):
+                print(f'Skipping: {output_path} already exists ({i+1}/{len(cards)})')
+                continue
+
             title = card['title']
             skill_name = card['skillName'] if card['skillName'] != '無' else title
             
@@ -244,11 +253,11 @@ def main():
             card_element = page.query_selector('.card-container')
             if card_element:
                 # Screenshot the card element
-                output_path = os.path.join(output_dir, f'{title}.jpeg')
+                output_path = os.path.join(output_dir, f'{id}.jpeg')
                 card_element.screenshot(path=output_path, type='jpeg', quality=95)
                 print(f'Generated: {output_path} ({i+1}/{len(cards)})')
             else:
-                print(f'Failed: {title} - card element not found')
+                print(f'Failed: {id} - card element not found')
         
         browser.close()
     
