@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡牌 UI 設計 - MTG風格</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', 'Georgia', serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            padding: 30px;
+            color: #1a1a1a;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* MTG 風格卡牌 */
+        .card {
+            width: 340px;
+            background: #faf8f0;
+            border: 1px solid #aaa;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 
+                0 0 0 2px #fff,
+                0 0 0 4px #000,
+                5px 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-frame {
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 12px;
+            background: #fff;
+            position: relative;
+        }
+
+        /* 卡牌名稱區 */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #000;
+        }
+
+        .card-title {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1a1a1a;
+            letter-spacing: -0.5px;
+        }
+
+        .card-id {
+            font-size: 0.8em;
+            color: #555;
+            font-style: italic;
+        }
+
+        /* 圖片區 - MTG 標準比例 */
+        .card-image {
+            width: 100%;
+            height: 180px;
+            background: #e0e0e0;
+            border: 1px solid #000;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-image-placeholder {
+            color: #888;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        /* 卡牌類型橢圓 */
+        .card-type {
+            background: #e8e8e8;
+            border: 1px solid #000;
+            border-radius: 12px;
+            padding: 4px 12px;
+            display: inline-block;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+        }
+
+        /* 屬性區 */
+        .card-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #f5f5f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.7em;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #1a1a1a;
+            line-height: 1;
+        }
+
+        /* 技能框 */
+        .card-text-box {
+            background: #f5f5f0;
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            min-height: 80px;
+            position: relative;
+        }
+
+        .card-text-box::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            height: 1px;
+            background: #ccc;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #999;
+        }
+
+        .skill-name {
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+
+        .skill-cost-badge {
+            background: #fff;
+            border: 1px solid #000;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .skill-type-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: bold;
+            margin-bottom: 6px;
+            border: 1px solid #000;
+        }
+
+        .skill-type-tag.氣場 { background: #a8e6cf; }
+        .skill-type-tag.反應 { background: #ffaaa5; }
+        .skill-type-tag.遠招 { background: #a8d8ff; }
+        .skill-type-tag.近招 { background: #ffd3b6; }
+        .skill-type-tag.防招 { background: #d0a8ff; }
+        .skill-type-tag.氣功 { background: #ffb6c1; }
+
+        .skill-text {
+            font-size: 0.85em;
+            line-height: 1.4;
+            color: #222;
+        }
+
+        .skill-mana {
+            font-size: 0.75em;
+            color: #666;
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        /* 卡牌底部 */
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75em;
+            color: #555;
+            padding-top: 6px;
+            border-top: 1px solid #ccc;
+        }
+
+        .expansion {
+            font-style: italic;
+        }
+
+        .rarity {
+            font-weight: bold;
+        }
+
+        /* 不同稀有度邊框 */
+        .card.common { border-color: #aaa; }
+        .card.uncommon { border-color: #000; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000, 5px 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 0 2px #ffd700; }
+        .card.rare { border-color: #ffd700; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ffd700, 5px 5px 15px rgba(255, 215, 0, 0.3); }
+        .card.mythic { border-color: #ff4d00; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ff4d00, 5px 5px 15px rgba(255, 77, 0, 0.4); }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <!-- 卡牌範例 1：魔術帽 -->
+        <div class="card rare">
+            <div class="card-frame">
+                <div class="card-header">
+                    <div class="card-title">魔術帽</div>
+                    <div class="card-id">ID: 1</div>
+                </div>
+
+                <div class="card-image">
+                    <img src="" alt="卡牌圖片1" id="img1">
+                    <div class="card-image-placeholder">圖片1</div>
+                </div>
+
+                <div class="card-image">
+                    <img src="" alt="卡牌圖片2" id="img2">
+                    <div class="card-image-placeholder">圖片2</div>
+                </div>
+
+                <div class="card-type">裝備 — 頭部</div>
+
+                <div class="card-stats">
+                    <div class="stat">
+                        <div class="stat-label">重量</div>
+                        <div class="stat-value">1</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">外功</div>
+                        <div class="stat-value">1</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">內功</div>
+                        <div class="stat-value">2</div>
+                    </div>
+                </div>
+
+                <div class="card-text-box">
+                    <span class="skill-type-tag 氣場">氣場</span>
+                    <div class="skill-header">
+                        <span class="skill-name">魔力壓縮</span>
+                        <span class="skill-cost-badge">{1}</span>
+                    </div>
+                    <div class="skill-mana">元素：無</div>
+                    <div class="skill-text">
+                        這張卡在場時，自己使用內功系列招式時，那個招式可以氣力-2打出。效果一回合一次。
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <span class="expansion">Fighter Cards</span>
+                    <span class="rarity"> Rare </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡牌範例 2：魔杖 -->
+        <div class="card rare">
+            <div class="card-frame">
+                <div class="card-header">
+                    <div class="card-title">魔杖</div>
+                    <div class="card-id">ID: 4</div>
+                </div>
+
+                <div class="card-image">
+                    <img src="" alt="卡牌圖片1">
+                    <div class="card-image-placeholder">圖片1</div>
+                </div>
+
+                <div class="card-image">
+                    <img src="" alt="卡牌圖片2">
+                    <div class="card-image-placeholder">圖片2</div>
+                </div>
+
+                <div class="card-type">裝備 — 武器</div>
+
+                <div class="card-stats">
+                    <div class="stat">
+                        <div class="stat-label">重量</div>
+                        <div class="stat-value">3</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">外功</div>
+                        <div class="stat-value">5</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">內功</div>
+                        <div class="stat-value">5</div>
+                    </div>
+                </div>
+
+                <div class="card-text-box">
+                    <span class="skill-type-tag 遠招">遠招</span>
+                    <div class="skill-header">
+                        <span class="skill-name">烈炎術</span>
+                        <span class="skill-cost-badge">{2}</span>
+                    </div>
+                    <div class="skill-mana">元素：火-燒傷7</div>
+                    <div class="skill-text">
+                        內功+6。狀態判定+1次。
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <span class="expansion">Fighter Cards</span>
+                    <span class="rarity"> Rare </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡牌範例 3：鉄劍 -->
+        <div class="card uncommon">
+            <div class="card-frame">
+                <div class="card-header">
+                    <div class="card-title">鉄劍</div>
+                    <div class="card-id">ID: 43</div>
+                </div>
+
+                <div class="card-image">
+                    <img src="" alt="卡牌圖片1">
+                    <div class="card-image-placeholder">圖片1</div>
+                </div>
+
+                <div class="card-image">
+                    <img src="" alt="卡牌圖片2">
+                    <div class="card-image-placeholder">圖片2</div>
+                </div>
+
+                <div class="card-type">裝備 — 武器</div>
+
+                <div class="card-stats">
+                    <div class="stat">
+                        <div class="stat-label">重量</div>
+                        <div class="stat-value">2</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">外功</div>
+                        <div class="stat-value">5</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">內功</div>
+                        <div class="stat-value">2</div>
+                    </div>
+                </div>
+
+                <div class="card-text-box">
+                    <span class="skill-type-tag 近招">近招</span>
+                    <div class="skill-header">
+                        <span class="skill-name">湛沪劍法</span>
+                        <span class="skill-cost-badge">{2}</span>
+                    </div>
+                    <div class="skill-mana">元素：刺-點打3</div>
+                    <div class="skill-text">
+                        外功+4。交戰勝利時。指定一個玩家機率5丟棄一張手牌。這個效果執行兩次。
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <span class="expansion">Fighter Cards</span>
+                    <span class="rarity"> Uncommon </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Generate detailed armor prompts based on name imagery
+"""
+
+import os
+
+# Armor-specific detailed prompts based on name imagery
+ARMOR_PROMPTS = {
+    # 防具-頭 (Headgear)
+    '魔術帽': 'A mystical magician hat with tall pointed crown and wide brim, deep purple fabric with silver star and moon embroidery, golden arcane symbols stitched along the brim edge, floating slightly above an ornate stone pedestal, magical energy swirling in violet and silver hues, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '騎士頭盔': 'A knight helmet with full face protection and nasal guard, polished steel surface with reflective finish, decorative crest mounting point on top, chainmail aventail attachment rings, protective aura visible as golden light shimmer, floating slightly above a noble stone pedestal, head protection energy suggesting mental clarity, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '原住民頭巾': 'A tribal headband with feather decorations and bone ornaments, woven fabric base with earth-tone patterns, small protective charms and beads attached, natural materials construction with spiritual significance, earth energy visible as brown and green wisps, floating slightly above a nature stone pedestal, temporal trap aura suggesting time manipulation, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '羽毛帽': 'An elegant feathered hat with vibrant plumage decorations, wide brim with upturned edge, colorful bird feathers arranged in fan pattern, leather band with decorative buckle, wind energy visible as subtle air currents, floating slightly above a sky-themed stone pedestal, evasion enhancement aura suggesting agility, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 防具-衣 (Body Armor/Robe)
+    '練甲': 'A martial artist training armor with layered fabric construction, reinforced chest and back panels, traditional Chinese knot closures, movement-enhancing design with flexible joints, swift energy visible as blue motion trails, floating slightly above a training ground stone pedestal, damage reduction aura suggesting protective techniques, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '道服': 'A Taoist priest robe with flowing wide sleeves and traditional cut, white and blue fabric with yin-yang symbols, embroidered trigram patterns along the edges, silk sash belt with tassel ends, spiritual energy visible as white and gold light, floating slightly above a temple stone pedestal, qi cultivation aura suggesting energy manipulation, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '獅相門道服': 'A lion sect martial arts uniform with fierce lion emblem on chest, reinforced stitching at stress points, traditional design with modern combat modifications, golden and red color scheme, proud energy visible as golden aura, floating slightly above a dojo stone pedestal, lion spirit aura suggesting combat action enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '黑風衣': 'A black wind coat with long flowing design, dark fabric that seems to move with invisible wind, reinforced shoulders and elbows, mysterious hood and high collar, shadow energy visible as dark wisps, floating slightly above a storm stone pedestal, weapon block aura suggesting defensive capability, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '華山道服': 'A Mount Hua sect robe with elegant mountain-inspired design, blue and white fabric with cloud patterns, embroidered mountain peaks along the hem, traditional Taoist symbols and trigrams, purple energy visible as mystical aura, floating slightly above a mountain stone pedestal, purple霞 divine skill aura suggesting internal power, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '粗布麻衣': 'A simple rough cloth garment with basic construction, natural unbleached fabric showing weave texture, minimal decoration emphasizing practicality, worn appearance suggesting long use, humble energy visible as soft brown light, floating slightly above a village stone pedestal, recovery aura suggesting natural healing, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '猛士披挂': 'A fierce warrior battle dress with reinforced padding, layered construction for impact protection, bold color scheme with tribal patterns, intimidating design elements, fierce energy visible as red aura, floating slightly above a battlefield stone pedestal, power accumulation aura suggesting strength enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '神羅裝束': 'A divine armor outfit with celestial design elements, golden and white fabric with heavenly patterns, ornate shoulder guards and chest plate, sacred symbols embroidered throughout, divine energy visible as brilliant golden light, floating slightly above a celestial stone pedestal, soldier spirit aura suggesting qi enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '武器大師裝束': 'A weapon master outfit with practical combat design, multiple weapon attachment points, reinforced joints for mobility, professional appearance with subtle decorations, mastery energy visible as silver aura, floating slightly above a weapons rack stone pedestal, technique defense aura suggesting combat expertise, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '原住民披肩': 'A tribal shawl with traditional woven patterns, earth-tone colors with natural dye variations, decorative fringe and beadwork edges, spiritual symbols woven into the fabric, nature energy visible as green and brown wisps, floating slightly above a tribal stone pedestal, terrain无视 aura suggesting movement enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '柔術道服': 'A jiu-jitsu gi with reinforced collar and sleeves, white fabric with traditional cut, belt ranking system visible, grip-resistant material construction, grappling energy visible as subtle motion trails, floating slightly above a dojo stone pedestal, technique learning aura suggesting skill acquisition, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '武器大師綁腿': 'A weapon master leg wrap with reinforced ankle support, layered fabric construction for protection, secure binding design for stability, professional appearance with subtle details, caution energy visible as yellow aura, floating slightly above a training stone pedestal, crisis reaction aura suggesting defensive reflexes, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '東方流道服': 'An Eastern style martial arts uniform with traditional design, flowing fabric with elegant cut, sect emblem prominently displayed, quality construction with attention to detail, Eastern energy visible as balanced yin-yang light, floating slightly above an Eastern temple stone pedestal, style mastery aura suggesting technique perfection, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '元素服': 'An elemental mage robe woven from ethereal fabrics that shift between colors representing fire crimson, water azure, wind jade, and earth amber, four elemental symbols embroidered on the chest in luminescent thread, flowing sleeves with gradient patterns transitioning through the elemental spectrum, silver trim along the edges shaped like swirling elemental forces, lightweight material that seems to ripple with inner energy, displayed floating above a circular stone pedestal inscribed with elemental runes, multicolored magical aura cycling through fire, water, wind, and earth effects surrounding the garment, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 防具-褲 (Leg Armor)
+    '騎士腳甲': 'Knight leg armor with articulated plate construction, polished steel surfaces with decorative engravings, reinforced knee and shin protection, secure strap and buckle system, protective energy visible as silver light, floating slightly above a noble stone pedestal, damage reduction aura suggesting leg protection, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '腿甲': 'Practical leg armor with flexible plate design, reinforced thigh and calf protection, movement-friendly joint construction, battle-worn surface showing combat use, defensive energy visible as blue aura, floating slightly above a training stone pedestal, recovery aura suggesting action point restoration, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '功夫褲': 'Kung fu training pants with loose comfortable fit, reinforced knee and ankle areas, traditional Chinese design elements, flexible material for high kicks, swift energy visible as motion trails, floating slightly above a martial arts stone pedestal, movement technique aura suggesting agility enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 防具-飾 (Accessories)
+    '魔石': 'A mystical magic stone pendant with faceted crystal surface, silver chain and ornate setting, multiple color reflections visible within, arcane energy pulsing from within the stone, magical energy visible as multicolored wisps, floating slightly above an ancient stone pedestal, spell casting aura suggesting magical enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '鐵指環': 'An iron ring with simple sturdy construction, wide band design for durability, subtle engravings along the surface, practical finish without pretense, enhancement energy visible as subtle glow, floating slightly above a workshop stone pedestal, weapon buff aura suggesting combat support, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '腐蟲砂': 'A蛊 poison sand container with ornate design, dark materials with poison-green accents, intricate蛊 pattern engravings, sealed construction to contain toxic contents, toxic energy visible as green mist, floating slightly above a corrupted stone pedestal, poison manipulation aura suggesting蛊 control, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '麻腦串': 'A mind-clearing bead necklace with natural stone beads, simple cord construction with spiritual significance, earthy tones and natural materials, meditation-enhancing design, clarity energy visible as white light, floating slightly above a temple stone pedestal, awakening aura suggesting mental enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '道具': 'A collection of utility items in ornate packaging, various potions and tools visible, professional adventurer equipment, quality construction with practical design, utility energy visible as golden light, floating slightly above a merchant stone pedestal, item usage aura suggesting versatility, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '製木書': 'A woodworking manual with leather-bound cover, wood grain patterns embossed on the surface, tool illustrations visible on pages, practical knowledge compilation, craft energy visible as brown aura, floating slightly above a workshop stone pedestal, repair aura suggesting maintenance skills, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '飛沙走石': 'A sand and stone manipulation accessory, ornate container with earth element symbols, swirling sand visible within glass sections, stone fragments suspended in magical field, earth energy visible as brown and yellow wisps, floating slightly above a desert stone pedestal, projectile aura suggesting ranged earth attacks, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '背包': 'A rugged adventurer backpack with multiple leather compartments and buckles, reinforced canvas material with metal frame support, rolled bedroll attached to the bottom, various pouches and straps for equipment organization, subtle magical glow emanating from within the main compartment, resting on a worn stone pedestal, faint golden energy suggesting hidden treasures inside, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '忍具': 'A ninja tool pouch with dark stealthy design, multiple compartments for various tools, secure closure system, professional ninja equipment appearance, shadow energy visible as dark wisps, floating slightly above a shadow stone pedestal, throwing mastery aura suggesting projectile enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '破血針匣': 'A blood-breaking needle case with ornate design, dark materials with crimson accents, intricate needle pattern engravings, secure construction to hold deadly contents, piercing energy visible as red light, floating slightly above a dark stone pedestal, bleeding aura suggesting damage over time, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '防火手套': 'Fire-resistant gauntlets with heat-protective construction, reinforced palm and finger areas, fire symbol engravings on the back, specialized materials for flame protection, fire energy visible as orange and red wisps, floating slightly above a forge stone pedestal, fire adaptation aura suggesting flame enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '工具箱': 'A master tool box with organized compartments, various tools visible in designated slots, professional construction with durable materials, maintenance and repair equipment, craft energy visible as metallic light, floating slightly above a workshop stone pedestal, training aura suggesting skill development, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '力量戒指': 'A massive strength ring forged from dark iron with a thick band, central crimson gemstone pulsing with raw power, intricate muscle fiber patterns engraved around the band symbolizing physical might, small runic symbols of power scattered across the surface, rough textured metal giving it a battle-worn appearance, faint red energy crackling around the gemstone, floating slightly above a cracked stone pedestal showing signs of immense pressure, subtle crimson aura emanating from the ring distorting the air around it, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '醫術書': 'A medical treatise with professional binding, anatomical illustrations visible on pages, herbal remedy sections marked with plant symbols, healing knowledge compilation, medical energy visible as green and white light, floating slightly above a healing stone pedestal, recovery aura suggesting health restoration, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '厨藝書': 'A culinary cookbook with appetizing design, food illustrations on the cover, recipe sections marked with ingredient symbols, cooking knowledge compilation, culinary energy visible as warm orange light, floating slightly above a kitchen stone pedestal, cooking aura suggesting food preparation skills, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '佛學書': 'An ancient Buddhist scripture tome bound in weathered sandalwood covers, golden lotus flower embossments adorning the front and back, delicate Sanskrit mantras inscribed along the spine in faded ink, silk bookmark ribbons in saffron and crimson trailing from the pages, brass corner protectors shaped like dharma wheels, pages slightly yellowed with age showing intricate mandala illustrations, soft golden light emanating from between the pages, floating slightly above a carved lotus stone pedestal, peaceful spiritual aura surrounding the book, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '品鑒書': 'An appraisal manual with elegant binding, quality assessment charts visible on pages, grading system illustrations and examples, connoisseur knowledge compilation, evaluation energy visible as gold and silver light, floating slightly above a merchant stone pedestal, quality assessment aura suggesting item evaluation, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '鍛造書': 'A blacksmithing manual with reinforced cover, forging technique illustrations visible, metalworking diagrams and temperature charts, smithing knowledge compilation, forge energy visible as orange and red light, floating slightly above an anvil stone pedestal, forging aura suggesting weapon enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '詩書': 'A poetry collection with elegant literary binding, calligraphy samples visible on pages, verse sections marked with artistic symbols, literary knowledge compilation, poetic energy visible as flowing blue light, floating slightly above a scholar stone pedestal, literary aura suggesting cultural enhancement, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '音律書': 'A music theory manual with ornate binding, musical notation visible on pages, instrument illustrations and scale diagrams, musical knowledge compilation, harmony energy visible as rainbow light, floating slightly above a concert stone pedestal, musical aura suggesting sound manipulation, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '雜學書': 'A miscellaneous knowledge tome with eclectic binding, various subject illustrations visible, cross-reference sections and indexes, general knowledge compilation, wisdom energy visible as multicolored light, floating slightly above a library stone pedestal, miscellaneous aura suggesting diverse knowledge, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 防具-盾 (Shield)
+    '紋章盾': 'A heraldic shield with ornate emblem design, reinforced metal construction with wooden core, decorative heraldry prominently displayed, protective enchantments visible as glowing runes, blessing energy visible as golden light, floating slightly above a noble stone pedestal, trust aura suggesting defensive support, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+}
+
+def main():
+    prompts_dir = 'prompts'
+    
+    print(f'Updating {len(ARMOR_PROMPTS)} armor prompts...')
+    
+    for name, prompt in ARMOR_PROMPTS.items():
+        filepath = os.path.join(prompts_dir, f'{name}.txt')
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(prompt)
+        
+        print(f'Updated: {filepath}')
+    
+    print(f'\nTotal armor prompts updated: {len(ARMOR_PROMPTS)}')
+
+if __name__ == '__main__':
+    main()

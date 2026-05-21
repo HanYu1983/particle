@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔石 - 中毒術</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap');
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        .card-container {
+            position: relative;
+            width: 300px;
+            height: 420px;
+            padding: 12px;
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border-radius: 16px;
+            border: 3px solid #c9a227;
+            box-shadow: 
+                0 0 20px rgba(201, 162, 39, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(201, 162, 39, 0.1);
+            overflow: hidden;
+        }
+
+        .card-container::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1px solid rgba(201, 162, 39, 0.4);
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .weapon-container {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 48%;
+            background: linear-gradient(180deg, #0a0a15 0%, #151525 100%);
+            border-radius: 8px;
+            border: 2px solid #8b7355;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .action-container {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 48%;
+            margin-top: 8px;
+            background: linear-gradient(180deg, #0a0a15 0%, #151525 100%);
+            border-radius: 8px;
+            border: 2px solid #8b7355;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .action-name {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 28px;
+            font-size: 16px;
+            font-weight: 900;
+            color: #f4e4c1;
+            background: linear-gradient(90deg, #3a2a1a, #5a4a3a, #3a2a1a);
+            text-align: center;
+            line-height: 28px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+            border-bottom: 2px solid #c9a227;
+            letter-spacing: 2px;
+        }
+
+        .action-img {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 28px);
+            overflow: hidden;
+            background: #1a1a2a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) saturate(1.2);
+        }
+
+        .no-image {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .UI-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .UI-center {
+            position: relative;
+            top: 110px;
+            width: 90%;
+            height: 120px;
+            display: flex;
+            justify-content:space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .UI-power{
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #f4e4c1, #c9a227, #8b6914);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: #1a1a2e;
+            border: 3px solid #000000;
+            box-shadow: 
+                0 0 15px rgba(201, 162, 39, 0.6),
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.3),
+                inset 0 3px 6px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .UI-power-physical {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #ff9999, #cc3333, #8b0000);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: #1a1a2e;
+            border: 3px solid #000000;
+            box-shadow: 
+                0 0 15px rgba(204, 51, 51, 0.6),
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.3),
+                inset 0 3px 6px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .UI-power-magic {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #99ccff, #3366cc, #00008b);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: #1a1a2e;
+            border: 3px solid #000000;
+            box-shadow: 
+                0 0 15px rgba(51, 102, 204, 0.6),
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.3),
+                inset 0 3px 6px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .UI-power::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        .UI-power::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 25%;
+            height: 20%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.6), transparent);
+            border-radius: 50%;
+            transform: rotate(-30deg);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="weapon-container">
+            <div class="action-name">
+                魔石
+            </div>
+            <div class="action-img">
+                <img src="file:///E:/Vic/Git/particle/python_workspace/cardImageGenerator/output_images/魔石_1779349478.png" alt="Weapon Image" style="width: 100%; height: 100%;">
+            </div>
+        </div>
+        <div class="action-container">
+            <div class="action-name">
+                中毒術
+            </div>
+            <div class="action-img">
+                <img src="file:///E:/Vic/Git/particle/python_workspace/cardImageGenerator/action_output_images/中毒術_1779348455.png" alt="Action Image" style="width: 100%; height: 100%;">
+            </div>
+        </div>
+         <div class="UI-container">
+            <div class="UI-center">
+                <div class="UI-power-physical">
+                    0
+                </div>
+                <div class="UI-power-magic">
+                    4
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

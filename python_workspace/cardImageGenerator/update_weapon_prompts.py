@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Generate detailed weapon prompts based on name imagery
+"""
+
+import os
+
+# Weapon-specific detailed prompts based on name imagery
+WEAPON_PROMPTS = {
+    # 打擊-棍 (Staff/Rod)
+    '魔杖': 'An ornate wizard staff with a twisted wooden shaft, crystal orb at the top radiating arcane energy, ancient runes carved spiraling along the length, magical wisps of fire and water energy emanating from the crystal, leather-wrapped grip with silver wire accents, floating slightly above an ancient stone pedestal, swirling multicolored magical energy surrounding it, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '雙頭鋼棍': 'A massive double-headed steel staff with reinforced metal caps on both ends, intricate geometric patterns engraved along the shaft, heavy chain links wrapped around the center grip, battle-worn steel surface with subtle dents and scratches, glowing blue energy crackling between the two heads, floating horizontally above a cracked stone pedestal, powerful kinetic energy aura surrounding the weapon, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 打擊-鎚 (Hammer)
+    '巨鎚': 'A colossal war hammer with an enormous rectangular steel head, reinforced metal bands wrapping around the striking surfaces, thick wooden haft wrapped in worn leather grip, earth-shattering weight evident in its construction, glowing orange energy pulsing from the hammer head, resting heavily on a fractured stone pedestal with cracks radiating outward, seismic energy waves distorting the air around it, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 打擊-弓 (Bow)
+    '獵弓': 'A sturdy hunting bow crafted from layered wood and horn, curved limbs with reinforced tips, braided sinew bowstring taut and ready, leather arrow rest and grip wrapping, subtle nature-themed carvings along the limbs, floating slightly above a moss-covered stone pedestal, faint green energy aura suggesting woodland origins, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '鋼輪弓': 'A mechanical compound bow with steel wheel cams at the limb tips, modern cable and pulley system, reinforced metal riser with precision engineering, sleek dark finish with metallic accents, glowing cyan energy flowing through the cable system, floating slightly above an industrial stone pedestal, mechanical energy humming around the bow, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '反曲弓': 'An elegant recurve bow with dramatically curved limb tips sweeping forward, polished wood core with horn overlays, traditional leather grip and arrow shelf, intricate vine patterns carved along the limbs, soft golden light emanating from the bowstring, floating slightly above a weathered stone pedestal, life-draining energy subtly visible as wisps around the weapon, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 打擊-包 (Backpack)
+    '背包': 'A rugged adventurer backpack with multiple leather compartments and buckles, reinforced canvas material with metal frame support, rolled bedroll attached to the bottom, various pouches and straps for equipment organization, subtle magical glow emanating from within the main compartment, resting on a worn stone pedestal, faint golden energy suggesting hidden treasures inside, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 打擊-短 (Short Weapon)
+    '法杖': 'A classic mage staff with a smooth wooden shaft topped by an ornate metal headpiece, multiple gemstone sockets arranged in a circular pattern, arcane symbols engraved along the length, leather-wrapped grip section with silver wire details, soft blue magical energy swirling around the gemstones, floating slightly above an ancient rune-inscribed stone pedestal, mystical aura radiating from the staff, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '工匠錘': 'A master craftsman hammer with a polished steel head featuring both flat and peened faces, wooden handle with worn leather grip showing years of use, measurement markings etched along the handle, small tool attachments visible on the sides, warm orange glow emanating from the striking surface, floating slightly above an anvil-shaped stone pedestal, forging energy sparks floating around the hammer, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '塑膠棒': 'A modern training staff made from durable polymer material, segmented construction with visible joint connections, measurement markings along the length, bright colored grip sections, subtle mathematical symbols and geometric patterns printed on the surface, floating slightly above a clean stone pedestal, faint blue energy suggesting calculation and precision, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 斬擊-大 (Greatsword)
+    '大劍': 'A massive two-handed greatsword with an enormous broad blade, reinforced fuller running down the center, heavy crossguard with angular design, thick leather-wrapped grip for two-handed use, battle-worn steel surface with visible edge nicks, floating slightly above a cracked stone pedestal, powerful slashing energy aura visible as faint air distortions, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '破壞大劍': 'A colossal destruction greatsword with an impossibly wide blade, jagged edges suggesting devastating cutting power, reinforced spine with multiple support ribs, massive crossguard shaped like wings, dark steel surface with crimson energy veins running through it, resting heavily on a shattered stone pedestal, overwhelming destructive aura crackling with red and black energy, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '白影劍': 'An elegant greatsword with a pristine white blade that seems to glow, silver fuller with intricate light-refracting patterns, ornate crossguard shaped like angel wings, pearl-white grip wrapped in fine leather, ethereal white energy flowing along the blade edges, floating slightly above a luminous stone pedestal, protective barrier aura shimmering around the weapon, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '雪葬的星銀': 'A legendary greatsword forged from starlight silver metal, blade surface showing frozen crystalline patterns like frost, crossguard shaped like snowflakes with embedded ice crystals, grip wrapped in white fur and silver wire, cold blue energy emanating from the blade creating visible frost, floating slightly above a frozen stone pedestal covered in ice, blizzard energy swirling around the weapon with snowflake particles, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 斬擊-刀 (Katana/Longsword)
+    '鐮刀': 'A deadly scythe-like blade with a curved single-edged design, long wooden haft with reinforced metal collar, razor-sharp inner edge with subtle serrations, dark steel surface with blood-red patina, shadowy energy wisps trailing from the blade tip, floating slightly above a dark stone pedestal, deathly aura visible as dark mist swirling around the weapon, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '鬼劍': 'A demonic sword with a wickedly curved blade showing dark energy patterns, jagged edge design suggesting soul-rending power, crossguard shaped like demonic horns, grip wrapped in dark leather with bone accents, crimson and black energy crackling along the blade, floating slightly above a corrupted stone pedestal, dark aura with ghostly faces visible in the shadows, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '無限刃': 'A blazing sword with flames constantly dancing along the blade edge, red-hot metal surface with heat distortion visible, crossguard shaped like fire wings, grip wrapped in fire-resistant materials, intense orange and red energy radiating from the weapon, floating slightly above a scorched stone pedestal, inferno aura with actual flames licking around the blade, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '苗刀': 'A traditional Chinese miaodao with a long gracefully curved blade, subtle hamon line visible along the edge, ornate tsuba guard with mountain and cloud motifs, silk-wrapped grip with traditional braiding, wind energy visible as subtle air currents around the blade, floating slightly above a bamboo-patterned stone pedestal, swift cutting aura suggesting lightning-fast strikes, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '引出刀': 'A masterwork katana with a perfectly balanced blade showing exceptional craftsmanship, traditional hamon temper line with beautiful patterns, ornate tsuba with intricate metalwork, ray skin grip with traditional silk wrapping, multiple elemental energies cycling around the blade, floating slightly above a traditional Japanese stone pedestal, legendary sword aura with visible power fluctuations, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '天目影打刀': 'A shadow-forged katana with a blade that seems to absorb light, dark metallic surface with subtle shadow patterns moving across it, crossguard shaped like mountain peaks, grip wrapped in dark materials, shadow energy pooling around the blade creating darkness, floating slightly above a cave-like stone pedestal, dimensional energy suggesting storage and retrieval powers, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 斬擊-單 (Single-handed Blade)
+    '鬼疱丁': 'A demonic cleaver-style blade with a wide rectangular cutting surface, blood groove running down the center, reinforced spine with demonic face pommel, dark steel with crimson energy veins, ghostly energy emanating from the blade surface, floating slightly above a corrupted stone pedestal, fear-inducing aura with visible dark wisps, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '青龍刀': 'A legendary green dragon blade with a gracefully curved single edge, dragon scale patterns etched along the blade surface, ornate guard shaped like a dragon head, jade-green energy flowing through the metal, emerald light emanating from the blade, floating slightly above a cloud-patterned stone pedestal, dragon aura with visible wind currents swirling around it, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '忍刀': 'A ninja shinobigatana with a straight narrow blade, minimal guard design for quick drawing, black-wrapped grip for silent handling, dark steel surface with subtle wave patterns, shadow energy clinging to the blade, floating slightly above a dark stone pedestal, stealth aura making the weapon seem to flicker in and out of visibility, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '大手裡劍': 'A massive shuriken throwing star with multiple razor-sharp points, central hole for finger grip, intricate wind and fire patterns etched on the surface, dark steel construction with balanced weight distribution, elemental energy crackling around the points, floating and slowly rotating above a stone pedestal, throwing energy aura suggesting incredible velocity, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '天霜皓月': 'A frost moon blade with a curved edge showing ice crystal formations, silver-white metal surface reflecting moonlight, crossguard shaped like a crescent moon, grip wrapped in white leather, freezing cold energy emanating from the blade creating visible frost, floating slightly above an ice-covered stone pedestal, blizzard aura with snowflakes materializing around the weapon, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '鉄刀': 'A sturdy iron blade with a practical single-edged design, reinforced spine for durability, simple functional guard, dark iron surface with visible forging marks, reliable construction showing battlefield use, floating slightly above a worn stone pedestal, steady energy aura suggesting dependable performance, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 刺擊-劍 (Sword)
+    '鉄劍': 'A practical iron sword with a straight double-edged blade, simple crossguard design, leather-wrapped grip showing wear, dark iron surface with battle scars, honest craftsmanship without pretense, floating slightly above a weathered stone pedestal, reliable energy aura suggesting proven combat effectiveness, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '長劍': 'An elegant longsword with a perfectly balanced blade, ornate fuller with decorative patterns, elaborate crossguard with gemstone accents, fine leather grip with wire wrapping, refined steel surface with mirror polish, floating slightly above a noble stone pedestal, precise energy aura suggesting masterful swordsmanship, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '寒月': 'A cold moon sword with a blade showing frost patterns along the edges, silver-blue metal surface with moonlight reflections, crossguard shaped like a crescent moon, grip wrapped in pale leather, chilling energy emanating from the blade, floating slightly above a frozen stone pedestal, emotional disturbance aura visible as color-shifting mist, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '匣裏龍吟': 'A dragon-roaring sword hidden within a scabbard, blade showing lightning and fire patterns, ornate guard shaped like a dragon mouth, grip wrapped in storm-colored materials, thunderous energy crackling along the blade, floating slightly above a storm-cloud stone pedestal, elemental suppression aura suggesting power over fire and lightning, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '祭禮劍': 'A ceremonial sword designed for ritual purposes, pristine blade with sacred engravings, ornate crossguard with religious symbols, white silk-wrapped grip, peaceful golden energy emanating from the weapon, floating slightly above a temple stone pedestal, calming aura suggesting meditation and focus, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '騎士劍': 'A knightly sword with a straight blade showing holy light patterns, crossguard shaped like a holy cross, grip wrapped in white and gold materials, sacred energy radiating from the blade, floating slightly above a blessed stone pedestal, protective aura with visible light barriers, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 刺擊-槍 (Spear/Lance)
+    '龍槍': 'A dragon lance with a spearhead shaped like a dragon fang, shaft decorated with dragon scale patterns, reinforced metal collar below the head, crimson and gold energy flowing along the weapon, dragon aura visible as heat distortion around the tip, floating slightly above a volcanic stone pedestal, elemental enhancement aura suggesting power over multiple elements, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '喜多院十文字': 'A cross-shaped spear with a unique十字 (cross) blade design, balanced symmetrical construction, ornate metalwork with Japanese aesthetic, grip wrapped in traditional materials, scholarly energy emanating from the weapon, floating slightly above a garden stone pedestal, nobility aura suggesting refined combat techniques, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '匣裏滅晨': 'A dawn-destroying spear hidden within darkness, blade showing void-like patterns that absorb light, crossguard shaped like extinguished stars, grip wrapped in midnight materials, destructive energy pooling around the tip, floating slightly above a darkened stone pedestal, dawn-breaking aura suggesting power to end beginnings, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 刺擊-匕 (Dagger)
+    '鐵梭子': 'An iron shuttle dagger shaped like a weaving tool, narrow pointed blade for thrusting, reinforced handle with grip grooves, dark iron surface with practical finish, throwing energy visible as motion trails, floating slightly above a workshop stone pedestal, projectile aura suggesting ranged combat capability, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '苦無': 'A ninja kunai with a leaf-shaped blade, ring at the pommel for rope attachment, black-wrapped grip for throwing, dark steel surface with matte finish, explosive energy subtly visible around the blade, floating slightly above a shadow stone pedestal, assassination aura suggesting silent deadly precision, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '拳刃': 'A fist dagger designed for close combat, short blade extending from a hand guard, reinforced grip for punching strikes, dark steel with poison-green energy veins, toxic energy emanating from the blade, floating slightly above a corrupted stone pedestal, poison adaptation aura visible as green mist, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '青竹刺': 'A bamboo-styled thrusting dagger with a slender green-tinted blade, segmented pattern along the shaft resembling bamboo joints, leaf-shaped guard design, natural materials construction, wood energy visible as green wisps, floating slightly above a forest stone pedestal, nature aura suggesting growth and flexibility, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 格鬥-拳 (Gauntlets)
+    '拳套': 'A pair of fighting gauntlets with reinforced knuckle guards, articulated finger design for flexibility, leather and metal construction, combat-worn surface showing battle use, energy channeling patterns visible on the surface, floating slightly above a training stone pedestal, HP recovery aura suggesting life force manipulation, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '黑風拳套': 'A pair of black wind gauntlets with dark metal construction, wind pattern engravings along the knuckles, reinforced striking surfaces, purple energy crackling around the fists, dark aura visible as swirling shadows, floating slightly above a storm stone pedestal, elemental fist aura suggesting fire and darkness power, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '忍者指套': 'A pair of ninja finger gauntlets with lightweight metal construction, elemental symbol engravings on each finger, flexible joint design for hand seals, dark materials with subtle shine, multiple elemental energies cycling around the fingers, floating slightly above a shadow stone pedestal, jutsu aura suggesting elemental technique mastery, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '柔術手套': 'A pair of jiu-jitsu gloves with reinforced palm and finger construction, grip-enhancing surface patterns, flexible material allowing full hand movement, subtle energy channeling lines visible, throwing energy aura suggesting grappling techniques, floating slightly above a dojo stone pedestal, combat sports aura suggesting technical mastery, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '獅相門拳套': 'A pair of lion sect gauntlets with fierce lion head knuckle guards, golden mane patterns along the wrists, reinforced striking surfaces, proud energy emanating from the design, lion aura visible as golden light, floating slightly above a temple stone pedestal, martial arts sect aura suggesting disciplined training, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '半指手套': 'A pair of half-finger fighting gloves with exposed fingertips for precision, reinforced knuckle guards, palm grip enhancement patterns, flash energy visible as bright sparks around the knuckles, floating slightly above a training stone pedestal, blinding aura suggesting light-based techniques, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '靈手套': 'A pair of spirit gauntlets with ethereal energy construction, translucent material showing inner energy flow, spirit symbol engravings on the back, glowing light emanating from within, spiritual energy visible as white and gold wisps, floating slightly above a sacred stone pedestal, spirit gun aura suggesting energy projection, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    # 格鬥-腿 (Leg Weapons)
+    '戰士靴': 'A pair of warrior boots with reinforced toe caps for kicking, ankle protection plating, sturdy sole construction for stability, battle-worn leather and metal, combat energy visible as red aura around the boots, floating slightly above a battlefield stone pedestal, knee destruction aura suggesting devastating leg techniques, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+    
+    '功夫鞋': 'A pair of kung fu shoes with lightweight flexible construction, reinforced striking surfaces on toes and heels, traditional Chinese design elements, swift movement patterns visible as energy trails, floating slightly above a temple stone pedestal, step technique aura suggesting incredible footwork, fantasy RPG equipment, detailed game asset, high quality fantasy illustration, Magic the Gathering style, by Seb McKinnon and Chris Rahn, no UI elements, no text, no borders',
+}
+
+def main():
+    prompts_dir = 'prompts'
+    
+    print(f'Updating {len(WEAPON_PROMPTS)} weapon prompts...')
+    
+    for name, prompt in WEAPON_PROMPTS.items():
+        filepath = os.path.join(prompts_dir, f'{name}.txt')
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(prompt)
+        
+        print(f'Updated: {filepath}')
+    
+    print(f'\nTotal weapon prompts updated: {len(WEAPON_PROMPTS)}')
+
+if __name__ == '__main__':
+    main()

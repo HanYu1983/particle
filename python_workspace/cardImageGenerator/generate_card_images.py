@@ -52,6 +52,9 @@ def generate_card_html(card):
     """Generate HTML for a single card"""
     title = card['title']
     skill_name = card['skillName'] if card['skillName'] != '無' else title
+    power_physical = card['outsidePower'] if 'outsidePower' in card else '0'
+    power_magic = card['insidePower'] if 'insidePower' in card else '0'
+
     
     # Image paths - find files with timestamp suffix
     weapon_img = find_image("output_images", title)
@@ -177,6 +180,120 @@ def generate_card_html(card):
             color: #666;
             font-size: 14px;
         }}
+
+        .UI-container {{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }}
+
+        .UI-center {{
+            position: relative;
+            top: 110px;
+            width: 90%;
+            height: 120px;
+            display: flex;
+            justify-content:space-between;
+            align-items: center;
+            padding: 0 10px;
+        }}
+
+        .UI-power{{
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #f4e4c1, #c9a227, #8b6914);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: #1a1a2e;
+            border: 3px solid #000000;
+            box-shadow: 
+                0 0 15px rgba(201, 162, 39, 0.6),
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.3),
+                inset 0 3px 6px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }}
+
+        .UI-power-physical {{
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #ff9999, #cc3333, #8b0000);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: #1a1a2e;
+            border: 3px solid #000000;
+            box-shadow: 
+                0 0 15px rgba(204, 51, 51, 0.6),
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.3),
+                inset 0 3px 6px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }}
+
+        .UI-power-magic {{
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #99ccff, #3366cc, #00008b);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: #1a1a2e;
+            border: 3px solid #000000;
+            box-shadow: 
+                0 0 15px rgba(51, 102, 204, 0.6),
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.3),
+                inset 0 3px 6px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }}
+
+        .UI-power::before {{
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }}
+
+        .UI-power::after {{
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 25%;
+            height: 20%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.6), transparent);
+            border-radius: 50%;
+            transform: rotate(-30deg);
+            pointer-events: none;
+        }}
     </style>
 </head>
 <body>
@@ -195,6 +312,16 @@ def generate_card_html(card):
             </div>
             <div class="action-img">
                 {'<img src="' + action_img + '" alt="Action Image" style="width: 100%; height: 100%;">' if action_img else '<div class="no-image">No Image</div>'}
+            </div>
+        </div>
+         <div class="UI-container">
+            <div class="UI-center">
+                <div class="UI-power-physical">
+                    {power_physical}
+                </div>
+                <div class="UI-power-magic">
+                    {power_magic}
+                </div>
             </div>
         </div>
     </div>
@@ -224,7 +351,7 @@ def main():
             id = card['id']
 
             # 檢查是否已經生成過圖片
-            output_path = os.path.join(output_dir, f"{id}.jpeg")
+            output_path = os.path.join(output_dir, f"{id}.png")
 
             if os.path.exists(output_path):
                 print(f'Skipping: {output_path} already exists ({i+1}/{len(cards)})')
@@ -253,8 +380,8 @@ def main():
             card_element = page.query_selector('.card-container')
             if card_element:
                 # Screenshot the card element
-                output_path = os.path.join(output_dir, f'{id}.jpeg')
-                card_element.screenshot(path=output_path, type='jpeg', quality=95)
+                output_path = os.path.join(output_dir, f'{id}.png')
+                card_element.screenshot(path=output_path, type='png')
                 print(f'Generated: {output_path} ({i+1}/{len(cards)})')
             else:
                 print(f'Failed: {id} - card element not found')
