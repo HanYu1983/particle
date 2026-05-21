@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡牌 UI 設計 - MTG風格</title>
+    <style>
+        .card-container {
+            position: relative;
+            width: 200px;
+            height: 280px;
+            padding: 5px;
+            background-color: rgb(0, 0, 0);
+        }
+
+        .weapon-container {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+        }
+
+        .action-container {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+        }
+
+        .action-name {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+            background-color: white;
+        }
+
+        .action-img {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 24px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card-container">
+        <div class="weapon-container">
+            <div class="action-name">
+                黑風拳套
+            </div>
+            <div class="action-img">
+                <img src="output_images/黑風拳套_1779345895.png" alt="Action Image"
+                    style="width: 100%; height: 100%;">
+            </div>
+        </div>
+        <div class="action-container">
+            <div class="action-name">
+                名士振舞
+            </div>
+            <div class="action-img">
+                <img src="action_output_images/名士振舞_1779345731.png" alt="Action Image"
+                    style="width: 100%; height: 100%;">
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

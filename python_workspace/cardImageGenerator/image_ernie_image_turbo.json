@@ -14,8 +14,8 @@
   },
   "88:71": {
     "inputs": {
-      "width": 512,
-      "height": 1024,
+      "width": 1024,
+      "height": 512,
       "batch_size": 1
     },
     "class_type": "EmptyFlux2LatentImage",
@@ -51,7 +51,7 @@
   },
   "88:70": {
     "inputs": {
-      "seed": 161907788371240,
+      "seed": 838587236885291,
       "steps": 8,
       "cfg": 1,
       "sampler_name": "euler",
@@ -143,7 +143,7 @@
   },
   "88:94": {
     "inputs": {
-      "value": "{\n  \"studioName\": \"清雅文化工作室\",\n  \"location\": \"江南小鎮老街區，臨近水巷與古橋\",\n  \"spaceDesign\": {\n    \"style\": \"現代簡約融合古典元素，保留老建築木樑與磚牆，搭配落地窗引入自然光\",\n    \"layout\": \"開放式茶室、古琴演奏區、詩詞書畫創作角、小型展覽空間、庭院花園\",\n    \"decor\": \"原木家具、竹簾、素色布幔、蘭花盆栽、古典書架、水墨畫作點綴\",\n    \"atmosphere\": \"寧靜雅緻，空氣中常飄著淡淡茶香與墨香，背景輕柔古琴音樂\"\n  },\n  \"services\": {\n    \"courses\": [\"古典詩詞賞析\", \"古琴基礎教學\", \"花道與茶道體驗\", \"傳統禮儀工作坊\"],\n    \"events\": [\"月度文化沙龍\", \"季節詩會\", \"古典美學展覽\", \"文人雅集\"],\n    \"consulting\": \"品牌古典風格設計諮詢、文化活動策劃顧問\"\n  },\n  \"operation\": {\n    \"schedule\": \"週二至週日開放，週一休館整理\",\n    \"hours\": \"上午 10:00 至下午 6:00，夜間活動另計\",\n    \"capacity\": \"同時容納 15-20 人，小班制教學\",\n    \"philosophy\": \"以慢生活為核心，強調文化體驗的深度與質感，不追求商業化擴張\"\n  },\n  \"team\": {\n    \"founder\": \"柳清雅\",\n    \"members\": [\"古琴老師一位\", \"茶道師一位\", \"兼職行政助理一位\"],\n    \"collaborators\": \"在地藝術家、詩人、花藝師不定期合作\"\n  },\n  \"renderStyle\": {\n    \"type\": \"家庭拍照風格\",\n    \"quality\": \"寫實自然，不追求完美\",\n    \"details\": \"照片光線柔和但不完美，色調偏暖，不刻意修飾空間細節，少許生活痕跡顯現真實感\",\n    \"expression\": \"場景自然，不需過分整潔或佈置，帶有日常生活感與使用痕跡\",\n    \"atmosphere\": \"像普通家庭相冊中的一張照片，真實、平凡且溫馨，保持自然質感而非理想化空間攝影\",\n    \"negativePrompt\": \"不要出現任何文字、水印、標誌、標籤、簽名或可讀字符，背景與物品上均無文字元素\"\n  }\n}\n"
+      "value": "單一遊戲招式圖標設計。  \n細節：A martial artist wearing kung fu pants executing a defensive footwork technique, body shifting through three distinct stances in rapid succession, legs moving in triangular pattern creating afterimages, incoming attack passing through empty space as the warrior phases aside, defensive energy flaring on contact with the missed strike, opponent thrown off balance by the evasive maneuver, protective barrier shimmering around the defender with residual energy, close-up perspective capturing the moment the attack misses, opponent's next attack visibly disrupted with probability distortion effect, intense battle atmosphere with dramatic lighting emphasizing the evasion, dynamic composition emphasizing motion and footwork mastery\n風格要求：  \n- 類型：像素美術風格（Pixel Art Icon）  \n- 像素大小：統一解析度（例如 32x32 或 64x64），所有招式保持一致  \n- 邊框：統一規範（全部有邊框）  \n- 視覺：16-bit 像素風格，清晰銳利  \n- 色彩：有限色盤，對比鮮明，避免漸層  \n- 線條：邊緣清楚，像素格感明顯  \n- 表現：用像素塊抽象化表現能量或元素效果  \n- 整體：統一的像素 UI 圖標風格，適合 RPG / MMORPG 技能介面  \n\n"
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -219,7 +219,7 @@
   },
   "88:99": {
     "inputs": {
-      "source": 512
+      "source": 1024
     },
     "class_type": "PreviewAny",
     "_meta": {
@@ -228,7 +228,7 @@
   },
   "88:100": {
     "inputs": {
-      "source": 1024
+      "source": 512
     },
     "class_type": "PreviewAny",
     "_meta": {
