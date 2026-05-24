@@ -226,6 +226,34 @@
             transform: rotate(-30deg);
             pointer-events: none;
         }
+
+         .UI-weapon-context {
+            position: absolute;
+            top: 42px;
+            left: 13px;
+            width: 90%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 1.0);
+            font-family: 'sans-serif', serif;
+        }
+
+        .UI-context {
+            position: absolute;
+            top: 257px;
+            left: 13px;
+            width: 90%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 1.0);
+            font-family: 'sans-serif', serif;
+        }
     </style>
 </head>
 <body>
@@ -254,6 +282,12 @@
                 <div class="UI-power-magic">
                     3
                 </div>
+            </div>
+            <div class="UI-weapon-context">
+                斬擊-刀 3
+            </div>
+            <div class="UI-context">
+                氣場 0 無 這個氣場在場時，自配置時可以支付1行動力，從捨棄庫或者牌組補充1氣到這張卡上。最多可以有3氣在這張卡上。自己交戰及打人判定成功時，這張卡上的所有氣廢棄。每廢棄1氣。可以回復3氣。這張卡的破氣重量為這張卡上的氣的數量。這張卡沒有氣時，也不會廢棄。
             </div>
         </div>
     </div>
