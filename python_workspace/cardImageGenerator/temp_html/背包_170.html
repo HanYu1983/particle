@@ -127,11 +127,12 @@
 
         .UI-center {
             position: relative;
-            width: 99%;
+            top: 110px;
+            width: 90%;
             height: 120px;
             display: flex;
             justify-content:space-between;
-            align-items: start;
+            align-items: center;
             padding: 0 10px;
         }
 
@@ -225,6 +226,34 @@
             transform: rotate(-30deg);
             pointer-events: none;
         }
+
+         .UI-weapon-context {
+            position: absolute;
+            top: 42px;
+            left: 13px;
+            width: 90%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 1.0);
+            font-family: 'sans-serif', serif;
+        }
+
+        .UI-context {
+            position: absolute;
+            top: 257px;
+            left: 13px;
+            width: 90%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 1.0);
+            font-family: 'sans-serif', serif;
+        }
     </style>
 </head>
 <body>
@@ -253,6 +282,12 @@
                 <div class="UI-power-magic">
                     3
                 </div>
+            </div>
+            <div class="UI-weapon-context">
+                打擊-包 2
+            </div>
+            <div class="UI-context">
+                氣場 1 無 這氣場在場時，對方在選擇破壞防具與偷防具的對象時，一定要選這張。若那個效果生效時，取代生效的結果，改為廢棄這張卡。這個氣場可以重復。
             </div>
         </div>
     </div>
