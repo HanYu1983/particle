@@ -127,11 +127,12 @@
 
         .UI-center {
             position: relative;
-            width: 99%;
+            top: 110px;
+            width: 90%;
             height: 120px;
             display: flex;
             justify-content:space-between;
-            align-items: start;
+            align-items: center;
             padding: 0 10px;
         }
 
@@ -225,6 +226,34 @@
             transform: rotate(-30deg);
             pointer-events: none;
         }
+
+         .UI-weapon-context {
+            position: absolute;
+            top: 42px;
+            left: 13px;
+            width: 90%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 1.0);
+            font-family: 'sans-serif', serif;
+        }
+
+        .UI-context {
+            position: absolute;
+            top: 257px;
+            left: 13px;
+            width: 90%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 1.0);
+            font-family: 'sans-serif', serif;
+        }
     </style>
 </head>
 <body>
@@ -253,6 +282,12 @@
                 <div class="UI-power-magic">
                     0
                 </div>
+            </div>
+            <div class="UI-weapon-context">
+                防具-盾 1
+            </div>
+            <div class="UI-context">
+                反應 2 無 獲得一個[祝福護甲-下一次的自己的反應宣告時一定要宣告, 若為外功傷害時抵消外功傷害並抵消狀態]的狀態. 這個狀態不能重復.
             </div>
         </div>
     </div>
