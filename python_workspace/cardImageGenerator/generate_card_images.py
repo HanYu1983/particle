@@ -54,7 +54,12 @@ def generate_card_html(card):
     skill_name = card['skillName'] if card['skillName'] != '無' else title
     power_physical = card['outsidePower'] if 'outsidePower' in card else '0'
     power_magic = card['insidePower'] if 'insidePower' in card else '0'
-
+    equipment_type = card['attackType'] if 'attackType' in card else ''
+    weight = card['weight'] if 'weight' in card else ''
+    action_type = card['skillType'] if 'skillType' in card else ''
+    action_cost = card['skillCost'] if 'skillCost' in card else ''
+    effect = card['skillMana'] if 'skillMana' in card else ''
+    context = card['skillText'] if 'skillText' in card else ''
     
     # Image paths - find files with timestamp suffix
     weapon_img = find_image("output_images", title)
@@ -294,6 +299,34 @@ def generate_card_html(card):
             transform: rotate(-30deg);
             pointer-events: none;
         }}
+
+         .UI-weapon-context {{
+            position: absolute;
+            top: 42px;
+            left: 13px;
+            width: 90%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 1.0);
+            font-family: 'sans-serif', serif;
+        }}
+
+        .UI-context {{
+            position: absolute;
+            top: 257px;
+            left: 13px;
+            width: 90%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            font-size: 12px;
+            color: #ffffff;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 1.0);
+            font-family: 'sans-serif', serif;
+        }}
     </style>
 </head>
 <body>
@@ -322,6 +355,12 @@ def generate_card_html(card):
                 <div class="UI-power-magic">
                     {power_magic}
                 </div>
+            </div>
+            <div class="UI-weapon-context">
+                {equipment_type} {weight}
+            </div>
+            <div class="UI-context">
+                {action_type} {action_cost} {effect} {context}
             </div>
         </div>
     </div>
